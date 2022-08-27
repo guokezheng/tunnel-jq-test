@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.videoevents.SdkEventTaskMapper">
+    <resultMap type="SdkEventTask" id="SdkEventTaskResult">
+        <result property="id"    column="id"    />
+        <result property="dockerId"    column="docker_id"    />
+        <result property="channelId"    column="channel_id"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="url"    column="url"    />
+        <result property="results"    column="results"    />
+        <result property="sceneMode"    column="scene_mode"    />
+        <result property="reportingInterval"    column="reporting_interval"    />
+        <result property="nightMode"    column="night_mode"    />
+        <result property="nightStart"    column="night_start"    />
+        <result property="nightEnd"    column="night_end"    />
+        <result property="alarmVideo"    column="alarm_video"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTtime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdkEventTaskVo">
+        select id, docker_id,channel_id, task_type, url, results, scene_mode, reporting_interval,night_mode, night_start, night_end,alarm_video,
+        create_by, create_time, update_by, update_time
+        from sdk_event_task
+    </sql>
+    <sql id="selectSdkEventTaskVo1">
+        select a.id, a.docker_id,b.dockerName,a.channel_id, a.task_type, a.url, a.results, a.scene_mode, a.reporting_interval,a.night_mode, a.night_start, a.night_end,alarm_video,
+        a.create_by, a.create_time,a.update_by, a.update_time
+        from sdk_event_task a
+        left join sd_create_docker b on a.docker_id = b.id
+    </sql>
+    <select id="selectSdkEventTaskList" parameterType="SdkEventTask" resultMap="SdkEventTaskResult">
+        <include refid="selectSdkEventTaskVo1"/>
+        <where>  
+            <if test="channelId != null  and channelId != ''"> and a.channel_id = #{channelId}</if>
+            <if test="taskType != null  and taskType != ''"> and a.task_type = #{taskType}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdkEventTaskById" parameterType="Integer" resultMap="SdkEventTaskResult">
+        <include refid="selectSdkEventTaskVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectSdkEventTaskByChannelId" parameterType="String" resultMap="SdkEventTaskResult">
+        <include refid="selectSdkEventTaskVo"/>
+        where channel_id = #{id}
+    </select>
+        
+    <insert id="insertSdkEventTask" parameterType="SdkEventTask" useGeneratedKeys="true" keyProperty="id">
+        insert into sdk_event_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">channel_id,</if>
+            <if test="dockerId != null">docker_id,</if>
+            <if test="taskType != null">task_type,</if>
+            <if test="url != null">url,</if>
+            <if test="results != null">results,</if>
+            <if test="sceneMode != null">scene_mode,</if>
+            <if test="reportingInterval != null">reporting_interval,</if>
+            <if test="nightMode != null">night_mode,</if>
+            <if test="nightStart != null">night_start,</if>
+            <if test="nightEnd != null">night_end,</if>
+            <if test="alarmVideo != null">alarm_video,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTtime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channelId != null">#{channelId},</if>
+            <if test="dockerId != null">#{dockerId},</if>
+            <if test="taskType != null">#{taskType},</if>
+            <if test="url != null">#{url},</if>
+            <if test="results != null">#{results},</if>
+            <if test="sceneMode != null">#{sceneMode},</if>
+            <if test="reportingInterval != null">#{reportingInterval},</if>
+            <if test="nightMode != null">#{nightMode},</if>
+            <if test="nightStart != null">#{nightStart},</if>
+            <if test="nightEnd != null">#{nightEnd},</if>
+            <if test="alarmVideo != null">#{alarmVideo},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTtime != null">#{updateTtime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdkEventTask" parameterType="SdkEventTask">
+        update sdk_event_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channelId != null">channel_id = #{channelId},</if>
+            <if test="dockerId != null">docker_id = #{dockerId},</if>
+            <if test="taskType != null">task_type = #{taskType},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="results != null">results = #{results},</if>
+            <if test="sceneMode != null">scene_mode = #{sceneMode},</if>
+            <if test="reportingInterval != null">reporting_interval = #{reportingInterval},</if>
+            <if test="nightMode != null">night_mode =#{nightMode},</if>
+            <if test="nightStart != null">night_start =#{nightStart},</if>
+            <if test="nightEnd != null">night_end =#{nightEnd},</if>
+            <if test="alarmVideo != null">alarm_video =#{alarmVideo},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTtime != null">update_time = #{updateTtime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdkEventTaskById" parameterType="Integer">
+        delete from sdk_event_task where id = #{id}
+    </delete>
+
+    <delete id="deleteSdkEventTaskByIds" parameterType="String">
+        delete from sdk_event_task where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

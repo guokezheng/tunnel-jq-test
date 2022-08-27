@@ -1,0 +1,46 @@
+.contentTitle{
+  width: 99%;
+  height: 1.6vw;
+  margin: 0 auto;
+  background-color: rgba(255,255,255,0.2);
+  /* background-color: rgba(4,15,78,0.4); */
+  color: white;
+  font-size: 0.9vw;
+  padding-left: 1vw;
+  line-height: 1.6vw;
+}
+.contentTitle i{
+  color: rgba(255,255,255,0.5);
+  float: right;
+  padding-right: 0.5vw;
+  font-size: 0.7vw;
+  line-height: 1.8vw;
+  text-transform:Uppercase;
+}
+.alarmsStatisticsBox{
+  width: 99%;
+  height: calc( 100% - 2vw );
+  margin: 0 auto;
+  /* border: solid 1px white; */
+  /* background-color: rgba(255,255,255,0.1); */
+    background-color: rgba(4,15,78,0.8);
+}
+.listHeader{
+  font-size: 1.2vw;
+  background-color: #041356;
+  color: #FFFFFF;
+  line-height: 2vw;
+  height: 2vw;
+  /* border: solid 1px yellow; */
+}
+.listContent{
+  height: calc(100% - 2vw);
+  color: white;
+  font-size: 0.8vw;
+  line-height: 1.8vw;
+  overflow: hidden;
+  /* li{
+      border-bottom: solid 1px;
+      border-bottom-color: rgba(255,255,255,0.5);
+  } */
+}

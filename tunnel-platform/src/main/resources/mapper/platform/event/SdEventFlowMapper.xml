@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdEventFlowMapper">
+    
+    <resultMap type="SdEventFlow" id="SdEventFlowResult">
+        <result property="id"    column="id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="flowTime"    column="flow_time"    />
+        <result property="flowDescription"    column="flow_description"    />
+        <result property="flowHandler"    column="flow_handler"    />
+        <result property="nickName"    column="nick_name"    />
+    </resultMap>
+
+    <sql id="selectSdEventFlowVo">
+        select id, event_id, flow_time, flow_description, flow_handler from sd_event_flow
+    </sql>
+
+    <select id="selectSdEventFlowList" parameterType="SdEventFlow" resultMap="SdEventFlowResult">
+        select A.id, A.event_id, A.flow_time, A.flow_description, A.flow_handler, B.nick_name
+        from sd_event_flow A
+        left join sys_user B on A.flow_handler = B.user_name
+        <where>  
+            <if test="eventId != null  and eventId != ''"> and A.event_id = #{eventId}</if>
+            <if test="flowTime != null "> and A.flow_time = #{flowTime}</if>
+            <if test="flowDescription != null  and flowDescription != ''"> and A.flow_description = #{flowDescription}</if>
+            <if test="flowHandler != null  and flowHandler != ''"> and A.flow_handler = #{flowHandler}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEventFlowById" parameterType="Long" resultMap="SdEventFlowResult">
+        <include refid="selectSdEventFlowVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdEventFlow" parameterType="SdEventFlow" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_event_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">event_id,</if>
+            <if test="flowTime != null">flow_time,</if>
+            <if test="flowDescription != null">flow_description,</if>
+            <if test="flowHandler != null">flow_handler,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">#{eventId},</if>
+            <if test="flowTime != null">#{flowTime},</if>
+            <if test="flowDescription != null">#{flowDescription},</if>
+            <if test="flowHandler != null">#{flowHandler},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEventFlow" parameterType="SdEventFlow">
+        update sd_event_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventId != null">event_id = #{eventId},</if>
+            <if test="flowTime != null">flow_time = #{flowTime},</if>
+            <if test="flowDescription != null">flow_description = #{flowDescription},</if>
+            <if test="flowHandler != null">flow_handler = #{flowHandler},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEventFlowById" parameterType="Long">
+        delete from sd_event_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEventFlowByIds" parameterType="String">
+        delete from sd_event_flow where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

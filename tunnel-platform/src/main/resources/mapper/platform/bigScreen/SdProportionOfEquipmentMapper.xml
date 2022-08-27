@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.bigScreenApi.mapper.fullView.SdProportionOfEquipmentMapper">
+    
+    <select id="getProportionOfEquipment" resultType="hashmap">
+        SELECT b.type_name name,count(b.type_name) number from sd_devices a
+        left join sd_equipment_type b on a.eq_type = b.type_id
+        WHERE a.eq_tunnel_id = #{tunnelId}
+        GROUP BY b.type_name
+    </select>
+    
+</mapper>

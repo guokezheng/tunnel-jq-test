@@ -1,0 +1,37 @@
+package com.tunnel.platform.controller.dataInfo;
+
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.service.dataInfo.ISdDevicesService;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+/**
+ * 设备Controller
+ * 
+ * @author yanghousheng
+ * @date 2020-12-15
+ */
+@RestController
+@RequestMapping("/equipmentRunning")
+public class SdEquipmentRunningController extends BaseController {
+	
+	 @Autowired
+	    private ISdDevicesService sdDevicesService;
+
+	    /**
+	     * 查询设备列表
+	     */
+	    @GetMapping("/list")
+	    public TableDataInfo list(SdDevices sdDevices)
+	    {
+	        startPage();
+	        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+	        return getDataTable(list);
+	    }
+
+}

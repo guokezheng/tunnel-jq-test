@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficBroadcasting.SdBroadcastRecordMapper">
+    
+    <resultMap type="SdBroadcastRecord" id="SdBroadcastRecordResult">
+        <result property="id"    column="id"    />
+        <result property="broadcastEqids"    column="broadcast_eqids"    />
+        <result property="broadcastEqnames"    column="broadcast_eqnames"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="publishResults"    column="publish_results"    />
+        <result property="broadcastContent"    column="broadcast_content"    />
+        <result property="broadcastSpokesman"    column="broadcast_spokesman"    />
+        <result property="broadcastSpeed"    column="broadcast_speed"    />
+        <result property="isSaveRecording"    column="is_save_recording"    />
+        <result property="volume"    column="volume"    />
+        <result property="numberOfBroadcasts"    column="number_of_broadcasts"    />
+        <result property="recordingAddress"    column="recording_address"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+    </resultMap>
+
+    <sql id="selectSdBroadcastRecordVo">
+        select a.id, a.broadcast_eqids, a.create_time, a.publish_results, a.broadcast_content, a.broadcast_spokesman,
+        a.broadcast_speed, IF(a.is_save_recording = 1,"不保存","保存") is_save_recording, a.volume, a.number_of_broadcasts,
+        a.recording_address, (SELECT GROUP_CONCAT(b.broadcast_name) FROM `sd_broadcast_information_list` b
+        WHERE FIND_IN_SET(b.id,a.broadcast_eqids)) broadcast_eqnames from sd_broadcast_record a
+    </sql>
+
+    <select id="selectSdBroadcastRecordList" parameterType="SdBroadcastRecord" resultMap="SdBroadcastRecordResult">
+        <include refid="selectSdBroadcastRecordVo"/>
+        <where>  
+            <if test="broadcastEqids != null  and broadcastEqids != ''"> and a.broadcast_eqids = #{broadcastEqids}</if>
+            <if test="publishResults != null  and publishResults != ''"> and a.publish_results = #{publishResults}</if>
+            <if test="broadcastContent != null  and broadcastContent != ''"> and a.broadcast_content = #{broadcastContent}</if>
+            <if test="broadcastSpokesman != null  and broadcastSpokesman != ''"> and a.broadcast_spokesman = #{broadcastSpokesman}</if>
+            <if test="broadcastSpeed != null  and broadcastSpeed != ''"> and a.broadcast_speed = #{broadcastSpeed}</if>
+            <if test="isSaveRecording != null  and isSaveRecording != ''"> and a.is_save_recording = #{isSaveRecording}</if>
+            <if test="volume != null  and volume != ''"> and a.volume = #{volume}</if>
+            <if test="numberOfBroadcasts != null  and numberOfBroadcasts != ''"> and a.number_of_broadcasts = #{numberOfBroadcasts}</if>
+            <if test="recordingAddress != null  and recordingAddress != ''"> and a.recording_address = #{recordingAddress}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdBroadcastRecordById" parameterType="Long" resultMap="SdBroadcastRecordResult">
+        <include refid="selectSdBroadcastRecordVo"/>
+        where a.id = #{id}
+    </select>
+        
+    <insert id="insertSdBroadcastRecord" parameterType="SdBroadcastRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_broadcast_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="broadcastEqids != null">broadcast_eqids,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="publishResults != null">publish_results,</if>
+            <if test="broadcastContent != null">broadcast_content,</if>
+            <if test="broadcastSpokesman != null">broadcast_spokesman,</if>
+            <if test="broadcastSpeed != null">broadcast_speed,</if>
+            <if test="isSaveRecording != null">is_save_recording,</if>
+            <if test="volume != null">volume,</if>
+            <if test="numberOfBroadcasts != null">number_of_broadcasts,</if>
+            <if test="recordingAddress != null">recording_address,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="broadcastEqids != null">#{broadcastEqids},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="publishResults != null">#{publishResults},</if>
+            <if test="broadcastContent != null">#{broadcastContent},</if>
+            <if test="broadcastSpokesman != null">#{broadcastSpokesman},</if>
+            <if test="broadcastSpeed != null">#{broadcastSpeed},</if>
+            <if test="isSaveRecording != null">#{isSaveRecording},</if>
+            <if test="volume != null">#{volume},</if>
+            <if test="numberOfBroadcasts != null">#{numberOfBroadcasts},</if>
+            <if test="recordingAddress != null">#{recordingAddress},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdBroadcastRecord" parameterType="SdBroadcastRecord">
+        update sd_broadcast_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="broadcastEqids != null">broadcast_eqids = #{broadcastEqids},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="publishResults != null">publish_results = #{publishResults},</if>
+            <if test="broadcastContent != null">broadcast_content = #{broadcastContent},</if>
+            <if test="broadcastSpokesman != null">broadcast_spokesman = #{broadcastSpokesman},</if>
+            <if test="broadcastSpeed != null">broadcast_speed = #{broadcastSpeed},</if>
+            <if test="isSaveRecording != null">is_save_recording = #{isSaveRecording},</if>
+            <if test="volume != null">volume = #{volume},</if>
+            <if test="numberOfBroadcasts != null">number_of_broadcasts = #{numberOfBroadcasts},</if>
+            <if test="recordingAddress != null">recording_address = #{recordingAddress},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdBroadcastRecordById" parameterType="Long">
+        delete from sd_broadcast_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSdBroadcastRecordByIds" parameterType="String">
+        delete from sd_broadcast_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

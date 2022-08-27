@@ -1,0 +1,213 @@
+<template>
+    <div :class="{'has-logo':showLogo}" :style="{ backgroundColor: settings.sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground} + {height:topNav?'65px':'100%'}">
+        <logo v-if="showLogo" :collapse="isCollapse"/>
+        <div :class="topNav ? 'workbenchNavbar':'workbenchSidbar'"
+            :style="{'color': settings.sideTheme === 'theme-dark'? variables.menuColor : variables.menuLightColor}">
+            <router-link to="/index">
+            <!-- <i class="el-icon-setting"></i> -->
+            <span v-if="topNav||!isCollapse">工作台</span>
+            </router-link>
+        </div>
+        <template v-if="topNav">
+            <el-tooltip class="item" effect="dark" content="点击展示更多导航" placement="left">
+                <i class="el-icon-arrow-left" @click="prevScroll"></i>
+            </el-tooltip>
+        </template>
+
+        <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper"
+            :style="topNav?'width:55%;height:100%;':''" ref="scroll">
+            <el-menu
+                ref="currentNav"
+                :default-active="activeMenu"
+                :collapse="isCollapse"
+                :text-color="settings.sideTheme === 'theme-dark' ? variables.menuColor : variables.menuLightColor"
+                :unique-opened="true"
+                :active-text-color="settings.theme"
+                :collapse-transition="true"
+                :mode="topNav?'horizontal':'vertical'"
+                :style="topNav?'':'white-space:unset;'"
+            >
+                <sidebar-item
+                    v-for="(route, index) in sidebarRouters"
+                    :key="route.path  + index"
+                    :item="route"
+                    :base-path="route.path"
+                    :class="topNav?'menu-item is_top':'menu-item is_left'"
+                    :style="topNav?style:'width:100%;'"
+                />
+            </el-menu>
+        </el-scrollbar>
+        <template v-if="topNav">
+            <el-tooltip class="item" effect="dark" content="点击展示更多导航" placement="right">
+                <i class="el-icon-arrow-right" @click="nextScroll"></i>
+            </el-tooltip>
+        </template>
+    </div>
+</template>
+
+<script>
+import { mapGetters, mapState } from "vuex";
+import Logo from "./Logo";
+import TopNav from '@/components/TopNav'
+import SidebarItem from "./SidebarItem";
+import variables from "@/assets/styles/variables.scss";
+
+export default {
+    components: { SidebarItem, Logo, TopNav},
+    computed: {
+        ...mapState(["settings"]),
+        ...mapGetters(["sidebarRouters", "sidebar"]),
+        activeMenu() {
+            const route = this.$route;
+            const { meta, path } = route;
+            // if set path, the sidebar will highlight the path you set
+            if (meta.activeMenu) {
+                return meta.activeMenu;
+            }
+            return path;
+        },
+        showLogo() {
+            return this.$store.state.settings.sidebarLogo;
+        },
+        variables() {
+            return variables;
+        },
+        isCollapse() {
+            return !this.sidebar.opened;
+        },
+        topNav(){
+            return this.$store.state.settings.topNav
+        }
+    },
+    data(){
+        return{
+            style:null,
+            path:null,
+        }
+    },
+    mounted(){
+        // 当前导航栏子元素数量
+        const childrenLength = this.$refs.currentNav.$el['childElementCount'];
+        // 导航栏菜单
+        if(childrenLength > 6){
+            this.style = "min-width:18.7%;";
+        }else{
+            this.style = "width:20%;";
+        }
+    },
+    methods: {
+        prevScroll(){
+            let wrap = this.$refs.scroll.$refs.wrap
+            wrap.scrollLeft = wrap.scrollLeft - 150;
+        },
+        nextScroll(){
+            let wrap = this.$refs.scroll.$refs.wrap
+            wrap.scrollLeft = wrap.scrollLeft + 150;
+        },
+        changeScroll(e) {
+            let wrap = this.$refs.scroll.$refs.wrap
+            wrap.scrollLeft = wrap.scrollLeft - e.wheelDelta
+        },
+    }
+};
+</script>
+<style lang="scss" scope>
+    .hideSidebar .el-menu .menu-item .el-submenu__title .el-icon-arrow-right{display: none;}
+    .el-menu{background-color: unset;}
+    #el-scrollbar-top{
+        width:100%;
+        height: 65px !important;
+        left:unset;
+        top:unset;
+        bottom:unset;
+        position: unset;
+    }
+    .el-men-flex{display:flex;justify-content:left;align-items:center;}
+
+    // .theme-light .el-scrollbar__wrap{background-color:white;}
+    // .theme-light #app .sidebar-container{background-color: white;}
+    .theme-light,.theme-dark{
+        .el-scrollbar{
+            .is-vertical{display: none;}
+        }
+        .index_menu{position: relative;
+            .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:24px;font-size:16px;cursor: pointer;}
+            .el-icon-arrow-left{left:42%;color:white;}
+            .el-icon-arrow-right{right:-4%;color:white;}
+            a{display: unset !important;}
+        }
+        .el-scrollbar__view{
+            width:100%;height:100%;
+        }
+       .el-scrollbar{
+           .el-scrollbar__view{
+               .el-menu{white-space:nowrap;
+                   .menu-item{display:inline-block;vertical-align: bottom;}
+               }
+           }
+        }
+       .right-menu{
+           .el-icon-caret-bottom{display:none;}
+       }
+    }
+    .theme-light{
+        .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:17px;font-size:16px;cursor: pointer;}
+        .index_menu .el-icon-arrow-left{left:31%;color: #000 !important;;}
+        .index_menu .el-icon-arrow-right{right: 0% !important;;color: #000 !important;;}
+    }
+
+    // .theme-dark #app .sidebar-container .el-menu-item, .theme-dark #app .sidebar-container .el-submenu__title {
+    //     color: white !important;
+    // }
+    .theme-dark #app .sidebar-container .theme-dark .is-active > .el-submenu__title,
+    .theme-dark #app .sidebar-container .el-menu-item.is-active{
+        color: #f19f39 !important;
+        text-shadow: 1px 1px white;
+        background-image: url(../../../assets/cloudControl/navBg.png) !important;
+        background-repeat: no-repeat;
+        background-position: 20% 58%;
+    }
+    .theme-dark #app .workbenchNavbar .router-link-active{
+       color: #f19f39 !important;
+       text-shadow: 1px 1px white;
+       background-image: url(../../../assets/cloudControl/navBg.png) !important;
+       background-repeat: no-repeat;
+       background-position: 0% 58%;
+    }
+    .theme-light  #app .el-menu--horizontal .is-active > .el-submenu__title,
+     .theme-light #app .sidebar-container .el-menu-item.is-active,
+     .theme-light #app .sidebar-container .theme-light .is-active > .el-submenu__title,
+     .theme-light #app .workbenchNavbar .router-link-active{
+        color: #ffdb82 !important;
+        background-image: url(../../../assets/cloudControl/navBg2.png) !important;
+        background-repeat: no-repeat;
+        background-position: 20% 50%;
+    }
+
+    // 工作台按钮样式
+    .workbenchNavbar, .workbenchSidbar {
+        // padding-left: 20px;
+        a {
+            height: 100%;
+            font-size: 14px;
+            line-height: 65px;
+        }
+    }
+    .workbenchNavbar{
+        width:10%;
+        float: left;
+        text-align: left;
+        span {
+            margin-left: 10px;
+        }
+    }
+    .workbenchSidbar{
+        width:100%;
+        span {
+            margin-left: 15px;
+        }
+    }
+    .is_top {height:100%;
+        .el-submenu{height:100%;}
+    }
+</style>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficControlInfoMapper">
+
+    <resultMap type="SdTrafficControlInfo" id="SdTrafficControlInfoResult">
+        <result property="id"    column="id"    />
+        <result property="incidentId"    column="incident_id"    />
+        <result property="reasonClass"    column="reason_class"    />
+        <result property="reasonType"    column="reason_type"    />
+        <result property="direction"    column="direction"    />
+        <result property="stakeNumber"    column="stake_number"    />
+        <result property="stakeDistance"    column="stake_distance"    />
+        <result property="specialSiteDesc"    column="special_site_desc"    />
+        <result property="trafficCondition" column="traffic_condition"/>
+        <result property="isFinish"    column="is_finish"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <!--<association property="incidentInfo" column="incidentId" javaType="SdTrafficIncidentInfo" resultMap="IncidentInfoResult"/>-->
+        <!--<association property="incidentInfo" column="incidentId"-->
+        <!--javaType="com.tunnel.platform.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo"-->
+        <!--select="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficIncidentInfoMapper.findIncidentInfo"/>-->
+    </resultMap>
+
+
+    <sql id="selectSdTrafficControlInfoVo">
+        select id, incident_id, reason_class, reason_type,direction, stake_number, stake_distance, special_site_desc, traffic_condition,
+         is_finish, create_time, create_by, update_time, update_by from sd_traffic_control_info
+    </sql>
+
+    <select id="selectSdTrafficControlInfoList" parameterType="SdTrafficControlInfo" resultMap="SdTrafficControlInfoResult">
+        <include refid="selectSdTrafficControlInfoVo"/>
+        <where>
+            <if test="incidentId != null "> and incident_id = #{incidentId}</if>
+            <if test="reasonClass != null  and reasonClass != ''"> and reason_class = #{reasonClass}</if>
+            <if test="reasonType != null  and reasonType != ''"> and reason_type = #{reasonType}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="stakeNumber != null  and stakeNumber != ''"> and stake_number = #{stakeNumber}</if>
+            <if test="stakeDistance != null  and stakeDistance != ''"> and stake_distance = #{stakeDistance}</if>
+            <if test="specialSiteDesc != null  and specialSiteDesc != ''"> and special_site_desc = #{specialSiteDesc}</if>
+            <if test="trafficCondition != null and trafficCondition !=''"> and traffic_condition = #{trafficCondition}</if>
+            <if test="isFinish != null  and isFinish != ''"> and is_finish = #{isFinish}</if>
+        </where>
+    </select>
+
+    <!--查询列表-->
+    <select id="selectControlInfoList" parameterType="SdTrafficIncidentInfo" resultType="java.util.Map">
+        select s.id,s.tunnel_id tunnelId,t.tunnel_name tunnelName, s.incident_type incidentType, s.incident_status incidentStatus,
+        date_format(s.occur_time,'%Y-%m-%d %H:%i:%s') occurTime, s.msg_source msgSource, s.report_person reportPerson ,
+        date_format(s.report_time,'%Y-%m-%d %H:%i:%s') reportTime,
+        s.incident_grade incidentGrade,
+        s.police_inform policeInform, s.take_measure takeMeasure, s.publish_object publishObject,s.publish_status publishStatus, s.remark,
+        c.incident_id incidentId, c.reason_class reasonClass, c.reason_type reasonType,
+        c.direction,c.stake_number stakeNumber,c.stake_distance stakeDistance,c.traffic_condition trafficCondition,
+        c.is_finish isFinish,
+        c.create_time createTime, c.create_by createBy, c.update_time updateTime, c.update_by updateBy,
+        g.id configLevelId,g.control_level controlLevel,g.control_type controlType
+        from sd_traffic_control_info c
+        inner join sd_traffic_incident_info s on c.incident_id = s.id
+        left join sd_tunnels t on s.tunnel_id = t.tunnel_id
+        left join sd_traffic_incident_measure m on s.id = m.incident_id
+        left join sd_control_level_config g on g.id = m.config_level_id
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
+            <if test="incidentType != null  and incidentType != ''"> and s.incident_type = #{incidentType}</if>
+            <if test="incidentStatus != null  and incidentStatus != ''"> and s.incident_status = #{incidentStatus}</if>
+            <!--<if test="occurTime != null  and occurTime != ''"> and s.occur_time = #{occurTime}</if>-->
+            <!--开始时间-->
+            <if test="params.startTime != null and params.startTime != ''">
+                and date_format(s.occur_time,'%y%m%d') &gt;= date_format(#{params.startTime},'%y%m%d')
+            </if>
+            <!-- 结束时间 -->
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(s.occur_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (t.dept_id = #{params.deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+        order by c.create_time desc,c.update_time desc
+    </select>
+
+    <select id="selectSdTrafficControlInfoById" parameterType="Long" resultMap="SdTrafficControlInfoResult">
+        <include refid="selectSdTrafficControlInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdTrafficControlInfo" parameterType="SdTrafficControlInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_traffic_control_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="incidentId != null">incident_id,</if>
+            <if test="reasonClass != null">reason_class,</if>
+            <if test="reasonType != null">reason_type,</if>
+            <if test="direction != null">direction,</if>
+            <if test="stakeNumber != null">stake_number,</if>
+            <if test="stakeDistance != null">stake_distance,</if>
+            <if test="specialSiteDesc != null">special_site_desc,</if>
+            <if test="trafficCondition != null">traffic_condition,</if>
+            <if test="isFinish != null">is_finish,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="incidentId != null">#{incidentId},</if>
+            <if test="reasonClass != null">#{reasonClass},</if>
+            <if test="reasonType != null">#{reasonType},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="stakeNumber != null">#{stakeNumber},</if>
+            <if test="stakeDistance != null">#{stakeDistance},</if>
+            <if test="specialSiteDesc != null">#{specialSiteDesc},</if>
+            <if test="trafficCondition != null">#{trafficCondition},</if>
+            <if test="isFinish != null">#{isFinish},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficControlInfo" parameterType="SdTrafficControlInfo">
+        update sd_traffic_control_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="incidentId != null">incident_id = #{incidentId},</if>
+            <if test="reasonClass != null">reason_class = #{reasonClass},</if>
+            <if test="reasonType != null">reason_type = #{reasonType},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="stakeNumber != null">stake_number = #{stakeNumber},</if>
+            <if test="stakeDistance != null">stake_distance = #{stakeDistance},</if>
+            <if test="specialSiteDesc != null">special_site_desc = #{specialSiteDesc},</if>
+            <if test="trafficCondition != null">traffic_condition = #{trafficCondition},</if>
+            <if test="isFinish != null">is_finish = #{isFinish},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTrafficControlInfoById" parameterType="Long">
+        delete from sd_traffic_control_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTrafficControlInfoByIds" parameterType="String">
+        delete from sd_traffic_control_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--根据incidentId字段查询交通管制事件信息-->
+    <select id="getControlInfoByIncidentId" resultMap="SdTrafficControlInfoResult">
+        <include refid="selectSdTrafficControlInfoVo"/>
+       where incident_id = #{incidentId}
+    </select>
+
+    <!--根据事件信息id删除交通管制事件信息-->
+    <delete id="delControlInfoByIncidentId" parameterType="Long">
+          delete from sd_traffic_control_info where incident_id = #{incidentId}
+    </delete>
+</mapper>

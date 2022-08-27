@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.bigScreenApi.mapper.fullView.SdControlRecordMapper">
+
+    <select id="getRecentControlRecordMsg" resultType="hashmap">
+        SELECT sol.id,st.tunnel_name name,sol.create_time time,concat(devc.eq_name,e.state_name) operation
+        from sd_operation_log sol
+            left join sd_tunnels st on st.tunnel_id = sol.tunnel_id
+            left join sd_equipment_state e on sol.operation_state = e.id
+            left join sd_devices devc on devc.eq_id = sol.eq_id
+        WHERE sol.create_time >= (NOW() - interval 12 hour)
+        and sol.tunnel_id = #{tunnelId}
+    </select>
+
+</mapper>

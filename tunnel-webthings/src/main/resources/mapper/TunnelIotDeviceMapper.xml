@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.webthings.dao.TunnelIotDeviceMapper">
+
+    <update id="update">
+        update sd_equipment_state_icon_file set url=#{s} where url=#{s1}
+    </update>
+    <delete id="deleteDevice">
+        truncate table sd_devices_copy;
+    </delete>
+
+    <select id="selectIotDeviceType" resultType="string">
+        select dict_value from sys_jq_dict dict where dict.dict_label = #{devType}
+    </select>
+    <select id="selectFile" resultType="java.lang.String">
+        select url from sd_equipment_state_icon_file
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(1) from sd_devices_copy
+    </select>
+
+    <insert id="addActiveLuminousSigns" parameterType="com.tunnel.webthings.vo.SdActiveLuminousSignsVO" >
+        insert into jq_iot_device(
+            iot_devNo,
+            iot_devType,
+            iot_timeStamp,
+            iot_user,
+            iot_random,
+            iot_directType,
+            iot_directTypeDesc,
+            expands,
+            create_time
+        ) values (
+            #{devN},
+            #{devType},
+            #{timeStamp},
+            #{user},
+            #{random},
+            #{directType},
+            #{directTypeDesc},
+            #{ex},
+            now()
+        )
+    </insert>
+
+    <insert id="addConfluenceDevFaultWarn" parameterType="com.tunnel.webthings.vo.SdConfluenceDevFaultWarnVO" >
+        insert into jq_iot_device(
+            iot_devNo,
+            iot_devType,
+            iot_timeStamp,
+            iot_user,
+            iot_random,
+            iot_directType,
+            iot_directTypeDesc,
+            expands,
+            create_time
+        ) values(
+            #{devN},
+            #{devType},
+            #{timeStamp},
+            #{user},
+            #{random},
+            #{directType},
+            #{directTypeDesc},
+            #{ex},
+            now()
+        )
+    </insert>
+
+    <insert id="addRadarMsgTopic" parameterType="com.tunnel.webthings.vo.SdRadarMsgTopicVO" >
+        insert into jq_iot_device(
+            iot_devNo,
+            iot_devType,
+            iot_timeStamp,
+            iot_user,
+            iot_random,
+            iot_directType,
+            iot_directTypeDesc,
+            expands,
+            create_time
+        ) values(
+            #{devN},
+            #{devType},
+            #{timeStamp},
+            #{user},
+            #{random},
+            #{directType},
+            #{directTypeDesc},
+            #{ex},
+            now()
+        )
+    </insert>
+
+    <insert id="addStateStorage" parameterType="com.tunnel.webthings.vo.SdStateStorageVO">
+        insert into jq_iot_device(
+            iot_devNo,
+            iot_devType,
+            iot_timeStamp,
+            iot_user,
+            iot_random,
+            iot_directType,
+            iot_directTypeDesc,
+            expands,
+            create_time
+        ) values(
+            #{devN},
+            #{devType},
+            #{timeStamp},
+            #{user},
+            #{random},
+            #{directType},
+            #{directTypeDesc},
+            #{ex},
+            now()
+        )
+    </insert>
+
+    <insert id="insertDevice">
+        insert into sd_devices_copy
+        (eq_id,brand_name,eq_type,eq_model,brand_id,lane,eq_direction,eq_tunnel_id,lat,lng,pile,pile_num,ip,port,secure_key,eq_user,
+         eq_pwd,protocol,protocol_version,protocol_name,data_type,data_source,delivery_time,warranty_end_time,install_time,use_life,
+         use_status,is_monitor,port_status,port_status_time,gateway_netstatus,gateway_netstatus_time,eq_status,eq_status_time)
+         values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.devNo},#{item.serialNo},#{item.dType},#{item.devModel},#{item.supplierId},#{item.roadId},#{item.rDirection},
+            #{item.tunnelId},#{item.lat},#{item.lng},#{item.pile},#{item.pileNum},#{item.ip},#{item.port},
+            #{item.secureKey},#{item.devUsr},#{item.devPwd},#{item.protocol},#{item.protocolVersion},#{item.protocolName},#{item.dataType},
+            #{item.dataSource},#{item.dyTime},#{item.wEndTime},#{item.inTime},#{item.uLife},#{item.uStatus},#{item.isMonitor},
+            #{item.portStatus},#{item.pStatusTime},#{item.gatewayNetstatus},#{item.gNetstatusTime},#{item.devStatus},#{item.dStatusTime})
+        </foreach>
+    </insert>
+
+
+</mapper>

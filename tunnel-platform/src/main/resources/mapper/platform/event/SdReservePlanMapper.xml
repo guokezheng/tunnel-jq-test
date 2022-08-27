@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdReservePlanMapper">
+
+    <resultMap type="SdReservePlan" id="SdReservePlanResult">
+        <result property="id"    column="id"    />
+        <result property="planTypeId"    column="plan_type_id"    />
+        <result property="planDescription"    column="plan_description"    />
+        <result property="planName"    column="plan_name"    />
+        <result property="planFileId"    column="plan_file_id"    />
+        <result property="strategyId"    column="strategy_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
+        <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
+    </resultMap>
+
+	<resultMap id="eventTypeResult" type="SdEventType">
+		<id  property="id" column="id" />
+		<result property="eventType" column="event_type"   />
+	</resultMap>
+
+	<resultMap id="strategyResult" type="SdStrategy">
+		<id  property="id" column="id" />
+		<result property="tunnelId"    column="tunnel_id"    />
+        <result property="strategyName"    column="strategy_name"    />
+        <result property="strategyType"    column="strategy_type"    />
+        <result property="strategyInfo"    column="strategy_info"    />
+        <result property="warningId"    column="warning_id"    />
+        <result property="schedulerTime"    column="scheduler_time"    />
+        <result property="rlId"    column="rl_id"    />
+	</resultMap>
+
+    <sql id="selectSdReservePlanVo">
+        select id, plan_type_id, plan_description, plan_name, plan_file_id, strategy_id, create_by, create_time, update_by, update_time from sd_reserve_plan
+    </sql>
+
+    <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
+        select A.id, A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
+        		 A.strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
+        		 B.event_type, C.strategy_name, C.strategy_info, C.strategy_type
+        from sd_reserve_plan A
+        left join sd_event_type B on A.plan_type_id = B.id
+        left join sd_strategy C on A.strategy_id = C.id
+        <where>
+            <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
+            <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
+            <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
+            <if test="strategyId != null "> and A.strategy_id = #{strategyId}</if>
+        </where>
+        ORDER BY A.id DESC
+    </select>
+
+    <select id="selectSdReservePlanById" parameterType="Long" resultMap="SdReservePlanResult">
+        <include refid="selectSdReservePlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdReservePlan" parameterType="SdReservePlan" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_reserve_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="planTypeId != null">plan_type_id,</if>
+            <if test="planDescription != null">plan_description,</if>
+            <if test="planName != null">plan_name,</if>
+            <if test="planFileId != null">plan_file_id,</if>
+            <if test="strategyId != null">strategy_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="planTypeId != null">#{planTypeId},</if>
+            <if test="planDescription != null">#{planDescription},</if>
+            <if test="planName != null">#{planName},</if>
+            <if test="planFileId != null">#{planFileId},</if>
+            <if test="strategyId != null">#{strategyId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdReservePlan" parameterType="SdReservePlan">
+        update sd_reserve_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="planTypeId != null">plan_type_id = #{planTypeId},</if>
+            <if test="planDescription != null">plan_description = #{planDescription},</if>
+            <if test="planName != null">plan_name = #{planName},</if>
+            <if test="planFileId != null">plan_file_id = #{planFileId},</if>
+            <if test="strategyId != null">strategy_id = #{strategyId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdReservePlanById" parameterType="Long">
+        delete from sd_reserve_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteSdReservePlanByIds" parameterType="String">
+        delete from sd_reserve_plan where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteSdReservePlanByRlIds" parameterType="String">
+        delete from sd_reserve_plan where plan_file_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkIfSingleReservePlan" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
+        <include refid="selectSdReservePlanVo"/>
+        <where>
+            <if test="planTypeId != null "> and plan_type_id = #{planTypeId}</if>
+            <if test="planName != null  and planName != ''"> and plan_name = #{planName}</if>
+            <if test="planDescription != null and planDescription != ''"> and plan_description = #{planDescription}</if>
+        </where>
+    </select>
+
+</mapper>

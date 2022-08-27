@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdIcyRoadMapper">
+
+    <resultMap type="SdIcyRoad" id="SdIcyRoadResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="status"    column="status"    />
+        <result property="surfaceTemperature"    column="surface_temperature"    />
+        <result property="freezeTemperature"    column="freeze_temperature"    />
+        <result property="iceThickness"    column="Ice_thickness"    />
+        <result property="salinityValue"    column="salinity_value"    />
+        <result property="wetslidingCoefficient"    column="wetsliding_coefficient"    />
+        <result property="roadCondition"    column="road_condition"    />
+        <result property="createTime"    column="create_time"    />
+
+        <result property="eqName"    column="eqName"    />
+        <result property="tunnelName"    column="tunnelName"    />
+    </resultMap>
+
+    <sql id="selectSdIcyRoadVo">
+        select id, device_id, status, surface_temperature, freeze_temperature, Ice_thickness, salinity_value, wetsliding_coefficient, road_condition, create_time from sd_icy_road
+    </sql>
+
+    <select id="selectSdIcyRoadList" parameterType="SdIcyRoad" resultMap="SdIcyRoadResult">
+        select a.id, a.device_id, a.status,b.eq_name as eqName,c.tunnel_name as tunnelName, a.surface_temperature, a.freeze_temperature,
+        a.Ice_thickness, a.salinity_value, a.wetsliding_coefficient, a.road_condition, a.create_time
+        from sd_icy_road a
+LEFT JOIN sd_devices b on a.device_id = b.eq_id
+LEFT JOIN sd_tunnels c on b.eq_tunnel_id = c.tunnel_id
+
+        <where>
+            <if test="deviceId != null  and deviceId != ''"> and a.device_id = #{deviceId}</if>
+            <if test="createTime != null "><!-- 开始时间检索 -->
+                and date_format(A.create_time,'%y%m%d') = date_format(#{createTime},'%y%m%d')
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (c.dept_id = #{params.deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+        order by A.create_time desc
+    </select>
+
+    <select id="selectSdIcyRoadById" parameterType="Long" resultMap="SdIcyRoadResult">
+        <include refid="selectSdIcyRoadVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdIcyRoad" parameterType="SdIcyRoad" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_icy_road
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="status != null">status,</if>
+            <if test="surfaceTemperature != null">surface_temperature,</if>
+            <if test="freezeTemperature != null">freeze_temperature,</if>
+            <if test="iceThickness != null">Ice_thickness,</if>
+            <if test="salinityValue != null">salinity_value,</if>
+            <if test="wetslidingCoefficient != null">wetsliding_coefficient,</if>
+            <if test="roadCondition != null">road_condition,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="surfaceTemperature != null">#{surfaceTemperature},</if>
+            <if test="freezeTemperature != null">#{freezeTemperature},</if>
+            <if test="iceThickness != null">#{iceThickness},</if>
+            <if test="salinityValue != null">#{salinityValue},</if>
+            <if test="wetslidingCoefficient != null">#{wetslidingCoefficient},</if>
+            <if test="roadCondition != null">#{roadCondition},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdIcyRoad" parameterType="SdIcyRoad">
+        update sd_icy_road
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="surfaceTemperature != null">surface_temperature = #{surfaceTemperature},</if>
+            <if test="freezeTemperature != null">freeze_temperature = #{freezeTemperature},</if>
+            <if test="iceThickness != null">Ice_thickness = #{iceThickness},</if>
+            <if test="salinityValue != null">salinity_value = #{salinityValue},</if>
+            <if test="wetslidingCoefficient != null">wetsliding_coefficient = #{wetslidingCoefficient},</if>
+            <if test="roadCondition != null">road_condition = #{roadCondition},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdIcyRoadById" parameterType="Long">
+        delete from sd_icy_road where id = #{id}
+    </delete>
+
+    <delete id="deleteSdIcyRoadByIds" parameterType="String">
+        delete from sd_icy_road where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--查询某隧道最新的数据记录-->
+    <select id="selectLatestIcyRoadList" resultMap="SdIcyRoadResult">
+       select a.id, a.device_id, a.status,b.eq_name as eqName,c.tunnel_id tunnelId,c.tunnel_name as tunnelName,
+       a.surface_temperature, a.freeze_temperature,  a.Ice_thickness, a.salinity_value, a.wetsliding_coefficient,
+       a.road_condition, a.create_time
+        from sd_icy_road a
+      LEFT JOIN sd_devices b on a.device_id = b.eq_id
+      LEFT JOIN sd_tunnels c on b.eq_tunnel_id = c.tunnel_id
+	  where c.tunnel_id = #{tunnelId}
+	  and a.create_time = (
+			select max(a.create_time) from sd_icy_road a
+            LEFT JOIN sd_devices b on a.device_id = b.eq_id
+            LEFT JOIN sd_tunnels c on b.eq_tunnel_id = c.tunnel_id
+            where c.tunnel_id = #{tunnelId}
+      )
+    </select>
+</mapper>

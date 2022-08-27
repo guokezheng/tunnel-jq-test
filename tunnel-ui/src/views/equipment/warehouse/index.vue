@@ -1,0 +1,416 @@
+<template>
+  <div class="app-container">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="备件名称" prop="partName">
+        <el-input
+          v-model="queryParams.partName"
+          placeholder="请输入备件名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="品牌" prop="brand">
+        <el-input
+          v-model="queryParams.brand"
+          placeholder="请输入品牌"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="生产厂家" prop="manufacturer">
+        <el-input
+          v-model="queryParams.manufacturer"
+          placeholder="请输入生产厂家"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="管理员" prop="keeper">
+        <el-input
+          v-model="queryParams.keeper"
+          placeholder="请输入管理员"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:warehouse:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:warehouse:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:warehouse:remove']"
+        >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:warehouse:export']"
+        >导出</el-button>
+      </el-col>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+
+    <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+<!--      <el-table-column label="id" align="center" prop="id" />-->
+      <el-table-column label="备件名称" align="center" prop="partName" />
+      <el-table-column label="品牌" align="center" prop="brand" />
+      <el-table-column label="型号" align="center" prop="model" />
+      <el-table-column label="单位" align="center" prop="unit" />
+      <el-table-column label="生产厂家" align="center" prop="manufacturer" />
+      <el-table-column label="上次采购时间" align="center" prop="lastPurchaseTime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.lastPurchaseTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="上次采购数量" align="center" prop="lastPurchaseQuantity" />
+      <el-table-column label="上次采购单价" align="center" prop="lastPurchaseUnitPrice" />
+      <el-table-column label="当前库存量" align="center" prop="currentInventory" />
+      <el-table-column label="管理员" align="center" prop="keeper" />
+      <el-table-column label="联系方式" align="center" prop="phone" />
+      <el-table-column label="所在位置" align="center" prop="location" />
+      <el-table-column label="备注" align="center" prop="remake" />
+<!--      <el-table-column label="备注1" align="center" prop="remake1" />-->
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:warehouse:edit']"
+          >修改</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['system:warehouse:remove']"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+    <!-- 添加或修改备品备件库对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+        <el-form-item label="备件名称" prop="partName">
+          <el-input v-model="form.partName" placeholder="请输入备件名称" />
+        </el-form-item>
+        <el-form-item label="品牌" prop="brand">
+          <el-input v-model="form.brand" placeholder="请输入品牌" />
+        </el-form-item>
+        <el-form-item label="型号" prop="model">
+          <el-input v-model="form.model" placeholder="请输入型号" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <el-input v-model="form.unit" placeholder="请输入单位" />
+        </el-form-item>
+        <el-form-item label="生产厂家" prop="manufacturer">
+          <el-input v-model="form.manufacturer" placeholder="请输入生产厂家" />
+        </el-form-item>
+        <el-form-item label="上次采购时间" prop="lastPurchaseTime">
+          <el-date-picker clearable size="small"
+            v-model="form.lastPurchaseTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="选择上次采购时间"
+            style="width: 100%">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="上次采购数量" prop="lastPurchaseQuantity">
+          <el-input v-model="form.lastPurchaseQuantity" placeholder="请输入上次采购数量" />
+        </el-form-item>
+        <el-form-item label="上次采购单价" prop="lastPurchaseUnitPrice">
+          <el-input v-model="form.lastPurchaseUnitPrice" placeholder="请输入上次采购单价" />
+        </el-form-item>
+        <el-form-item label="当前库存量" prop="currentInventory">
+          <el-input v-model="form.currentInventory" placeholder="请输入当前库存量" />
+        </el-form-item>
+        <el-form-item label="管理员" prop="keeper">
+          <el-input v-model="form.keeper" placeholder="请输入管理员" />
+        </el-form-item>
+        <el-form-item label="联系方式" prop="phone">
+          <el-input v-model="form.phone" placeholder="请输入联系方式" />
+        </el-form-item>
+        <el-form-item label="所在位置" prop="location">
+          <el-input v-model="form.location" placeholder="请输入所在位置" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remake">
+          <el-input v-model="form.remake" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse, exportWarehouse }
+  from "@/api/equipment/warehouse/warehouse";
+
+export default {
+  name: "Warehouse",
+  data() {
+    return {
+      // 遮罩层
+      loading: true,
+      // 导出遮罩层
+      exportLoading: false,
+      // 选中数组
+      ids: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+      // 总条数
+      total: 0,
+      // 备品备件库表格数据
+      warehouseList: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      open: false,
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        partName: null,
+        brand: null,
+        model: null,
+        unit: null,
+        manufacturer: null,
+        lastPurchaseTime: null,
+        lastPurchaseQuantity: null,
+        lastPurchaseUnitPrice: null,
+        currentInventory: null,
+        keeper: null,
+        phone: null,
+        location: null,
+        remake: null,
+        remake1: null
+      },
+      // 表单参数
+      form: {},
+      // 表单校验
+      rules: {
+        partName: [{
+          required: true,
+          message: "请输入备件名称",
+          trigger: "blur"
+        }],
+        brand: [{
+          required: true,
+          message: "请输入品牌",
+          trigger: "blur"
+        }],
+        model: [{
+          required: true,
+          message: "请输入型号",
+          trigger: "blur"
+        }],
+        unit: [{
+          required: true,
+          message: "请输入单位",
+          trigger: "blur"
+        }],
+        lastPurchaseUnitPrice: [{
+          required: true,
+          message: "请输入上次采购单价",
+          trigger: "blur"
+        }],
+        currentInventory: [{
+          required: true,
+          message: "请输入当前库存量",
+          trigger: "blur"
+        }],
+        keeper: [{
+          required: true,
+          message: "请输入管理员",
+          trigger: "blur"
+        }],
+        phone: [{
+          required: true,
+          message: "请输入管理员联系方式",
+          trigger: "blur"
+        }],
+        location: [{
+          required: true,
+          message: "请输入备品所在位置",
+          trigger: "blur"
+        }],
+      }
+    };
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    /** 查询备品备件库列表 */
+    getList() {
+      this.loading = true;
+      listWarehouse(this.queryParams).then(response => {
+        this.warehouseList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        partName: null,
+        brand: null,
+        model: null,
+        unit: null,
+        manufacturer: null,
+        lastPurchaseTime: null,
+        lastPurchaseQuantity: null,
+        lastPurchaseUnitPrice: null,
+        currentInventory: null,
+        keeper: null,
+        phone: null,
+        location: null,
+        createTime: null,
+        createBy: null,
+        updateTime: null,
+        updateBy: null,
+        remake: null,
+        remake1: null
+      };
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length!==1
+      this.multiple = !selection.length
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+      this.title = "添加备品备件库";
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      this.reset();
+      const id = row.id || this.ids
+      getWarehouse(id).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改备品备件库";
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.form.id != null) {
+            updateWarehouse(this.form).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addWarehouse(this.form).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids;
+      this.$modal.confirm('是否确认删除备品备件信息？').then(function() {
+        return delWarehouse(ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(() => {});
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      const queryParams = this.queryParams;
+      this.$modal.confirm('是否确认导出所有备品备件库数据项？').then(() => {
+        this.exportLoading = true;
+        return exportWarehouse(queryParams);
+      }).then(response => {
+        this.$download.name(response.msg);
+        this.exportLoading = false;
+      }).catch(() => {});
+    }
+  }
+};
+</script>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdEventControlConfigurationMapper">
+    
+    <resultMap type="SdEventControlConfiguration" id="SdEventControlConfigurationResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="eventType"    column="event_type"    />
+        <result property="eventLevel"    column="event_level"    />
+        <result property="eventMeasures"    column="event_measures"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+        <result property="remake2"    column="remake2"    />
+    </resultMap>
+
+    <sql id="selectSdEventControlConfigurationVo">
+        select id, tunnel_id, event_type, event_level, event_measures, create_time, create_by, update_time, update_by, remake, remake1, remake2 from sd_event_control_configuration
+    </sql>
+
+    <select id="selectSdEventControlConfigurationList" parameterType="SdEventControlConfiguration" resultMap="SdEventControlConfigurationResult">
+        <include refid="selectSdEventControlConfigurationVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="eventType != null  and eventType != ''"> and event_type = #{eventType}</if>
+            <if test="eventLevel != null  and eventLevel != ''"> and event_level = #{eventLevel}</if>
+            <if test="eventMeasures != null  and eventMeasures != ''"> and event_measures = #{eventMeasures}</if>
+            <if test="remake != null  and remake != ''"> and remake = #{remake}</if>
+            <if test="remake1 != null  and remake1 != ''"> and remake1 = #{remake1}</if>
+            <if test="remake2 != null  and remake2 != ''"> and remake2 = #{remake2}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEventControlConfigurationById" parameterType="Long" resultMap="SdEventControlConfigurationResult">
+        <include refid="selectSdEventControlConfigurationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdEventControlConfiguration" parameterType="SdEventControlConfiguration" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_event_control_configuration
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="eventType != null">event_type,</if>
+            <if test="eventLevel != null">event_level,</if>
+            <if test="eventMeasures != null">event_measures,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+            <if test="remake2 != null">remake2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="eventLevel != null">#{eventLevel},</if>
+            <if test="eventMeasures != null">#{eventMeasures},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+            <if test="remake2 != null">#{remake2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEventControlConfiguration" parameterType="SdEventControlConfiguration">
+        update sd_event_control_configuration
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="eventLevel != null">event_level = #{eventLevel},</if>
+            <if test="eventMeasures != null">event_measures = #{eventMeasures},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+            <if test="remake2 != null">remake2 = #{remake2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEventControlConfigurationById" parameterType="Long">
+        delete from sd_event_control_configuration where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEventControlConfigurationByIds" parameterType="String">
+        delete from sd_event_control_configuration where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

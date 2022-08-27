@@ -1,0 +1,350 @@
+package com.tunnel.platform.controller.dataInfo;
+
+import com.ruoyi.common.core.page.Result;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.informationBoard.SdIotDevice;
+import com.tunnel.platform.service.dataInfo.ISdDevicesService;
+import com.tunnel.platform.service.informationBoard.ISdIotDeviceService;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 设备Controller
+ *
+ * @author zhangweitian
+ * @date 2020-08-27
+ */
+@RestController
+@RequestMapping("/devices")
+@Api(tags = "设备管理")
+public class SdDevicesController extends BaseController
+{
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+    @Autowired
+    private ISdIotDeviceService sdIotDeviceService;
+
+    /**
+     * 查询设备列表
+     */
+    @GetMapping("/list")
+    @ApiOperation("查询设备列表")
+    public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices)
+    {
+        if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
+            Long deptId = SecurityUtils.getDeptId();
+            sdDevices.setDeptId(deptId);
+        }
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        //1：代表执行校验指令SQL
+        if ("1".equals(sdDevices.getEqDirection())){
+            List<String> eqIds=new ArrayList<String>();
+            List<SdDevices> checklist = sdDevicesService.getChecklist(list);
+            for (SdDevices devices: checklist) {
+                eqIds.add(devices.getEqId());
+            }
+            startPage();
+            sdDevices.setEqIds(eqIds);
+            list=sdDevicesService.selectSdDevicesList(sdDevices);
+        }else {
+            startPage();
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        }
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询传感器设备列表
+     */
+    @GetMapping("/sensorList")
+    @ApiOperation("查询传感器设备列表")
+    public Result<List<SdDevices>> sensorList(SdDevices sdDevices)
+    {
+    	List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        return Result.success(list);
+    }
+
+    /**
+     * 大屏查询设备数据
+     */
+    @GetMapping("/bigscreenlist")
+   // @ApiOperation("大屏查询设备数据")
+  //  @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public int[] bigscreenlist(String eqTunnelId)
+    {
+        SdDevices sd = new SdDevices();
+        sd.setEqTunnelId(eqTunnelId);
+        sd.setEqType(1L);
+        int d1 = sdDevicesService.selectSdDevicesList(sd).size();//普通车道指示器
+        sd.setEqType(2L);
+        int d2 = sdDevicesService.selectSdDevicesList(sd).size();//带左转车道指示器
+        sd.setEqType(3L);
+        int d3 = sdDevicesService.selectSdDevicesList(sd).size();//普通交通信号灯
+        sd.setEqType(4L);
+        int d4 = sdDevicesService.selectSdDevicesList(sd).size();//带左转交通信号灯
+        sd.setEqType(5L);
+        int d5 = sdDevicesService.selectSdDevicesList(sd).size();//洞内亮度
+        sd.setEqType(6L);
+        int d6 = sdDevicesService.selectSdDevicesList(sd).size();//洞外亮度
+        sd.setEqType(7L);
+        int d7 = sdDevicesService.selectSdDevicesList(sd).size();//加强照明
+        sd.setEqType(10L);
+        int d10 = sdDevicesService.selectSdDevicesList(sd).size();//主风机
+        sd.setEqType(17L);
+        int d17 = sdDevicesService.selectSdDevicesList(sd).size();//卷帘门
+        SdIotDevice sdIotDevice = new SdIotDevice();
+        int qbblist = sdIotDeviceService.selectIotDeviceArrayList(sdIotDevice).size();//情报板
+        int[] a = {d3+d4,d1+d2,d17,d10,d7,qbblist,d5+d6};
+        return a;
+    }
+
+
+
+
+    /**
+     * 查询设备列表+情报板
+     */
+    @GetMapping("/alllist")
+    @ApiOperation("查询设备列表+情报板")
+    public TableDataInfo<List<SdDevices>> qbblist(SdDevices sdDevices)
+    {
+        startPage();
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        SdIotDevice iotDevice = new SdIotDevice();
+        List<SdIotDevice> qbblist = sdIotDeviceService.selectIotDeviceArrayList(iotDevice);
+        for (SdIotDevice io :qbblist){
+            SdDevices sd = new SdDevices();
+            sd.setEqId(io.getDeviceId().toString());
+            sd.setEqTunnelId(io.getTunnelId());
+            sd.setEqType(100L);
+            list.add(sd);
+        }
+
+        return getDataTable(list);
+    }
+    /**
+     * 导出设备列表
+     */
+    @Log(title = "设备", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public AjaxResult export(SdDevices sdDevices)
+    {
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
+        return util.exportExcel( list, "设备详情");
+    }
+
+    /**
+     * 获取设备详细信息
+     */
+    @GetMapping(value = "/{eqId}")
+    @ApiOperation("获取设备详细信息")
+    @ApiImplicitParam(name = "eqId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<SdDevices> getInfo(@PathVariable("eqId") String eqId)
+    {
+        SdDevices sd = sdDevicesService.selectSdDevicesById(eqId);
+        return Result.success(sd);
+    }
+
+    /**
+     * 通过隧道id查询设备类型名称
+     */
+    /* @GetMapping(value = "/{tunnelId}")*/
+    @GetMapping("/tunnelId")
+    @ApiOperation("通过隧道id查询设备类型名称")
+    @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<List<Map<String, Object>>> getEquipmentInfo(@PathVariable("tunnelId") String eqTunnelId)
+    {
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(eqTunnelId);
+        List<Map<String, Object>> list = sdDevicesService.selectSdDevicesByTunnelId(sdDevices);
+        return Result.success(list);
+    }
+
+    /**
+     * 新增设备
+     */
+    @Log(title = "设备", businessType = BusinessType.INSERT)
+    @PostMapping
+    @ApiOperation("新增设备")
+    public Result add(@RequestBody SdDevices sdDevices)
+    {
+        SdDevices sd = new SdDevices();
+        sd.setEqId(sdDevices.getEqId());
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
+        if (list.size()>0){
+            return Result.error(1,"当前设备ID重复，请重新输入");
+        } else {
+            int i = sdDevicesService.insertSdDevices(sdDevices);
+            sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+            return Result.toResult(i);
+        }
+    }
+
+    @PostMapping("/autoId")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class),
+            @ApiImplicitParam(name = "typeId", value = "类型ID", required = true, dataType = "Integer", paramType = "path",dataTypeClass = Integer.class),
+    })
+
+    public Result autoId(@RequestParam("tunnelId") String tunnelId,@RequestParam("typeId") Integer typeId){
+        return Result.success(sdDevicesService.autoId(tunnelId,typeId));
+    }
+
+    /**
+     * 修改设备
+     */
+    @Log(title = "设备", businessType = BusinessType.UPDATE)
+    @PutMapping
+    @ApiOperation("修改设备")
+    public Result edit(@RequestBody SdDevices sdDevices)
+    {
+        int i = sdDevicesService.updateSdDevices(sdDevices);
+        sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+        return Result.toResult(i);
+    }
+
+    /**
+     * 删除设备
+     */
+    @ApiOperation("删除设备")
+    @Log(title = "设备", businessType = BusinessType.DELETE)
+    @DeleteMapping("/{eqIds}")
+    @ApiImplicitParam(name = "eqIds", value = "需要删除的设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result remove(@PathVariable String[] eqIds)
+    {
+        return Result.toResult(sdDevicesService.deleteSdDevicesByIds(eqIds));
+    }
+
+    @PostMapping("/importTemplate")
+    public AjaxResult importTemplate(HttpServletResponse response) throws IOException
+    {
+//        util.exportExcel( list, "设备详情");
+        ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
+        return util.importTemplateExcel("设备数据");
+    }
+
+    @Log(title = "设备管理", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
+        List<SdDevices> userList = util.importExcel(file.getInputStream());
+        String operName = SecurityUtils.getUsername();
+        String message = sdDevicesService.importSdDevices(userList, updateSupport, operName);
+        return AjaxResult.success(message);
+    }
+    /**
+     * 生成控制指令
+     */
+   // @ApiOperation("生成控制指令")
+    @PostMapping(value = "/createDmcontrolSeat")
+    public Map createDmcontrolSeat( @RequestBody SdDevices sdDevices)
+    {
+        Map<String,String> map=new HashMap<>();
+        StringBuilder sb=new StringBuilder();
+        String deviceState = sdDevices.getInstruction();//指令模式
+        //CIO 查询指令
+        sb.append(sdDevicesService.getCommandCode(sdDevices,sdDevices.getSeat(),deviceState.split("_")[0],deviceState.split("_")[1]));
+        sb.append(sdDevicesService.getIpleftPad(sdDevices.getqNumber()));//点位地址
+        map.put("instruction",sb.toString());
+        map.put("instructionAndseat", deviceState.split("_")[0]+"_"+sdDevices.getSeat());
+        return map;
+    }
+    /**
+     * 生成查询指令
+     */
+  //  @ApiOperation("生成查询指令")
+    @PostMapping(value = "/createInstruction")
+    public Map createInstruction( @RequestBody SdDevices sdDevices)
+    {
+        Map<String,String> map=new HashMap<>();
+        StringBuilder sb=new StringBuilder();
+        //CIO 查询指令
+        sb.append(sdDevicesService.getCommandCode(sdDevices,sdDevices.getInstructionSeat().split("_")[1],sdDevices.getInstructionSeat().split("_")[0],"0"));
+        sb.append(sdDevicesService.getIpleftPad(sdDevices.getqNumber()));//点位地址
+        map.put("instructionSeat",sb.toString());
+        return map;
+    }
+
+
+    /**
+     * 校验指令
+     */
+  //  @ApiOperation("校验指令")
+    @GetMapping("/checkInstruction")
+    public Map checkInstruction(SdDevices sdDevices)
+    {
+        Map<String,Object> map=new HashMap<>();
+        List<SdDevices> checklist=new ArrayList<SdDevices>();
+        StringBuffer sb=new StringBuffer();
+        //循环列表数据
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        map.put("sumDate",list.size());
+        map.put("errorDate",sdDevicesService.getChecklist(list));
+        return map;
+    }
+
+    /**
+     * 获取所有压力表信息
+     */
+    @ApiOperation("获取所有压力表信息")
+    @GetMapping("/getAllPressureGaugesMsg")
+    public Result< List<SdDevices>> getAllPressureGaugesMsg()
+    {
+        return Result.success(sdDevicesService.getAllPressureGaugesMsg());
+    }
+
+    /**
+     * 获取运营APP首页需要的设备信息
+     */
+  //  @ApiOperation("获取运营APP首页需要的设备信息")
+    @PostMapping("/getDevicesMsgToApp")
+  //  @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result getDevicesMsgToApp(String tunnelId)
+    {
+//        if(tunnelId.equals("") || tunnelId.isEmpty()){
+//            throw new RuntimeException("当前获取查询参数为空，无法进行后续操作!");
+//        }
+        Map<String, Object> details = new HashMap<>();
+        //正常设备数
+        details.put("normalEquipment","89");
+        //故障设备数
+        details.put("faultyEquipment","9");
+        //设备完好率
+        details.put("equipmentIntactRate","6");
+        //今日修复
+        details.put("repairToday","0");
+        //暂未修复
+        details.put("notRepairedYet","0");
+        return Result.success(details);
+    }
+
+    @PostMapping("/getDevicesStatus")
+    @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public AjaxResult getDevicesStatus(String tunnelId) {
+        return AjaxResult.success(sdDevicesService.getDevicesStatus(tunnelId));
+    }
+
+    @PostMapping("/obtainEquipmentEnergyConsumption")
+    @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public AjaxResult obtainEquipmentEnergyConsumption(String tunnelId) {
+        return AjaxResult.success(sdDevicesService.obtainEquipmentEnergyConsumption(tunnelId));
+    }
+}

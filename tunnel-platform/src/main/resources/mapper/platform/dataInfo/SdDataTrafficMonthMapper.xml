@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdDataTrafficMonthMapper">
+
+    <resultMap type="SdDataTrafficMonth" id="SdDataTrafficMonthResult">
+        <result property="id"    column="id"    />
+        <result property="statTime"    column="stat_time"    />
+        <result property="segmentNo"    column="segment_no"    />
+        <result property="year"    column="year"    />
+        <result property="month"    column="month"    />
+        <result property="totalFlow"    column="total_flow"    />
+        <result property="flowSveh"    column="flow_sveh"    />
+        <result property="flowMveh"    column="flow_mveh"    />
+        <result property="flowBveh"    column="flow_bveh"    />
+        <result property="avgSpeed"    column="avg_speed"    />
+        <result property="flowCar"    column="flow_car"    />
+        <result property="flowTruck"    column="flow_truck"    />
+        <result property="flowXveh"    column="flow_xveh"    />
+        <result property="flowDveh"    column="flow_dveh"    />
+        <result property="bus1"    column="bus1"    />
+        <result property="bus2"    column="bus2"    />
+        <result property="bus3"    column="bus3"    />
+        <result property="bus4"    column="bus4"    />
+        <result property="truck1"    column="truck1"    />
+        <result property="truck2"    column="truck2"    />
+        <result property="truck3"    column="truck3"    />
+        <result property="truck4"    column="truck4"    />
+        <result property="truck5"    column="truck5"    />
+        <result property="truck6"    column="truck6"    />
+        <result property="special1"    column="special1"    />
+        <result property="special2"    column="special2"    />
+        <result property="special3"    column="special3"    />
+        <result property="special4"    column="special4"    />
+        <result property="special5"    column="special5"    />
+        <result property="special6"    column="special6"    />
+        <result property="bus1Ratio"    column="bus1_ratio"    />
+        <result property="bus2Ratio"    column="bus2_ratio"    />
+        <result property="bus3Ratio"    column="bus3_ratio"    />
+        <result property="bus4Ratio"    column="bus4_ratio"    />
+        <result property="truck1Ratio"    column="truck1_ratio"    />
+        <result property="truck2Ratio"    column="truck2_ratio"    />
+        <result property="truck3Ratio"    column="truck3_ratio"    />
+        <result property="truck4Ratio"    column="truck4_ratio"    />
+        <result property="truck5Ratio"    column="truck5_ratio"    />
+        <result property="truck6Ratio"    column="truck6_ratio"    />
+        <result property="special1Ratio"    column="special1_ratio"    />
+        <result property="special2Ratio"    column="special2_ratio"    />
+        <result property="special3Ratio"    column="special3_ratio"    />
+        <result property="special4Ratio"    column="special4_ratio"    />
+        <result property="special5Ratio"    column="special5_ratio"    />
+        <result property="special6Ratio"    column="special6_ratio"    />
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="tunnelName" column="tunnel_name"/>
+        <result property="direction" column="direction"/>
+    </resultMap>
+
+    <sql id="selectSdDataTrafficMonthVo">
+        select id, stat_time, segment_no, year, month, total_flow, flow_sveh, flow_mveh, flow_bveh, avg_speed, flow_car,
+               flow_truck, flow_xveh, flow_dveh, bus1, bus2, bus3, bus4, truck1, truck2, truck3, truck4, truck5,
+               truck6, special1, special2, special3, special4, special5, special6, bus1_ratio, bus2_ratio,
+               bus3_ratio, bus4_ratio, truck1_ratio, truck2_ratio, truck3_ratio, truck4_ratio, truck5_ratio,
+               truck6_ratio, special1_ratio, special2_ratio, special3_ratio, special4_ratio, special5_ratio,
+               special6_ratio, tunnel_id, tunnel_name,direction from sd_data_traffic_month
+    </sql>
+
+    <select id="selectSdDataTrafficMonthList" parameterType="SdDataTrafficMonth" resultMap="SdDataTrafficMonthResult">
+        <include refid="selectSdDataTrafficMonthVo"/>
+        <where>
+            <if test="statTime != null "> and stat_time = #{statTime}</if>
+            <if test="segmentNo != null  and segmentNo != ''"> and segment_no = #{segmentNo}</if>
+            <if test="year != null "> and year = #{year}</if>
+            <if test="month != null "> and month = #{month}</if>
+            <if test="totalFlow != null "> and total_flow = #{totalFlow}</if>
+            <if test="flowSveh != null "> and flow_sveh = #{flowSveh}</if>
+            <if test="flowMveh != null "> and flow_mveh = #{flowMveh}</if>
+            <if test="flowBveh != null "> and flow_bveh = #{flowBveh}</if>
+            <if test="avgSpeed != null "> and avg_speed = #{avgSpeed}</if>
+            <if test="flowCar != null "> and flow_car = #{flowCar}</if>
+            <if test="flowTruck != null "> and flow_truck = #{flowTruck}</if>
+            <if test="flowXveh != null "> and flow_xveh = #{flowXveh}</if>
+            <if test="flowDveh != null "> and flow_dveh = #{flowDveh}</if>
+            <if test="bus1 != null "> and bus1 = #{bus1}</if>
+            <if test="bus2 != null "> and bus2 = #{bus2}</if>
+            <if test="bus3 != null "> and bus3 = #{bus3}</if>
+            <if test="bus4 != null "> and bus4 = #{bus4}</if>
+            <if test="truck1 != null "> and truck1 = #{truck1}</if>
+            <if test="truck2 != null "> and truck2 = #{truck2}</if>
+            <if test="truck3 != null "> and truck3 = #{truck3}</if>
+            <if test="truck4 != null "> and truck4 = #{truck4}</if>
+            <if test="truck5 != null "> and truck5 = #{truck5}</if>
+            <if test="truck6 != null "> and truck6 = #{truck6}</if>
+            <if test="special1 != null "> and special1 = #{special1}</if>
+            <if test="special2 != null "> and special2 = #{special2}</if>
+            <if test="special3 != null "> and special3 = #{special3}</if>
+            <if test="special4 != null "> and special4 = #{special4}</if>
+            <if test="special5 != null "> and special5 = #{special5}</if>
+            <if test="special6 != null "> and special6 = #{special6}</if>
+            <if test="bus1Ratio != null "> and bus1_ratio = #{bus1Ratio}</if>
+            <if test="bus2Ratio != null "> and bus2_ratio = #{bus2Ratio}</if>
+            <if test="bus3Ratio != null "> and bus3_ratio = #{bus3Ratio}</if>
+            <if test="bus4Ratio != null "> and bus4_ratio = #{bus4Ratio}</if>
+            <if test="truck1Ratio != null "> and truck1_ratio = #{truck1Ratio}</if>
+            <if test="truck2Ratio != null "> and truck2_ratio = #{truck2Ratio}</if>
+            <if test="truck3Ratio != null "> and truck3_ratio = #{truck3Ratio}</if>
+            <if test="truck4Ratio != null "> and truck4_ratio = #{truck4Ratio}</if>
+            <if test="truck5Ratio != null "> and truck5_ratio = #{truck5Ratio}</if>
+            <if test="truck6Ratio != null "> and truck6_ratio = #{truck6Ratio}</if>
+            <if test="special1Ratio != null "> and special1_ratio = #{special1Ratio}</if>
+            <if test="special2Ratio != null "> and special2_ratio = #{special2Ratio}</if>
+            <if test="special3Ratio != null "> and special3_ratio = #{special3Ratio}</if>
+            <if test="special4Ratio != null "> and special4_ratio = #{special4Ratio}</if>
+            <if test="special5Ratio != null "> and special5_ratio = #{special5Ratio}</if>
+            <if test="special6Ratio != null "> and special6_ratio = #{special6Ratio}</if>
+            <if test="tunnelId != null and tunnelId !=''"> and tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null and tunnelName != ''"> and tunnel_name = #{tunnel_name}</if>
+            <if test="direction != null and direction != ''"> and direction = #{direction}</if>
+        </where>
+    </select>
+
+    <select id="selectSdDataTrafficMonthById" parameterType="Long" resultMap="SdDataTrafficMonthResult">
+        <include refid="selectSdDataTrafficMonthVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdDataTrafficMonth" parameterType="SdDataTrafficMonth" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_data_traffic_month
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="statTime != null">stat_time,</if>
+            <if test="segmentNo != null">segment_no,</if>
+            <if test="year != null">year,</if>
+            <if test="month != null">month,</if>
+            <if test="totalFlow != null">total_flow,</if>
+            <if test="flowSveh != null">flow_sveh,</if>
+            <if test="flowMveh != null">flow_mveh,</if>
+            <if test="flowBveh != null">flow_bveh,</if>
+            <if test="avgSpeed != null">avg_speed,</if>
+            <if test="flowCar != null">flow_car,</if>
+            <if test="flowTruck != null">flow_truck,</if>
+            <if test="flowXveh != null">flow_xveh,</if>
+            <if test="flowDveh != null">flow_dveh,</if>
+            <if test="bus1 != null">bus1,</if>
+            <if test="bus2 != null">bus2,</if>
+            <if test="bus3 != null">bus3,</if>
+            <if test="bus4 != null">bus4,</if>
+            <if test="truck1 != null">truck1,</if>
+            <if test="truck2 != null">truck2,</if>
+            <if test="truck3 != null">truck3,</if>
+            <if test="truck4 != null">truck4,</if>
+            <if test="truck5 != null">truck5,</if>
+            <if test="truck6 != null">truck6,</if>
+            <if test="special1 != null">special1,</if>
+            <if test="special2 != null">special2,</if>
+            <if test="special3 != null">special3,</if>
+            <if test="special4 != null">special4,</if>
+            <if test="special5 != null">special5,</if>
+            <if test="special6 != null">special6,</if>
+            <if test="bus1Ratio != null">bus1_ratio,</if>
+            <if test="bus2Ratio != null">bus2_ratio,</if>
+            <if test="bus3Ratio != null">bus3_ratio,</if>
+            <if test="bus4Ratio != null">bus4_ratio,</if>
+            <if test="truck1Ratio != null">truck1_ratio,</if>
+            <if test="truck2Ratio != null">truck2_ratio,</if>
+            <if test="truck3Ratio != null">truck3_ratio,</if>
+            <if test="truck4Ratio != null">truck4_ratio,</if>
+            <if test="truck5Ratio != null">truck5_ratio,</if>
+            <if test="truck6Ratio != null">truck6_ratio,</if>
+            <if test="special1Ratio != null">special1_ratio,</if>
+            <if test="special2Ratio != null">special2_ratio,</if>
+            <if test="special3Ratio != null">special3_ratio,</if>
+            <if test="special4Ratio != null">special4_ratio,</if>
+            <if test="special5Ratio != null">special5_ratio,</if>
+            <if test="special6Ratio != null">special6_ratio,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="tunnelName != null">tunnel_name,</if>
+            <if test="direction != null">direction,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="statTime != null">#{statTime},</if>
+            <if test="segmentNo != null">#{segmentNo},</if>
+            <if test="year != null">#{year},</if>
+            <if test="month != null">#{month},</if>
+            <if test="totalFlow != null">#{totalFlow},</if>
+            <if test="flowSveh != null">#{flowSveh},</if>
+            <if test="flowMveh != null">#{flowMveh},</if>
+            <if test="flowBveh != null">#{flowBveh},</if>
+            <if test="avgSpeed != null">#{avgSpeed},</if>
+            <if test="flowCar != null">#{flowCar},</if>
+            <if test="flowTruck != null">#{flowTruck},</if>
+            <if test="flowXveh != null">#{flowXveh},</if>
+            <if test="flowDveh != null">#{flowDveh},</if>
+            <if test="bus1 != null">#{bus1},</if>
+            <if test="bus2 != null">#{bus2},</if>
+            <if test="bus3 != null">#{bus3},</if>
+            <if test="bus4 != null">#{bus4},</if>
+            <if test="truck1 != null">#{truck1},</if>
+            <if test="truck2 != null">#{truck2},</if>
+            <if test="truck3 != null">#{truck3},</if>
+            <if test="truck4 != null">#{truck4},</if>
+            <if test="truck5 != null">#{truck5},</if>
+            <if test="truck6 != null">#{truck6},</if>
+            <if test="special1 != null">#{special1},</if>
+            <if test="special2 != null">#{special2},</if>
+            <if test="special3 != null">#{special3},</if>
+            <if test="special4 != null">#{special4},</if>
+            <if test="special5 != null">#{special5},</if>
+            <if test="special6 != null">#{special6},</if>
+            <if test="bus1Ratio != null">#{bus1Ratio},</if>
+            <if test="bus2Ratio != null">#{bus2Ratio},</if>
+            <if test="bus3Ratio != null">#{bus3Ratio},</if>
+            <if test="bus4Ratio != null">#{bus4Ratio},</if>
+            <if test="truck1Ratio != null">#{truck1Ratio},</if>
+            <if test="truck2Ratio != null">#{truck2Ratio},</if>
+            <if test="truck3Ratio != null">#{truck3Ratio},</if>
+            <if test="truck4Ratio != null">#{truck4Ratio},</if>
+            <if test="truck5Ratio != null">#{truck5Ratio},</if>
+            <if test="truck6Ratio != null">#{truck6Ratio},</if>
+            <if test="special1Ratio != null">#{special1Ratio},</if>
+            <if test="special2Ratio != null">#{special2Ratio},</if>
+            <if test="special3Ratio != null">#{special3Ratio},</if>
+            <if test="special4Ratio != null">#{special4Ratio},</if>
+            <if test="special5Ratio != null">#{special5Ratio},</if>
+            <if test="special6Ratio != null">#{special6Ratio},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="tunnelName != null">#{tunnelName},</if>
+            <if test="direction != null">#{direction},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDataTrafficMonth" parameterType="SdDataTrafficMonth">
+        update sd_data_traffic_month
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="statTime != null">stat_time = #{statTime},</if>
+            <if test="segmentNo != null">segment_no = #{segmentNo},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="month != null">month = #{month},</if>
+            <if test="totalFlow != null">total_flow = #{totalFlow},</if>
+            <if test="flowSveh != null">flow_sveh = #{flowSveh},</if>
+            <if test="flowMveh != null">flow_mveh = #{flowMveh},</if>
+            <if test="flowBveh != null">flow_bveh = #{flowBveh},</if>
+            <if test="avgSpeed != null">avg_speed = #{avgSpeed},</if>
+            <if test="flowCar != null">flow_car = #{flowCar},</if>
+            <if test="flowTruck != null">flow_truck = #{flowTruck},</if>
+            <if test="flowXveh != null">flow_xveh = #{flowXveh},</if>
+            <if test="flowDveh != null">flow_dveh = #{flowDveh},</if>
+            <if test="bus1 != null">bus1 = #{bus1},</if>
+            <if test="bus2 != null">bus2 = #{bus2},</if>
+            <if test="bus3 != null">bus3 = #{bus3},</if>
+            <if test="bus4 != null">bus4 = #{bus4},</if>
+            <if test="truck1 != null">truck1 = #{truck1},</if>
+            <if test="truck2 != null">truck2 = #{truck2},</if>
+            <if test="truck3 != null">truck3 = #{truck3},</if>
+            <if test="truck4 != null">truck4 = #{truck4},</if>
+            <if test="truck5 != null">truck5 = #{truck5},</if>
+            <if test="truck6 != null">truck6 = #{truck6},</if>
+            <if test="special1 != null">special1 = #{special1},</if>
+            <if test="special2 != null">special2 = #{special2},</if>
+            <if test="special3 != null">special3 = #{special3},</if>
+            <if test="special4 != null">special4 = #{special4},</if>
+            <if test="special5 != null">special5 = #{special5},</if>
+            <if test="special6 != null">special6 = #{special6},</if>
+            <if test="bus1Ratio != null">bus1_ratio = #{bus1Ratio},</if>
+            <if test="bus2Ratio != null">bus2_ratio = #{bus2Ratio},</if>
+            <if test="bus3Ratio != null">bus3_ratio = #{bus3Ratio},</if>
+            <if test="bus4Ratio != null">bus4_ratio = #{bus4Ratio},</if>
+            <if test="truck1Ratio != null">truck1_ratio = #{truck1Ratio},</if>
+            <if test="truck2Ratio != null">truck2_ratio = #{truck2Ratio},</if>
+            <if test="truck3Ratio != null">truck3_ratio = #{truck3Ratio},</if>
+            <if test="truck4Ratio != null">truck4_ratio = #{truck4Ratio},</if>
+            <if test="truck5Ratio != null">truck5_ratio = #{truck5Ratio},</if>
+            <if test="truck6Ratio != null">truck6_ratio = #{truck6Ratio},</if>
+            <if test="special1Ratio != null">special1_ratio = #{special1Ratio},</if>
+            <if test="special2Ratio != null">special2_ratio = #{special2Ratio},</if>
+            <if test="special3Ratio != null">special3_ratio = #{special3Ratio},</if>
+            <if test="special4Ratio != null">special4_ratio = #{special4Ratio},</if>
+            <if test="special5Ratio != null">special5_ratio = #{special5Ratio},</if>
+            <if test="special6Ratio != null">special6_ratio = #{special6Ratio},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="tunnelName != null">tunnel_name = #{tunnelName},</if>
+            <if test="direction != null">direction = #{direction},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdDataTrafficMonthById" parameterType="Long">
+        delete from sd_data_traffic_month where id = #{id}
+    </delete>
+
+    <delete id="deleteSdDataTrafficMonthByIds" parameterType="String">
+        delete from sd_data_traffic_month where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCarNumberByMonth" resultType="hashmap">
+        SELECT a.date,IFNULL(b.total_flow,0) total_flow,IFNULL(b.flow_sveh,0) flow_sveh,IFNULL(b.flow_mveh,0) flow_mveh,
+               IFNULL(b.flow_bveh,0) flow_bveh,IFNULL(b.avg_speed,0) avg_speed,
+               IFNULL(ROUND(IFNULL(b.flow_sveh,0) / b.total_flow * 100,1),0) flow_sveh_ratio,
+               IFNULL(ROUND(IFNULL(b.flow_mveh,0) / b.total_flow * 100,1),0) flow_mveh_ratio,
+               IFNULL(ROUND(IFNULL(b.flow_bveh,0) / b.total_flow * 100,1),0) flow_bveh_ratio,
+               #{tunnelName} tunnel_name,b.direction
+            from
+            (   SELECT CONCAT(#{params.year},"-01") as date union
+                SELECT CONCAT(#{params.year},"-02") as date union
+                SELECT CONCAT(#{params.year},"-03") as date union
+                SELECT CONCAT(#{params.year},"-04") as date union
+                SELECT CONCAT(#{params.year},"-05") as date union
+                SELECT CONCAT(#{params.year},"-06") as date union
+                SELECT CONCAT(#{params.year},"-07") as date union
+                SELECT CONCAT(#{params.year},"-08") as date union
+                SELECT CONCAT(#{params.year},"-09") as date union
+                SELECT CONCAT(#{params.year},"-10") as date union
+                SELECT CONCAT(#{params.year},"-11") as date union
+                SELECT CONCAT(#{params.year},"-12") as date ) a
+                left join
+            ( select DATE_FORMAT(c.stat_time, '%Y-%m') stat_time
+        ,CAST((sum(c.flow_sveh)) as decimal(10,0)) as flow_sveh
+        ,CAST((sum(c.flow_mveh)) as decimal(10,0)) as flow_mveh,
+        CAST((sum(c.flow_bveh)) as decimal(10,0)) as flow_bveh,
+        CAST((sum(c.avg_speed)/count(c.id)) as decimal(10,2)) as avg_speed,
+        CAST((sum(c.total_flow)) as decimal(10,0)) as total_flow,c.direction
+                from sd_data_traffic_month c
+            left join sd_tunnels e on c.tunnel_id = e.tunnel_id
+            where c.year= #{params.year} and c.tunnel_id = #{tunnelId}
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (e.dept_id = #{params.deptId} OR e.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+            group by c.month) b
+            on a.date = b.stat_time WHERE a.date <![CDATA[ <= ]]> DATE_FORMAT(CURDATE(), '%Y-%m') order by a.date
+    </select>
+</mapper>

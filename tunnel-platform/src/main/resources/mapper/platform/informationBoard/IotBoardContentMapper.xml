@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.informationBoard.IotBoardContentMapper">
+    
+    <resultMap type="IotBoardContent" id="IotBoardContentResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+    </resultMap>
+
+    <sql id="selectIotBoardContentVo">
+        select id, content from iot_board_content
+    </sql>
+
+    <select id="selectIotBoardContentList" parameterType="IotBoardContent" resultMap="IotBoardContentResult">
+        <include refid="selectIotBoardContentVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectIotBoardContentById" parameterType="Long" resultMap="IotBoardContentResult">
+        <include refid="selectIotBoardContentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIotBoardContent" parameterType="IotBoardContent">
+        insert into iot_board_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="content != null  and content != ''">content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="content != null  and content != ''">#{content},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIotBoardContent" parameterType="IotBoardContent">
+        update iot_board_content
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null  and content != ''">content = #{content},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIotBoardContentById" parameterType="Long">
+        delete from iot_board_content where id = #{id}
+    </delete>
+
+    <delete id="deleteIotBoardContentByIds" parameterType="String">
+        delete from iot_board_content where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

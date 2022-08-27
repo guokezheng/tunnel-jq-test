@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.video.SdVedioRecordMapper">
+
+    <resultMap type="SdVedioRecord" id="SdVedioRecordResult">
+        <result property="id" column="id"/>
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="vedioName" column="vedio_name"/>
+        <result property="videoIp" column="video_ip"/>
+        <result property="url" column="url"/>
+        <result property="stakeMark" column="stake_mark"/>
+        <result property="startTime" column="start_time"/>
+        <result property="overTime" column="over_time"/>
+        <result property="vedioSize" column="vedio_size"/>
+        <result property="vedioFormat" column="vedio_format"/>
+        <result property="storageAddress" column="storage_address"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
+    </resultMap>
+
+    <resultMap id="tunnelResult" type="SdTunnels">
+        <id property="tunnelId" column="tunnel_id"/>
+        <result property="tunnelName" column="tunnel_name"/>
+    </resultMap>
+
+    <sql id="selectSdVedioRecordVo">
+        select id, tunnel_id, vedio_name, video_ip,url, stake_mark, start_time, over_time, vedio_size, vedio_format, storage_address, create_by, create_time, update_by, update_time from sd_vedio_record
+    </sql>
+
+    <select id="selectSdVedioRecordList" parameterType="SdVedioRecord" resultMap="SdVedioRecordResult">
+        select A.id, A.tunnel_id, A.vedio_name, A.video_ip,A.url, A.stake_mark, A.start_time, A.over_time,
+        A.vedio_size, A.vedio_format, A.storage_address, A.create_by, A.create_time,
+        A.update_by, A.update_time, B.tunnel_name
+        from sd_vedio_record A
+        left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        <where>
+            <if test="tunnelId != null and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
+            <if test="vedioName != null  and vedioName != ''">and A.vedio_name like concat('%', #{vedioName}, '%')</if>
+            <if test="videoIp != null  and videoIp != ''">and A.video_ip = #{videoIp}</if>
+            <if test="url != null  and url != ''">and A.url = #{url}</if>
+            <if test="stakeMark != null  and stakeMark != ''">and A.stake_mark = #{stakeMark}</if>
+            <if test="startTime != null ">and A.start_time = #{startTime}</if>
+            <if test="overTime != null ">and A.over_time = #{overTime}</if>
+            <if test="vedioFormat != null  and vedioFormat != ''">and A.vedio_format = #{vedioFormat}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdVedioRecordById" parameterType="Long" resultMap="SdVedioRecordResult">
+        <include refid="selectSdVedioRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdVedioRecord" parameterType="SdVedioRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_vedio_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="vedioName != null">vedio_name,</if>
+            <if test="videoIp != null">video_ip,</if>
+            <if test="url != null">url,</if>
+            <if test="stakeMark != null">stake_mark,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="overTime != null">over_time,</if>
+            <if test="vedioSize != null">vedio_size,</if>
+            <if test="vedioFormat != null">vedio_format,</if>
+            <if test="storageAddress != null">storage_address,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="vedioName != null">#{vedioName},</if>
+            <if test="videoIp != null">#{videoIp},</if>
+            <if test="url != null">#{url},</if>
+            <if test="stakeMark != null">#{stakeMark},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="overTime != null">#{overTime},</if>
+            <if test="vedioSize != null">#{vedioSize},</if>
+            <if test="vedioFormat != null">#{vedioFormat},</if>
+            <if test="storageAddress != null">#{storageAddress},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSdVedioRecord" parameterType="SdVedioRecord">
+        update sd_vedio_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="vedioName != null">vedio_name = #{vedioName},</if>
+            <if test="videoIp != null">video_ip = #{videoIp},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="stakeMark != null">stake_mark = #{stakeMark},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="overTime != null">over_time = #{overTime},</if>
+            <if test="vedioSize != null">vedio_size = #{vedioSize},</if>
+            <if test="vedioFormat != null">vedio_format = #{vedioFormat},</if>
+            <if test="storageAddress != null">storage_address = #{storageAddress},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdVedioRecordById" parameterType="Long">
+        delete from sd_vedio_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSdVedioRecordByIds" parameterType="String">
+        delete from sd_vedio_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

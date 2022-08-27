@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdStrategyMapper">
+
+    <resultMap type="SdStrategy" id="SdStrategyResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="strategyName"    column="strategy_name"    />
+        <result property="strategyType"    column="strategy_type"    />
+        <result property="strategyInfo"    column="strategy_info"    />
+        <result property="warningId"    column="warning_id"    />
+        <result property="schedulerTime"    column="scheduler_time"    />
+        <result property="rlId"    column="rl_id"    />
+        <result property="jobRelationId"    column="job_relation_id"    />
+        <result property="direction"    column="direction"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+    </resultMap>
+
+    <resultMap id="tunnelResult" type="SdTunnels">
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+
+
+    <sql id="selectSdStrategyVo">
+        select id, tunnel_id, strategy_name, strategy_type, strategy_info, warning_id, scheduler_time, rl_id, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
+    </sql>
+
+    <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        		A.scheduler_time, A.rl_id, A.job_relation_id, A.direction,A.create_by,
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name
+        from sd_strategy A
+        left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        <where>
+            <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
+            <if test="strategyName != null  and strategyName != ''"> and A.strategy_name like concat('%', #{strategyName}, '%')</if>
+            <if test="strategyType != null  and strategyType != ''"> and A.strategy_type = #{strategyType}</if>
+            <if test="strategyInfo != null  and strategyInfo != ''"> and A.strategy_info = #{strategyInfo}</if>
+            <if test="schedulerTime != null  and schedulerTime != ''"> and A.scheduler_time = #{schedulerTime}</if>
+            <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+        order by A.id desc
+    </select>
+
+    <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        		A.scheduler_time, A.rl_id, A.job_relation_id, A.create_by, A.direction,
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name
+        from sd_strategy A
+        left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        where A.id = #{id}
+    </select>
+    <select id="selectSdStrategyByJobRelationId" parameterType="String" resultMap="SdStrategyResult">
+        <include refid="selectSdStrategyVo"/>
+        where job_relation_id = #{jobRelationId}
+    </select>
+
+    <insert id="insertSdStrategy" parameterType="SdStrategy" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_strategy(
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="strategyName != null">strategy_name,</if>
+            <if test="strategyType != null">strategy_type,</if>
+            <if test="strategyInfo != null">strategy_info,</if>
+            <if test="warningId != null">warning_id,</if>
+            <if test="schedulerTime != null">scheduler_time,</if>
+            <if test="rlId != null">rl_id,</if>
+            <if test="jobRelationId != null">job_relation_id,</if>
+            <if test="direction != null">direction,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time
+ 		)values(
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="strategyName != null">#{strategyName},</if>
+            <if test="strategyType != null">#{strategyType},</if>
+            <if test="strategyInfo != null">#{strategyInfo},</if>
+            <if test="warningId != null">#{warningId},</if>
+            <if test="schedulerTime != null">#{schedulerTime},</if>
+            <if test="rlId != null">#{rlId},</if>
+            <if test="jobRelationId != null">#{jobRelationId},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="createBy != null">#{createBy},</if>
+            sysdate()
+          )
+    </insert>
+
+    <update id="updateSdStrategy" parameterType="SdStrategy">
+        update sd_strategy
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="strategyName != null">strategy_name = #{strategyName},</if>
+            <if test="strategyType != null">strategy_type = #{strategyType},</if>
+            <if test="strategyInfo != null">strategy_info = #{strategyInfo},</if>
+            <if test="warningId != null">warning_id = #{warningId},</if>
+            <if test="schedulerTime != null">scheduler_time = #{schedulerTime},</if>
+            <if test="rlId != null">rl_id = #{rlId},</if>
+            <if test="jobRelationId != null">job_relation_id = #{jobRelationId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdStrategyById" parameterType="Long">
+        delete from sd_strategy where id = #{id}
+    </delete>
+
+    <delete id="deleteSdStrategyByIds" parameterType="String">
+        delete from sd_strategy where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSdStrategyByRlIds" parameterType="String">
+        delete from sd_strategy where rl_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateSdStrategyInfoByRlId" parameterType="SdStrategy">
+        update sd_strategy
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="strategyName != null">strategy_name = #{strategyName},</if>
+            <if test="strategyType != null">strategy_type = #{strategyType},</if>
+            <if test="strategyInfo != null">strategy_info = #{strategyInfo},</if>
+            <if test="warningId != null">warning_id = #{warningId},</if>
+            <if test="schedulerTime != null">scheduler_time = #{schedulerTime},</if>
+            <if test="rlId != null">rl_id = #{rlId},</if>
+            <if test="jobRelationId != null">job_relation_id = #{jobRelationId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where rl_id = #{rlId}
+    </update>
+
+    <select id="selectStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        A.scheduler_time, A.rl_id, A.job_relation_id, A.direction,A.create_by,
+        A.create_time, A.update_by, A.update_time
+        from sd_strategy A
+        <where>
+            <if test="rlId != null  and rlId != ''"> and A.rl_id = #{rlId}</if>
+        </where>
+    </select>
+
+    <select id="checkStrategyIfExist" resultType="hashmap">
+        select id, plan_name, strategy_id, create_time from sd_reserve_plan
+        where strategy_id like concat("%",#{id},"%")
+    </select>
+</mapper>

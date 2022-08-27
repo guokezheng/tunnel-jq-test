@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdVehicleManagementMapper">
+    
+    <resultMap type="SdVehicleManagement" id="SdVehicleManagementResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="vehicleTypeId"    column="vehicle_type_id"    />
+        <result property="direction"    column="direction"    />
+        <result property="mark"    column="mark"    />
+        <result property="driver"    column="driver"    />
+        <result property="carNumber"    column="car_number"    />
+        <result property="accessTime"    column="access_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+        <result property="remake2"    column="remake2"    />
+    </resultMap>
+
+    <sql id="selectSdVehicleManagementVo">
+        select id, tunnel_id, vehicle_type_id, direction, mark, driver, car_number, access_time, create_time, create_by, update_time, update_by, remake, remake1, remake2 from sd_vehicle_management
+    </sql>
+
+    <select id="selectSdVehicleManagementList" parameterType="SdVehicleManagement" resultMap="SdVehicleManagementResult">
+        <include refid="selectSdVehicleManagementVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="vehicleTypeId != null  and vehicleTypeId != ''"> and vehicle_type_id = #{vehicleTypeId}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="driver != null  and driver != ''"> and driver = #{driver}</if>
+            <if test="carNumber != null  and carNumber != ''"> and car_number = #{carNumber}</if>
+            <if test="accessTime != null "> and access_time = #{accessTime}</if>
+            <if test="remake != null  and remake != ''"> and remake = #{remake}</if>
+            <if test="remake1 != null  and remake1 != ''"> and remake1 = #{remake1}</if>
+            <if test="remake2 != null  and remake2 != ''"> and remake2 = #{remake2}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdVehicleManagementById" parameterType="Long" resultMap="SdVehicleManagementResult">
+        <include refid="selectSdVehicleManagementVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdVehicleManagement" parameterType="SdVehicleManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_vehicle_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="vehicleTypeId != null">vehicle_type_id,</if>
+            <if test="direction != null">direction,</if>
+            <if test="mark != null">mark,</if>
+            <if test="driver != null">driver,</if>
+            <if test="carNumber != null">car_number,</if>
+            <if test="accessTime != null">access_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+            <if test="remake2 != null">remake2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="vehicleTypeId != null">#{vehicleTypeId},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="driver != null">#{driver},</if>
+            <if test="carNumber != null">#{carNumber},</if>
+            <if test="accessTime != null">#{accessTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+            <if test="remake2 != null">#{remake2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdVehicleManagement" parameterType="SdVehicleManagement">
+        update sd_vehicle_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="vehicleTypeId != null">vehicle_type_id = #{vehicleTypeId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="driver != null">driver = #{driver},</if>
+            <if test="carNumber != null">car_number = #{carNumber},</if>
+            <if test="accessTime != null">access_time = #{accessTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+            <if test="remake2 != null">remake2 = #{remake2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdVehicleManagementById" parameterType="Long">
+        delete from sd_vehicle_management where id = #{id}
+    </delete>
+
+    <delete id="deleteSdVehicleManagementByIds" parameterType="String">
+        delete from sd_vehicle_management where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

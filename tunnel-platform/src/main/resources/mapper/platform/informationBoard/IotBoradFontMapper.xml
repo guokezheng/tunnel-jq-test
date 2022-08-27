@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.informationBoard.IotBoradFontMapper">
+    
+    <resultMap type="IotBoradFont" id="IotBoradFontResult">
+        <result property="id"    column="id"    />
+        <result property="devicePixel"    column="device_pixel"    />
+        <result property="fontSize"    column="font_size"    />
+        <result property="maxLength"    column="max_length"    />
+    </resultMap>
+
+    <sql id="selectIotBoradFontVo">
+        select id, device_pixel, font_size, max_length from iot_borad_font
+    </sql>
+
+    <select id="selectIotBoradFontList" parameterType="IotBoradFont" resultMap="IotBoradFontResult">
+        <include refid="selectIotBoradFontVo"/>
+        <where>  
+            <if test="devicePixel != null  and devicePixel != ''"> and device_pixel = #{devicePixel}</if>
+            <if test="fontSize != null "> and font_size = #{fontSize}</if>
+            <if test="maxLength != null "> and max_length = #{maxLength}</if>
+        </where>
+        ORDER BY font_size DESC
+    </select>
+    
+    <select id="selectIotBoradFontById" parameterType="Long" resultMap="IotBoradFontResult">
+        <include refid="selectIotBoradFontVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIotBoradFont" parameterType="IotBoradFont" useGeneratedKeys="true" keyProperty="id">
+        insert into iot_borad_font
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="devicePixel != null  and devicePixel != ''">device_pixel,</if>
+            <if test="fontSize != null ">font_size,</if>
+            <if test="maxLength != null ">max_length,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="devicePixel != null  and devicePixel != ''">#{devicePixel},</if>
+            <if test="fontSize != null ">#{fontSize},</if>
+            <if test="maxLength != null ">#{maxLength},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIotBoradFont" parameterType="IotBoradFont">
+        update iot_borad_font
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="devicePixel != null  and devicePixel != ''">device_pixel = #{devicePixel},</if>
+            <if test="fontSize != null ">font_size = #{fontSize},</if>
+            <if test="maxLength != null ">max_length = #{maxLength},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIotBoradFontById" parameterType="Long">
+        delete from iot_borad_font where id = #{id}
+    </delete>
+
+    <delete id="deleteIotBoradFontByIds" parameterType="String">
+        delete from iot_borad_font where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

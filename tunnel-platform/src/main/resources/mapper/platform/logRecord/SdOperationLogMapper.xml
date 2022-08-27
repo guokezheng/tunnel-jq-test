@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.logRecord.SdOperationLogMapper">
+
+    <resultMap type="SdOperationLog" id="SdOperationLogResult">
+        <result property="id"    column="id"    />
+        <result property="eqTypeId"    column="eq_type_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="eqId"    column="eq_id"    />
+        <!-- <result property="eqName"    column="eq_name"    /> -->
+        <result property="code"    column="code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="beforeState"    column="before_state"    />
+        <result property="operationState"    column="operation_state"    />
+        <result property="controlType"    column="control_type"    />
+        <result property="state"    column="state"    />
+        <result property="description"    column="description"    />
+        <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+        <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
+        <association property="stateName"  column="id" javaType="SdEquipmentState" resultMap="stateNameResult" />
+        <association property="eqName"  column="eq_id" javaType="SdDevices" resultMap="SdDevicesResult" />
+    </resultMap>
+    <resultMap id="tunnelResult" type="SdTunnels">
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+	<resultMap id="eqTypeResult" type="SdEquipmentType">
+		<id  property="typeId" column="type_id" />
+		<result property="typeName" column="type_name"   />
+	</resultMap>
+	<resultMap id="stateNameResult" type="SdEquipmentState">
+		<id  property="id" column="id" />
+		<result property="stateName" column="state_name"   />
+	</resultMap>
+	<resultMap id="SdDevicesResult" type="SdDevices">
+		<id  property="eqId" column="eq_id" />
+		<result property="eqName" column="eq_name"   />
+	</resultMap>
+
+    <sql id="selectSdOperationLogVo">
+        select id, eq_type_id, tunnel_id, user_name, eq_id,code,create_by, create_time, update_by, update_time, before_state, operation_state, control_type, state, description from sd_operation_log
+    </sql>
+
+    <select id="selectSdOperationLogList" parameterType="SdOperationLog" resultMap="SdOperationLogResult">
+        <!-- <include refid="selectSdOperationLogVo"/> -->
+        select a.id, a.eq_type_id,d.type_name, a.tunnel_id,b.tunnel_name, a.user_name, a.eq_id, c.eq_name, a.code,a.create_by, a.create_time, a.update_by, a.update_time, a.before_state, a.operation_state,e.state_name, a.control_type, a.state, a.description from sd_operation_log a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_devices c on a.eq_id = c.eq_id
+        left join sd_equipment_type d on a.eq_type_id = d.type_id
+        left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id
+        where 1=1 and a.create_time <![CDATA[ > ]]> DATE_SUB(CURDATE(),INTERVAL 3 day)
+        <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
+        <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+        <if test="userName != null  and userName != ''"> and a.user_name like concat('%', #{userName}, '%')</if>
+        <if test="eqId != null  and eqId != ''"> and a.eq_id = #{eqId}</if>
+        <!-- <if test="eqName != null  and eqName != ''"> and a.eq_name like concat('%', #{eqName}, '%')</if> -->
+        <if test="code != null  and code != ''"> and a.code = #{code}</if>
+        <if test="beforeState != null  and beforeState != ''"> and a.before_state = #{beforeState}</if>
+        <if test="operationState != null  and operationState != ''"> and a.operation_state = #{operationState}</if>
+        <if test="controlType != null  and controlType != ''"> and a.control_type = #{controlType}</if>
+        <if test="state != null  and state != ''"> and a.state = #{state}</if>
+        <if test="description != null  and description != ''"> and a.description = #{description}</if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and date_format(a.create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and date_format(a.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectSdOperationLogById" parameterType="Long" resultMap="SdOperationLogResult">
+        <include refid="selectSdOperationLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdOperationLog" parameterType="SdOperationLog" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+        	<if test="eqTypeId != null">eq_type_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="eqId != null">eq_id,</if>
+            <!-- <if test="eqName != null">eq_name,</if> -->
+            <if test="code != null">code,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time,
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="beforeState != null">before_state,</if>
+            <if test="operationState != null">operation_state,</if>
+            <if test="controlType != null">control_type,</if>
+            <if test="state != null">state,</if>
+            <if test="description != null">description,</if>
+            </trim>
+        	<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="eqTypeId != null">#{eqTypeId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="eqId != null">#{eqId},</if>
+            <!-- <if test="eqName != null">#{eqName},</if> -->
+            <if test="code != null">#{code},</if>
+            <if test="createBy != null">#{createBy},</if>
+          	sysdate(),
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="beforeState != null">#{beforeState},</if>
+            <if test="operationState != null">#{operationState},</if>
+            <if test="controlType != null">#{controlType},</if>
+            <if test="state != null">#{state},</if>
+            <if test="description != null">#{description},</if>
+            </trim>
+    </insert>
+
+    <update id="updateSdOperationLog" parameterType="SdOperationLog">
+        update sd_operation_log
+        <set>
+            <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="eqId != null">eq_id = #{eqId},</if>
+            <!-- <if test="eqName != null">eq_name = #{eqName},</if> -->
+            <if test="code != null">code = #{code},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            update_time = sysdate(),
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="beforeState != null">before_state = #{beforeState},</if>
+            <if test="operationState != null">operation_state = #{operationState},</if>
+            <if test="controlType != null">control_type = #{controlType},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="description != null">description = #{description},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdOperationLogById" parameterType="Long">
+        delete from sd_operation_log where id = #{id}
+    </delete>
+
+    <delete id="deleteSdOperationLogByIds" parameterType="String">
+        delete from sd_operation_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectOprationLogOver3month" resultMap="SdOperationLogResult">
+        select id from sd_operation_log
+        where create_time <![CDATA[ < ]]> DATE_SUB(CURDATE(),INTERVAL 3 month)
+    </select>
+
+</mapper>

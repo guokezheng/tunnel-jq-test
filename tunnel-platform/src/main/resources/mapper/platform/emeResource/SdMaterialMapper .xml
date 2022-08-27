@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.emeResource.SdMaterialMapper">
+    
+    <resultMap type="SdMaterial" id="SdMaterialResult">
+        <result property="id"    column="id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialType"    column="material_type"    />
+        <result property="inventoryQuantity"    column="Inventory_quantity"    />
+        <result property="company"    column="company"    />
+        <result property="position"    column="position"    />
+        <result property="warningValue"    column="warning_value"    />
+        <result property="code"    column="code"    />
+        <result property="remark"    column="remark"    />
+        <result property="state"    column="state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="price"    column="price"    />
+
+        <association property="sdMaterialType"  column="id" javaType="SdMaterialType" resultMap="materialTypeResult" />
+    </resultMap>
+	<resultMap id="materialTypeResult" type="SdMaterialType">
+		<id  property="id" column="id" />
+		<result property="name" column="name"   />
+	</resultMap>
+    <sql id="selectSdMaterialVo">
+        select id, material_id, material_name, material_type, Inventory_quantity, company, position, warning_value, code, remark, state, create_time, update_time, price from sd_material
+    </sql>
+
+    <select id="selectSdMaterialList" parameterType="SdMaterial" resultMap="SdMaterialResult">
+       <!--  select s.id, s.material_id, s.material_name, s.material_type, s.Inventory_quantity, s.company, s.position, s.warning_value, s.code, s.remark, s.state, s.create_time, s.update_time,x.pid,x.user_id,x.stock,x.change_stock,x.type
+         from sd_material s left join sd_material_record x on s.id = x.pid
+         where 1=1
+            <if test="materialId != null  and materialId != ''"> and s.material_id = #{materialId}</if>
+            <if test="materialName != null  and materialName != ''"> s.and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialType != null  and materialType != ''"> s.and material_type = #{materialType}</if>
+            <if test="inventoryQuantity != null "> and s.Inventory_quantity = #{inventoryQuantity}</if>
+            <if test="company != null  and company != ''"> and s.company = #{company}</if>
+            <if test="position != null  and position != ''"> and s.position = #{position}</if>
+            <if test="warningValue != null "> and s.warning_value = #{warningValue}</if>
+            <if test="code != null  and code != ''"> and s.code = #{code}</if>
+            <if test="state != null  and state != ''"> and s.state = #{state}</if>
+            <if test="createTime != null "> and s.create_time = #{createTime}</if>
+            <if test="updateTime != null "> and s.update_time = #{updateTime}</if> -->
+           <!--   <include refid="selectSdMaterialVo"/> -->
+           select s.id, s.material_id, s.material_name, s.material_type,x.name,s.Inventory_quantity, s.company, s.position, s.warning_value, s.code, s.remark, s.state, 
+           s.create_time, s.update_time, s.price
+          from sd_material s 
+          left join sd_material_type x on s.material_type = x.id
+        <where>  
+            <if test="materialId != null  and materialId != ''"> and material_id = #{materialId}</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialType != null  and materialType != ''"> and material_type = #{materialType}</if>
+            <if test="inventoryQuantity != null "> and Inventory_quantity = #{inventoryQuantity}</if>
+            <if test="company != null  and company != ''"> and company = #{company}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="warningValue != null "> and warning_value = #{warningValue}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="remark != null  and remark != ''"> and remark = #{remark}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+        </where>
+      
+    </select>
+    
+    <select id="selectSdMaterialById" parameterType="Long" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        where id = #{id}
+    </select>
+        
+    <select id="selectSdMaterialByMId" parameterType="String" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        where material_id = #{materialId}
+    </select>
+    
+    <insert id="insertSdMaterial" parameterType="SdMaterial" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="materialType != null">material_type,</if>
+            <if test="inventoryQuantity != null">Inventory_quantity,</if>
+            <if test="company != null">company,</if>
+            <if test="position != null">position,</if>
+            <if test="warningValue != null">warning_value,</if>
+            <if test="code != null">code,</if>
+            <if test="remark != null">remark,</if>
+            <if test="state != null">state,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="price != null">price,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="materialType != null">#{materialType},</if>
+            <if test="inventoryQuantity != null">#{inventoryQuantity},</if>
+            <if test="company != null">#{company},</if>
+            <if test="position != null">#{position},</if>
+            <if test="warningValue != null">#{warningValue},</if>
+            <if test="code != null">#{code},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="state != null">#{state},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="price != null">#{price},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMaterial" parameterType="SdMaterial">
+        update sd_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="inventoryQuantity != null">Inventory_quantity = #{inventoryQuantity},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="warningValue != null">warning_value = #{warningValue},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="price != null">price = #{price},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    
+    <update id="updateMaterialMessage" parameterType="SdMaterial">
+        update sd_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="inventoryQuantity != null">Inventory_quantity = #{inventoryQuantity},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="warningValue != null">warning_value = #{warningValue},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="price != null">price = #{price},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdMaterialById" parameterType="Long">
+        delete from sd_material where id = #{id}
+    </delete>
+
+    <delete id="deleteSdMaterialByIds" parameterType="String">
+        delete from sd_material where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

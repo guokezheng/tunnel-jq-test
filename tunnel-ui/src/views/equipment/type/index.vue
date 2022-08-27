@@ -1,0 +1,525 @@
+<template>
+  <div class="app-container">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="100px"
+    >
+      <el-form-item label="设备类型名称" prop="typeName">
+        <el-input
+          v-model="queryParams.typeName"
+          placeholder="请输入设备类型名称"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="设备类型代号" prop="typeAbbr">
+        <el-input
+          v-model="queryParams.typeAbbr"
+          placeholder="请输入设备类型代号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          type="cyan"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
+      </el-form-item>
+    </el-form>
+
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:type:add']"
+          >新增</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:type:edit']"
+          >修改</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:type:remove']"
+          >删除</el-button
+        >
+      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          icon="el-icon-download"-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['system:type:export']"-->
+<!--          >导出</el-button-->
+<!--        >-->
+<!--      </el-col>-->
+      <div class="top-right-btn">
+        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+          <el-button
+            size="mini"
+            circle
+            icon="el-icon-refresh"
+            @click="handleQuery"
+          />
+        </el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="showSearch ? '隐藏搜索' : '显示搜索'"
+          placement="top"
+        >
+          <el-button
+            size="mini"
+            circle
+            icon="el-icon-search"
+            @click="showSearch = !showSearch"
+          />
+        </el-tooltip>
+      </div>
+    </el-row>
+
+    <el-table
+      v-loading="loading"
+      :data="typeList"
+      max-height="610"
+      @selection-change="handleSelectionChange"
+    >
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="设备类型名称" align="center" prop="typeName" />
+      <el-table-column label="设备类型代号" align="center" prop="typeAbbr" />
+      <el-table-column label="图标宽度" align="center" prop="iconWidth">
+        <template slot-scope="scope">
+          <span>{{ scope.row.iconWidth }} px</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="图标高度" align="center" prop="iconHeight">
+        <template slot-scope="scope">
+          <span>{{ scope.row.iconHeight }} px</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:type:edit']"
+            >修改</el-button
+          >
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['system:type:remove']"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="queryParams.pageNum"
+      :limit.sync="queryParams.pageSize"
+      @pagination="getList"
+    />
+
+    <!-- 添加或修改设备类型对话框 -->
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+        <el-form-item label="设备类型名称" prop="typeName">
+          <el-input v-model="form.typeName" placeholder="请输入设备类型名称" />
+        </el-form-item>
+        <el-form-item label="设备类型代号" prop="typeAbbr">
+          <el-input v-model="form.typeAbbr" placeholder="请输入设备类型代号" />
+          <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div>
+        </el-form-item>
+        <el-form-item label="图标宽度" prop="iconWidth">
+          <el-input
+            v-model="form.iconWidth"
+            placeholder="图标宽度"
+            maxlength="3"
+            style="width: 100px"
+          />
+          px
+        </el-form-item>
+        <el-form-item label="图标高度" prop="iconHeight">
+          <el-input
+            v-model="form.iconHeight"
+            placeholder="图标高度"
+            maxlength="3"
+            style="width: 100px"
+          />
+          px
+        </el-form-item>
+        <el-form-item label="默认图标" label-width="100px">
+          <el-upload
+            ref="upload"
+            action="http://xxx.xxx.xxx/personality/uploadExcel"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :http-request="uploadFile"
+            :file-list="fileList"
+            :on-exceed="handleExceed"
+            :on-change="handleChange"
+            :limit="2"
+            :class="fileList.length >=2 ? 'showUpload':''"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="设备大类" class="checkboxFormDialog" prop="bigType">
+          <el-checkbox-group v-model="form.bigType">
+              <el-checkbox v-for="dict in bigTypeOptions" :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import {
+  listType,
+  getType,
+  delType,
+  addType,
+  updateType,
+  groupByBigType,
+  eqTypeList,
+  loadPicture,
+} from "@/api/equipment/type/api.js";
+
+export default {
+  name: "Type",
+  data() {
+    return {
+		bigType:'',
+      // 遮罩层
+      loading: true,
+      // 选中数组
+      ids: [],
+      // 非单个禁用
+      single: true,
+      // 非多个禁用
+      multiple: true,
+      // 显示搜索条件
+      showSearch: true,
+	  bigTypeOptions:[],
+      // 总条数
+      total: 0,
+      // 设备类型表格数据
+      typeList: [],
+      // 弹出层标题
+      title: "",
+      // 是否显示弹出层
+      open: false,
+	  form:{
+		  bigType:[]
+	  },
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        typeName: null,
+      },
+      // 表单参数
+      form1: {
+		  bigType:[]
+	  },
+      // 表单校验
+      rules: {
+          typeName: [
+              { required: true, message: "设备类型不能为空", trigger: "blur" }
+          ],
+        typeAbbr:[
+          { required: true, message: "设备代号不能为空", trigger: "blur" },
+          // {
+          //   pattern:/^\w+$/,
+          //   message: "只能输入数字、字母、下划线",
+          // },
+        ],
+          iconWidth: [
+              { required: true, message: "图标宽度不能为空", trigger: "blur" }
+          ],
+          iconHeight: [
+              { required: true, message: "图标高度不能为空", trigger: "blur" }
+          ],
+          bigType: [
+              { required: true, message: "设备大类不能为空", trigger: 'change' }
+          ],
+      },
+      //是否区分方向
+      direction: "",
+      dialogImageUrl: "",
+      dialogVisible: false,
+      fileData: "", // 文件上传数据（多文件合一）
+      fileList: [], // upload多文件数组
+      //需要移除的文件ids
+      removeIds: [],
+      // fIds:[]//需要移除的关联图标iconFileId
+      typeList:[],//所有设备大类
+    };
+  },
+  created() {
+	  this.getDicts("sd_sys_name").then(response => {
+	    this.bigTypeOptions = response.data;
+	  });
+    this.getList();
+    this.getGroupByBigType();
+    this.fileData = new FormData(); // new formData对象
+  },
+  methods: {
+    getGroupByBigType(){
+      groupByBigType().then((response) => {
+        this.typeList = response.rows;
+        console.log(this.typeList)
+      });
+    },
+    //删除文件
+    handleRemove(file, fileList) {
+      if (file.hasOwnProperty("fId")) {
+        this.removeIds.push(file.fId);
+      }
+      this.fileList = fileList;
+    },
+
+    handlePictureCardPreview(file) {
+      // this.dialogImageUrl = file.url;
+      // this.dialogVisible = true;
+    },
+    // 上传文件
+    uploadFile(file) {
+      this.fileData.append("file", file.file); // append增加数据
+    },
+    //监控上传文件列表
+    handleChange(file, fileList) {
+      this.fileList = fileList;
+    },
+    // 选取文件超过数量提示
+    handleExceed(files, fileList) {
+      // let num = this.direction == 0 ? 2 : 1;
+      this.$message.warning("限制上传图标个数不超过2个");
+    },
+    async planRoadmapUrl(iFileList) {
+      var that = this;
+      that.fileList = [];
+      for (let i = 0; i < iFileList.length; i++) {
+        let iconName = iFileList[i].stateIconName;
+        let iconUrl = await that.picture(iFileList[i].url);
+        that.fileList.push({
+          name: iconName,
+          url: iconUrl,
+          fId: iFileList[i].id,
+        });
+        // fileList.push(this.form.iFileList[i].url)
+      }
+    },
+
+    /* 请求图片base64地址*/
+    picture(fileUrl) {
+      return new Promise((resolve, reject) => {
+        loadPicture({
+          url: fileUrl,
+        }).then((response) => {
+          if (response.code == 200) {
+            let base64 = response.msg;
+            resolve(base64); //不可缺少
+          }
+        });
+      });
+      return resolve(base64);
+    },
+
+    /** 查询设备类型列表 */
+    getList() {
+      this.loading = true;
+      listType(this.queryParams).then((response) => {
+        this.typeList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
+    },
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        typeId: null,
+        typeName: null,
+        createBy: null,
+        createTime: null,
+        updateBy: null,
+        updateTime: null,
+		bigType:[]
+      };
+      this.fileList = [];
+      this.removeIds = [];
+      this.resetForm("form");
+    },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.queryParams.pageNum = 1;
+      this.getList();
+    },
+    /** 重置按钮操作 */
+    resetQuery() {
+      this.resetForm("queryForm");
+      this.handleQuery();
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map((item) => item.typeId);
+      // this.fIds = selection.map(item => item.iconFileId)
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
+    },
+    /** 新增按钮操作 */
+    handleAdd() {
+      this.reset();
+      this.open = true;
+
+      this.title = "添加设备类型";
+    },
+    /** 修改按钮操作 */
+    handleUpdate(row) {
+      var that = this;
+      that.reset();
+	  this.form = {
+		  bigType:[]
+	  }
+      const typeId = row.typeId || that.ids;
+      getType(typeId).then((response) => {
+		  debugger
+		var resultData = response.data
+		if(resultData.bigType){
+			resultData.bigType = resultData.bigType.split(',')
+		}
+		this.form = resultData
+        that.planRoadmapUrl(that.form.iFileList);
+        this.open = true;
+        this.title = "修改设备类型";
+      });
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.fileData = new FormData(); // new formData对象
+      this.$refs.upload.submit(); // 提交调用uploadFile函数
+      this.fileData.append("typeName", this.form.typeName); //类型名称
+      this.fileData.append("typeAbbr",this.form.typeAbbr);
+      this.fileData.append("iconWidth", this.form.iconWidth);
+      this.fileData.append("iconHeight", this.form.iconHeight);
+	  this.fileData.append("bigType", this.form.bigType.join(','));
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          if(this.fileList.length <= 0) {
+            return this.$modal.msgWarning('请选择要上传的图标')
+          }
+          if (this.form.typeId != null) {
+            this.fileData.append("typeId", this.form.typeId); //类型id
+            this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id
+            this.fileData.append("removeIds", this.removeIds);
+            updateType(this.fileData).then((response) => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            addType(this.fileData).then((response) => {
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const typeIds = row.typeId || this.ids;
+      // const iconFileIds = row.iconFileId || this.fIds;
+      this.$confirm("是否确认删除?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
+          return delType(typeIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(function () {});
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      this.download(
+        "system/type/export",
+        {
+          ...this.queryParams,
+        },
+        `system_type.xlsx`
+      );
+    },
+  },
+};
+</script>
+<style scoped lang="scss">
+  ::v-deep .checkboxFormDialog .el-checkbox{
+      width: 80px;
+    }
+
+  ::v-deep .showUpload {
+    .el-upload {
+      display: none;
+    }
+  }
+</style>

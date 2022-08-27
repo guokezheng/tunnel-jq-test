@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zc.iot.mapper.IotProductMapper">
+    
+    <resultMap type="IotProduct" id="IotProductResult">
+        <result property="id"    column="id"    />
+        <result property="productName"    column="product_name"    />
+        <result property="categoryKey"    column="category_key"    />
+        <result property="nodeType"    column="node_type"    />
+        <result property="netType"    column="net_type"    />
+        <result property="description"    column="description"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectIotProductVo">
+        select id, product_name, category_key, node_type, net_type, description, create_time, update_time from athena_iot_product
+    </sql>
+
+    <select id="selectIotProductList" parameterType="IotProduct" resultMap="IotProductResult">
+        <include refid="selectIotProductVo"/>
+        <where>  
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="categoryKey != null "> and category_key = #{categoryKey}</if>
+            <if test="nodeType != null "> and node_type = #{nodeType}</if>
+            <if test="netType != null "> and net_type = #{netType}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectIotProductById" parameterType="Long" resultMap="IotProductResult">
+        <include refid="selectIotProductVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertIotProduct" parameterType="IotProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into athena_iot_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="productName != null and productName != ''">product_name,</if>
+            <if test="categoryKey != null">category_key,</if>
+            <if test="nodeType != null">node_type,</if>
+            <if test="netType != null">net_type,</if>
+            <if test="description != null">description,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="productName != null and productName != ''">#{productName},</if>
+            <if test="categoryKey != null">#{categoryKey},</if>
+            <if test="nodeType != null">#{nodeType},</if>
+            <if test="netType != null">#{netType},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIotProduct" parameterType="IotProduct">
+        update athena_iot_product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productName != null and productName != ''">product_name = #{productName},</if>
+            <if test="categoryKey != null">category_key = #{categoryKey},</if>
+            <if test="nodeType != null">node_type = #{nodeType},</if>
+                                        net_type = #{netType},
+            <if test="description != null">description = #{description},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteIotProductById" parameterType="Long">
+        delete from athena_iot_product where id = #{id}
+    </delete>
+
+    <delete id="deleteIotProductByCategoryKey" parameterType="Long">
+        delete from athena_iot_product where category_key = #{categoryKey}
+    </delete>
+
+    <delete id="deleteIotProductByIds" parameterType="String">
+        delete from athena_iot_product where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

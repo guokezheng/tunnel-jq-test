@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.videoevents.SdkEventAnalysisMapper">
+    
+    <resultMap type="SdkEventAnalysis" id="SdkEventAnalysisResult">
+        <result property="id"    column="id"    />
+        <result property="taskId"    column="taskId"    />
+        <result property="abandonedObjectSense"    column="abandoned_object_sense"    />
+        <result property="congestionInterval"    column="congestion_interval"    />
+        <result property="illegalParkTime"    column="illegal_park_time"    />
+        <result property="coordinates"    column="coordinates"    />
+        <result property="incident"    column="incident"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdkEventAnalysisVo">
+        select id, taskId, abandoned_object_sense, congestion_interval, illegal_park_time, coordinates, incident, create_by, create_time, update_by, update_time from sdk_event_analysis
+    </sql>
+
+    <select id="selectSdkEventAnalysisList" parameterType="SdkEventAnalysis" resultMap="SdkEventAnalysisResult">
+        <include refid="selectSdkEventAnalysisVo"/>
+        <where>  
+            <if test="taskId != null "> and taskId = #{taskId}</if>
+            <if test="abandonedObjectSense != null "> and abandoned_object_sense = #{abandonedObjectSense}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdkEventAnalysisById" parameterType="Integer" resultMap="SdkEventAnalysisResult">
+        <include refid="selectSdkEventAnalysisVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSdkEventAnalysisByTaskId" parameterType="Integer" resultMap="SdkEventAnalysisResult">
+        <include refid="selectSdkEventAnalysisVo"/>
+        where taskId = #{id}
+    </select>
+
+    <insert id="insertSdkEventAnalysis" parameterType="SdkEventAnalysis" useGeneratedKeys="true" keyProperty="id">
+        insert into sdk_event_analysis
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">taskId,</if>
+            <if test="abandonedObjectSense != null">abandoned_object_sense,</if>
+            <if test="congestionInterval != null">congestion_interval,</if>
+            <if test="illegalParkTime != null">illegal_park_time,</if>
+            <if test="coordinates != null">coordinates,</if>
+            <if test="incident != null">incident,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="abandonedObjectSense != null">#{abandonedObjectSense},</if>
+            <if test="congestionInterval != null">#{congestionInterval},</if>
+            <if test="illegalParkTime != null">#{illegalParkTime},</if>
+            <if test="coordinates != null">#{coordinates},</if>
+            <if test="incident != null">#{incident},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdkEventAnalysis" parameterType="SdkEventAnalysis">
+        update sdk_event_analysis
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">taskId = #{taskId},</if>
+            <if test="abandonedObjectSense != null">abandoned_object_sense = #{abandonedObjectSense},</if>
+            <if test="congestionInterval != null">congestion_interval = #{congestionInterval},</if>
+            <if test="illegalParkTime != null">illegal_park_time = #{illegalParkTime},</if>
+            <if test="coordinates != null">coordinates = #{coordinates},</if>
+            <if test="incident != null">incident = #{incident},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdkEventAnalysisById" parameterType="Integer">
+        delete from sdk_event_analysis where taskId = #{id}
+    </delete>
+
+    <delete id="deleteSdkEventAnalysisByIds" parameterType="String">
+        delete from sdk_event_analysis where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

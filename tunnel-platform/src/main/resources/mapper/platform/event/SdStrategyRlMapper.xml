@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdStrategyRlMapper">
+    
+    <resultMap type="SdStrategyRl" id="SdStrategyRlResult">
+        <result property="id"    column="id"    />
+        <result property="strategyId"    column="strategy_id"    />
+        <result property="eqTypeId"    column="eq_type_id"    />
+        <result property="equipments"    column="equipments"    />
+        <result property="state"    column="state"    />
+        <association property="eqType"    column="type_id" javaType="SdEquipmentType" resultMap="TypeResult" />
+    </resultMap>
+	
+	<resultMap id="TypeResult" type="SdEquipmentType">
+		<id     property="typeId"   column="type_id"     />
+		<result property="typeName" column="type_name"   />
+	</resultMap>
+    <sql id="selectSdStrategyRlVo">
+        select id, strategy_id, eq_type_id, equipments, state from sd_strategy_rl
+    </sql>
+
+    <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
+        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name
+        from sd_strategy_rl A
+        left join sd_equipment_type B ON A.eq_type_id = B.type_id
+        <where>  
+            <if test="strategyId != null "> and A.strategy_id = #{strategyId}</if>
+            <if test="eqTypeId != null "> and A.eq_type_id = #{eqTypeId}</if>
+            <if test="equipments != null  and equipments != ''"> and A.equipments = #{equipments}</if>
+            <if test="state != null  and state != ''"> and A.state = #{state}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdStrategyRlById" parameterType="Long" resultMap="SdStrategyRlResult">
+        <include refid="selectSdStrategyRlVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdStrategyRl" parameterType="SdStrategyRl" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_strategy_rl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="strategyId != null">strategy_id,</if>
+            <if test="eqTypeId != null">eq_type_id,</if>
+            <if test="equipments != null">equipments,</if>
+            <if test="state != null">state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="strategyId != null">#{strategyId},</if>
+            <if test="eqTypeId != null">#{eqTypeId},</if>
+            <if test="equipments != null">#{equipments},</if>
+            <if test="state != null">#{state},</if>
+         </trim>
+    </insert>
+    
+    	<!-- 批量新增策略关联信息 -->
+	  <insert id="batchInsertStrategyRl" parameterType="java.util.List">
+	    insert into sd_strategy_rl
+	    (
+	      strategy_id, eq_type_id, equipments, state
+	    )
+	    values
+	    <foreach collection="list" index="index" item="item" separator=",">
+	      (
+	        #{item.strategyId}, #{item.eqTypeId}, #{item.equipments}, #{item.state}
+	      )
+	    </foreach>
+	  </insert>
+    
+    
+    
+
+    <update id="updateSdStrategyRl" parameterType="SdStrategyRl">
+        update sd_strategy_rl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="strategyId != null">strategy_id = #{strategyId},</if>
+            <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
+            <if test="equipments != null">equipments = #{equipments},</if>
+            <if test="state != null">state = #{state},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdStrategyRlById" parameterType="Long">
+        delete from sd_strategy_rl where id = #{id}
+    </delete>
+
+    <delete id="deleteSdStrategyRlByIds" parameterType="String">
+        delete from sd_strategy_rl where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSdStrategyRlByRlId" parameterType="String">
+        delete from sd_strategy_rl where strategy_id = #{rlId}
+    </delete>
+    
+    <delete id="deleteSdStrategyRlByRlIds" parameterType="String">
+        delete from sd_strategy_rl where strategy_id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

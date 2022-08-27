@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficIncidentInfoMapper">
+
+    <resultMap type="SdTrafficIncidentInfo" id="SdTrafficIncidentInfoResult">
+        <result property="id"    column="id"    />
+        <!--<result property="tunnelStationId"    column="tunnel_station_id"    />-->
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="incidentType"    column="incident_type"    />
+        <result property="incidentStatus"    column="incident_status"    />
+        <result property="incidentContent" column="incident_content"/>
+        <result property="occurTime"    column="occur_time"    />
+        <result property="msgSource"    column="msg_source"    />
+        <result property="reportPerson"    column="report_person"    />
+        <result property="reportTime"    column="report_time"    />
+        <result property="incidentGrade"    column="incident_grade"    />
+        <result property="policeInform"    column="police_inform"    />
+        <result property="takeMeasure"    column="take_measure"    />
+        <!--<result property="publishObject"    column="publish_object"    />-->
+        <result property="publishStatus" column="publish_status"/>
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficIncidentInfoVo">
+        select id,
+        <!-- tunnel_station_id,-->
+         tunnel_id, incident_type, incident_status, incident_content, occur_time, msg_source, report_person, report_time, incident_grade, police_inform, take_measure,
+        <!-- publish_object,-->
+        remark, create_time, create_by, update_time, update_by, del_flag from sd_traffic_incident_info
+    </sql>
+
+    <select id="selectSdTrafficIncidentInfoList" parameterType="SdTrafficIncidentInfo" resultMap="SdTrafficIncidentInfoResult">
+        <include refid="selectSdTrafficIncidentInfoVo"/>
+        <where>
+            <!--<if test="tunnelStationId != null  and tunnelStationId != ''"> and tunnel_station_id = #{tunnelStationId}</if>-->
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="incidentType != null  and incidentType != ''"> and incident_type = #{incidentType}</if>
+            <if test="incidentStatus != null  and incidentStatus != ''"> and incident_status = #{incidentStatus}</if>
+            <if test="occurTime != null  and occurTime != ''"> and occur_time = #{occurTime}</if>
+            <if test="msgSource != null  and msgSource != ''"> and msg_source = #{msgSource}</if>
+            <if test="reportPerson != null  and reportPerson != ''"> and report_person = #{reportPerson}</if>
+            <if test="reportTime != null  and reportTime != ''"> and report_time = #{reportTime}</if>
+            <if test="incidentGrade != null  and incidentGrade != ''"> and incident_grade = #{incidentGrade}</if>
+            <if test="policeInform != null  and policeInform != ''"> and police_inform = #{policeInform}</if>
+            <if test="takeMeasure != null  and takeMeasure != ''"> and take_measure = #{takeMeasure}</if>
+            <!--<if test="publishObject != null  and publishObject != ''"> and publish_object = #{publishObject}</if>-->
+            <if test="publishStatus != null and publishStatus !=''"> and publish_status = #{publishStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficIncidentInfoById" parameterType="Long" resultMap="SdTrafficIncidentInfoResult">
+        <include refid="selectSdTrafficIncidentInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdTrafficIncidentInfo" parameterType="SdTrafficIncidentInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_traffic_incident_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <!--<if test="tunnelStationId != null">tunnel_station_id,</if>-->
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="incidentType != null">incident_type,</if>
+            <if test="incidentStatus != null">incident_status,</if>
+            <if test="incidentContent != null">incident_content,</if>
+            <if test="occurTime != null">occur_time,</if>
+            <if test="msgSource != null">msg_source,</if>
+            <if test="reportPerson != null">report_person,</if>
+            <if test="reportTime != null">report_time,</if>
+            <if test="incidentGrade != null">incident_grade,</if>
+            <if test="policeInform != null">police_inform,</if>
+            <if test="takeMeasure != null">take_measure,</if>
+            <!--<if test="publishObject != null">publish_object,</if>-->
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <!--<if test="tunnelStationId != null">#{tunnelStationId},</if>-->
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="incidentType != null">#{incidentType},</if>
+            <if test="incidentStatus != null">#{incidentStatus},</if>
+            <if test="incidentContent != null">#{incidentContent},</if>
+            <if test="occurTime != null">#{occurTime},</if>
+            <if test="msgSource != null">#{msgSource},</if>
+            <if test="reportPerson != null">#{reportPerson},</if>
+            <if test="reportTime != null">#{reportTime},</if>
+            <if test="incidentGrade != null">#{incidentGrade},</if>
+            <if test="policeInform != null">#{policeInform},</if>
+            <if test="takeMeasure != null">#{takeMeasure},</if>
+            <!--<if test="publishObject != null">#{publishObject},</if>-->
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficIncidentInfo" parameterType="SdTrafficIncidentInfo">
+        update sd_traffic_incident_info
+        <trim prefix="SET" suffixOverrides=",">
+            <!--<if test="tunnelStationId != null">tunnel_station_id = #{tunnelStationId},</if>-->
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="incidentType != null">incident_type = #{incidentType},</if>
+            <if test="incidentStatus != null">incident_status = #{incidentStatus},</if>
+            <if test="incidentContent != null">incident_content = #{incidentContent},</if>
+            <if test="occurTime != null">occur_time = #{occurTime},</if>
+            <if test="msgSource != null">msg_source = #{msgSource},</if>
+            <if test="reportPerson != null">report_person = #{reportPerson},</if>
+            <if test="reportTime != null">report_time = #{reportTime},</if>
+            <if test="incidentGrade != null">incident_grade = #{incidentGrade},</if>
+            <if test="policeInform != null">police_inform = #{policeInform},</if>
+            <if test="takeMeasure != null">take_measure = #{takeMeasure},</if>
+            <!--<if test="publishObject != null">publish_object = #{publishObject},</if>-->
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTrafficIncidentInfoById" parameterType="Long">
+        delete from sd_traffic_incident_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTrafficIncidentInfoByIds" parameterType="String">
+        delete from sd_traffic_incident_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--获取已发布的交通事件信息-->
+    <select id="getPublishIncidentInfo" resultType="java.util.Map">
+         select t.id incidentId,t.tunnel_id tunnelId,t.incident_type incidentType,
+         s.tunnel_name tunnelName,m.config_level_id configLevelId,t.report_time reportTime,t.occur_time occurTime
+         from sd_traffic_incident_info t
+         left join sd_tunnels s on t.tunnel_id = s.tunnel_id
+         left join sd_traffic_incident_measure m on m.incident_id = t.id
+        where t.publish_status = #{status}
+        order by t.update_time desc,t.create_time desc
+        limit 10
+    </select>
+</mapper>

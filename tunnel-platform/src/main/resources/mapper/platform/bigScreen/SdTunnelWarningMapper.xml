@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.bigScreenApi.mapper.fullView.SdTunnelWarningMapper">
+    
+    <select id="getTunnelWarningNumber" resultType="java.lang.Long">
+        SELECT
+--                tbl._date AS countdate,
+               IFNULL(tbr.totalnum, 0) AS totalnum
+        FROM (
+        SELECT @s :=@s + 1 AS _index,DATE(DATE_SUB(CURRENT_DATE, INTERVAL @s DAY)) AS _date
+        FROM
+        information_schema.tables,(SELECT @s := - 1) temp
+        WHERE @s <![CDATA[ < ]]> 29  ORDER BY   _date
+        ) AS tbl
+        LEFT JOIN (
+        SELECT   count(*) AS totalnum,  DATE(warning_time) warningdate
+        FROM sd_warning_info  GROUP BY  warning_time) AS tbr ON tbl._date = tbr.warningdate
+        GROUP BY    tbl._date
+    </select>
+    
+</mapper>

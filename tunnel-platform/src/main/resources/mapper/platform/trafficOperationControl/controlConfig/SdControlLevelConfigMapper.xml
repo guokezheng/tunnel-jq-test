@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.controlConfig.SdControlLevelConfigMapper">
+
+    <resultMap type="SdControlLevelConfig" id="SdControlLevelConfigResult">
+        <result property="id"    column="id"    />
+        <result property="controlType"    column="control_type"    />
+        <result property="controlLevel"    column="control_level"    />
+        <result property="status"    column="status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectSdControlLevelConfigVo">
+        select id, control_type, control_level, status, create_time, create_by, update_time, update_by, del_flag from sd_control_level_config
+    </sql>
+
+    <select id="selectSdControlLevelConfigList" parameterType="SdControlLevelConfig" resultMap="SdControlLevelConfigResult">
+        <include refid="selectSdControlLevelConfigVo"/>
+        <where>
+            <if test="controlType != null  and controlType != ''"> and control_type = #{controlType}</if>
+            <if test="controlLevel != null  and controlLevel != ''"> and control_level = #{controlLevel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+        order by create_time desc,update_time desc
+    </select>
+
+    <select id="selectSdControlLevelConfigById" parameterType="Long" resultMap="SdControlLevelConfigResult">
+        <include refid="selectSdControlLevelConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdControlLevelConfig" parameterType="SdControlLevelConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_control_level_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="controlType != null">control_type,</if>
+            <if test="controlLevel != null">control_level,</if>
+            <if test="status != null">status,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="controlType != null">#{controlType},</if>
+            <if test="controlLevel != null">#{controlLevel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdControlLevelConfig" parameterType="SdControlLevelConfig">
+        update sd_control_level_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="controlType != null">control_type = #{controlType},</if>
+            <if test="controlLevel != null">control_level = #{controlLevel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdControlLevelConfigById" parameterType="Long">
+        delete from sd_control_level_config where id = #{id}
+    </delete>
+
+    <delete id="deleteSdControlLevelConfigByIds" parameterType="String">
+        delete from sd_control_level_config where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--查询是否存在相同的管控类别、管控级别的数据-->
+    <select id="querySameLevelConfig" resultType="Integer">
+        select count(*) from sd_control_level_config
+        where control_type = #{controlType}
+        and control_level = #{controlLevel}
+        <if test="id != null and id != ''">
+            <!--修改时判断-->
+            and id != #{id}
+        </if>
+    </select>
+
+    <!--查询配置的管控类别-->
+    <select id="getControlTypeList" resultType="java.util.Map">
+        select distinct c.control_type controlType,d.dict_label typeName
+        from sd_control_level_config c
+        inner join sys_dict_data d on c.control_type = d.dict_value
+		where c.status = #{status}
+		and d.dict_type = #{dictType}
+		order by d.dict_sort
+    </select>
+
+    <!--根据管控类别查询配置的管控级别-->
+    <select id="getControlLevelByType" resultType="java.util.Map">
+      	select distinct c.control_level controlLevel,d.dict_label levelName
+		from sd_control_level_config c
+        inner join sys_dict_data d on c.control_level = d.dict_value
+		where c.status = #{status}
+		and c.control_type = #{controlType}
+		and d.dict_type = #{dictType}
+		order by d.dict_sort
+    </select>
+
+    <!--根据管控类别、管控级别查询配置信息-->
+    <select id="getConfigInfo" parameterType="SdControlLevelConfig" resultMap="SdControlLevelConfigResult">
+        <include refid="selectSdControlLevelConfigVo"/>
+      where control_type = #{controlType}
+       and control_level = #{controlLevel}
+    </select>
+
+</mapper>

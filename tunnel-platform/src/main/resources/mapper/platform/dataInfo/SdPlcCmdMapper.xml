@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdPlcCmdMapper">
+    
+    <resultMap type="SdPlcCmd" id="SdPlcCmdResult">
+        <result property="cmdId"    column="cmd_id"    />
+        <result property="cmdPlcId"    column="cmd_plc_id"    />
+        <result property="cmdDevicesType"    column="cmd_devices_type"    />
+        <result property="cmdDevices"    column="cmd_devices"    />
+        <result property="command"    column="command"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdPlcCmdVo">
+        select cmd_id, cmd_plc_id, cmd_devices_type,cmd_devices, command, create_by, create_time, update_by, update_time from sd_plc_cmd
+    </sql>
+
+    <select id="selectSdPlcCmdList" parameterType="SdPlcCmd" resultMap="SdPlcCmdResult">
+        <include refid="selectSdPlcCmdVo"/>
+        <where>  
+            <if test="cmdPlcId != null "> and cmd_plc_id = #{cmdPlcId}</if>
+            <if test="cmdDevicesType != null "> and cmd_devices_type = #{cmdDevicesType}</if>
+            <if test="cmdDevices != null  and cmdDevices != ''"> and cmd_devices = #{cmdDevices}</if>
+            <if test="command != null  and command != ''"> and command = #{command}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdPlcCmdById" parameterType="Long" resultMap="SdPlcCmdResult">
+        <include refid="selectSdPlcCmdVo"/>
+        where cmd_id = #{cmdId}
+    </select>
+        
+    <insert id="insertSdPlcCmd" parameterType="SdPlcCmd" useGeneratedKeys="true" keyProperty="cmdId">
+        insert into sd_plc_cmd
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cmdPlcId != null">cmd_plc_id,</if>
+            <if test="cmdDevicesType != null">cmd_devices_type,</if>
+            <if test="cmdDevices != null">cmd_devices,</if>
+            <if test="command != null">command,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cmdPlcId != null">#{cmdPlcId},</if>
+            <if test="cmdDevicesType != null">#{cmdDevicesType},</if>
+            <if test="cmdDevices != null">#{cmdDevices},</if>
+            <if test="command != null">#{command},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdPlcCmd" parameterType="SdPlcCmd">
+        update sd_plc_cmd
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cmdPlcId != null">cmd_plc_id = #{cmdPlcId},</if>
+            <if test="cmdDevicesType != null">cmd_devices_type = #{cmdDevicesType},</if>
+            <if test="cmdDevices != null">cmd_devices = #{cmdDevices},</if>
+            <if test="command != null">command = #{command},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where cmd_id = #{cmdId}
+    </update>
+
+    <delete id="deleteSdPlcCmdById" parameterType="Long">
+        delete from sd_plc_cmd where cmd_id = #{cmdId}
+    </delete>
+
+    <delete id="deleteSdPlcCmdByIds" parameterType="String">
+        delete from sd_plc_cmd where cmd_id in 
+        <foreach item="cmdId" collection="array" open="(" separator="," close=")">
+            #{cmdId}
+        </foreach>
+    </delete>
+</mapper>

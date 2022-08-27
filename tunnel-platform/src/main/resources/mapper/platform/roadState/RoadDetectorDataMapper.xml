@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.roadState.SdRoadDetectorDataMapper">
+
+    <resultMap type="SdRoadDetectorData" id="SdRoadDetectorDataResult">
+        <result property="id"    column="id"    />
+        <result property="devno"    column="devno"    />
+        <result property="pavementtemp"    column="pavementtemp"    />
+        <result property="icepointtemp"    column="icepointtemp"    />
+        <result property="pavementstatus"    column="pavementstatus"    />
+        <result property="frictionalcoe"    column="frictionalcoe"    />
+        <result property="waterfilmheigh"    column="waterfilmheigh"    />
+        <result property="waterthickness"    column="waterthickness"    />
+        <result property="snowthickness"    column="snowthickness"    />
+        <result property="icethickness"    column="icethickness"    />
+        <result property="saltnessnacl"    column="saltnessNaCl"    />
+        <result property="saltnessmgcl2"    column="saltnessMgCl2"    />
+        <result property="saltnesscacl2"    column="saltnessCaCl2"    />
+        <result property="icepercent"    column="icepercent"    />
+        <result property="icepossibiblity"    column="icepossibiblity"    />
+        <result property="timeCollect"    column="time_collect"    />
+        <result property="timeUpdate"    column="time_update"    />
+    </resultMap>
+
+    <sql id="selectSdRoadDetectorDataVo">
+        select id, devno, pavementtemp, icepointtemp, pavementstatus, frictionalcoe, waterfilmheigh, waterthickness, snowthickness, icethickness, saltnessNaCl, saltnessMgCl2, saltnessCaCl2, icepercent, icepossibiblity, time_collect, time_update from sd_road_detector_data
+    </sql>
+
+    <select id="selectSdRoadDetectorDataList" parameterType="SdRoadDetectorDataDTO" resultType="com.tunnel.platform.domain.roadState.SdRoadDetectorDataDTO">
+        SELECT
+        rdd.id,
+        rdd.devno,
+        rdd.pavementtemp,
+        rdd.icepointtemp,
+        rdd.pavementstatus,
+        rdd.frictionalcoe,
+        rdd.waterfilmheigh,
+        rdd.waterthickness,
+        rdd.snowthickness,
+        rdd.icethickness,
+        rdd.saltnessNaCl,
+        rdd.saltnessMgCl2,
+        rdd.saltnessCaCl2,
+        rdd.icepercent,
+        rdd.icepossibiblity,
+        rdd.time_collect AS timeCollect,
+        rdd.time_update AS timeUpdate,
+        sd.eq_name AS eqName,
+        sd.eq_direction AS eqDirection,
+        sd.stake_mark AS stakeMark,
+        st.tunnel_name AS tunnelName,
+        st.tunnel_code AS tunnelCode,
+        st.tunnel_address AS tunnelAddress
+        FROM sd_road_detector_data AS rdd
+        LEFT JOIN sd_devices AS sd ON sd.eq_id = rdd.devno
+        LEFT JOIN sd_tunnels AS st ON st.tunnel_id = sd.eq_tunnel_id
+        <where>
+            <if test="plcTunnelId != null  and plcTunnelId != ''"> AND st.tunnel_id = #{plcTunnelId}</if>
+            <if test="eqDirection != null  and eqDirection != ''"> AND sd.eq_direction = #{eqDirection}</if>
+            <if test="status != null  and status != ''">
+                <choose>
+                    <when test="status == 1">
+                       AND 100 > rdd.waterfilmheigh AND 2500 > rdd.pavementtemp
+                    </when >
+                    <when test="status == 2">
+                        AND rdd.pavementtemp > 2500
+                    </when >
+                    <when test="status == 3">
+                        AND rdd.waterfilmheigh > 100
+                    </when >
+                    <otherwise>
+                    </otherwise>
+                </choose>
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (st.dept_id = #{params.deptId} OR st.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+        ORDER BY timeCollect DESC
+    </select>
+
+    <select id="selectSdRoadDetectorDataById" parameterType="Integer" resultType="com.tunnel.platform.domain.roadState.SdRoadDetectorData">
+        <include refid="selectSdRoadDetectorDataVo"/>
+        where id = #{id}
+    </select>
+    <select id="statisticsRoadMonitoring" resultType="java.util.Map">
+        SELECT
+        SUM(CASE WHEN 100 > waterfilmheigh AND 2500 > pavementtemp THEN 1 ELSE 0 END ) AS normal,
+        SUM(CASE WHEN pavementtemp > 2500 THEN 1 ELSE 0 END ) AS hyperthermy,
+        SUM(CASE WHEN waterfilmheigh > 100 THEN 1 ELSE 0 END ) AS hydrops
+        FROM
+        sd_road_detector_data
+    </select>
+
+    <select id="statisticsYearSdDevices" resultType="java.util.Map">
+        SELECT
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '1' THEN 1 ELSE 0 END), 0) AS m1,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '2' THEN 1 ELSE 0 END), 0) AS m2,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '3' THEN 1 ELSE 0 END), 0) AS m3,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '4' THEN 1 ELSE 0 END), 0) AS m4,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '5' THEN 1 ELSE 0 END), 0) AS m5,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '6' THEN 1 ELSE 0 END), 0) AS m6,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '7' THEN 1 ELSE 0 END), 0) AS m7,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '8' THEN 1 ELSE 0 END), 0) AS m8,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '9' THEN 1 ELSE 0 END), 0) AS m9,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '10' THEN 1  ELSE 0 END), 0) AS m10,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '11' THEN 1  ELSE 0 END), 0) AS m11,
+        IFNULL(SUM(CASE WHEN MONTH(time_collect) = '12' THEN 1  ELSE 0 END), 0) AS m12
+        FROM sd_road_detector_data
+        WHERE YEAR(time_collect) = #{year}
+        AND devno = #{devno}
+        AND (waterfilmheigh > 100 OR pavementtemp > 2500)
+    </select>
+
+    <select id="statisticsWarningTrendSearchMonth" resultType="java.util.Map">
+        SELECT
+        COUNT(*) AS `count`,
+        DATE_FORMAT(time_collect, '%Y-%m') AS `month`
+        FROM
+        sd_road_detector_data
+        WHERE DATE_FORMAT(time_collect, '%Y-%m') BETWEEN CONCAT(#{startTime}, '-01') AND CONCAT(#{endTime}, '-01')
+        AND (waterfilmheigh > 100 OR pavementtemp > 2500)
+        GROUP BY DATE_FORMAT(time_collect, '%Y-%m')
+    </select>
+
+    <select id="statisticsWarningTrendSearchDay" resultType="java.util.Map">
+        SELECT
+        COUNT(*) AS `count`,
+        DATE_FORMAT(time_collect, '%Y-%m-%d') AS `month`
+        FROM
+        sd_road_detector_data
+        WHERE DATE_FORMAT(time_collect, '%Y-%m-%d') BETWEEN #{startTime} AND #{endTime}
+        AND (waterfilmheigh > 100 OR pavementtemp > 2500)
+        GROUP BY DATE_FORMAT(time_collect, '%Y-%m-%d')
+    </select>
+
+    <select id="statisticsSearchDay" resultType="java.util.Map">
+        SELECT
+            a.order_hour as order_hour,
+            IFNULL(b.pavementtemp,0) pavementtemp,
+            IFNULL(b.waterthickness,0) waterthickness,
+            IFNULL(b.snowthickness,0) snowthickness,
+            IFNULL(b.frictionalcoe,0) frictionalcoe
+        FROM(
+            SELECT 0 AS order_hour UNION ALL SELECT 1 AS order_hour UNION ALL
+            SELECT 2 AS order_hour UNION ALL SELECT 3 AS order_hour UNION ALL
+            SELECT 4 AS order_hour UNION ALL SELECT 5 AS order_hour UNION ALL
+            SELECT 6 AS order_hour UNION ALL SELECT 7 AS order_hour UNION ALL
+            SELECT 8 AS order_hour UNION ALL SELECT 9 AS order_hour UNION ALL
+            SELECT 10 AS order_hour UNION ALL SELECT 11 AS order_hour UNION ALL
+            SELECT 12 AS order_hour UNION ALL SELECT 13 AS order_hour UNION ALL
+            SELECT 14 AS order_hour UNION ALL SELECT 15 AS order_hour UNION ALL
+            SELECT 16 AS order_hour UNION ALL SELECT 17 AS order_hour UNION ALL
+            SELECT 18 AS order_hour UNION ALL SELECT 19 AS order_hour UNION ALL
+            SELECT 20 AS order_hour UNION ALL SELECT 21 AS order_hour UNION ALL
+            SELECT 22 AS order_hour UNION ALL SELECT 23 AS order_hour) as a
+        LEFT JOIN
+            (SELECT
+                HOUR(rdd.time_collect) AS order_hour, rdd.pavementtemp as pavementtemp,
+                rdd.waterthickness as waterthickness, rdd.snowthickness as snowthickness,
+                rdd.frictionalcoe as frictionalcoe
+            from
+                sd_road_detector_data rdd
+            left join
+                sd_devices sd on rdd.devno = sd.eq_id
+            WHERE
+                DATE_FORMAT(rdd.time_collect, '%Y-%m-%d')
+            BETWEEN str_to_date(concat(#{startTime}," 00:00:00"),'%Y-%m-%d %T')
+            AND str_to_date(concat(#{startTime}," 23:59:59"),'%Y-%m-%d %T')
+            AND sd.eq_tunnel_id = #{tunnelId}
+            GROUP BY order_hour) as b
+        ON a.order_hour = b.order_hour
+        WHERE a.order_hour <![CDATA[ <= ]]> HOUR(now()) ORDER BY order_hour
+    </select>
+
+    <select id="statisticsSearchMon" resultType="java.util.Map">
+        SELECT
+            a.curr_date as curr_date,
+            IFNULL(b.pavementtemp,0) pavementtemp,
+            IFNULL(b.waterthickness,0) waterthickness,
+            IFNULL(b.snowthickness,0) snowthickness,
+            IFNULL(b.frictionalcoe,0) frictionalcoe
+        FROM(
+            SELECT date_format( date_add(CURDATE(), INTERVAL - t.help_topic_id DAY ), '%Y-%m-%d' ) AS 'curr_date'
+            FROM mysql.help_topic t WHERE t.help_topic_id <![CDATA[<]]> DATEDIFF(CURDATE(), concat(#{startTime},'-01')) + 1
+        ) as a
+        LEFT JOIN
+        (SELECT
+            DATE_FORMAT(rdd.time_collect, '%Y-%m-%d') AS date_str, rdd.pavementtemp as pavementtemp,
+            rdd.waterthickness as waterthickness, rdd.snowthickness as snowthickness,
+            rdd.frictionalcoe as frictionalcoe
+            from
+            sd_road_detector_data rdd
+            left join
+            sd_devices sd on rdd.devno = sd.eq_id
+            WHERE
+            1=1
+            AND sd.eq_tunnel_id = #{tunnelId}
+            GROUP BY DATE_FORMAT(rdd.time_collect, '%Y-%m-%d')
+        ) as b
+        ON a.curr_date = b.date_str ORDER BY a.curr_date
+    </select>
+
+    <select id="statisticsSearchYear" resultType="java.util.Map">
+        SELECT
+            a.date, IFNULL(b.pavementtemp,0) pavementtemp,
+            IFNULL(b.waterthickness,0) waterthickness,
+            IFNULL(b.snowthickness,0) snowthickness,
+            IFNULL(b.frictionalcoe,0) frictionalcoe
+        FROM
+            (SELECT CONCAT(#{startTime},"-01") as date union
+            SELECT CONCAT(#{startTime},"-02") as date union
+            SELECT CONCAT(#{startTime},"-03") as date union
+            SELECT CONCAT(#{startTime},"-04") as date union
+            SELECT CONCAT(#{startTime},"-05") as date union
+            SELECT CONCAT(#{startTime},"-06") as date union
+            SELECT CONCAT(#{startTime},"-07") as date union
+            SELECT CONCAT(#{startTime},"-08") as date union
+            SELECT CONCAT(#{startTime},"-09") as date union
+            SELECT CONCAT(#{startTime},"-10") as date union
+            SELECT CONCAT(#{startTime},"-11") as date union
+            SELECT CONCAT(#{startTime},"-12") as date ) a
+        LEFT JOIN
+            (SELECT DATE_FORMAT(rdd.time_collect, '%Y-%m') as stat_time, rdd.pavementtemp as pavementtemp,
+                rdd.waterthickness as waterthickness, rdd.snowthickness as snowthickness,
+                rdd.frictionalcoe as frictionalcoe
+            FROM
+                sd_road_detector_data rdd
+            LEFT JOIN
+                sd_devices sd
+            ON
+                rdd.devno = sd.eq_id
+            WHERE date_format(rdd.time_collect,'%Y')= #{startTime}
+            AND sd.eq_tunnel_id = #{tunnelId}
+            GROUP BY date_format(rdd.time_collect,'%Y-%m')
+        ) b
+        on a.date = b.stat_time
+        WHERE a.date <![CDATA[ <= ]]> DATE_FORMAT(CURDATE(), '%Y-%m')
+        ORDER BY a.date
+    </select>
+
+    <select id="statisticsSearcMaxPavementtemp" resultType="java.util.Map">
+        SELECT
+	        rdd.pavementtemp as pavementtemp,
+	        rdd.time_collect,
+	        sd.eq_name AS eqName,
+	        st.tunnel_name AS tunnelName
+        FROM
+	        sd_road_detector_data AS rdd
+        LEFT JOIN sd_devices AS sd ON sd.eq_id = rdd.devno
+        LEFT JOIN sd_tunnels AS st ON st.tunnel_id = sd.eq_tunnel_id
+        WHERE
+	        pavementtemp = (
+		    SELECT
+			    MAX(cast(pavementtemp AS DECIMAL(5, 1))) AS pavementtemp
+		    FROM
+			    sd_road_detector_data
+	        )
+        AND DATE_FORMAT(rdd.time_collect,'%Y') = #{startTime}
+    </select>
+
+    <select id="statisticsSearchPavementstatusMonth" resultType="java.util.Map">
+        SELECT
+            max(CONVERT(rdd.frictionalcoe, DECIMAL)) AS frictionalcoe,
+            DATE_FORMAT(rdd.time_collect, '%Y-%m-%d') AS `day`
+        FROM
+	        sd_road_detector_data rdd
+        LEFT JOIN sd_devices sd ON rdd.devno = sd.eq_id
+        WHERE
+	        DATE_FORMAT(rdd.time_collect, '%Y-%m-%d') BETWEEN CONCAT(#{startTime}, '-01') and CONCAT(#{startTime}, '-31')
+	        AND sd.eq_tunnel_id =#{tunnelId}
+		GROUP BY
+			DATE_FORMAT(rdd.time_collect, '%Y-%m-%d')
+		ORDER BY date_format(rdd.time_collect,'%Y-%m-%d')
+    </select>
+
+    <select id="statisticsSearchPavementstatusYear" resultType="java.util.Map">
+        select
+            max(CONVERT(rdd.frictionalcoe, DECIMAL)) AS frictionalcoe,
+            date_format(rdd.time_collect,'%Y-%m') AS `month`
+        from
+            sd_road_detector_data rdd
+        LEFT JOIN sd_devices sd ON rdd.devno = sd.eq_id
+        WHERE date_format(rdd.time_collect,'%Y')= #{startTime}
+        AND sd.eq_tunnel_id =#{tunnelId}
+        GROUP BY date_format(rdd.time_collect,'%Y-%m')
+        ORDER BY date_format(rdd.time_collect,'%Y-%m')
+    </select>
+
+    <select id="statisticsSearchPavementstatusDay" resultType="java.util.Map">
+        SELECT
+        rdd.frictionalcoe as frictionalcoe,
+        DATE_FORMAT(rdd.time_collect, '%Y-%m-%d %H:%i:%S') AS `hour`
+        FROM
+        sd_road_detector_data rdd
+        left JOIN sd_devices sd on rdd.devno = sd.eq_id
+        WHERE DATE_FORMAT(rdd.time_collect, '%Y-%m-%d')
+            BETWEEN str_to_date(concat(#{startTime}," 00:00:00"),'%Y-%m-%d %T') AND str_to_date(concat(#{startTime}," 23:59:59"),'%Y-%m-%d %T')
+        AND sd.eq_tunnel_id =#{tunnelId}
+        ORDER BY date_format(rdd.time_collect,'%Y-%m-%d %H:%i:%S')
+    </select>
+
+    <select id="selectByEqDeno" resultType="java.util.Map">
+        SELECT
+	        pavementtemp, pavementstatus, frictionalcoe, waterfilmheigh, waterthickness,
+	        snowthickness, icethickness,  DATE_FORMAT(time_collect, '%Y-%m-%d %H:%i:%S') AS timeCollect
+        FROM
+	        sd_road_detector_data
+        WHERE
+	        devno = #{eqNumber}
+        ORDER BY
+	        time_collect DESC
+        LIMIT 0,1
+    </select>
+
+    <insert id="insertSdRoadDetectorData" parameterType="SdRoadDetectorData" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_road_detector_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="devno != null and devno != ''">devno,</if>
+            <if test="pavementtemp != null">pavementtemp,</if>
+            <if test="icepointtemp != null">icepointtemp,</if>
+            <if test="pavementstatus != null">pavementstatus,</if>
+            <if test="frictionalcoe != null">frictionalcoe,</if>
+            <if test="waterfilmheigh != null">waterfilmheigh,</if>
+            <if test="waterthickness != null">waterthickness,</if>
+            <if test="snowthickness != null">snowthickness,</if>
+            <if test="icethickness != null">icethickness,</if>
+            <if test="saltnessnacl != null">saltnessNaCl,</if>
+            <if test="saltnessmgcl2 != null">saltnessMgCl2,</if>
+            <if test="saltnesscacl2 != null">saltnessCaCl2,</if>
+            <if test="icepercent != null">icepercent,</if>
+            <if test="icepossibiblity != null">icepossibiblity,</if>
+            <if test="timeCollect != null">time_collect,</if>
+            <if test="timeUpdate != null">time_update,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="devno != null and devno != ''">#{devno},</if>
+            <if test="pavementtemp != null">#{pavementtemp},</if>
+            <if test="icepointtemp != null">#{icepointtemp},</if>
+            <if test="pavementstatus != null">#{pavementstatus},</if>
+            <if test="frictionalcoe != null">#{frictionalcoe},</if>
+            <if test="waterfilmheigh != null">#{waterfilmheigh},</if>
+            <if test="waterthickness != null">#{waterthickness},</if>
+            <if test="snowthickness != null">#{snowthickness},</if>
+            <if test="icethickness != null">#{icethickness},</if>
+            <if test="saltnessnacl != null">#{saltnessnacl},</if>
+            <if test="saltnessmgcl2 != null">#{saltnessmgcl2},</if>
+            <if test="saltnesscacl2 != null">#{saltnesscacl2},</if>
+            <if test="icepercent != null">#{icepercent},</if>
+            <if test="icepossibiblity != null">#{icepossibiblity},</if>
+            <if test="timeCollect != null">now(),</if>
+            <if test="timeUpdate != null">now(),</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdRoadDetectorData" parameterType="SdRoadDetectorData">
+        update sd_road_detector_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="devno != null and devno != ''">devno = #{devno},</if>
+            <if test="pavementtemp != null">pavementtemp = #{pavementtemp},</if>
+            <if test="icepointtemp != null">icepointtemp = #{icepointtemp},</if>
+            <if test="pavementstatus != null">pavementstatus = #{pavementstatus},</if>
+            <if test="frictionalcoe != null">frictionalcoe = #{frictionalcoe},</if>
+            <if test="waterfilmheigh != null">waterfilmheigh = #{waterfilmheigh},</if>
+            <if test="waterthickness != null">waterthickness = #{waterthickness},</if>
+            <if test="snowthickness != null">snowthickness = #{snowthickness},</if>
+            <if test="icethickness != null">icethickness = #{icethickness},</if>
+            <if test="saltnessnacl != null">saltnessNaCl = #{saltnessnacl},</if>
+            <if test="saltnessmgcl2 != null">saltnessMgCl2 = #{saltnessmgcl2},</if>
+            <if test="saltnesscacl2 != null">saltnessCaCl2 = #{saltnesscacl2},</if>
+            <if test="icepercent != null">icepercent = #{icepercent},</if>
+            <if test="icepossibiblity != null">icepossibiblity = #{icepossibiblity},</if>
+            <if test="timeCollect != null">time_collect = #{timeCollect},</if>
+            <if test="timeUpdate != null">time_update = #{timeUpdate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdRoadDetectorDataById" parameterType="Integer">
+        delete from sd_road_detector_data where id = #{id}
+    </delete>
+
+    <delete id="deleteSdRoadDetectorDataByIds" parameterType="String">
+        delete from sd_road_detector_data where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

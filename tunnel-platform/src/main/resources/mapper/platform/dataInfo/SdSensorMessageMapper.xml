@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdSensorMessageMapper">
+
+    <resultMap type="SdSensorMessage" id="SdSensorMessageResult">
+        <result property="id"    column="id"    />
+        <result property="eqId"    column="eq_id"    />
+        <result property="eqType"    column="eq_type"    />
+        <result property="sensorValue"    column="sensor_value"    />
+        <result property="eqTunnelId"    column="eq_tunnel_id"    />
+        <result property="gettime"    column="getTime"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="sdDevice"  column="eq_id" javaType="SdDevices" resultMap="sdDeviceResult" />
+        <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="SdEquipmentTypeResult" />
+        <association property="sdTunnel"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+    </resultMap>
+
+	<resultMap type="SdTunnels" id="tunnelResult" >
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+
+	<resultMap type="SdEquipmentType" id="SdEquipmentTypeResult" >
+		<id  property="typeId" column="type_id" />
+		<result property="typeName" column="type_name"   />
+	</resultMap>
+	<resultMap type="SdDevices" id="sdDeviceResult" >
+		<id  property="eqId" column="eq_id" />
+		<result property="eqName" column="eq_name"   />
+	</resultMap>
+    <sql id="selectSdSensorMessageVo">
+        select id, eq_id, eq_type, sensor_value,eq_tunnel_id, getTime, create_time, update_time from sd_sensor_message
+    </sql>
+
+    <select id="selectSdSensorMessageList" parameterType="SdSensorMessage" resultMap="SdSensorMessageResult">
+        select a.id, a.eq_id,b.eq_name, a.eq_type,c.type_name, a.sensor_value, a.eq_tunnel_id, d.tunnel_name, a.getTime, a.create_time, a.update_time
+        from sd_sensor_message a
+        left join sd_devices b on a.eq_id = b.eq_id
+        left join sd_equipment_type c on a.eq_type = c.type_id
+        left join sd_tunnels d on a.eq_tunnel_id = d.tunnel_id
+        <where>
+            <if test="eqId != null  and eqId != ''"> and a.eq_id = #{eqId}</if>
+            <if test="eqType != null  and eqType != ''"> and a.eq_type = #{eqType}</if>
+            <if test="sensorValue != null "> and a.sensor_value = #{sensorValue}</if>
+            <if test="eqTunnelId != null "> and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="gettime != null "> and a.getTime = #{gettime}</if>
+        </where>
+	       ORDER BY a.gettime DESC
+    </select>
+  <!--   <select id="selectSdSensorEqsByTunnelId" parameterType="SdSensorMessage" resultMap="SdSensorMessageResult">
+        SELECT
+			a.id,
+			a.eq_id,
+			b.eq_name,
+			a.eq_type,
+			a.sensor_value,
+			a.eq_tunnel_id,
+			d.tunnel_name,
+			a.getTime,
+			a.create_time,
+			a.update_time
+		FROM
+			sd_sensor_message a
+		LEFT JOIN sd_devices b ON a.eq_id = b.eq_id
+		LEFT JOIN sd_tunnels d ON a.eq_tunnel_id = d.tunnel_id
+		where a.eq_tunnel_id = 'S29-LinYiCompany-BaiYanStation-001'
+        <where>
+            <if test="eqTunnelId != null "> and a.eq_tunnel_id = #{eqTunnelId}</if>
+        </where>
+	       GROUP BY a.eq_id
+    </select> -->
+
+    <select id="selectSdSensorMessageById" parameterType="Long" resultMap="SdSensorMessageResult">
+        <include refid="selectSdSensorMessageVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdSensorMessage" parameterType="SdSensorMessage" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_sensor_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">eq_id,</if>
+            <if test="eqType != null">eq_type,</if>
+            <if test="sensorValue != null">sensor_value,</if>
+            <if test="eqTunnelId != null">eq_tunnel_id,</if>
+            <if test="gettime != null">getTime,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">#{eqId},</if>
+            <if test="eqType != null">#{eqType},</if>
+            <if test="sensorValue != null">#{sensorValue},</if>
+            <if test="eqTunnelId != null">#{eqTunnelId},</if>
+            <if test="gettime != null">#{gettime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdSensorMessage" parameterType="SdSensorMessage">
+        update sd_sensor_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eqId != null">eq_id = #{eqId},</if>
+            <if test="eqType != null">eq_type = #{eqType},</if>
+            <if test="sensorValue != null">sensor_value = #{sensorValue},</if>
+            <if test="eqTunnelId != null">eq_tunnel_id = #{eqTunnelId},</if>
+            <if test="gettime != null">getTime = #{gettime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdSensorMessageById" parameterType="Long">
+        delete from sd_sensor_message where id = #{id}
+    </delete>
+
+    <delete id="deleteSdSensorMessageByIds" parameterType="String">
+        delete from sd_sensor_message where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSdSensorMessageNow" parameterType="SdSensorMessage" resultMap="SdSensorMessageResult">
+        select id, a.eq_id, a.eq_type, a.sensor_value, a.eq_tunnel_id, a.getTime, a.create_time, a.update_time
+        from sd_sensor_message a
+        where a.eq_tunnel_id = #{eqTunnelId}
+        and a.eq_type = #{eqType}
+        and to_days(create_time) = to_days(now());
+    </select>
+
+    <select id="selectSdSensorMessageByTime" parameterType="SdSensorMessage" resultMap="SdSensorMessageResult">
+        select id, eq_id, eq_type, sensor_value, eq_tunnel_id, getTime, create_time, update_time
+        from sd_sensor_message
+        <where>
+            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
+	        <if test="params.beginTime != null and params.beginTime != '' and params.endTime != null and params.endTime != '' ">
+				and create_time between  #{params.beginTime} and #{params.endTime}
+			</if>
+        </where>
+    </select>
+
+</mapper>

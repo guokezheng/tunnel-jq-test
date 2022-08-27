@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.emeResource.SdEmergencyOrgMapper">
+    
+    <resultMap type="SdEmergencyOrg" id="SdEmergencyOrgResult">
+        <result property="orgId"    column="org_id"    />
+        <result property="orgName"    column="org_name"    />
+        <result property="stationName"    column="station_name"    />
+        <result property="orgAddress"    column="org_address"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="outsourceUnit"    column="outsource_unit"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdEmergencyOrgVo">
+        select org_id, org_name, station_name, org_address, longitude, latitude, outsource_unit, create_by, create_time, update_by, update_time from sd_emergency_org
+    </sql>
+    <sql id="selectSdEmergencyOrg">
+        select org_id,org_name, station_name, org_address, longitude, latitude, outsource_unit from sd_emergency_org
+    </sql>
+    <select id="selectSdEmergencyOrgList" parameterType="SdEmergencyOrg" resultMap="SdEmergencyOrgResult">
+        <include refid="selectSdEmergencyOrgVo"/>
+        <where>  
+            <if test="orgName != null  and orgName != ''"> and org_name like concat('%', #{orgName}, '%')</if>
+            <if test="stationName != null  and stationName != ''"> and station_name like concat('%', #{stationName}, '%')</if>
+            <if test="orgAddress != null  and orgAddress != ''"> and org_address = #{orgAddress}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="outsourceUnit != null  and outsourceUnit != ''"> and outsource_unit = #{outsourceUnit}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEmergencyOrgByOrgId" parameterType="Long" resultMap="SdEmergencyOrgResult">
+        <include refid="selectSdEmergencyOrg"/>
+        where org_id = #{orgId}
+    </select>
+        
+    <insert id="insertSdEmergencyOrg" parameterType="SdEmergencyOrg" useGeneratedKeys="true" keyProperty="orgId">
+        insert into sd_emergency_org
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orgName != null">org_name,</if>
+            <if test="stationName != null">station_name,</if>
+            <if test="orgAddress != null">org_address,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="outsourceUnit != null">outsource_unit,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orgName != null">#{orgName},</if>
+            <if test="stationName != null">#{stationName},</if>
+            <if test="orgAddress != null">#{orgAddress},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="outsourceUnit != null">#{outsourceUnit},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEmergencyOrg" parameterType="SdEmergencyOrg">
+        update sd_emergency_org
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orgName != null">org_name = #{orgName},</if>
+            <if test="stationName != null">station_name = #{stationName},</if>
+            <if test="orgAddress != null">org_address = #{orgAddress},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="outsourceUnit != null">outsource_unit = #{outsourceUnit},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where org_id = #{orgId}
+    </update>
+
+    <delete id="deleteSdEmergencyOrgByOrgId" parameterType="Long">
+        delete from sd_emergency_org where org_id = #{orgId}
+    </delete>
+
+    <delete id="deleteSdEmergencyOrgByOrgIds" parameterType="String">
+        delete from sd_emergency_org where org_id in 
+        <foreach item="orgId" collection="array" open="(" separator="," close=")">
+            #{orgId}
+        </foreach>
+    </delete>
+</mapper>

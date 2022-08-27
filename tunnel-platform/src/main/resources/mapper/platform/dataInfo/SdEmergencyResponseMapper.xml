@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.dataInfo.SdEmergencyResponseMapper">
+    
+    <resultMap type="SdEmergencyResponse" id="SdEmergencyResponseResult">
+        <result property="responseId"    column="response_id"    />
+        <result property="responseName"    column="response_name"    />
+        <result property="responseTunnel"    column="response_tunnel"    />
+        <result property="responseType"    column="response_type"    />
+        <result property="responseEqName"    column="response_eq_name"    />
+        <result property="responseEqState"    column="response_eq_state"    />
+        <result property="responseRemark"    column="response_remark"    />
+        <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+        <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
+    </resultMap>
+    
+    <resultMap id="tunnelResult" type="SdTunnels">
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+	
+	<resultMap id="eqTypeResult" type="SdEquipmentType">
+		<id  property="typeId" column="type_id" />
+		<result property="typeName" column="type_name"   />
+	</resultMap>
+
+    <sql id="selectSdEmergencyResponseVo">
+        select response_id, response_name, response_tunnel, response_type, response_eq_name, response_eq_state, response_remark from sd_emergency_response
+    </sql>
+
+    <select id="selectSdEmergencyResponseList" parameterType="SdEmergencyResponse" resultMap="SdEmergencyResponseResult">
+        <include refid="selectSdEmergencyResponseVo"/>
+        <where>  
+            <if test="responseName != null  and responseName != ''"> and response_name like concat('%', #{responseName}, '%')</if>
+            <if test="responseTunnel != null  and responseTunnel != ''"> and response_tunnel = #{responseTunnel}</if>
+            <if test="responseType != null  and responseType != ''"> and response_type = #{responseType}</if>
+            <if test="responseEqName != null  and responseEqName != ''"> and response_eq_name like concat('%', #{responseEqName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectDropSdEmergencyResponseList" parameterType="SdEmergencyResponse" resultMap="SdEmergencyResponseResult">
+        select a.response_id, a.response_name, b.tunnel_name, c.type_name, a.response_eq_name, a.response_eq_state, a.response_remark 
+        from sd_emergency_response a
+        left join sd_tunnels b on a.response_tunnel = b.tunnel_id
+        left join sd_equipment_type c on a.response_type = c.type_id
+        <where>  
+            <if test="responseName != null  and responseName != ''"> and response_name like concat('%', #{responseName}, '%')</if>
+            <if test="responseTunnel != null  and responseTunnel != ''"> and response_tunnel = #{responseTunnel}</if>
+            <if test="responseType != null  and responseType != ''"> and response_type = #{responseType}</if>
+            <if test="responseEqName != null  and responseEqName != ''"> and response_eq_name like concat('%', #{responseEqName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEmergencyResponseById" parameterType="Long" resultMap="SdEmergencyResponseResult">
+        <include refid="selectSdEmergencyResponseVo"/>
+        where response_id = #{responseId}
+    </select>
+        
+    <insert id="insertSdEmergencyResponse" parameterType="SdEmergencyResponse" useGeneratedKeys="true" keyProperty="responseId">
+        insert into sd_emergency_response
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="responseName != null">response_name,</if>
+            <if test="responseTunnel != null">response_tunnel,</if>
+            <if test="responseType != null">response_type,</if>
+            <if test="responseEqName != null">response_eq_name,</if>
+            <if test="responseEqState != null">response_eq_state,</if>
+            <if test="responseRemark != null">response_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="responseName != null">#{responseName},</if>
+            <if test="responseTunnel != null">#{responseTunnel},</if>
+            <if test="responseType != null">#{responseType},</if>
+            <if test="responseEqName != null">#{responseEqName},</if>
+            <if test="responseEqState != null">#{responseEqState},</if>
+            <if test="responseRemark != null">#{responseRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEmergencyResponse" parameterType="SdEmergencyResponse">
+        update sd_emergency_response
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="responseName != null">response_name = #{responseName},</if>
+            <if test="responseTunnel != null">response_tunnel = #{responseTunnel},</if>
+            <if test="responseType != null">response_type = #{responseType},</if>
+            <if test="responseEqName != null">response_eq_name = #{responseEqName},</if>
+            <if test="responseEqState != null">response_eq_state = #{responseEqState},</if>
+            <if test="responseRemark != null">response_remark = #{responseRemark},</if>
+        </trim>
+        where response_id = #{responseId}
+    </update>
+
+    <delete id="deleteSdEmergencyResponseById" parameterType="Long">
+        delete from sd_emergency_response where response_id = #{responseId}
+    </delete>
+
+    <delete id="deleteSdEmergencyResponseByIds" parameterType="String">
+        delete from sd_emergency_response where response_id in 
+        <foreach item="responseId" collection="array" open="(" separator="," close=")">
+            #{responseId}
+        </foreach>
+    </delete>
+    
+</mapper>

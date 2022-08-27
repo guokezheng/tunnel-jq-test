@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.situationModel.SdTrafficIncidentMonitorMapper">
+
+    <resultMap type="SdTrafficIncidentMonitor" id="SdTrafficIncidentMonitorResult">
+        <result property="monitorId"    column="monitor_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="direction"    column="direction"    />
+        <result property="stakeNumber"    column="stake_number"    />
+        <result property="stakeDistance"    column="stake_distance"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="incidentSource"    column="incident_source"    />
+        <result property="incidentType"    column="incident_type"    />
+        <result property="incidentContent"    column="incident_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficIncidentMonitorVo">
+        select monitor_id, tunnel_id, direction, stake_number, stake_distance, start_time, end_time, incident_source, incident_type, incident_content, create_time, create_by, update_time, update_by from sd_traffic_incident_monitor
+    </sql>
+
+    <select id="selectSdTrafficIncidentMonitorList" parameterType="SdTrafficIncidentMonitor" resultMap="SdTrafficIncidentMonitorResult">
+        <include refid="selectSdTrafficIncidentMonitorVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="stakeNumber != null  and stakeNumber != ''"> and stake_number = #{stakeNumber}</if>
+            <if test="stakeDistance != null  and stakeDistance != ''"> and stake_distance = #{stakeDistance}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="incidentSource != null  and incidentSource != ''"> and incident_source = #{incidentSource}</if>
+            <if test="incidentType != null  and incidentType != ''"> and incident_type = #{incidentType}</if>
+            <if test="incidentContent != null  and incidentContent != ''"> and incident_content = #{incidentContent}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficIncidentMonitorByMonitorId" parameterType="Long" resultMap="SdTrafficIncidentMonitorResult">
+        <include refid="selectSdTrafficIncidentMonitorVo"/>
+        where monitor_id = #{monitorId}
+    </select>
+
+    <insert id="insertSdTrafficIncidentMonitor" parameterType="SdTrafficIncidentMonitor">
+        insert into sd_traffic_incident_monitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="monitorId != null">monitor_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="direction != null">direction,</if>
+            <if test="stakeNumber != null">stake_number,</if>
+            <if test="stakeDistance != null">stake_distance,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="incidentSource != null">incident_source,</if>
+            <if test="incidentType != null">incident_type,</if>
+            <if test="incidentContent != null">incident_content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="monitorId != null">#{monitorId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="stakeNumber != null">#{stakeNumber},</if>
+            <if test="stakeDistance != null">#{stakeDistance},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="incidentSource != null">#{incidentSource},</if>
+            <if test="incidentType != null">#{incidentType},</if>
+            <if test="incidentContent != null">#{incidentContent},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficIncidentMonitor" parameterType="SdTrafficIncidentMonitor">
+        update sd_traffic_incident_monitor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="stakeNumber != null">stake_number = #{stakeNumber},</if>
+            <if test="stakeDistance != null">stake_distance = #{stakeDistance},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="incidentSource != null">incident_source = #{incidentSource},</if>
+            <if test="incidentType != null">incident_type = #{incidentType},</if>
+            <if test="incidentContent != null">incident_content = #{incidentContent},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where monitor_id = #{monitorId}
+    </update>
+
+    <delete id="deleteSdTrafficIncidentMonitorByMonitorId" parameterType="Long">
+        delete from sd_traffic_incident_monitor where monitor_id = #{monitorId}
+    </delete>
+
+    <delete id="deleteSdTrafficIncidentMonitorByMonitorIds" parameterType="String">
+        delete from sd_traffic_incident_monitor where monitor_id in
+        <foreach item="monitorId" collection="array" open="(" separator="," close=")">
+            #{monitorId}
+        </foreach>
+    </delete>
+
+    <!--查询获取事件监测信息、以及当前隧道的车流量等信息-->
+    <select id="getList" resultType="java.util.Map">
+        select m.monitor_id monitorId, m.tunnel_id tunnelId, m.direction, m.stake_number stakeNumber,
+        m.stake_distance stakeDistance,date_format(m.start_time,'%Y-%m-%d %H:%i:%s') startTime,
+        date_format(m.end_time,'%Y-%m-%d %H:%i:%s') endTime,
+        m.incident_source incidentSource,
+        m.incident_type incidentType, m.incident_content incidentContent,
+        t.traffic_flow trafficFlow,t.average_velocity averageVelocity,t.line_occupancy lineOccupancy,s.tunnel_name tunnelName
+        from sd_traffic_incident_monitor m
+        inner join sd_tunnels s on m.tunnel_id = s.tunnel_id
+        left join (
+                <!--查询最新的隧道实时车流量信息-->
+                select s.tunnel_id,s.direction,s.traffic_flow,s.average_velocity,s.line_occupancy from sd_traffic_flow_state  s
+                inner join
+                (
+                select tunnel_id,direction,max(statistic_time) statistic_time from sd_traffic_flow_state group by tunnel_id,direction
+                ) t on s.tunnel_id = t.tunnel_id and s.direction = t.direction and s.statistic_time = t.statistic_time
+        ) t on m.tunnel_id = t.tunnel_id and m.direction = t.direction
+        <where>
+              <if test="tunnelId != null  and tunnelId != ''"> and m.tunnel_id = #{tunnelId}</if>
+              <if test="incidentType != null  and incidentType != ''"> and m.incident_type = #{incidentType}</if>
+              <if test="params.startTime != null and params.startTime != ''">
+                  and date_format(m.start_time,'%y%m%d') &gt;= date_format(#{params.startTime},'%y%m%d')
+              </if>
+              <!-- 结束时间 -->
+              <if test="params.endTime != null and params.endTime != ''">
+                  and date_format(m.start_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+              </if>
+              <if test="params.deptId != null and params.deptId != ''">
+                  AND (s.dept_id = #{params.deptId} OR s.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+              </if>
+          </where>
+        order by m.create_time desc, m.update_time desc
+    </select>
+</mapper>

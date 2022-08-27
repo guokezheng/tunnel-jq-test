@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.intelligentMonitoring.VehicleWhiteListMapper">
+
+    <resultMap type="VehicleWhiteList" id="VehicleWhiteListResult">
+        <result property="id"    column="id"    />
+        <result property="licensePlateNumber"    column="license_plate_number"    />
+        <result property="lastPassTime"    column="last_pass_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="lastPassStatus"    column="last_pass_status"    />
+        <result property="status"    column="status"    />
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="carModel" column="car_model"/>
+    </resultMap>
+
+    <sql id="selectVehicleWhiteListVo">
+        select id, license_plate_number, last_pass_time, create_time, last_pass_status, status
+                 , create_by, update_time, update_by, car_model
+        from vehicle_white_list
+    </sql>
+
+    <select id="selectVehicleWhiteListList" parameterType="VehicleWhiteList" resultMap="VehicleWhiteListResult">
+        <include refid="selectVehicleWhiteListVo"/>
+        <where>
+            <if test="licensePlateNumber != null  and licensePlateNumber != ''"> and license_plate_number = #{licensePlateNumber}</if>
+            <if test="lastPassTime != null  and lastPassTime != ''"> and last_pass_time = #{lastPassTime}</if>
+            <if test="lastPassStatus != null "> and last_pass_status = #{lastPassStatus}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="selectVehicleWhiteListById" parameterType="Integer" resultMap="VehicleWhiteListResult">
+        <include refid="selectVehicleWhiteListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVehicleWhiteList" parameterType="VehicleWhiteList" useGeneratedKeys="true" keyProperty="id">
+        insert into vehicle_white_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">license_plate_number,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="carModel != null">car_model,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">#{licensePlateNumber},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="carModel != null">#{carModel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVehicleWhiteList" parameterType="VehicleWhiteList">
+        update vehicle_white_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="licensePlateNumber != null and licensePlateNumber != ''">license_plate_number = #{licensePlateNumber},</if>
+            <if test="lastPassTime != null and lastPassTime != ''">last_pass_time = #{lastPassTime},</if>
+            <if test="lastPassStatus != null">last_pass_status = #{lastPassStatus},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateBy != null">car_model = #{carModel}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehicleWhiteListById" parameterType="Integer">
+        delete from vehicle_white_list where id = #{id}
+    </delete>
+
+    <delete id="deleteVehicleWhiteListByIds" parameterType="String">
+        delete from vehicle_white_list where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectlistByLicensePlateNumber" parameterType="String" resultMap="VehicleWhiteListResult">
+        <include refid="selectVehicleWhiteListVo"/>
+        where license_plate_number = #{licensePlateNumber}
+    </select>
+</mapper>

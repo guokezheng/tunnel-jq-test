@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficIncidentPublishObjectMapper">
+
+    <resultMap type="SdTrafficIncidentPublishObject" id="SdTrafficIncidentPublishObjectResult">
+        <result property="objectId"    column="object_id"    />
+        <result property="incidentId"    column="incident_id"    />
+        <result property="publishObject"    column="publish_object"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficIncidentPublishObjectVo">
+        select object_id, incident_id, publish_object from sd_traffic_incident_publish_object
+    </sql>
+
+    <select id="selectSdTrafficIncidentPublishObjectList" parameterType="SdTrafficIncidentPublishObject" resultMap="SdTrafficIncidentPublishObjectResult">
+        <include refid="selectSdTrafficIncidentPublishObjectVo"/>
+        <where>
+            <if test="incidentId != null "> and incident_id = #{incidentId}</if>
+            <if test="publishObject != null  and publishObject != ''"> and publish_object = #{publishObject}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficIncidentPublishObjectByObjectId" parameterType="Long" resultMap="SdTrafficIncidentPublishObjectResult">
+        <include refid="selectSdTrafficIncidentPublishObjectVo"/>
+        where object_id = #{objectId}
+    </select>
+
+    <insert id="insertSdTrafficIncidentPublishObject" parameterType="SdTrafficIncidentPublishObject" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_traffic_incident_publish_object
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="objectId != null">object_id,</if>
+            <if test="incidentId != null">incident_id,</if>
+            <if test="publishObject != null">publish_object,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="objectId != null">#{objectId},</if>
+            <if test="incidentId != null">#{incidentId},</if>
+            <if test="publishObject != null">#{publishObject},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficIncidentPublishObject" parameterType="SdTrafficIncidentPublishObject">
+        update sd_traffic_incident_publish_object
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="incidentId != null">incident_id = #{incidentId},</if>
+            <if test="publishObject != null">publish_object = #{publishObject},</if>
+        </trim>
+        where object_id = #{objectId}
+    </update>
+
+    <delete id="deleteSdTrafficIncidentPublishObjectByObjectId" parameterType="Long">
+        delete from sd_traffic_incident_publish_object where object_id = #{objectId}
+    </delete>
+
+    <delete id="deleteSdTrafficIncidentPublishObjectByObjectIds" parameterType="String">
+        delete from sd_traffic_incident_publish_object where object_id in
+        <foreach item="objectId" collection="array" open="(" separator="," close=")">
+            #{objectId}
+        </foreach>
+    </delete>
+
+    <!--根据事件信息incidentId获取发布对象数据-->
+    <select id="getPublishObjectByIncidentId" resultMap="SdTrafficIncidentPublishObjectResult">
+        <include refid="selectSdTrafficIncidentPublishObjectVo"/>
+        where incident_id = #{incidentId}
+    </select>
+
+    <!--添加多条发布对象-->
+    <insert id="insertMultiPublishObject">
+        insert into sd_traffic_incident_publish_object(incident_id, publish_object)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.incidentId},#{item.publishObject})
+        </foreach>
+    </insert>
+
+    <!--根据事件信息incidentId删除发布对象数据-->
+    <delete id="delMultiPublishObject" parameterType="Long">
+         delete from sd_traffic_incident_publish_object where incident_id = #{incidentId}
+    </delete>
+</mapper>

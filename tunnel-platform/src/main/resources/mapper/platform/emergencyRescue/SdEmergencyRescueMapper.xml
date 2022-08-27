@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.emergencyRescue.SdEmergencyRescueMapper">
+
+    <resultMap type="SdEmergencyRescue" id="SdEmergencyRescueResult">
+        <result property="id"    column="id"    />
+        <result property="rescuePortal"    column="rescue_portal"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="rescueLocation"    column="rescue_location"    />
+        <result property="phone"    column="phone"    />
+        <result property="serviceInformation"    column="service_information"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+        <result property="remake2"    column="remake2"    />
+    </resultMap>
+
+    <sql id="selectSdEmergencyRescueVo">
+        select sder.id, sder.rescue_portal, sder.tunnel_id, sder.rescue_location, sder.phone, sder.service_information,
+        sder.create_time, sder.create_by,sder.update_time, sder.update_by, sder.remake,
+        sder.remake1, sder.remake2, sdt.tunnel_name from sd_emergency_rescue sder
+        left join sd_tunnels sdt on sder.tunnel_id = sdt.tunnel_id
+    </sql>
+
+    <select id="selectSdEmergencyRescueList" parameterType="SdEmergencyRescue" resultMap="SdEmergencyRescueResult">
+        <include refid="selectSdEmergencyRescueVo"/>
+        <where>
+            <if test="rescuePortal != null  and rescuePortal != ''"> and sder.rescue_portal = #{rescuePortal}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and sder.tunnel_id = #{tunnelId}</if>
+            <if test="rescueLocation != null  and rescueLocation != ''"> and sder.rescue_location = #{rescueLocation}</if>
+            <if test="phone != null  and phone != ''"> and sder.phone = #{phone}</if>
+            <if test="serviceInformation != null  and serviceInformation != ''"> and sder.service_information = #{serviceInformation}</if>
+            <if test="remake != null  and remake != ''"> and sder.remake = #{remake}</if>
+            <if test="remake1 != null  and remake1 != ''"> and sder.remake1 = #{remake1}</if>
+            <if test="remake2 != null  and remake2 != ''"> and sder.remake2 = #{remake2}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (sdt.dept_id = #{params.deptId} OR sdt.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdEmergencyRescueById" parameterType="Long" resultMap="SdEmergencyRescueResult">
+        <include refid="selectSdEmergencyRescueVo"/>
+        where sder.id = #{id}
+    </select>
+
+    <insert id="insertSdEmergencyRescue" parameterType="SdEmergencyRescue" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_emergency_rescue
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rescuePortal != null">rescue_portal,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="rescueLocation != null">rescue_location,</if>
+            <if test="phone != null">phone,</if>
+            <if test="serviceInformation != null">service_information,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+            <if test="remake2 != null">remake2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rescuePortal != null">#{rescuePortal},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="rescueLocation != null">#{rescueLocation},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="serviceInformation != null">#{serviceInformation},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+            <if test="remake2 != null">#{remake2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEmergencyRescue" parameterType="SdEmergencyRescue">
+        update sd_emergency_rescue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="rescuePortal != null">rescue_portal = #{rescuePortal},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="rescueLocation != null">rescue_location = #{rescueLocation},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="serviceInformation != null">service_information = #{serviceInformation},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+            <if test="remake2 != null">remake2 = #{remake2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEmergencyRescueById" parameterType="Long">
+        delete from sd_emergency_rescue where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEmergencyRescueByIds" parameterType="String">
+        delete from sd_emergency_rescue where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

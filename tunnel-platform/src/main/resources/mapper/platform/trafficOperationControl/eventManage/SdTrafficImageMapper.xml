@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper">
+
+    <resultMap type="SdTrafficImage" id="SdTrafficImageResult">
+        <result property="imgId"    column="img_id"    />
+        <result property="imgName"    column="img_name"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="imgWidth"    column="img_width"    />
+        <result property="imgHeight"    column="img_height"    />
+        <result property="remark"    column="remark"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficImageVo">
+        select img_id, img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by, update_time, update_by from sd_traffic_image
+    </sql>
+
+    <select id="selectSdTrafficImageList" parameterType="SdTrafficImage" resultMap="SdTrafficImageResult">
+        <include refid="selectSdTrafficImageVo"/>
+        <where>
+            <if test="imgName != null  and imgName != ''"> and img_name like concat('%', #{imgName}, '%')</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="imgWidth != null  and imgWidth != ''"> and img_width = #{imgWidth}</if>
+            <if test="imgHeight != null  and imgHeight != ''"> and img_height = #{imgHeight}</if>
+            <if test="businessId != null  and businessId != ''"> and business_id = #{businessId}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficImageByImgId" parameterType="Long" resultMap="SdTrafficImageResult">
+        <include refid="selectSdTrafficImageVo"/>
+        where img_id = #{imgId}
+    </select>
+
+    <insert id="insertSdTrafficImage" parameterType="SdTrafficImage" useGeneratedKeys="true" keyProperty="imgId">
+        insert into sd_traffic_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imgName != null">img_name,</if>
+            <if test="imgUrl != null">img_url,</if>
+            <if test="imgWidth != null">img_width,</if>
+            <if test="imgHeight != null">img_height,</if>
+            <if test="remark != null">remark,</if>
+            <if test="businessId != null">business_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imgName != null">#{imgName},</if>
+            <if test="imgUrl != null">#{imgUrl},</if>
+            <if test="imgWidth != null">#{imgWidth},</if>
+            <if test="imgHeight != null">#{imgHeight},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="businessId != null">#{businessId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficImage" parameterType="SdTrafficImage">
+        update sd_traffic_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imgName != null">img_name = #{imgName},</if>
+            <if test="imgUrl != null">img_url = #{imgUrl},</if>
+            <if test="imgWidth != null">img_width = #{imgWidth},</if>
+            <if test="imgHeight != null">img_height = #{imgHeight},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="businessId != null">business_id = #{businessId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where img_id = #{imgId}
+    </update>
+
+    <delete id="deleteSdTrafficImageByImgId" parameterType="Long">
+        delete from sd_traffic_image where img_id = #{imgId}
+    </delete>
+
+    <delete id="deleteSdTrafficImageByImgIds" parameterType="String">
+        delete from sd_traffic_image where img_id in
+        <foreach item="imgId" collection="array" open="(" separator="," close=")">
+            #{imgId}
+        </foreach>
+    </delete>
+
+    <!--关联业务id与图片信息-->
+    <update id="updateMultiImageByImgId">
+        update sd_traffic_image set business_id = #{businessId}
+        where img_id in
+        <foreach item="item" collection="imgList" open="(" separator="," close=")">
+            #{item.imgId}
+        </foreach>
+    </update>
+
+    <!--新增图片信息-->
+    <insert id="insertMultiImage">
+        insert into sd_traffic_image(img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by)
+        values
+        <foreach collection="imgList" item="item" separator=",">
+            (#{item.imgName},#{item.imgUrl},#{item.imgWidth},#{item.imgHeight},#{item.remark},#{businessId},sysdate(),#{item.createBy})
+        </foreach>
+    </insert>
+
+    <!--删除业务id关联的图片信息-->
+    <delete id="delImageByBusinessIds">
+         delete from sd_traffic_image where business_id in
+        <foreach item="businessId" collection="businessIds" open="(" separator="," close=")">
+            #{businessId}
+        </foreach>
+    </delete>
+
+    <!--查询流程关联的图片信息-->
+    <select id="selectImageByBusinessIds" resultMap="SdTrafficImageResult">
+        <include refid="selectSdTrafficImageVo"/>
+        where business_id in
+        <foreach item="businessId" collection="list" open="(" separator="," close=")">
+            #{businessId}
+        </foreach>
+    </select>
+</mapper>

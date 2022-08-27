@@ -1,0 +1,64 @@
+<template>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+
+export default {
+  name: "Websocket",
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapState({
+      token: state => state.user.token,
+      websocket: state => state.user.websocket
+    })
+  },
+  watch: {
+   /* websocket({ password, path, port, interval}) {
+      // 建立 websocket 连接
+      this.socket.initialize({
+       
+		url:'ws://60.208.23.50:81/ws',
+        password: password,
+        tokenSN: this.token,
+        heartRate: interval
+      });
+
+      this.socket.onmessage = (message) => {
+        message = JSON.parse(message)
+        const method = message.method;
+
+        if (method !== 'event')
+        {
+          return;
+        }
+
+        const params = message.params;
+        const subEvent = params.subEvent;
+        const content = params.content;
+        switch (subEvent)
+        {
+          case 'payment_webSocket_send':
+            this.$store.commit('PAYMENT', content)
+            break;
+          case 'carList':
+            this.$store.commit('CARLIST', content)
+            break;
+          case 'realTimeLaneTrajectory':
+            this.$store.commit('REALTIMELANETRAJECTORY', content)
+            break;
+          default:
+        }
+      }
+    } */
+  },
+  created() {
+  },
+  methods: {
+  }
+};
+</script>
+
+

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.trafficOperationControl.eventManage.SdTrafficIncidentProcessMapper">
+
+    <resultMap type="SdTrafficIncidentProcess" id="SdTrafficIncidentProcessResult">
+        <result property="processId"    column="process_id"    />
+        <result property="incidentId"    column="incident_id"    />
+        <result property="processTime"    column="process_time"    />
+        <result property="processDesc"    column="process_desc"    />
+        <result property="handler"    column="handler"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficIncidentProcessVo">
+        select process_id, incident_id, process_time, process_desc, handler, create_time, create_by, update_time, update_by from sd_traffic_incident_process
+    </sql>
+
+    <select id="selectSdTrafficIncidentProcessList" parameterType="SdTrafficIncidentProcess" resultMap="SdTrafficIncidentProcessResult">
+        <include refid="selectSdTrafficIncidentProcessVo"/>
+        <where>
+            <if test="incidentId != null "> and incident_id = #{incidentId}</if>
+            <if test="processTime != null "> and process_time = #{processTime}</if>
+            <if test="processDesc != null  and processDesc != ''"> and process_desc = #{processDesc}</if>
+            <if test="handler != null  and handler != ''"> and handler = #{handler}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficIncidentProcessByProcessId" parameterType="Long" resultMap="SdTrafficIncidentProcessResult">
+        <include refid="selectSdTrafficIncidentProcessVo"/>
+        where process_id = #{processId}
+    </select>
+
+    <insert id="insertSdTrafficIncidentProcess" parameterType="SdTrafficIncidentProcess" useGeneratedKeys="true" keyProperty="processId">
+        insert into sd_traffic_incident_process
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="incidentId != null">incident_id,</if>
+            <if test="processTime != null">process_time,</if>
+            <if test="processDesc != null">process_desc,</if>
+            <if test="handler != null">handler,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="incidentId != null">#{incidentId},</if>
+            <if test="processTime != null">#{processTime},</if>
+            <if test="processDesc != null">#{processDesc},</if>
+            <if test="handler != null">#{handler},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficIncidentProcess" parameterType="SdTrafficIncidentProcess">
+        update sd_traffic_incident_process
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="incidentId != null">incident_id = #{incidentId},</if>
+            <if test="processTime != null">process_time = #{processTime},</if>
+            <if test="processDesc != null">process_desc = #{processDesc},</if>
+            <if test="handler != null">handler = #{handler},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where process_id = #{processId}
+    </update>
+
+    <delete id="deleteSdTrafficIncidentProcessByProcessId" parameterType="Long">
+        delete from sd_traffic_incident_process where process_id = #{processId}
+    </delete>
+
+    <delete id="deleteSdTrafficIncidentProcessByProcessIds" parameterType="String">
+        delete from sd_traffic_incident_process where process_id in
+        <foreach item="processId" collection="array" open="(" separator="," close=")">
+            #{processId}
+        </foreach>
+    </delete>
+
+    <!--获取交通事件-处理流程列表-->
+    <select id="getProcessList" resultMap="SdTrafficIncidentProcessResult">
+        <include refid="selectSdTrafficIncidentProcessVo"/>
+        where incident_id = #{incidentId}
+    </select>
+
+    <!--删除事件关联的流程-->
+    <delete id="delProcessByIncidentId">
+        delete from sd_traffic_incident_process where incident_id = #{incidentId}
+    </delete>
+
+    <!--查询事件关联的所有流程id-->
+    <select id="queryProcessIdByIncidentId" resultType="Long">
+        select process_id from sd_traffic_incident_process where incident_id = #{incidentId}
+    </select>
+</mapper>

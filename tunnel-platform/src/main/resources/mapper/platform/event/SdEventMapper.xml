@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdEventMapper">
+    
+    <resultMap type="SdEvent" id="SdEventResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="eventTypeId"    column="event_type_id"    />
+        <result property="eventTitle"    column="event_title"    />
+        <result property="eventTime"    column="event_time"    />
+        <result property="eventState"    column="event_state"    />
+        <result property="eventGrade"    column="event_grade"    />
+        <result property="eventLocation"    column="event_location"    />
+        <result property="eventDeath"    column="event_death"    />
+        <result property="eventInjured"    column="event_injured"    />
+        <result property="eventDescription"    column="event_description"    />
+        <result property="reservePlanId"    column="reserve_plan_id"    />
+        <result property="flowId"    column="flow_id"    />
+        <result property="warningId"    column="warning_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
+        <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+    </resultMap>
+
+	<resultMap id="eventTypeResult" type="SdEventType">
+		<id  property="id" column="id" />
+		<result property="eventType" column="event_type"   />
+	</resultMap>
+
+	<resultMap id="tunnelResult" type="SdTunnels">
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+
+    <sql id="selectSdEventVo">
+        select id, tunnel_id, event_type_id, event_title, event_time, event_state, event_grade, event_location, event_death, event_injured, event_description, reserve_plan_id, flow_id, warning_id, create_by, create_time, update_by, update_time from sd_event
+    </sql>
+
+    <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">
+        select A.id, A.tunnel_id, A.event_type_id, A.event_title, A.event_time, A.event_state, A.event_grade, 
+        		A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id, 
+        		A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
+        		C.tunnel_name
+        from sd_event A
+        left join sd_event_type B
+        on A.event_type_id = B.id
+        left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        <where>  
+        	1=1 
+        	<if test="id != null  and id != ''"> and A.id = #{id}</if>
+        	<if test="tunnelId != null  and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
+            <if test="eventTypeId != null  and eventTypeId != ''"> and A.event_type_id = #{eventTypeId}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and A.event_title = #{eventTitle}</if>
+            <if test="eventTime != null "> and A.event_time = #{eventTime}</if>
+            <if test="eventState != null  and eventState != ''"> and A.event_state = #{eventState}</if>
+            <if test="eventGrade != null  and eventGrade != ''"> and A.event_grade = #{eventGrade}</if>
+            <if test="eventLocation != null  and eventLocation != ''"> and A.event_location = #{eventLocation}</if>
+            <if test="eventDeath != null "> and A.event_death = #{eventDeath}</if>
+            <if test="eventInjured != null "> and A.event_injured = #{eventInjured}</if>
+            <if test="eventDescription != null  and eventDescription != ''"> and A.event_description = #{eventDescription}</if>
+        	<if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
+				and date_format(A.event_time,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+			</if>
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and date_format(A.event_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+			</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEventById" parameterType="Long" resultMap="SdEventResult">
+        <include refid="selectSdEventVo"/>
+        where id = #{id}
+    </select>
+    
+	<!-- 查询事件状态为（已处理、处理中）的数量 -->
+    <select id="selectEventStateCount"  resultMap="SdEventResult">
+        SELECT COUNT(1) FROM sd_event
+		<where> 
+           <if test="eventState != null "> and event_state = #{eventState}</if>
+        </where>
+    </select>
+        
+    <insert id="insertSdEvent" parameterType="SdEvent">
+        insert into sd_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="eventTypeId != null">event_type_id,</if>
+            <if test="eventTitle != null">event_title,</if>
+            <if test="eventTime != null">event_time,</if>
+            <if test="eventState != null">event_state,</if>
+            <if test="eventGrade != null">event_grade,</if>
+            <if test="eventLocation != null">event_location,</if>
+            <if test="eventDeath != null">event_death,</if>
+            <if test="eventInjured != null">event_injured,</if>
+            <if test="eventDescription != null">event_description,</if>
+            <if test="reservePlanId != null">reserve_plan_id,</if>
+            <if test="flowId != null">flow_id,</if>
+            <if test="warningId != null">warning_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="eventTypeId != null">#{eventTypeId},</if>
+            <if test="eventTitle != null">#{eventTitle},</if>
+            <if test="eventTime != null">#{eventTime},</if>
+            <if test="eventState != null">#{eventState},</if>
+            <if test="eventGrade != null">#{eventGrade},</if>
+            <if test="eventLocation != null">#{eventLocation},</if>
+            <if test="eventDeath != null">#{eventDeath},</if>
+            <if test="eventInjured != null">#{eventInjured},</if>
+            <if test="eventDescription != null">#{eventDescription},</if>
+            <if test="reservePlanId != null">#{reservePlanId},</if>
+            <if test="flowId != null">#{flowId},</if>
+            <if test="warningId != null">#{warningId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEvent" parameterType="SdEvent">
+        update sd_event
+        <trim prefix="SET" suffixOverrides=",">
+        	<if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="eventTypeId != null">event_type_id = #{eventTypeId},</if>
+            <if test="eventTitle != null">event_title = #{eventTitle},</if>
+            <if test="eventTime != null">event_time = #{eventTime},</if>
+            <if test="eventState != null">event_state = #{eventState},</if>
+            <if test="eventGrade != null">event_grade = #{eventGrade},</if>
+            <if test="eventLocation != null">event_location = #{eventLocation},</if>
+            <if test="eventDeath != null">event_death = #{eventDeath},</if>
+            <if test="eventInjured != null">event_injured = #{eventInjured},</if>
+            <if test="eventDescription != null">event_description = #{eventDescription},</if>
+            <if test="reservePlanId != null">reserve_plan_id = #{reservePlanId},</if>
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="warningId != null">warning_id = #{warningId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEventById" parameterType="Long">
+        delete from sd_event where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEventByIds" parameterType="String">
+        delete from sd_event where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

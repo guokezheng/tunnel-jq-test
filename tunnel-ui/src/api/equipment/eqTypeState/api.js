@@ -9,6 +9,7 @@ export function listEqTypeState(query) {
   })
 }
 
+
 // 查询设备类型状态关系列表(设备名称横向)
 export function listEqTypeStates(query) {
   return request({
@@ -129,5 +130,22 @@ export function deleteEquiment(eqTypeId) {
   return request({
     url: '/eqTypeState/delStatesByTypeId/' + eqTypeId,
     method: 'delete'
+  })
+}
+
+// 查询设备类型状态关系设备运行状态
+export function getStateByRun(query) {
+  return request({
+    url: '/eqTypeState/getRunTypeList',
+    method: 'get',
+    params: query
+  })
+}
+// 查询设备类型状态关系设备数据状态
+export function getStateByData(query) {
+  return request({
+    url: '/eqTypeState/getDataTypeList',
+    method: 'get',
+    params: query
   })
 }

@@ -146,4 +146,6 @@ public interface ISdDevicesService
      * @return
      */
     public List<SdDevices> updateCarFingerById(List<SdDevices> sdDevices);
+
+    public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 }

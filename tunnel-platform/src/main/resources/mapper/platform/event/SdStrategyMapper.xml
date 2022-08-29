@@ -55,9 +55,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
         		A.scheduler_time, A.rl_id, A.job_relation_id, A.create_by, A.direction,
-        		A.create_time, A.update_by, A.update_time, B.tunnel_name
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
+        left join sd_tunnel_subarea C on B.tunnel_id = C.tunnel_id
         where A.id = #{id}
     </select>
     <select id="selectSdStrategyByJobRelationId" parameterType="String" resultMap="SdStrategyResult">

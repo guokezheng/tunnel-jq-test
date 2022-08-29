@@ -3,10 +3,14 @@ package com.tunnel.platform.domain.dataInfo;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.tunnel.platform.domain.event.SdSafetyIndex;
+import com.tunnel.platform.domain.event.SdTunnelSubarea;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 
 /**
  * 隧道对象 sd_tunnels
@@ -15,6 +19,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @date 2020-08-27
  */
 @ApiModel("隧道实体")
+@Data
 public class SdTunnels extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -104,6 +109,9 @@ public class SdTunnels extends BaseEntity
 
     @ApiModelProperty("隧道所属部门名称")
     private String deptName;
+
+    private List<SdTunnelSubarea> list;
+
 
     public Long getDeptId() {
         return deptId;

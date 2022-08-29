@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
     <sql id="selectSdEquipmentStateVo">
-        select id, state_type_id, device_state, state_name, is_control,icon_file_id from sd_equipment_state
+        select id, state_type_id, device_state, state_name, is_control ssc,icon_file_id from sd_equipment_state
     </sql>
 
     <select id="selectSdEquipmentStateList" parameterType="SdEquipmentState" resultMap="SdEquipmentStateResult">
@@ -70,7 +70,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>
             <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if>
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
-            <if test="isControl != null "> and is_control = #{isControl}</if>
+            <if test="isControl != null "> and a.is_control = #{isControl}</if>
+        </where>
+    </select>
+
+    <select id="selectSdEquipmentStateListGroupByStateType" parameterType="SdEquipmentState" resultMap="SdEquipmentStateResult">
+        select a.id, a.state_type_id, b.type_name, a.device_state, a.state_name , a.is_control ,a.icon_file_id, a.state_type
+        from sd_equipment_state a
+        left join sd_equipment_type b on a.state_type_id = b.type_id
+        <where>
+            <if test="stateTypeId != null "> and state_type_id = #{stateTypeId}</if>
+            <if test="stateType != null"> and state_type = #{stateType} </if>
+            <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>
+            <!-- <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if> -->
+            <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
+            <if test="isControl != null "> and a.is_control = #{isControl}</if>
         </where>
     </select>
 

@@ -44,6 +44,34 @@ public class SdEquipmentStateController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 查询设备类型状态关系列表设备数据状态
+     * @param sdEquipmentState
+     * @return
+     */
+    @GetMapping("/getDataTypeList")
+    @ApiOperation("查询设备类型状态关系列表设备数据状态 ")
+    public TableDataInfo<List<SdEquipmentState>> getStatesByData(SdEquipmentState sdEquipmentState) {
+        startPage();
+        sdEquipmentState.setStateType("2");
+        List<SdEquipmentState> list = sdEquipmentStateService.selectSdEquipmentStateListGroupByStateType(sdEquipmentState);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询设备类型状态关系列表设备运行状态
+     * @param sdEquipmentState
+     * @return
+     */
+    @GetMapping("/getRunTypeList")
+    @ApiOperation("查询设备类型状态关系列表设备运行状态")
+    public TableDataInfo<List<SdEquipmentState>> getStatesByRun(SdEquipmentState sdEquipmentState) {
+        startPage();
+        sdEquipmentState.setStateType("1");
+        List<SdEquipmentState> list = sdEquipmentStateService.selectSdEquipmentStateListGroupByStateType(sdEquipmentState);
+        return getDataTable(list);
+    }
+
 
      /**
      * 查询设备类型状态关系列表（按设备类型分组查询）

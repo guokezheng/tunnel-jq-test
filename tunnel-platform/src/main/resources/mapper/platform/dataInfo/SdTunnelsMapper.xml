@@ -26,6 +26,10 @@
         <result property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
+        <collection property="list" ofType="SdTunnelSubarea">
+            <id column="sId" property="sId"></id>
+            <result column="sName" property="sName"></result>
+        </collection>
     </resultMap>
 
     <resultMap id="indexResult" type="SdSafetyIndex">
@@ -146,5 +150,27 @@
             #{tunnelId}
         </foreach>
     </delete>
+
+    <select id="selectSdTunnelsSubList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        <!--select t.tunnel_id, t.tunnel_name, a.s_name sName, a.s_id sId
+        from sd_tunnels t
+        left join sd_tunnel_subarea a on a.tunnel_id = t.tunnel_id
+        <where>
+            <if test="tunnelName != null and tunnelName != ''"> and t.tunnel_name = #{tunnelName}</if>
+        </where>
+        GROUP BY t.tunnel_name-->
+        select
+        st.tunnel_id, st.tunnel_name,
+        ss.s_id sId,
+        ss.s_name  sName
+        from
+        sd_tunnels st
+        LEFT JOIN
+        sd_tunnel_subarea ss
+        on
+        st.tunnel_id= ss.tunnel_id
+    </select>
+
+
 
 </mapper>

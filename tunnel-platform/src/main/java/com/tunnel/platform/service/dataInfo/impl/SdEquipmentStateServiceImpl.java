@@ -81,8 +81,31 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 				}
 			}
 		}
+
 		return list;
     }
+
+	/**
+	 * 查询可控设备类型状态关系列表根据状态类型分组
+	 *
+	 * @param sdEquipmentState
+	 * @return
+	 */
+	@Override
+	public List<SdEquipmentState> selectSdEquipmentStateListGroupByStateType(SdEquipmentState sdEquipmentState) {
+		List<SdEquipmentState> list = sdEquipmentStateMapper.selectSdEquipmentStateListGroupByStateType(sdEquipmentState);
+		for (int i = 0; i < list.size(); i++) {
+			String iconFileId = list.get(i).getIconFileId();
+			if(iconFileId!=null && !"".equals(iconFileId) && !"null".equals(iconFileId)){
+				if(!"-1".equals(iconFileId)){
+					SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+					sdEquipmentStateIconFile.setStateIconId(iconFileId);
+					list.get(i).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+				}
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * 查询设备关系状态关系表(按设备类型分组查询)

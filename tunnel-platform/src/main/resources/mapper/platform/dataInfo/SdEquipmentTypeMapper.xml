@@ -13,14 +13,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="iconFileId"    column="icon_file_id"    />
-
         <result property="iconWidth"    column="icon_width"    />
         <result property="iconHeight"    column="icon_height"    />
         <result property="bigType"    column="big_type"    />
+        <result property="isControl"    column="is_control"    />
     </resultMap>
 
     <sql id="selectSdEquipmentTypeVo">
-        select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height,
+        select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height, is_control,
         update_by, update_time,icon_file_id,big_type from sd_equipment_type
     </sql>
 
@@ -63,7 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdEquipmentTypeHasList" parameterType="String" resultMap="SdEquipmentTypeResult">
         SELECT
-		b.type_id, b.type_name, b.type_abbr,b.create_by, b.create_time, b.update_by, b.update_time,b.icon_file_id,b.icon_height,b.icon_width
+		b.type_id, b.type_name, b.type_abbr,b.create_by, b.create_time, b.update_by, b.update_time,b.icon_file_id,b.icon_height,b.icon_width,b.is_control
 		from sd_equipment_type b
 		LEFT JOIN sd_devices a on a.eq_type = b.type_id
 		where
@@ -85,6 +85,7 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="typeAbbr != null">type_abbr,</if>
             <if test="iconWidth != null">icon_width,</if>
             <if test="iconHeight != null">icon_height,</if>
+            <if test="isControl != null">is_control,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -97,7 +98,7 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="typeAbbr != null">#{typeAbbr},</if>
             <if test="iconWidth != null">#{iconWidth},</if>
             <if test="iconHeight != null">#{iconHeight},</if>
-
+            <if test="isControl != null">#{is_control},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -114,6 +115,7 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="typeAbbr != null">type_abbr = #{typeAbbr},</if>
             <if test="iconWidth != null">icon_width = #{iconWidth},</if>
             <if test="iconHeight != null">icon_height = #{iconHeight},</if>
+            <if test="isControl != null">is_control = #{is_control},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

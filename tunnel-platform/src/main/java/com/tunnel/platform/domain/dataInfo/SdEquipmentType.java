@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * 设备类型对象 sd_equipment_type
- * 
+ *
  * @author zhangweitian
  * @param <SdEquipmentStateIconFile>
  * @date 2020-08-27
@@ -41,7 +41,7 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @Excel(name = "设备类型默认图标ID")
     @ApiModelProperty("设备类型默认图标ID")
     private String iconFileId;
-    
+
     /** 图片宽度 */
     @Excel(name = "图片宽度")
     @ApiModelProperty("图片宽度")
@@ -50,6 +50,11 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @Excel(name = "图片高度")
     @ApiModelProperty("图片高度")
     private String iconHeight;
+
+    @Excel(name = "是否可控")
+    @ApiModelProperty("是否可控1：是 0：否")
+    private String isControl;
+
     @ApiModelProperty("设备大类")
     private String bigType;
 
@@ -71,22 +76,30 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 	public void setIconHeight(String iconHeight) {
 		this.iconHeight = iconHeight;
 	}
-    
-    public void setTypeId(Long typeId) 
+
+    public void setTypeId(Long typeId)
     {
         this.typeId = typeId;
     }
 
-    public Long getTypeId() 
+    public Long getTypeId()
     {
         return typeId;
     }
-    public void setIconFileId(String iconFileId) 
+    public void setIconFileId(String iconFileId)
     {
         this.iconFileId = iconFileId;
     }
 
-    public String getIconFileId() 
+    public String getIsControl() {
+        return isControl;
+    }
+
+    public void setIsControl(String isControl) {
+        this.isControl = isControl;
+    }
+
+    public String getIconFileId()
     {
         return iconFileId;
     }
@@ -98,12 +111,12 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
   		this.iFileList = iFileList;
   	}
 
-    public void setTypeName(String typeName) 
+    public void setTypeName(String typeName)
     {
         this.typeName = typeName;
     }
 
-    public String getTypeName() 
+    public String getTypeName()
     {
         return typeName;
     }

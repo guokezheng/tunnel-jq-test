@@ -123,4 +123,11 @@ public interface SdDevicesMapper
 	List<SdEquipmentType> selectList();
 
 	public List<SdDevices> selectCarFingerById(SdDevices sdDevices);
+
+	/**
+	 * 查询可控设备列表
+	 * @param sdDevices
+	 * @return
+	 */
+	public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 }

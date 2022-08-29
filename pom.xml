@@ -224,6 +224,7 @@
         <module>tunnel-webthings</module>
         <module>tunnel-datacenter</module>
         <module>tunnel-plc</module>
+        <module>tunnel-deal</module>
     </modules>
     <packaging>pom</packaging>
 

@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="SdReservePlan" id="SdReservePlanResult">
         <result property="id"    column="id"    />
+        <result property="subareaId" column="subarea_id" />
         <result property="planTypeId"    column="plan_type_id"    />
         <result property="planDescription"    column="plan_description"    />
         <result property="planName"    column="plan_name"    />
@@ -17,6 +18,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
+        <association property="sdTunnelSubarea" javaType="sdTunnelSubarea">
+            <id column="sid" property="sId"/>
+            <result column="sName" property="sName"/>
+            <result column="tunnelId" property="tunnelId"/>
+        </association>
     </resultMap>
 
 	<resultMap id="eventTypeResult" type="SdEventType">
@@ -35,17 +41,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="rlId"    column="rl_id"    />
 	</resultMap>
 
+    <resultMap id="subareaResult" type="SdTunnelSubarea">
+        <id property="sId" column="s_id" />
+        <result property="sName" column="s_name" />
+        <result property="tunnelId" column="tunnel_id" />
+    </resultMap>
+
     <sql id="selectSdReservePlanVo">
-        select id, plan_type_id, plan_description, plan_name, plan_file_id, strategy_id, create_by, create_time, update_by, update_time from sd_reserve_plan
+        select id,subarea_id, plan_type_id, plan_description, plan_name, plan_file_id, strategy_id, create_by, create_time, update_by, update_time from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
-        select A.id, A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
+        select A.id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
         		 A.strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
-        		 B.event_type, C.strategy_name, C.strategy_info, C.strategy_type
+        		 B.event_type, C.strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_strategy C on A.strategy_id = C.id
+        left join sd_tunnel_subarea D on D.tunnel_id = C.tunnel_id
         <where>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
@@ -63,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSdReservePlan" parameterType="SdReservePlan" useGeneratedKeys="true" keyProperty="id">
         insert into sd_reserve_plan
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subareaId != null">subarea_id,</if>
             <if test="planTypeId != null">plan_type_id,</if>
             <if test="planDescription != null">plan_description,</if>
             <if test="planName != null">plan_name,</if>
@@ -74,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="subareaId != null">#{subareaId}</if>
             <if test="planTypeId != null">#{planTypeId},</if>
             <if test="planDescription != null">#{planDescription},</if>
             <if test="planName != null">#{planName},</if>
@@ -89,6 +104,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSdReservePlan" parameterType="SdReservePlan">
         update sd_reserve_plan
         <trim prefix="SET" suffixOverrides=",">
+            <if test="subareaId != null">subarea_id = #{subareaId}</if>
             <if test="planTypeId != null">plan_type_id = #{planTypeId},</if>
             <if test="planDescription != null">plan_description = #{planDescription},</if>
             <if test="planName != null">plan_name = #{planName},</if>

@@ -31,6 +31,13 @@ public interface ISdEquipmentStateService
     public List<SdEquipmentState> selectSdEquipmentStateList(SdEquipmentState sdEquipmentState);
 
     /**
+     * 查询可控设备类型状态关系列表根据状态类型分组
+     *
+     * @param sdEquipmentState
+     * @return
+     */
+    public List<SdEquipmentState> selectSdEquipmentStateListGroupByStateType(SdEquipmentState sdEquipmentState);
+    /**
      * 查询设备关系状态关系表(按设备类型分组查询)
      * @param sdEquipmentState
      * @return

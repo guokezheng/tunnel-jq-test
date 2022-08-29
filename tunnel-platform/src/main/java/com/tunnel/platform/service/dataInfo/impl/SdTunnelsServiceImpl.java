@@ -2,6 +2,7 @@ package com.tunnel.platform.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
+import com.tunnel.platform.domain.event.SdTunnelSubarea;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
 import com.ruoyi.common.utils.DateUtils;
@@ -103,4 +104,10 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService
     {
         return sdTunnelsMapper.deleteSdTunnelsById(tunnelId);
     }
+
+    @Override
+    public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels) {
+        return sdTunnelsMapper.selectSdTunnelsSubList(sdTunnels);
+    }
+
 }

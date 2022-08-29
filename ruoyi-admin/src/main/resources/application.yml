@@ -11,7 +11,7 @@ ruoyi:
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
 #  profile: /Users/yqc/OpenSources/ruoyi
   profile: /opt/suidao/file/uploadPath
-#  profile: D:/ruoyi/uploadPath
+#  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -46,7 +46,7 @@ spring:
     # 国际化资源文件路径
     basename: i18n/messages
   profiles: 
-    active: druid,webthings
+    active: druid,webthings,deal
   # 文件上传
   servlet:
      multipart:

@@ -720,6 +720,10 @@
             {{ stateForm.lightValue }}</label
           >
         </el-form-item>
+        <!-- 所有设备 -->
+        <el-form-item label="运行状态:" >
+          {{ '正常' }}
+        </el-form-item>
         <!-- plc -->
         <el-form-item label="配置状态:" v-if="stateForm.eqType == 14">
           {{ '在线'}}
@@ -2074,6 +2078,8 @@ import {
   listEqTypeState,
   getEqTypeState,
   updateEqTypeState,
+  getStateByRun,
+  getStateByData
 } from "@/api/equipment/eqTypeState/api";
 import {
   icon,
@@ -2521,7 +2527,8 @@ export default {
       showTooltip: false,
       tooltipShow: false,//是否展示提示内容
       echartsColor: '#0a88bd',
-      imageTimer:null //定时器
+      imageTimer:null, //定时器
+      isLogin:false
     }
   },
 
@@ -2631,6 +2638,8 @@ export default {
     this.getDicts("sd_operation_log_state").then(response => {
       this.operationStateOptions = response.data;
     });
+        //调取滚动条
+    this.srollAuto()
   },
   watch: {
     // 设备类型
@@ -2773,7 +2782,7 @@ export default {
     this.timer = setInterval(() => {
       setTimeout(this.getRealTimeData, 0);
       // setTimeout(this.getLiPowerDevice, 0)
-    }, 1000 * 2);
+    }, 1000 * 5);
 
 
     // 模拟实时隧道温度 调完了再删
@@ -2796,26 +2805,30 @@ export default {
     // }
     this.initeChartsEnd();
     this.loadFocusCar();
-    //调取滚动条
     this.srollAuto()
   },
   methods: {
     // 滚动条动画
     srollAuto(){
       var parent=document.getElementsByClassName('content')
-      // var child=document.getElementsByClassName('workbench-content')
-      // console.log(parent[0].scrollLeft,'parentparentparent')       
-       clearInterval(this.imageTimer)
-       this.imageTimer = setInterval(()=>{
-        //判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
-              // console.log( parent[0].scrollLeft  , '判断啊条件')
-        if (Math.round(parent[0].scrollLeft) + parent[0].clientWidth === parent[0].scrollWidth) {
-                parent[0].scrollLeft = 0
-            } else {
-                parent[0].scrollLeft++ // 元素自增距离顶部
-            }
-              }, 10)
-      //  console.log( this.imageTimer,' this.imageTimer this.imageTimer this.imageTimer')
+      // console.log(parent,'parentparent')
+       clearInterval(this.imageTimer) 
+      this.imageTimer = setInterval(()=>{
+        // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
+          if( Math.round(parent[0].scrollLeft) + parent[0].clientWidth === parent[0].scrollWidth){
+                clearInterval(this.imageTimer)     
+              this.imageTimer=setInterval(()=>{
+                  parent[0].scrollLeft--               
+                  if(Math.round(parent[0].scrollLeft)+ parent[0].clientWidth === parent[0].clientWidth){
+                    this.srollAuto()
+                    // console.log(123213,'12321')
+                  }
+                },20)
+          } else{
+             parent[0].scrollLeft++
+          }                                                 
+              }, 20)
+    
      },
 
     mouseoversImage(){
@@ -4128,8 +4141,9 @@ export default {
         stateName: null,
         isControl: null,
       };
-      await listEqTypeState(queryParams).then((response) => {
+      await getStateByData(queryParams).then((response) => {
         let list = response.rows;
+        console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
         that.getEqUrl(list);
       });
     },
@@ -4198,7 +4212,7 @@ export default {
           listType("").then((response) => {
             for (let i = 0; i < res.eqList.length; i++) {
               res.eqList[i].focus = false;
-              console.log(response,'responseresponseresponse')
+              // console.log(response,'responseresponseresponse')
               console.log(res.eqList[i].focus,'item.focus')
               for (let j = 0; j < response.rows.length; j++) {
                 if (response.rows[j].typeId == res.eqList[i].eqType) {
@@ -4211,7 +4225,7 @@ export default {
               }
             }
             that.selectedIconList = res.eqList //设备
-            console.log(that.selectedIconList, '当前设备所属隧道')
+            console.log(that.selectedIconList, '当前设备所属隧道')  
           }).then(() => {
             that.initEharts()
             // 切换隧道配置信息时，联动大类查询
@@ -4500,6 +4514,13 @@ export default {
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, '点击的设备');
+      let StateTypeId={ 
+       StateTypeId: item.eqType
+      }
+      getStateByRun(StateTypeId).then(res=>{
+         console.log(res,'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
+        this.stateForm.stateName=res.rows[0].stateName
+      })
       this.getTunnelData(this.currentTunnel.id);
       // 防止 ‘暂未获取’ 和 配置状态单选同时出现
       this.spanEqtypeDate = true
@@ -5580,7 +5601,7 @@ export default {
      }
      ::-webkit-scrollbar-thumb:hover {
          background-color: #00c2ff;
-
+    
      }
   }
   .drawerTop{
@@ -5931,6 +5952,7 @@ export default {
     // ::v-deep .menu-b .el-select--small{
     //     transform: translateY(-6px);
     // }
+  
     // 火灾报警弹窗
 ::v-deep .temperatureDialog .el-dialog{
         margin-top: 15vw !important;
@@ -6116,7 +6138,25 @@ export default {
   margin-left: 30px;
   line-height: 40px;
 }
-
+//  .theme-dark .content::-webkit-scrollbar-thumb{
+//       animation: movegundong 60s infinite linear;
+//       // background-color:red;
+//   }
+// @keyframes movegundong {
+//        0% {
+//           transform: translateX(0px);
+//       }
+//       50% {
+//           transform: translateX(200px);
+//       }
+//       75% {
+//           transform: translateX(800px);
+//       }
+//       100% {
+//           transform: translateX(1000px);
+//       }
+//    }
+    
 
 .system-state-normal {
   color: #00aa00;
@@ -6840,7 +6880,7 @@ input {
 
   /* table滚动条的滑块*/
   .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    // background-color: #455d79;
+    background-color: #455d79;
     border-radius: 3px;
   }
 }

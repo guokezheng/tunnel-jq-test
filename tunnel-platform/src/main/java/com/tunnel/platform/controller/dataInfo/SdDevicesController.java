@@ -347,4 +347,33 @@ public class SdDevicesController extends BaseController
     public AjaxResult obtainEquipmentEnergyConsumption(String tunnelId) {
         return AjaxResult.success(sdDevicesService.obtainEquipmentEnergyConsumption(tunnelId));
     }
+
+    /**
+     * 查询可控设备列表
+     */
+    @GetMapping("/isControl")
+    @ApiOperation("查询设备列表")
+    public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices)
+    {
+        if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
+            Long deptId = SecurityUtils.getDeptId();
+            sdDevices.setDeptId(deptId);
+        }
+        List<SdDevices> list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);
+        //1：代表执行校验指令SQL
+        if ("1".equals(sdDevices.getEqDirection())){
+            List<String> eqIds=new ArrayList<String>();
+            List<SdDevices> checklist = sdDevicesService.getChecklist(list);
+            for (SdDevices devices: checklist) {
+                eqIds.add(devices.getEqId());
+            }
+            startPage();
+            sdDevices.setEqIds(eqIds);
+            list=sdDevicesService.selectIsControlSdDevicesList(sdDevices);
+        }else {
+            startPage();
+            list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);
+        }
+        return getDataTable(list);
+    }
 }

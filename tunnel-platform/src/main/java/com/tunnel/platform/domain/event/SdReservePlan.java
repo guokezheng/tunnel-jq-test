@@ -3,8 +3,10 @@ package com.tunnel.platform.domain.event;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.tunnel.platform.domain.dataInfo.SdTunnels;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,6 +19,7 @@ import java.util.List;
  * @date 2020-09-10
  */
 @ApiModel("预案信息实体")
+@Data
 public class SdReservePlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -24,6 +27,10 @@ public class SdReservePlan extends BaseEntity
     /** 预案ID */
     @ApiModelProperty("预案ID")
     private Long id;
+
+    @Excel(name = "分区ID")
+    @ApiModelProperty("分区ID")
+    private Long subareaId;
 
     /** 预案类型ID */
     @Excel(name = "预案类型ID")
@@ -71,6 +78,11 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("策略名")
     private String strategyNames;
 
+    private SdTunnelSubarea sdTunnelSubarea;
+
+    private SdTunnels sdTunnels;
+
+
     public void setId(Long id)
     {
         this.id = id;
@@ -80,6 +92,23 @@ public class SdReservePlan extends BaseEntity
     {
         return id;
     }
+
+    public Long getSubareaId() {
+        return subareaId;
+    }
+
+    public void setSubareaId(Long subareaId) {
+        this.subareaId = subareaId;
+    }
+
+    public SdTunnelSubarea getSdTunnelSubarea() {
+        return sdTunnelSubarea;
+    }
+
+    public void setSdTunnelSubarea(SdTunnelSubarea sdTunnelSubarea) {
+        this.sdTunnelSubarea = sdTunnelSubarea;
+    }
+
     public void setPlanTypeId(Long planTypeId)
     {
         this.planTypeId = planTypeId;
@@ -90,9 +119,13 @@ public class SdReservePlan extends BaseEntity
         return planTypeId;
     }
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
 
-	public SdEventType getEventType() {
+
+    public SdEventType getEventType() {
 		if (eventType == null)
         {
 			eventType = new SdEventType();

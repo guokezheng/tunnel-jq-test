@@ -574,4 +574,15 @@ public class SdDevicesServiceImpl implements ISdDevicesService
         return sdDevicesList;
     }
 
+    /**
+     * 查询可控设备列表
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectIsControlSdDevicesList(sdDevices);
+        return devicesList;
+    }
+
 }

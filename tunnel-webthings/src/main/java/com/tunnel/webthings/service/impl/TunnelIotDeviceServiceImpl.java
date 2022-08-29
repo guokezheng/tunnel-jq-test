@@ -104,9 +104,9 @@ public class TunnelIotDeviceServiceImpl implements TunnelIotDeviceService {
         List<String> list=iotDeviceMapper.selectFile();
         StringBuilder sb=new StringBuilder();
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).contains("/home/ruoyi/uploadPath/upload/equipmentIcon")){
+            if (list.get(i).contains("E:/")){
                 sb.append(list.get(i));
-                String s = list.get(i).replace("/home/ruoyi/uploadPath/upload/equipmentIcon", "/opt/suidao/file/uploadPath/upload/equipmentIcon");
+                String s = list.get(i).replace("E:/", "E:/equipmentIcon");
                 String s1 = sb.toString();
                 iotDeviceMapper.update(s1,s);
                 sb.delete(0,sb.length());

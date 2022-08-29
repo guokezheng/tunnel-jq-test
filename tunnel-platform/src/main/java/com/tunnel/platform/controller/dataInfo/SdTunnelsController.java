@@ -90,4 +90,16 @@ public class SdTunnelsController extends BaseController
     {
         return Result.toResult(sdTunnelsService.deleteSdTunnelsByIds(tunnelIds));
     }
+
+    /**
+     * 查询隧道列表
+     */
+    @ApiOperation("查询隧道分区列表")
+    @GetMapping("/sublist")
+    public TableDataInfo<List<SdTunnels>> sublist(SdTunnels sdTunnels)
+    {
+        List<SdTunnels> list = sdTunnelsService.selectSdTunnelsSubList(sdTunnels);
+        return getDataTable(list);
+    }
+
 }

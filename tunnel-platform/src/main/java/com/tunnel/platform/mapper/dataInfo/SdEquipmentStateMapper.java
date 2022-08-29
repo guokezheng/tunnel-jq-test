@@ -46,10 +46,19 @@ public interface SdEquipmentStateMapper
      */
     public List<SdEquipmentState> selectIsControlList(SdEquipmentState sdEquipmentState);
 
-    /*
-	 * 查询设备类型状态关系列表
-	 */
+    /**
+     * 查询设备类型状态关系列表
+     * @param sdEquipmentState
+     * @return
+     */
     public List<SdEquipmentState> selectDropSdEquipmentStateList(SdEquipmentState sdEquipmentState);
+
+    /**
+     * 查询设备类型状态关系列表 根据状态类型分组
+     * @param sdEquipmentState
+     * @return
+     */
+    public List<SdEquipmentState> selectSdEquipmentStateListGroupByStateType(SdEquipmentState sdEquipmentState);
 
     /**
      * 根据设备类型查询设备类型状态关系列表

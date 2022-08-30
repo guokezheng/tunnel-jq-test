@@ -8,10 +8,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sId"    column="s_id"    />
         <result property="sName"    column="s_name"    />
         <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName" column="tunnel_name" />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <!--<association property="list" javaType="sdTunnelSubarea">
+            <id column="sid" property="sId"/>
+            <result column="sName" property="sName"/>
+            <result column="tunnelId" property="tunnelId"/>
+        </association>
+        <association property="sdTunnels" javaType="sdTunnels">
+            <id column="tunnelId" property="tunnelId"/>
+            <id column="tunnelName" property="tunnelName"/>
+        </association>-->
     </resultMap>
 
     <sql id="selectSdTunnelSubareaVo">
@@ -81,4 +91,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{sId}
         </foreach>
     </delete>
+
+    <select id="seleceList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
+        select a.s_id, a.s_name, b.tunnel_id, b.tunnel_name   from sd_tunnel_subarea a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+    </select>
 </mapper>

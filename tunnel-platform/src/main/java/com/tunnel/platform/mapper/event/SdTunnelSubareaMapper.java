@@ -64,4 +64,11 @@ public interface SdTunnelSubareaMapper
      * @return 结果
      */
     public int deleteSdTunnelSubareaBySIds(Long[] sIds);
+
+    /**
+     * 查询分区和隧道的对应关系
+     * @return
+     */
+    public List<SdTunnelSubarea> seleceList(SdTunnelSubarea sdTunnelSubarea);
+
 }

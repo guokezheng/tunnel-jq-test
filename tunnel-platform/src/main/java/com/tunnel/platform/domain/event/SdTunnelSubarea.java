@@ -1,9 +1,13 @@
 package com.tunnel.platform.domain.event;
 
+import com.tunnel.platform.domain.dataInfo.SdTunnels;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.List;
 
 /**
  * 隧道分区对象 sd_tunnel_subarea
@@ -11,6 +15,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author ruoyi
  * @date 2022-08-25
  */
+@Data
 public class SdTunnelSubarea extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -25,6 +30,8 @@ public class SdTunnelSubarea extends BaseEntity
     /** 隧道id */
     @Excel(name = "隧道id")
     private String tunnelId;
+
+    private String tunnelName;
 
     public void setsId(Long sId)
     {

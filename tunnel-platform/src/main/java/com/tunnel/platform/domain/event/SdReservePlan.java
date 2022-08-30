@@ -78,8 +78,10 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("策略名")
     private String strategyNames;
 
+    @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
 
+    @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
 
 

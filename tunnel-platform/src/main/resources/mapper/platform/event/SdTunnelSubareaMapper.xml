@@ -93,7 +93,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="seleceList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
-        select a.s_id, a.s_name, b.tunnel_id, b.tunnel_name   from sd_tunnel_subarea a
+        select a.s_id, a.s_name, b.tunnel_id, b.tunnel_name
+        from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
     </select>
 </mapper>

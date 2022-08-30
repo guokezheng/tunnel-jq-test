@@ -17,10 +17,10 @@
             <p class="zoom-title" style="font-size: 14px;">{{ displayNumb == 0 ? '桩号开' : '桩号关' }}</p>
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
           </div>
-         <!-- <div class="display-box">
+         <div class="display-box">
             <p class="zoom-title" style="font-size: 14px;">{{ zoomSwitch == 0 ? '缩放开' : '缩放关' }}</p>
             <el-switch v-model="zoomSwitch" class="switchStyle" @change='zoomSwitchChange'></el-switch>
-          </div> -->
+          </div>
           <!-- <div class="display-box">
             <p class="zoom-title" style="font-size: 14px;">{{displayThumbnail == 0 ? '缩略图开' : '缩略图关'}}</p>
             <el-switch v-model="displayThumbnail" active-color="#6ea2ec" inactive-color="#8a8c8e" @change="changeThumbnail"></el-switch>
@@ -2528,7 +2528,8 @@ export default {
       tooltipShow: false,//是否展示提示内容
       echartsColor: '#0a88bd',
       imageTimer:null, //定时器
-      isLogin:false
+      isLogin:false,
+      handleTableWheelSwithch:false,
     }
   },
 
@@ -2851,9 +2852,9 @@ export default {
     zoomSwitchChange(val){
       console.log(val,"val")
       if(val == false){
-        this.handleTableWheel = false
+        this.handleTableWheelSwithch = false
       }else{
-        this.handleTableWheel = true
+        this.handleTableWheelSwithch = true
       }
     },
     async flvPlayer(){
@@ -5214,7 +5215,10 @@ export default {
       console.log(event,"event")
       // let obj = document.getElementsByClassName('content')
       let obj = this.$refs.divRoller;
-      return this.tableZoom(obj, event);
+      if ( this.handleTableWheelSwithch==true ) {
+        this.tableZoom(obj, event);
+      }
+      
     },
     tableZoom(obj, event) {
       console.log(obj, event,'obj, event')

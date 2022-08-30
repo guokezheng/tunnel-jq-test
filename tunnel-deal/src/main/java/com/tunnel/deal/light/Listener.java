@@ -1,3 +1,4 @@
+package com.tunnel.deal.light;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;

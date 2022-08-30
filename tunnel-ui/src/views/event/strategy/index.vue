@@ -229,8 +229,8 @@
         </el-form-item>
         <el-form-item label="设备类型" v-if="equipmentTypeData.length" :style="{height: viewStrategy? '2.75rem':'13.75rem',overflow: 'auto'}" prop="equipment_type">
           <el-radio-group v-model="eqForm.equipment_type" v-for="item in equipmentTypeData" :key="item.typeId" @click.native="eqTypeChange(item.typeId,item.typeName)" >
-              <el-radio-button v-if="eqForm.eqType==item.typeId && viewStrategy!=false" :label="item.typeId" :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName}}</el-radio-button>
-              <el-radio-button v-if="viewStrategy==false" :label="item.typeId" :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName}}</el-radio-button>
+              <el-radio-button v-if="eqForm.eqType==item.typeId && viewStrategy!=false" :label="item.typeId" :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName.typeName}}</el-radio-button>
+              <el-radio-button v-if="viewStrategy==false" :label="item.typeId" :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName.typeName}}</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="设备类型" v-else>
@@ -652,6 +652,7 @@ export default {
 	getEquipmentHasType() {
 	  listHasType(this.strategyForm.tunnelId).then(response => {
 	    this.equipmentTypeData = response.rows;
+      // console.log(response.rows,'response.rowsresponse.rows')
 	  });
 	},
     /** 根据设备类型查询设备列表 */
@@ -820,6 +821,7 @@ export default {
         });
         this.chooseEq = true;
         this.title = "选择设备";
+        console.log(this.strategyForm,'this.strategyFormthis.strategyForm')
         this.getEquipmentHasType();
       }else{
         this.$modal.msgError("请先选择隧道！");

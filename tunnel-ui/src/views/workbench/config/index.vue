@@ -4141,11 +4141,11 @@ export default {
         stateName: null,
         isControl: null,
       };
-      await getStateByData(queryParams).then((response) => {
-        let list = response.rows;
-        console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
-        that.getEqUrl(list);
-      });
+      // await getStateByData(queryParams).then((response) => {
+      //   let list = response.rows;
+      //   console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
+      //   that.getEqUrl(list);
+      // });
     },
     async getEqUrl(list) {
       let that = this;
@@ -4194,7 +4194,6 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData(tunnelId) {      
-      console.log(tunnelId,'参数餐宿参数擦擦是')
       let that = this;
       that.upList = [];
       that.downList = [];

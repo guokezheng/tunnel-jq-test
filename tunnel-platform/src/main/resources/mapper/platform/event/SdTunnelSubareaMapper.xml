@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdTunnelSubareaMapper">
+
+    <resultMap type="SdTunnelSubarea" id="SdTunnelSubareaResult">
+        <result property="sId"    column="s_id"    />
+        <result property="sName"    column="s_name"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName" column="tunnel_name" />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <!--<association property="list" javaType="sdTunnelSubarea">
+            <id column="sid" property="sId"/>
+            <result column="sName" property="sName"/>
+            <result column="tunnelId" property="tunnelId"/>
+        </association>
+        <association property="sdTunnels" javaType="sdTunnels">
+            <id column="tunnelId" property="tunnelId"/>
+            <id column="tunnelName" property="tunnelName"/>
+        </association>-->
+    </resultMap>
+
+    <sql id="selectSdTunnelSubareaVo">
+        select s_id, s_name, tunnel_id, create_by, create_time, update_by, update_time from sd_tunnel_subarea
+    </sql>
+
+    <select id="selectSdTunnelSubareaList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
+        <include refid="selectSdTunnelSubareaVo"/>
+        <where>
+            <if test="sName != null  and sName != ''"> and s_name like concat('%', #{sName}, '%')</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTunnelSubareaBySId" parameterType="Long" resultMap="SdTunnelSubareaResult">
+        <include refid="selectSdTunnelSubareaVo"/>
+        where s_id = #{sId}
+    </select>
+
+    <select id="selectSdTunnelSubareaByTunnelId" parameterType="String" resultMap="SdTunnelSubareaResult">
+        <include refid="selectSdTunnelSubareaVo"/>
+        where tunnel_id = #{tunnelId}
+    </select>
+
+    <insert id="insertSdTunnelSubarea" parameterType="SdTunnelSubarea">
+        insert into sd_tunnel_subarea
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sId != null">s_id,</if>
+            <if test="sName != null">s_name,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sId != null">#{sId},</if>
+            <if test="sName != null">#{sName},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTunnelSubarea" parameterType="SdTunnelSubarea">
+        update sd_tunnel_subarea
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sName != null">s_name = #{sName},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+
+    <delete id="deleteSdTunnelSubareaBySId" parameterType="Long">
+        delete from sd_tunnel_subarea where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteSdTunnelSubareaBySIds" parameterType="String">
+        delete from sd_tunnel_subarea where s_id in
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+
+    <select id="seleceList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
+        select a.s_id, a.s_name, b.tunnel_id, b.tunnel_name   from sd_tunnel_subarea a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+    </select>
+</mapper>

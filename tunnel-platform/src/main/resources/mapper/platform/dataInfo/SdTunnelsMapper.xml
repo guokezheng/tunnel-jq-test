@@ -26,10 +26,6 @@
         <result property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
-        <collection property="list" ofType="SdTunnelSubarea">
-            <id column="sId" property="sId"></id>
-            <result column="sName" property="sName"></result>
-        </collection>
     </resultMap>
 
     <resultMap id="indexResult" type="SdSafetyIndex">

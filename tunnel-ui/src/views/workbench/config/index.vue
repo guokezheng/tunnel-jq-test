@@ -29,7 +29,7 @@
             <p class="zoom-title" style="font-size: 14px;">统计图表</p>
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
-          <el-button
+         <!-- <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -37,7 +37,7 @@
             @click="strategyPage"
           >
             控制策略
-          </el-button>
+          </el-button> -->
           <el-button
             class="flex-row"
             type="primary"
@@ -133,7 +133,7 @@
                   class="back-img"
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
-                  
+
                 ></el-image>
 
                 <div
@@ -175,7 +175,7 @@
                     v-for="(item, index) in selectedIconList"
                     :key="index"
                     :style="{
-                            left: item.position.left - 12 + 'px',
+                            left: item.position.left  + 'px',
                             top: item.position.top + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
@@ -316,7 +316,7 @@
 
     <!-- 右侧侧窗 -->
       <div class=" indicatorLight" @click="isDrawerA()"><i class="el-icon-caret-left"></i>一键车道控制模块</div>
-      <div class=" brightnessControl" @click="isDrawerB()"><i class="el-icon-caret-left"></i>照明控制模块</div>
+      <div class=" brightnessControl" @click="isDrawerB()"><i class="el-icon-caret-left"></i>定时控制模块</div>
        <el-drawer
         title="车道指示灯-车道控制"
         :visible.sync="drawerA"
@@ -743,7 +743,7 @@
         <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
         </el-form-item>
-        
+
           <!-- ====================微波检查器开始====== -->
           <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
           {{ '正常'}}
@@ -2812,13 +2812,13 @@ export default {
     srollAuto(){
       var parent=document.getElementsByClassName('content')
       // console.log(parent,'parentparent')
-       clearInterval(this.imageTimer) 
+       clearInterval(this.imageTimer)
       this.imageTimer = setInterval(()=>{
         // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
           if( Math.round(parent[0].scrollLeft) + parent[0].clientWidth === parent[0].scrollWidth){
-                clearInterval(this.imageTimer)     
+                clearInterval(this.imageTimer)
               this.imageTimer=setInterval(()=>{
-                  parent[0].scrollLeft--               
+                  parent[0].scrollLeft--
                   if(Math.round(parent[0].scrollLeft)+ parent[0].clientWidth === parent[0].clientWidth){
                     this.srollAuto()
                     // console.log(123213,'12321')
@@ -2826,21 +2826,21 @@ export default {
                 },20)
           } else{
              parent[0].scrollLeft++
-          }                                                 
+          }
               }, 20)
-    
+
      },
 
     mouseoversImage(){
-      //  console.log(this.imageTimer,'清定时器')    
+      //  console.log(this.imageTimer,'清定时器')
        clearInterval(this.imageTimer)
        this.imageTimer=null
-           
+
     },
-    mouseleaveImage(){      
+    mouseleaveImage(){
         // console.log('离开了')
         this.srollAuto()
-    },    
+    },
     //抽屉
     isDrawerA(){
       this.drawerA=true
@@ -4193,7 +4193,8 @@ export default {
       this.cameraErrorInfo = "抱歉！视频信号丢失！";
     },
     /* 获取隧道配置信息*/
-    getTunnelData(tunnelId) {      
+    getTunnelData(tunnelId) {
+      console.log(tunnelId,'参数餐宿参数擦擦是')
       let that = this;
       that.upList = [];
       that.downList = [];
@@ -4224,7 +4225,7 @@ export default {
               }
             }
             that.selectedIconList = res.eqList //设备
-            console.log(that.selectedIconList, '当前设备所属隧道')  
+            console.log(that.selectedIconList, '当前设备所属隧道')
           }).then(() => {
             that.initEharts()
             // 切换隧道配置信息时，联动大类查询
@@ -4352,7 +4353,7 @@ export default {
                       this.eqTypeStateList[k].type &&
                       this.selectedIconList[j].eqType == "108" &&
                       type == "108"
-                    ) {                 
+                    ) {
                       this.selectedIconList[j].wbList = response[i].state;
                     }
                     // 路面状态
@@ -4513,7 +4514,7 @@ export default {
     /* 打开配置界面*/
     async openStateSwitch(item) {
       console.log(item, '点击的设备');
-      let StateTypeId={ 
+      let StateTypeId={
        StateTypeId: item.eqType
       }
       getStateByRun(StateTypeId).then(res=>{
@@ -4547,7 +4548,7 @@ export default {
                   //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
                   // })
                 }
-      
+
       //跳转微波车检
       if (item.eqType == "108") {
         console.log('tiaodaochejianl')
@@ -5600,7 +5601,7 @@ export default {
      }
      ::-webkit-scrollbar-thumb:hover {
          background-color: #00c2ff;
-    
+
      }
   }
   .drawerTop{
@@ -5951,7 +5952,7 @@ export default {
     // ::v-deep .menu-b .el-select--small{
     //     transform: translateY(-6px);
     // }
-  
+
     // 火灾报警弹窗
 ::v-deep .temperatureDialog .el-dialog{
         margin-top: 15vw !important;
@@ -6155,7 +6156,7 @@ export default {
 //           transform: translateX(1000px);
 //       }
 //    }
-    
+
 
 .system-state-normal {
   color: #00aa00;

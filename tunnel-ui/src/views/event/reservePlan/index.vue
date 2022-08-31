@@ -324,7 +324,7 @@
      
       <!-- 查看工作台对话框 -->
     <el-dialog
-        title="提示"
+        title="预览"
         :visible.sync="workbenchOpen"
          width="86.5%"
         :before-close="handleClose"              
@@ -338,7 +338,7 @@
                     :key="index"
                     :style="{
                             left: item.position.left - 12 + 'px',
-                            top: item.position.top + 'px',
+                            top: item.position.top + 52 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
@@ -453,7 +453,7 @@
 
     <!-- 新增弹窗 -->
   <el-dialog
-        title="添加预案信息"
+        :title="addTitle"
         :visible.sync="addForm"
          width="86.5%"
         :before-close="handleClose"              
@@ -564,6 +564,112 @@
          </el-col>
   <!-- 车道背景图 -->
         <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
+        <div
+                    class="icon-box mouseHover"
+                    v-for="(item, index) in selectedIconList"
+                    :key="index"
+                    :style="{
+                            left: item.position.left - 12 + 'px',
+                            top: item.position.top + 150 +'px',
+                            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
+                          }"
+                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
+                  >
+                     <div
+                        v-show="(item.eqType != 7 &&
+
+                                  item.eqType != 16 &&
+
+                                  item.eqType != 15 &&
+                                  item.eqType != 8 &&
+                                  item.eqType != 9 &&
+                                  item.eqType != 21 &&
+                                  item.display == true) ||
+                                ((item.eqType == 7 ||
+                                  item.eqType == 8 ||
+                                  item.eqType == 9 ||
+                                  item.eqType == 21 ) &&
+                                  item.display == true &&
+                                  lightSwitch == 1)"
+                        :class="{ focus: item.focus }"
+                      >
+                        <img
+                          v-for="(url, indexs) in item.url"
+                          style="position: relative;"
+                          :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :key="item.deptId + indexs"
+                          :src="url"
+                        />
+
+                        <!-- 调光数值 -->
+                        <label
+                          style="
+                                  color: yellow;
+                                  position: absolute;
+                                  left: 30px;
+                                  bottom: 2px;
+                                  pointer-events: none;
+                                "
+                          v-if="item.eqType == 21"
+                        >{{ item.lightValue }}</label
+                        >
+                        <!-- CO/VI -->
+                        <label
+                          style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 19">
+                          {{ item.value }}
+                          <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
+                          <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
+                        </label>
+                        <!-- 风速风向 -->
+                        <label
+                          style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 17">
+                          {{ item.value }}
+                          <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
+                        </label>
+                        <!-- 洞内洞外 -->
+                        <label
+                          style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 5">
+                          {{ item.value }}cd/m2
+                        </label>  
+                      </div>
+                
+                    <!-- 桩号 -->
+                    <!-- <input
+                      :class="[
+                              item.eqType == 7 ||
+                              item.eqType == 8 ||
+                              item.eqType == 9 ||
+                              item.eqType == 21
+                                ? 's-config-img-input'
+                                : 'config-img-input',
+                            ]"
+                        v-if="(item.display == true &&
+                                displayNumb == true &&
+                                item.eqType != 7 &&
+                                item.eqType != 8 &&
+                                item.eqType != 9 &&
+                                item.eqType != 21) ||
+                              ((item.eqType == 7 ||
+                                item.eqType == 8 ||
+                                item.eqType == 9 ||
+                                item.eqType == 21) &&
+                                item.display == true &&
+                                lightSwitch == 1 &&
+                                displayNumb == true)
+                            "
+                      v-show="item.eqType || item.eqType==0"
+                      type="text"
+                      v-model="item.pile"
+                      disabled="true"
+                      style="color: #055270;"
+                    />
+                    <div v-else style="width: 80px"></div> -->
+                  </div>
              
       <el-form-item  style="text-align: right;width: 100%;">
           <el-button style="width: 10%;" type="primary" @click="submitUpload" :loading="dloading">{{ dloading ? '提交中 ...' : '保存' }}</el-button>
@@ -612,6 +718,8 @@ export default {
     return {
       //新增弹窗
       addForm:false,
+      title:"",
+      addTitle:"",
       options: [{
           value: 'zhinan',
           label: '指南',
@@ -914,8 +1022,8 @@ export default {
       selectedIconList:[],
       lightSwitch: 0,
       eqTunnelData:[] ,//隧道下拉
-      eqTunnelDataList:[] //分区隧道下拉
-
+      eqTunnelDataList:[], //分区隧道下拉
+      timer:null,//步骤条定时器
     };
   },
   created() {
@@ -924,14 +1032,14 @@ export default {
     this.getStrategyInfo();//策略下拉
     this.getTunnelData(this.tunnelId)
     this.lightSwitchFunc()
-    // this.ceshiTime()
+    this.ceshiTime()
   },
   methods: {
-    // ceshiTime(){
-    //     setInterval(()=>{
-    //         this.active++
-    //     },1000)
-    // },
+    ceshiTime(){     
+     this.timer=setInterval(()=>{            
+            if(this.active++ >2) this.active = 0            
+        },1000)
+    },
     showStrategyContent(row){
       this.strategyDialog = true
       this.str_arr = row.strategyNames.split("；");
@@ -1244,6 +1352,7 @@ export default {
   },
       /** drawer-form表单，取消操作 **/
       drawerClose() {
+        this.$refs['form1'].resetFields();
         this.resetReservePlanDrawForm();
         this.drawer = false;
         this.dloading=false
@@ -1251,21 +1360,22 @@ export default {
       },
       /** 新增按钮操作 **/
       handleAdd() {
-        // this.resetReservePlanDrawForm();
-        // this.drawerTitle = "新增预案";
-        // this.planChangeSink = "add";
-        // this.drawer = true;
-        // tunnelNames().then(res=>{
-        //    this.eqTunnelData=res.rows
-        //    console.log(this.eqTunnelData,'this.eqTunnelDatathis.eqTunnelData')
-        // })
+        this.resetReservePlanDrawForm();
+        this.addTitle = "新增预案";
+        this.planChangeSink = "add";
+
+        tunnelNames().then(res=>{
+           this.eqTunnelData=res.rows
+           console.log(res,'this.eqTunnelDatathis.eqTunnelData')
+        })
+
         this.addForm=true
       },
       changeSelection(e){
         console.log(e,'indexindex')
          this.eqTunnelData.forEach(item=>{
            if(item.tunnelId==e){
-           this.eqTunnelDataList=item.list
+           this.eqTunnelDataList=item.sdTunnelSubareas
            }
          })
          console.log( this.eqTunnelDataList,' this.eqTunnelDataList this.eqTunnelDataList')
@@ -1275,26 +1385,32 @@ export default {
         this.resetReservePlanDrawForm();
         this.planChangeSink = "edit";
         const id = row.id || this.ids
-        getPlan(id).then(response => {
-          console.log(response,"response")
-          this.fileList = [];
-          this.reservePlanDrawForm = response.data;
-          if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
-            this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
-          }
+        // getPlan(id).then(response => {
+        //   console.log(response,"response")
+        //   this.fileList = [];
+        //   this.reservePlanDrawForm = response.data;
+        //   if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
+        //     this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
+        //   }
 
-          let fileInfo = response.data.pFileList;
-          for ( var i = 0; i < fileInfo.length; i++){
-              let fileModel = {};
-              fileModel.name = fileInfo[i].fileName;
-              fileModel.url = fileInfo[i].url;
-              fileModel.fId = fileInfo[i].id;
-              this.fileList.push(fileModel);
-          }
-          //文件回显
-          this.drawer = true;
-          this.drawerTitle = "修改预案信息";
-        });
+        //   let fileInfo = response.data.pFileList;
+        //   for ( var i = 0; i < fileInfo.length; i++){
+        //       let fileModel = {};
+        //       fileModel.name = fileInfo[i].fileName;
+        //       fileModel.url = fileInfo[i].url;
+        //       fileModel.fId = fileInfo[i].id;
+        //       this.fileList.push(fileModel);
+        //   }
+        //   //文件回显
+         
+        // });
+         // this.drawer = true;
+         this.$nextTick(()=>{
+            this.$refs['form1'].resetFields();
+          })
+          
+          this.addForm=true
+          this.title = "修改预案信息";
       },
       /** 删除按钮操作 */
       handleDelete(row) {
@@ -1366,6 +1482,7 @@ export default {
             //   .catch(_ => {});
             // console.log(done )
             done();
+            this.$refs['form1'].resetFields()
          },
          //关闭drawer
          handleFileClose(done) {

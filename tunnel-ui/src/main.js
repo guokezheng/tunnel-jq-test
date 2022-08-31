@@ -38,6 +38,8 @@ import VueMeta from 'vue-meta'
 import DictData from '@/components/DictData'
 // 无缝滚动组件
 import VueSeamlessScroll from 'vue-seamless-scroll'
+// 字典标签组件
+import reproductionImage from '@/components/reproduction'
 // jQuery
 import $ from 'jquery'
 import preventClick from './api/clickOnceAtime'
@@ -73,6 +75,7 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('VueSeamlessScroll', VueSeamlessScroll)
+Vue.component('reproductionImage', reproductionImage)
 
 Vue.use(directive)
 Vue.use(plugins)

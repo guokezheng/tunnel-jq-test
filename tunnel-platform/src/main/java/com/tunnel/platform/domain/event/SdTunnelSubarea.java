@@ -1,6 +1,7 @@
 package com.tunnel.platform.domain.event;
 
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -21,17 +22,16 @@ public class SdTunnelSubarea extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 分区id */
+    @ApiModelProperty("分区Id")
     private Long sId;
 
     /** 分区名称 */
     @Excel(name = "分区名称")
+    @ApiModelProperty("分区名称")
     private String sName;
 
-    /** 隧道id */
-    @Excel(name = "隧道id")
+    @ApiModelProperty(name = "所属隧道")
     private String tunnelId;
-
-    private String tunnelName;
 
     public void setsId(Long sId)
     {
@@ -51,14 +51,13 @@ public class SdTunnelSubarea extends BaseEntity
     {
         return sName;
     }
-    public void setTunnelId(String tunnelId)
-    {
-        this.tunnelId = tunnelId;
+
+    public String getTunnelId() {
+        return tunnelId;
     }
 
-    public String getTunnelId()
-    {
-        return tunnelId;
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
     }
 
     @Override

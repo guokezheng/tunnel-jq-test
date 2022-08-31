@@ -154,7 +154,7 @@
                             height: h + 'px',
                             width: w + 'px',
                             position: 'absolute',
-                            left: left - 48 + 'px',
+                            left: left - 30 + 'px',
                             top: top - 30 + 'px',
                             opacity: 0.5,
                             border: len + 'px dashed #176CBF',

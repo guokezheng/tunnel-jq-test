@@ -484,15 +484,19 @@
         }else{
           id=this.ids
         }
+        console.log(row.stateType,'stateTypestateTypev')
        if(row.stateType === '设备数据状态' && row.stateType) {
           staTyId=2
        }else if(row.stateType === '设备运行状态' && row.stateType){
         staTyId=1
-       }else{
+       }else if(row.stateType ===undefined ){
+        staTyId=0
+       }
+       else{
          staTyId=this.sid
        }
-        
-        console.log(row,'11111111111111')
+       
+        // console.log(staTyId,'11111111111111')
         getEqTypeStatesByType(id,staTyId).then(response => {
          console.log(response,'resres')
          if(response.data.length==0){

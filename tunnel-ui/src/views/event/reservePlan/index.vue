@@ -79,6 +79,7 @@
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
       <el-table-column label="预案名称" align="center" prop="planName" />
+      <el-table-column label="分区" align="center" prop="sdTunnelSubarea.sName" />
       <el-table-column label="事件类型" align="center" prop="eventType.eventType" />
       <el-table-column label="预案描述" align="left" prop="planDescription" width="200" >      
       <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" > -->
@@ -91,18 +92,7 @@
               <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;">{{scope.row.planDescription}}</div>
             </el-popover>
         </template>
-      </el-table-column>
-          <!-- 查看工作台 -->
-        <!-- <el-table-column label="查看工作台" align="center" prop="planDescription" width="180" >      
-                <template slot-scope="scope">
-                        <el-button  v-show="scope.row.planFileId !=null"
-                          size="mini"
-                          type="text"                         
-                          @click="openWorkbench(scope.row)"
-                          style="cursor:pointer;"
-                        >点击查看</el-button>                    
-                </template>
-          </el-table-column> -->
+      </el-table-column>     
 
       <el-table-column label="相关文档" align="center" class-name="small-padding fixed-width">
          <template slot-scope="scope">
@@ -172,7 +162,7 @@
       @pagination="getList"
     />
 
-    <el-drawer
+    <!-- <el-drawer
       class="zwsj"
       :title="drawerTitle"
       :visible.sync="drawer"
@@ -181,15 +171,15 @@
       destroy-on-close>
       <el-form ref="form1" :model="reservePlanDrawForm" :rules="rules" label-width="120px">
       <el-form-item label="所属隧道" prop="tunnelId">
-              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width: 80%;">
+              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width: 80%;" @change="changeSelection">
                 <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
-                  :value="item.tunnelId"></el-option>
+                  :value="item.tunnelId" ></el-option>
               </el-select>  
             </el-form-item>
-            <el-form-item label="分区隧道" prop="s_id">
-              <el-select v-model="reservePlanDrawForm.s_id" placeholder="请选择所属隧道" style="width: 80%;">
-                <el-option v-for="item in eqTunnelData" :key="item.s_name" :label="item.s_name"
-                  :value="item.tunnelId"></el-option>
+            <el-form-item label="隧道分区" prop="sId">
+              <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width: 80%;">
+                <el-option v-for="item in eqTunnelDataList" :key="item.sName" :label="item.sName"
+                  :value="item.sId"></el-option>
               </el-select>  
             </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId">
@@ -209,13 +199,13 @@
         </el-form-item>
         <el-form-item label="相关策略" prop="strategyNames">
           <el-input style="width: 80%;" v-model="reservePlanDrawForm.strategyNames" @focus="openAddStragegyDialog" @click.native="openAddStragegyDialog()"  placeholder="" />
-          <!-- <el-select v-model="reservePlanDrawForm.strategyId" placeholder="请选择相关策略" style="width: 80%;">
+          <el-select v-model="reservePlanDrawForm.strategyId" placeholder="请选择相关策略" style="width: 80%;">
             <el-option
                 v-for="item in strategyData"
                 :key="item.id"
                 :label="item.strategyName"
                 :value="item.id"/>
-          </el-select> -->
+          </el-select>
         </el-form-item>
         <el-form-item label="相关文档" prop="eventLocation">
           <el-upload  style="width: 80%;"
@@ -232,9 +222,9 @@
             :http-request="uploadFile"
             :auto-upload="false">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-           <!-- <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
+          <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
             </el-button> -->
-            <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;">{{text}}</span>
+            <!-- <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;">{{text}}</span>
           </el-upload>
         </el-form-item>
 
@@ -243,7 +233,7 @@
           <el-button style="width: 30%;"  @click="drawerClose">取 消</el-button>
         </el-form-item>
       </el-form>
-    </el-drawer>
+    </el-drawer> --> 
 
      <el-drawer
        class="zwsj"
@@ -334,7 +324,7 @@
      
       <!-- 查看工作台对话框 -->
     <el-dialog
-        title="提示"
+        title="预览"
         :visible.sync="workbenchOpen"
          width="86.5%"
         :before-close="handleClose"              
@@ -348,7 +338,7 @@
                     :key="index"
                     :style="{
                             left: item.position.left - 12 + 'px',
-                            top: item.position.top + 'px',
+                            top: item.position.top + 52 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
@@ -448,10 +438,248 @@
                     />
                     <div v-else style="width: 80px"></div> -->
                   </div>
+          <el-steps :active="active" finish-status="success">
+              <el-step title="步骤 1"></el-step>
+              <el-step title="步骤 2"></el-step>
+              <el-step title="步骤 3"></el-step>
+            </el-steps>
         <span slot="footer" class="dialog-footer">
           <el-button @click="workbenchOpen = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
         </span>
+        
+     </el-dialog>
+
+
+    <!-- 新增弹窗 -->
+  <el-dialog
+        :title="addTitle"
+        :visible.sync="addForm"
+         width="86.5%"
+        :before-close="handleClose"              
+         append-to-body
+         >
+         <el-form ref="form1" :model="reservePlanDrawForm" :rules="rules" label-width="80px">
+        <el-col :span="4">
+         <el-form-item label="所属隧道" prop="tunnelId">
+              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width:80%;" @change="changeSelection">
+                <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
+                  :value="item.tunnelId" ></el-option>
+              </el-select>  
+            </el-form-item>
+            </el-col>
+            <el-col :span="4">
+         <el-form-item label="隧道分区" prop="sId">
+              <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width:80%;">
+                <el-option v-for="item in eqTunnelDataList" :key="item.sName" :label="item.sName"
+                  :value="item.sId"></el-option>
+              </el-select>  
+            </el-form-item>
+         </el-col>
+           <el-col :span="4">
+        <el-form-item label="事件类型" prop="planTypeId">
+          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
+            <el-option
+                v-for="item in planTypeData"
+                :key="item.id"
+                :label="item.eventType"
+                :value="item.id"/>
+          </el-select>
+        </el-form-item>
+         </el-col>
+          <el-col :span="4">
+         <el-form-item label="预案名称" prop="planName">
+          <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案名称" />
+        </el-form-item>
+         </el-col>
+          <el-col :span="4">
+         <el-form-item label="预案描述" prop="planDescription">
+          <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案描述" />
+        </el-form-item>
+          </el-col>
+          <el-col :span="4">
+        <el-form-item label="相关文档" prop="strategyNames">
+         <el-upload  style="width: 80%;"
+            multiple
+            class="upload-demo"
+            ref="upload"
+            :limit="5"
+            action="http://xxx.xxx.xxx/personality/uploadExcel"
+            :on-preview="handlePreview"
+            :on-change="handleChange"
+            :on-remove="handleRemove"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
+            :http-request="uploadFile"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+           <!-- <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
+            </el-button> -->
+            <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;"></span>
+          </el-upload>
+        </el-form-item>
+         </el-col>
+        
+
+        <el-col :span="6">
+        <el-form-item label="相关策略" prop="planTypeId">
+          <el-cascader
+          
+          :options="options"
+          @change="handleChange"></el-cascader>
+        </el-form-item>
+         </el-col>
+         <el-col :span="6">
+        <el-form-item label="红黄灯" prop="planTypeId">
+          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
+            <el-option
+                v-for="item in planTypeData"
+                :key="item.id"
+                :label="item.eventType"
+                :value="item.id"/>
+          </el-select>
+        </el-form-item>
+         </el-col>
+         <el-col :span="6">
+        <el-form-item label="红黄灯" prop="planTypeId">
+          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
+            <el-option
+                v-for="item in planTypeData"
+                :key="item.id"
+                :label="item.eventType"
+                :value="item.id"/>
+          </el-select>
+        </el-form-item>
+         </el-col>
+         <el-col :span="6">
+        <el-form-item label="红黄灯" prop="planTypeId">
+          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
+            <el-option
+                v-for="item in planTypeData"
+                :key="item.id"
+                :label="item.eventType"
+                :value="item.id"/>
+          </el-select>
+        </el-form-item>
+         </el-col>
+  <!-- 车道背景图 -->
+        <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
+        <div
+                    class="icon-box mouseHover"
+                    v-for="(item, index) in selectedIconList"
+                    :key="index"
+                    :style="{
+                            left: item.position.left - 12 + 'px',
+                            top: item.position.top + 150 +'px',
+                            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
+                          }"
+                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
+                  >
+                     <div
+                        v-show="(item.eqType != 7 &&
+
+                                  item.eqType != 16 &&
+
+                                  item.eqType != 15 &&
+                                  item.eqType != 8 &&
+                                  item.eqType != 9 &&
+                                  item.eqType != 21 &&
+                                  item.display == true) ||
+                                ((item.eqType == 7 ||
+                                  item.eqType == 8 ||
+                                  item.eqType == 9 ||
+                                  item.eqType == 21 ) &&
+                                  item.display == true &&
+                                  lightSwitch == 1)"
+                        :class="{ focus: item.focus }"
+                      >
+                        <img
+                          v-for="(url, indexs) in item.url"
+                          style="position: relative;"
+                          :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :key="item.deptId + indexs"
+                          :src="url"
+                        />
+
+                        <!-- 调光数值 -->
+                        <label
+                          style="
+                                  color: yellow;
+                                  position: absolute;
+                                  left: 30px;
+                                  bottom: 2px;
+                                  pointer-events: none;
+                                "
+                          v-if="item.eqType == 21"
+                        >{{ item.lightValue }}</label
+                        >
+                        <!-- CO/VI -->
+                        <label
+                          style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 19">
+                          {{ item.value }}
+                          <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
+                          <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
+                        </label>
+                        <!-- 风速风向 -->
+                        <label
+                          style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 17">
+                          {{ item.value }}
+                          <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
+                        </label>
+                        <!-- 洞内洞外 -->
+                        <label
+                          style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
+                          v-if="item.eqType == 5">
+                          {{ item.value }}cd/m2
+                        </label>  
+                      </div>
+                
+                    <!-- 桩号 -->
+                    <!-- <input
+                      :class="[
+                              item.eqType == 7 ||
+                              item.eqType == 8 ||
+                              item.eqType == 9 ||
+                              item.eqType == 21
+                                ? 's-config-img-input'
+                                : 'config-img-input',
+                            ]"
+                        v-if="(item.display == true &&
+                                displayNumb == true &&
+                                item.eqType != 7 &&
+                                item.eqType != 8 &&
+                                item.eqType != 9 &&
+                                item.eqType != 21) ||
+                              ((item.eqType == 7 ||
+                                item.eqType == 8 ||
+                                item.eqType == 9 ||
+                                item.eqType == 21) &&
+                                item.display == true &&
+                                lightSwitch == 1 &&
+                                displayNumb == true)
+                            "
+                      v-show="item.eqType || item.eqType==0"
+                      type="text"
+                      v-model="item.pile"
+                      disabled="true"
+                      style="color: #055270;"
+                    />
+                    <div v-else style="width: 80px"></div> -->
+                  </div>
+             
+      <el-form-item  style="text-align: right;width: 100%;">
+          <el-button style="width: 10%;" type="primary" @click="submitUpload" :loading="dloading">{{ dloading ? '提交中 ...' : '保存' }}</el-button>
+          <el-button style="width: 10%;"  @click="drawerClose">取 消</el-button>
+        </el-form-item>
+       
+         </el-form>
+
+ 
+     
      </el-dialog>
 
   </div>
@@ -468,7 +696,8 @@ import {
   loadPlanFile,
   updatePlanFile,
   listStrategyByPlanId,
-  partitionTunnel
+  partitionTunnel,
+  tunnelNames
   } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
 import { listReservePlanFile } from "@/api/event/reservePlanFile";
@@ -487,6 +716,206 @@ export default {
   name: "Plan",
   data() {
     return {
+      //新增弹窗
+      addForm:false,
+      title:"",
+      addTitle:"",
+      options: [{
+          value: 'zhinan',
+          label: '指南',
+          children: [{
+            value: 'shejiyuanze',
+            label: '设计原则',
+            children: [{
+              value: 'yizhi',
+              label: '一致'
+            }, {
+              value: 'fankui',
+              label: '反馈'
+            }, {
+              value: 'xiaolv',
+              label: '效率'
+            }, {
+              value: 'kekong',
+              label: '可控'
+            }]
+          }, {
+            value: 'daohang',
+            label: '导航',
+            children: [{
+              value: 'cexiangdaohang',
+              label: '侧向导航'
+            }, {
+              value: 'dingbudaohang',
+              label: '顶部导航'
+            }]
+          }]
+        }, {
+          value: 'zujian',
+          label: '组件',
+          children: [{
+            value: 'basic',
+            label: 'Basic',
+            children: [{
+              value: 'layout',
+              label: 'Layout 布局'
+            }, {
+              value: 'color',
+              label: 'Color 色彩'
+            }, {
+              value: 'typography',
+              label: 'Typography 字体'
+            }, {
+              value: 'icon',
+              label: 'Icon 图标'
+            }, {
+              value: 'button',
+              label: 'Button 按钮'
+            }]
+          }, {
+            value: 'form',
+            label: 'Form',
+            children: [{
+              value: 'radio',
+              label: 'Radio 单选框'
+            }, {
+              value: 'checkbox',
+              label: 'Checkbox 多选框'
+            }, {
+              value: 'input',
+              label: 'Input 输入框'
+            }, {
+              value: 'input-number',
+              label: 'InputNumber 计数器'
+            }, {
+              value: 'select',
+              label: 'Select 选择器'
+            }, {
+              value: 'cascader',
+              label: 'Cascader 级联选择器'
+            }, {
+              value: 'switch',
+              label: 'Switch 开关'
+            }, {
+              value: 'slider',
+              label: 'Slider 滑块'
+            }, {
+              value: 'time-picker',
+              label: 'TimePicker 时间选择器'
+            }, {
+              value: 'date-picker',
+              label: 'DatePicker 日期选择器'
+            }, {
+              value: 'datetime-picker',
+              label: 'DateTimePicker 日期时间选择器'
+            }, {
+              value: 'upload',
+              label: 'Upload 上传'
+            }, {
+              value: 'rate',
+              label: 'Rate 评分'
+            }, {
+              value: 'form',
+              label: 'Form 表单'
+            }]
+          }, {
+            value: 'data',
+            label: 'Data',
+            children: [{
+              value: 'table',
+              label: 'Table 表格'
+            }, {
+              value: 'tag',
+              label: 'Tag 标签'
+            }, {
+              value: 'progress',
+              label: 'Progress 进度条'
+            }, {
+              value: 'tree',
+              label: 'Tree 树形控件'
+            }, {
+              value: 'pagination',
+              label: 'Pagination 分页'
+            }, {
+              value: 'badge',
+              label: 'Badge 标记'
+            }]
+          }, {
+            value: 'notice',
+            label: 'Notice',
+            children: [{
+              value: 'alert',
+              label: 'Alert 警告'
+            }, {
+              value: 'loading',
+              label: 'Loading 加载'
+            }, {
+              value: 'message',
+              label: 'Message 消息提示'
+            }, {
+              value: 'message-box',
+              label: 'MessageBox 弹框'
+            }, {
+              value: 'notification',
+              label: 'Notification 通知'
+            }]
+          }, {
+            value: 'navigation',
+            label: 'Navigation',
+            children: [{
+              value: 'menu',
+              label: 'NavMenu 导航菜单'
+            }, {
+              value: 'tabs',
+              label: 'Tabs 标签页'
+            }, {
+              value: 'breadcrumb',
+              label: 'Breadcrumb 面包屑'
+            }, {
+              value: 'dropdown',
+              label: 'Dropdown 下拉菜单'
+            }, {
+              value: 'steps',
+              label: 'Steps 步骤条'
+            }]
+          }, {
+            value: 'others',
+            label: 'Others',
+            children: [{
+              value: 'dialog',
+              label: 'Dialog 对话框'
+            }, {
+              value: 'tooltip',
+              label: 'Tooltip 文字提示'
+            }, {
+              value: 'popover',
+              label: 'Popover 弹出框'
+            }, {
+              value: 'card',
+              label: 'Card 卡片'
+            }, {
+              value: 'carousel',
+              label: 'Carousel 走马灯'
+            }, {
+              value: 'collapse',
+              label: 'Collapse 折叠面板'
+            }]
+          }]
+        }, {
+          value: 'ziyuan',
+          label: '资源',
+          children: [{
+            value: 'axure',
+            label: 'Axure Components'
+          }, {
+            value: 'sketch',
+            label: 'Sketch Templates'
+          }, {
+            value: 'jiaohu',
+            label: '组件交互文档'
+          }]
+        }],
+      active: 0,
       //工作台
       workbenchOpen:false,
       str_arr:[],
@@ -525,6 +954,7 @@ export default {
         ],
         planTypeId: { required: true, message: '请选择事件类型', trigger: 'change'},
         tunnelId: { required: true, message: '请选择隧道类型', trigger: 'change'},
+          sId: { required: true, message: '请选择分区隧道', trigger: 'change'},
         planDescription: { required: true, message: '请输入预案描述', trigger: 'blur'},
         eventLocation: {required: true, trigger: 'blur'},
         /* strategyNames: [{ required: true, trigger: 'blur'}],
@@ -536,7 +966,7 @@ export default {
       drawerTitle: "",
       //搜索-事件类型
       planTypeData:[],
-      //drawer中from表单参数
+      //from表单参数
       reservePlanDrawForm:{
         planTypeId:null,//事件类型
         planName:null,//预案名称
@@ -545,7 +975,7 @@ export default {
         strategyNames:null,//多个策略的名称，以：分割
         planFileId:null,
         tunnelId:null ,//隧道
-        s_id:null
+        sId:null,//分区隧道
       },
       // 遮罩层
       dloading: false,
@@ -591,7 +1021,9 @@ export default {
       tunnelId:'JQ-JiNan-WenZuBei-MJY',
       selectedIconList:[],
       lightSwitch: 0,
-      eqTunnelData:[] //隧道下拉
+      eqTunnelData:[] ,//隧道下拉
+      eqTunnelDataList:[], //分区隧道下拉
+      timer:null,//步骤条定时器
     };
   },
   created() {
@@ -600,9 +1032,14 @@ export default {
     this.getStrategyInfo();//策略下拉
     this.getTunnelData(this.tunnelId)
     this.lightSwitchFunc()
-    this.getTunnel()//隧道下拉
+    this.ceshiTime()
   },
   methods: {
+    ceshiTime(){     
+     this.timer=setInterval(()=>{            
+            if(this.active++ >2) this.active = 0            
+        },1000)
+    },
     showStrategyContent(row){
       this.strategyDialog = true
       this.str_arr = row.strategyNames.split("；");
@@ -686,14 +1123,6 @@ export default {
           // that.rightDirection = "";
         }
       });
-    },
-
-    //获取隧道
-    getTunnel() {
-        partitionTunnel().then((response) => {
-          console.log(response,'隧道下拉eeeeeeeeeeeeeeeee')
-           this.eqTunnelData = response.rows;
-        });
     },
 
 
@@ -837,11 +1266,13 @@ export default {
         this.reservePlanDrawForm.strategyId = null;
         this.reservePlanDrawForm.strategyNames = null;
         this.reservePlanDrawForm.planDescription = null;
-          this.reservePlanDrawForm.tunnelId = null;
+        this.reservePlanDrawForm.tunnelId = null;
+        this.reservePlanDrawForm.sId = null;
         this.fileList = [];
         this.removeIds = [];
         this.planChangeSink = null;
         this.multipleSelectionIds = [];
+        this.eqTunnelDataList=[]
     },
     // 上传到服务器
     async submitUpload() {
@@ -882,7 +1313,9 @@ export default {
         this.fileData.append('planTypeId', this.reservePlanDrawForm.planTypeId);  // 事件类型
         this.fileData.append('planDescription', this.reservePlanDrawForm.planDescription==null ? "#^#" : this.reservePlanDrawForm.planDescription);  // 预案描述
         this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
-
+        // this.fileData.append('tunnelId', this.reservePlanDrawForm.tunnelId);
+        this.fileData.append('sId', this.reservePlanDrawForm.sId);
+        console.log(this.fileData,'this.fileDatathis.fileDatathis.fileData')
         if(this.planChangeSink == "add"){
           await addPlanFile(this.fileData).then((response) => {
                   if (response.code === 200) {
@@ -919,41 +1352,65 @@ export default {
   },
       /** drawer-form表单，取消操作 **/
       drawerClose() {
+        this.$refs['form1'].resetFields();
         this.resetReservePlanDrawForm();
         this.drawer = false;
+        this.dloading=false
+        this.addForm=false
       },
       /** 新增按钮操作 **/
       handleAdd() {
         this.resetReservePlanDrawForm();
-        this.drawerTitle = "新增预案";
+        this.addTitle = "新增预案";
         this.planChangeSink = "add";
-        this.drawer = true;
+
+        tunnelNames().then(res=>{
+           this.eqTunnelData=res.rows
+           console.log(res,'this.eqTunnelDatathis.eqTunnelData')
+        })
+
+        this.addForm=true
+      },
+      changeSelection(e){
+        console.log(e,'indexindex')
+         this.eqTunnelData.forEach(item=>{
+           if(item.tunnelId==e){
+           this.eqTunnelDataList=item.sdTunnelSubareas
+           }
+         })
+         console.log( this.eqTunnelDataList,' this.eqTunnelDataList this.eqTunnelDataList')
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
         this.resetReservePlanDrawForm();
         this.planChangeSink = "edit";
         const id = row.id || this.ids
-        getPlan(id).then(response => {
-          console.log(response,"response")
-          this.fileList = [];
-          this.reservePlanDrawForm = response.data;
-          if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
-            this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
-          }
+        // getPlan(id).then(response => {
+        //   console.log(response,"response")
+        //   this.fileList = [];
+        //   this.reservePlanDrawForm = response.data;
+        //   if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
+        //     this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
+        //   }
 
-          let fileInfo = response.data.pFileList;
-          for ( var i = 0; i < fileInfo.length; i++){
-              let fileModel = {};
-              fileModel.name = fileInfo[i].fileName;
-              fileModel.url = fileInfo[i].url;
-              fileModel.fId = fileInfo[i].id;
-              this.fileList.push(fileModel);
-          }
-          //文件回显
-          this.drawer = true;
-          this.drawerTitle = "修改预案信息";
-        });
+        //   let fileInfo = response.data.pFileList;
+        //   for ( var i = 0; i < fileInfo.length; i++){
+        //       let fileModel = {};
+        //       fileModel.name = fileInfo[i].fileName;
+        //       fileModel.url = fileInfo[i].url;
+        //       fileModel.fId = fileInfo[i].id;
+        //       this.fileList.push(fileModel);
+        //   }
+        //   //文件回显
+         
+        // });
+         // this.drawer = true;
+         this.$nextTick(()=>{
+            this.$refs['form1'].resetFields();
+          })
+          
+          this.addForm=true
+          this.title = "修改预案信息";
       },
       /** 删除按钮操作 */
       handleDelete(row) {
@@ -1025,6 +1482,7 @@ export default {
             //   .catch(_ => {});
             // console.log(done )
             done();
+            this.$refs['form1'].resetFields()
          },
          //关闭drawer
          handleFileClose(done) {
@@ -1035,6 +1493,7 @@ export default {
         getList() {
           this.loading = true;
           listPlan(this.queryParams).then(response => {
+            console.log(response,'responseresponse')
             this.planList = response.rows;
             this.total = response.total;
             this.loading = false;
@@ -1110,6 +1569,7 @@ export default {
       // position: relative;
       width: 1620px;
       height: 580px;
+      margin-bottom: 20px;
   }
 .icon-box {
   position: absolute;
@@ -1118,6 +1578,10 @@ export default {
   /* // align-items: center; */
   width: 40px !important;
 }
+ .el-dialog-div{
+    height: 80vh;
+     overflow: auto;
+    }
 // .mouseHover {
 //   &:hover {
 //     z-index: 10;

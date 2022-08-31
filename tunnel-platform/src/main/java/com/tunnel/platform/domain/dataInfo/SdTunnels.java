@@ -83,6 +83,9 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道长度")
     private String tunnelLength;
 
+    @ApiModelProperty("隧道分区")
+    public List<SdTunnelSubarea> sdTunnelSubareas;
+
     public String getTunnelLength() {
 		return tunnelLength;
 	}

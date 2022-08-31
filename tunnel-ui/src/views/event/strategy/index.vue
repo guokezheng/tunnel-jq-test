@@ -209,9 +209,9 @@
          </el-select>
          <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
       </el-form-item>
-      <el-form-item label="" style="">
+      <!-- <el-form-item label="" style="">
           <a href="#" @click= "addItem" style="color: #1890ff;">+添加执行操作</a>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item  style="text-align: center;text-align: center; width: 100%;">
           <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >保 存</el-button>
           <el-button style="width: 30%;"  @click="strategyFormClose">取 消</el-button>

@@ -3,12 +3,28 @@
     <div style="height: 100%;display: flex;justify-content: space-between;">
       <div  style="height: 100%;width: 66%;">
         <el-card class="bottomEventForm">
-        <div style="height: 59%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;">
+        <div class="tunnelMap">
           <el-image
             class="back-img"
             :src="laneUrlList[0].url"
             :style="{ width: laneUrlList[0].width + 'px' }"
           ></el-image>
+          <div  class="maskClass" >
+              <div v-for="(item,index) in planList1" class="mousemoveBox"
+              @contextmenu.prevent="rightClick(index)"
+              @mouseleave='mouseleave(index)'
+              :style="{marginTop:index>=planList1.length/2?'4%':'',width:100/(planList1.length/2)+'%'}"
+              >
+                <div class="partitionBox"></div>
+                <div class="rightClickClass">
+                  <div class="row1" >{{item.text}}</div>
+                  <div class="row2" >
+                    <div>执行</div>
+                    <div>预览</div>
+                  </div>
+                </div>
+              </div>
+          </div>
           <div
             class="wrapper"
             id="eq-wrapper"
@@ -150,7 +166,7 @@
                 </el-col>
                 <el-col :span="16">
                   <el-form-item label="详细内容:" prop="eventTitle">
-                    <el-input v-model="eventForm.eventTitle"  style="width: 636px;"/>
+                    <el-input v-model="eventForm.eventTitle"  style="width: 660px;"/>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -291,7 +307,7 @@
               </el-row>
 
               <el-form-item label="经验总结:" prop="eventTitle">
-                <el-input type="textarea" v-model="eventForm.eventTitle"  />
+                <el-input type="textarea" v-model="eventForm.eventTitle"  style="width: 1056px;"/>
               </el-form-item>
             </el-form>
           </div>
@@ -303,12 +319,9 @@
                 <div>切换事件详情</div>
               </div>
             </div>
-            <div style="width: 100%;height: calc(100% - 35px);border: solid 1px red;" class="cameraBox">
-              <el-image>
-                <div slot="error" class="image-slot">
-                  <i class="el-icon-picture-outline"></i>
-                </div>
-              </el-image>
+            <div class="cameraBox">
+              <video controls muted autoplay loop :src=item.src  v-for="item in videoList"></video>
+              <el-image :src="require('@/assets/icons/outline.png')" v-show="videoList.length<2"/>
             </div>
           </div>
         </el-card>
@@ -327,22 +340,18 @@
             </div>
             <!-- 预案 -->
             <div class="rightBox planBox">
-              <div class="title">关联预案</div>
-              <div style="height: calc(100% - 26px);overflow: auto;">
-                <div class="planMiniBox" v-for="item in 8">
-                  <div style="" class="miniTitle">火灾报警1区</div>
-                  <div class="planButtonS">
-                    <div>执行</div>
-                    <div>预览</div>
-                  </div>
-                </div>
-              </div>
+              <div class="title">周边物资</div>
+              <el-table :data="materialList" max-height="230" >
+                <el-table-column label="物资名称" align="center" prop="name" />
+                <el-table-column label="桩号" align="center" prop="phone" />
+                <el-table-column label="数量" align="center" prop="phone1" width="60"/>
+              </el-table>
 
             </div>
             <!-- 电话 -->
             <div class="rightBox phoneBox">
               <div class="title">调度电话</div>
-              <el-table :data="personnelList" max-height="185" >
+              <el-table :data="personnelList" max-height="210" >
                 <el-table-column label="姓名" align="center" prop="name" width="60"/>
                 <el-table-column label="联系方式" align="center" prop="phone" />
                 <el-table-column label="操作" align="center" class-name="small-padding" width="60">
@@ -364,7 +373,7 @@
                 <el-step title="处置中" icon="el-icon-picture"></el-step>
                 <el-step title="处置结束" icon="el-icon-s-tools"></el-step>
               </el-steps>
-              <el-timeline style="height: calc(100% - 120px);overflow: auto;">
+              <el-timeline style="height: calc(100% - 150px);overflow: auto;">
                   <el-timeline-item placement="top" v-for="(item,index) in eventList" color="#00A0FF">
                     <div>{{item.time}}</div>
                     <el-card>
@@ -373,8 +382,22 @@
                   </el-timeline-item>
                 </el-timeline>
                 <div class="endButton">
-                  <el-image :src="require('@/assets/icons/hand.png')"/>
-                  <div>一键结束</div>
+                  <div class="ButtonBox">
+                    <div class="recovery">左洞恢复</div>
+                    <div class="button">
+                      <div>预览</div>
+                      <div>执行</div>
+                    </div>
+                  </div>
+                  <div class="ButtonBox">
+                    <div class="recovery">右洞恢复</div>
+                    <div class="button">
+                      <div>预览</div>
+                      <div>执行</div>
+                    </div>
+                  </div>
+                 <!-- <el-image :src="require('@/assets/icons/hand.png')"/>
+                  <div>一键结束</div> -->
                 </div>
             </div>
             <div class="rightBox implement">
@@ -401,6 +424,7 @@
 </template>
 
 <script>
+  import $ from "jquery";
   import {
     icon,
     laneImage,
@@ -415,9 +439,49 @@
     name: "dispatch",
     data(){
       return{
+        planList1:[
+          {
+            text:'火灾报警1区'
+          },
+          {
+            text:'火灾报警2区'
+          },
+          {
+            text:'火灾报警3区'
+          },
+          {
+            text:'火灾报警4区'
+          },
+          {
+            text:'火灾报警5区'
+          },
+          {
+            text:'火灾报警6区'
+          },
+          {
+            text:'火灾报警7区'
+          },
+          {
+            text:'火灾报警8区'
+          },
+          {
+            text:'火灾报警9区'
+          },
+          {
+            text:'火灾报警10区'
+          },
+        ],
         lightSwitch: 0,
-        changeVideo:0,
+        changeVideo:1,
         eqTunnelData:[],
+        videoList:[
+          {
+            src:require('@/assets/Example/v1.mp4')
+          },
+          {
+            src:require('@/assets/Example/d1.mp4')
+          },
+        ],
         // 策略按钮
         strategyList:[
           {
@@ -476,25 +540,36 @@
         ],
         materialList:[
           {
-            name:'K666+000',
-            phone:'1',
+            name:'泡沫灭火器',
+            phone:'K666+000',
             phone1:'1',
-            phone2:'1',
-            phone3:'1',
+
           },
           {
-            name:'K666+000',
-            phone:'1',
+            name:'干粉灭火器',
+            phone:'K666+000',
             phone1:'1',
-            phone2:'1',
-            phone3:'1',
+
           },
           {
-            name:'K666+000',
-            phone:'1',
+            name:'消火栓',
+            phone:'K666+000',
             phone1:'1',
-            phone2:'1',
-            phone3:'1',
+          },
+          {
+            name:'消防水带',
+            phone:'K666+000',
+            phone1:'1',
+          },
+          {
+            name:'消防水带',
+            phone:'K666+000',
+            phone1:'1',
+          },
+          {
+            name:'消防水带',
+            phone:'K666+000',
+            phone1:'1',
           },
         ],
         coviList:[
@@ -567,6 +642,18 @@
       this.getTunnelData()
     },
     methods:{
+      rightClick(index){
+         $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
+         console.log($('.mousemoveBox').eq(index).children(1)[1],"index")
+      },
+      // mouseenter(index){
+      //   console.log(index)
+      //   $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
+      // },
+      mouseleave(index){
+        $('.mousemoveBox').eq(index).children(1)[1].style.display = 'none'
+      },
+
       returnDetails(){
         this.changeVideo = 0
       },
@@ -701,6 +788,9 @@
     height: 98% !important;
     position: absolute;
   }
+  .changeMap{
+    width: 30px;height: 30px;position: absolute;left: 0px;top: 0px;cursor: pointer;z-index: 10;
+  }
   ::v-deep .bottomEventForm{
     width: 100%;
     height: 100%;
@@ -708,6 +798,41 @@
       height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
+      .tunnelMap{
+        height: 59%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;
+        .maskClass{
+          height: 100%;width: 100%;position: relative;z-index: 3;
+            .mousemoveBox{
+              height: 44%;position: relative;display: inline-block;
+              .partitionBox{
+                width: 100%;height: 100%;color: white;position: relative;z-index: 100;
+              }
+              .partitionBox:hover{
+                background-color: rgba($color: #fff, $alpha: 0.3);z-index: 10;
+              }
+              .rightClickClass{
+                width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: none;
+                color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 100;border-radius: 10px;box-shadow: 0 0 5px white;
+                .row1{
+                  width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;
+                }
+                .row2{
+                  width: 100%;height: 50%;display: flex;justify-content: space-around;padding: 10px;
+                  div{
+                    width: 35%;height: 30px;border: solid 1px white;border-radius: 10px;text-align: center;font-size: 14px;line-height: 29px;cursor: pointer;
+                  }
+                  div:nth-of-type(1):hover{
+                    background-color: #E1AA43;
+                  }
+                  div:nth-of-type(2):hover{
+                    background-color: #19B9EA;
+                  }
+                }
+              }
+            }
+
+        }
+      }
     }
   }
   ::v-deep .el-input{
@@ -727,15 +852,18 @@
   .wrapper {
     height: 100%;
     width: 100%;
-    position: relative;
-    z-index: 3;
+    position: absolute;
+    // z-index: 3;
+    top: 0px;
+    left: 0px;
   }
   .icon-box {
     position: absolute;
     display: flex;
     flex-direction: column;
     // align-items: center;
-    width: 80px !important;
+    width: 30px !important;
+    z-index: 2;
   }
   .app-container{
       background-color: #D6EDFB;
@@ -747,7 +875,7 @@
   }
   .formButton{
     width: 130px;height: 35px;float: right;color: white;border-radius: 2px;text-align: center;font-size: 14px;font-weight: 500;
-    display: flex;justify-content: center;align-items: center;
+    display: flex;justify-content: center;align-items: center;cursor: pointer;
     >.el-image{
         width: 15%;
         height: 50%;
@@ -762,6 +890,29 @@
     background: linear-gradient(2deg, #37D8AC, #1CCF7B);
     margin-left: 10px;
   }
+  .cameraBox{
+    width: 100%;height: calc(100% - 35px);display: flex;justify-content: space-between;
+    .el-image{
+      width: 49%;
+      height: 100%;
+      border: solid 1px #E0E7ED;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      ::v-deep .el-image__inner{
+        width: 60%;height: 65%;
+      }
+    }
+    video{
+      width: 49%;
+      height: 100%;
+      border: solid 1px #E0E7ED;
+      border-radius: 10px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+  }
   .video1{
     width: 100%;height: 150px;object-fit: cover;z-index: -100;border-radius: 10px;
   }
@@ -771,11 +922,12 @@
       width: 100%;height: 26%;display: flex;justify-content: space-between;
     }
   }
+
   .videoBox{
     border-top: solid 10px #1287B2;height: 30%;
   }
   .planBox{
-    border-top: solid 10px #0F9CF5;margin-top: 10px;height: 38%;
+    border-top: solid 10px #0F9CF5;margin-top: 10px;height: 35%;
     >.title{
       font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;border-bottom: solid 1px #E0E7ED;margin: 0px auto 0px auto;
     }
@@ -795,41 +947,12 @@
     }
   }
   .phoneBox{
-    border-top: solid 10px #E1AA43;margin-top: 10px;height: calc(32% - 20px);
+    border-top: solid 10px #E1AA43;margin-top: 10px;height: calc(35% - 20px);
     >.title{
       font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;border-bottom: solid 1px #E0E7ED;margin: 0px auto 0px auto;
     }
-    ::v-deep .el-table .el-table__cell.is-center{
-      background-color: #F2F9FF !important;
-    }
-    ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      background-color: #F2F9FF !important;
-    }
-    // ::v-deep .el-table thead{
-    //   color: #1287B2 !important;
-    // }
-    ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      color: #1287B2 !important;
-    }
-    /*table滚动条背景色 */
-    ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
-      background-color: rgba($color: #00c2ff, $alpha: 0.1);
-      width: 8px;
-      height: 10px;
-    }
 
-    /* table滚动条的滑块*/
-    ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: rgba($color: #00c2ff, $alpha: 0.6);
-      border-radius: 10px;
-    }
-    /* 鼠标悬浮*/
-    ::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #c4e8f6;
-    }
-    ::v-deep .el-table__body{
-      width: 264px !important;
-    }
+
     .phoneButton{
       width: 40px;height: 23px;background: linear-gradient(2deg,#4B6AD4,#07A1FB);border-radius: 12px;
       .el-image{
@@ -927,15 +1050,29 @@
       margin-right: 8px;
     }
     .endButton{
-      width: 40%;height: 35px;margin: 10px auto;text-align: center;
-      background: linear-gradient(2deg, #07A1FB, #4B6AD4);border-radius: 2px;
-      color: white;line-height: 35px;font-size: 14px;
-      .el-image{
-        width: 16px;height: 30px;padding-top: 6px;transform: translateX(-5px);
+      width: 90%;height: 65px;margin: 10px auto;display: flex;justify-content: space-between;
+      // background: linear-gradient(2deg, #07A1FB, #4B6AD4);border-radius: 2px;
+      color: #4B6AD4;
+      font-size: 14px;
+      .ButtonBox{
+        width: 45%;height: 100%;border: solid 1px #07A1FB;border-radius: 10px;background-color: #E8F3FC;box-shadow: 0 0 5px #07A1FB;
+        .recovery{
+          width: 100%;height: 45%;border-bottom: dashed 1px #07A1FB;text-align: center;line-height: 2;
+        }
+        .button{
+          height: 55%;display: flex;justify-content: space-around;color: white;padding-top: 5%;
+          div{
+            width: 40%;height: 80%;text-align: center;font-size: 12px;line-height: 2;
+            background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 4px;cursor: pointer;
+          }
+        }
       }
-      >div{
-        height: 35px;display: inline-block;transform: translate(6px,-7px);
-      }
+      // .el-image{
+      //   width: 16px;height: 30px;padding-top: 6px;transform: translateX(-5px);
+      // }
+      // >div{
+      //   height: 35px;display: inline-block;transform: translate(6px,-7px);
+      // }
     }
   }
   .implement{
@@ -989,10 +1126,41 @@
     background: url(../../../assets/icons/outline.png);
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 80% 80%;
+    background-size: 100% 100%;
   }
   ::v-deep .el-icon-picture-outline:before{
     content: "11";
     visibility: hidden;
+  }
+  ::v-deep .el-table .el-table__cell.is-center{
+    background-color: #F2F9FF !important;
+  }
+  ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+    background-color: #F2F9FF !important;
+  }
+  // ::v-deep .el-table thead{
+  //   color: #1287B2 !important;
+  // }
+  ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+    color: #1287B2 !important;
+  }
+  /*table滚动条背景色 */
+  ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
+    background-color: rgba($color: #00c2ff, $alpha: 0.1);
+    width: 8px;
+    height: 10px;
+  }
+
+  /* table滚动条的滑块*/
+  ::v-deep .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba($color: #00c2ff, $alpha: 0.6);
+    border-radius: 10px;
+  }
+  /* 鼠标悬浮*/
+  ::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
+    background-color: #c4e8f6;
+  }
+  ::v-deep .el-table__body{
+    width: 264px !important;
   }
 </style>

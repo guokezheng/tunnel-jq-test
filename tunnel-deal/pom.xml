@@ -19,6 +19,13 @@
             <artifactId>tunnel-platform</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+        <!-- 添加对485接口的依赖 -->
+        <dependency>
+            <groupId>org.rxtx</groupId>
+            <artifactId>rxtx</artifactId>
+            <version>2.1.7</version>
+        </dependency>
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -31,5 +38,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
 
 </project>

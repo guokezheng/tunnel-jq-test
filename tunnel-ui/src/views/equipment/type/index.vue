@@ -126,6 +126,11 @@
           <span>{{ scope.row.iconHeight }} px</span>
         </template>
       </el-table-column>
+      <el-table-column label="是否可控" align="center" prop="isControl" >
+      <template slot-scope="scope">
+          <span>{{ scope.row.isControl==1?'是':'否' }} </span>
+        </template>
+       </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -316,6 +321,7 @@ export default {
   methods: {
     getGroupByBigType(){
       groupByBigType().then((response) => {
+        // console.log(response,'responseresponse')
         this.typeList = response.rows;
         console.log(this.typeList)
       });
@@ -379,6 +385,7 @@ export default {
     getList() {
       this.loading = true;
       listType(this.queryParams).then((response) => {
+        console.log(response,'responseresponse12312')
         this.typeList = response.rows;
         this.total = response.total;
         this.loading = false;

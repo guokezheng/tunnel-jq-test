@@ -26,9 +26,10 @@
         <result property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
-        <collection property="list" ofType="SdTunnelSubarea">
-            <id column="sId" property="sId"></id>
-            <result column="sName" property="sName"></result>
+        <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
+            <result property="sId" column="s_id" />
+            <result property="sName" column="s_name" />
+            <result property="tunnelId" column="tunnel_id" />
         </collection>
     </resultMap>
 
@@ -152,25 +153,19 @@
     </delete>
 
     <select id="selectSdTunnelsSubList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
-        <!--select t.tunnel_id, t.tunnel_name, a.s_name sName, a.s_id sId
-        from sd_tunnels t
-        left join sd_tunnel_subarea a on a.tunnel_id = t.tunnel_id
+        select a.tunnel_id, a.tunnel_name, b.s_id, b.s_name from sd_tunnels a
+        left join sd_tunnel_subarea b on a.tunnel_id = b.tunnel_id
         <where>
-            <if test="tunnelName != null and tunnelName != ''"> and t.tunnel_name = #{tunnelName}</if>
+            <if test="tunnelId != null">a.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null">a.tunnelName = #{tunnelName} </if>
         </where>
-        GROUP BY t.tunnel_name-->
-        select
-        st.tunnel_id, st.tunnel_name,
-        ss.s_id sId,
-        ss.s_name  sName
-        from
-        sd_tunnels st
-        LEFT JOIN
-        sd_tunnel_subarea ss
-        on
-        st.tunnel_id= ss.tunnel_id
     </select>
 
+    <select id="getSubareas" parameterType="java.lang.String" resultType="com.tunnel.platform.domain.event.SdTunnelSubarea">
+        select a.s_id, a.s_name, a.tunnel_id  from sd_tunnel_subarea a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        where a.tunnel_id = #{tunnel_id}
+    </select>
 
 
 </mapper>

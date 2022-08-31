@@ -60,10 +60,4 @@ public interface ISdTunnelSubareaService
      */
     public int deleteSdTunnelSubareaBySId(Long sId);
 
-    /**
-     * 查询分区和隧道的对应关系
-     * @param sdTunnelSubarea
-     * @return
-     */
-    public List<SdTunnelSubarea> getList(SdTunnelSubarea sdTunnelSubarea);
 }

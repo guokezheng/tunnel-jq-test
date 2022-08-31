@@ -104,22 +104,5 @@ public class SdTunnelSubareaController extends BaseController
         return toAjax(sdTunnelSubareaService.deleteSdTunnelSubareaBySIds(sIds));
     }
 
-    @GetMapping("/getList")
-    public TableDataInfo getList(SdTunnelSubarea sdTunnelSubarea) {
-        List<SdTunnelSubarea> list = sdTunnelSubareaService.getList(sdTunnelSubarea);
-        return getDataTable(list);
-    }
-
-    /**
-     * 查询隧道列表
-     */
-    /*@ApiOperation("查询隧道分区列表")
-    @GetMapping("/sublist")
-    public TableDataInfo<List<SdTunnelSubarea>> sublist(SdTunnelSubarea sdTunnelSubarea)
-    {
-        List<SdTunnelSubarea> list = sdTunnelSubareaService.selectSdTunnelsSubList(sdTunnelSubarea);
-        return getDataTable(list);
-    }*/
-
 
 }

@@ -30,8 +30,14 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("分区名称")
     private String sName;
 
-    @ApiModelProperty(name = "所属隧道")
+    @ApiModelProperty("隧道Id")
     private String tunnelId;
+
+    @ApiModelProperty("桩号下限")
+    private String pileMin;
+
+    @ApiModelProperty("桩号上限")
+    private String pileMax;
 
     public void setsId(Long sId)
     {
@@ -58,6 +64,22 @@ public class SdTunnelSubarea extends BaseEntity
 
     public void setTunnelId(String tunnelId) {
         this.tunnelId = tunnelId;
+    }
+
+    public String getPileMin() {
+        return pileMin;
+    }
+
+    public void setPileMin(String pileMin) {
+        this.pileMin = pileMin;
+    }
+
+    public String getPileMax() {
+        return pileMax;
+    }
+
+    public void setPileMax(String pileMax) {
+        this.pileMax = pileMax;
     }
 
     @Override

@@ -175,7 +175,7 @@
                     v-for="(item, index) in selectedIconList"
                     :key="index"
                     :style="{
-                            left: item.position.left  + 'px',
+                            left: item.position.left + 'px',
                             top: item.position.top + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"

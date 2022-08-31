@@ -1,4 +1,4 @@
-package com.zc.netty;
+package com.tunnel.deal.plc;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;

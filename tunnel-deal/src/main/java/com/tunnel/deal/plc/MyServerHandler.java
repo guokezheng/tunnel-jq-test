@@ -1,14 +1,10 @@
-package com.zc.netty;
+package com.tunnel.deal.plc;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
-import io.netty.util.NettyRuntime;
-import io.netty.util.internal.SystemPropertyUtil;
-
-import java.util.concurrent.Executor;
 
 public class MyServerHandler extends ChannelInboundHandlerAdapter {
 

@@ -242,7 +242,7 @@
             <el-option
                 v-for="item in equipmentData"
                 :key="item.eqId"
-                :label="item.eqName"
+                :label="item.eqId"
                 :value="item.eqId"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>

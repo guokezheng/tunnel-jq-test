@@ -131,21 +131,21 @@
                   class="back-img"
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
-                  
+
                 ></el-image> -->
-                
+
             <!-- 画布区域 -->
                 <reproductionImage
-                 v-if="flag"                              
-                 :currentTunnel="currentTunnel"               
-                 :eqTypeList="eqTypeList" 
-                 :tunnelId="tunnelId"             
-                ></reproductionImage>  
-                
+                 v-if="flag"
+                 :currentTunnel="currentTunnel"
+                 :eqTypeList="eqTypeList"
+                 :tunnelId="tunnelId"
+                ></reproductionImage>
+
               </el-row>
             </div>
-         
-                  
+
+
           </div>
 
         </div>
@@ -378,27 +378,30 @@
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
       <div  class="footer" v-show="displayThumbnail == true">
-          <div class="footMiniBox"  @click="jumpLink('/14/trafficFlowAnalysis')" style="cursor: pointer;">
+<!--          <div class="footMiniBox"  @click="jumpLink('/14/trafficFlowAnalysis')" style="cursor: pointer;">-->
+        <div class="footMiniBox"  style="cursor: pointer;">
               <div class="footTitle">
                 <div class="footTitleCont"><p>车辆监测</p>  <p>Vehicle detection</p></div>
               </div>
               <div id="vehicle"></div>
           </div>
-           <div class="footMiniBox footerRight" @click="jumpLink('/15/status')" style="cursor: pointer;">
+<!--           <div class="footMiniBox footerRight" @click="jumpLink('/15/status')" style="cursor: pointer;">-->
+        <div class="footMiniBox footerRight" style="cursor: pointer;">
                 <div class="footTitle">
                 <!-- <div class="footTriangle"></div> -->
                 <div class="footTitleCont"><p>能耗监测</p><p>Energy consumption monitoring</p></div>
                 </div>
                 <div id="energyConsumption"></div>
           </div>
-
-          <div class="footMiniBox footerRight" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">
+          <div class="footMiniBox footerRight" style="cursor: pointer;">
+<!--          <div class="footMiniBox footerRight" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
               <div class="footTitle">
                 <div class="footTitleCont"><p>重点车辆</p><p>Key vehicles</p></div>
               </div>
               <div id="focusCar"></div>
           </div>
-          <div class="footerRight footMiniBox" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">
+          <div class="footerRight footMiniBox" style="cursor: pointer;">
+<!--          <div class="footerRight footMiniBox" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
               <div class="footTitle">
                 <div class="footTitleCont"><p>预警事件</p><p>Alert event</p></div>
               </div>
@@ -597,7 +600,7 @@
         <!-- <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
         </el-form-item> -->
-        
+
           <!-- ====================微波检查器开始====== -->
           <!-- <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
           {{ '正常'}}
@@ -1237,7 +1240,7 @@
     </el-dialog>
 
     <!--摄像机对话框-->
-   
+
 
     <el-dialog
       v-dialogDrag
@@ -4384,10 +4387,10 @@ export default {
       })
     },
     //================================================单个配置开始==================================
-   
- 
 
-   
+
+
+
 
     /* 诱导确认配置（单项）*/
     submitCorLight() {
@@ -4478,7 +4481,7 @@ export default {
     everyCheck(number) {
       return number != 100;
     },
-   
+
     // 点击某一行，将其选中
     handleRowClick(row, i, a) {
       this.$refs.multipleTable.toggleRowSelection(row)
@@ -4563,7 +4566,7 @@ export default {
       if ( this.handleTableWheelSwithch==true ) {
         this.tableZoom(obj, event);
       }
-      
+
     },
     tableZoom(obj, event) {
       console.log(obj, event,'obj, event')

@@ -62,17 +62,17 @@ public interface SdStrategyRlMapper
     /**
      * 删除策略关联设备信息
      * 
-     * @param rlIds 需要删除的数据ID
+     * @param strategyId 需要删除的数据ID
      * @return 结果
      */
-    public int deleteSdStrategyRlByRlId(String rlId);
+    public int deleteSdStrategyRlByStrategyId(Long strategyId);
     /**
      * 批量删除策略关联设备信息
      * 
-     * @param rlIds 需要删除的数据ID
+     * @param ids 需要删除的数据ID
      * @return 结果
      */
-    public int deleteSdStrategyRlByRlIds(String[] rlIds);
+    public int deleteSdStrategyRlByStrategyIds(Long[] ids);
     
     /**
      * 批量添加策略关联设备信息

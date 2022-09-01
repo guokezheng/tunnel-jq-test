@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +39,6 @@ import java.util.Map;
  * @author gongfanfei
  * @date 2020-08-27
  */
-@RestController("ISdStrategyService")
 @Service
 public class SdStrategyServiceImpl implements ISdStrategyService {
 
@@ -97,7 +95,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         for (int i = 0; i < list.size(); i++) {
             List<String> sList = new ArrayList<String>();
             SdStrategyRl rl = new SdStrategyRl();
-            rl.setStrategyId(list.get(i).getRlId());
+            rl.setStrategyId(list.get(i).getId());
             String strategyType = list.get(i).getStrategyType();
             if ("1".equals(strategyType)) {
                 sList.add(list.get(i).getStrategyInfo());
@@ -144,7 +142,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     public int updateSdStrategy(SdStrategy sdStrategy) {
         sdStrategy.setUpdateTime(DateUtils.getNowDate());
-        return sdStrategyMapper.updateSdStrategy(sdStrategy);
+        return sdStrategyMapper.updateSdStrategyById(sdStrategy);
     }
 
     /**
@@ -159,38 +157,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     /**
-     * 批量删除控制策略
-     *
-     * @param rlIds 需要删除的控制策略RLID
-     * @return 结果
-     */
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public int deleteSdStrategyByRlIds(String[] rlIds) {
-        // 删除策略之前要先判断策略是否已经在预案管理中被引用
-        for (int i = 0; i < rlIds.length; i++) {
-            SdStrategy sdStrategy = new SdStrategy();
-            String rlId = rlIds[i];
-            sdStrategy.setRlId(rlId);
-            List<SdStrategy> sdStrategies = sdStrategyMapper.selectStrategyList(sdStrategy);
-            if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
-                Long strategeId = sdStrategies.get(0).getId();
-                List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(strategeId);
-                if (maps.size() > 0) {
-                    throw new RuntimeException("控制策略已经在预案管理中引用，不可删除！");
-                }
-            } else {
-                throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
-            }
-        }
-        int result = sdStrategyRlMapper.deleteSdStrategyRlByRlIds(rlIds);
-        if (result > 0) {
-            result = sdStrategyMapper.deleteSdStrategyByRlIds(rlIds);
-        }
-        return result;
-    }
-
-    /**
      * 删除控制策略信息
      *
      * @param id 控制策略ID
@@ -202,6 +168,48 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     /**
+     * 批量删除控制策略信息
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public int deleteSdStrategyByStrategyIds(Long[] ids) {
+        // 删除策略之前要先判断策略是否已经在预案管理中被引用
+        for (int i = 0; i < ids.length; i++) {
+            SdStrategy sdStrategy = new SdStrategy();
+            Long id = ids[i];
+            sdStrategy.setId(id);
+            List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(sdStrategy);
+            if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
+                List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
+                if (maps.size() > 0) {
+                    throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+                }
+            } else {
+                throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
+            }
+        }
+        int result = sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
+        if (result >0) {
+            result = sdStrategyMapper.deleteSdStrategyByIds(ids);
+        }
+        return result;
+    }
+
+    /**
+     * 删除控制策略信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteSdStrategyByStrategyId(Long id) {
+        return 0;
+    }
+
+    /**
      * 新增控制策略
      * 对应批量新增关联子表信息
      *
@@ -209,15 +217,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
-    public int addStrategysInfo(SdStrategyModel model, String guid) {
+    public int addStrategysInfo(SdStrategyModel model) {
         String[] equipments = model.getEquipments().split("#");
         String[] equipmentType = model.getEquipmentTypeId().split("#");
         String[] equipmentState = model.getEquipmentState().split("#");
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
         SdStrategy sty = new SdStrategy();
-        sty.setStrategyType(model.getStrategyType());//策略类型
-        sty.setRlId(guid);
+        //策略类型
+        sty.setStrategyType(model.getStrategyType());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
@@ -230,10 +238,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //策略关联表
         for (int i = 0; i < equipmentState.length; i++) {
             SdStrategyRl rl = new SdStrategyRl();
-            rl.setStrategyId(guid);
             rl.setEqTypeId(equipmentType[i]);
             rl.setEquipments(equipments[i]);
             rl.setState(equipmentState[i]);
+            rl.setStrategyId(sty.getId());
             list.add(rl);
         }
         int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
@@ -256,8 +264,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
         SdStrategy sty = new SdStrategy();
-        sty.setStrategyType(model.getStrategyType());//策略类型
-        sty.setRlId(model.getRlId());
+        //策略类型
+        sty.setStrategyType(model.getStrategyType());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
@@ -267,12 +275,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setCreateBy(SecurityUtils.getUsername());
         int result = 1;
         //1.0  更新策略 主表
-        int upStr = sdStrategyMapper.updateSdStrategyInfoByRlId(sty);
+        int upStr = sdStrategyMapper.updateSdStrategyById(sty);
         if (upStr < 0) {
             result = -1;
         }
         //2.0  删除关联子表相关信息
-        int upStrRl = sdStrategyRlMapper.deleteSdStrategyRlByRlId(model.getRlId());
+        int upStrRl = sdStrategyRlMapper.deleteSdStrategyRlByStrategyId(model.getId());
         if (upStrRl < 0) {
             result = -1;
         }
@@ -280,10 +288,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //策略关联表
         for (int i = 0; i < equipmentState.length; i++) {
             SdStrategyRl rl = new SdStrategyRl();
-            rl.setStrategyId(model.getRlId());
             rl.setEqTypeId(equipmentType[i]);
             rl.setEquipments(equipments[i]);
             rl.setState(equipmentState[i]);
+            rl.setStrategyId(model.getId());
             list.add(rl);
         }
         int insertBranchInfo = sdStrategyRlMapper.batchInsertStrategyRl(list);
@@ -303,9 +311,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(id);
         String strategyType = strategy.getStrategyType();
         String tunnelId = strategy.getTunnelId();
-        String rlId = strategy.getRlId();//策略子表关联ID
         SdStrategyRl rl = new SdStrategyRl();
-        rl.setStrategyId(rlId);
         List<SdStrategyRl> ssgyRlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
         for (int i = 0; i < ssgyRlList.size(); i++) {
             //设备类型
@@ -341,9 +347,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(id);
             String strategyType = strategy.getStrategyType();
             String tunnelId = strategy.getTunnelId();
-            String rlId = strategy.getRlId();//策略子表关联ID
             SdStrategyRl rl = new SdStrategyRl();
-            rl.setStrategyId(rlId);
             List<SdStrategyRl> ssgyRlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
             for (int i = 0; i < ssgyRlList.size(); i++) {
                 //设备类型
@@ -413,4 +417,5 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SpringUtils.getBean(RedisPubSub.class).publish("PLC_CONTROL", JSON.toJSONString(instruction));
         }
     }
+
 }

@@ -26,7 +26,7 @@ public class SdStrategyRl extends BaseEntity
 
     /** 策略ID */
     @Excel(name = "策略关联ID")
-    private String strategyId;
+    private Long strategyId;
 
     /** 设备类型ID */
     @Excel(name = "设备类型ID")
@@ -59,16 +59,18 @@ public class SdStrategyRl extends BaseEntity
     {
         return id;
     }
-    public void setStrategyId(String strategyId) 
+
+    public void setStrategyId(Long strategyId)
     {
         this.strategyId = strategyId;
     }
 
-    public String getStrategyId() 
+    public Long getStrategyId()
     {
         return strategyId;
     }
-    public void setEqTypeId(String eqTypeId) 
+
+    public void setEqTypeId(String eqTypeId)
     {
         this.eqTypeId = eqTypeId;
     }

@@ -95,12 +95,12 @@ public class SdStrategyController extends BaseController
      * 删除控制策略
      */
     @Log(title = "控制策略", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{rlIds}")
+	@DeleteMapping("/{ids}")
     @ApiOperation("删除控制策略")
     @ApiImplicitParam(name = "rlIds", value = "需要删除的控制策略关系ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable String[] rlIds)
+    public Result remove(@PathVariable Long[] ids)
     {
-        return Result.toResult(sdStrategyService.deleteSdStrategyByRlIds(rlIds));
+        return Result.toResult(sdStrategyService.deleteSdStrategyByStrategyIds(ids));
     }
 
     /**
@@ -111,7 +111,7 @@ public class SdStrategyController extends BaseController
     @ApiOperation("新增控制策略")
     public Result addStrategysInfo(@RequestBody SdStrategyModel sdStrategymodel)
     {
-        return Result.toResult(sdStrategyService.addStrategysInfo(sdStrategymodel, UUIDUtil.getRandom32BeginTimePK()));
+        return Result.toResult(sdStrategyService.addStrategysInfo(sdStrategymodel));
     }
 
     /**

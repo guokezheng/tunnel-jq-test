@@ -58,6 +58,21 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @ApiModelProperty("设备大类")
     private String bigType;
 
+    @Override
+    public String toString() {
+        return "SdEquipmentType{" +
+                "typeId=" + typeId +
+                ", typeName='" + typeName + '\'' +
+                ", typeAbbr='" + typeAbbr + '\'' +
+                ", iconFileId='" + iconFileId + '\'' +
+                ", iconWidth='" + iconWidth + '\'' +
+                ", iconHeight='" + iconHeight + '\'' +
+                ", isControl='" + isControl + '\'' +
+                ", bigType='" + bigType + '\'' +
+                ", iFileList=" + iFileList +
+                '}';
+    }
+
     @ApiModelProperty("默认图标")
     private List<SdEquipmentStateIconFile> iFileList;
 
@@ -141,20 +156,4 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
         return serialVersionUID;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("typeId", getTypeId())
-            .append("typeName", getTypeName())
-                .append("typeAbbr",getTypeAbbr())
-            .append("iconFileId", getIconFileId())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("iFileList", getiFileList())
-            .append("iconWidth", getIconWidth())
-            .append("iconHeight", getIconHeight())
-            .toString();
-    }
 }

@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+
         </where>
     </select>
 

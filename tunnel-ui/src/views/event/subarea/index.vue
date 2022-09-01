@@ -116,7 +116,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/tunnel/subarea";
+import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/event/subarea";
 
 export default {
   name: "Subarea",

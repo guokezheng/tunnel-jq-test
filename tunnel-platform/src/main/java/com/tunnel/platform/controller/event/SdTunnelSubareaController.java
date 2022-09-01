@@ -30,7 +30,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2022-08-25
  */
 @RestController
-@RequestMapping("/system/subarea")
+@RequestMapping("/tunnel/subarea")
 public class SdTunnelSubareaController extends BaseController
 {
     @Autowired

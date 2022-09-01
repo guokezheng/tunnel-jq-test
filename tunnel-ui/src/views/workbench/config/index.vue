@@ -1,25 +1,42 @@
 <template>
   <div class="app-container">
-
-    <div class="my-back" :style="{height: 'calc(100vh - ('+ navigationHeight + 'px))'}">
+    <div
+      class="my-back"
+      :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
+    >
       <div class="header workbench-header">
         <div
           class="flex-row"
           style="position: absolute; right: 0px; top: 0.7vh; z-index: 8"
         >
           <div class="display-box zoomClass">
-            <p class="zoom-title" style="font-size: 14px;">缩放：</p>
-            <el-input-number v-model="zoom" :step="10" :min="60" :max="140" step-strictly @change="zoomChange">
-              {{ zoom + '%' }}
+            <p class="zoom-title" style="font-size: 14px">缩放：</p>
+            <el-input-number
+              v-model="zoom"
+              :step="10"
+              :min="60"
+              :max="140"
+              step-strictly
+              @change="zoomChange"
+            >
+              {{ zoom + "%" }}
             </el-input-number>
           </div>
           <div class="display-box">
-            <p class="zoom-title" style="font-size: 14px;">{{ displayNumb == 0 ? '桩号开' : '桩号关' }}</p>
+            <p class="zoom-title" style="font-size: 14px">
+              {{ displayNumb == 0 ? "桩号开" : "桩号关" }}
+            </p>
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
           </div>
-         <div class="display-box">
-            <p class="zoom-title" style="font-size: 14px;">{{ zoomSwitch == 0 ? '缩放开' : '缩放关' }}</p>
-            <el-switch v-model="zoomSwitch" class="switchStyle" @change='zoomSwitchChange'></el-switch>
+          <div class="display-box">
+            <p class="zoom-title" style="font-size: 14px">
+              {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
+            </p>
+            <el-switch
+              v-model="zoomSwitch"
+              class="switchStyle"
+              @change="zoomSwitchChange"
+            ></el-switch>
           </div>
           <!-- <div class="display-box">
             <p class="zoom-title" style="font-size: 14px;">{{displayThumbnail == 0 ? '缩略图开' : '缩略图关'}}</p>
@@ -29,7 +46,7 @@
             <p class="zoom-title" style="font-size: 14px;">统计图表</p>
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
-         <!-- <el-button
+          <!-- <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -62,13 +79,16 @@
             size="mini"
             icon="el-icon-tickets"
             @click="operationLogPage"
-            style="margin-right: 1vw;"
+            style="margin-right: 1vw"
           >
             操作日志
           </el-button>
         </div>
-        <el-row class="menu-b" style="display: flex;align-items: center;"
-                :style="isManagementStation ? 'padding-left:100px;' : ''">
+        <el-row
+          class="menu-b"
+          style="display: flex; align-items: center"
+          :style="isManagementStation ? 'padding-left:100px;' : ''"
+        >
           <el-cascader
             v-model="tunnelQueryParams.deptId"
             :options="siteList"
@@ -81,8 +101,11 @@
             popper-class="popper-class-site"
             v-show="!isManagementStation"
           />
-          <el-button-group class="menu-button-group" style="margin-left: 3px;"
-                           :style="isManagementStation ? 'display: flex;':''">
+          <el-button-group
+            class="menu-button-group"
+            style="margin-left: 3px"
+            :style="isManagementStation ? 'display: flex;' : ''"
+          >
             <el-tooltip
               class="item"
               popper-class="wb-tip"
@@ -96,8 +119,8 @@
                 type="info"
                 size="mini"
                 @click="setTunnel(item, index)"
-                :class="index ==  buttonIndex?'tunnelBtnStyle':''"
-                style="display: flex;justify-content: center;"
+                :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
+                style="display: flex; justify-content: center"
               >
                 <div>{{ item.tunnelName }}</div>
               </el-button>
@@ -106,13 +129,12 @@
         </el-row>
       </div>
       <div class="vehicleLane">
-
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative; left: 0px;"
+          style="position: relative; left: 0px"
         >
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
@@ -122,7 +144,7 @@
             ref="dragImgDom"
             @contextmenu.prevent
           >
-          <div>
+            <div>
               <el-row
                 class="config-img-area"
                 :style="{ width: currentTunnel.lane.width + 'px' }"
@@ -134,291 +156,432 @@
 
                 ></el-image> -->
 
-            <!-- 画布区域 -->
+                <!-- 画布区域 -->
                 <reproductionImage
-                 v-if="flag"
-                 :currentTunnel="currentTunnel"
-                 :eqTypeList="eqTypeList"
-                 :tunnelId="tunnelId"
+                  v-if="flag"
+                  :currentTunnel="currentTunnel"
+                  :eqTypeList="eqTypeList"
+                  :tunnelId="tunnelId"
                 ></reproductionImage>
-
               </el-row>
             </div>
-
-
           </div>
-
         </div>
       </div>
-      <div class="siblings" >
-      <div class="eqTypeListClass">
+      <div class="siblings">
+        <div class="eqTypeListClass">
           <div
-              type="info"
-              size="small"
-              v-for="(item,index) in dictList"
-             :key="index"
-             :label="item.label"
-             :value="index"
-              @click="displayControl(index, item.label)"
-               class="leftButtonS"
-              >
-              <div>{{ item.label }}</div>
+            type="info"
+            size="small"
+            v-for="(item, index) in dictList"
+            :key="index"
+            :label="item.label"
+            :value="index"
+            @click="displayControl(index, item.label)"
+            class="leftButtonS"
+          >
+            <div>{{ item.label }}</div>
           </div>
         </div>
 
+        <!-- 右侧侧窗 -->
+        <div class="indicatorLight" @click="isDrawerA()">
+          <i class="el-icon-caret-left"></i>一键车道控制模块
+        </div>
+        <div class="brightnessControl" @click="isDrawerB()">
+          <i class="el-icon-caret-left"></i>定时控制模块
+        </div>
+        <div class="triggerControl" @click="isDrawerC()">
+          <i class="el-icon-caret-left"></i>触发控制模块
+        </div>
+        <!-- 一键车道控制模块 -->
+        <el-drawer
+          title="车道指示灯-车道控制"
+          :visible.sync="drawerA"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerTop"
+        >
+          <div class="bingZhou">
+            <span>济南方向：</span>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              1
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              2
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              3
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <el-button type="primary" class="control">控制</el-button>
+          </div>
+          <div class="bingZhou">
+            <span>潍坊方向：</span>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              1
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              2
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <div
+              class="number"
+              :style="
+                checked
+                  ? 'background-color:#EC9D3C'
+                  : 'background-color:#00C9FF'
+              "
+            >
+              3
+            </div>
+            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <el-button type="primary" class="control">控制</el-button>
+          </div>
+        </el-drawer>
+        <!-- 定时控制模块 -->
+        <el-drawer
+          title="照明亮度自动控制"
+          :visible.sync="drawerB"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerCenter"
+        >
+          <div class="ledLighting">
+            <span>引道照明时序自动控制 </span>
+            <el-switch
+              v-model="kaiGuan"
+              active-color="#B6DEEE"
+              inactive-color="#B6DEEE"
+            >
+            </el-switch>
+          </div>
+          <div class="Time">
+            <div class="timeStart">
+              <span class="setTime">开启时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+            </div>
+            <div class="timeEnd">
+              <span class="setTime">关闭时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+              <el-button type="primary" size="mini" class="handleLightClass"
+                >确定
+              </el-button>
+            </div>
+          </div>
+          <div class="ledLighting">
+            <span>加强照明1时序自动控制 </span>
+            <el-switch
+              v-model="kaiGuan"
+              active-color="#B6DEEE"
+              inactive-color="#B6DEEE"
+            >
+            </el-switch>
+          </div>
+          <div class="Time">
+            <div class="timeStart">
+              <span class="setTime">开启时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+            </div>
+            <div class="timeEnd">
+              <span class="setTime">关闭时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+              <el-button type="primary" size="mini" class="handleLightClass"
+                >确定
+              </el-button>
+            </div>
+          </div>
+          <div class="ledLighting">
+            <span>加强照2时序自动控制 </span>
+            <el-switch
+              v-model="kaiGuan"
+              active-color="#B6DEEE"
+              inactive-color="#B6DEEE"
+            >
+            </el-switch>
+          </div>
+          <div class="Time">
+            <div class="timeStart">
+              <span class="setTime">开启时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+            </div>
+            <div class="timeEnd">
+              <span class="setTime">关闭时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+              <el-button type="primary" size="mini" class="handleLightClass"
+                >确定
+              </el-button>
+            </div>
+          </div>
+          <div class="ledLighting">
+            <span>加强照明2时序自动控制 </span>
+            <el-switch
+              v-model="kaiGuan"
+              active-color="#B6DEEE"
+              inactive-color="#B6DEEE"
+            >
+            </el-switch>
+          </div>
+          <div class="Time">
+            <div class="timeStart">
+              <span class="setTime">开启时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+            </div>
+            <div class="timeEnd">
+              <span class="setTime">关闭时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+              >
+              </el-time-picker>
+              <el-button type="primary" size="mini" class="handleLightClass"
+                >确定
+              </el-button>
+            </div>
+          </div>
+          <div class="ledLighting">
+            <span>基本照明2时序自动控制 </span>
+            <el-switch
+              v-model="kaiGuan"
+              active-color="#B6DEEE"
+              inactive-color="#B6DEEE"
+            >
+            </el-switch>
+          </div>
+          <div class="Time">
+            <div class="timeStart">
+              <span class="setTime">开启时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+            </div>
+            <div class="timeEnd">
+              <span class="setTime">关闭时间：</span>
+              <el-time-picker
+                v-model="value1"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                size="mini"
+                :clearable="false"
+              >
+              </el-time-picker>
+              <el-button type="primary" size="mini" class="handleLightClass"
+                >确定
+              </el-button>
+            </div>
+          </div>
+        </el-drawer>
+        <!-- 触发控制模块 -->
+        <el-drawer
+          title="车道指示灯-触发控制"
+          :visible.sync="drawerC"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerBottom"
+        >
+          <div class="bingZhou">
+            <!-- 设备类型 -->
+            <el-select v-model="typeValue" placeholder="请选择设备类型">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+            <!-- 设备名称 -->
+            <div style="margin: 0 15px">
+              <el-select v-model="nameValue" placeholder="请选择设备名称">
+                <el-option
+                  v-for="item in nameOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
 
-    <!-- 右侧侧窗 -->
-      <div class=" indicatorLight" @click="isDrawerA()"><i class="el-icon-caret-left"></i>一键车道控制模块</div>
-      <div class=" brightnessControl" @click="isDrawerB()"><i class="el-icon-caret-left"></i>定时控制模块</div>
-       <el-drawer
-        title="车道指示灯-车道控制"
-        :visible.sync="drawerA"
-        :modal="false"
-        :append-to-body="true"
-        class="drawerTop"
-        >
-        <div class="bingZhou">
-          <span>济南方向：</span>
-          <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">1</div>
-          <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">2</div>
-          <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">3</div>
-          <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <el-button type="primary" class="control">控制</el-button>
-        </div>
-        <div class="bingZhou">
-          <span>潍坊方向：</span> <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">1</div> <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">2</div> <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">3</div> <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-          <el-button type="primary" class="control">控制</el-button>
-        </div>
-      </el-drawer>
-      <el-drawer
-        title="照明亮度自动控制"
-        :visible.sync="drawerB"
-        :modal="false"
-        :append-to-body="true"
-        class="drawerBottom"
-        >
-       <div class="ledLighting">
-          <span>引道照明时序自动控制 </span>
-          <el-switch
-            v-model="kaiGuan"
-            active-color="#B6DEEE"
-            inactive-color="#B6DEEE"
-            >
-          </el-switch>
-       </div>
-       <div class="Time" >
-       <div class="timeStart">
-       <span class="setTime">开启时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-         >
-        </el-time-picker>
-       </div>
-       <div class="timeEnd">
-      <span class="setTime">关闭时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-          >
-        </el-time-picker>
-        <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
-       </div>
+            <el-input v-model="inputValue" placeholder="请输入"></el-input>
+          </div>
+        </el-drawer>
       </div>
-        <div class="ledLighting"> <span>加强照明1时序自动控制 </span> <el-switch
-            v-model="kaiGuan"
-            active-color="#B6DEEE"
-            inactive-color="#B6DEEE"
-            >
-          </el-switch>
-       </div>
-       <div class="Time" >
-       <div class="timeStart">
-       <span class="setTime">开启时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-         >
-        </el-time-picker>
-       </div>
-       <div class="timeEnd">
-      <span class="setTime">关闭时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-          >
-        </el-time-picker>
-        <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
-       </div>
-      </div>
-        <div class="ledLighting"> <span>加强照2时序自动控制 </span> <el-switch
-            v-model="kaiGuan"
-            active-color="#B6DEEE"
-            inactive-color="#B6DEEE"
-            >
-          </el-switch>
-       </div>
-       <div class="Time" >
-       <div class="timeStart">
-       <span class="setTime">开启时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-         >
-        </el-time-picker>
-       </div>
-       <div class="timeEnd">
-      <span class="setTime">关闭时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-          >
-        </el-time-picker>
-        <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
-       </div>
-      </div>
-        <div class="ledLighting"> <span>加强照明2时序自动控制 </span> <el-switch
-            v-model="kaiGuan"
-            active-color="#B6DEEE"
-            inactive-color="#B6DEEE"
-            >
-          </el-switch>
-       </div>
-       <div class="Time" >
-       <div class="timeStart">
-       <span class="setTime">开启时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-         >
-        </el-time-picker>
-       </div>
-       <div class="timeEnd">
-      <span class="setTime">关闭时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          >
-        </el-time-picker>
-        <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
-       </div>
-      </div>
-        <div class="ledLighting"> <span>基本照明2时序自动控制 </span> <el-switch
-            v-model="kaiGuan"
-            active-color="#B6DEEE"
-            inactive-color="#B6DEEE"
-            >
-          </el-switch>
-       </div>
-       <div class="Time" >
-       <div class="timeStart">
-       <span class="setTime">开启时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-         >
-        </el-time-picker>
-       </div>
-       <div class="timeEnd">
-      <span class="setTime">关闭时间：</span>
-         <el-time-picker
-          v-model="value1"
-          :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-          size="mini"
-          :clearable="false"
-          >
-        </el-time-picker>
-        <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
-       </div>
-      </div>
-      </el-drawer>
-       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
       <!--配置区域-->
-      <div  class="footer" v-show="displayThumbnail == true">
-<!--          <div class="footMiniBox"  @click="jumpLink('/14/trafficFlowAnalysis')" style="cursor: pointer;">-->
-        <div class="footMiniBox"  style="cursor: pointer;">
-              <div class="footTitle">
-                <div class="footTitleCont"><p>车辆监测</p>  <p>Vehicle detection</p></div>
-              </div>
-              <div id="vehicle"></div>
+      <div class="footer" v-show="displayThumbnail == true">
+        <!--          <div class="footMiniBox"  @click="jumpLink('/14/trafficFlowAnalysis')" style="cursor: pointer;">-->
+        <div class="footMiniBox" style="cursor: pointer">
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <p>车辆监测</p>
+              <p>Vehicle detection</p>
+            </div>
           </div>
-<!--           <div class="footMiniBox footerRight" @click="jumpLink('/15/status')" style="cursor: pointer;">-->
-        <div class="footMiniBox footerRight" style="cursor: pointer;">
-                <div class="footTitle">
-                <!-- <div class="footTriangle"></div> -->
-                <div class="footTitleCont"><p>能耗监测</p><p>Energy consumption monitoring</p></div>
-                </div>
-                <div id="energyConsumption"></div>
+          <div id="vehicle"></div>
+        </div>
+        <!--           <div class="footMiniBox footerRight" @click="jumpLink('/15/status')" style="cursor: pointer;">-->
+        <div class="footMiniBox footerRight" style="cursor: pointer">
+          <div class="footTitle">
+            <!-- <div class="footTriangle"></div> -->
+            <div class="footTitleCont">
+              <p>能耗监测</p>
+              <p>Energy consumption monitoring</p>
+            </div>
           </div>
-          <div class="footMiniBox footerRight" style="cursor: pointer;">
-<!--          <div class="footMiniBox footerRight" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
-              <div class="footTitle">
-                <div class="footTitleCont"><p>重点车辆</p><p>Key vehicles</p></div>
-              </div>
-              <div id="focusCar"></div>
+          <div id="energyConsumption"></div>
+        </div>
+        <div class="footMiniBox footerRight" style="cursor: pointer">
+          <!--          <div class="footMiniBox footerRight" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <p>重点车辆</p>
+              <p>Key vehicles</p>
+            </div>
           </div>
-          <div class="footerRight footMiniBox" style="cursor: pointer;">
-<!--          <div class="footerRight footMiniBox" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
-              <div class="footTitle">
-                <div class="footTitleCont"><p>预警事件</p><p>Alert event</p></div>
-              </div>
-              <div v-if="trafficList.length == 0" style="width: 100%;text-align: center;font-size: 14px;margin-top: 80px;">暂无交通事件</div>
-              <vue-seamless-scroll
-                :class-option="defaultOption"
-                class="listContent"
-                :data="trafficList"
-              >
-                <el-row v-for="(item, index) in trafficList" :key="index"
-                     class="listRow">
-                        <el-col style="width: 3vw;text-align: center;">{{index+1}}</el-col>
-                        <el-col style="width: 18vw;">{{item}}</el-col>
-                </el-row>
-              </vue-seamless-scroll>
+          <div id="focusCar"></div>
+        </div>
+        <div class="footerRight footMiniBox" style="cursor: pointer">
+          <!--          <div class="footerRight footMiniBox" @click="jumpLink('/3/warningInfo')" style="cursor: pointer;">-->
+          <div class="footTitle">
+            <div class="footTitleCont">
+              <p>预警事件</p>
+              <p>Alert event</p>
+            </div>
           </div>
-
+          <div
+            v-if="trafficList.length == 0"
+            style="
+              width: 100%;
+              text-align: center;
+              font-size: 14px;
+              margin-top: 80px;
+            "
+          >
+            暂无交通事件
+          </div>
+          <vue-seamless-scroll
+            :class-option="defaultOption"
+            class="listContent"
+            :data="trafficList"
+          >
+            <el-row
+              v-for="(item, index) in trafficList"
+              :key="index"
+              class="listRow"
+            >
+              <el-col style="width: 3vw; text-align: center">{{
+                index + 1
+              }}</el-col>
+              <el-col style="width: 18vw">{{ item }}</el-col>
+            </el-row>
+          </vue-seamless-scroll>
+        </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
     </div>
@@ -435,9 +598,19 @@
         :model="queryParams"
         ref="queryForm"
         label-width="68px"
-        size="mini">
-        <el-form-item label="设备类型" prop="eqTypeId" style="display: inline-block;">
-          <el-select v-model="queryParams.eqTypeId" placeholder="请选择设备类型" clearable size="small">
+        size="mini"
+      >
+        <el-form-item
+          label="设备类型"
+          prop="eqTypeId"
+          style="display: inline-block"
+        >
+          <el-select
+            v-model="queryParams.eqTypeId"
+            placeholder="请选择设备类型"
+            clearable
+            size="small"
+          >
             <el-option
               v-for="item in eqTypeData"
               :key="item.typeId"
@@ -446,8 +619,17 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="隧道名称" prop="tunnelId" style="display: inline-block;margin-left: 20px;">
-          <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道" clearable size="small">
+        <el-form-item
+          label="隧道名称"
+          prop="tunnelId"
+          style="display: inline-block; margin-left: 20px"
+        >
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择隧道"
+            clearable
+            size="small"
+          >
             <el-option
               v-for="item in eqTunnelData"
               :key="item.tunnelId"
@@ -456,11 +638,11 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="创建时间" style="display: inline-block;">
+        <el-form-item label="创建时间" style="display: inline-block">
           <el-date-picker
             v-model="dateRange"
             size="small"
-            style="width: 360px;"
+            style="width: 360px"
             value-format="yyyy-MM-dd HH-mm-ss"
             type="datetimerange"
             range-separator="-"
@@ -470,33 +652,70 @@
             class="dateRange"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item style="display: inline-block;margin-left: 20px;">
-          <el-button type="cyan" icon="el-icon-search" size="mini" class="submitButton" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-                     style="color: white;">重置
+        <el-form-item style="display: inline-block; margin-left: 20px">
+          <el-button
+            type="cyan"
+            icon="el-icon-search"
+            size="mini"
+            class="submitButton"
+            @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            size="mini"
+            @click="resetQuery"
+            style="color: white"
+            >重置
           </el-button>
         </el-form-item>
       </el-form>
       <el-table
-        v-loading="loading" :data="logList" min-height="200"
-        :default-sort="{prop: 'createTime', order: 'descending'}"
+        v-loading="loading"
+        :data="logList"
+        min-height="200"
+        :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
-        empty-text="暂无操作日志">
+        empty-text="暂无操作日志"
+      >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column label="隧道名称" align="center" prop="tunnelName.tunnelName"/>
-        <el-table-column label="设备类型" align="center" prop="typeName.typeName"/>
-        <el-table-column label="设备名称" align="center" prop="eqName.eqName"/>
-        <el-table-column label="操作状态" align="center" prop="stateName.stateName"/>
-        <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
-        <el-table-column label="用户名称" align="center" prop="userName"/>
-        <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable>
+        <el-table-column
+          label="隧道名称"
+          align="center"
+          prop="tunnelName.tunnelName"
+        />
+        <el-table-column
+          label="设备类型"
+          align="center"
+          prop="typeName.typeName"
+        />
+        <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+        <el-table-column
+          label="操作状态"
+          align="center"
+          prop="stateName.stateName"
+        />
+        <el-table-column
+          label="控制方式"
+          align="center"
+          prop="controlType"
+          :formatter="controlTypeFormat"
+        />
+        <el-table-column label="用户名称" align="center" prop="userName" />
+        <el-table-column
+          label="创建时间"
+          align="center"
+          prop="createTime"
+          width="180"
+          sortable
+        >
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
       </el-table>
       <pagination
-        v-show="total>0"
+        v-show="total > 0"
         :total="total"
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
@@ -559,15 +778,15 @@
         <el-form-item label="方向:">
           <div v-if="stateForm.eqDirection == 0">
             {{ rightDirection + "方向" }} -->
-            <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
-          <!-- </div>
+    <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
+    <!-- </div>
           <div v-else-if="stateForm.eqDirection == 1">
             {{ leftDirection + "方向" }} -->
-          <!--  <img
+    <!--  <img
               src="../../../assets/image/workbench/long-arrowhead.png"
               style="transform: rotate(180deg); margin-left: 10px"
             /> -->
-          <!-- </div>
+    <!-- </div>
         </el-form-item>
         <el-form-item label="调光强度:" v-if="stateForm.eqType == 99999999">
           <div style="width: 200px; float: left">
@@ -577,32 +796,32 @@
             {{ stateForm.lightValue }}</label
           >
         </el-form-item> -->
-        <!-- 所有设备 -->
-        <!-- <el-form-item label="运行状态:" > -->
-          <!-- {{ '正常' }} -->
-        <!-- </el-form-item> -->
-        <!-- plc -->
-        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 14"> -->
-          <!-- {{ '在线'}} -->
-        <!-- </el-form-item> -->
-        <!-- 压力表 -->
-        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 28"> -->
-          <!-- {{ '正常'}} -->
-        <!-- </el-form-item> -->
-        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 21"> -->
-          <!-- {{ '在线'}} -->
-        <!-- </el-form-item> -->
-        <!-- 智能手动报警 -->
-        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 34">
+    <!-- 所有设备 -->
+    <!-- <el-form-item label="运行状态:" > -->
+    <!-- {{ '正常' }} -->
+    <!-- </el-form-item> -->
+    <!-- plc -->
+    <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 14"> -->
+    <!-- {{ '在线'}} -->
+    <!-- </el-form-item> -->
+    <!-- 压力表 -->
+    <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 28"> -->
+    <!-- {{ '正常'}} -->
+    <!-- </el-form-item> -->
+    <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 21"> -->
+    <!-- {{ '在线'}} -->
+    <!-- </el-form-item> -->
+    <!-- 智能手动报警 -->
+    <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 34">
           {{ '在线'}}
         </el-form-item> -->
-          <!-- 消防水泵 -->
-        <!-- <el-form-item label="水位:" v-if="stateForm.eqType == 13">
+    <!-- 消防水泵 -->
+    <!-- <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
         </el-form-item> -->
 
-          <!-- ====================微波检查器开始====== -->
-          <!-- <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
+    <!-- ====================微波检查器开始====== -->
+    <!-- <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
           {{ '正常'}}
         </el-form-item>
             <el-form-item label="车道:" v-if="stateForm.value && stateForm.eqType == 20">
@@ -620,8 +839,8 @@
         <el-form-item label="上传时间:" v-if="stateForm.value && stateForm.eqType == 20">
           {{ '今天'}}
         </el-form-item> -->
-            <!-- ====================微博检查结束============ -->
-        <!-- <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
+    <!-- ====================微博检查结束============ -->
+    <!-- <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
           {{ stateForm.value }}
         </el-form-item>
         <el-form-item label="检测值:" v-if="stateForm.value && stateForm.eqType == 999">
@@ -646,8 +865,8 @@
           label="配置状态:"
           v-if="stateForm.eqType != 21 && !stateForm.value && stateForm.eqType != 123 && stateForm.eqType != 28  && stateForm.eqType != 34"
         > -->
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
+    <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
+    <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group
               v-for="(item, index) in eqTypeStateList"
               :key="index"
@@ -733,13 +952,13 @@
             </el-form>
           </div>
         </el-form-item> -->
-        <!-- 应急照明 -->
-       <!-- <el-form-item
+    <!-- 应急照明 -->
+    <!-- <el-form-item
           label="配置状态:"
           v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 6"
         > -->
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
+    <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
+    <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group
               v-for="(item, index) in eqTypeStateList"
               :key="index"
@@ -802,7 +1021,7 @@
             </el-radio-group>
           </div> -->
 
-          <!-- <div v-if="stateForm.eqType == 111">
+    <!-- <div v-if="stateForm.eqType == 111">
             <el-form label-width="100px" label-position="left" size="mini">
               <el-form-item label="设备名称:">
                 {{ stateForm.equipmentName }}
@@ -825,13 +1044,13 @@
             </el-form>
           </div>
         </el-form-item> -->
-        <!-- 消防水泵 -->
-       <!-- <el-form-item
+    <!-- 消防水泵 -->
+    <!-- <el-form-item
           label="配置状态:"
           v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 13"
         > -->
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
+    <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
+    <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group
               v-for="(item, index) in eqTypeStateList"
               :key="index"
@@ -918,8 +1137,7 @@
           </div>
         </el-form-item> -->
 
-
-        <!-- <template v-if="stateForm.eqType == 112">
+    <!-- <template v-if="stateForm.eqType == 112">
           <div class="robotBox">
             <video
               v-if="watchVideo"
@@ -991,10 +1209,10 @@
             </el-tab-pane>
           </el-tabs>
         </template> -->
-        <!-- <el-form-item label="模拟量:" v-if="stateForm.value">
+    <!-- <el-form-item label="模拟量:" v-if="stateForm.value">
           <div id="analogQuantity"></div>
         </el-form-item> -->
-      <!-- </el-form>
+    <!-- </el-form>
       <div slot="footer">
         <el-button
           type="primary"
@@ -1018,7 +1236,7 @@
 
     <!--批量管理对话框-->
 
-  <el-dialog
+    <el-dialog
       v-dialogDrag
       class="workbench-dialog batch-table batch-dialog"
       :title="title"
@@ -1112,7 +1330,7 @@
         <el-form-item label="配置状态:" prop="state" style="margin-top: 20px">
           <div class="wrap">
             <el-radio-group
-              v-for="(items,index) in eqTypeStateList"
+              v-for="(items, index) in eqTypeStateList"
               :key="index"
               v-model="batchForm.state"
               style="display: flex; flex-direction: column"
@@ -1147,8 +1365,8 @@
                   v-else-if="items.url.length > 1 && batchFormDirection == 1"
                 >
                   <el-row class="flex-row align-items-center form-direction">
-                    <img class="equipment-img" :src="items.url[1]"/>
-                    <img class="equipment-img" :src="items.url[0]"/>
+                    <img class="equipment-img" :src="items.url[1]" />
+                    <img class="equipment-img" :src="items.url[0]" />
                   </el-row>
                   <el-row
                     class="flex-row align-items-center form-direction"
@@ -1159,7 +1377,7 @@
                   </el-row>
                 </el-row>
                 <el-row v-else-if="items.url.length == 1" class="flex-row">
-                  <img class="equipment-img" :src="items.url[0]"/>
+                  <img class="equipment-img" :src="items.url[0]" />
                   <el-row style="margin: 5px 0 0 10px">{{ items.name }}</el-row>
                 </el-row>
               </el-radio>
@@ -1173,13 +1391,11 @@
           size="mini"
           @click="submitBatchState('batchForm')"
           class="submitButton"
-        >确 定
-        </el-button
-        >
+          >确 定
+        </el-button>
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
 
     <!--微波车检对话框-->
     <el-dialog
@@ -1229,8 +1445,8 @@
         <el-table-column label="上传时间" align="center" prop="createTime">
           <template slot-scope="scope">
             <span>{{
-                parseTime(scope.row.createTime, "{y}-{m}-{d} {h}:{i}:{s}")
-              }}</span>
+              parseTime(scope.row.createTime, "{y}-{m}-{d} {h}:{i}:{s}")
+            }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -1240,7 +1456,6 @@
     </el-dialog>
 
     <!--摄像机对话框-->
-
 
     <el-dialog
       v-dialogDrag
@@ -1304,12 +1519,7 @@
       append-to-body
       style="left: 30%"
     >
-      <el-form
-        ref="form"
-        :model="stateForm"
-        label-position="left"
-        size="mini"
-      >
+      <el-form ref="form" :model="stateForm" label-position="left" size="mini">
         <el-row>
           <el-col :span="8">
             <el-form-item label="所处位置:" label-width="80px">
@@ -1324,7 +1534,7 @@
           <el-col :span="8">
             <el-form-item label="方向:" label-width="50px">
               <div v-if="stateForm.eqDirection == 0">
-                <img src="../../../assets/image/workbench/long-arrowhead.png"/>
+                <img src="../../../assets/image/workbench/long-arrowhead.png" />
                 {{ rightDirection + "方向" }}
               </div>
               <div v-else-if="stateForm.eqDirection == 1">
@@ -1403,12 +1613,7 @@
       append-to-body
       style="left: 30%"
     >
-      <el-form
-        ref="form"
-        :model="stateForm"
-        label-position="left"
-        size="mini"
-      >
+      <el-form ref="form" :model="stateForm" label-position="left" size="mini">
         <el-row>
           <el-col :span="8">
             <el-form-item label="所处位置:" label-width="80px">
@@ -1423,7 +1628,7 @@
           <el-col :span="8">
             <el-form-item label="方向:" label-width="50px">
               <div v-if="stateForm.eqDirection == 0">
-                <img src="../../../assets/image/workbench/long-arrowhead.png"/>
+                <img src="../../../assets/image/workbench/long-arrowhead.png" />
                 {{ rightDirection + "方向" }}
               </div>
               <div v-else-if="stateForm.eqDirection == 1">
@@ -1483,7 +1688,14 @@
           <el-col :span="12">
             <el-form-item label="采集时间:">
               <template slot-scope="scope">
-                <span> {{ parseTime(lumianList.timeCollect, "{yyyy}-{m}-{d} {h}:{i}:{s}") }}</span>
+                <span>
+                  {{
+                    parseTime(
+                      lumianList.timeCollect,
+                      "{yyyy}-{m}-{d} {h}:{i}:{s}"
+                    )
+                  }}</span
+                >
               </template>
             </el-form-item>
           </el-col>
@@ -1515,7 +1727,11 @@
       >
         <el-table-column label="图标">
           <template slot-scope="scope">
-            　 <img :src="scope.row.url" style="vertical-align: middle;max-height: 30px;"/>
+            　
+            <img
+              :src="scope.row.url"
+              style="vertical-align: middle; max-height: 30px"
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -1559,14 +1775,12 @@
           prop="tunnels.tunnelName"
           width="200"
         />
-        <el-table-column
-          label="策略名称"
-          align="center"
-          prop="strategyName"
-        />
+        <el-table-column label="策略名称" align="center" prop="strategyName" />
         <el-table-column label="策略信息" align="center" prop="strategyInfo">
-          <template slot-scope="scope" v-if="scope.row.slist!=[]">
-            <div v-for="(item,index) in scope.row.slist" :key="index">{{ item }}</div>
+          <template slot-scope="scope" v-if="scope.row.slist != []">
+            <div v-for="(item, index) in scope.row.slist" :key="index">
+              {{ item }}
+            </div>
           </template>
           <div v-else>暂无信息</div>
         </el-table-column>
@@ -1582,7 +1796,7 @@
               type="text"
               icon="el-icon-thumb"
               @click="handleController(scope.row)"
-            >手动控制
+              >手动控制
             </el-button>
           </template>
         </el-table-column>
@@ -1676,8 +1890,13 @@
       class="temperatureDialog"
     >
       <div slot="title">
-        <span><i class="el-icon-message-solid" style="color: #e6a23c;margin-right:10px"></i></span>
-        <span style="color: white;">火灾报警提示</span>
+        <span
+          ><i
+            class="el-icon-message-solid"
+            style="color: #e6a23c; margin-right: 10px"
+          ></i
+        ></span>
+        <span style="color: white">火灾报警提示</span>
       </div>
       <div>
         <div>隧道名称</div>
@@ -1708,9 +1927,20 @@
         <span>2米</span>
       </div>
       <div>
-        <el-progress :text-inside="true" :stroke-width="26" :percentage="percentage" :color="customColors"
-                     style="width: 60%;display: inline-block;"></el-progress>
-        <div style="display: inline-block;margin-left: 20px;color: white !important;">
+        <el-progress
+          :text-inside="true"
+          :stroke-width="26"
+          :percentage="percentage"
+          :color="customColors"
+          style="width: 60%; display: inline-block"
+        ></el-progress>
+        <div
+          style="
+            display: inline-block;
+            margin-left: 20px;
+            color: white !important;
+          "
+        >
           <el-button-group>
             <el-button icon="el-icon-minus" @click="decrease"></el-button>
             <el-button icon="el-icon-plus" @click="increase"></el-button>
@@ -1719,10 +1949,21 @@
       </div>
     </el-dialog>
     <!--隧道诱导对话框-->
-    <el-dialog v-dialogDrag class="workbench-dialog batch-table youdaoDialog" :title="title"
-               :visible.sync="youdaoVisible"
-               width="40vw" append-to-body>
-      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini">
+    <el-dialog
+      v-dialogDrag
+      class="workbench-dialog batch-table youdaoDialog"
+      :title="title"
+      :visible.sync="youdaoVisible"
+      width="40vw"
+      append-to-body
+    >
+      <el-form
+        ref="form"
+        :model="stateForm"
+        label-width="80px"
+        label-position="left"
+        size="mini"
+      >
         <el-row>
           <!-- <el-col :span="8">
             <el-form-item label="所处位置:">
@@ -1737,13 +1978,15 @@
           <el-col :span="8">
             <el-form-item label="方向:">
               <div v-if="stateForm.eqDirection == 0">
-                <img src="@/assets/image/workbench/long-arrowhead.png"/>
+                <img src="@/assets/image/workbench/long-arrowhead.png" />
                 {{ rightDirection + "方向" }}
               </div>
               <div v-else-if="stateForm.eqDirection == 1">
                 {{ leftDirection + "方向" }}
-                <img src="@/assets/image/workbench/long-arrowhead.png"
-                     style="transform: rotate(180deg);margin-left: 10px;"/>
+                <img
+                  src="@/assets/image/workbench/long-arrowhead.png"
+                  style="transform: rotate(180deg); margin-left: 10px"
+                />
               </div>
             </el-form-item>
           </el-col>
@@ -1753,21 +1996,40 @@
             <el-form-item label="控制模式:" prop="corModel">
               <el-radio-group v-model="stateForm.corModel" @change="outLight">
                 <el-col :span="4">
-                  <el-radio key="00" label="00" style="padding: 5px 20px 5px 10px;">闪烁</el-radio>
+                  <el-radio
+                    key="00"
+                    label="00"
+                    style="padding: 5px 20px 5px 10px"
+                    >闪烁</el-radio
+                  >
                 </el-col>
                 <el-col :span="4">
-                  <el-radio key="02" label="02" style="padding: 5px 20px 5px 10px;margin-left: 25px;">常亮</el-radio>
+                  <el-radio
+                    key="02"
+                    label="02"
+                    style="padding: 5px 20px 5px 10px; margin-left: 25px"
+                    >常亮</el-radio
+                  >
                 </el-col>
                 <el-col :span="4">
-                  <el-radio key="03" label="03" style="padding: 5px 20px 5px 10px;margin-left: 50px;">常灭</el-radio>
+                  <el-radio
+                    key="03"
+                    label="03"
+                    style="padding: 5px 20px 5px 10px; margin-left: 50px"
+                    >常灭</el-radio
+                  >
                 </el-col>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="车道:" prop="lane">
-              <el-checkbox v-model="stateForm.Zlane" label="D" key="D">左车道</el-checkbox>
-              <el-checkbox v-model="stateForm.Ylane" label="E" key="E">右车道</el-checkbox>
+              <el-checkbox v-model="stateForm.Zlane" label="D" key="D"
+                >左车道</el-checkbox
+              >
+              <el-checkbox v-model="stateForm.Ylane" label="E" key="E"
+                >右车道</el-checkbox
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -1777,7 +2039,8 @@
               <el-slider
                 v-model="stateForm.whiteLight"
                 :step="10"
-                style="width: 90%;">
+                style="width: 90%"
+              >
               </el-slider>
             </el-form-item>
           </el-col>
@@ -1786,47 +2049,63 @@
               <el-slider
                 v-model="stateForm.yellowLight"
                 :step="10"
-                style="width: 90%;">
+                style="width: 90%"
+              >
               </el-slider>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-if="stateForm.corModel=='00'">
+        <el-row v-if="stateForm.corModel == '00'">
           <el-col :span="12">
             <el-form-item label="闪烁模式:">
-              <el-select v-model="stateForm.twinkleModel" placeholder="请选择" style="width: 60%;">
+              <el-select
+                v-model="stateForm.twinkleModel"
+                placeholder="请选择"
+                style="width: 60%"
+              >
                 <el-option
-                  v-for="(item,index) in twinkleModelOptions"
+                  v-for="(item, index) in twinkleModelOptions"
                   :key="index"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="闪烁频率:">
-              <el-select v-model="stateForm.twinkleFrequency" placeholder="请选择" style="width: 60%;">
+              <el-select
+                v-model="stateForm.twinkleFrequency"
+                placeholder="请选择"
+                style="width: 60%"
+              >
                 <el-option
-                  v-for="(item,index) in twinkleFrequencyOptions"
+                  v-for="(item, index) in twinkleFrequencyOptions"
                   :key="index"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
               次/分钟
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-if="stateForm.corModel=='00'">
+        <el-row v-if="stateForm.corModel == '00'">
           <el-col :span="12">
             <el-form-item label="亮灯时长:">
-              <el-select v-model="stateForm.lightTime" placeholder="请选择" style="width: 60%;">
+              <el-select
+                v-model="stateForm.lightTime"
+                placeholder="请选择"
+                style="width: 60%"
+              >
                 <el-option
-                  v-for="(item,index) in lightTimeOptions"
+                  v-for="(item, index) in lightTimeOptions"
                   :key="index"
                   :label="item.label"
-                  :value="item.value">
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
               毫秒
@@ -1835,7 +2114,9 @@
         </el-row>
       </el-form>
       <div slot="footer">
-        <el-button type="primary" size="mini" @click="submitCorLight">确 定</el-button>
+        <el-button type="primary" size="mini" @click="submitCorLight"
+          >确 定</el-button
+        >
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -1844,11 +2125,11 @@
 
 <script>
 import flvjs from "flv.js";
-import vueSeamlessScroll from 'vue-seamless-scroll';
+import vueSeamlessScroll from "vue-seamless-scroll";
 import $ from "jquery";
 import "jquery-ui-dist/jquery-ui";
 import "jquery-ui-dist/jquery-ui.min.css";
-import bus from '@/utils/bus'
+import bus from "@/utils/bus";
 import {
   getLiPowerDevices,
   //initLipowerDevice
@@ -1867,9 +2148,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
-import {
-  getTemplateInfo,
-} from "@/api/board/template.js";
+import { getTemplateInfo } from "@/api/board/template.js";
 import {
   listTunnels,
   getTunnels,
@@ -1887,7 +2166,7 @@ import {
   getEqTypeState,
   updateEqTypeState,
   getStateByRun,
-  getStateByData
+  getStateByData,
 } from "@/api/equipment/eqTypeState/api";
 import {
   icon,
@@ -1899,31 +2178,35 @@ import {
   getStrategy,
   handleStrategy,
 } from "@/api/event/strategy";
-import {selectByEqDeno} from "@/api/business/roadState.js";
+import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
-import vmsContentUpdate from "@/views/workbench/config/vms-content-update";//单个编辑
-import contentBatchEdit from "@/views/workbench/config/content-batch-edit";//批量编辑
-import {getLocalIP} from "@/api/event/vedioRecord";
-import {getHosts} from "@/api/equipment/plc/api";
+import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
+import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑
+import { getLocalIP } from "@/api/event/vedioRecord";
+import { getHosts } from "@/api/equipment/plc/api";
 import * as echarts from "echarts";
-import {listUser, getUserDeptId} from "@/api/system/user";
-import * as deviceApi from '@/api/equipment/device/api'
-import {listLog} from "@/api/system/log";
-import {listDept, listDeptExcludeChild, roleDeptTreeselect} from "@/api/system/dept";
-import bg from '@/assets/cloudControl/right_button.png'
-import hoverbg from '@/assets/cloudControl/right_button_hover2.png'
+import { listUser, getUserDeptId } from "@/api/system/user";
+import * as deviceApi from "@/api/equipment/device/api";
+import { listLog } from "@/api/system/log";
+import {
+  listDept,
+  listDeptExcludeChild,
+  roleDeptTreeselect,
+} from "@/api/system/dept";
+import bg from "@/assets/cloudControl/right_button.png";
+import hoverbg from "@/assets/cloudControl/right_button_hover2.png";
 import {
   getSystemWarningMsg,
   getTrafficIncident,
   proportionOfEquipment,
-  trafficFlowInformation
-} from "@/api/workbench/config.js"
+  trafficFlowInformation,
+} from "@/api/workbench/config.js";
 import {
   getDeviceBase,
   getNewBoardEditInfo,
   templateList,
 } from "@/api/workbench/config";
-import BatteryIcon from "@/components/BatteryIcon"
+import BatteryIcon from "@/components/BatteryIcon";
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -1943,20 +2226,21 @@ export default {
   },
   data() {
     return {
-      flag:false,
-      dictList:[],
-      robotShow:false,
+      flag: false,
+      dictList: [],
+      robotShow: false,
       //抽屉
-      drawerA:false,
-      drawerB:false,
-      kaiGuan:false,
-      checked:false,
-       value1: new Date(),
+      drawerA: false,
+      drawerB: false,
+      drawerC: false,
+      kaiGuan: false,
+      checked: false,
+      value1: new Date(),
       // wheel:'wheel.prevent',
       buttonIndex: 0,
       sevenDaysBefore: [],
       trafficJamList: [],
-      operationLogDialog: false,//操作日志弹窗
+      operationLogDialog: false, //操作日志弹窗
       //设备类型
       eqTypeData: {},
       //所属隧道
@@ -1978,7 +2262,7 @@ export default {
         operationState: null,
         controlType: null,
         state: null,
-        description: null
+        description: null,
       },
       // 操作日志表格数据
       logList: [],
@@ -1995,34 +2279,34 @@ export default {
       total: 0,
       // 进度条
       customColors: [
-        {color: '#f56c6c', percentage: 20},
-        {color: '#e6a23c', percentage: 40},
-        {color: '#5cb87a', percentage: 60},
-        {color: '#1989fa', percentage: 80},
-        {color: '#6f7ad3', percentage: 100}
+        { color: "#f56c6c", percentage: 20 },
+        { color: "#e6a23c", percentage: 40 },
+        { color: "#5cb87a", percentage: 60 },
+        { color: "#1989fa", percentage: 80 },
+        { color: "#6f7ad3", percentage: 100 },
       ],
       percentage: 70,
-      tunnelNameEarlyWarn: '',
-      tunnelId: '',
+      tunnelNameEarlyWarn: "",
+      tunnelId: "",
       displayThumbnail: true,
       SysEarlyWarning: [],
       trafficList: [],
-      hour1: '',
-      hour2: '',
-      hour3: '',
+      hour1: "",
+      hour2: "",
+      hour3: "",
 
-      selectSite: '',
+      selectSite: "",
       siteList: null,
       siteProps: {
-        value: 'deptId',
-        label: 'deptName',
-        children: 'children',
+        value: "deptId",
+        label: "deptName",
+        children: "children",
       },
-      seamless: false,//情报板轮播
+      seamless: false, //情报板轮播
       /* ---------火灾报警---------------*/
-      alarmBell: false,//是否启用报警铃声
-      tunnelName: '',
-      temperature: '',
+      alarmBell: false, //是否启用报警铃声
+      tunnelName: "",
+      temperature: "",
       HZdialogVisible: false,
       controlHeightVisible: false,
       railingList: [
@@ -2032,8 +2316,8 @@ export default {
             left: 150,
           },
           height: 2,
-          image: require('@/assets/logo/equipment_log/railing.png'),
-          tunnelName: '刘长山隧道'
+          image: require("@/assets/logo/equipment_log/railing.png"),
+          tunnelName: "刘长山隧道",
         },
         {
           position: {
@@ -2041,17 +2325,19 @@ export default {
             left: 0,
           },
           height: 2,
-          image: require('@/assets/logo/equipment_log/railing.png'),
-          tunnelName: '凤凰山隧道'
+          image: require("@/assets/logo/equipment_log/railing.png"),
+          tunnelName: "凤凰山隧道",
         },
       ],
       /* ---------工作台轮播情报版---------------*/
-      newsList: [{
-        "title": '下雨路滑 请谨慎驾驶',
-      },
+      newsList: [
         {
-          'title': '文明出行 安全第一',
-        }],
+          title: "下雨路滑 请谨慎驾驶",
+        },
+        {
+          title: "文明出行 安全第一",
+        },
+      ],
       /* ---------鼠标右键拖动---------------*/
       mouseLeft: 0,
       mouseTop: 0,
@@ -2098,7 +2384,7 @@ export default {
       timer: null, //定时器
       windowHeight: document.documentElement.clientHeight, //实时屏幕高度
       displayNumb: false, //显示编号
-      zoomSwitch:false, //缩放
+      zoomSwitch: false, //缩放
       currentTunnel: {
         id: "",
         name: "",
@@ -2124,8 +2410,8 @@ export default {
       eqTypeList: [], //设备类型
       eqBigTypeList: [], //设备类型
       selectBigType: {
-        bigType: '全部设备',
-        index: 0
+        bigType: "全部设备",
+        index: 0,
       },
       checkboxTunnel: [], //可点的隧道
       tunnelList: [], //隧道
@@ -2138,7 +2424,7 @@ export default {
         eqType: "",
         eqList: [],
         state: "",
-        eqlane: ""
+        eqlane: "",
       },
       lightSwitch: 0,
       //车道按钮样式
@@ -2226,95 +2512,109 @@ export default {
       //   color: "#fff",
       //   "border-color": "#304156",
       // },
-    //  leftDirection: "潍坊", //左侧方向
-    //   rightDirection: "济南", //右侧方向
-    //   batchFormDirection: 1, //批量对话框默认的设备方向
-      twinkleModelOptions: [{
-        value: '01',
-        label: '单闪'
-      }, {
-        value: '02',
-        label: '双闪'
-      }, {
-        value: '03',
-        label: '三闪'
-      }, {
-        value: '04',
-        label: '四闪'
-      }, {
-        value: '05',
-        label: '五闪'
-      }],
-      twinkleFrequencyOptions: [{
-        value: '20',
-        label: '20'
-      }, {
-        value: '30',
-        label: '30'
-      }, {
-        value: '45',
-        label: '45'
-      }, {
-        value: '60',
-        label: '60'
-      }, {
-        value: '90',
-        label: '90'
-      }],
-      lightTimeOptions: [{
-        value: '100',
-        label: '100'
-      }, {
-        value: '150',
-        label: '150'
-      }, {
-        value: '200',
-        label: '200'
-      }, {
-        value: '250',
-        label: '250'
-      }, {
-        value: '300',
-        label: '300'
-      }, {
-        value: '350',
-        label: '350'
-      }, {
-        value: '400',
-        label: '400'
-      }, {
-        value: '500',
-        label: '500'
-      }],
+      //  leftDirection: "潍坊", //左侧方向
+      //   rightDirection: "济南", //右侧方向
+      //   batchFormDirection: 1, //批量对话框默认的设备方向
+      twinkleModelOptions: [
+        {
+          value: "01",
+          label: "单闪",
+        },
+        {
+          value: "02",
+          label: "双闪",
+        },
+        {
+          value: "03",
+          label: "三闪",
+        },
+        {
+          value: "04",
+          label: "四闪",
+        },
+        {
+          value: "05",
+          label: "五闪",
+        },
+      ],
+      twinkleFrequencyOptions: [
+        {
+          value: "20",
+          label: "20",
+        },
+        {
+          value: "30",
+          label: "30",
+        },
+        {
+          value: "45",
+          label: "45",
+        },
+        {
+          value: "60",
+          label: "60",
+        },
+        {
+          value: "90",
+          label: "90",
+        },
+      ],
+      lightTimeOptions: [
+        {
+          value: "100",
+          label: "100",
+        },
+        {
+          value: "150",
+          label: "150",
+        },
+        {
+          value: "200",
+          label: "200",
+        },
+        {
+          value: "250",
+          label: "250",
+        },
+        {
+          value: "300",
+          label: "300",
+        },
+        {
+          value: "350",
+          label: "350",
+        },
+        {
+          value: "400",
+          label: "400",
+        },
+        {
+          value: "500",
+          label: "500",
+        },
+      ],
       lightControForm: {
         index: 0,
-        lCDirection: '',
+        lCDirection: "",
         radioLightControlTop: [],
         radioLightControlBottom: [],
-        state: '',
-        lane: '',
-        name: '',
+        state: "",
+        lane: "",
+        name: "",
       },
       lCTop: false,
       lCBottom: false,
 
       carShow: false,
       carShowTwo: false,
-      light: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAYAAADOvw4PAAAAAXNSR0IArs4c6QAABUBJREFUaEPtWk9oXEUc/r63UA9JerCHQiuIVRDNoYfY6CGBrlrtIftsQ6J4Ezx4EUnxmD3uCl4aPHkTb4Uaa0wDjRR2iyJKVqRgDgGrohgv9rS7gXpIpuz7N/Nm3uzO22xA9O1ld7Pz3pf3m2++3+/3zRDRS6yiggNcAXEOwHj89xzvXQi0QFzlIjZs1xU4RmSOOG4ESADsgtH8zO/b52dtooISrkCUzoEcD6/1wnukPnu9ewKMfgvGBJ+7oNeC511leSfA6d0BYhU1CCznIFT/oUSdC6jqgwqcARE+bNxCMkWT3+/dq/NS15yfjRM1gMshoTQSpb5n/Kb/HhKuztkfqxSfYQ7AzZERLL4R4XNB3rfAcYywU9x6JIg1IlGqWLEy3mO1UdQIns/K/WTexVcn53BQupmhTBrhYlXrEU35HJBKJV+C6VNcRwNE2TEE7sMEmnwdLybpuMBxi50RNzbgsRymJhux1HSmpzVrumvy4q6cn9tnGgDLiYplEiZJiVFqtBAtSavB/9XsKVkbwIRbBHKN6nARxxOSFTiDgxemuw4XDmTcbhxrA5yI6qpslQoIqKY4p3TX4YVfJE7z2QgnJpJRa/UnVlKf6UrndXokE4OffrgRXAzXXlD3FThKEPunO87/I+O2NiZkCrMV3xmkkoW4Nd3x/LbE+WYqxLGTRRLZlhqD67UUCqIgWY71M9yiUWsmt3TH1zpy8jceFTm7O0Vx4u4vW5U405I4381EZM6jYHEqVtXLxCxINkqSOXd3KvFi9ZBqxLn7cvJvnRJmt+fc3UXKoqtL+J0vfC1xWhfSJEtUyVSmRFl15VItjUQVCyXLQTEgpWSrFG52geoluaU7XvxTTv7tMwPSmKoc+dIdpzYlzl0/wrGRSlW4rPSsP6dcPIWSDaSZVB0u7MtJuXEsJJlhVjp3dzYzE3z5nsRpTio12VDdnbVg59kvJM72G9lkVmsso8FQVVjpYpO4hLEoSKaSbEC64+UHclK+HI9IZqa7w5qZPP+TUpA/J0mWFNwO/pRDuuPkNYmz85Z8Hr1TzXL8NSLJBWf6dv9Tkg1nZtJvKwX5CWXlD9fd2cxMzmxJnO9no8I/D7GUFKp3i4oy8elPJM7P72hdrK5SmkWikizoZ9TdhnR6OEqfrMtF6b8doR83ACd/d5e5Xwd2Ofd34ieKzdOKr5TRZQ1vZnb5/B2J88MrbdCbCO0FnWhu3Z3FQ+vyqY8lzm/vtYEejsu2VMTNYOzAV/e/5/ivsgF4oXPtJOmu6a7U5Kt/KA75kw0wwsn0jfJYAaluscmpTYlz93K4I2NgxMqSZR/oqpOxwQ00+cRHEuf398PnyYpZstswkFDmAKLJ4FSEwPoQl/e/RN+DGylOKt35XNiXe3Brj1QguJ4OVsbe3SCHXDcze8/z0j2Jc2eyApTWU9swIzEzSz7Pfi5xtt+sgFxP7ynm6+7kglMWlPB8Pv6hxNldrkCIKG4jZYMf6N2/+3REv3Tn1Tn/wDxNsH68BnjRaQLr3p21uzNUA6yzvG3ifDtdA0ry1EKsNum9uz7bMUa6q3Pymomz83YNHpeThaOSOen47N1dhjrV+dgHJs5f1RqEGOFpHNZ5qlaVhd91+ACWQEwDGBuCy3sQ2IKHFfX0hX4f0Q/HzczcA7gFeCu81LGeHhG3TvoAlwBvGuSYsWWiG4fmUZU9sIdTWuFsy47TKvtAaQngNOiFOIlKZlkOip8U1lkRjrfCZz614/z6rg8hlsBS+DxOpUCqGN8DsQWBFZ6u23F2qz4oliAOwQMN5yErndtqYIc5/QAAAABJRU5ErkJggg==",
+      light:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAYAAADOvw4PAAAAAXNSR0IArs4c6QAABUBJREFUaEPtWk9oXEUc/r63UA9JerCHQiuIVRDNoYfY6CGBrlrtIftsQ6J4Ezx4EUnxmD3uCl4aPHkTb4Uaa0wDjRR2iyJKVqRgDgGrohgv9rS7gXpIpuz7N/Nm3uzO22xA9O1ld7Pz3pf3m2++3+/3zRDRS6yiggNcAXEOwHj89xzvXQi0QFzlIjZs1xU4RmSOOG4ESADsgtH8zO/b52dtooISrkCUzoEcD6/1wnukPnu9ewKMfgvGBJ+7oNeC511leSfA6d0BYhU1CCznIFT/oUSdC6jqgwqcARE+bNxCMkWT3+/dq/NS15yfjRM1gMshoTQSpb5n/Kb/HhKuztkfqxSfYQ7AzZERLL4R4XNB3rfAcYywU9x6JIg1IlGqWLEy3mO1UdQIns/K/WTexVcn53BQupmhTBrhYlXrEU35HJBKJV+C6VNcRwNE2TEE7sMEmnwdLybpuMBxi50RNzbgsRymJhux1HSmpzVrumvy4q6cn9tnGgDLiYplEiZJiVFqtBAtSavB/9XsKVkbwIRbBHKN6nARxxOSFTiDgxemuw4XDmTcbhxrA5yI6qpslQoIqKY4p3TX4YVfJE7z2QgnJpJRa/UnVlKf6UrndXokE4OffrgRXAzXXlD3FThKEPunO87/I+O2NiZkCrMV3xmkkoW4Nd3x/LbE+WYqxLGTRRLZlhqD67UUCqIgWY71M9yiUWsmt3TH1zpy8jceFTm7O0Vx4u4vW5U405I4381EZM6jYHEqVtXLxCxINkqSOXd3KvFi9ZBqxLn7cvJvnRJmt+fc3UXKoqtL+J0vfC1xWhfSJEtUyVSmRFl15VItjUQVCyXLQTEgpWSrFG52geoluaU7XvxTTv7tMwPSmKoc+dIdpzYlzl0/wrGRSlW4rPSsP6dcPIWSDaSZVB0u7MtJuXEsJJlhVjp3dzYzE3z5nsRpTio12VDdnbVg59kvJM72G9lkVmsso8FQVVjpYpO4hLEoSKaSbEC64+UHclK+HI9IZqa7w5qZPP+TUpA/J0mWFNwO/pRDuuPkNYmz85Z8Hr1TzXL8NSLJBWf6dv9Tkg1nZtJvKwX5CWXlD9fd2cxMzmxJnO9no8I/D7GUFKp3i4oy8elPJM7P72hdrK5SmkWikizoZ9TdhnR6OEqfrMtF6b8doR83ACd/d5e5Xwd2Ofd34ieKzdOKr5TRZQ1vZnb5/B2J88MrbdCbCO0FnWhu3Z3FQ+vyqY8lzm/vtYEejsu2VMTNYOzAV/e/5/ivsgF4oXPtJOmu6a7U5Kt/KA75kw0wwsn0jfJYAaluscmpTYlz93K4I2NgxMqSZR/oqpOxwQ00+cRHEuf398PnyYpZstswkFDmAKLJ4FSEwPoQl/e/RN+DGylOKt35XNiXe3Brj1QguJ4OVsbe3SCHXDcze8/z0j2Jc2eyApTWU9swIzEzSz7Pfi5xtt+sgFxP7ynm6+7kglMWlPB8Pv6hxNldrkCIKG4jZYMf6N2/+3REv3Tn1Tn/wDxNsH68BnjRaQLr3p21uzNUA6yzvG3ifDtdA0ry1EKsNum9uz7bMUa6q3Pymomz83YNHpeThaOSOen47N1dhjrV+dgHJs5f1RqEGOFpHNZ5qlaVhd91+ACWQEwDGBuCy3sQ2IKHFfX0hX4f0Q/HzczcA7gFeCu81LGeHhG3TvoAlwBvGuSYsWWiG4fmUZU9sIdTWuFsy47TKvtAaQngNOiFOIlKZlkOip8U1lkRjrfCZz614/z6rg8hlsBS+DxOpUCqGN8DsQWBFZ6u23F2qz4oliAOwQMN5yErndtqYIc5/QAAAABJRU5ErkJggg==",
       dark: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAMAAAD5Yf49AAAAAXNSR0IArs4c6QAAAUdQTFRFAAAArq6utbW1ubm5v7+/w8PDycnJzc3N09PTsLCwtra2vb29wMDAysrKzc3N1NTUsbGxt7e3wcHBzs7OsLCwtra2uLi4v7+/wcHBy8vLzc3N1dXVrq6usLCwtLS0tbW1t7e3uLi4v7+/wcHBw8PDycnJy8vLzMzMzc3N1NTU1dXVr6+vsLCwtbW1t7e3v7+/wcHBysrKzMzM1dXVr6+vsLCwtLS0uLi4vb29v7+/wsLCyMjIycnJzs7O1NTU1dXVr6+vsLCwtLS0uLi4vb29wsLCycnJzs7O1NTUr6+vsLCwsbGxsrKys7OztLS0tbW1t7e3uLi4ubm5urq6u7u7vLy8vb29vr6+v7+/wcHBwsLCw8PDxMTExcXFxsbGx8fHyMjIycnJysrKzMzMzc3Nzs7Oz8/P0NDQ0dHR0tLS09PT1NTU1dXV1E4hgwAAAEl0Uk5TAExMTExMTExMTU1NTU1NTU5OTk6EhISEhISEhL6+vr6+vr6+vr6+vr6+vvLy8vLy8vLy8vPz8/Pz8/Pz8/Pz8/T09PT09PT09GJ8jKsAAAG6SURBVEjH7dZHU8JAFMDxxQ5SLFgJKAhKsRuxK3aJGkrovffvf/YF4gwLL3jB0QPvyH928hsO+5YQomRYb/ewjIJ0ZkAxnr7DfMB8wvBu05hUVOazQDAYFIRQKBQORyLnlgmpqK2XyWQqlUqnM5lsNpe7sk1JRWu/KVcqlWq1VqvX643GrWNG/Fnv7R89+aFwHEfJeN631C7L/kCAkkWi0ZV2WY0nEpQsl8+vtct6qVSmZM1my0CIwouNkgwsHCLzqaCM+xFZTA1lMo7IChoo00VE1tIRBv0+AyfkixGVbUDZRGUWKFuobBvKDipzEhf6fReckC+7qGwPyj4qO4ByiMqOoByjshPixQdOyBcOlfmg+FFZDEr8W5bulhWgFFFZ65dkAiJL/IGMH8lGMlzW+H+yao8Mv7VY2fuMRe6zjszddZ/Rsov2fYbJrrvuM1p2N5QdwPftAAHZAb2yfM8OoGVOopTdjgMKKhP3pgqViXtTjcrEvalFZbqhvDX4vreGgLw1EBn11qBkBjHMMR7q4x5GKb2bBhTjPSV7MKmkMm9+pGRPllmpLFifKdmLTSOVRfsrJXtzwD/2Betpxj8VdhGZAAAAAElFTkSuQmCC",
-      allDirection: [],// 所有方向
-      allLane: [],// 所有车道
+      allDirection: [], // 所有方向
+      allLane: [], // 所有车道
       dialogVisible: false, // 情报板批量编辑弹窗
-      aaa: '444',
-      zoomList: [
-        70,
-        80,
-        90,
-        100,
-        110,
-        120,
-        130
-      ], // 工作台缩放比例列表
+      aaa: "444",
+      zoomList: [70, 80, 90, 100, 110, 120, 130], // 工作台缩放比例列表
       zoom: 100, // 工作台缩放比例
       spanEqtypeDate: true, // 控制设备配置状态不存在时显示“暂未获取”
       // 巡检机器人----------------------------------------------------------------start
@@ -2322,7 +2622,7 @@ export default {
       watchVideo: false,
       robotVideoUrl: require("@/assets/Example/v1.mp4"),
       // tab页
-      robotInformationActive: 'trafficFlow',
+      robotInformationActive: "trafficFlow",
       robotInformationCollectionData: null,
       // 状态记录
       robotRecordList: null,
@@ -2334,12 +2634,37 @@ export default {
       isManagementStation: false, // 当前账号的权限是否是管理站
       showTooltipIndex: 999,
       showTooltip: false,
-      tooltipShow: false,//是否展示提示内容
-      echartsColor: '#0a88bd',
-      imageTimer:null, //定时器
-      isLogin:false,
-      handleTableWheelSwithch:false,
-    }
+      tooltipShow: false, //是否展示提示内容
+      echartsColor: "#0a88bd",
+      imageTimer: null, //定时器
+      isLogin: false,
+      handleTableWheelSwithch: false,
+      // 触发控制模块-设备类型
+      typeOptions: [
+        {
+          value: "选项1",
+          label: "选项1",
+        },
+        {
+          value: "选项2",
+          label: "选项2",
+        },
+      ],
+      typeValue: "",
+      // 设备名称
+      nameOptions: [
+        {
+          value: "名称1",
+          label: "选项1",
+        },
+        {
+          value: "名称2",
+          label: "选项2",
+        },
+      ],
+      nameValue: "",
+      inputValue: "",
+    };
   },
 
   directives: {
@@ -2352,7 +2677,7 @@ export default {
         function (e) {
           // 获取鼠标所在位置
 
-          let {clientX, clientY} = e;
+          let { clientX, clientY } = e;
           // 获取元素距离屏幕边界左边和上边距离
 
           let offsetX = $(oDiv).offset().left;
@@ -2412,25 +2737,24 @@ export default {
       );
     },
   },
-  created () {
-    bus.$on('process', (e) => {
-        console.log(e,"-----------")
-        if(e == 'theme-light'){
-          this.echartsColor = '#00c8ff'
-          this.initechartsZ()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        }else if(e == 'theme-dark'){
-          this.echartsColor = '#0a88bd',
-          this.initechartsZ()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        }
-    })
+  created() {
+    bus.$on("process", (e) => {
+      console.log(e, "-----------");
+      if (e == "theme-light") {
+        this.echartsColor = "#00c8ff";
+        this.initechartsZ();
+        this.initEnergyConsumption();
+        this.loadFocusCar();
+      } else if (e == "theme-dark") {
+        (this.echartsColor = "#0a88bd"), this.initechartsZ();
+        this.initEnergyConsumption();
+        this.loadFocusCar();
+      }
+    });
     // this.flvPlayer()
-    this.trafficFlowLane()
+    this.trafficFlowLane();
     this.getEqTypeStateIcon();
-    this.getWarnList()
+    this.getWarnList();
     // this.$store.dispatch('app/toggleSideBar')
     getLocalIP().then((response) => {
       this.hostIP = response;
@@ -2440,16 +2764,16 @@ export default {
     // this.selectEquipmentType()
     // this.initWebSocket()
     this.lightSwitchFunc();
-    this.getEqType()
-    this.getTunnel()
-    this.getDicts("sd_control_type").then(response => {
+    this.getEqType();
+    this.getTunnel();
+    this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
     });
-    this.getDicts("sd_operation_log_state").then(response => {
+    this.getDicts("sd_operation_log_state").then((response) => {
       this.operationStateOptions = response.data;
     });
-        //调取滚动条
-    this.srollAuto()
+    //调取滚动条
+    this.srollAuto();
   },
   watch: {
     // 设备类型
@@ -2459,7 +2783,7 @@ export default {
           eqTunnelId: this.currentTunnel.id,
           eqType: val,
           lane: this.batchForm.eqlane,
-          eqDirection: this.batchForm.eqDirection
+          eqDirection: this.batchForm.eqDirection,
         };
         this.selectEquipment(param);
         this.selectDirection(param);
@@ -2488,7 +2812,7 @@ export default {
         eqTunnelId: this.currentTunnel.id,
         eqDirection: this.batchForm.eqDirection,
         lane: val,
-      }
+      };
       this.selectLane(param);
     },
     batchVisible(val) {
@@ -2509,39 +2833,39 @@ export default {
       handler(val) {
         for (var item of val) {
           if (item.temperature >= 50) {
-            this.temperature = item.temperature
-            this.tunnelName = item.tunnelName
-            this.HZdialogVisible = true
+            this.temperature = item.temperature;
+            this.tunnelName = item.tunnelName;
+            this.HZdialogVisible = true;
             // 当设备异常时
             this.$refs.audio.currentTime = 0; //从头开始播放提示音
             this.$refs.audio.play(); //播放
           } else {
-            this.HZdialogVisible = false
+            this.HZdialogVisible = false;
           }
         }
       },
       // 这里是关键，代表递归监听 demo 的变化
-      deep: true
+      deep: true,
     },
     // 监听声音开关按钮
     alarmBell: {
       handler(val) {
-        if (val = true) {
+        if ((val = true)) {
           this.$refs.audio.currentTime = 0; //从头开始播放提示音
           this.$refs.audio.play(); //播放
           // 谷歌浏览器禁止一打开就播放声音 所以需要通过开关打开声音
           // 打开后会声音直接播放 所以设置10毫秒 用户就不会听到了
           setTimeout(() => {
-            this.$refs.audio.pause()
-            this.$refs.audio.load()
-          }, 10)
+            this.$refs.audio.pause();
+            this.$refs.audio.load();
+          }, 10);
         } else {
-          this.$refs.audio.pause()
-          this.$refs.audio.load()
+          this.$refs.audio.pause();
+          this.$refs.audio.load();
         }
       },
       // 这里是关键，代表递归监听 demo 的变化
-      deep: true
+      deep: true,
     },
   },
   computed: {
@@ -2554,8 +2878,8 @@ export default {
         openWatch: true, // 开启数据实时监控刷新dom
         singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
-        waitTime: 1000 // 单步运动停止的时间(默认值1000ms)
-      }
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
     },
     // 监听属性 类似于data概念
     optionLeft() {
@@ -2563,24 +2887,24 @@ export default {
         step: 0.4,
         direction: 1, // 0向下 1向上 2向左 3向右
         limitMoveNum: 2,
-        waitTime: 1000
-      }
+        waitTime: 1000,
+      };
     },
     navigationHeight() {
-      const topNav = this.$store.state.settings.topNav
-      const needTagsView = this.$store.state.settings.tagsView
-      let h = 0
-      h += 66
+      const topNav = this.$store.state.settings.topNav;
+      const needTagsView = this.$store.state.settings.tagsView;
+      let h = 0;
+      h += 66;
       if (!topNav) {
-        if (needTagsView) h += 34
+        if (needTagsView) h += 34;
       }
 
-      return h
-    }
+      return h;
+    },
   },
   mounted() {
-    this.initEnergyConsumption()
-    this.getTimeData()
+    this.initEnergyConsumption();
+    this.getTimeData();
     let that = this;
     window.onresize = () => {
       return (() => {
@@ -2593,7 +2917,6 @@ export default {
       setTimeout(this.getRealTimeData, 0);
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
-
 
     // 模拟实时隧道温度 调完了再删
     // setInterval(()=>{
@@ -2615,98 +2938,113 @@ export default {
     // }
     this.initeChartsEnd();
     this.loadFocusCar();
-    this.srollAuto()
+    this.srollAuto();
   },
   methods: {
     // 滚动条动画
-    srollAuto(){
-      var parent=document.getElementsByClassName('content')
+    srollAuto() {
+      var parent = document.getElementsByClassName("content");
       // console.log(parent,'parentparent')
-       clearInterval(this.imageTimer)
-      this.imageTimer = setInterval(()=>{
+      clearInterval(this.imageTimer);
+      this.imageTimer = setInterval(() => {
         // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
-          if( Math.round(parent[0].scrollLeft) + parent[0].clientWidth === parent[0].scrollWidth){
-                clearInterval(this.imageTimer)
-              this.imageTimer=setInterval(()=>{
-                  parent[0].scrollLeft--
-                  if(Math.round(parent[0].scrollLeft)+ parent[0].clientWidth === parent[0].clientWidth){
-                    this.srollAuto()
-                    // console.log(123213,'12321')
-                  }
-                },20)
-          } else{
-             parent[0].scrollLeft++
-          }
-              }, 20)
-
-     },
-
-    mouseoversImage(){
-      //  console.log(this.imageTimer,'清定时器')
-       clearInterval(this.imageTimer)
-       this.imageTimer=null
-
+        if (
+          Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
+          parent[0].scrollWidth
+        ) {
+          clearInterval(this.imageTimer);
+          this.imageTimer = setInterval(() => {
+            parent[0].scrollLeft--;
+            if (
+              Math.round(parent[0].scrollLeft) + parent[0].clientWidth ===
+              parent[0].clientWidth
+            ) {
+              this.srollAuto();
+              // console.log(123213,'12321')
+            }
+          }, 20);
+        } else {
+          parent[0].scrollLeft++;
+        }
+      }, 20);
     },
-    mouseleaveImage(){
-        // console.log('离开了')
-        this.srollAuto()
+
+    mouseoversImage() {
+      //  console.log(this.imageTimer,'清定时器')
+      clearInterval(this.imageTimer);
+      this.imageTimer = null;
+    },
+    mouseleaveImage() {
+      // console.log('离开了')
+      this.srollAuto();
     },
     //抽屉
-    isDrawerA(){
-      this.drawerA=true
+    isDrawerA() {
+      this.drawerA = true;
     },
-    isDrawerB(){
-      this.drawerB=true
+    isDrawerB() {
+      this.drawerB = true;
     },
-    zoomSwitchChange(val){
-      console.log(val,"val")
-      if(val == false){
-        this.handleTableWheelSwithch = false
-      }else{
-        this.handleTableWheelSwithch = true
+    isDrawerC() {
+      this.drawerC = true;
+    },
+    zoomSwitchChange(val) {
+      console.log(val, "val");
+      if (val == false) {
+        this.handleTableWheelSwithch = false;
+      } else {
+        this.handleTableWheelSwithch = true;
       }
     },
-    async flvPlayer(){
+    async flvPlayer() {
       if (flvjs.isSupported()) {
-          var video = document.getElementsByClassName("videoElement");
-          console.log(video[0],'video');
-          if (video) {
-              //创建播放器实例
-              var player = flvjs.createPlayer({
-                  type: 'flv',
-                  isLive: true,
-                  hasAudio: false,
-                  url: `http://10.166.139.12:8081/live/22456.flv`,
-              });
-              player.attachMediaElement(video);
-              try {
-                  player.load();
-                  player.play()
-              } catch (error) {
-                  console.log(error)
-              }
+        var video = document.getElementsByClassName("videoElement");
+        console.log(video[0], "video");
+        if (video) {
+          //创建播放器实例
+          var player = flvjs.createPlayer({
+            type: "flv",
+            isLive: true,
+            hasAudio: false,
+            url: `http://10.166.139.12:8081/live/22456.flv`,
+          });
+          player.attachMediaElement(video);
+          try {
+            player.load();
+            player.play();
+          } catch (error) {
+            console.log(error);
           }
+        }
       }
     },
     // 交通流状况 拥堵状况
     trafficFlowLane() {
-      trafficFlowInformation().then(response => {
-        this.trafficJamList = response.data
+      trafficFlowInformation().then((response) => {
+        this.trafficJamList = response.data;
         for (var item of response.data) {
-          console.log(item.left, "left", item.width, "width", item.color, "color", item.tunnelId, item.type)
+          console.log(
+            item.left,
+            "left",
+            item.width,
+            "width",
+            item.color,
+            "color",
+            item.tunnelId,
+            item.type
+          );
         }
-      })
+      });
     },
     /** 设备类型 */
     getEqType() {
-      listType().then(response => {
-
+      listType().then((response) => {
         this.eqTypeData = response.rows;
       });
     },
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then(response => {
+      listTunnels().then((response) => {
         this.eqTunnelData = response.rows;
       });
     },
@@ -2718,11 +3056,13 @@ export default {
     /** 查询操作日志列表 */
     getList() {
       this.loading = true;
-      listLog(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-        this.logList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+      listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
+        (response) => {
+          this.logList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        }
+      );
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -2739,12 +3079,12 @@ export default {
       return this.selectDictLabel(this.operationStateOptions, row.state);
     },
     openTooltip(item, index) {
-      this.showTooltipIndex = index
+      this.showTooltipIndex = index;
       // this.showTooltip = true;
-      this.sensorDisabled(item)
+      this.sensorDisabled(item);
     },
     closeTooltip(item) {
-      this.showTooltipIndex = 999
+      this.showTooltipIndex = 999;
       // this.showTooltip = false
     },
     increase() {
@@ -2760,59 +3100,66 @@ export default {
       }
     },
     controlHeight(item) {
-      console.log(item, "item")
+      console.log(item, "item");
     },
     getWarnList() {
       getSystemWarningMsg().then((res) => {
-        console.log(res, "系统预警")
-        res.data.forEach(val => {
+        console.log(res, "系统预警");
+        res.data.forEach((val) => {
           if (val) {
-            this.SysEarlyWarning = res.data
+            this.SysEarlyWarning = res.data;
           }
-        })
-      })
+        });
+      });
       getTrafficIncident().then((response) => {
-        this.trafficList = response.data
-      })
+        this.trafficList = response.data;
+      });
     },
     /** 查询部门列表 */
     getDeptList() {
-      var that = this
-      var id = this.tunnelQueryParams.deptId
-      var iid = ''
+      var that = this;
+      var id = this.tunnelQueryParams.deptId;
+      var iid = "";
       const params = {
-        status: 0
-      }
-      listDept(params).then(response => {
-        var list = that.handleTree(response.data, "deptId");
-        function a(list) {
-          list.forEach(item => {
-            if (item.deptId == id) {
-              that.siteList = item.children || []
-            } else {
-              item.children && a(item.children)
-            }
-          })
-        }
-
-        a(list)
-      }).then(() => {
-        that.siteList.filter(item => {
-          if (item.children) {
-            item.children.forEach(val => {
-              iid ? '' : iid = val.deptId
-              that.tunnelQueryParams.deptId == iid ? '' : that.tunnelQueryParams.deptId = iid
-            })
-          } else {
-            iid ? '' : iid = item.deptId
-            that.tunnelQueryParams.deptId == iid ? '' : that.tunnelQueryParams.deptId = iid
+        status: 0,
+      };
+      listDept(params)
+        .then((response) => {
+          var list = that.handleTree(response.data, "deptId");
+          function a(list) {
+            list.forEach((item) => {
+              if (item.deptId == id) {
+                that.siteList = item.children || [];
+              } else {
+                item.children && a(item.children);
+              }
+            });
           }
+
+          a(list);
         })
-      }).then(() => {
-        // 获取隧道
-        that.getTunnelList();
-        that.siteList.length == 0 ? (that.isManagementStation = true) : ''
-      })
+        .then(() => {
+          that.siteList.filter((item) => {
+            if (item.children) {
+              item.children.forEach((val) => {
+                iid ? "" : (iid = val.deptId);
+                that.tunnelQueryParams.deptId == iid
+                  ? ""
+                  : (that.tunnelQueryParams.deptId = iid);
+              });
+            } else {
+              iid ? "" : (iid = item.deptId);
+              that.tunnelQueryParams.deptId == iid
+                ? ""
+                : (that.tunnelQueryParams.deptId = iid);
+            }
+          });
+        })
+        .then(() => {
+          // 获取隧道
+          that.getTunnelList();
+          that.siteList.length == 0 ? (that.isManagementStation = true) : "";
+        });
     },
     // 获取最近24小时时间数组
     getTimeData() {
@@ -2822,43 +3169,49 @@ export default {
 
       function getLastDayHour(d, s) {
         let result = [];
-        d.setHours(d.getHours())
+        d.setHours(d.getHours());
         for (var i = 0; i < s; i++) {
           d.setHours(d.getHours() - 1);
-          var h = d.getHours() + ':00';
+          var h = d.getHours() + ":00";
           result.push(h);
         }
         return result.reverse();
-        console.log()
+        console.log();
       }
 
-      return hourArr
+      return hourArr;
     },
     // 改变站点
     changeSite(index) {
       if (index) {
-        this.tunnelQueryParams.deptId = index[index.length - 1]
-        this.getTunnelList()
+        this.tunnelQueryParams.deptId = index[index.length - 1];
+        this.getTunnelList();
         // this.srollAuto()
       }
     },
     // 机器人tabs页
     robotTabsClick(tab, event) {
-      var that = this
-      if (tab.paneName == 'stateRecords') {
-        this.robotChartDom || (this.robotChartDom = echarts.init(document.getElementById('robotEchart')));
+      var that = this;
+      if (tab.paneName == "stateRecords") {
+        this.robotChartDom ||
+          (this.robotChartDom = echarts.init(
+            document.getElementById("robotEchart")
+          ));
         that.$nextTick(() => {
-          that.robotEchartInit()
-        })
+          that.robotEchartInit();
+        });
       }
     },
     // 机器人状态记录图表初始化
     robotEchartInit() {
       this.robotStateData || (this.robotStateData = [0, 1, 2]);
-      this.robotXData || (this.robotXData = ['8:30', '10:30', '11:30']);
-      this.robotChartDom || (this.robotChartDom = echarts.init(document.getElementById('robotEchart')));
-      this.robotEchart()
-      this.robotChartDom.resize()
+      this.robotXData || (this.robotXData = ["8:30", "10:30", "11:30"]);
+      this.robotChartDom ||
+        (this.robotChartDom = echarts.init(
+          document.getElementById("robotEchart")
+        ));
+      this.robotEchart();
+      this.robotChartDom.resize();
     },
     robotEchart() {
       this.robotOption = {
@@ -2869,112 +3222,120 @@ export default {
         //   }
         // },
         tooltip: {
-          trigger: 'axis',
+          trigger: "axis",
           formatter: function (value) {
             for (var j = 0; j < value.length; j++) {
               if (value[j].value == 0) {
-                return value[j].name + '<br/> ' + value[j].seriesName + ": 正常";
+                return (
+                  value[j].name + "<br/> " + value[j].seriesName + ": 正常"
+                );
               } else if (value[j].value == 1) {
-                return value[j].name + '<br/> ' + value[j].seriesName + ": 离线";
+                return (
+                  value[j].name + "<br/> " + value[j].seriesName + ": 离线"
+                );
               } else if (value[j].value == 2) {
-                return value[j].name + '<br/> ' + value[j].seriesName + ": 故障";
+                return (
+                  value[j].name + "<br/> " + value[j].seriesName + ": 故障"
+                );
               }
             }
           },
           textStyle: {
-            color: 'powderblue'
+            color: "powderblue",
           },
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          extraCssText: 'box-shadow: 0px 0px 10px rgb(104 181 255);',
+          backgroundColor: "rgba(0,0,0,0.5)",
+          extraCssText: "box-shadow: 0px 0px 10px rgb(104 181 255);",
         },
         grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          top: '3%',
-          containLabel: true
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          top: "3%",
+          containLabel: true,
         },
         xAxis: {
-          type: 'category',
+          type: "category",
           boundaryGap: true,
           data: this.robotXData,
           axisLine: {
             lineStyle: {
-              color: '#fff'
-            }
-          }
+              color: "#fff",
+            },
+          },
         },
         yAxis: {
-          type: 'category',
+          type: "category",
           axisLine: {
             lineStyle: {
-              color: '#fff'
-            }
+              color: "#fff",
+            },
           },
           data: [
             {
-              value: '正常',
+              value: "正常",
               textStyle: {
                 fontSize: 20,
-                color: 'yellow'
-              }
-            }, {
-              value: '离线',
+                color: "yellow",
+              },
+            },
+            {
+              value: "离线",
               textStyle: {
                 fontSize: 20,
-                color: '#2c5ea2'
-              }
-            }, {
-              value: '故障',
+                color: "#2c5ea2",
+              },
+            },
+            {
+              value: "故障",
               textStyle: {
                 fontSize: 20,
-                color: 'red'
-              }
-            }],
+                color: "red",
+              },
+            },
+          ],
           axisLine: {
-            show: true
+            show: true,
           },
           textStyle: {
-            color: '#fff'
-          }
+            color: "#fff",
+          },
         },
         series: [
           {
-            name: '运行状态',
-            type: 'line',
-            step: 'end',
-            data: this.robotStateData
-          }
-        ]
+            name: "运行状态",
+            type: "line",
+            step: "end",
+            data: this.robotStateData,
+          },
+        ],
       };
       this.robotOption && this.robotChartDom.setOption(this.robotOption);
     },
     // 缩略图开关
     changeThumbnail(val) {
-      console.log(val, "val")
-      var vehicleLane = document.getElementsByClassName('vehicleLane')
-      var footer = document.getElementsByClassName('footer')
-      console.log(vehicleLane,"vehicleLane")
-      console.log(footer,"footer")
+      console.log(val, "val");
+      var vehicleLane = document.getElementsByClassName("vehicleLane");
+      var footer = document.getElementsByClassName("footer");
+      console.log(vehicleLane, "vehicleLane");
+      console.log(footer, "footer");
       if (!val) {
-
-        vehicleLane[0].style.height = "87%"
-        footer[1].style.height = "0%"
+        vehicleLane[0].style.height = "87%";
+        footer[1].style.height = "0%";
       } else {
-        console.log(footer)
+        console.log(footer);
         vehicleLane[0].style.removeProperty("height");
-        this.initEharts()
+        this.initEharts();
       }
     },
     // 初始化echart图
     initEharts() {
-      var that = this
-      proportionOfEquipment({tunnelId: that.currentTunnel.id}).then((res) => {
-        console.log(res, '设备类型占比')
+      var that = this;
+      proportionOfEquipment({ tunnelId: that.currentTunnel.id }).then((res) => {
+        console.log(res, "设备类型占比");
         // that.initechartsB(res.data)
-      })
-      that.initeChartsEnd()
-      that.loadFocusCar()
+      });
+      that.initeChartsEnd();
+      that.loadFocusCar();
     },
     // 获取最近七天数组
     dateFormat(dateData) {
@@ -2982,415 +3343,449 @@ export default {
       // console.log(times,"times")
       var now = new Date(dateData),
         // y = now.getFullYear(),//年份
-        m = now.getMonth() + 1,//月份
-        d = now.getDate();//日期
+        m = now.getMonth() + 1, //月份
+        d = now.getDate(); //日期
       return (m < 10 ? "0" + m : m) + "." + (d < 10 ? "0" + d : d);
     },
 
     // 能耗监测echarts
-    initEnergyConsumption(sevenDaysBefore){
-        // 获取最近10天
-        var sevenDaysBefore = ['', '', '', '', '', '', '','','','']
-        var now = new Date();//获取当前时间
-        var nowMs = now.getTime();//获取当前时间的毫秒数
-        sevenDaysBefore[9] = this.dateFormat(nowMs - 1000 * 60 * 60);//前几天，n就取几，整数
-        sevenDaysBefore[8] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(1));//前几天，n就取几，整数
-        sevenDaysBefore[7] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(3));//前几天，n就取几，整数
-        sevenDaysBefore[6] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(2));//前几天，n就取几，整数
-        sevenDaysBefore[5] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(4));//前几天，n就取几，整数
-        sevenDaysBefore[4] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(5));//前几天，n就取几，整数
-        sevenDaysBefore[3] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(6));//前几天，n就取几，整数
-        sevenDaysBefore[2] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(7));//前几天，n就取几，整数
-        sevenDaysBefore[1] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(8));//前几天，n就取几，整数
-        sevenDaysBefore[0] = this.dateFormat(nowMs - 1000 * 60 * 60 * 24 * parseInt(9));//前几天，n就取几，整数
-        var energyConsumption = echarts.init(document.getElementById('energyConsumption'));
-        // var areaList = ['姚家峪隧道', '毓秀山隧道', '洪河隧道', '滨莱高速', '望海石隧道','中庄隧道','马公祠隧道', '乐疃隧道','樵岭前隧道','佛羊岭隧道','迎春坡隧道','龙山寨隧道'];
-        var safetyArr =  [1450,1650,1500,1430,1580,1530,1580,1460,1400,1540];
-        var option = {
+    initEnergyConsumption(sevenDaysBefore) {
+      // 获取最近10天
+      var sevenDaysBefore = ["", "", "", "", "", "", "", "", "", ""];
+      var now = new Date(); //获取当前时间
+      var nowMs = now.getTime(); //获取当前时间的毫秒数
+      sevenDaysBefore[9] = this.dateFormat(nowMs - 1000 * 60 * 60); //前几天，n就取几，整数
+      sevenDaysBefore[8] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(1)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[7] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(3)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[6] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(2)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[5] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(4)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[4] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(5)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[3] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(6)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[2] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(7)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[1] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(8)
+      ); //前几天，n就取几，整数
+      sevenDaysBefore[0] = this.dateFormat(
+        nowMs - 1000 * 60 * 60 * 24 * parseInt(9)
+      ); //前几天，n就取几，整数
+      var energyConsumption = echarts.init(
+        document.getElementById("energyConsumption")
+      );
+      // var areaList = ['姚家峪隧道', '毓秀山隧道', '洪河隧道', '滨莱高速', '望海石隧道','中庄隧道','马公祠隧道', '乐疃隧道','樵岭前隧道','佛羊岭隧道','迎春坡隧道','龙山寨隧道'];
+      var safetyArr = [
+        1450, 1650, 1500, 1430, 1580, 1530, 1580, 1460, 1400, 1540,
+      ];
+      var option = {
+        // backgroundColor: '#00043A',
+        tooltip: {
+          trigger: "axis",
+          show: true,
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+          },
+          formatter: "{b}<br>能耗： {c} ",
+        },
+        legend: {
+          show: false,
+        },
+        grid: {
+          left: "10%",
+          right: "10%",
+          bottom: "8%",
+          top: "20%",
+          containLabel: true,
+        },
+        xAxis: [
+          {
+            // name:'日',
+            type: "category",
+            // boundaryGap : false,
+            axisLabel: {
+              textStyle: {
+                color: this.echartsColor,
+                fontSize: 10,
+              },
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: this.echartsColor,
+              },
+            },
 
-            // backgroundColor: '#00043A',
-            tooltip: {
-                trigger: 'axis',
-                show: true,
-                axisPointer: { // 坐标轴指示器，坐标轴触发有效
-                    type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-                },
-                formatter: "{b}<br>能耗： {c} ",
+            axisTick: {
+              show: false,
             },
-            legend: {
-                show:false
+            // splitLine:{
+            //   show:true,
+            //   lineStyle:{
+            //     color:'#195384'
+            //   }
+            // },
+            data: sevenDaysBefore,
+          },
+        ],
+        yAxis: {
+          name: "kw-h",
+          nameTextStyle: {
+            color: "#00c8ff",
+            padding: [10, 20, 0, -40],
+          },
+          splitLine: {
+            show: false,
+          },
+          axisLabel: {
+            formatter: "{value}",
+            textStyle: {
+              color: this.echartsColor,
+              fontSize: 10,
             },
-            grid: {
-                left: '10%',
-                right: '10%',
-                bottom: '8%',
-                top:'20%',
-                containLabel: true
-            },
-            xAxis : [{
-                // name:'日',
-                type : 'category',
-                // boundaryGap : false,
-                axisLabel: {
-                  textStyle: {
-                    color: this.echartsColor,
-                    fontSize: 10
-                  }
-                },
-                axisLine:{
-                    show:true,
-                    lineStyle:{
-                      color:this.echartsColor
-                  }
-                },
-
-                axisTick:{
-                  show:false,
-                },
-                // splitLine:{
-                //   show:true,
-                //   lineStyle:{
-                //     color:'#195384'
-                //   }
-                // },
-                data:sevenDaysBefore
-              }],
-            yAxis: {
-              name:'kw-h',
-               nameTextStyle:{
-                  color:'#00c8ff',
-                  padding:[10,20,0,-40],
-              },
-            	splitLine: {
-                 show:false
-              },
-               axisLabel : {
-                formatter: '{value}',
-                textStyle:{
-                  color:this.echartsColor,
-                  fontSize: 10
-                }
-              },
-              axisLine:{
-                show: false,
-                // lineStyle:{
-                //   color:'#0a88bd'
-                // }
-              },
-              // offset:20,
-            },
-            series: [
-                {
-                    type: 'bar',
-                    barWidth :12,//柱图宽度
-                    itemStyle: {
-                        normal: {
-                        	barBorderRadius: [6,6,0,0],
-                            color: {
-            			    type: 'linear',
-            			    x: 0,
-            			    y: 0,
-            			    x2: 0,
-            			    y2: 1,
-            			    colorStops: [{
-            			        offset: 0, color: '#499eff' // 0% 处的颜色
-            			    }, {
-            			        offset: 1, color: '#838eff' // 100% 处的颜色
-            			    }],
-            			    globalCoord: true // 缺省为 false
-            			},
-            		},
+          },
+          axisLine: {
+            show: false,
+            // lineStyle:{
+            //   color:'#0a88bd'
+            // }
+          },
+          // offset:20,
+        },
+        series: [
+          {
+            type: "bar",
+            barWidth: 12, //柱图宽度
+            itemStyle: {
+              normal: {
+                barBorderRadius: [6, 6, 0, 0],
+                color: {
+                  type: "linear",
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: "#499eff", // 0% 处的颜色
                     },
-                    data: safetyArr
-                }
-            ]
-        };
-        energyConsumption.setOption(option);
-        window.addEventListener("resize",function (){
-          energyConsumption.resize();
-        });
+                    {
+                      offset: 1,
+                      color: "#838eff", // 100% 处的颜色
+                    },
+                  ],
+                  globalCoord: true, // 缺省为 false
+                },
+              },
+            },
+            data: safetyArr,
+          },
+        ],
+      };
+      energyConsumption.setOption(option);
+      window.addEventListener("resize", function () {
+        energyConsumption.resize();
+      });
     },
-    initeChartsEnd(){
+    initeChartsEnd() {
       let newPromise = new Promise((resolve) => {
-        resolve()
-      })
+        resolve();
+      });
       //然后异步执行echarts的初始化函数
       newPromise.then(() => {
         //	此dom为echarts图标展示dom
         var vehicle = echarts.init(document.getElementById("vehicle"));
         var option = {
-
           tooltip: {
-            trigger: 'axis',
+            trigger: "axis",
           },
           legend: {
             show: true,
             icon: "rect",
             itemWidth: 10,
             itemHeight: 10,
-            x: 'center',
-            data: ['客车', '货车', '专项车'],
-            textStyle:{//图例文字的样式
-                  color:this.echartsColor,
-                  fontSize:12
-            }
+            x: "center",
+            data: ["客车", "货车", "专项车"],
+            textStyle: {
+              //图例文字的样式
+              color: this.echartsColor,
+              fontSize: 12,
+            },
           },
           calculable: true,
           grid: {
-            top: '28%',
-            bottom: '20%',
-            left: '14%',
-            right: '14%',
+            top: "28%",
+            bottom: "20%",
+            left: "14%",
+            right: "14%",
           },
-          xAxis: [{
-            type: 'category',
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: false
-            },
-
-            axisLabel: {
-              textStyle: {
-                color: this.echartsColor,
-                fontSize: 10
-              }
-            },
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: this.echartsColor
-              }
-            },
-            data: this.getTimeData()
-          }],
-          yAxis: [{
-            name:'辆',
-            nameTextStyle:{
-                color:"#00c8ff",
-                fontSize:10,
-                padding:[0,20,0,0]
-            },
-            type: 'value',
-            minInterval:4,
-            min: 0,
-            max: 200,
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              show: true,
-              lineStyle:{       //分割线的样式
-                  color: ['rgba(0,0,0,0.3)'],
-                  width: 1,
-                  type: 'dashed'
-              }
-            },
-            axisLine: {
+          xAxis: [
+            {
+              type: "category",
+              axisTick: {
                 show: false,
+              },
+              splitLine: {
+                show: false,
+              },
+
+              axisLabel: {
+                textStyle: {
+                  color: this.echartsColor,
+                  fontSize: 10,
+                },
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: this.echartsColor,
+                },
+              },
+              data: this.getTimeData(),
             },
-            axisLabel: {
-              textStyle: {
-                color: this.echartsColor,
-                fontSize: 10
-              }
+          ],
+          yAxis: [
+            {
+              name: "辆",
+              nameTextStyle: {
+                color: "#00c8ff",
+                fontSize: 10,
+                padding: [0, 20, 0, 0],
+              },
+              type: "value",
+              minInterval: 4,
+              min: 0,
+              max: 200,
+              axisTick: {
+                show: false,
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  //分割线的样式
+                  color: ["rgba(0,0,0,0.3)"],
+                  width: 1,
+                  type: "dashed",
+                },
+              },
+              axisLine: {
+                show: false,
+              },
+              axisLabel: {
+                textStyle: {
+                  color: this.echartsColor,
+                  fontSize: 10,
+                },
+              },
             },
-          }],
-          series: [{
-              name: '客车',
-              type: 'line',
-              color:'#59c5f9',
-              symbol:'circle',
-              symbolSize:[7,7],
-              itemStyle:{
-                normal:{
-                  borderColor:"white"
-                }
+          ],
+          series: [
+            {
+              name: "客车",
+              type: "line",
+              color: "#59c5f9",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
               smooth: true,
-              data: [100,80,60,40,80,120,100,80,100,140,160,120]
-            }, {
-              name: '货车',
-              type: 'line',
-              color:'#db72a7',
-              symbol:'circle',
-              symbolSize:[7,7],
-              itemStyle:{
-                normal:{
-                  borderColor:"white"
-                }
+              data: [100, 80, 60, 40, 80, 120, 100, 80, 100, 140, 160, 120],
+            },
+            {
+              name: "货车",
+              type: "line",
+              color: "#db72a7",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
               smooth: true,
-              stack: 'Total',
+              stack: "Total",
               areaStyle: {},
               emphasis: {
-                focus: 'series'
+                focus: "series",
               },
               //渐变色
               areaStyle: {
                 normal: {
                   //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(
-                    0, 0, 0, 1,
-                    [
-                        { offset: 0, color: '#db72a7' },
-                        { offset: 1, color: 'rgba(219,114,167,0.3)' }
-                    ]
-                  )
-                }
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: "#db72a7" },
+                    { offset: 1, color: "rgba(219,114,167,0.3)" },
+                  ]),
+                },
               },
-              data: [90,70,50,30,80,90,30,60,70,80,90,20]
-            }, {
-              name: '专项车',
-              type: 'line',
-              color:'#ffb600',
-              symbol:'circle',
-              symbolSize:[7,7],
-              itemStyle:{
-                normal:{
-                  borderColor:"white"
-                }
+              data: [90, 70, 50, 30, 80, 90, 30, 60, 70, 80, 90, 20],
+            },
+            {
+              name: "专项车",
+              type: "line",
+              color: "#ffb600",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
               smooth: true,
-              data: [20,30,40,50,70,80,90,60,40,30,20,60]
+              data: [20, 30, 40, 50, 70, 80, 90, 60, 40, 30, 20, 60],
             },
-          ]
-        }
+          ],
+        };
         vehicle.setOption(option);
-        window.addEventListener("resize",function (){
-                vehicle.resize();
-
+        window.addEventListener("resize", function () {
+          vehicle.resize();
         });
-      })
+      });
     },
-    loadFocusCar(){
+    loadFocusCar() {
       let newPromise = new Promise((resolve) => {
-        resolve()
-      })
-      newPromise.then(()=>{
+        resolve();
+      });
+      newPromise.then(() => {
         var focusCar = echarts.init(document.getElementById("focusCar"));
         var option = {
           tooltip: {
-            trigger: 'axis'
+            trigger: "axis",
           },
           toolbox: {
             show: true,
             feature: {
               // magicType: { show: true, type: ['stack', 'tiled'] },
               // saveAsImage: { show: true }
-            }
+            },
           },
           grid: {
-            top: '20%',
-            bottom: '18%',
-            left: '14%',
-            right: '14%',
+            top: "20%",
+            bottom: "18%",
+            left: "14%",
+            right: "14%",
           },
           xAxis: {
-            type: 'category',
+            type: "category",
             boundaryGap: false,
             data: this.getTimeData(),
             axisLabel: {
               textStyle: {
                 color: this.echartsColor,
-                fontSize: 10
-              }
+                fontSize: 10,
+              },
             },
             axisLine: {
               show: true,
               lineStyle: {
-                color: this.echartsColor
-              }
+                color: this.echartsColor,
+              },
             },
           },
           yAxis: {
-            type: 'value',
-            name:'辆',
-            nameTextStyle:{
-                color:"#00c8ff",
-                fontSize:10,
-                padding:[0,20,0,0]
+            type: "value",
+            name: "辆",
+            nameTextStyle: {
+              color: "#00c8ff",
+              fontSize: 10,
+              padding: [0, 20, 0, 0],
             },
             axisLabel: {
               textStyle: {
                 color: this.echartsColor,
-                fontSize: 10
-              }
+                fontSize: 10,
+              },
             },
             axisLine: {
-                show: false,
+              show: false,
             },
             axisTick: {
-              show: false
+              show: false,
             },
             splitLine: {
               show: true,
-              lineStyle:{       //分割线的样式
-                  color: ['rgba(0,0,0,0.3)'],
-                  width: 1,
-                  type: 'dashed'
-              }
+              lineStyle: {
+                //分割线的样式
+                color: ["rgba(0,0,0,0.3)"],
+                width: 1,
+                type: "dashed",
+              },
             },
           },
           series: [
             {
-              type: 'line',
+              type: "line",
               color: this.echartsColor,
-              symbol: 'none',
+              symbol: "none",
               smooth: true,
-              stack: 'Total',
+              stack: "Total",
               areaStyle: {},
-              symbol:'circle',
-              symbolSize:[7,7],
-              itemStyle:{
-                normal:{
-                  borderColor:"white"
-                }
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
               },
               emphasis: {
-                focus: 'series'
+                focus: "series",
               },
               //渐变色
               areaStyle: {
                 normal: {
                   //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色
                   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: '#33b0ee' },
-                    { offset: 1, color: 'rgba(51,176,238,0.3)' }
-                  ])
-                }
+                    { offset: 0, color: "#33b0ee" },
+                    { offset: 1, color: "rgba(51,176,238,0.3)" },
+                  ]),
+                },
               },
-              data: [90, 70, 50, 50, 70, 90, 50, 60, 70, 80, 90, 20]
-            }
-          ]
+              data: [90, 70, 50, 50, 70, 90, 50, 60, 70, 80, 90, 20],
+            },
+          ],
         };
 
         focusCar.setOption(option);
-        window.addEventListener("resize",function (){
+        window.addEventListener("resize", function () {
           focusCar.resize();
         });
-      })
+      });
     },
     // 情报板编辑
     IntelligenceBoardEdit(item) {
       console.log(item);
       this.dialogVisible = true;
       // this.$refs.contentBatchEdit.deviceId = item.id;
-      this.$refs.contentBatchEdit.vmsSize = '1024*768';//item.vmsSize
+      this.$refs.contentBatchEdit.vmsSize = "1024*768"; //item.vmsSize
       // this.$refs.contentBatchEdit.list = item.item;
       // this.$refs.vmsContentUpdate.add = true;
       this.$refs.vmsContentUpdate.init();
     },
     // 火灾报警弹窗
     HZhandleClose() {
-      this.HZdialogVisible = false
+      this.HZdialogVisible = false;
     },
-    handleClosee(){
-      this.cameraVisible = false
+    handleClosee() {
+      this.cameraVisible = false;
     },
     controlHeightClose() {
-      this.controlHeightVisible = false
+      this.controlHeightVisible = false;
     },
     showA() {
       this.carShow = !this.carShow;
@@ -3403,18 +3798,22 @@ export default {
     },
     // 跑车
     carMapSportCar() {
-      clearInterval(this.timer)
-      const car = this.$refs['sportCar']
+      clearInterval(this.timer);
+      const car = this.$refs["sportCar"];
       // item.position['left']  当前隧道灯的距离出口的距离
       // car.style.left    当前距离隧道出口的距离
-      let speed = 200
+      let speed = 200;
       this.timer = setInterval(() => {
         if (parseInt(car.style.left) <= 30) {
           // 车辆停止运动
           clearInterval(this.timer);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
-            if ((item.eqType == 7 && item.eqDirection == 1) || (item.eqType == 8 && item.eqDirection == 1) || (item.eqType == 9 && item.eqDirection == 1)) {
+            if (
+              (item.eqType == 7 && item.eqDirection == 1) ||
+              (item.eqType == 8 && item.eqDirection == 1) ||
+              (item.eqType == 9 && item.eqDirection == 1)
+            ) {
               item.url[0] = this.dark;
             }
           }
@@ -3424,37 +3823,45 @@ export default {
             let item = this.selectedIconList[i];
             let item_1 = this.selectedIconList[i - 1];
             // 取到所有的隧道灯
-            if ((item.eqType == 7 && item.eqDirection == 1) || (item.eqType == 8 && item.eqDirection == 1) || (item.eqType == 9 && item.eqDirection == 1)) {
-              if (car.style.left == '100px') {
+            if (
+              (item.eqType == 7 && item.eqDirection == 1) ||
+              (item.eqType == 8 && item.eqDirection == 1) ||
+              (item.eqType == 9 && item.eqDirection == 1)
+            ) {
+              if (car.style.left == "100px") {
                 this.carShow = false;
               }
-              if (parseInt(car.style.left) - item.position['left'] <= 150) {
+              if (parseInt(car.style.left) - item.position["left"] <= 150) {
                 item.url[0] = this.light;
               }
               if (item_1.position.top == 156) {
-                if (parseInt(car.style.left) - item.position['left'] <= -150) {
+                if (parseInt(car.style.left) - item.position["left"] <= -150) {
                   item_1.url[0] = this.dark;
                 }
               }
             }
           }
-          car.style.left = parseInt(car.style.left) - 20 + 'px'
+          car.style.left = parseInt(car.style.left) - 20 + "px";
         }
-      }, speed)
+      }, speed);
       this.$forceUpdate();
     },
     // 下行车道
     carMapLeft() {
-      clearInterval(this.timer)
-      const car = this.$refs['carLeft']
-      let speed = 210
+      clearInterval(this.timer);
+      const car = this.$refs["carLeft"];
+      let speed = 210;
       this.timer = setInterval(() => {
         if (parseInt(car.style.left) >= 1130) {
           // 车辆停止运动
           clearInterval(this.timer);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
-            if (item.eqType == 7 && item.eqDirection == 0 || item.eqType == 8 && item.eqDirection == 0 || item.eqType == 9 && item.eqDirection == 0) {
+            if (
+              (item.eqType == 7 && item.eqDirection == 0) ||
+              (item.eqType == 8 && item.eqDirection == 0) ||
+              (item.eqType == 9 && item.eqDirection == 0)
+            ) {
               item.url[0] = this.dark;
             }
           }
@@ -3463,43 +3870,51 @@ export default {
             let item = this.selectedIconList[i];
             let item_1 = this.selectedIconList[i - 1];
             // 取到所有的隧道灯
-            if (item.eqType == 7 && item.eqDirection == 0 || item.eqType == 8 && item.eqDirection == 0 || item.eqType == 9 && item.eqDirection == 0) {
+            if (
+              (item.eqType == 7 && item.eqDirection == 0) ||
+              (item.eqType == 8 && item.eqDirection == 0) ||
+              (item.eqType == 9 && item.eqDirection == 0)
+            ) {
               // 到达终点隐藏
-              if (car.style.left == '1130px') {
+              if (car.style.left == "1130px") {
                 this.carShow = false;
-                return false
+                return false;
               }
               // 如果车辆当前位置和路灯位置相差小于100，则亮灯
-              if (parseInt(car.style.left) - item.position['left'] <= -100) {
+              if (parseInt(car.style.left) - item.position["left"] <= -100) {
                 item.url[0] = this.light;
               }
               if (item_1.position.top != 0) {
                 // 如果车辆位置 - 当前路灯位置 大于等于 100 则代表车辆已经离开当前路灯区域，则灭灯
-                if (parseInt(car.style.left) - item.position['left'] >= 100) {
+                if (parseInt(car.style.left) - item.position["left"] >= 100) {
                   item_1.url[0] = this.dark;
                 }
               }
             }
           }
-          car.style.left = parseInt(car.style.left) + 24 + 'px'
+          car.style.left = parseInt(car.style.left) + 24 + "px";
         }
-      }, speed)
+      }, speed);
       this.$forceUpdate();
     },
     // 上行车道
     carMapRight() {
-      clearInterval(this.timer)
-      const car = this.$refs['carRight']
+      clearInterval(this.timer);
+      const car = this.$refs["carRight"];
       // item.position['left']  当前隧道灯的距离出口的距离
       // car.style.left    当前距离隧道出口的距离
-      let speed = 200
+      let speed = 200;
       this.timer = setInterval(() => {
         if (parseInt(car.style.left) <= 30) {
           // 车辆停止运动
           clearInterval(this.timer);
           for (let i = 0; i < this.selectedIconList.length; i++) {
             let item = this.selectedIconList[i];
-            if ((item.eqType == 7 && item.eqDirection == 1) || (item.eqType == 8 && item.eqDirection == 1) || (item.eqType == 9 && item.eqDirection == 1)) {
+            if (
+              (item.eqType == 7 && item.eqDirection == 1) ||
+              (item.eqType == 8 && item.eqDirection == 1) ||
+              (item.eqType == 9 && item.eqDirection == 1)
+            ) {
               item.url[0] = this.dark;
             }
           }
@@ -3509,23 +3924,27 @@ export default {
             let item = this.selectedIconList[i];
             let item_1 = this.selectedIconList[i - 1];
             // 取到所有的隧道灯
-            if ((item.eqType == 7 && item.eqDirection == 1) || (item.eqType == 8 && item.eqDirection == 1) || (item.eqType == 9 && item.eqDirection == 1)) {
-              if (car.style.left == '100px') {
+            if (
+              (item.eqType == 7 && item.eqDirection == 1) ||
+              (item.eqType == 8 && item.eqDirection == 1) ||
+              (item.eqType == 9 && item.eqDirection == 1)
+            ) {
+              if (car.style.left == "100px") {
                 this.carShow = false;
               }
-              if (parseInt(car.style.left) - item.position['left'] <= 150) {
+              if (parseInt(car.style.left) - item.position["left"] <= 150) {
                 item.url[0] = this.light;
               }
               if (item_1.position.top == 156) {
-                if (parseInt(car.style.left) - item.position['left'] <= -150) {
+                if (parseInt(car.style.left) - item.position["left"] <= -150) {
                   item_1.url[0] = this.dark;
                 }
               }
             }
           }
-          car.style.left = parseInt(car.style.left) - 20 + 'px'
+          car.style.left = parseInt(car.style.left) - 20 + "px";
         }
-      }, speed)
+      }, speed);
       this.$forceUpdate();
     },
     getUserDept() {
@@ -3533,11 +3952,11 @@ export default {
         this.userDeptId = response.rows[0].deptId;
         this.tunnelQueryParams.deptId = response.rows[0].deptId;
         this.getDeptList();
-      })
+      });
     },
     //右键拖动
     dragImg(e) {
-      console.log(e,'e')
+      console.log(e, "e");
       if (e.button == 0) {
         return;
       }
@@ -3623,7 +4042,7 @@ export default {
       }
       let px1 = this.px;
       let px2 = this.py;
-      console.log(event.clientX,10,wrapperClientX,'当前left值')
+      console.log(event.clientX, 10, wrapperClientX, "当前left值");
       this.left = event.clientX + event.clientX * this.moveTop - wrapperClientX;
       this.top = event.clientY + event.clientY * this.moveTop - wrapperClientY;
       this.h = this.top - this.py;
@@ -3663,7 +4082,7 @@ export default {
         if (inRange == true) {
           //判断当前圈选设备的remark字段中是否为null，且是否包含“hjpz”，如果不包含，则返回-1，证明是正常设备，则可以显示圈选效果
           const remark = this.selectedIconList[i].remark;
-          if (remark != null && remark.indexOf('hjpz') == -1) {
+          if (remark != null && remark.indexOf("hjpz") == -1) {
             this.selectedIconList[i].isfocus = true;
           }
           // this.selectedIconList[i].isfocus = true;
@@ -3687,14 +4106,12 @@ export default {
               }
             }
           } else {
-
             if (!str.includes(parseInt(list[i].eqType))) {
               boxEqList.push({
                 typeId: list[i].eqType,
                 eqlist: [list[i]],
               });
               this.boxType(list[i].eqType);
-
             }
           }
         } else {
@@ -3748,7 +4165,6 @@ export default {
     },
     boxType(type) {
       for (let i = 0; i < this.eqTypeList.length; i++) {
-
         if (type == this.eqTypeList[i].typeId || type == 100) {
           this.boxTypeList.push({
             typeId: type,
@@ -3822,23 +4238,23 @@ export default {
     /* 查询隧道列表 */
     getTunnelList() {
       listTunnels(this.tunnelQueryParams).then((response) => {
-        if(!response.rows[0]){
+        if (!response.rows[0]) {
           this.tunnelList = [];
-          return false
+          return false;
         }
-        this.tunnelNameEarlyWarn = response.rows[0].tunnelName
-        this.tunnelId = response.rows[0].tunnelId
-        this.flag=true
-        console.log( this.tunnelId ,'eeeeeeeeeeeeeeeeeeeeeeqwwqw')
-        var newDict = this.dict.type.sd_sys_name
-        if(this.tunnelId != "JQ-JiNan-WenZuBei-MJY"){
-          this.robotShow = false
-          this.dictList = newDict.slice(0,10)
-        }else if(this.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
-          this.dictList = this.dict.type.sd_sys_name
-          this.robotShow = true
+        this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
+        this.tunnelId = response.rows[0].tunnelId;
+        this.flag = true;
+        console.log(this.tunnelId, "eeeeeeeeeeeeeeeeeeeeeeqwwqw");
+        var newDict = this.dict.type.sd_sys_name;
+        if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
+          this.robotShow = false;
+          this.dictList = newDict.slice(0, 10);
+        } else if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+          this.dictList = this.dict.type.sd_sys_name;
+          this.robotShow = true;
         }
-        console.log(this.dictList,'this.dictList')
+        console.log(this.dictList, "this.dictList");
         this.tunnelList = [];
         this.checkboxTunnel = [];
         let list = response.rows;
@@ -3849,7 +4265,7 @@ export default {
               list[i].tunnelLength = num.toString();
             }
           }
-          this.tunnelList = list
+          this.tunnelList = list;
           this.checkboxTunnel.push(this.tunnelList[0]);
           this.currentTunnel.id = this.tunnelList[0].tunnelId;
           this.currentTunnel.name = this.tunnelList[0].tunnelName;
@@ -3955,7 +4371,7 @@ export default {
       };
       await getStateByData(queryParams).then((response) => {
         let list = response.rows;
-        console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
+        console.log(response, "qqqqqqqqqqqqqqqqqqqqqqq");
         that.getEqUrl(list);
       });
     },
@@ -3981,7 +4397,7 @@ export default {
       }
       for (var item of that.eqTypeStateList) {
         if (item.type == 18) {
-          console.log(item, "引道照明")
+          console.log(item, "引道照明");
         }
       }
     },
@@ -4006,13 +4422,13 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData(tunnelId) {
-      console.log(tunnelId,'参数餐宿参数擦擦是')
+      console.log(tunnelId, "参数餐宿参数擦擦是");
       let that = this;
       that.upList = [];
       that.downList = [];
       const params = {
-        tunnelId: tunnelId
-      }
+        tunnelId: tunnelId,
+      };
       getTunnels(tunnelId).then((response) => {
         that.loading = false;
         let res = response.data.storeConfigure;
@@ -4020,29 +4436,34 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res,"resdssssssssssss")
-          listType("").then((response) => {
-            for (let i = 0; i < res.eqList.length; i++) {
-              res.eqList[i].focus = false;
-              // console.log(response,'responseresponseresponse')
-              console.log(res.eqList[i].focus,'item.focus')
-              for (let j = 0; j < response.rows.length; j++) {
-                if (response.rows[j].typeId == res.eqList[i].eqType) {
-                  let iconWidth = Number(response.rows[j].iconWidth);
-                  let iconHeight = Number(response.rows[j].iconHeight);
-                  res.eqList[i].iconWidth = iconWidth;
-                  res.eqList[i].iconHeight = iconHeight;
-                  break;
+          console.log(res, "resdssssssssssss");
+          listType("")
+            .then((response) => {
+              for (let i = 0; i < res.eqList.length; i++) {
+                res.eqList[i].focus = false;
+                // console.log(response,'responseresponseresponse')
+                console.log(res.eqList[i].focus, "item.focus");
+                for (let j = 0; j < response.rows.length; j++) {
+                  if (response.rows[j].typeId == res.eqList[i].eqType) {
+                    let iconWidth = Number(response.rows[j].iconWidth);
+                    let iconHeight = Number(response.rows[j].iconHeight);
+                    res.eqList[i].iconWidth = iconWidth;
+                    res.eqList[i].iconHeight = iconHeight;
+                    break;
+                  }
                 }
               }
-            }
-            that.selectedIconList = res.eqList //设备
-            console.log(that.selectedIconList, '当前设备所属隧道')
-          }).then(() => {
-            that.initEharts()
-            // 切换隧道配置信息时，联动大类查询
-            that.displayControl(that.selectBigType.index.toString(), that.selectBigType.bigType.toString())
-          });
+              that.selectedIconList = res.eqList; //设备
+              console.log(that.selectedIconList, "当前设备所属隧道");
+            })
+            .then(() => {
+              that.initEharts();
+              // 切换隧道配置信息时，联动大类查询
+              that.displayControl(
+                that.selectBigType.index.toString(),
+                that.selectBigType.bigType.toString()
+              );
+            });
 
           if (res.upList != undefined) {
             that.upList = res.upList;
@@ -4050,15 +4471,15 @@ export default {
           if (res.downList != undefined) {
             that.downList = res.downList;
           }
-          if (res.leftDirection != undefined && res.leftDirection != '') {
+          if (res.leftDirection != undefined && res.leftDirection != "") {
             that.leftDirection = res.leftDirection;
           }
-          if (res.rightDirection != undefined && res.leftDirection != '') {
+          if (res.rightDirection != undefined && res.leftDirection != "") {
             that.rightDirection = res.rightDirection;
           }
 
           let id = res.lane;
-          console.log(that.laneUrlList,"that.laneUrlList")
+          console.log(that.laneUrlList, "that.laneUrlList");
           for (let i = 0; i < that.laneUrlList.length; i++) {
             if (that.laneUrlList[i].id == id) {
               that.currentTunnel.lane = that.laneUrlList[i];
@@ -4066,7 +4487,7 @@ export default {
             }
           }
         } else {
-          console.log('不存在')
+          console.log("不存在");
           //不存在
           that.selectedIconList = [];
           that.initEharts();
@@ -4111,7 +4532,7 @@ export default {
                 // 设备状态相同且设备类型相同
                 if (
                   this.selectedIconList[j].eqType ==
-                  this.eqTypeStateList[k].type &&
+                    this.eqTypeStateList[k].type &&
                   res.list[i].switchStatus == this.eqTypeStateList[k].state
                 ) {
                   // 改变图标
@@ -4129,7 +4550,7 @@ export default {
       // 真实
       //getConfigData(this.currentTunnel.id)
       // 模拟
-      getStorageData({tunnelId: this.currentTunnel.id})
+      getStorageData({ tunnelId: this.currentTunnel.id })
         .then((response) => {
           for (let i = 0; i < response.length; i++) {
             let type = response[i].devType;
@@ -4140,7 +4561,7 @@ export default {
                   for (let k = 0; k < this.eqTypeStateList.length; k++) {
                     if (
                       this.selectedIconList[j].eqType ==
-                      this.eqTypeStateList[k].type &&
+                        this.eqTypeStateList[k].type &&
                       response[i].state == this.eqTypeStateList[k].state
                     ) {
                       let url = this.eqTypeStateList[k].url;
@@ -4162,7 +4583,7 @@ export default {
                     // 微波车检
                     else if (
                       this.selectedIconList[j].eqType ==
-                      this.eqTypeStateList[k].type &&
+                        this.eqTypeStateList[k].type &&
                       this.selectedIconList[j].eqType == "108" &&
                       type == "108"
                     ) {
@@ -4171,7 +4592,8 @@ export default {
                     // 路面状态
                     else if (
                       // this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
-                      this.selectedIconList[j].eqType == "120" && type == "120"
+                      this.selectedIconList[j].eqType == "120" &&
+                      type == "120"
                     ) {
                       this.selectedIconList[j].lmList = response[i].state;
                     }
@@ -4219,12 +4641,12 @@ export default {
     },
     /* 选择隧道*/
     setTunnel(item, index) {
-      console.log(item,'-=-=-=-=-=-==-')
+      console.log(item, "-=-=-=-=-=-==-");
       this.buttonIndex = index;
-      this.tunnelNameEarlyWarn = item.tunnelName
-      this.tunnelId = item.tunnelId
-      this.lightControForm.index = index
-      this.lightControForm.name = item.tunnelName
+      this.tunnelNameEarlyWarn = item.tunnelName;
+      this.tunnelId = item.tunnelId;
+      this.lightControForm.index = index;
+      this.lightControForm.name = item.tunnelName;
       // this.tunnelBtnStyle = []
       // this.tunnelBtnStyle[index] = {
       //   "border-color": "#ffbf1d",
@@ -4232,42 +4654,43 @@ export default {
       //   "color": "0a88bd",
       //   "background-color": "#e2f3fa !important",
       // };
-      this.currentTunnel.id = item.tunnelId,
-      this.currentTunnel.name = item.tunnelName,
-      this.selectEquipmentType(this.currentTunnel.id);
+      (this.currentTunnel.id = item.tunnelId),
+        (this.currentTunnel.name = item.tunnelName),
+        this.selectEquipmentType(this.currentTunnel.id);
       this.getTunnelData(this.currentTunnel.id);
-      console.log(this.currentTunnel.id,'-------------------------')
+      console.log(this.currentTunnel.id, "-------------------------");
     },
-    onActivated(key) {
-    },
-    onDragging(key) {
-    },
-    onDropped(key) {
-    },
+    onActivated(key) {},
+    onDragging(key) {},
+    onDropped(key) {},
     /*点击设备类型*/
     displayControl(value, lable) {
-      if(this.tunnelId == "JQ-JiNan-WenZuBei-MJY"){
-        if(lable == '巡检机器人' || lable == '全部设备'){
-            this.robotShow = true
-        }else{
-          this.robotShow = false
+      if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+        if (lable == "巡检机器人" || lable == "全部设备") {
+          this.robotShow = true;
+        } else {
+          this.robotShow = false;
         }
-      }else{
-        this.robotShow = false
+      } else {
+        this.robotShow = false;
       }
 
-      $('.leftButtonS').eq(value).addClass('leftButton_hover').siblings().removeClass('leftButton_hover')
+      $(".leftButtonS")
+        .eq(value)
+        .addClass("leftButton_hover")
+        .siblings()
+        .removeClass("leftButton_hover");
 
       this.selectBigType = {
         bigType: lable,
-        index: value
-      }
+        index: value,
+      };
       let data = this.eqBigTypeList;
 
-      var val = value.toString()
+      var val = value.toString();
       hasListByBigType(val).then((response) => {
         let typelist = response.rows;
-        console.log(response.rows, "点击设备类型")
+        console.log(response.rows, "点击设备类型");
         let typeIndex = [];
         if (typelist.length > 0) {
           for (let y = 0; y < typelist.length; y++) {
@@ -4278,7 +4701,10 @@ export default {
               this.selectedIconList[i].display = false;
 
               // 没有eqType属性的图片依旧显示 例如：隧道名称
-              if (this.selectedIconList[i].eqType == null || this.selectedIconList[i].eqType == undefined) {
+              if (
+                this.selectedIconList[i].eqType == null ||
+                this.selectedIconList[i].eqType == undefined
+              ) {
                 this.selectedIconList[i].display = true;
               }
             }
@@ -4322,13 +4748,13 @@ export default {
         return false;
       }
     },
-     /* 查询设备*/
-     selectEquipment(param) {
+    /* 查询设备*/
+    selectEquipment(param) {
       let that = this;
       listDevices(param).then((response) => {
         that.devicesList = that.changeDirection(response.rows);
         // console.log(that.devicesList,'that.devicesList')
-      })
+      });
     },
     changeDirection(list) {
       for (let i = 0; i < list.length; i++) {
@@ -4342,8 +4768,8 @@ export default {
       }
       return list;
     },
-     // 查询车道
-     selectLane(param) {
+    // 查询车道
+    selectLane(param) {
       listDevices(param).then((response) => {
         this.allLane = this.changeDirection(response.rows);
         for (let i = 0; i < this.allLane.length; i++) {
@@ -4354,48 +4780,47 @@ export default {
             }
           }
         }
-        this.allLane.forEach(item => {
+        this.allLane.forEach((item) => {
           switch (Number(item.lane)) {
             case 1:
-              item.laneName = '第一车道'
+              item.laneName = "第一车道";
               break;
             case 2:
-              item.laneName = '第二车道'
+              item.laneName = "第二车道";
               break;
             case 3:
-              item.laneName = '第三车道'
+              item.laneName = "第三车道";
               break;
             case 0:
-              item.laneName = '其它'
+              item.laneName = "其它";
               break;
           }
-        })
-      })
+        });
+      });
     },
-     // 查询方向
-     selectDirection(param) {
+    // 查询方向
+    selectDirection(param) {
       listDevices(param).then((response) => {
         this.allDirection = this.changeDirection(response.rows);
         for (let i = 0; i < this.allDirection.length; i++) {
           for (let j = i + 1; j < this.allDirection.length; j++) {
-            if (this.allDirection[i].eqDirection == this.allDirection[j].eqDirection) {
+            if (
+              this.allDirection[i].eqDirection ==
+              this.allDirection[j].eqDirection
+            ) {
               this.allDirection.splice(j, 1); //splice会改变原数组
               j--;
             }
           }
         }
-      })
+      });
     },
     //================================================单个配置开始==================================
-
-
-
-
 
     /* 诱导确认配置（单项）*/
     submitCorLight() {
       if (this.stateForm.corModel == null) {
-        this.$modal.msgError('请选择控制模式后重试！');
+        this.$modal.msgError("请选择控制模式后重试！");
         return;
       }
       let param = {
@@ -4407,21 +4832,25 @@ export default {
         yellowLight: this.stateForm.yellowLight,
         twinkleModel: this.stateForm.twinkleModel,
         twinkleFrequency: this.stateForm.twinkleFrequency,
-        lightTime: this.stateForm.lightTime
-      }
-      this.setCorLight(param).then(response => {
-        this.$modal.msgSuccess('控制成功')
-        this.youdaoVisible = false
-      }).catch(() => {
-        this.$modal.msgError('控制失败，请检查设备或稍后重试！')
-      })
+        lightTime: this.stateForm.lightTime,
+      };
+      this.setCorLight(param)
+        .then((response) => {
+          this.$modal.msgSuccess("控制成功");
+          this.youdaoVisible = false;
+        })
+        .catch(() => {
+          this.$modal.msgError("控制失败，请检查设备或稍后重试！");
+        });
     },
     setCorLight(param) {
-      setCorLight(param).then(response => {
-        console.log(response)
-      }).catch(err => {
-        console.log("配置失败,后台报错：" + err)
-      })
+      setCorLight(param)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((err) => {
+          console.log("配置失败,后台报错：" + err);
+        });
     },
     /**诱导弹窗-控制模式改变 */
     outLight() {
@@ -4441,17 +4870,17 @@ export default {
       let param = {
         eqTunnelId: this.currentTunnel.id,
         eqType: this.eqTypeList[1].typeId,
-        eqDirection: '',
-        lane: ''
+        eqDirection: "",
+        lane: "",
       };
       this.batchFormDirection = 1;
       this.selectEquipment(param);
     },
     /* 批量选择后*/
     handleSelectionChange(val) {
-      this.ids = val.map(item => item.id)
-      this.single = val.length !== 1
-      this.multiple = !val.length
+      this.ids = val.map((item) => item.id);
+      this.single = val.length !== 1;
+      this.multiple = !val.length;
       this.batchForm.eqList = [];
       // this.batchFormDirection = 1
       for (let i = 0; i < val.length; i++) {
@@ -4484,7 +4913,7 @@ export default {
 
     // 点击某一行，将其选中
     handleRowClick(row, i, a) {
-      this.$refs.multipleTable.toggleRowSelection(row)
+      this.$refs.multipleTable.toggleRowSelection(row);
     },
     //========================================批量配置结束================================================
     //========================================控制策略开始================================================
@@ -4499,12 +4928,11 @@ export default {
           strategyType: 0,
           tunnelId: this.currentTunnel.id,
         }).then((response) => {
-          console.log(response.rows, " response.rows控制策略")
+          console.log(response.rows, " response.rows控制策略");
           this.strategyList = response.rows;
           this.loading = false;
         });
       }
-
     },
     // 关闭控制策略对话框
     strategyCancel() {
@@ -4516,11 +4944,11 @@ export default {
       handleStrategy(row.id);
     },
     // 查看策略，表格的行样式
-    tableRowClassName({row, rowIndex}) {
+    tableRowClassName({ row, rowIndex }) {
       // if (rowIndex%2 == 0) {
       // return 'even-row';
       // } else {
-      return 'odd-row'
+      return "odd-row";
       // }
     },
     //========================================控制策略结束================================================
@@ -4530,7 +4958,7 @@ export default {
       //   name: "OperationLog",
       // });
       this.title = "操作日志";
-      this.operationLogDialog = true
+      this.operationLogDialog = true;
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -4560,26 +4988,25 @@ export default {
       this.stateForm = {};
     },
     handleTableWheel(event) {
-      console.log(event,"event")
+      console.log(event, "event");
       // let obj = document.getElementsByClassName('content')
       let obj = this.$refs.divRoller;
-      if ( this.handleTableWheelSwithch==true ) {
+      if (this.handleTableWheelSwithch == true) {
         this.tableZoom(obj, event);
       }
-
     },
     tableZoom(obj, event) {
-      console.log(obj, event,'obj, event')
+      console.log(obj, event, "obj, event");
       // 一开始默认是100%
       let zoom = parseInt(obj.style.zoom, 10) || 100;
       // 滚轮滚一下wheelDelta的值增加或减少120
       zoom += event.wheelDelta / (Math.abs(event.wheelDelta) / 10);
 
       // zoom > 130 ? zoom = 100 : ''
-      zoom < 60 ? zoom = 60 : ''
-      zoom > 140 ? zoom = 140 : ''
-      this.zoom = zoom
-      this.setMoveTop(zoom)
+      zoom < 60 ? (zoom = 60) : "";
+      zoom > 140 ? (zoom = 140) : "";
+      this.zoom = zoom;
+      this.setMoveTop(zoom);
       if (zoom > 0) {
         obj.style.zoom = zoom + "%";
       }
@@ -4587,7 +5014,7 @@ export default {
       return false;
     },
     setMoveTop(zoom) {
-      console.log(zoom,"zoom")
+      console.log(zoom, "zoom");
       var ii = 0;
       // if(!zoom){
       //   zoom = 100
@@ -4637,7 +5064,7 @@ export default {
       } else {
         this.wheelFlag = false;
       }
-      console.log(this.$refs.divRoller,'this.$refs.divRoller')
+      console.log(this.$refs.divRoller, "this.$refs.divRoller");
       this.oldWidth = this.$refs.divRoller.offsetWidth;
       this.oldHeight = this.$refs.divRoller.offsetHeight;
       this.mouseLeft = e.clientX - this.$refs.divRoller.offsetLeft;
@@ -4748,7 +5175,7 @@ export default {
               fontSize: 12,
             },
           },
-          textStyle: {fontSize: "100%"},
+          textStyle: { fontSize: "100%" },
           formatter: (v) => {
             return `
                     <div class='u-p-2'>
@@ -4766,9 +5193,9 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: false, // 两边留白
-          axisLabel: {textStyle: {color: "#fff", fontSize: 14}},
+          axisLabel: { textStyle: { color: "#fff", fontSize: 14 } },
           data: xData,
-          axisLine: {lineStyle: {color: "#000", width: 1}},
+          axisLine: { lineStyle: { color: "#000", width: 1 } },
           splitLine: {
             lineStyle: {
               type: "dashed",
@@ -4789,10 +5216,10 @@ export default {
             fontSize: "100%",
           },
           axisLabel: {
-            textStyle: {color: "#fff", fontSize: "100%"},
+            textStyle: { color: "#fff", fontSize: "100%" },
             margin: 8,
           },
-          axisLine: {lineStyle: {color: "#000", width: 1}},
+          axisLine: { lineStyle: { color: "#000", width: 1 } },
           splitLine: {
             lineStyle: {
               type: "solid",
@@ -4829,10 +5256,10 @@ export default {
               y2: 0,
               // 0% 处的颜色                           // 100% 处的颜色
               colorStops: [
-                {offset: 0, color: "#3a76f6"},
-                {offset: 0.25, color: "#66d4fa"},
-                {offset: 0.75, color: "#f8d470"},
-                {offset: 1, color: "#ec637b"},
+                { offset: 0, color: "#3a76f6" },
+                { offset: 0.25, color: "#66d4fa" },
+                { offset: 0.75, color: "#f8d470" },
+                { offset: 1, color: "#ec637b" },
               ],
               global: false, // 缺省为 false
             },
@@ -4848,19 +5275,19 @@ export default {
     },
     // 跳转页面
     jumpLink(url) {
-      if (url == '/15/status') {
-        this.$modal.msgWarning('跳转页面暂未完成')
-        return
+      if (url == "/15/status") {
+        this.$modal.msgWarning("跳转页面暂未完成");
+        return;
       }
-      this.$router.push({path: url, query: {}})
+      this.$router.push({ path: url, query: {} });
     },
     // 监听缩放比例变化
     zoomChange(val) {
-      val < 70 ? val = this.zoom : ''
-      val > 130 ? val = this.zoom : ''
+      val < 70 ? (val = this.zoom) : "";
+      val > 130 ? (val = this.zoom) : "";
       if (val) {
-        this.$refs.divRoller.style.zoom = val + '%'
-        this.setMoveTop(val)
+        this.$refs.divRoller.style.zoom = val + "%";
+        this.setMoveTop(val);
       }
     },
   },
@@ -4868,272 +5295,293 @@ export default {
   beforeDestroy() {
     clearInterval(this.timer);
     this.timer = null;
-    clearInterval(this.imageTimer)
-    this.imageTimer=null
+    clearInterval(this.imageTimer);
+    this.imageTimer = null;
   },
-
 };
 </script>
 
 <style lang="scss" scoped>
-
-
-  .siblings{
-    position: fixed;
-    top: 13%;
-    width:100%;
-    height: 62%;
-    .eqTypeListClass{
-      float: left;
-      width: 8%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-    }
-    //车道控制
-    .indicatorLight{
-      position:absolute;
-      right:0;
-      top:-4px;
-      width:25px;
-      height:30%;
-      background-color: #4682B4;
-      color:white;
-      writing-mode:vertical-lr;
-      text-align: center;
-      letter-spacing:5px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    //照明控制
-    .brightnessControl{
-      position:absolute;
-      right:0;
-      top:31%;
-      width:25px;
-      height:30%;
-      background-color: #4682B4;
-      color:white;
-      //垂直向下
-      writing-mode:vertical-lr;
-      text-align: center;
-      //文字间隔
-      letter-spacing:5px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .el-icon-close:before {
-        content: "\e6d9" !important;
-    }
+.siblings {
+  position: fixed;
+  top: 13%;
+  width: 100%;
+  height: 62%;
+  .eqTypeListClass {
+    float: left;
+    width: 8%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
-  //抽屉的高度
-  ::v-deep .el-drawer.rtl {
-     // height:49%;
-     // top:239px;
-     width: 21% !important;
-     font-size: 14px;
-     ::-webkit-scrollbar-track-piece {
-         background-color: rgba($color: #00c2ff, $alpha: 0.1);
-         border-left: 1px solid rgba(0, 0, 0, 0);
-         width: 1000px;
-         border-width:50px;
-     }
-     ::-webkit-scrollbar {
-         width: 10px;
-         height: 10px;
-
-     }
-     ::-webkit-scrollbar-thumb {
-         background-color: rgba($color: #00c2ff, $alpha: 0.6);
-         background-clip: padding-box;
-
-         min-height: 28px;
-     }
-     ::-webkit-scrollbar-thumb:hover {
-         background-color: #00c2ff;
-
-     }
-  }
-  .drawerTop{
-    height:19%;
-    top:115px;
-  }
-.drawerBottom{
-    height:43%;
-    top:32%;
-  }
-  .control{
-    width: 50px !important;
-    height: 22px !important;
+  //车道控制
+  .indicatorLight {
+    position: absolute;
+    right: 0;
+    top: -4px;
+    width: 25px;
+    height: 30%;
+    background-color: #4682b4;
+    color: white;
+    writing-mode: vertical-lr;
     text-align: center;
-    line-height: 22px;
-    padding: 0px 0px !important;
-    font-size: 12px;
+    letter-spacing: 5px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  //照明控制
+  .brightnessControl {
+    position: absolute;
+    right: 0;
+    top: 31%;
+    width: 25px;
+    height: 30%;
+    background-color: #4682b4;
+    color: white;
+    //垂直向下
+    writing-mode: vertical-lr;
+    text-align: center;
+    //文字间隔
+    letter-spacing: 5px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  // 触发控制模块
+  .triggerControl {
+    position: absolute;
+    right: 0;
+    top: 63%;
+    width: 25px;
+    height: 30%;
+    background-color: #4682b4;
+    color: white;
+    //垂直向下
+    writing-mode: vertical-lr;
+    text-align: center;
+    //文字间隔
+    letter-spacing: 5px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .el-icon-close:before {
+    content: "\e6d9" !important;
+  }
+}
+//抽屉的高度
+::v-deep .el-drawer.rtl {
+  // height:49%;
+  // top:239px;
+  width: 21% !important;
+  font-size: 14px;
+  ::-webkit-scrollbar-track-piece {
+    background-color: rgba($color: #00c2ff, $alpha: 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0);
+    width: 1000px;
+    border-width: 50px;
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba($color: #00c2ff, $alpha: 0.6);
+    background-clip: padding-box;
+
+    min-height: 28px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
     background-color: #00c2ff;
-    border-color: #00c2ff;
   }
-  //小三角位置
-  // ::v-deep .el-icon-caret-left:before{
-  //   margin-top:-60px;
-  // }
+}
+.drawerTop {
+  height: 19%;
+  top: 115px;
+}
+.drawerCenter {
+  height: 43%;
+  top: 32%;
+}
 
-   //多选框选中样式
-  ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner{
-    background-color:white;
-    width: 20px;
-    height: 21px;
-    border: solid 1px #DCAD76;
-    box-shadow:1px 1px 2px #DCAD76;
-  }
-  ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after{
-    height: 9px;
-    width: 6px;
-    border: 2px solid #DCAD76;  // 是改这里的颜色
-    border-left: 0;
-    border-top: 0;
-    top: 3px;
-    left: 5px;
-  }
-  //title
-  ::v-deep .el-drawer__header{
-      padding-bottom:24px;
-      background-color:#00C9FE;
-      font-size:14px;
-      margin-bottom: 0px !important;
-      height: 36px;
-      line-height: 40px;
-      padding: 0 6px !important;
-      color: #fff;
-      border-left: 5px solid #F19E39;
-  }
-   //开关
+.drawerBottom {
+  height: 20%;
+  top: 62%;
+}
+.control {
+  width: 50px !important;
+  height: 22px !important;
+  text-align: center;
+  line-height: 22px;
+  padding: 0px 0px !important;
+  font-size: 12px;
+  background-color: #00c2ff;
+  border-color: #00c2ff;
+}
+//小三角位置
+// ::v-deep .el-icon-caret-left:before{
+//   margin-top:-60px;
+// }
 
-  ::v-deep .el-drawer__body {
+//多选框选中样式
+::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: white;
+  width: 20px;
+  height: 21px;
+  border: solid 1px #dcad76;
+  box-shadow: 1px 1px 2px #dcad76;
+}
+::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
+  height: 9px;
+  width: 6px;
+  border: 2px solid #dcad76; // 是改这里的颜色
+  border-left: 0;
+  border-top: 0;
+  top: 3px;
+  left: 5px;
+}
+//title
+::v-deep .el-drawer__header {
+  padding-bottom: 24px;
+  background-color: #00c9fe;
+  font-size: 14px;
+  margin-bottom: 0px !important;
+  height: 36px;
+  line-height: 40px;
+  padding: 0 6px !important;
+  color: #fff;
+  border-left: 5px solid #f19e39;
+}
+//开关
 
-    >.bingZhou{
-    display:flex;
+::v-deep .el-drawer__body {
+  > .bingZhou {
+    display: flex;
     align-items: flex-start;
     justify-content: flex-start;
     padding-top: 28px;
     padding-left: 20px;
-    font-size:12px;
-    >.number{
-       width:22px;
-       height:22px;
-       // background-color:#00C7FE !important;
-       color:white;
+    font-size: 12px;
+    > .number {
+      width: 22px;
+      height: 22px;
+      // background-color:#00C7FE !important;
+      color: white;
       text-align: center;
       line-height: 22px;
       vertical-align: middle;
     }
-    }
-    >.ledLighting{
-      height: 36px;
-      background-color: #4EAACF;
-      line-height: 40px;
-      padding-left: 14px;
-      font-size: 14px;
-      color: #fff;
-      .el-switch__core:after{
-        background-color: #0F8AB9;
-      }
-    }
-    >.Time{
-       display:flex;
-       align-items: flex-start;
-       height:50px;
-       padding-top: 10px;
-      .setTime{
-         white-space:nowrap;
-         line-height: 32px;
-      }
-      .timeStart{
-        display: flex;
-        margin-right: 10px;
-        margin-left:14px;
-        .el-input--suffix .el-input__inner{
-          padding-right: 0px !important;
-        }
-      }
-      .timeEnd{
-        display:flex;
-        .el-button--mini{
-          padding: 0px 0px !important;
-        }
-        .el-input--suffix .el-input__inner{
-          padding-right: 0px !important;
-        }
-      }
-      .handleLightClass{
-        height: 28px;
-        margin-left: 10px;
-        width: 40px;
-        text-align: center;
-        background-color: #07C2FF !important;
-        border: none;
-      }
+  }
+  > .ledLighting {
+    height: 36px;
+    background-color: #4eaacf;
+    line-height: 40px;
+    padding-left: 14px;
+    font-size: 14px;
+    color: #fff;
+    .el-switch__core:after {
+      background-color: #0f8ab9;
     }
   }
-  ::v-deep .el-date-editor.el-input, .el-date-editor.el-input__inner{
-    width:86px;
-  }
-  // ::v-deep .el-input--prefix .el-input__inner{
-  //       padding-left: 26px !important;
-  //       border: solid 1px #1088B9;
-  //       box-shadow:1px 1px 2px #02C6FA;
-  // }
-  // ::v-deep .el-input--suffix .el-input__inner {
-  //     padding-right: 10px;
-  //     border: solid 1px #1088B9;
-  // }
- ::v-deep .el-input--medium .el-input__inner{
-      width:107px
-  }
-  ::v-deep .el-button--medium{
-      margin-left:20px;
-  }
-  ::v-deep .el-checkbox__inner{
-    width:20px;
-    height:22px;
-    border: 1px solid #02C6FA;
-    border-radius: 0px;
-  }
-  .vehicleLane{
-    height: 68%;
-    align-items: center;
-    width: 100%;
+  > .Time {
     display: flex;
-    position: relative;
-    margin-top: 6px;
+    align-items: flex-start;
+    height: 50px;
+    padding-top: 10px;
+    .setTime {
+      white-space: nowrap;
+      line-height: 32px;
+    }
+    .timeStart {
+      display: flex;
+      margin-right: 10px;
+      margin-left: 14px;
+      .el-input--suffix .el-input__inner {
+        padding-right: 0px !important;
+      }
+    }
+    .timeEnd {
+      display: flex;
+      .el-button--mini {
+        padding: 0px 0px !important;
+      }
+      .el-input--suffix .el-input__inner {
+        padding-right: 0px !important;
+      }
+    }
+    .handleLightClass {
+      height: 28px;
+      margin-left: 10px;
+      width: 40px;
+      text-align: center;
+      background-color: #07c2ff !important;
+      border: none;
+    }
   }
-   #vehicle,#energyConsumption,#focusCar{
-    width: 100%;
-    height: calc(100% - 2vw);
-    margin-top: 5px;
-   }
-  .el-input-number {
-    width: 5.5vw;
-    line-height: 30px;
+}
+::v-deep .el-date-editor.el-input,
+.el-date-editor.el-input__inner {
+  width: 86px;
+}
+// ::v-deep .el-input--prefix .el-input__inner{
+//       padding-left: 26px !important;
+//       border: solid 1px #1088B9;
+//       box-shadow:1px 1px 2px #02C6FA;
+// }
+// ::v-deep .el-input--suffix .el-input__inner {
+//     padding-right: 10px;
+//     border: solid 1px #1088B9;
+// }
+::v-deep .el-input--medium .el-input__inner {
+  width: 107px;
+}
+::v-deep .el-button--medium {
+  margin-left: 20px;
+}
+::v-deep .el-checkbox__inner {
+  width: 20px;
+  height: 22px;
+  border: 1px solid #02c6fa;
+  border-radius: 0px;
+}
+.vehicleLane {
+  height: 68%;
+  align-items: center;
+  width: 100%;
+  display: flex;
+  position: relative;
+  margin-top: 6px;
+}
+#vehicle,
+#energyConsumption,
+#focusCar {
+  width: 100%;
+  height: calc(100% - 2vw);
+  margin-top: 5px;
+}
+.el-input-number {
+  width: 5.5vw;
+  line-height: 30px;
 
-    // .el-input-number__decrease, .el-input-number__increase {
-    //   color: #e1feff;
-    //   background-color: transparent !important;
-    //   border: unset;
-    //   width: 2vw;
-    //   font-size: 10px;
-    //   :hover {
-    //     font-size: 15px;
-    //   }
-    // }
-    // .el-input__inner {
-    //   height: 30px;
-    //   padding: 0;
-    //   color: #e1feff;
-    //   background-color: #0b1a46 !important;
-    //   border: solid 1px #0b1a46;
-    //   // box-shadow: 0px 0px 10px #68B5FF;
-    // }
+  // .el-input-number__decrease, .el-input-number__increase {
+  //   color: #e1feff;
+  //   background-color: transparent !important;
+  //   border: unset;
+  //   width: 2vw;
+  //   font-size: 10px;
+  //   :hover {
+  //     font-size: 15px;
+  //   }
+  // }
+  // .el-input__inner {
+  //   height: 30px;
+  //   padding: 0;
+  //   color: #e1feff;
+  //   background-color: #0b1a46 !important;
+  //   border: solid 1px #0b1a46;
+  //   // box-shadow: 0px 0px 10px #68B5FF;
+  // }
   // }
 }
 
@@ -5200,176 +5648,183 @@ export default {
       overflow: hidden;
     }
   }
-  }
-.rightButtonS{
-
-      margin-top: 32px;
-      font-size: 16px;
-      // color: #0a88bd;
-      width: 120px;
-      height: 6vh;
-      line-height: 6vh;
-      padding-left: 20px;
-      // background-image: url(../../../assets/cloudControl/rightButton.png);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      cursor: pointer;
-      caret-color: rgba(0,0,0,0);
-      display: flex;
-      justify-content: left;
-      img{
-        width:20px;
-        height: 100%;
-        object-fit: contain;
-        margin-left: 20px;
-        margin-right: 8px;
-      }
-    }
-.leftButtonS{
-      position: relative;
-      left: 0px;
-      // margin-top: 20px;
-      font-size: 16px;
-      // color: #0a88bd;
-      width: 120px;
-      height: 4vh;
-      line-height: 4vh;
-      // background-image: url(../../../assets/cloudControl/leftButton.png);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      cursor: pointer;
-      caret-color: rgba(0,0,0,0);
-      padding-right: 20px;
-      text-align: right;
-      display: flex;
-      justify-content: right;
-      img{
-        width:20px;
-        height: 100%;
-        object-fit: contain;
-        margin-left: 8px;
-        margin-right: 20px;
-      }
 }
-    // .bigTypeButton{
-    //     color: #baddff;
-    //     background-image: url(../../../assets/cloudControl/right_button.png);
-    // }
-    // .bigTypeButton:hover{
-    //     color: #fff;
-    //     background-image: url(../../../assets/cloudControl/right_button_hover2.png);
-    // }
+.rightButtonS {
+  margin-top: 32px;
+  font-size: 16px;
+  // color: #0a88bd;
+  width: 120px;
+  height: 6vh;
+  line-height: 6vh;
+  padding-left: 20px;
+  // background-image: url(../../../assets/cloudControl/rightButton.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  cursor: pointer;
+  caret-color: rgba(0, 0, 0, 0);
+  display: flex;
+  justify-content: left;
+  img {
+    width: 20px;
+    height: 100%;
+    object-fit: contain;
+    margin-left: 20px;
+    margin-right: 8px;
+  }
+}
+.leftButtonS {
+  position: relative;
+  left: 0px;
+  // margin-top: 20px;
+  font-size: 16px;
+  // color: #0a88bd;
+  width: 120px;
+  height: 4vh;
+  line-height: 4vh;
+  // background-image: url(../../../assets/cloudControl/leftButton.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  cursor: pointer;
+  caret-color: rgba(0, 0, 0, 0);
+  padding-right: 20px;
+  text-align: right;
+  display: flex;
+  justify-content: right;
+  img {
+    width: 20px;
+    height: 100%;
+    object-fit: contain;
+    margin-left: 8px;
+    margin-right: 20px;
+  }
+}
+// .bigTypeButton{
+//     color: #baddff;
+//     background-image: url(../../../assets/cloudControl/right_button.png);
+// }
+// .bigTypeButton:hover{
+//     color: #fff;
+//     background-image: url(../../../assets/cloudControl/right_button_hover2.png);
+// }
 
-    .tunnelBox{
-        overflow: hidden;
-        margin-left: 100px;
-        width: 85%;
-        height: 2%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: 100% 100%;
+.tunnelBox {
+  overflow: hidden;
+  margin-left: 100px;
+  width: 85%;
+  height: 2%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.tunnelBoxTop {
+  background-image: url(../../../assets/cloudControl/top.png);
+  margin-top: 10px;
+  z-index: 999;
+}
+.tunnelBoxBottom {
+  background-image: url(../../../assets/cloudControl/bottom.png);
+}
+
+::v-deep .menu-b .el-select-dropdown {
+  background-color: #03192e !important;
+  color: white;
+  border: solid 1px #e1feff;
+  z-index: 100;
+}
+
+// ::v-deep .menu-b .el-input--mini .el-input__inner{
+//     background-color: #e2f3fa !important;
+//     border: solid 1px #0a88bd;
+//     color: #0a88bd;
+//     // box-shadow: 0px 0px 10px #68B5FF;
+//     width: 170px;
+// }
+::v-deep .menu-b .el-select .el-input .el-select__caret {
+  color: #e1feff;
+}
+::v-deep .menu-b .el-select > .el-input {
+  margin-top: 5px;
+}
+// ::v-deep .menu-b .el-select--small{
+//     transform: translateY(-6px);
+// }
+
+// 火灾报警弹窗
+::v-deep .temperatureDialog .el-dialog {
+  margin-top: 15vw !important;
+  border: solid 4px #9f0000;
+  background-color: rgba($color: #9d0000, $alpha: 0.5);
+  border-radius: 4px;
+
+  .el-dialog__body {
+    display: flex;
+    font-size: 20px;
+    text-align: center;
+    padding: 0%;
+    > div {
+      width: 50%;
+      color: white;
+      margin-bottom: 10%;
+      > div:first-of-type {
+        color: #c9c9c9;
+        line-height: 50px;
+      }
     }
-    .tunnelBoxTop{
-        background-image: url(../../../assets/cloudControl/top.png);
-        margin-top: 10px;
-        z-index: 999;
+    > div:nth-of-type(1) {
+      border-right: solid 1px rgba(255, 255, 255, 0.5);
+      z-index: 10;
     }
-    .tunnelBoxBottom{
-        background-image: url(../../../assets/cloudControl/bottom.png);
+    > div:nth-of-type(2) {
+      z-index: 10;
     }
-
-    ::v-deep .menu-b .el-select-dropdown{
-        background-color: #03192E !important;
-        color: white;
-        border: solid 1px #e1feff;
-       z-index: 100;
+    .HZdialogBg {
+      width: 100%;
+      height: calc(100% - 54px);
+      position: absolute;
+      background: url(../../../assets/image/fire_bg.png) no-repeat;
+      opacity: 0.3;
+      background-size: 85% 200%;
+      background-position: 130px -20px;
     }
-
-    // ::v-deep .menu-b .el-input--mini .el-input__inner{
-    //     background-color: #e2f3fa !important;
-    //     border: solid 1px #0a88bd;
-    //     color: #0a88bd;
-    //     // box-shadow: 0px 0px 10px #68B5FF;
-    //     width: 170px;
-    // }
-    ::v-deep .menu-b .el-select .el-input .el-select__caret{
-        color: #e1feff;
-    }
-    ::v-deep .menu-b .el-select > .el-input{
-        margin-top: 5px;
-    }
-    // ::v-deep .menu-b .el-select--small{
-    //     transform: translateY(-6px);
-    // }
-
-    // 火灾报警弹窗
-::v-deep .temperatureDialog .el-dialog{
-        margin-top: 15vw !important;
-        border: solid 4px #9F0000;
-        background-color: rgba($color: #9d0000, $alpha: 0.5);
-        border-radius: 4px;
-
-        .el-dialog__body{
-            display: flex;
-            font-size: 20px;
-            text-align: center;
-            padding: 0%;
-            >div{
-                width: 50%;
-                color: white;
-                margin-bottom: 10%;
-                >div:first-of-type{
-                    color: #C9C9C9;
-                    line-height: 50px;
-                }
-            }
-            >div:nth-of-type(1){
-                border-right: solid 1px rgba(255,255,255,0.5);
-                z-index: 10;
-            }
-            >div:nth-of-type(2){
-                z-index: 10;
-            }
-            .HZdialogBg{
-                width: 100%;
-                height: calc(100% - 54px);
-                position: absolute;
-                background: url(../../../assets/image/fire_bg.png) no-repeat;
-                opacity: 0.3;
-                background-size: 85% 200%;
-                background-position: 130px -20px;
-            }
-
-        }
-
+  }
 }
 
 // 隧道温度
-.temperature{
+.temperature {
   font-size: 16px;
   font-weight: bold;
   position: absolute;
-  img{
-      width: 25px;
-      height: 25px;
+  img {
+    width: 25px;
+    height: 25px;
   }
 }
 // 字幕滚动
 .seamless-warp2 {
-    background-image: url("../../../assets/image/scroll_bg.png");
-    // transform: rotate(-90deg);
-    // height: 25px;
-    // width: 100px;
-    overflow: hidden;
-    position: absolute;
-    top: 32%;
-    right: 20%;
-    background-size:100% 100%;
-    .item{padding-left:0px;width: 400px;
-      li{list-style:none;float: left;margin-right:20px;letter-spacing: 2px;color:white;width:30px;height:150px;}
+  background-image: url("../../../assets/image/scroll_bg.png");
+  // transform: rotate(-90deg);
+  // height: 25px;
+  // width: 100px;
+  overflow: hidden;
+  position: absolute;
+  top: 32%;
+  right: 20%;
+  background-size: 100% 100%;
+  .item {
+    padding-left: 0px;
+    width: 400px;
+    li {
+      list-style: none;
+      float: left;
+      margin-right: 20px;
+      letter-spacing: 2px;
+      color: white;
+      width: 30px;
+      height: 150px;
     }
+  }
 }
 .item {
   margin: 4px;
@@ -5398,7 +5853,6 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
-
 }
 
 .flex-row {
@@ -5465,7 +5919,6 @@ export default {
 //   border: 1px solid #7f8c98;
 // }
 
-
 .tunnel-checkbox {
   margin: 10px 0 10px 10px;
   color: #c0ccda;
@@ -5507,7 +5960,6 @@ export default {
 //           transform: translateX(1000px);
 //       }
 //    }
-
 
 .system-state-normal {
   color: #00aa00;
@@ -5555,7 +6007,7 @@ export default {
   // display: flex;
   // justify-content: center;
   // overflow-x: auto;
-  >div{
+  > div {
     width: 100%;
   }
 }
@@ -5831,7 +6283,6 @@ input {
   // .el-radio__input.is-checked + .el-radio__label{
   //   color: #c0ccda !important;
   // }
-
 }
 
 .form-direction {
@@ -5986,15 +6437,23 @@ input {
 }
 </style>
 <style lang="scss">
-  .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {display: none !important;}
-  .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow {display: none !important;}
-  .tipCase.el-tooltip__popper[x-placement^="right"] .popper__arrow:after { display: none !important;}
-  .tipCase.el-tooltip__popper[x-placement^="right"] .popper__arrow { display: none !important;}
-  .tipCase {
-    background: #CDEDFA !important;
-    border: solid 1px #1d58a9;
-    color: #1d58a9 !important;
-  }
+.tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
+  display: none !important;
+}
+.tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow {
+  display: none !important;
+}
+.tipCase.el-tooltip__popper[x-placement^="right"] .popper__arrow:after {
+  display: none !important;
+}
+.tipCase.el-tooltip__popper[x-placement^="right"] .popper__arrow {
+  display: none !important;
+}
+.tipCase {
+  background: #cdedfa !important;
+  border: solid 1px #1d58a9;
+  color: #1d58a9 !important;
+}
 // .popper-class-site {
 //   border-color: rgb(104, 181, 255);
 //   box-shadow: rgb(104 181 255) 0px 0px 10px;
@@ -6258,7 +6717,6 @@ input {
   // }
 }
 
-
 .clickShowDrag {
   width: 40px;
   height: 40px;
@@ -6278,7 +6736,8 @@ input {
   color: #c0ccda;
 }
 
-.carContentRight, .carContentLeft {
+.carContentRight,
+.carContentLeft {
   overflow: hidden;
   width: 100%;
 }
@@ -6303,12 +6762,12 @@ input {
   transition: 1.6s;
 }
 
-
 .item-title {
   font-size: 16px;
 }
 
-.oldContent, .newContent {
+.oldContent,
+.newContent {
   .el-input__inner {
     background: #000000;
     border: unset;
@@ -6324,7 +6783,8 @@ input {
   font-weight: bold;
 }
 
-.offline, .online {
+.offline,
+.online {
   .el-button {
     background-color: unset;
     border: unset;
@@ -6355,7 +6815,8 @@ input {
 
 .iconList {
   .el-row {
-    .el-col-4, .el-col-5 {
+    .el-col-4,
+    .el-col-5 {
       .el-button {
         background-color: unset;
         border: unset;
@@ -6400,7 +6861,7 @@ input {
 }
 
 .tooltip::before {
-  content: '';
+  content: "";
   position: relative;
   width: 0;
   height: 0;
@@ -6410,7 +6871,7 @@ input {
   top: -39px;
   left: 45%;
 }
-.robotAnimation{
+.robotAnimation {
   width: 20px;
   height: 20px;
   transform: translateY(-12px);
@@ -6419,18 +6880,17 @@ input {
   z-index: 10;
 }
 @keyframes mymove {
-       0% {
-          transform: translateX(0px);
-      }
-      50% {
-          transform: translateX(1290px);
-      }
-      100% {
-          transform: translateX(0px);
-      }
-
-   }
-.el-image__error{
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(1290px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+.el-image__error {
   display: none;
 }
 </style>

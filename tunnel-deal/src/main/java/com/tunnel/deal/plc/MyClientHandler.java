@@ -5,16 +5,18 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import org.springframework.stereotype.Component;
 
+/**
+ * @author dzy
+ */
+@Component
 public class MyClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         //发送消息到服务端
-        for (int i = 0; i < 130; i++) {
-            Thread.sleep(5000);
-            ctx.writeAndFlush(Unpooled.copiedBuffer("dzy_cs"+i, CharsetUtil.UTF_8));
-        }
+            ctx.writeAndFlush(Unpooled.copiedBuffer("dzy_cs", CharsetUtil.UTF_8));
     }
 
     @Override

@@ -5,7 +5,9 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MyServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
@@ -32,7 +34,7 @@ public class MyServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         //发送消息给客户端
-        ctx.writeAndFlush(Unpooled.copiedBuffer("???a???", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("-----A----", CharsetUtil.UTF_8));
     }
 
     @Override

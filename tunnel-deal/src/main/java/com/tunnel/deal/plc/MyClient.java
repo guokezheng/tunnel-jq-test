@@ -6,11 +6,17 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-
+/**
+ * @author dzy
+ */
+@Component
 public class MyClient {
 
-    public static void main(String[] args) throws Exception {
+    @Bean
+    public void client() throws Exception {
 
         NioEventLoopGroup eventExecutors = new NioEventLoopGroup();
 

@@ -198,7 +198,7 @@
 
 
         <!-- 右侧侧窗 -->
-<<<<<<< HEAD
+
         <div class="indicatorLight" @click="isDrawerA()">
           <i class="el-icon-caret-left"></i>一键车道控制模块
         </div>
@@ -206,22 +206,13 @@
         <div class="brightnessControl" @click="isDrawerB()">
           <i class="el-icon-caret-left"></i>定时控制模块
         </div>
-        <div class="triggerControl" @click="isDrawerC()">
+        <!-- <div class="triggerControl" @click="isDrawerC()">
           <i class="el-icon-caret-left"></i>触发控制模块
-        </div>
-        <!-- 一键车道控制模块 -->
-        <el-drawer
-          title="车道指示灯-车道控制"
-          :visible.sync="drawerA"
-          :modal="false"
-          :append-to-body="true"
-          class="drawerTop"
-        >
-=======
-        <div class=" indicatorLight" @click="isDrawerA()"><i class="el-icon-caret-left"></i>一键车道控制模块</div>
-        <div class=" brightnessControl" @click="isDrawerB()"><i class="el-icon-caret-left"></i>定时控制模块</div>
+        </div> -->
+        <!-- 一键车道控制模块 -->     
+
         <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
           <div class="bingZhou">
             <span>济南方向：</span>
             <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">1</div>

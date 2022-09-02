@@ -74,11 +74,10 @@
 
     <el-table v-loading="loading" :data="subareaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-<<<<<<< HEAD
       <el-table-column label="分区id" align="center" prop="sId" />
-=======
+
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
       <el-table-column label="分区名称" align="center" prop="sName" />
       <el-table-column label="隧道id" align="center" prop="tunnelId" />
       <el-table-column label="桩号下限" align="center" prop="pileMin" />
@@ -102,11 +101,7 @@
         </template>
       </el-table-column>
     </el-table>
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
     <pagination
       v-show="total>0"
       :total="total"
@@ -121,11 +116,11 @@
         <el-form-item label="分区名称" prop="sName">
           <el-input v-model="form.sName" placeholder="请输入分区名称" />
         </el-form-item>
-<<<<<<< HEAD
+
         <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
         </el-form-item>
-=======
+
         <!-- <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
         </el-form-item> -->
@@ -138,7 +133,7 @@
               :value="item.tunnelId"/>
         </el-select>
       </el-form-item>
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
         <el-form-item label="桩号下限" prop="pileMin">
           <el-input v-model="form.pileMin" placeholder="请输入桩号下限" />
         </el-form-item>
@@ -155,13 +150,12 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/tunnel/subarea";
 
-=======
+// import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/tunnel/subarea";
+
 import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/event/subarea";
 import { listTunnels } from "@/api/equipment/tunnel/api";
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
 export default {
   name: "Subarea",
   data() {
@@ -199,10 +193,7 @@ export default {
       form: {},
       // 表单校验
       rules: {
-<<<<<<< HEAD
-      }
-=======
-          sName: [
+        sName: [
             { required: true, message: '请输入分区名称', trigger: 'change' }
           ],
           tunnelId: [
@@ -211,19 +202,18 @@ export default {
           sName: [
             { required: true, message: '请输入分区名称', trigger: 'change' }
           ],
+
       },
+
       tunnelData:[]
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
     };
   },
   created() {
     this.getList();
-<<<<<<< HEAD
-  },
-  methods: {
-=======
     this.getTunnels()
   },
+
   methods: {
     // 隧道名称 下拉框
     getTunnels() {
@@ -231,7 +221,7 @@ export default {
           this.tunnelData = response.rows;
         });
       },
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+
     /** 查询隧道分区列表 */
     getList() {
       this.loading = true;
@@ -239,10 +229,7 @@ export default {
         this.subareaList = response.rows;
         this.total = response.total;
         this.loading = false;
-<<<<<<< HEAD
-=======
         console.log(response,'responseresponse')
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
       });
     },
     // 取消按钮

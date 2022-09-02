@@ -7,6 +7,7 @@ import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  * @date 2020-08-24
  */
 @ApiModel("事件管理实体")
+@Data
 public class SdEvent extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -109,6 +111,24 @@ public class SdEvent extends BaseEntity
 
     @ApiModelProperty("结束时间")
     private String endTime;
+
+    @ApiModelProperty("车道号")
+    private String laneNo;
+
+    @ApiModelProperty("事件位置经度")
+    private String eventLongitude;
+
+    @ApiModelProperty("事件位置纬度")
+    private String eventLatitude;
+
+    @ApiModelProperty("事件开始时间")
+    private String startTime;
+
+    @ApiModelProperty("事件短视频URL地址")
+    private String videoUrl;
+
+//    @ApiModelProperty("事件结束时间")
+//    private Date endTime;
 
     public String getBeginTime() {
 		return beginTime;

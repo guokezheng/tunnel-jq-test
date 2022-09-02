@@ -1,5 +1,11 @@
 package com.tunnel.platform.service.event.impl;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.platform.domain.digitalmodel.WjConfidence;
+import com.tunnel.platform.domain.digitalmodel.WjEvent;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdEventFlow;
 import com.tunnel.platform.mapper.event.SdEventFlowMapper;
@@ -10,8 +16,11 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Service业务层处理
@@ -24,6 +33,7 @@ public class SdEventServiceImpl implements ISdEventService
 {
     @Autowired
     private SdEventMapper sdEventMapper;
+
     @Autowired
     private SdEventFlowMapper sdEventFlowMapper;
 
@@ -120,5 +130,48 @@ public class SdEventServiceImpl implements ISdEventService
     public int deleteSdEventById(Long id)
     {
         return sdEventMapper.deleteSdEventById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult insertWjEvent(Map<String, Object> map) {
+        //获取异常事件列表
+        JSON parse = JSONUtil.parse(map.get("b5eventList"));
+        List<WjEvent> list = JSONUtil.toList(parse.toString(), WjEvent.class);
+        List<SdEvent> eventList=new ArrayList<>();
+        list.forEach(f->{
+            SdEvent sdEvent=new SdEvent();
+            if (StringUtils.isNotBlank(f.getEventId()+"")){
+                sdEvent.setId(f.getEventId());
+            }
+            if (StringUtils.isNotBlank(f.getEventType()+"")){
+                Byte eventType = f.getEventType();
+                sdEvent.setEventTypeId(eventType.longValue());
+            }
+            if (StringUtils.isNotBlank(f.getStationId()+"")){
+                sdEvent.setTunnelId(f.getStationId()+"");
+            }
+            if (StringUtils.isNotBlank(f.getLaneNo()+"")){
+                sdEvent.setLaneNo(f.getLaneNo()+"");
+            }
+            if (StringUtils.isNotBlank(f.getEventLongitude()+"")){
+                sdEvent.setEventLongitude(f.getEventLongitude()+"");
+            }
+            if (StringUtils.isNotBlank(f.getEventLatitude()+"")){
+                sdEvent.setEventLatitude(f.getEventLatitude()+"");
+            }
+            if (StringUtils.isNotBlank(f.getEventTimeStampStart())){
+                sdEvent.setStartTime(f.getEventTimeStampStart());
+            }
+            if (StringUtils.isNotBlank(f.getEventTimeStampEnd())){
+                sdEvent.setEndTime(f.getEventTimeStampEnd());
+            }
+            eventList.add(sdEvent);
+            List<WjConfidence> targetList = f.getTargetList();
+            targetList.forEach(s->s.setEventIds(f.getEventId()));
+            sdEventMapper.insertEventConfidence(targetList);
+        });
+        sdEventMapper.insertWjEvent(eventList);
+        return AjaxResult.success();
     }
 }

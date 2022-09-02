@@ -1,8 +1,10 @@
 package com.tunnel.platform.service.event;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.event.SdEvent;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Service接口
@@ -59,4 +61,10 @@ public interface ISdEventService
      * @return 结果
      */
     public int deleteSdEventById(Long id);
+
+    /**
+     * 新增万集事件
+     * @param map
+     */
+    AjaxResult insertWjEvent(Map<String, Object> map);
 }

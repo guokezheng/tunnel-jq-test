@@ -23,6 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="laneNo"    column="lane_no"    />
+        <result property="eventLongitude"    column="longitude"    />
+        <result property="eventLatitude"    column="latitude"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="videoUrl"    column="video_url"    />
+        <result property="endTime"    column="end_time"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
@@ -127,6 +133,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
+    </insert>
+
+    <insert id="insertEventConfidence">
+        insert into sd_event_confidence
+        (event_id,target_id,confidence)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.eventIds},#{item.targetId},#{item.eventConfidence})
+        </foreach>
+    </insert>
+
+    <insert id="insertWjEvent">
+        insert into sd_event
+        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},#{item.startTime},#{item.endTime})
+        </foreach>
     </insert>
 
     <update id="updateSdEvent" parameterType="SdEvent">

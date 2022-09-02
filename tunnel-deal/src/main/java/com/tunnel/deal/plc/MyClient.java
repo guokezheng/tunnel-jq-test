@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyClient {
 
-    @Bean
+//    @Bean
     public void client() throws Exception {
 
         NioEventLoopGroup eventExecutors = new NioEventLoopGroup();

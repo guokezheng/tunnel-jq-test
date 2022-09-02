@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyServer {
 
-    @Bean
+//    @Bean
     public void server() throws Exception {
 
         //创建两个线程组 boosGroup、workerGroup

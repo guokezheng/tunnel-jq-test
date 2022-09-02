@@ -542,19 +542,19 @@
             //设备图标
             let img1 = that.svg.paper.image(
               list[i].url[0],
-              list[i].position.left,
-              list[i].position.top,
+              list[i].position.left + iconWidth,
+              list[i].position.top + iconHeight,
               iconWidth,
               iconHeight
             );
             let img2 = that.svg.paper.image(
               list[i].url[1],
               list[i].position.left + iconWidth,
-              list[i].position.top,
+              list[i].position.top + iconHeight,
               iconWidth,
               iconHeight
             );
-            console.log(list[i].pile, 'list[i].pile')
+            // console.log(list[i].pile, 'list[i].pile')
             if (list[i].pile != "") {
               let r = that.svg.paper
                 .rect(
@@ -589,7 +589,7 @@
           } else {
             var img3 = that.svg.paper.image(
               list[i].url[0],
-              list[i].position.left + 15,
+              list[i].position.left + iconWidth,
               list[i].position.top,
               iconWidth,
               iconHeight
@@ -660,6 +660,7 @@
             eqList.push(this.selectedIconList[i]);
           }
         }
+
         //遍历车道上方参数，获取位置
         for (let j = 0; j < this.upList.length; j++) {
           let upObj = document.getElementById("drag-up" + j);
@@ -693,6 +694,7 @@
           leftDirection: this.leftDirection,
           rightDirection: this.rightDirection,
         };
+
         let param = {
           tunnelId: this.selectedTunnel.id,
           storeConfigure: JSON.stringify(configData),
@@ -900,7 +902,7 @@
             if (url.length > 1) {
               let img1 = this.svg.paper.image(
                 url[0],
-                10,
+                10 + iconWidth,
                 0,
                 iconWidth,
                 iconHeight
@@ -926,13 +928,13 @@
               if (item.eqType == 7 || item.eqType == 117) {
                 // 加强照明  电光标志
                 img3 = this.svg.paper
-                  .image(url, 5, 0, iconWidth, iconHeight)
+                  .image(url, 5 + iconWidth, 0, iconWidth, iconHeight)
                   .attr({
                     id: item.eqId,
                   });
               } else {
                 img3 = this.svg.paper
-                  .image(url, 25, 0, iconWidth, iconHeight)
+                  .image(url, 25 + iconWidth, 0, iconWidth, iconHeight)
                   .attr({
                     id: item.eqId,
                   });
@@ -948,7 +950,7 @@
             if (url.length > 1) {
               let img1 = this.svg.paper.image(
                 url[0],
-                10,
+                10 + iconWidth,
                 0,
                 iconWidth,
                 iconHeight

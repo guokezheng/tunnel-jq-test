@@ -75,4 +75,5 @@ public interface SdMaterialMapper
      * @return 结果
      */
 	public int updateMaterialMessage(SdMaterial sdMaterial);
+
 }

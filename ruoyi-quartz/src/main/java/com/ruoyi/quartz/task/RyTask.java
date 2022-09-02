@@ -66,9 +66,7 @@ public class RyTask {
         SdStrategy strategy = sdStrategyService.selectSdStrategyByJobRelationId(params);
         String strategyType = strategy.getStrategyType();
         String tunnelId = strategy.getTunnelId();
-        String rlId = strategy.getRlId();//策略子表关联ID
         SdStrategyRl rl = new SdStrategyRl();
-        rl.setStrategyId(rlId);
         List<SdStrategyRl> ssgyRlList = sdStrategyRlService.selectSdStrategyRlList(rl);
         for (int i = 0; i < ssgyRlList.size(); i++) {
             //设备类型

@@ -330,7 +330,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
     	for (int i = 0; i < list.size(); i++) {
     		List<String> sList = new ArrayList<String>();
     		SdStrategyRl rl = new SdStrategyRl();
-    		rl.setStrategyId(list.get(i).getRlId());
     		String strategyType = list.get(i).getStrategyType();
     		if("1".equals(strategyType)){
     			sList.add(list.get(i).getStrategyInfo());

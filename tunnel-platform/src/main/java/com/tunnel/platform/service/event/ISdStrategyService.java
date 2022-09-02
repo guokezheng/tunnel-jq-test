@@ -62,13 +62,6 @@ public interface ISdStrategyService
      * @return 结果
      */
     public int deleteSdStrategyByIds(Long[] ids);
-    /**
-     * 批量删除控制策略
-     * 
-     * @param ids 需要删除的控制策略关系ID
-     * @return 结果
-     */
-    public int deleteSdStrategyByRlIds(String[] rlIds);
 
     /**
      * 删除控制策略信息
@@ -77,6 +70,20 @@ public interface ISdStrategyService
      * @return 结果
      */
     public int deleteSdStrategyById(Long id);
+
+    /**
+     * 批量删除控制策略信息
+     * @param ids
+     * @return
+     */
+    public int deleteSdStrategyByStrategyIds(Long[] ids);
+
+    /**
+     * 删除控制策略信息
+     * @param id
+     * @return
+     */
+    public int deleteSdStrategyByStrategyId(Long id);
     
     /**
      * 新增控制策略
@@ -84,7 +91,7 @@ public interface ISdStrategyService
      * @param SdStrategyModel 控制策略
      * @return 结果
      */
-    public int addStrategysInfo(SdStrategyModel model, String guid);
+    public int addStrategysInfo(SdStrategyModel model);
     /**
      * 修改控制策略
      * 

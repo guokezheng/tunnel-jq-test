@@ -24,11 +24,6 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略ID")
     private Long id;
 
-    /* 关联ID */
-    @ApiModelProperty("关联ID")
-    private String rlId;
-
-
     /** 隧道ID */
     @Excel(name = "隧道ID")
     @ApiModelProperty("隧道ID")
@@ -101,14 +96,6 @@ public class SdStrategyModel extends BaseEntity
     {
         return id;
     }
-
-    public String getRlId() {
-		return rlId;
-	}
-
-	public void setRlId(String rlId) {
-		this.rlId = rlId;
-	}
 
 	public void setTunnelId(String tunnelId)
     {
@@ -216,7 +203,6 @@ public class SdStrategyModel extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("rlId", getRlId())
             .append("tunnelId", getTunnelId())
             .append("strategyName", getStrategyName())
             .append("strategyType", getStrategyType())

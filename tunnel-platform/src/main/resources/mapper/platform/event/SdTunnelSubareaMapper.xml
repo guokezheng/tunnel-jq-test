@@ -8,24 +8,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sId"    column="s_id"    />
         <result property="sName"    column="s_name"    />
         <result property="tunnelId"    column="tunnel_id"    />
-        <result property="tunnelName" column="tunnel_name" />
+        <result property="pileMin" column="pile_min" />
+        <result property="pileMax" column="pile_max" />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
-        <!--<association property="list" javaType="sdTunnelSubarea">
-            <id column="sid" property="sId"/>
-            <result column="sName" property="sName"/>
-            <result column="tunnelId" property="tunnelId"/>
-        </association>
-        <association property="sdTunnels" javaType="sdTunnels">
-            <id column="tunnelId" property="tunnelId"/>
-            <id column="tunnelName" property="tunnelName"/>
-        </association>-->
     </resultMap>
 
     <sql id="selectSdTunnelSubareaVo">
-        select s_id, s_name, tunnel_id, create_by, create_time, update_by, update_time from sd_tunnel_subarea
+        select s_id, s_name, tunnel_id, pile_min, pile_max, create_by, create_time, update_by, update_time from sd_tunnel_subarea
     </sql>
 
     <select id="selectSdTunnelSubareaList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
@@ -52,6 +44,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sId != null">s_id,</if>
             <if test="sName != null">s_name,</if>
             <if test="tunnelId != null">tunnel_id,</if>
+            <if test="pileMin != null">pile_min,</if>
+            <if test="pileMax != null">pile_max,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -61,6 +55,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sId != null">#{sId},</if>
             <if test="sName != null">#{sName},</if>
             <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="pileMin != null">#{pileMin},</if>
+            <if test="pileMax != null">#{pileMax},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -73,6 +69,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="sName != null">s_name = #{sName},</if>
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="pileMin != null">pile_min = #{pileMin},</if>
+            <if test="pileMax != null">pile_max = #{pileMax},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -92,9 +90,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <select id="seleceList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
-        select a.s_id, a.s_name, b.tunnel_id, b.tunnel_name
-        from sd_tunnel_subarea a
-        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
-    </select>
 </mapper>

@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdMaterialById" parameterType="Long" resultMap="SdMaterialResult">
         <include refid="selectSdMaterialVo"/>
-        where id = #{id}
+        where id = #{id} or tunnel_id = #{tunnelId}
     </select>
 
     <select id="selectSdMaterialByMId" parameterType="String" resultMap="SdMaterialResult">

@@ -13,24 +13,37 @@
               <div v-for="(item,index) in planList1" class="mousemoveBox"
               @contextmenu.prevent="rightClick(index)"
               @mouseleave='mouseleave(index)'
-              :style="{marginTop:index>=planList1.length/2?'4%':'',width:100/(planList1.length/2)+'%'}"
+              :style="{width:100/(planList1.length/2)+'%'}"
               >
                 <div class="partitionBox"></div>
-                <div class="rightClickClass">
-                  <div class="row1" >{{item.text}}</div>
-                  <div class="row2" >
-                    <div>执行</div>
-                    <div>预览</div>
-                  </div>
+                <div class="rightClickClass" >
+                    <div class="row1" >{{item.text}}</div>
+                    <div class="row2" >
+                      <div>执行</div>
+                      <div>预览</div>
+                    </div>
                 </div>
               </div>
           </div>
+          <!-- <div  class="maskClass1" >
+            <div class="rightClickClass" v-for="(item,index) in planList1"
+                  :style="{width:100/(planList1.length/2)+'%'}"
+                  @contextmenu.prevent="rightClick(index)">
+                  <div class="rightClickButton">
+                    <div class="row1" >{{item.text}}</div>
+                    <div class="row2" >
+                      <div>执行</div>
+                      <div>预览</div>
+                    </div>
+                  </div>
+            </div>
+          </div> -->
           <div
             class="wrapper"
             id="eq-wrapper"
           >
             <div
-              class="icon-box"
+              class="icon-box active"
               v-for="(item, index) in selectedIconList"
               :key="index"
               :style="{
@@ -614,14 +627,11 @@
       
       rightClick(index){
          $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
-         console.log($('.mousemoveBox').eq(index).children(1)[1],"index")
+         $(".icon-box").removeClass("active")
       },
-      // mouseenter(index){
-      //   console.log(index)
-      //   $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
-      // },
       mouseleave(index){
         $('.mousemoveBox').eq(index).children(1)[1].style.display = 'none'
+        $(".icon-box").addClass("active")
       },
 
       returnDetails(){
@@ -701,6 +711,9 @@
 </script>
 
 <style scoped lang="scss">
+  .active{
+    z-index: 3;
+  }
   .leftContent{
     width: 30%;
     height: 100%;
@@ -771,9 +784,9 @@
       .tunnelMap{
         height: 57%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;
         .maskClass{
-          height: 100%;width: 100%;position: relative;
+          height: 98%;width: 100%;position: absolute;top: 0;left: 0;
             .mousemoveBox{
-              height: 44%;position: relative;display: inline-block;z-index: 2;
+              height: 50%;position: relative;display: inline-block;z-index: 2;
               .partitionBox{
                 width: 100%;height: 100%;color: white;position: relative;
               }
@@ -781,26 +794,51 @@
                 background-color: rgba($color: #fff, $alpha: 0.3);
               }
               .rightClickClass{
-                width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: block;
-                color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 4;border-radius: 10px;box-shadow: 0 0 5px white;
-                .row1{
-                  width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;
+                  width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: none;
+                  color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 4;border-radius: 10px;box-shadow: 0 0 5px white;
+                  .row1{
+                    width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;
+                  }
+                  .row2{
+                    width: 100%;height: 50%;display: flex;justify-content: space-around;padding: 10px;
+                    div{
+                      width: 35%;height: 30px;border: solid 1px white;border-radius: 10px;text-align: center;font-size: 14px;line-height: 29px;cursor: pointer;
+                    }
+                    div:nth-of-type(1):hover{
+                      background-color: #E1AA43;
+                    }
+                    div:nth-of-type(2):hover{
+                      background-color: #19B9EA;
+                    }
+                  }
                 }
-                .row2{
-                  width: 100%;height: 50%;display: flex;justify-content: space-around;padding: 10px;
-                  div{
-                    width: 35%;height: 30px;border: solid 1px white;border-radius: 10px;text-align: center;font-size: 14px;line-height: 29px;cursor: pointer;
-                  }
-                  div:nth-of-type(1):hover{
-                    background-color: #E1AA43;
-                  }
-                  div:nth-of-type(2):hover{
-                    background-color: #19B9EA;
-                  }
-                }
+            }
+        }
+        .maskClass1{
+          height: 98%;width: 100%;position: absolute;top: 0;left: 0;
+          .rightClickClass{
+            height: 50%;position: relative;display: inline-block;border: solid 1px white;vertical-align:top;
+            .rightClickButton{
+              height: 70%;border: solid 1px white;box-shadow: 0 0 5px white;background-color: rgba($color: #005E96, $alpha: 0.5);width: 70%;
+              border-radius: 10px;display: none;margin: 10% auto;position: relative;color: white;vertical-align:top;
+              z-index: 4;
+            }
+            .row1{
+              width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;
+            }
+            .row2{
+              width: 100%;height: 50%;display: flex;justify-content: space-around;padding: 10px;
+              div{
+                width: 35%;height: 30px;border: solid 1px white;border-radius: 10px;text-align: center;font-size: 14px;line-height: 29px;cursor: pointer;
+              }
+              div:nth-of-type(1):hover{
+                background-color: #E1AA43;
+              }
+              div:nth-of-type(2):hover{
+                background-color: #19B9EA;
               }
             }
-
+          }
         }
       }
     }
@@ -820,7 +858,7 @@
   }
   // 工作台
   .wrapper {
-    height: 100%;
+    height: 98%;
     width: 100%;
     position: absolute;
     // z-index: 3;
@@ -833,7 +871,6 @@
     flex-direction: column;
     // align-items: center;
     width: 30px !important;
-    z-index: 3;
   }
   .app-container{
       background-color: #D6EDFB;

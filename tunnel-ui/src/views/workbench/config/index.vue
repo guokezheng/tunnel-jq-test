@@ -594,7 +594,26 @@
               </el-radio>
             </el-radio-group>
           </div>
-
+          <div v-if="stateForm.eqType == 31" class="EqType31">
+            <el-form label-width="60px" label-position="left" size="mini">
+              <el-form-item class="radioEqType31">
+                <el-radio-group v-model="radioEqType31"  >
+                   <el-radio :label="1">关灯</el-radio>
+                   <el-radio :label="2">同步单闪</el-radio>
+                   <el-radio :label="3">流水灯</el-radio>
+                 </el-radio-group>
+              </el-form-item>
+              
+              <el-form-item label="亮度:">
+                  <el-slider v-model="brightness"  style="width: 90%;" :min="10" :max="155">
+                  </el-slider>
+              </el-form-item>
+              <el-form-item label="频率:">
+                 <el-slider v-model="frequency"  style="width: 90%;" :min="10" :max="155">
+                 </el-slider>
+              </el-form-item>
+            </el-form>
+          </div>
           <div v-if="stateForm.eqType == 111">
             <el-form label-width="100px" label-position="left" size="mini">
               <el-form-item label="设备名称:">
@@ -1501,6 +1520,7 @@
     },
     data() {
       return {
+        radioEqType31:2,
         dictList: [],
         robotShow: false,
         //抽屉
@@ -1701,7 +1721,11 @@
         checkboxTunnel: [], //可点的隧道
         tunnelList: [], //隧道
         selectedIconList: [], //配置图标
-        stateForm: {}, //配置表单
+        stateForm: {
+          state:1,
+        }, //配置表单
+        brightness:50,
+        frequency:69,
         weiboList: [],
         shuibengVisible: false,
         shuibengObj: {},
@@ -4287,8 +4311,10 @@
           deviceId: this.stateForm.eqId,
           devType: this.stateForm.eqType,
           hostId: this.stateForm.eqHostId,
-          state: this.stateForm.state,
+          state: this.stateForm.eqType==31?this.radioEqType31:this.stateForm.state,
           tunnelId: this.currentTunnel.id,
+          brightness:this.brightness,
+          frequency:this.frequency,
         };
         // 发送模拟指令
         this.sendAnalogCommand(param)
@@ -6151,6 +6177,14 @@
   ::v-deep .app-main {
     height: calc(100vh - 52px) !important;
   }
+  ::v-deep .EqType31 .radioEqType31 .el-form-item__content{
+    margin-left: 0px !important;
+  }
+  ::v-deep .EqType31 .radioEqType31 .el-radio{
+    padding: 0px 20px !important;
+    height: 40px;
+    line-height: 40px;
+  }
 </style>
 <style lang="scss">
   .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
@@ -6267,10 +6301,10 @@
     }
 
     .el-form-item__content {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-left: 0;
+      // display: flex;
+      // flex-direction: row;
+      // align-items: center;
+      // margin-left: 0;
     }
 
     .form-item-img {
@@ -6315,8 +6349,9 @@
       content: "\e79d";
       font-size: 20px;
     }
+    
   }
-
+    
   /* 批量管理中的table*/
   .batch-table {
     //table为空时
@@ -6623,4 +6658,5 @@
   .el-image__error {
     display: none;
   }
+  
 </style>

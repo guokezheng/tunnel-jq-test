@@ -188,9 +188,11 @@
         <div class="indicatorLight" @click="isDrawerA()">
           <i class="el-icon-caret-left"></i>一键车道控制模块
         </div>
+        <!-- 定时控制模块 -->
         <div class="brightnessControl" @click="isDrawerB()">
           <i class="el-icon-caret-left"></i>定时控制模块
         </div>
+        <!-- 触发控制模块 -->
         <div class="triggerControl" @click="isDrawerC()">
           <i class="el-icon-caret-left"></i>触发控制模块
         </div>

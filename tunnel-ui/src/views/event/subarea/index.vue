@@ -74,12 +74,12 @@
 
     <el-table v-loading="loading" :data="subareaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分区id" align="center" prop="sId" />
+      <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
 
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
 
-      <el-table-column label="分区名称" align="center" prop="sName" />
-      <el-table-column label="隧道id" align="center" prop="tunnelId" />
+      <!-- <el-table-column label="分区名称" align="center" prop="sName" /> -->      
+      <el-table-column label="隧道名称" align="center" prop="tunnelId" />
       <el-table-column label="桩号下限" align="center" prop="pileMin" />
       <el-table-column label="桩号上限" align="center" prop="pileMax" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -117,9 +117,9 @@
           <el-input v-model="form.sName" placeholder="请输入分区名称" />
         </el-form-item>
 
-        <el-form-item label="隧道id" prop="tunnelId">
+        <!-- <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
-        </el-form-item>
+        </el-form-item> -->
 
         <!-- <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
@@ -219,7 +219,18 @@ export default {
     getTunnels() {
         listTunnels().then(response => {
           this.tunnelData = response.rows;
+          console.log( this.tunnelData,' this.tunnelData')
+        console.log( this.subareaList,'this.subareaListthis.subareaList')
+        this.tunnelData.forEach((item,index)=>{
+            this.subareaList.forEach((it,id)=>{
+                if(item.tunnelId==it.tunnelId){
+                  it.tunnelId=item.tunnelName
+                }
+            })
+        })
         });
+      
+        
       },
 
     /** 查询隧道分区列表 */
@@ -293,12 +304,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.getTunnels()
             });
           } else {
             addSubarea(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.getTunnels()
             });
           }
         }
@@ -312,6 +325,7 @@ export default {
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
+        this.getTunnels()
       }).catch(() => {});
     },
     /** 导出按钮操作 */
@@ -328,8 +342,8 @@ export default {
   }
 };
 </script>
-<<<<<<< HEAD
-=======
+
+
 <style scoped>
 
 .tunnelName{
@@ -337,4 +351,4 @@ export default {
 }
 
 </style>
->>>>>>> 2eefc33c28a0aad85fd753be02e2f6d93fffa117
+

@@ -1060,67 +1060,38 @@ export default {
         tunnelId: tunnelId
       }
       getTunnels(tunnelId).then((response) => {
-        // that.loading = false;
         let res = response.data.storeConfigure;
-          console.log(response,'eeeeeeeeeee')
-        // //存在配置内容
+        //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res,"resdssssssssssss")
-          listType("").then((response) => {
-            for (let i = 0; i < res.eqList.length; i++) {
-              res.eqList[i].focus = false;
-              console.log(res.eqList[i].focus,'item.focus')
-              for (let j = 0; j < response.rows.length; j++) {
-                if (response.rows[j].typeId == res.eqList[i].eqType) {
-                  let iconWidth = Number(response.rows[j].iconWidth);
-                  let iconHeight = Number(response.rows[j].iconHeight);
-                  res.eqList[i].iconWidth = iconWidth;
-                  res.eqList[i].iconHeight = iconHeight;
-                  break;
+          console.log(res,"res")
+          listType({isControl:1}).then((response) => {
+            console.log(response,'response')
+            var arr = []
+            for(let item1 of response.rows) {
+              for(let item of res.eqList){
+                item.focus = false;
+                if (item1.typeId ==item.eqType) {
+                  item.iconWidth = Number(item1.iconWidth);
+                  item.iconHeight = Number(item1.iconHeight);
+                  arr.push(item)
                 }
               }
+             
             }
-            that.selectedIconList = res.eqList //设备
-            console.log(that.selectedIconList, '当前设备所属隧道')
+            this.selectedIconList = arr //这是最终需要挂载到页面上的值
+            console.log(this.selectedIconList,"this.selectedIconList")
           }).then(() => {
-            // that.initEharts()
-            // // 切换隧道配置信息时，联动大类查询
-            // that.displayControl(that.selectBigType.index.toString(), that.selectBigType.bigType.toString())
           });
-
-          // if (res.upList != undefined) {
-          //   that.upList = res.upList;
-          // }
-          // if (res.downList != undefined) {
-          //   that.downList = res.downList;
-          // }
-          // if (res.leftDirection != undefined && res.leftDirection != '') {
-          //   that.leftDirection = res.leftDirection;
-          // }
-          // if (res.rightDirection != undefined && res.leftDirection != '') {
-          //   that.rightDirection = res.rightDirection;
-          // }
-
-          // let id = res.lane;
-          // console.log(that.laneUrlList,"that.laneUrlList")
-          // for (let i = 0; i < that.laneUrlList.length; i++) {
-          //   if (that.laneUrlList[i].id == id) {
-          //     that.currentTunnel.lane = that.laneUrlList[i];
-          //     // that.railingList[1].position.left = that.laneUrlList[i].width
-          //   }
-          // }
         } else {
-          console.log('不存在')
           //不存在
           that.selectedIconList = [];
-          // that.initEharts();
           //工作台默认背景图
           // that.currentTunnel.lane = this.getLanUrl(response.data.lane);
-          // that.upList = [];
-          // that.downList = [];
-          // that.leftDirection = "";
-          // that.rightDirection = "";
+          that.upList = [];
+          that.downList = [];
+          that.leftDirection = "";
+          that.rightDirection = "";
         }
       });
     },

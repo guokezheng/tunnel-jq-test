@@ -781,7 +781,7 @@
                 background-color: rgba($color: #fff, $alpha: 0.3);
               }
               .rightClickClass{
-                width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: none;
+                width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: block;
                 color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 4;border-radius: 10px;box-shadow: 0 0 5px white;
                 .row1{
                   width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;

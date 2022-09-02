@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 107% !important;">
+  <div style="height: calc(100% + 60px);">
     <img style="width: 100%;height: 100%;" src="../../assets/images/map.png"></img>
   </div>
 </template>

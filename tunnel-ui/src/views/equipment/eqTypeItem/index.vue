@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="数据项编号" prop="itemCode">
         <el-input
           v-model="queryParams.itemCode"
@@ -19,7 +19,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="设备类型id" prop="deviceTypeId">
+      <!-- <el-form-item label="设备类型id" prop="deviceTypeId">
         <el-input
           v-model="queryParams.deviceTypeId"
           placeholder="请输入设备类型id"
@@ -27,7 +27,13 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
+      <el-form-item label="设备类型" prop="deviceTypeId">
+              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" >
+                <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
+                </el-option>
+              </el-select>
+            </el-form-item>
       <el-form-item label="单位" prop="unit">
         <el-input
           v-model="queryParams.unit"
@@ -92,10 +98,11 @@
 
     <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
-      <el-table-column label="设备类型id" align="center" prop="deviceTypeId" />
+      <el-table-column label="设备类型" align="center" prop="deviceTypeId">           
+      </el-table-column>
+     
       <el-table-column label="单位" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -128,16 +135,19 @@
 
     <!-- 添加或修改设备类型数据项对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="数据项编号" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
+          <el-input v-model="form.itemCode" placeholder="请输入数据项编号(限数字)" />
         </el-form-item>
         <el-form-item label="数据项名称" prop="itemName">
           <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
         </el-form-item>
-        <el-form-item label="设备类型id" prop="deviceTypeId">
-          <el-input v-model="form.deviceTypeId" placeholder="请输入设备类型id" />
-        </el-form-item>
+        <el-form-item label="设备类型" prop="deviceTypeId" >
+              <el-select v-model="form.deviceTypeId" placeholder="请选择设备类型" class="deviceTypeId" >
+                <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
+                </el-option>
+              </el-select>
+            </el-form-item>
         <el-form-item label="单位" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位" />
         </el-form-item>
@@ -155,7 +165,7 @@
 
 <script>
 import { listItem, getItem, delItem, addItem, updateItem, exportItem } from "@/api/equipment/eqTypeItem/item";
-
+import { listType } from "@/api/equipment/type/api";
 export default {
   name: "Item",
   data() {
@@ -193,21 +203,67 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+          itemCode: [
+          {
+              required: true,
+              message: "数据项编号不能为空",
+              trigger: "blur"
+            },
+            {
+              pattern: /^[0-9]*$/,
+              message: "数据项编号需为数字",
+              trigger: "blur"
+            },
+          ],
+          itemName: [
+            { required: true, message: '请输入数据项名称', trigger: 'change' }
+          ],
+          deviceTypeId: [
+            { required: true, message: '请输入设备类型ID', trigger: 'change' }
+          ], 
+          unit: [
+            { required: true, message: '请输入单位', trigger: 'change' }
+          ],
+          remark: [
+            { required: true, message: '请输入备注', trigger: 'change' }
+          ],
+      },
+      eqTypeData:[]//设备类型
     };
   },
-  created() {
-    this.getList();
+  created() {  
+    this.getList();  
+  },
+  mounted(){
+    this.getEqType()  
   },
   methods: {
+     /** 设备类型 */
+     getEqType() {
+        listType().then((response) => {
+          this.eqTypeData = response.rows;
+          console.log(this.eqTypeData,'eqTypeDataeqTypeDataeqTypeDataeqTypeData')
+          this.itemList.forEach((item,index)=>{
+            this.eqTypeData.forEach((it,id)=>{
+                if(item.deviceTypeId == it.typeId){
+                  item.deviceTypeId= it.typeName
+                }
+            })
+          })
+          console.log(this.itemList,'itemListitemListitemListitemList')
+        });
+      },
     /** 查询设备类型数据项列表 */
     getList() {
       this.loading = true;
       listItem(this.queryParams).then(response => {
+        // console.log(response,'responseresponse')
         this.itemList = response.rows;
         this.total = response.total;
         this.loading = false;
+       
       });
+      
     },
     // 取消按钮
     cancel() {
@@ -270,12 +326,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.getEqType()  
             });
           } else {
             addItem(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.getEqType()  
             });
           }
         }
@@ -288,8 +346,9 @@ export default {
         return delItem(ids);
       }).then(() => {
         this.getList();
+        this.getEqType()
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {});     
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -305,3 +364,10 @@ export default {
   }
 };
 </script>
+<style scoped>
+ .deviceTypeId{
+  width: 359px;
+ }
+
+
+</style>

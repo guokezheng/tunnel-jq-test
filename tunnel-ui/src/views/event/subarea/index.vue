@@ -10,33 +10,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="隧道id" prop="tunnelId">
-        <el-input
-          v-model="queryParams.tunnelId"
-          placeholder="请输入隧道id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="桩号下限" prop="pileMin">
-        <el-input
-          v-model="queryParams.pileMin"
-          placeholder="请输入桩号下限"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="桩号上限" prop="pileMax">
-        <el-input
-          v-model="queryParams.pileMax"
-          placeholder="请输入桩号上限"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+      <el-form-item label="隧道名称" prop="tunnelId">
+        <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道" clearable >
+          <el-option
+              v-for="item in tunnelData"
+              :key="item.tunnelName"
+              :label="item.tunnelName"
+              :value="item.tunnelId"/>
+        </el-select>
+      </el-form-item>     
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -92,7 +74,7 @@
 
     <el-table v-loading="loading" :data="subareaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分区id" align="center" prop="sId" />
+      <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
       <el-table-column label="分区名称" align="center" prop="sName" />
       <el-table-column label="隧道id" align="center" prop="tunnelId" />
       <el-table-column label="桩号下限" align="center" prop="pileMin" />
@@ -131,9 +113,18 @@
         <el-form-item label="分区名称" prop="sName">
           <el-input v-model="form.sName" placeholder="请输入分区名称" />
         </el-form-item>
-        <el-form-item label="隧道id" prop="tunnelId">
+        <!-- <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
-        </el-form-item>
+        </el-form-item> -->
+        <el-form-item label="隧道名称" prop="tunnelId" >
+        <el-select v-model="form.tunnelId" placeholder="请选择隧道" class="tunnelName" >
+          <el-option
+              v-for="item in tunnelData"
+              :key="item.tunnelName"
+              :label="item.tunnelName"
+              :value="item.tunnelId"/>
+        </el-select>
+      </el-form-item>
         <el-form-item label="桩号下限" prop="pileMin">
           <el-input v-model="form.pileMin" placeholder="请输入桩号下限" />
         </el-form-item>
@@ -151,7 +142,7 @@
 
 <script>
 import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/event/subarea";
-
+import { listTunnels } from "@/api/equipment/tunnel/api";
 export default {
   name: "Subarea",
   data() {
@@ -189,13 +180,30 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+          sName: [
+            { required: true, message: '请输入分区名称', trigger: 'change' }
+          ],
+          tunnelId: [
+            { required: true, message: '请选择隧道名称', trigger: 'change' }
+          ],
+          sName: [
+            { required: true, message: '请输入分区名称', trigger: 'change' }
+          ],
+      },
+      tunnelData:[]
     };
   },
   created() {
     this.getList();
+    this.getTunnels()
   },
   methods: {
+    // 隧道名称 下拉框
+    getTunnels() {
+        listTunnels().then(response => {
+          this.tunnelData = response.rows;
+        });
+      },
     /** 查询隧道分区列表 */
     getList() {
       this.loading = true;
@@ -203,6 +211,7 @@ export default {
         this.subareaList = response.rows;
         this.total = response.total;
         this.loading = false;
+        console.log(response,'responseresponse')
       });
     },
     // 取消按钮
@@ -301,3 +310,10 @@ export default {
   }
 };
 </script>
+<style scoped>
+
+.tunnelName{
+  width: 378px;
+}
+
+</style>

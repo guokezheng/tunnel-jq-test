@@ -1,6 +1,7 @@
 package com.tunnel.platform.mapper.event;
 
 import com.tunnel.platform.domain.event.SdStrategy;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public interface SdStrategyMapper
      * @param sdStrategy 控制策略
      * @return 结果
      */
-    public int updateSdStrategy(SdStrategy sdStrategy);
+    public int updateSdStrategyById(SdStrategy sdStrategy);
 
     /**
      * 删除控制策略
@@ -68,13 +69,14 @@ public interface SdStrategyMapper
      * @return 结果
      */
     public int deleteSdStrategyByIds(Long[] ids);
+
     /**
      * 批量删除控制策略
      * 
      * @param rlIds 需要删除的数据RLID
      * @return 结果
      */
-    public int deleteSdStrategyByRlIds(String[] rlIds);
+    /*public int deleteSdStrategyByRlIds(String[] rlIds);*/
     
     /**
      * 修改控制策略
@@ -82,9 +84,15 @@ public interface SdStrategyMapper
      * @param sdStrategy 控制策略
      * @return 结果
      */
-    public int updateSdStrategyInfoByRlId(SdStrategy sdStrategy);
+    /*public int updateSdStrategyInfoByRlId(SdStrategy sdStrategy);*/
 
-    public List<SdStrategy> selectStrategyList(SdStrategy sdStrategy);
+    /**
+     * 查询控制策略列表(根据rlId)
+     *
+     * @param sdStrategy 控制策略
+     * @return 结果
+     */
+    /*public List<SdStrategy> selectStrategyList(SdStrategy sdStrategy);*/
 
     public List<Map<String, Object>> checkStrategyIfExist(Long id);
 }

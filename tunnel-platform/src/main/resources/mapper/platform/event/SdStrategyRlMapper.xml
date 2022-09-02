@@ -93,11 +93,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <delete id="deleteSdStrategyRlByRlId" parameterType="String">
-        delete from sd_strategy_rl where strategy_id = #{rlId}
+    <delete id="deleteSdStrategyRlByStrategyId" parameterType="Long">
+        delete from sd_strategy_rl where strategy_id = #{strategyId}
     </delete>
     
-    <delete id="deleteSdStrategyRlByRlIds" parameterType="String">
+    <delete id="deleteSdStrategyRlByStrategyIds" parameterType="Long">
         delete from sd_strategy_rl where strategy_id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}

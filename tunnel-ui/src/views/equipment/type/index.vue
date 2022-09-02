@@ -116,6 +116,11 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
       <el-table-column label="设备类型代号" align="center" prop="typeAbbr" />
+      <el-table-column label="是否可控" align="center" prop="isControl" >
+      <template slot-scope="scope">
+          <span>{{ scope.row.isControl==1?'是':'否' }} </span>
+        </template>
+       </el-table-column>
       <el-table-column label="图标宽度" align="center" prop="iconWidth">
         <template slot-scope="scope">
           <span>{{ scope.row.iconWidth }} px</span>
@@ -126,11 +131,7 @@
           <span>{{ scope.row.iconHeight }} px</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否可控" align="center" prop="isControl" >
-      <template slot-scope="scope">
-          <span>{{ scope.row.isControl==1?'是':'否' }} </span>
-        </template>
-       </el-table-column>
+      
       <el-table-column
         label="操作"
         align="center"
@@ -175,6 +176,11 @@
           <el-input v-model="form.typeAbbr" placeholder="请输入设备类型代号" />
           <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div>
         </el-form-item>
+        <el-form-item label="是否可控" prop="isControl">
+                  <el-select v-model="form.isControl" placeholder="请选择是否可控">
+                    <el-option v-for="dict in isControlOptions" :key="dict.dictSort" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
+                  </el-select>
+                </el-form-item>
         <el-form-item label="图标宽度" prop="iconWidth">
           <el-input
             v-model="form.iconWidth"
@@ -297,6 +303,9 @@ export default {
           bigType: [
               { required: true, message: "设备大类不能为空", trigger: 'change' }
           ],
+          isControl: [
+              { required: true, message: "是否可控不能为空", trigger: 'change' }
+          ],
       },
       //是否区分方向
       direction: "",
@@ -308,6 +317,7 @@ export default {
       removeIds: [],
       // fIds:[]//需要移除的关联图标iconFileId
       typeList:[],//所有设备大类
+      isControlOptions:[]//是否可控字典值
     };
   },
   created() {
@@ -317,6 +327,10 @@ export default {
     this.getList();
     this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
+    this.getDicts("sys_type_control").then(response => {          
+        this.isControlOptions = response.data;
+        console.log(this.isControlOptions,'this.isControlOptions')
+      });
   },
   methods: {
     getGroupByBigType(){
@@ -385,7 +399,7 @@ export default {
     getList() {
       this.loading = true;
       listType(this.queryParams).then((response) => {
-        console.log(response,'responseresponse12312')
+        console.log(response,'getListgetListgetListgetListgetList')
         this.typeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -444,7 +458,7 @@ export default {
 	  }
       const typeId = row.typeId || that.ids;
       getType(typeId).then((response) => {
-		  debugger
+        console.log(response,'xiugai')
 		var resultData = response.data
 		if(resultData.bigType){
 			resultData.bigType = resultData.bigType.split(',')
@@ -463,7 +477,8 @@ export default {
       this.fileData.append("typeAbbr",this.form.typeAbbr);
       this.fileData.append("iconWidth", this.form.iconWidth);
       this.fileData.append("iconHeight", this.form.iconHeight);
-	  this.fileData.append("bigType", this.form.bigType.join(','));
+      this.fileData.append("isControl", this.form.isControl);  
+	    this.fileData.append("bigType", this.form.bigType.join(','));
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if(this.fileList.length <= 0) {

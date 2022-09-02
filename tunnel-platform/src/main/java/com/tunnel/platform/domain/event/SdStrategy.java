@@ -70,10 +70,6 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("定时任务id")
     private String jobRelationId;
 
-    /** 策略关联ID */
-    @ApiModelProperty("策略关联ID")
-    private String rlId;
-
     @Excel(name = "方向")
     @ApiModelProperty("方向")
     private String direction;
@@ -157,14 +153,6 @@ public class SdStrategy extends BaseEntity
         return schedulerTime;
     }
 
-    public String getRlId() {
-		return rlId;
-	}
-
-	public void setRlId(String rlId) {
-		this.rlId = rlId;
-	}
-
 	public SdTunnels getTunnels() {
 		if (tunnels == null)
         {
@@ -195,7 +183,6 @@ public class SdStrategy extends BaseEntity
             .append("slist", getSlist())
             .append("warningId", getWarningId())
             .append("schedulerTime", getSchedulerTime())
-            .append("rlId", getRlId())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())

@@ -38,7 +38,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="strategyInfo"    column="strategy_info"    />
         <result property="warningId"    column="warning_id"    />
         <result property="schedulerTime"    column="scheduler_time"    />
-        <result property="rlId"    column="rl_id"    />
 	</resultMap>
 
     <resultMap id="subareaResult" type="SdTunnelSubarea">

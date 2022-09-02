@@ -12,7 +12,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="strategyInfo"    column="strategy_info"    />
         <result property="warningId"    column="warning_id"    />
         <result property="schedulerTime"    column="scheduler_time"    />
-        <result property="rlId"    column="rl_id"    />
         <result property="jobRelationId"    column="job_relation_id"    />
         <result property="direction"    column="direction"    />
         <result property="createBy"    column="create_by"    />
@@ -29,16 +28,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdStrategyVo">
-        select id, tunnel_id, strategy_name, strategy_type, strategy_info, warning_id, scheduler_time, rl_id, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
+        select id, tunnel_id, strategy_name, strategy_type, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
     </sql>
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
-        		A.scheduler_time, A.rl_id, A.job_relation_id, A.direction,A.create_by,
+        		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         <where>
+            <if test="id != null">and A.id = #{id}</if>
             <if test="tunnelId != null and tunnelId != ''"> and A.tunnel_id = #{tunnelId}</if>
             <if test="strategyName != null  and strategyName != ''"> and A.strategy_name like concat('%', #{strategyName}, '%')</if>
             <if test="strategyType != null  and strategyType != ''"> and A.strategy_type = #{strategyType}</if>
@@ -54,13 +54,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
-        		A.scheduler_time, A.rl_id, A.job_relation_id, A.create_by, A.direction,
+        		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         left join sd_tunnel_subarea C on B.tunnel_id = C.tunnel_id
         where A.id = #{id}
     </select>
+
     <select id="selectSdStrategyByJobRelationId" parameterType="String" resultMap="SdStrategyResult">
         <include refid="selectSdStrategyVo"/>
         where job_relation_id = #{jobRelationId}
@@ -74,7 +75,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null">strategy_info,</if>
             <if test="warningId != null">warning_id,</if>
             <if test="schedulerTime != null">scheduler_time,</if>
-            <if test="rlId != null">rl_id,</if>
             <if test="jobRelationId != null">job_relation_id,</if>
             <if test="direction != null">direction,</if>
             <if test="createBy != null">create_by,</if>
@@ -86,7 +86,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null">#{strategyInfo},</if>
             <if test="warningId != null">#{warningId},</if>
             <if test="schedulerTime != null">#{schedulerTime},</if>
-            <if test="rlId != null">#{rlId},</if>
             <if test="jobRelationId != null">#{jobRelationId},</if>
             <if test="direction != null">#{direction},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -94,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           )
     </insert>
 
-    <update id="updateSdStrategy" parameterType="SdStrategy">
+    <update id="updateSdStrategyById" parameterType="SdStrategy">
         update sd_strategy
         <trim prefix="SET" suffixOverrides=",">
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
@@ -103,7 +102,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null">strategy_info = #{strategyInfo},</if>
             <if test="warningId != null">warning_id = #{warningId},</if>
             <if test="schedulerTime != null">scheduler_time = #{schedulerTime},</if>
-            <if test="rlId != null">rl_id = #{rlId},</if>
             <if test="jobRelationId != null">job_relation_id = #{jobRelationId},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -125,13 +123,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <delete id="deleteSdStrategyByRlIds" parameterType="String">
+    <!-- 根据rlId删除 -->
+    <!-- <delete id="deleteSdStrategyByRlIds" parameterType="String">
         delete from sd_strategy where rl_id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
-    </delete>
-    <update id="updateSdStrategyInfoByRlId" parameterType="SdStrategy">
+    </delete> -->
+
+    <!-- 根据rlId更新 -->
+    <!-- <update id="updateSdStrategyInfoByRlId" parameterType="SdStrategy">
         update sd_strategy
         <trim prefix="SET" suffixOverrides=",">
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
@@ -140,7 +141,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null">strategy_info = #{strategyInfo},</if>
             <if test="warningId != null">warning_id = #{warningId},</if>
             <if test="schedulerTime != null">scheduler_time = #{schedulerTime},</if>
-            <if test="rlId != null">rl_id = #{rlId},</if>
             <if test="jobRelationId != null">job_relation_id = #{jobRelationId},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
@@ -149,9 +149,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where rl_id = #{rlId}
-    </update>
+    </update> -->
 
-    <select id="selectStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
+    <!-- 根据rlId查询 -->
+    <!-- <select id="selectStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
         A.scheduler_time, A.rl_id, A.job_relation_id, A.direction,A.create_by,
         A.create_time, A.update_by, A.update_time
@@ -159,10 +160,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="rlId != null  and rlId != ''"> and A.rl_id = #{rlId}</if>
         </where>
-    </select>
+    </select> -->
 
     <select id="checkStrategyIfExist" resultType="hashmap">
-        select id, plan_name, strategy_id, create_time from sd_reserve_plan
-        where strategy_id like concat("%",#{id},"%")
+        select A.id, A.plan_name, B.strategy_id, A.create_time from sd_reserve_plan A
+        left join sd_reserve_process B on A.id = B.reserve_id
+        where B.strategy_id like concat("%",#{id},"%")
     </select>
 </mapper>

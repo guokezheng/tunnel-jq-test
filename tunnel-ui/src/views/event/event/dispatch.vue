@@ -67,7 +67,7 @@
             </div>
           </div>
         </div>
-        <div style="height: 39%;" v-show="changeVideo == 0">
+        <div style="height: 41%;" v-show="changeVideo == 0">
             <div class="formTitle" >
               <div style="float: left;">事件详情</div>
               <div class="formButton formButton1" @click="submitEventForm">
@@ -311,7 +311,7 @@
               </el-form-item>
             </el-form>
           </div>
-          <div style="height: 39%;" v-show="changeVideo == 1">
+          <div style="height: 41%;" v-show="changeVideo == 1">
             <div class="formTitle" >
               <div style="float: left;">摄像视频</div>
               <div class="formButton formButton2" @click="returnDetails">
@@ -342,9 +342,9 @@
             <div class="rightBox planBox">
               <div class="title">周边物资</div>
               <el-table :data="materialList" max-height="230" >
-                <el-table-column label="物资名称" align="center" prop="name" />
-                <el-table-column label="桩号" align="center" prop="phone" />
-                <el-table-column label="数量" align="center" prop="phone1" width="60"/>
+                <el-table-column label="物资名称" align="center" prop="materialName" />
+                <el-table-column label="桩号" align="center" prop="station" />
+                <el-table-column label="数量" align="center" prop="number" width="60"/>
               </el-table>
 
             </div>
@@ -352,7 +352,7 @@
             <div class="rightBox phoneBox">
               <div class="title">调度电话</div>
               <el-table :data="personnelList" max-height="210" >
-                <el-table-column label="姓名" align="center" prop="name" width="60"/>
+                <el-table-column label="姓名" align="center" prop="userName" width="60"/>
                 <el-table-column label="联系方式" align="center" prop="phone" />
                 <el-table-column label="操作" align="center" class-name="small-padding" width="60">
                   <template slot-scope="scope">
@@ -364,7 +364,7 @@
               </el-table>
             </div>
           </el-col>
-          <el-col :span="12" style="height: 100%;">
+          <el-col :span="13" style="height: 100%;">
             <!-- 事件流程 -->
             <div class="rightBox processBox">
               <el-steps :active="1">
@@ -435,6 +435,12 @@
   import {
     listType,
   } from "@/api/equipment/type/api.js";
+  import {
+    listSdEmergencyPer,
+  } from "@/api/event/SdEmergencyPer";
+  import {
+    listMaterial,
+  } from "@/api/system/material";
   export default {
     name: "dispatch",
     data(){
@@ -464,12 +470,7 @@
           {
             text:'火灾报警8区'
           },
-          {
-            text:'火灾报警9区'
-          },
-          {
-            text:'火灾报警10区'
-          },
+         
         ],
         lightSwitch: 0,
         changeVideo:1,
@@ -516,62 +517,9 @@
           },
         ],
         // 人员列表
-        personnelList:[
-          {
-            name:'郭鹏',
-            phone:'13666666666'
-          },
-          {
-            name:'郭鹏',
-            phone:'13666666666'
-          },
-          {
-            name:'郭鹏',
-            phone:'13666666666'
-          },
-          {
-            name:'郭鹏',
-            phone:'13666666666'
-          },
-          {
-            name:'郭鹏',
-            phone:'13666666666'
-          },
-        ],
-        materialList:[
-          {
-            name:'泡沫灭火器',
-            phone:'K666+000',
-            phone1:'1',
-
-          },
-          {
-            name:'干粉灭火器',
-            phone:'K666+000',
-            phone1:'1',
-
-          },
-          {
-            name:'消火栓',
-            phone:'K666+000',
-            phone1:'1',
-          },
-          {
-            name:'消防水带',
-            phone:'K666+000',
-            phone1:'1',
-          },
-          {
-            name:'消防水带',
-            phone:'K666+000',
-            phone1:'1',
-          },
-          {
-            name:'消防水带',
-            phone:'K666+000',
-            phone1:'1',
-          },
-        ],
+        personnelList:[],
+        //应急物资
+        materialList:[],
         coviList:[
           {
             name:'CO',
@@ -640,8 +588,30 @@
     },
     created() {
       this.getTunnelData()
+      this.getmaterialList()//应急物资
+      this.getpersonnelList()//调度电话
     },
     methods:{
+      /** 查询应急人员信息列表 */
+      getpersonnelList() {
+        const params = {
+          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+        }
+        listSdEmergencyPer(params).then((response) => {
+          this.personnelList = response.rows;
+          
+
+        });
+      },
+      getmaterialList(){
+        const params = {
+          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+        }
+        listMaterial(params).then(response => {
+          this.materialList = response.rows;
+        });
+      },
+      
       rightClick(index){
          $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
          console.log($('.mousemoveBox').eq(index).children(1)[1],"index")
@@ -689,29 +659,29 @@
         const params = {
           tunnelId: tunnelId
         }
+        
         getTunnels(tunnelId).then((response) => {
           let res = response.data.storeConfigure;
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
             console.log(res,"res")
-            listType("").then((response) => {
+            listType({isControl:1}).then((response) => {
               console.log(response,'response')
-              for (let i = 0; i < res.eqList.length; i++) {
-                res.eqList[i].focus = false;
-                console.log(res.eqList[i].focus,'item.focus')
-                for (let j = 0; j < response.rows.length; j++) {
-                  if (response.rows[j].typeId == res.eqList[i].eqType) {
-                    let iconWidth = Number(response.rows[j].iconWidth);
-                    let iconHeight = Number(response.rows[j].iconHeight);
-                    res.eqList[i].iconWidth = iconWidth;
-                    res.eqList[i].iconHeight = iconHeight;
-                    break;
+              var arr = []
+              for(let item1 of response.rows) {
+                for(let item of res.eqList){
+                  item.focus = false;
+                  if (item1.typeId ==item.eqType) {
+                    item.iconWidth = Number(item1.iconWidth);
+                    item.iconHeight = Number(item1.iconHeight);
+                    arr.push(item)
                   }
                 }
+               
               }
-              that.selectedIconList = res.eqList //设备
-              console.log(that.selectedIconList, '当前设备所属隧道')
+              this.selectedIconList = arr //这是最终需要挂载到页面上的值
+              console.log(this.selectedIconList,"this.selectedIconList")
             }).then(() => {
             });
           } else {
@@ -799,20 +769,20 @@
       overflow-y: auto;
       overflow-x: hidden;
       .tunnelMap{
-        height: 59%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;
+        height: 57%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;
         .maskClass{
-          height: 100%;width: 100%;position: relative;z-index: 3;
+          height: 100%;width: 100%;position: relative;
             .mousemoveBox{
-              height: 44%;position: relative;display: inline-block;
+              height: 44%;position: relative;display: inline-block;z-index: 2;
               .partitionBox{
-                width: 100%;height: 100%;color: white;position: relative;z-index: 100;
+                width: 100%;height: 100%;color: white;position: relative;
               }
               .partitionBox:hover{
-                background-color: rgba($color: #fff, $alpha: 0.3);z-index: 10;
+                background-color: rgba($color: #fff, $alpha: 0.3);
               }
               .rightClickClass{
                 width: 70%;height: 70%;border: solid 1px white;position: absolute;top: 15%;left:15%;display: none;
-                color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 100;border-radius: 10px;box-shadow: 0 0 5px white;
+                color: white;background-color: rgba($color: #005E96, $alpha: 0.5);z-index: 4;border-radius: 10px;box-shadow: 0 0 5px white;
                 .row1{
                   width: 100%;height: 50%;border-bottom: dashed 1px #ccc;display: flex;justify-content: center;align-items: center;
                 }
@@ -863,11 +833,13 @@
     flex-direction: column;
     // align-items: center;
     width: 30px !important;
-    z-index: 2;
+    z-index: 3;
   }
   .app-container{
       background-color: #D6EDFB;
       padding: 0px 16px;
+      height: calc(100% + 60px);
+      padding: 20px;
   }
   .formTitle{
     width: 100%;height: 35px;line-height: 35px;border-left: 5px solid #385CD6;padding-left: 10px;
@@ -1162,5 +1134,8 @@
   }
   ::v-deep .el-table__body{
     width: 264px !important;
+  }
+  ::v-deep .rightBox .el-table__body-wrapper{
+    background-color: #F2F9FF !important;
   }
 </style>

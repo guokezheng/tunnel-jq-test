@@ -6,16 +6,11 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
-import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStrategyBack;
-import com.tunnel.platform.domain.event.SdStrategyModel;
-import com.tunnel.platform.domain.event.SdStrategyRl;
+import com.tunnel.platform.domain.dataInfo.*;
+import com.tunnel.platform.domain.event.*;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
+import com.tunnel.platform.mapper.dataInfo.SdStateStorageMapper;
 import com.tunnel.platform.mapper.event.SdStrategyBackMapper;
 import com.tunnel.platform.mapper.event.SdStrategyMapper;
 import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
@@ -222,6 +217,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String[] equipmentType = model.getEquipmentTypeId().split("#");
         String[] equipmentState = model.getEquipmentState().split("#");
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
+        List<SdTrigger> triggers = new ArrayList<>();
         //策略基础表
         SdStrategy sty = new SdStrategy();
         //策略类型
@@ -244,6 +240,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             rl.setStrategyId(sty.getId());
             list.add(rl);
         }
+        // 策略触发器表
+
         int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
         int result = 1;
         if (insertBranchResult < 0 || insetStrResult < 0) {
@@ -312,6 +310,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String strategyType = strategy.getStrategyType();
         String tunnelId = strategy.getTunnelId();
         SdStrategyRl rl = new SdStrategyRl();
+        rl.setStrategyId(strategy.getId());
         List<SdStrategyRl> ssgyRlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
         for (int i = 0; i < ssgyRlList.size(); i++) {
             //设备类型
@@ -331,8 +330,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdEquipmentState state = new SdEquipmentState();
             state.setStateTypeId(deviceTypeId);
             state.setDeviceState(codeDeviceState);
+            state.setStateType("2");
             List<SdEquipmentState> stateList = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
-            //状态名称
+            // 状态名称
             String stateName = stateList.get(0).getStateName();
             System.out.println("手动执行策略，调用发送指令接口【方法前】=====>>>guid：" + id);
             //调用发送指令

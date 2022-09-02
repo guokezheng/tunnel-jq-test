@@ -283,7 +283,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
     /**
      * 批量删除预案信息
      *
-     * @param ids 需要删除的预案信息ID
+     * @param rlIds 需要删除的预案信息ID
      * @return 结果
      */
     @Override
@@ -311,7 +311,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
     /**
      * 根据预案id，查询策略信息列表
      *
-     * @param sdReservePlan 预案信息
+     * @param id 预案信息
      * @return 预案信息
      */
     @Override

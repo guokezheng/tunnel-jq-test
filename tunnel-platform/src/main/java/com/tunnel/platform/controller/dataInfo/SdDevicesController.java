@@ -169,7 +169,7 @@ public class SdDevicesController extends BaseController
     @GetMapping("/tunnelId")
     @ApiOperation("通过隧道id查询设备类型名称")
     @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result<List<Map<String, Object>>> getEquipmentInfo(@PathVariable("tunnelId") String eqTunnelId)
+    public Result<List<Map<String, Object>>> getEquipmentInfo(String eqTunnelId)
     {
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqTunnelId(eqTunnelId);

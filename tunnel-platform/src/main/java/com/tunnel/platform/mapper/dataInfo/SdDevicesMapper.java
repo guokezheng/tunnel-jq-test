@@ -104,7 +104,7 @@ public interface SdDevicesMapper
 	/**
 	 * 查询每种设备类型对应的数量
 	 */
-	public int selectTypeNameCount(Long eqType, String eqTunnelId);
+	public int selectTypeNameCount(@Param("eqType") Long eqType, @Param("eqTunnelId") String eqTunnelId);
 	/**
 	 * 通过plc主机id查询设备信息
 	 * @param eqHostId

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdTriggerMapper">
+    
+    <resultMap type="SdTrigger" id="SdTriggerResult">
+        <result property="id"    column="id"    />
+        <result property="relateId"    column="relate_id"    />
+        <result property="deviceTypeId"    column="device_type_id"    />
+        <result property="triggerType"    column="trigger_type"    />
+        <result property="elementId"    column="element_id"    />
+        <result property="comparePattern"    column="compare_pattern"    />
+        <result property="compareValue"    column="compare_value"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdTriggerVo">
+        select id, relate_id, device_type_id, trigger_type, element_id, compare_pattern, compare_value, create_by, create_time, update_by, update_time from sd_trigger
+    </sql>
+
+    <select id="selectSdTriggerList" parameterType="SdTrigger" resultMap="SdTriggerResult">
+        <include refid="selectSdTriggerVo"/>
+        <where>  
+            <if test="relateId != null "> and relate_id = #{relateId}</if>
+            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
+            <if test="triggerType != null  and triggerType != ''"> and trigger_type = #{triggerType}</if>
+            <if test="elementId != null "> and element_id = #{elementId}</if>
+            <if test="comparePattern != null  and comparePattern != ''"> and compare_pattern = #{comparePattern}</if>
+            <if test="compareValue != null  and compareValue != ''"> and compare_value = #{compareValue}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdTriggerById" parameterType="Long" resultMap="SdTriggerResult">
+        <include refid="selectSdTriggerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdTrigger" parameterType="SdTrigger" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_trigger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="relateId != null">relate_id,</if>
+            <if test="deviceTypeId != null">device_type_id,</if>
+            <if test="triggerType != null">trigger_type,</if>
+            <if test="elementId != null">element_id,</if>
+            <if test="comparePattern != null">compare_pattern,</if>
+            <if test="compareValue != null">compare_value,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="relateId != null">#{relateId},</if>
+            <if test="deviceTypeId != null">#{deviceTypeId},</if>
+            <if test="triggerType != null">#{triggerType},</if>
+            <if test="elementId != null">#{elementId},</if>
+            <if test="comparePattern != null">#{comparePattern},</if>
+            <if test="compareValue != null">#{compareValue},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrigger" parameterType="SdTrigger">
+        update sd_trigger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="relateId != null">relate_id = #{relateId},</if>
+            <if test="deviceTypeId != null">device_type_id = #{deviceTypeId},</if>
+            <if test="triggerType != null">trigger_type = #{triggerType},</if>
+            <if test="elementId != null">element_id = #{elementId},</if>
+            <if test="comparePattern != null">compare_pattern = #{comparePattern},</if>
+            <if test="compareValue != null">compare_value = #{compareValue},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTriggerById" parameterType="Long">
+        delete from sd_trigger where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTriggerByIds" parameterType="String">
+        delete from sd_trigger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

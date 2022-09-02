@@ -139,12 +139,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     @Override
     public List<Map<String,Object>> selectSdDevicesByTunnelId(SdDevices sdDevices) {
         List<Map<String,Object>> listMap= new ArrayList<>();
-        List<SdDevices> list=sdDevicesMapper.selectSdDevicesByTunnelId(sdDevices);//查询所有的设备类型名称
+        List<SdDevices> list = sdDevicesMapper.selectSdDevicesByTunnelId(sdDevices);//查询所有的设备类型名称
         for (SdDevices devices : list) {
             Map<String, Object> map = new HashMap<>();
             int count = sdDevicesMapper.selectTypeNameCount(devices.getEqType(), devices.getEqTunnelId());//查询每种设备类型对应的设备数量
             map.put("count", count);
-            map.put("eqTypeName", devices.getTypeName());
+            map.put("eqTypeName", devices.getEqName());
             listMap.add(map);
         }
 

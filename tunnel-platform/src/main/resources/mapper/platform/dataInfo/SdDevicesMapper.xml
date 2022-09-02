@@ -58,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
-        <association property="typeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
+        <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
 
     <resultMap id="tunnelResult" type="SdTunnels">
@@ -351,7 +351,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 通过隧道id查询设备类型 -->
     <select id="selectSdDevicesByTunnelId" parameterType="SdDevices" resultMap="SdDevicesResult">
-        SELECT DISTINCT b.type_name, a.eq_type
+        SELECT DISTINCT b.type_name, a.eq_type, a.eq_tunnel_id, a.eq_Name
         FROM sd_devices a
         LEFT JOIN sd_equipment_type b ON a.eq_type = b.type_id
         <where>
@@ -361,7 +361,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <!-- 查询每种设备类型对应的数量 -->
-    <select id="selectTypeNameCount" resultMap="SdDevicesResult">
+    <select id="selectTypeNameCount" resultType="int" >
         SELECT COUNT(1) FROM sd_devices a
         LEFT JOIN sd_equipment_type b ON a.eq_type = b.type_id
         <where>

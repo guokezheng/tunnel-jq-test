@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdEquipmentStateVo"/>
         <where>
             <if test="stateTypeId != null "> and state_type_id = #{stateTypeId}</if>
+            <if test="stateType != null"> and state_type = #{stateType} </if>
             <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>
             <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if>
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
@@ -67,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_equipment_type b on a.state_type_id = b.type_id
         <where>
             <if test="stateTypeId != null "> and state_type_id = #{stateTypeId}</if>
+            <if test="stateType != null"> and state_type = #{stateType} </if>
             <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>
             <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if>
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->

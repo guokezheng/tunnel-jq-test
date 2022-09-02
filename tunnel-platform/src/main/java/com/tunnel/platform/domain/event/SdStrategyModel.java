@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
+
 /**
  * 控制策略对象 (接收对象)
  *
@@ -78,6 +80,10 @@ public class SdStrategyModel extends BaseEntity
 
     @ApiModelProperty("方向")
     private String direction;
+
+    /** 触发器 */
+    @ApiModelProperty("触发器")
+    private List<SdTrigger> triggers;
 
     public String getDirection() {
         return direction;
@@ -199,7 +205,15 @@ public class SdStrategyModel extends BaseEntity
 		this.tunnels = tunnels;
 	}
 
-	@Override
+    public List<SdTrigger> getTriggers() {
+        return triggers;
+    }
+
+    public void setTriggers(List<SdTrigger> triggers) {
+        this.triggers = triggers;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -217,6 +231,7 @@ public class SdStrategyModel extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("jobRelationId", getJobRelationId())
+
             .append("tunnels", getTunnels())
             .toString();
     }

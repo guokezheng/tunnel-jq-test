@@ -127,6 +127,12 @@ public class SdEvent extends BaseEntity
     @ApiModelProperty("事件短视频URL地址")
     private String videoUrl;
 
+    @ApiModelProperty("基站id")
+    private String stationId;
+
+    @ApiModelProperty("事件桩号")
+    private String stakeNum;
+
 //    @ApiModelProperty("事件结束时间")
 //    private Date endTime;
 

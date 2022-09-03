@@ -143,6 +143,7 @@ public class SdEventServiceImpl implements ISdEventService
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult insertWjEvent(Map<String, Object> map) {
         //获取异常事件列表
+        String tunnelId = (String) map.get("tunnelId");
         JSON parse = JSONUtil.parse(map.get("b5eventList"));
         List<WjEvent> list = JSONUtil.toList(parse.toString(), WjEvent.class);
         List<SdEvent> eventList=new ArrayList<>();
@@ -151,7 +152,9 @@ public class SdEventServiceImpl implements ISdEventService
             sdEvent.setId(f.getEventId());
             Byte eventType = f.getEventType();
             sdEvent.setEventTypeId(eventType.longValue());
-            sdEvent.setTunnelId(f.getStationId()+"");
+            sdEvent.setTunnelId(tunnelId);
+            sdEvent.setStationId(f.getStationId()+"");
+            sdEvent.setStakeNum(f.getStakeNum());
             sdEvent.setLaneNo(f.getLaneNo()+"");
             sdEvent.setEventLongitude(f.getEventLongitude()+"");
             sdEvent.setEventLatitude(f.getEventLatitude()+"");

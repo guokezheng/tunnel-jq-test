@@ -28,6 +28,9 @@ public class WjEvent extends BaseEntity {
     @ApiModelProperty("事件目标数量")
     private Byte targetNum;
 
+    @ApiModelProperty("事件桩号")
+    private String stakeNum;
+
     @ApiModelProperty("目标集合")
     private List<WjConfidence> targetList;
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -25,5 +26,10 @@ public class WjEventController {
     @PostMapping("/eventData")
     public AjaxResult eventData(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.insertWjEvent(map));
+    }
+
+    @PostMapping("/eventImage")
+    public void eventImage(@RequestBody Map<String,Object> map){
+        service.uploadPic(map);
     }
 }

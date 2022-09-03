@@ -153,6 +153,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+    <insert id="insertPic">
+    insert into sd_traffic_image
+    (business_id,img_name,img_url,create_time,create_by)
+    values
+    (#{eventId},#{picName},#{imgUrl},NOW(),'admin')
+    </insert>
+
     <update id="updateSdEvent" parameterType="SdEvent">
         update sd_event
         <trim prefix="SET" suffixOverrides=",">

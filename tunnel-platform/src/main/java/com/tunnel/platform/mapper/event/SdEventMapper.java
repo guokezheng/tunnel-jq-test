@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.event;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.digitalmodel.WjConfidence;
 import com.tunnel.platform.domain.event.SdEvent;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -70,4 +71,6 @@ public interface SdEventMapper
     void insertEventConfidence(List<WjConfidence> list);
 
     void insertWjEvent(List<SdEvent> list);
+
+    void insertPic(@Param("eventId") String eventId, @Param("imgUrl")String imgUrl,@Param("picName") String picName);
 }

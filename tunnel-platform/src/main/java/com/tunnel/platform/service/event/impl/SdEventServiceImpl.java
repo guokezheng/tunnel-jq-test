@@ -2,7 +2,9 @@ package com.tunnel.platform.service.event.impl;
 
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.platform.domain.digitalmodel.WjConfidence;
 import com.tunnel.platform.domain.digitalmodel.WjEvent;
@@ -15,6 +17,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,9 @@ public class SdEventServiceImpl implements ISdEventService
 
     @Autowired
     private SdEventFlowMapper sdEventFlowMapper;
+
+    @Value("${wj.imagePath}")
+    private String picUrl;
 
     /**
      * 查询事件管理
@@ -141,31 +147,15 @@ public class SdEventServiceImpl implements ISdEventService
         List<SdEvent> eventList=new ArrayList<>();
         list.forEach(f->{
             SdEvent sdEvent=new SdEvent();
-            if (StringUtils.isNotBlank(f.getEventId()+"")){
-                sdEvent.setId(f.getEventId());
-            }
-            if (StringUtils.isNotBlank(f.getEventType()+"")){
-                Byte eventType = f.getEventType();
-                sdEvent.setEventTypeId(eventType.longValue());
-            }
-            if (StringUtils.isNotBlank(f.getStationId()+"")){
-                sdEvent.setTunnelId(f.getStationId()+"");
-            }
-            if (StringUtils.isNotBlank(f.getLaneNo()+"")){
-                sdEvent.setLaneNo(f.getLaneNo()+"");
-            }
-            if (StringUtils.isNotBlank(f.getEventLongitude()+"")){
-                sdEvent.setEventLongitude(f.getEventLongitude()+"");
-            }
-            if (StringUtils.isNotBlank(f.getEventLatitude()+"")){
-                sdEvent.setEventLatitude(f.getEventLatitude()+"");
-            }
-            if (StringUtils.isNotBlank(f.getEventTimeStampStart())){
-                sdEvent.setStartTime(f.getEventTimeStampStart());
-            }
-            if (StringUtils.isNotBlank(f.getEventTimeStampEnd())){
-                sdEvent.setEndTime(f.getEventTimeStampEnd());
-            }
+            sdEvent.setId(f.getEventId());
+            Byte eventType = f.getEventType();
+            sdEvent.setEventTypeId(eventType.longValue());
+            sdEvent.setTunnelId(f.getStationId()+"");
+            sdEvent.setLaneNo(f.getLaneNo()+"");
+            sdEvent.setEventLongitude(f.getEventLongitude()+"");
+            sdEvent.setEventLatitude(f.getEventLatitude()+"");
+            sdEvent.setStartTime(f.getEventTimeStampStart());
+            sdEvent.setEndTime(f.getEventTimeStampEnd());
             eventList.add(sdEvent);
             List<WjConfidence> targetList = f.getTargetList();
             targetList.forEach(s->s.setEventIds(f.getEventId()));
@@ -173,5 +163,44 @@ public class SdEventServiceImpl implements ISdEventService
         });
         sdEventMapper.insertWjEvent(eventList);
         return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void uploadPic(Map<String, Object> map) {
+        String eventId =map.get("eventId")+"";
+        String videoImage = (String) map.get("videoImage");
+        String secondVideoImage = (String) map.get("secondVideoImage");
+        String thirdVideoImage = (String) map.get("thirdVideoImage");
+        if (StringUtils.isNotBlank(eventId)){
+            // 从缓存中获取文件存储路径
+            String fileServerPath = RuoYiConfig.getUploadPath();
+            //新路径
+            String url = fileServerPath + picUrl+"/";
+            if (StringUtils.isNotBlank(videoImage)) {
+                String e1 ="事件前";
+                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
+                String s1 = this.picName(imgUrl);
+                sdEventMapper.insertPic(eventId,imgUrl,s1);
+            }
+            if (StringUtils.isNotEmpty(secondVideoImage)) {
+                String e2 ="事件中";
+                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
+                String s2 = this.picName(imgUrl);
+                sdEventMapper.insertPic(eventId,imgUrl,s2);
+            }
+            if (StringUtils.isNotEmpty(thirdVideoImage)) {
+                String e3 ="事件后";
+                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
+                String s3 = this.picName(imgUrl);
+                sdEventMapper.insertPic(eventId,imgUrl,s3);
+            }
+        }
+    }
+
+    private String picName(String urlName){
+        String[] split = urlName.split("/");
+        String s = split[split.length - 1];
+        return s;
     }
 }

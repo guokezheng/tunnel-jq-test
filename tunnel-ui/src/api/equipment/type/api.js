@@ -98,3 +98,13 @@ export function autoEqTypeList(data) {
     params: data
   })
 }
+
+
+// 查询设备需要执行的操作
+export function getStateTypeId(data) {
+  return request({
+    url: '/eqTypeState/getDataTypeList',
+    method: 'get',
+    params: data
+  })
+}

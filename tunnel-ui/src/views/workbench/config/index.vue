@@ -206,9 +206,9 @@
         <div class="brightnessControl" @click="isDrawerB()">
           <i class="el-icon-caret-left"></i>定时控制模块
         </div>
-        <!-- <div class="triggerControl" @click="isDrawerC()">
+        <div class="triggerControl" @click="isDrawerC()">
           <i class="el-icon-caret-left"></i>触发控制模块
-        </div> -->
+        </div>
         <!-- 一键车道控制模块 -->
 
         <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
@@ -234,7 +234,7 @@
             <el-button type="primary" class="control">控制</el-button>
           </div>
         </el-drawer>
-        <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerBottom">
+        <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
           <div class="ledLighting">
             <span>引道照明时序自动控制 </span>
             <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
@@ -350,6 +350,41 @@
               </el-time-picker>
               <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
             </div>
+          </div>
+        </el-drawer>
+        <!-- 触发控制模块 -->
+        <el-drawer
+          title="触发控制"
+          :visible.sync="drawerC"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerBottom"
+        >
+          <div class="bingZhou">
+            <!-- 设备类型 -->
+            <el-select v-model="drawerC.typeValue" placeholder="请选择设备类型">
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+            <!-- 设备名称 -->
+            <div style="margin: 0 15px">
+              <el-select v-model="drawerC.nameValue" placeholder="请选择设备名称">
+                <el-option
+                  v-for="item in nameOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          
+            <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
           </div>
         </el-drawer>
       </div>
@@ -1520,12 +1555,40 @@
     },
     data() {
       return {
+        // 触发控制模块-设备类型
+        typeOptions: [
+          {
+            value: "选项1",
+            label: "选项1",
+          },
+          {
+            value: "选项2",
+            label: "选项2",
+          },
+        ],
+        // 设备名称
+        nameOptions: [
+          {
+            value: "名称1",
+            label: "选项1",
+          },
+          {
+            value: "名称2",
+            label: "选项2",
+          },
+        ],
+        drawerC:{
+          typeValue: "",
+          nameValue: "",
+          inputValue: "",
+        },
         radioEqType31:2,
         dictList: [],
         robotShow: false,
         //抽屉
         drawerA: false,
         drawerB: false,
+        drawerC: false,
         kaiGuan: false,
         checked: false,
         value1: new Date(),
@@ -2254,6 +2317,9 @@
       isDrawerB() {
         this.drawerB = true
       },
+       isDrawerC() {
+        this.drawerC = true;
+      },
       zoomSwitchChange(val) {
         console.log(val, "val")
         if (val == false) {
@@ -2543,6 +2609,7 @@
         };
         this.robotOption && this.robotChartDom.setOption(this.robotOption);
       },
+      
       // 缩略图开关
       changeThumbnail(val) {
         console.log(val, "val")
@@ -5053,7 +5120,24 @@
       content: "\e6d9" !important;
     }
   }
-
+// 触发控制模块
+    .triggerControl {
+      position: absolute;
+      right: 0;
+      top: 63%;
+      width: 25px;
+      height: 30%;
+      background-color: #4682b4;
+      color: white;
+      //垂直向下
+      writing-mode: vertical-lr;
+      text-align: center;
+      //文字间隔
+      letter-spacing: 5px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  
   //抽屉的高度
   ::v-deep .el-drawer.rtl {
     // height:49%;
@@ -5091,10 +5175,13 @@
     height: 19%;
     top: 115px;
   }
-
+  .drawerCenter{
+    height: 22%;
+    top: 31%;
+  }
   .drawerBottom {
-    height: 43%;
-    top: 32%;
+    height: 23%;
+    top: 52%;
   }
 
   .control {

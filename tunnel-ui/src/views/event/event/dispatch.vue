@@ -597,12 +597,14 @@
       upList: [],
       downList: [],
       selectedIconList: [], //配置图标
+      selectedTunnel:[]
       }
     },
     created() {
       this.getTunnelData()
       this.getmaterialList()//应急物资
       this.getpersonnelList()//调度电话
+      this.selectedTunnel = this.$route.query
     },
     methods:{
       /** 查询应急人员信息列表 */

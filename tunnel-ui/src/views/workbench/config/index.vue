@@ -2013,12 +2013,12 @@
         console.log(e, "-----------")
         if (e == 'theme-light') {
           this.echartsColor = '#00c8ff'
-          this.initechartsZ()
+          this.initeChartsEnd()
           this.initEnergyConsumption()
           this.loadFocusCar()
         } else if (e == 'theme-dark') {
           this.echartsColor = '#0a88bd',
-            this.initechartsZ()
+          this.initeChartsEnd()
           this.initEnergyConsumption()
           this.loadFocusCar()
         }
@@ -3563,11 +3563,11 @@
           stateName: null,
           isControl: null,
         };
-        // await getStateByData(queryParams).then((response) => {
-        //   let list = response.rows;
-        //   console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
-        //   that.getEqUrl(list);
-        // });
+        await getStateByData(queryParams).then((response) => {
+          let list = response.rows;
+          console.log(response,'qqqqqqqqqqqqqqqqqqqqqqq')
+          that.getEqUrl(list);
+        });
       },
       async getEqUrl(list) {
         let that = this;

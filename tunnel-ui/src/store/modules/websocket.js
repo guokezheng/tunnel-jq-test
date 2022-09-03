@@ -3,7 +3,8 @@ const websocket = {
   state: {
     payment: undefined,
     carList:[],
-    realTimeLaneTrajectory:{}
+    realTimeLaneTrajectory:{},
+    WjEvent:{}
   },
 
   mutations: {
@@ -15,6 +16,9 @@ const websocket = {
     },
     REALTIMELANETRAJECTORY: (state, data) => {
       state.realTimeLaneTrajectory = data
+    },
+    WJEVENT: (state, data) => {
+      state.WjEvent = data
     },
   },
 

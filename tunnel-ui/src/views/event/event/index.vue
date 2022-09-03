@@ -630,7 +630,6 @@ export default {
     },
     handleDispatch(row){
       this.$router.push({ path: "/emergency/administration/dispatch", query: { row: row } });
-      // /emergency/business/event/dispatch
     },
     // 表单重置
     reset() {

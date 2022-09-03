@@ -37,6 +37,8 @@
               <right-panel>
                 <settings />
               </right-panel>
+              <event-dialog v-show="eventDialog" class="eventClass"></event-dialog>
+             
             </div>
           </template>
         </div>
@@ -77,11 +79,13 @@ import Breadcrumb from '@/components/Breadcrumb'
 import RightPanel from '@/components/RightPanel'
 import TopNav from '@/components/TopNav'
 import { AppMain, Navbar, Settings, Sidebar, TagsView,Sidebarblue} from './components'
+// import {reproductionImage } from '@/components/reproductionImage'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
 import variables from '@/assets/styles/variables.scss'
 import axios from 'axios'
 import navBg from '@/assets/logo/nav_bg.png'
+import bus from "@/utils/bus";
 export default {
   name: 'Layout',
   components: {
@@ -94,6 +98,7 @@ export default {
     Sidebar,
     TagsView,
     TopNav,
+    // reproductionImage
   },
   data(){
     return{
@@ -105,18 +110,20 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
+      eventDialog:false,
     }
   },
   mixins: [ResizeMixin],
   computed: {
     ...mapState({
+      WjEvent: state => state.websocket.WjEvent,
       theme: state => state.settings.theme,
       sideTheme: state => state.settings.sideTheme,
       sidebar: state => state.app.sidebar,
       device: state => state.app.device,
       needTagsView: state => state.settings.tagsView,
       weatherView:state => state.settings.weatherView,
-      fixedHeader: state => state.settings.fixedHeader
+      fixedHeader: state => state.settings.fixedHeader,
     }),
     classObj() {
       return {
@@ -161,6 +168,7 @@ export default {
       return 'padding-top:'+ h +'px;'
     }
   },
+  
   created(){
     if(this.$route.path == '/tunnel'){
       if(this.sideTheme == 'theme-blue' || this.sideTheme == 'theme-dark' && this.topNav || this.sideTheme == 'theme-light' && this.topNav){
@@ -188,11 +196,19 @@ export default {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
+    closeDialog(val){
+      console.log(val,'valvalvalvalvalvalvalvalvalvalvalval')
+    }
   },
   watch: {
     sideTheme(val) {
       document.getElementsByTagName('body')[0].className = val;
-    }
+    },
+    WjEvent( event ){
+      if(event){
+        this.eventDialog = true
+      }
+     },
   },
   mounted() {
     if(this.weatherView == undefined) {
@@ -201,6 +217,11 @@ export default {
     this.getWeather();
     document.getElementsByTagName('body')[0].className = this.sideTheme;
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)['breadcrumb'];
+    bus.$on('closeDialog', (e) => {
+     if(e == false){
+       this.eventDialog = false
+     }
+    })
   },
 }
 </script>
@@ -264,5 +285,10 @@ export default {
       p{color:#000000;}
     }
   }
- 
+ .eventClass{
+   position: absolute;top: 25%;left: 25%;width: 50%;height: 50%;z-index: 100;
+   border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
+   background-color: #FFF;
+   border-radius: 10px;
+ }
 </style>

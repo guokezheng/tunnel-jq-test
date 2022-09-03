@@ -16,14 +16,16 @@ export default {
     })
   },
   watch: {
-   /* websocket({ password, path, port, interval}) {
+   websocket({ password, path, port, interval}) {
+     console.log(password, path, port, interval)
+     console.log(location.hostname)
       // 建立 websocket 连接
       this.socket.initialize({
        
-		url:'ws://60.208.23.50:81/ws',
-        password: password,
-        tokenSN: this.token,
-        heartRate: interval
+		     url: 'ws://10.168.64.171' + ':' + port + path,
+		        password: password,
+		        tokenSN: this.token,
+		        heartRate: interval
       });
 
       this.socket.onmessage = (message) => {
@@ -49,10 +51,13 @@ export default {
           case 'realTimeLaneTrajectory':
             this.$store.commit('REALTIMELANETRAJECTORY', content)
             break;
+          case 'WjEvent':
+            this.$store.commit('WJEVENT', content)
+            break;
           default:
         }
       }
-    } */
+    }
   },
   created() {
   },

@@ -16,6 +16,7 @@ import com.tunnel.platform.service.event.ISdEventService;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.utils.util.UUIDUtil;
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -162,12 +163,13 @@ public class SdEventServiceImpl implements ISdEventService
             sdEventMapper.insertEventConfidence(targetList);
         });
         sdEventMapper.insertWjEvent(eventList);
+        WebSocketService.broadcast("WjEvent",eventList);
         return AjaxResult.success();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void uploadPic(Map<String, Object> map) {
+    public AjaxResult uploadPic(Map<String, Object> map) {
         String eventId =map.get("eventId")+"";
         String videoImage = (String) map.get("videoImage");
         String secondVideoImage = (String) map.get("secondVideoImage");
@@ -196,6 +198,13 @@ public class SdEventServiceImpl implements ISdEventService
                 sdEventMapper.insertPic(eventId,imgUrl,s3);
             }
         }
+        return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void eventVideo(Map<String,Object> map) {
+
     }
 
     private String picName(String urlName){

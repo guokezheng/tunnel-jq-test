@@ -1,6 +1,5 @@
 package com.ruoyi.common.utils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

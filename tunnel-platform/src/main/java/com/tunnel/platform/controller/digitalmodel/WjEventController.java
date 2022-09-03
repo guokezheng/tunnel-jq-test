@@ -2,6 +2,8 @@ package com.tunnel.platform.controller.digitalmodel;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.service.event.ISdEventService;
+import com.zc.common.core.websocket.WebSocketService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +25,31 @@ public class WjEventController {
     @Autowired
     private ISdEventService service;
 
+
+    /**
+     * 事件数据
+     * @param map
+     * @return
+     */
     @PostMapping("/eventData")
     public AjaxResult eventData(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.insertWjEvent(map));
     }
 
+    /**
+     * 事件图片
+     * @param map
+     */
     @PostMapping("/eventImage")
-    public void eventImage(@RequestBody Map<String,Object> map){
-        service.uploadPic(map);
+    public AjaxResult eventImage(@RequestBody Map<String,Object> map){
+        return AjaxResult.success(service.uploadPic(map));
+    }
+
+    /**
+     * 事件视频
+     */
+    @PostMapping("/eventVideo")
+    public void eventVideo(@RequestBody Map<String,Object> map){
+        service.eventVideo(map);
     }
 }

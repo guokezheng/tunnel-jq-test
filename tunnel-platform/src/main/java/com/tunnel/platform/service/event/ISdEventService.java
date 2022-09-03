@@ -69,5 +69,7 @@ public interface ISdEventService
      */
     AjaxResult insertWjEvent(Map<String, Object> map);
 
-    void uploadPic(Map<String, Object> map);
+    AjaxResult uploadPic(Map<String, Object> map);
+
+    void eventVideo(Map<String,Object> map);
 }

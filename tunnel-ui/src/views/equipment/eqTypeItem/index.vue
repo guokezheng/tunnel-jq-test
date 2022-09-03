@@ -100,7 +100,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
-      <el-table-column label="设备类型" align="center" prop="deviceTypeId">           
+      <el-table-column label="设备类型" align="center" prop="typeName">           
       </el-table-column>
      
       <el-table-column label="单位" align="center" prop="unit" />
@@ -243,13 +243,13 @@ export default {
         listType().then((response) => {
           this.eqTypeData = response.rows;
           console.log(this.eqTypeData,'eqTypeDataeqTypeDataeqTypeDataeqTypeData')
-          this.itemList.forEach((item,index)=>{
-            this.eqTypeData.forEach((it,id)=>{
-                if(item.deviceTypeId == it.typeId){
-                  item.deviceTypeId= it.typeName
-                }
-            })
-          })
+          // this.itemList.forEach((item,index)=>{
+          //   this.eqTypeData.forEach((it,id)=>{
+          //       if(item.deviceTypeId == it.typeId){
+          //         item.deviceTypeId= it.typeName
+          //       }
+          //   })
+          // })
           console.log(this.itemList,'itemListitemListitemListitemList')
         });
       },

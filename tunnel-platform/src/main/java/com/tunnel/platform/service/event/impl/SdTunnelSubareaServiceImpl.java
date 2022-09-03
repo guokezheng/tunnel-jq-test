@@ -1,12 +1,13 @@
 package com.tunnel.platform.service.event.impl;
 
-import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.platform.domain.event.SdTunnelSubarea;
 import com.tunnel.platform.mapper.event.SdTunnelSubareaMapper;
 import com.tunnel.platform.service.event.ISdTunnelSubareaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 /**
@@ -42,7 +43,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService
     @Override
     public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea)
     {
-        return sdTunnelSubareaMapper.selectSdTunnelSubareaList(sdTunnelSubarea);
+        return sdTunnelSubareaMapper.selectSdTunnelSubareaLists(sdTunnelSubarea);
     }
 
     /**

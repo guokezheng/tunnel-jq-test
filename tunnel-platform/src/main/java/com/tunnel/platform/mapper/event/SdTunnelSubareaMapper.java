@@ -1,8 +1,8 @@
 package com.tunnel.platform.mapper.event;
 
-import java.util.List;
 import com.tunnel.platform.domain.event.SdTunnelSubarea;
-import org.apache.kafka.common.protocol.types.Field;
+
+import java.util.List;
 
 /**
  * 隧道分区Mapper接口
@@ -31,7 +31,7 @@ public interface SdTunnelSubareaMapper
      * @param sdTunnelSubarea 隧道分区
      * @return 隧道分区集合
      */
-    public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea);
+    public List<SdTunnelSubarea> selectSdTunnelSubareaLists(SdTunnelSubarea sdTunnelSubarea);
 
     /**
      * 新增隧道分区

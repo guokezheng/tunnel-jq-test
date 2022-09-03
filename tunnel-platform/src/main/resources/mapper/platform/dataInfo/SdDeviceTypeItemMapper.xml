@@ -14,6 +14,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="typeName"    column="type_name"    />
     </resultMap>
 
     <sql id="selectSdDeviceTypeItemVo">
@@ -29,6 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
         </where>
+    </select>
+
+    <select id="selectSdDeviceTypeItemLists" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">
+        select a.id, a.item_code, a.item_name, a.device_type_id, a.unit, a.remark, a.create_time, a.update_by, a.update_time ,b.type_name from sd_device_type_item a
+                                                                                                                                                   left join sd_equipment_type b on a.device_type_id = b.type_id
     </select>
     
     <select id="selectSdDeviceTypeItemById" parameterType="Long" resultMap="SdDeviceTypeItemResult">

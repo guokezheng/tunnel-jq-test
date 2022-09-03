@@ -43,7 +43,7 @@ public class SdDeviceTypeItemServiceImpl implements ISdDeviceTypeItemService
     @Override
     public List<SdDeviceTypeItem> selectSdDeviceTypeItemList(SdDeviceTypeItem sdDeviceTypeItem)
     {
-        return sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        return sdDeviceTypeItemMapper.selectSdDeviceTypeItemLists(sdDeviceTypeItem);
     }
 
     /**

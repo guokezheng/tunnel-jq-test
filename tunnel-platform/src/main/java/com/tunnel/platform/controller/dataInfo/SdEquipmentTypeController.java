@@ -90,6 +90,21 @@ public class SdEquipmentTypeController extends BaseController
         return Result.success( sdEquipmentTypeService.selectSdEquipmentTypeList(sdEquipmentType));
     }
 
+	/**
+	 * 查询数据项中设备类型列表
+	 *
+	 * @param sdEquipmentType
+	 * @return
+	 */
+	@GetMapping("/getHasItemEqTypeList")
+	@ApiOperation("查询数据项中设备类型列表")
+	public TableDataInfo<List<SdEquipmentType>> getHasItemEqTypeList(SdEquipmentType sdEquipmentType)
+	{
+		startPage();
+		List<SdEquipmentType> list = sdEquipmentTypeService.selectHasItemEqTypeList(sdEquipmentType);
+		return getDataTable(list);
+	}
+
 
 	/**
      * 获取设备类型详细信息

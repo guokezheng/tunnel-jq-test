@@ -62,6 +62,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where A.id = #{id}
     </select>
 
+    <select id="selectSdStrategyAndSdTriggerById" parameterType="Long" resultMap="SdStrategyResult">
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+               A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
+               A.create_time, A.update_by, A.update_time, B.tunnel_name,
+               d.id, relate_id, d.device_type_id, d.trigger_type, d.element_id, d.compare_pattern, d.compare_value, d.element_id, d.compare_pattern, d.compare_value
+        from sd_strategy a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_trigger d on a.id = d.relate_id
+        left join sd_trigger_device e on d.id = e.device_id
+        left join sd_device_type_item f on d.element_id = f.id
+        where a.id = #{id}
+    </select>
+
     <select id="selectSdStrategyByJobRelationId" parameterType="String" resultMap="SdStrategyResult">
         <include refid="selectSdStrategyVo"/>
         where job_relation_id = #{jobRelationId}

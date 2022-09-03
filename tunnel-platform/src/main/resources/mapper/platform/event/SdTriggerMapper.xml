@@ -38,6 +38,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdTriggerVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectSdTriggerByRelateId" parameterType="Long" resultMap="SdTriggerResult">
+        select id, relate_id, device_type_id, trigger_type, element_id, compare_pattern, compare_value
+        from sd_trigger
+        where relate_id = #{relateId}
+    </select>
         
     <insert id="insertSdTrigger" parameterType="SdTrigger" useGeneratedKeys="true" keyProperty="id">
         insert into sd_trigger
@@ -93,5 +99,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteSdTriggerByRelateId" parameterType="Long">
+        delete from sd_trigger where relate_id = #{rid}
     </delete>
 </mapper>

@@ -109,9 +109,29 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 	@Override
 	public Integer selectExistSameType(SdEquipmentType sdEquipmentType) {
 		return sdEquipmentTypeMapper.selectExistSameType(sdEquipmentType);
-	}
+	};
 
-	;
+	/**
+	 * 查询数据项中拥有的设备类型
+	 *
+	 * @param sdEquipmentType
+	 * @return
+	 */
+	@Override
+	public List<SdEquipmentType> selectHasItemEqTypeList(SdEquipmentType sdEquipmentType) {
+		List<SdEquipmentType> list = sdEquipmentTypeMapper.selectHasItemEqTypeList(sdEquipmentType);
+		for (int i = 0; i < list.size(); i++) {
+			String iconFileId = list.get(i).getIconFileId();
+			if(iconFileId!=null && !"".equals(iconFileId) && !"null".equals(iconFileId)){
+				if(!"-1".equals(iconFileId)){
+					SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+					sdEquipmentStateIconFile.setStateIconId(iconFileId);
+					list.get(i).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+				}
+			}
+		}
+		return list;
+	}
 
 	/**
 	 * 新增设备类型

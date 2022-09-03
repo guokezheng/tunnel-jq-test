@@ -34,6 +34,16 @@ public class SdTriggerServiceImpl implements ISdTriggerService
     }
 
     /**
+     * 根据策略id查询触发器
+     * @param relateId
+     * @return
+     */
+    @Override
+    public List<SdTrigger> selectSdTriggerByRelateId(Long relateId) {
+        return sdTriggerMapper.selectSdTriggerByRelateId(relateId);
+    }
+
+    /**
      * 查询触发器列表
      * 
      * @param sdTrigger 触发器

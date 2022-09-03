@@ -11,9 +11,7 @@ import com.tunnel.platform.domain.event.*;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.platform.mapper.dataInfo.SdStateStorageMapper;
-import com.tunnel.platform.mapper.event.SdStrategyBackMapper;
-import com.tunnel.platform.mapper.event.SdStrategyMapper;
-import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
+import com.tunnel.platform.mapper.event.*;
 import com.tunnel.platform.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -56,6 +54,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private static RedisCache redisCache;
+
+    @Autowired
+    SdTriggerMapper sdTriggerMapper;
+
+    @Autowired
+    SdTriggerDeviceMapper sdTriggerDeviceMapper;
 
     /**
      * 查询控制策略
@@ -217,7 +221,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String[] equipmentType = model.getEquipmentTypeId().split("#");
         String[] equipmentState = model.getEquipmentState().split("#");
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
-        List<SdTrigger> triggers = new ArrayList<>();
+        List<SdTrigger> sdTriggers = model.getTriggers();
         //策略基础表
         SdStrategy sty = new SdStrategy();
         //策略类型
@@ -240,13 +244,25 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             rl.setStrategyId(sty.getId());
             list.add(rl);
         }
-        // 策略触发器表
-
+        // 新增策略子表
         int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
         int result = 1;
         if (insertBranchResult < 0 || insetStrResult < 0) {
             result = -1;
         }
+        // 策略触发器表
+        for (int i = 0; i < sdTriggers.size(); i++) {
+            SdTrigger trigger = sdTriggers.get(i);
+            trigger.setRelateId(sty.getId());
+            int insertSdTrigger = sdTriggerMapper.insertSdTrigger(trigger);
+            if (insertSdTrigger > 0) {
+                SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
+                sdTriggerDevice.setTriggerId(trigger.getId());
+                sdTriggerDevice.setDeviceId(equipments[i]);
+                int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+            }
+        }
+
         return result;
     }
 
@@ -259,6 +275,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         String[] equipments = model.getEquipments().split("#");
         String[] equipmentType = model.getEquipmentTypeId().split("#");
         String[] equipmentState = model.getEquipmentState().split("#");
+        List<SdTrigger> sdTriggers = model.getTriggers();
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
         SdStrategy sty = new SdStrategy();
@@ -295,6 +312,37 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int insertBranchInfo = sdStrategyRlMapper.batchInsertStrategyRl(list);
         if (insertBranchInfo < 0) {
             result = -1;
+        }
+
+        //删除触发器
+        int upTrigger = sdTriggerMapper.deleteSdTriggerByRelateId(model.getId());
+        if (upTrigger < 0) {
+            result = -1;
+        }
+
+        if ("3".equals(model.getStrategyType())) {
+            //删除触发器关联设备
+            for(SdTrigger trigger : model.getTriggers()) {
+                int deviceByTId = sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(trigger.getId());
+                if (deviceByTId < 0) {
+                    result = -1;
+                }
+            }
+            //添加触发器
+            for (int i = 0; i < sdTriggers.size(); i++) {
+                SdTrigger trigger = sdTriggers.get(i);
+                trigger.setRelateId(model.getId());
+                int insertSdTrigger = sdTriggerMapper.insertSdTrigger(trigger);
+                if (insertSdTrigger > 0) {
+                    SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
+                    sdTriggerDevice.setTriggerId(trigger.getId());
+                    sdTriggerDevice.setDeviceId(equipments[i]);
+                    int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+                    if (insertSdTriggerDevice < 0) {
+                        result = -1;
+                    }
+                }
+            }
         }
         return result;
     }

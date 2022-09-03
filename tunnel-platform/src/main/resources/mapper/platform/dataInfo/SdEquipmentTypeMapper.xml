@@ -34,6 +34,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectHasItemEqTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
+        select a.type_id, a.type_name, a.type_abbr, a.icon_width, a.icon_height, a.is_control, a.icon_file_id, a.big_type
+        from sd_device_type_item b
+        LEFT JOIN sd_equipment_type a on a.type_id = b.device_type_id
+        <where>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
+            <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+        </where>
+        group by a.type_id
+    </select>
+
     <!--查询是否存在重复的设备类型:设备名称、代号均不可重复-->
     <!--传入的这个参数类型如果是Integer类型的话,0会识别为''-->
     <select id="selectExistSameType" parameterType="SdEquipmentType" resultType="java.lang.Integer">

@@ -22,6 +22,13 @@ public interface SdStrategyMapper
      * @return 控制策略
      */
     public SdStrategy selectSdStrategyById(Long id);
+
+    /**
+     * 查询控制策略
+     * @param id 控制策略ID
+     * @return 控制策略
+     */
+    public SdStrategy selectSdStrategyAndSdTriggerById(Long id);
     /**
      * 查询控制策略
      * 

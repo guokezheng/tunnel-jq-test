@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.event.SdTriggerDeviceMapper">
+    
+    <resultMap type="SdTriggerDevice" id="SdTriggerDeviceResult">
+        <result property="id"    column="id"    />
+        <result property="triggerId"    column="trigger_id"    />
+        <result property="deviceId"    column="device_id"    />
+    </resultMap>
+
+    <sql id="selectSdTriggerDeviceVo">
+        select id, trigger_id, device_id from sd_trigger_device
+    </sql>
+
+    <select id="selectSdTriggerDeviceList" parameterType="SdTriggerDevice" resultMap="SdTriggerDeviceResult">
+        <include refid="selectSdTriggerDeviceVo"/>
+        <where>  
+            <if test="triggerId != null "> and trigger_id = #{triggerId}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdTriggerDeviceById" parameterType="Long" resultMap="SdTriggerDeviceResult">
+        <include refid="selectSdTriggerDeviceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdTriggerDevice" parameterType="SdTriggerDevice" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_trigger_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="triggerId != null">trigger_id,</if>
+            <if test="deviceId != null">device_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="triggerId != null">#{triggerId},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTriggerDevice" parameterType="SdTriggerDevice">
+        update sd_trigger_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="triggerId != null">trigger_id = #{triggerId},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTriggerDeviceById" parameterType="Long">
+        delete from sd_trigger_device where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTriggerDeviceByIds" parameterType="String">
+        delete from sd_trigger_device where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteSdTriggerDeviceByTriggerId" parameterType="Long">
+        delete from sd_trigger_device where trigger_id = #{tid}
+    </delete>
+</mapper>

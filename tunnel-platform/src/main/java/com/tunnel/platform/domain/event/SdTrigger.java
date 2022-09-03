@@ -19,7 +19,7 @@ public class SdTrigger extends BaseEntity
     private Long id;
 
     /** 关联id（策略id） */
-    @Excel(name = "关联id", readConverterExp = "策=略id")
+    @Excel(name = "关联id", readConverterExp = "策略id")
     private Long relateId;
 
     /** 设备类型id */

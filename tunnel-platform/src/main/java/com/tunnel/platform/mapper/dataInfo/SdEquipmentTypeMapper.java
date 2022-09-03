@@ -29,6 +29,12 @@ public interface SdEquipmentTypeMapper
      */
     public List<SdEquipmentType> selectSdEquipmentTypeList(SdEquipmentType sdEquipmentType);
 
+    /**
+     *
+     * @param sdEquipmentType
+     * @return
+     */
+    public List<SdEquipmentType> selectHasItemEqTypeList(SdEquipmentType sdEquipmentType);
 
     /**
      * 查询是否存在重复的设备类型

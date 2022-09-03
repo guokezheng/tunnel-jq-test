@@ -3,6 +3,7 @@ package com.tunnel.platform.service.event;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.event.SdEvent;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -67,4 +68,8 @@ public interface ISdEventService
      * @param map
      */
     AjaxResult insertWjEvent(Map<String, Object> map);
+
+    AjaxResult uploadPic(Map<String, Object> map);
+
+    void eventVideo(Map<String,Object> map);
 }

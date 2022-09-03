@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 隧道数据存储表对象 sd_state_storage
- * 
+ *
  * @author 刘方堃
  * @date 2022-01-07
  */
@@ -28,6 +28,26 @@ public class SdStateStorage extends BaseEntity
 
     private String tunnelId;
 
+    private String brightness;
+
+    private String frequency;
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
+    public String getBrightness() {
+        return brightness;
+    }
+
+    public void setBrightness(String brightness) {
+        this.brightness = brightness;
+    }
+
     public String getTunnelId() {
         return tunnelId;
     }
@@ -41,25 +61,25 @@ public class SdStateStorage extends BaseEntity
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setDeviceId(String deviceId) 
+    public void setDeviceId(String deviceId)
     {
         this.deviceId = deviceId;
     }
 
-    public String getDeviceId() 
+    public String getDeviceId()
     {
         return deviceId;
     }
-    public void setState(String state) 
+    public void setState(String state)
     {
         this.state = state;
     }
 
-    public String getState() 
+    public String getState()
     {
         return state;
     }

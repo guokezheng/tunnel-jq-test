@@ -27,7 +27,7 @@ public interface SdDeviceTypeItemMapper
      * @param sdDeviceTypeItem 设备类型数据项
      * @return 设备类型数据项集合
      */
-    public List<SdDeviceTypeItem> selectSdDeviceTypeItemList(SdDeviceTypeItem sdDeviceTypeItem);
+    public List<SdDeviceTypeItem> selectSdDeviceTypeItemLists(SdDeviceTypeItem sdDeviceTypeItem);
 
     /**
      * 新增设备类型数据项

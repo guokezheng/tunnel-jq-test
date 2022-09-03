@@ -157,3 +157,6 @@ aj:
     # 滑动干扰项(0/1/2)
     interference-options: 2
 
+#万集接口对接
+wj:
+  imagePath: /eventimage

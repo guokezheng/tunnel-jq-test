@@ -192,7 +192,9 @@ public class SdDevicesController extends BaseController
             return Result.error(1,"当前设备ID重复，请重新输入");
         } else {
             int i = sdDevicesService.insertSdDevices(sdDevices);
-            sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+            if (sdDevices.getEqType() != 31L) {
+                sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+            }
             return Result.toResult(i);
         }
     }
@@ -216,7 +218,9 @@ public class SdDevicesController extends BaseController
     public Result edit(@RequestBody SdDevices sdDevices)
     {
         int i = sdDevicesService.updateSdDevices(sdDevices);
-        sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+        if (sdDevices.getEqType() != 31L) {
+            sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+        }
         return Result.toResult(i);
     }
 

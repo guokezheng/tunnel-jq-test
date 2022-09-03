@@ -90,3 +90,11 @@ export function loadPicture(data) {
   })
 }
 
+// 查询自动触发设备类型列表
+export function autoEqTypeList(data) {
+  return request({
+    url: '/type/getHasItemEqTypeList',
+    method: 'get',
+    params: data
+  })
+}

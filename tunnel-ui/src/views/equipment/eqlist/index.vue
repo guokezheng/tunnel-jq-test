@@ -385,6 +385,18 @@
             </el-form-item>
           </el-col>
 
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="控制状态" prop="controlStatus">-->
+<!--              <el-select v-model="form.controlStatus" placeholder="请选择控制状态" clearable>-->
+<!--                <el-option-->
+<!--                  v-for="dict in dict.type.inductionlamp_control_type"-->
+<!--                  :key="dict.value"-->
+<!--                  :label="dict.label"-->
+<!--                  :value="dict.value"-->
+<!--                />-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -514,8 +526,8 @@
   } from "@/utils/auth";
   export default {
     name: "Devices",
-    //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控
-    dicts: [ 'sd_direction','brand','sd_lane','sd_use_status','sd_is_monitor'],
+    //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
+    dicts: [ 'sd_direction','brand','sd_lane','sd_use_status','sd_is_monitor','inductionlamp_control_type'],
     data() {
       const validatePass = (rule, value, callback) => {
         console.log(rule, value, callback,"rule, value, callback")
@@ -889,7 +901,6 @@
           updateBy: null,
           updateTime: null,
           leishiDeviceIp: null,
-          fEqId:null,
           lane:null,
           pile:null,
           pileName:null,
@@ -912,6 +923,7 @@
           useLife:null,
           useStatus:null,
           isMonitor:null,
+          controlStatus:null,
         };
         this.resetForm("form");
         this.queryCmdParams = {

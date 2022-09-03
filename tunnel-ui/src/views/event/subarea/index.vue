@@ -78,8 +78,8 @@
 
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
 
-      <!-- <el-table-column label="分区名称" align="center" prop="sName" /> -->      
-      <el-table-column label="隧道名称" align="center" prop="tunnelId" />
+      <el-table-column label="分区名称" align="center" prop="sName" />      
+      <el-table-column label="隧道名称" align="center" prop="tunnelName" />
       <el-table-column label="桩号下限" align="center" prop="pileMin" />
       <el-table-column label="桩号上限" align="center" prop="pileMax" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -221,13 +221,13 @@ export default {
           this.tunnelData = response.rows;
           console.log( this.tunnelData,' this.tunnelData')
         console.log( this.subareaList,'this.subareaListthis.subareaList')
-        this.tunnelData.forEach((item,index)=>{
-            this.subareaList.forEach((it,id)=>{
-                if(item.tunnelId==it.tunnelId){
-                  it.tunnelId=item.tunnelName
-                }
-            })
-        })
+        // this.tunnelData.forEach((item,index)=>{
+        //     this.subareaList.forEach((it,id)=>{
+        //         if(item.tunnelId==it.tunnelId){
+        //           it.tunnelId=item.tunnelName
+        //         }
+        //     })
+        // })
         });
       
         
@@ -304,14 +304,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
-              this.getTunnels()
+              // this.getTunnels()
             });
           } else {
             addSubarea(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
-              this.getTunnels()
+              // this.getTunnels()
             });
           }
         }
@@ -325,7 +325,7 @@ export default {
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-        this.getTunnels()
+        // this.getTunnels()
       }).catch(() => {});
     },
     /** 导出按钮操作 */

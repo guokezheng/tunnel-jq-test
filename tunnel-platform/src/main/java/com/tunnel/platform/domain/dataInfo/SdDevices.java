@@ -397,6 +397,18 @@ public class SdDevices extends BaseEntity {
      **/
     private String qNumber;
 
+    //控制状态
+    @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
+    private String controlStatus;
+
+    public String getControlStatus() {
+        return controlStatus;
+    }
+
+    public void setControlStatus(String controlStatus) {
+        this.controlStatus = controlStatus;
+    }
+
     public String getInstruction() {
         return instruction;
     }

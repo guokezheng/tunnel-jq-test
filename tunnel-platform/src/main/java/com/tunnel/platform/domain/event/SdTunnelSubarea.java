@@ -1,14 +1,9 @@
 package com.tunnel.platform.domain.event;
 
-import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
-
-import java.util.List;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 /**
  * 隧道分区对象 sd_tunnel_subarea
@@ -38,6 +33,30 @@ public class SdTunnelSubarea extends BaseEntity
 
     @ApiModelProperty("桩号上限")
     private String pileMax;
+
+    @Override
+    public String toString() {
+        return "SdTunnelSubarea{" +
+                "sId=" + sId +
+                ", sName='" + sName + '\'' +
+                ", tunnelId='" + tunnelId + '\'' +
+                ", pileMin='" + pileMin + '\'' +
+                ", pileMax='" + pileMax + '\'' +
+                ", tunnelName='" + tunnelName + '\'' +
+                '}';
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    //sd_tunnels   tunnel_name
+    private String tunnelName;
+
 
     public void setsId(Long sId)
     {
@@ -82,16 +101,4 @@ public class SdTunnelSubarea extends BaseEntity
         this.pileMax = pileMax;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("sId", getsId())
-            .append("sName", getsName())
-            .append("tunnelId", getTunnelId())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .toString();
-    }
 }

@@ -160,6 +160,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     (#{eventId},#{picName},#{imgUrl},NOW(),'admin')
     </insert>
 
+    <insert id="insertVhc">
+        insert into sd_special_vehicle
+        (id,vehicle_id,tunnel_id,vehicle_type,vehicle_color,vehicle_license,license_color)
+        values
+        (#{recordSerialNumber},#{id},#{tunelId},#{originalType},#{originalColor},#{picLicense},#{vehicleColor})
+    </insert>
+
     <update id="updateSdEvent" parameterType="SdEvent">
         update sd_event
         <trim prefix="SET" suffixOverrides=",">
@@ -182,6 +189,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
+    </update>
+
+    <update id="updateVideoById">
+    update sd_event
+    set video_url=#{eventVideoUrl}
+    where id=#{eventId}
     </update>
 
     <delete id="deleteSdEventById" parameterType="Long">

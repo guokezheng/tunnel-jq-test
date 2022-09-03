@@ -203,8 +203,35 @@ public class SdEventServiceImpl implements ISdEventService
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void eventVideo(Map<String,Object> map) {
+    public AjaxResult eventVideo(Map<String,Object> map) {
+        String eventId =map.get("eventId")+"";
+        String eventVideoUrl = (String) map.get("eventVideoUrl");
+        if (StringUtils.isNotBlank(eventVideoUrl)){
+            sdEventMapper.updateVideoById(Long.parseLong(eventId),eventVideoUrl);
+            return AjaxResult.success();
+        }
+        return AjaxResult.error();
+    }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult specialCar(Map<String, Object> map) {
+        //数据流水号
+        String recordSerialNumber = (String) map.get("recordSerialNumber");
+        //参与者全域ID
+        String id = map.get("id")+"";
+        //隧道ID
+        String tunelId = (String) map.get("tunelId");
+        //车辆类型
+        String originalType = map.get("originalType")+"";
+        //车辆颜色
+        String originalColor = map.get("originalColor")+"";
+        //车牌号
+        String picLicense = (String) map.get("picLicense");
+        //车牌颜色
+        String vehicleColor = map.get("vehicleColor")+"";
+        sdEventMapper.insertVhc(recordSerialNumber,id,tunelId,originalType,originalColor,picLicense,vehicleColor);
+        return AjaxResult.success();
     }
 
     private String picName(String urlName){

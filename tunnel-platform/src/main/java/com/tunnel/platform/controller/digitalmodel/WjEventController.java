@@ -49,7 +49,15 @@ public class WjEventController {
      * 事件视频
      */
     @PostMapping("/eventVideo")
-    public void eventVideo(@RequestBody Map<String,Object> map){
-        service.eventVideo(map);
+    public AjaxResult eventVideo(@RequestBody Map<String,Object> map){
+        return AjaxResult.success(service.eventVideo(map));
+    }
+
+    /**
+     * 重点车辆
+     */
+    @PostMapping("/specialCar")
+    public AjaxResult specialCar(@RequestBody Map<String,Object> map){
+        return AjaxResult.success(service.specialCar(map));
     }
 }

@@ -71,5 +71,7 @@ public interface ISdEventService
 
     AjaxResult uploadPic(Map<String, Object> map);
 
-    void eventVideo(Map<String,Object> map);
+    AjaxResult eventVideo(Map<String,Object> map);
+
+    AjaxResult specialCar(Map<String, Object> map);
 }

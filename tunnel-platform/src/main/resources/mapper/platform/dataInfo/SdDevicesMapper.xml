@@ -57,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="controlStatus" column="control_status" />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -75,7 +76,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectSdDevicesVo">
         select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, eq_model, brand_id,
         <!-- brand_name, -->
-        eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol, protocol_url, protocol_version, protocol_name, data_type, data_source, delivery_time, warranty_end_time, install_time, use_life, use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status, eq_status_time, dmcontrol_seat, eq_lamp_type, instruction_seat, eq_control_point_address, eq_feedback_address1, eq_feedback_address2, eq_feedback_address3, eq_feedback_address4, eq_feedback_address5, create_by, create_time, update_by, update_time, remark from sd_devices
+        eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol, protocol_url,
+        protocol_version, protocol_name, data_type, data_source, delivery_time, warranty_end_time, install_time, use_life,
+        use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
+        eq_status_time, dmcontrol_seat, eq_lamp_type, instruction_seat, eq_control_point_address, eq_feedback_address1,
+        eq_feedback_address2, eq_feedback_address3, eq_feedback_address4, eq_feedback_address5, create_by, create_time,
+        update_by, update_time, remark, control_status from sd_devices
     </sql>
 
 
@@ -89,7 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
-        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name
+        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name, a.control_status
         from sd_devices a
         left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
         left join sys_dept c on c.dept_id = b.dept_id
@@ -132,7 +138,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name, a.control_status
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -224,6 +230,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
+            <if test="controlStatus != null">control_status,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -277,6 +284,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="controlStatus != null">#{controlStatus},</if>
          </trim>
     </insert>
 
@@ -333,6 +341,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="controlStatus != null">control_status = #{controlStatus},</if>
         </trim>
         where eq_id = #{eqId}
     </update>
@@ -456,7 +465,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name
+        ,c.tunnel_name, a.control_status
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id

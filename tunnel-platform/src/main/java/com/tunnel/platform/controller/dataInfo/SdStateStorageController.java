@@ -5,8 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdStateStorage;
+import com.tunnel.platform.service.dataInfo.IInductionlampControlStatusDetailsService;
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;
 import com.tunnel.platform.service.dataInfo.ISdStateStorageService;
 import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
@@ -45,6 +47,8 @@ public class SdStateStorageController extends BaseController {
     private ISdTunnelsService sdTunnelsService;
     @Autowired
     private ISdDevicesService sdDevicesService;
+    @Autowired
+    private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
     /**
      * 模拟获取隧道设备状态
      */
@@ -78,7 +82,22 @@ public class SdStateStorageController extends BaseController {
             } else {
                 json.put("state", sdStateStorage.getState());
             }
-
+            //诱导灯设备增加亮度和频率
+            if (sdDevice.getEqType() == 31L) {
+                InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
+                inductionlampControlStatusDetails.setEquipmentId(sdDevice.getEqId());
+                List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
+                if (statusDetails.size() == 0) {
+                    json.put("brightness", "10");
+                    json.put("frequency", "10");
+                } else {
+                    json.put("brightness", statusDetails.get(0).getBrightness());
+                    json.put("frequency", statusDetails.get(0).getFrequency());
+                }
+            } else {
+                json.put("brightness", "");
+                json.put("frequency", "");
+            }
             devList.add(json);
         }
         String res = JSON.toJSONString(devList);

@@ -6,27 +6,25 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 隧道数据存储表对象 sd_state_storage
+ * 设备控制状态详情关联对象 inductionlamp_control_status_details
  *
- * @author 刘方堃
- * @date 2022-01-07
+ * @author ruoyi
+ * @date 2022-08-30
  */
-public class SdStateStorage extends BaseEntity
+public class InductionlampControlStatusDetails extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
+    /** 主键 */
     private Long id;
 
     /** 设备id */
     @Excel(name = "设备id")
-    private String deviceId;
+    private String equipmentId;
 
-    /** 状态 */
-    @Excel(name = "状态")
-    private String state;
-
-    private String tunnelId;
+    /** 设备模式类型 */
+    @Excel(name = "设备模式类型")
+    private Integer equipmentModeType;
 
     private String brightness;
 
@@ -48,14 +46,6 @@ public class SdStateStorage extends BaseEntity
         this.brightness = brightness;
     }
 
-    public String getTunnelId() {
-        return tunnelId;
-    }
-
-    public void setTunnelId(String tunnelId) {
-        this.tunnelId = tunnelId;
-    }
-
     public void setId(Long id)
     {
         this.id = id;
@@ -65,33 +55,33 @@ public class SdStateStorage extends BaseEntity
     {
         return id;
     }
-    public void setDeviceId(String deviceId)
+    public void setEquipmentId(String equipmentId)
     {
-        this.deviceId = deviceId;
+        this.equipmentId = equipmentId;
     }
 
-    public String getDeviceId()
+    public String getEquipmentId()
     {
-        return deviceId;
+        return equipmentId;
     }
-    public void setState(String state)
+    public void setEquipmentModeType(Integer equipmentModeType)
     {
-        this.state = state;
+        this.equipmentModeType = equipmentModeType;
     }
 
-    public String getState()
+    public Integer getEquipmentModeType()
     {
-        return state;
+        return equipmentModeType;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("deviceId", getDeviceId())
-            .append("state", getState())
+            .append("equipmentId", getEquipmentId())
+            .append("equipmentModeType", getEquipmentModeType())
             .append("createTime", getCreateTime())
-            .append("tunnelId", getTunnelId())
+            .append("updateTime", getUpdateTime())
             .toString();
     }
 }

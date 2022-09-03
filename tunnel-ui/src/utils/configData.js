@@ -409,6 +409,14 @@ let laneImage = [
     num: 3,
     direction: 0
   },
+  {
+    id: "3",
+    name: "2车道-短",
+    url: require('@/assets/image/lane/fenghuangshan.png'),
+    width: 1620,
+    num: 2,
+    direction: 0
+  },
 ]
 
 export {

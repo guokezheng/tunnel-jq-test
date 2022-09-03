@@ -209,7 +209,7 @@
         <!-- <div class="triggerControl" @click="isDrawerC()">
           <i class="el-icon-caret-left"></i>触发控制模块
         </div> -->
-        <!-- 一键车道控制模块 -->     
+        <!-- 一键车道控制模块 -->
 
         <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
 
@@ -603,7 +603,7 @@
                    <el-radio :label="3">流水灯</el-radio>
                  </el-radio-group>
               </el-form-item>
-              
+
               <el-form-item label="亮度:">
                   <el-slider v-model="brightness"  style="width: 90%;" :min="10" :max="155">
                   </el-slider>
@@ -4271,7 +4271,7 @@
               this.title = item.eqName;
               // this.stateSwitchVisible = true;
               // console.log('走我了');
-              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34, 33];
+              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34, 33, 31];
               if (sensorDevice.indexOf(item.eqType) != -1) {
                 this.stateSwitchVisible = true;
                 // this.stateForm = {
@@ -6349,9 +6349,9 @@
       content: "\e79d";
       font-size: 20px;
     }
-    
+
   }
-    
+
   /* 批量管理中的table*/
   .batch-table {
     //table为空时
@@ -6658,5 +6658,5 @@
   .el-image__error {
     display: none;
   }
-  
+
 </style>

@@ -69,17 +69,4 @@ public interface SdEventMapper
      */
     public int deleteSdEventByIds(Long[] ids);
 
-    void insertEventConfidence(List<WjConfidence> list);
-
-    void insertWjEvent(List<SdEvent> list);
-
-    void insertPic(@Param("eventId") String eventId, @Param("imgUrl")String imgUrl,@Param("picName") String picName);
-
-    void updateVideoById(@Param("eventId") Long eventId,@Param("eventVideoUrl") String eventVideoUrl);
-
-    void insertVhc(@Param("recordSerialNumber") String recordSerialNumber,@Param("id") String id,@Param("tunelId") String tunelId,
-                   @Param("originalType") String originalType,@Param("originalColor") String originalColor,
-                   @Param("picLicense") String picLicense,@Param("vehicleColor") String vehicleColor);
-
-    void insertRadarDetect(List<SdRadarDetectData> list);
 }

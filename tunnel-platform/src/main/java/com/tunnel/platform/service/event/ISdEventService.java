@@ -64,17 +64,7 @@ public interface ISdEventService
      */
     public int deleteSdEventById(Long id);
 
-    /**
-     * 新增万集事件
-     * @param map
-     */
-    AjaxResult insertWjEvent(Map<String, Object> map);
 
-    AjaxResult uploadPic(Map<String, Object> map);
-
-    AjaxResult eventVideo(Map<String,Object> map);
-
-    AjaxResult specialCar(Map<String, Object> map);
 
     /**
      * 根据id查询事件 ---视频
@@ -83,5 +73,5 @@ public interface ISdEventService
      */
     public SdEvent getById(Long id);
 
-    void insertRadarDetect(Map<String, Object> map) throws ParseException;
+
 }

@@ -110,7 +110,7 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      eventDialog:false,
+      eventDialog:true,
     }
   },
   mixins: [ResizeMixin],
@@ -286,9 +286,9 @@ export default {
     }
   }
  .eventClass{
-   position: absolute;top: 25%;left: 25%;width: 50%;height: 50%;z-index: 100;
-   border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
-   background-color: #FFF;
-   border-radius: 10px;
+   position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 100;
+   // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
+   background-color: rgba($color: #000000, $alpha: 0.1);
+   // border-radius: 10px;
  }
 </style>

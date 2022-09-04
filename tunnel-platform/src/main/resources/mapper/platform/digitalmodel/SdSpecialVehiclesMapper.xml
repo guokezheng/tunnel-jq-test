@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.digitalmodel.SdSpecialVehiclesMapper">
+    
+    <resultMap type="SdSpecialVehicles" id="SdSpecialVehicleResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="vehicleColor"    column="vehicle_color"    />
+        <result property="vehicleLicense"    column="vehicle_license"    />
+        <result property="licenseColor"    column="license_color"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+    </resultMap>
+
+    <sql id="selectSdSpecialVehicleVo">
+        select id, vehicle_id, tunnel_id, vehicle_type, vehicle_color, vehicle_license, license_color, start_time, end_time from sd_special_vehicle
+    </sql>
+
+    <select id="selectSdSpecialVehicleList" parameterType="SdSpecialVehicles" resultMap="SdSpecialVehicleResult">
+        <include refid="selectSdSpecialVehicleVo"/>
+        <where>  
+            <if test="vehicleId != null  and vehicleId != ''"> and vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''"> and vehicle_color = #{vehicleColor}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''"> and vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''"> and license_color = #{licenseColor}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdSpecialVehicleById" parameterType="String" resultMap="SdSpecialVehicleResult">
+        <include refid="selectSdSpecialVehicleVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdSpecialVehicle" parameterType="SdSpecialVehicles">
+        insert into sd_special_vehicle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="vehicleColor != null">vehicle_color,</if>
+            <if test="vehicleLicense != null">vehicle_license,</if>
+            <if test="licenseColor != null">license_color,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="vehicleColor != null">#{vehicleColor},</if>
+            <if test="vehicleLicense != null">#{vehicleLicense},</if>
+            <if test="licenseColor != null">#{licenseColor},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdSpecialVehicle" parameterType="SdSpecialVehicles">
+        update sd_special_vehicle
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleColor != null">vehicle_color = #{vehicleColor},</if>
+            <if test="vehicleLicense != null">vehicle_license = #{vehicleLicense},</if>
+            <if test="licenseColor != null">license_color = #{licenseColor},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdSpecialVehicleById" parameterType="String">
+        delete from sd_special_vehicle where id = #{id}
+    </delete>
+
+    <delete id="deleteSdSpecialVehicleByIds" parameterType="String">
+        delete from sd_special_vehicle where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

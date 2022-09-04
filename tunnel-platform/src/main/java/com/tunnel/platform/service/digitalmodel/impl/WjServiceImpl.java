@@ -17,6 +17,7 @@ import com.tunnel.platform.service.digitalmodel.WjService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @author dzy
  * @date 2022/9/4 16:51
  */
+@Service
 public class WjServiceImpl implements WjService {
 
     @Autowired

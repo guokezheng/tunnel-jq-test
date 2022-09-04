@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.platform.mapper.digitalmodel.SdRadarDetectDatasMapper">
+    
+    <resultMap type="SdRadarDetectDatas" id="SdRadarDetectDataResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleId"    column="vehicle_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="vehicleColor"    column="vehicle_color"    />
+        <result property="longitude"    column="longitude"    />
+        <result property="latitude"    column="latitude"    />
+        <result property="speed"    column="speed"    />
+        <result property="laneNum"    column="lane_num"    />
+        <result property="courseAngle"    column="course_angle"    />
+        <result property="vehicleLicense"    column="vehicle_license"    />
+        <result property="licenseColor"    column="license_color"    />
+        <result property="stakeNum"    column="stake_num"    />
+        <result property="detectTime"    column="detect_time"    />
+    </resultMap>
+
+    <sql id="selectSdRadarDetectDataVo">
+        select id, vehicle_id, tunnel_id, vehicle_type, vehicle_color, longitude, latitude, speed, lane_num, course_angle, vehicle_license, license_color, stake_num, detect_time from sd_radar_detect_data
+    </sql>
+
+    <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        <where>  
+            <if test="vehicleId != null  and vehicleId != ''"> and vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''"> and vehicle_color = #{vehicleColor}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="speed != null  and speed != ''"> and speed = #{speed}</if>
+            <if test="laneNum != null  and laneNum != ''"> and lane_num = #{laneNum}</if>
+            <if test="courseAngle != null  and courseAngle != ''"> and course_angle = #{courseAngle}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''"> and vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''"> and license_color = #{licenseColor}</if>
+            <if test="stakeNum != null  and stakeNum != ''"> and stake_num = #{stakeNum}</if>
+            <if test="detectTime != null "> and detect_time = #{detectTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdRadarDetectData" parameterType="SdRadarDetectData">
+        insert into sd_radar_detect_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vehicleId != null">vehicle_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="vehicleColor != null">vehicle_color,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="speed != null">speed,</if>
+            <if test="laneNum != null">lane_num,</if>
+            <if test="courseAngle != null">course_angle,</if>
+            <if test="vehicleLicense != null">vehicle_license,</if>
+            <if test="licenseColor != null">license_color,</if>
+            <if test="stakeNum != null">stake_num,</if>
+            <if test="detectTime != null">detect_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vehicleId != null">#{vehicleId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="vehicleColor != null">#{vehicleColor},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="laneNum != null">#{laneNum},</if>
+            <if test="courseAngle != null">#{courseAngle},</if>
+            <if test="vehicleLicense != null">#{vehicleLicense},</if>
+            <if test="licenseColor != null">#{licenseColor},</if>
+            <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="detectTime != null">#{detectTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdRadarDetectData" parameterType="SdRadarDetectDatas">
+        update sd_radar_detect_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="vehicleColor != null">vehicle_color = #{vehicleColor},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="laneNum != null">lane_num = #{laneNum},</if>
+            <if test="courseAngle != null">course_angle = #{courseAngle},</if>
+            <if test="vehicleLicense != null">vehicle_license = #{vehicleLicense},</if>
+            <if test="licenseColor != null">license_color = #{licenseColor},</if>
+            <if test="stakeNum != null">stake_num = #{stakeNum},</if>
+            <if test="detectTime != null">detect_time = #{detectTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdRadarDetectDataById" parameterType="String">
+        delete from sd_radar_detect_data where id = #{id}
+    </delete>
+
+    <delete id="deleteSdRadarDetectDataByIds" parameterType="String">
+        delete from sd_radar_detect_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

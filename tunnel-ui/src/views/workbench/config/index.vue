@@ -629,7 +629,7 @@
               </el-radio>
             </el-radio-group>
           </div>
-          <div v-if="stateForm.eqType == 31" class="EqType31">
+          <div v-if="stateForm.eqType == 186" class="EqType31">
             <el-form label-width="60px" label-position="left" size="mini">
               <el-form-item class="radioEqType31">
                 <el-radio-group v-model="radioEqType31"  >
@@ -4338,7 +4338,7 @@
               this.title = item.eqName;
               // this.stateSwitchVisible = true;
               // console.log('走我了');
-              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34, 33, 31];
+              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34, 33, 186];
               if (sensorDevice.indexOf(item.eqType) != -1) {
                 this.stateSwitchVisible = true;
                 // this.stateForm = {
@@ -4378,7 +4378,7 @@
           deviceId: this.stateForm.eqId,
           devType: this.stateForm.eqType,
           hostId: this.stateForm.eqHostId,
-          state: this.stateForm.eqType==31?this.radioEqType31:this.stateForm.state,
+          state: this.stateForm.eqType==186?this.radioEqType31:this.stateForm.state,
           tunnelId: this.currentTunnel.id,
           brightness:this.brightness,
           frequency:this.frequency,

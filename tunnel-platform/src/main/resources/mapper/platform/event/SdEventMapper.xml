@@ -169,6 +169,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         (#{recordSerialNumber},#{id},#{tunelId},#{originalType},#{originalColor},#{picLicense},#{vehicleColor})
     </insert>
 
+    <insert id="insertRadarDetect">
+        insert into sd_radar_detect_data
+        (id,vehicle_id,tunnel_id,vehicle_type,vehicle_color,longitude,latitude,speed,lane_num,course_angle,vehicle_license,license_color,stake_num,detect_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.vehicleId},#{item.tunnelId},#{item.vehicleType},#{item.vehicleColor},
+             #{item.longitude},#{item.latitude},#{item.speed},#{item.laneNum},#{item.courseAngle},
+             #{item.vehicleLicense},#{item.licenseColor},#{item.stakeNum},#{item.detectTime})
+        </foreach>
+    </insert>
+
     <update id="updateSdEvent" parameterType="SdEvent">
         update sd_event
         <trim prefix="SET" suffixOverrides=",">

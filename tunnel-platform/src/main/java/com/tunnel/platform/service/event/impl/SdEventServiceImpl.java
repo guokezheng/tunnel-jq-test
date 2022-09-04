@@ -8,8 +8,10 @@ import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.platform.domain.digitalmodel.WjConfidence;
 import com.tunnel.platform.domain.digitalmodel.WjEvent;
+import com.tunnel.platform.domain.digitalmodel.WjParticipants;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdEventFlow;
+import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.event.SdEventFlowMapper;
 import com.tunnel.platform.mapper.event.SdEventMapper;
 import com.tunnel.platform.service.event.ISdEventService;
@@ -22,7 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -244,6 +248,39 @@ public class SdEventServiceImpl implements ISdEventService
     @Override
     public SdEvent getById(Long id) {
         return sdEventMapper.selectSdEventById(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void insertRadarDetect(Map<String, Object> map) throws ParseException{
+        //检测时间，yyyy-MM-dd HH:mm:ss:SSS（可读性考虑）
+        String timeStamp = (String) map.get("timeStamp");
+        //隧道ID
+        String tunnelId = (String) map.get("tunnelId");
+        Date date = DateUtils.parseDate(timeStamp, "yyyy-MM-dd HH:mm:ss.SSS");
+        JSON parse = JSONUtil.parse(map.get("participants"));
+        List<WjParticipants> list = JSONUtil.toList(parse.toString(), WjParticipants.class);
+        List<SdRadarDetectData> dataList=new ArrayList<>();
+        list.forEach(
+                f->{
+            SdRadarDetectData sdRadarDetectData=new SdRadarDetectData();
+            sdRadarDetectData.setTunnelId(tunnelId);
+            sdRadarDetectData.setDetectTime(date);
+            sdRadarDetectData.setId(f.getRecordSerialNumber());
+            sdRadarDetectData.setVehicleId(f.getId()+"");
+            sdRadarDetectData.setVehicleType(f.getOriginalType()+"");
+            sdRadarDetectData.setVehicleColor(f.getOriginalColor()+"");
+            sdRadarDetectData.setLongitude(f.getLongitude()+"");
+            sdRadarDetectData.setLatitude(f.getLatitude()+"");
+            sdRadarDetectData.setSpeed(f.getSpeed()+"");
+            sdRadarDetectData.setLaneNum(f.getLaneNum()+"");
+            sdRadarDetectData.setCourseAngle(f.getCourseAngle()+"");
+            sdRadarDetectData.setVehicleLicense(f.getPicLicense());
+            sdRadarDetectData.setLicenseColor(f.getVehicleColor()+"");
+            sdRadarDetectData.setStakeNum(f.getStakeNum());
+            dataList.add(sdRadarDetectData);
+        });
+        sdEventMapper.insertRadarDetect(dataList);
     }
 
     private String picName(String urlName){

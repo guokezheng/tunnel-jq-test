@@ -3,6 +3,8 @@ package com.tunnel.platform.service.event;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.event.SdEvent;
 
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -20,8 +22,8 @@ public interface ISdEventService
      * @param id 事件管理ID
      * @return 事件管理
      */
-
     public SdEvent selectSdEventById(Long id);
+
     /**
      * 查询事件管理列表
      * 
@@ -80,4 +82,6 @@ public interface ISdEventService
      * @return
      */
     public SdEvent getById(Long id);
+
+    void insertRadarDetect(Map<String, Object> map) throws ParseException;
 }

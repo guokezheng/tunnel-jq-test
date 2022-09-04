@@ -522,17 +522,17 @@
              if (item.iFileList){
                item.iFileList.forEach(function (it,index,self) {
               // that.planRoadmapUrl(it.url);
-                     new Promise((resolve, reject) => {
-                    loadPicture({
-                      url: it.url
-                    }).then(response => {
-                      if (response.code == 200) {
-                        let base64 = response.msg
-                        it.url=base64
-                        resolve(base64) //不可缺少
-                      }
-                    })
-                  })
+                  //    new Promise((resolve, reject) => {
+                  //   loadPicture({
+                  //     url: it.url
+                  //   }).then(response => {
+                  //     if (response.code == 200) {
+                  //       let base64 = response.msg
+                  //       it.url=base64
+                  //       resolve(base64) //不可缺少
+                  //     }
+                  //   })
+                  // })
             });
 
              }

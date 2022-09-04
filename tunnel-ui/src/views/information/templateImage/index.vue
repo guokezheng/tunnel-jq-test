@@ -396,7 +396,8 @@ export default {
       that.fileList = [];
       for (let i = 0; i < iFileList.length; i++) {
         let iconName = iFileList[i].stateIconName;
-        let iconUrl = await that.picture(iFileList[i].url);
+        // let iconUrl = await that.picture(iFileList[i].url);
+        let iconUrl = iFileList[i].url
         that.fileList.push({
           name: iconName,
           url: iconUrl,

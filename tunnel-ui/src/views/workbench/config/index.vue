@@ -3644,7 +3644,8 @@
           let iconUrl = [];
           if (list[i].iFileList != null) {
             for (let j = 0; j < list[i].iFileList.length; j++) {
-              let img = await that.picture(list[i].iFileList[j].url);
+              // let img = await that.picture(list[i].iFileList[j].url);
+              let img = list[i].iFileList[j].url
               iconUrl.push(img);
             }
           }

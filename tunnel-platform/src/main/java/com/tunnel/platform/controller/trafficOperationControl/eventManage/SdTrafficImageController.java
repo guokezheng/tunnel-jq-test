@@ -201,4 +201,14 @@ public class SdTrafficImageController extends BaseController
         return result;
     }
 
+    /**
+     * 查询单个事件图片
+     * @param businessId
+     * @return
+     */
+    @GetMapping("/Image")
+    public AjaxResult getImage(@RequestParam("businessId") Long  businessId)
+    {
+        return AjaxResult.success(sdTrafficImageService.selectImageByBusinessId(businessId));
+    }
 }

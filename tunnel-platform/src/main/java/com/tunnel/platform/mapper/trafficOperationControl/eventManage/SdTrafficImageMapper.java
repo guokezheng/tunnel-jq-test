@@ -90,4 +90,5 @@ public interface SdTrafficImageMapper
      * @return
      */
     List<SdTrafficImage> selectImageByBusinessIds(List<Long> list);
+    public List<SdTrafficImage> selectImageByBusinessId(String businessId);
 }

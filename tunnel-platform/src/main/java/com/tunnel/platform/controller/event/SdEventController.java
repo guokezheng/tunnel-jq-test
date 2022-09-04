@@ -1,14 +1,14 @@
 package com.tunnel.platform.controller.event;
 
-import com.ruoyi.common.core.domain.entity.SysRole;
-import com.ruoyi.common.core.page.Result;
-import com.tunnel.platform.domain.event.SdEvent;
-import com.tunnel.platform.service.event.ISdEventService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.tunnel.platform.domain.event.SdEvent;
+import com.tunnel.platform.service.event.ISdEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -109,5 +109,15 @@ public class SdEventController extends BaseController
     public Result remove(@PathVariable Long[] ids)
     {
         return Result.toResult(sdEventService.deleteSdEventByIds(ids));
+    }
+
+    /**
+     * 根据id查询事件 ---视频
+     * @param id
+     * @return
+     */
+    @GetMapping("evntId")
+    public AjaxResult getById(@RequestParam("id") Long id){
+        return AjaxResult.success(sdEventService.getById(id));
     }
 }

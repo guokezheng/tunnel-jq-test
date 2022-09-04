@@ -1,7 +1,5 @@
 package com.tunnel.platform.domain.trafficOperationControl.eventManage;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
@@ -96,31 +94,25 @@ public class SdTrafficImage extends BaseEntity
     {
         return imgHeight;
     }
-    public void setBusinessId(String businessId)
-    {
-        this.businessId = businessId;
-    }
-
-    public String getBusinessId()
-    {
-        return businessId;
-    }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("imgId", getImgId())
-            .append("imgName", getImgName())
-            .append("imgUrl", getImgUrl())
-                .append("imgBase64",getImgBase64())
-            .append("imgWidth", getImgWidth())
-            .append("imgHeight", getImgHeight())
-            .append("remark", getRemark())
-            .append("businessId", getBusinessId())
-            .append("createTime", getCreateTime())
-            .append("createBy", getCreateBy())
-            .append("updateTime", getUpdateTime())
-            .append("updateBy", getUpdateBy())
-            .toString();
+        return "SdTrafficImage{" +
+                "imgId=" + imgId +
+                ", imgName='" + imgName + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", imgBase64='" + imgBase64 + '\'' +
+                ", imgWidth='" + imgWidth + '\'' +
+                ", imgHeight='" + imgHeight + '\'' +
+                ", businessId='" + businessId + '\'' +
+                '}';
+    }
+
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
     }
 }

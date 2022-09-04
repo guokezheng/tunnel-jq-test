@@ -93,4 +93,10 @@ public interface ISdTrafficImageService
      * @return
      */
     List<SdTrafficImage> selectImageByBusinessIds(List<Long> list);
+    /**
+     * 查询单个事件图片
+     * @param businessId
+     * @return
+     */
+    List<SdTrafficImage> selectImageByBusinessId(Long businessId);
 }

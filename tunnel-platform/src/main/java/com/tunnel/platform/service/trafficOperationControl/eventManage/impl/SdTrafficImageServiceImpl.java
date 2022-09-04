@@ -141,4 +141,15 @@ public class SdTrafficImageServiceImpl implements ISdTrafficImageService
         return sdTrafficImageMapper.selectImageByBusinessIds(list);
     }
 
+    /**
+     * 查询单个事件图片
+     * @param businessId
+     * @return
+     */
+    @Override
+    public List<SdTrafficImage> selectImageByBusinessId(Long businessId) {
+        String id = businessId+"";
+        return  sdTrafficImageMapper.selectImageByBusinessId(id);
+    }
+
 }

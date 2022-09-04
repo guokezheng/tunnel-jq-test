@@ -236,6 +236,15 @@ public class SdEventServiceImpl implements ISdEventService
         sdEventMapper.insertVhc(recordSerialNumber,id,tunelId,originalType,originalColor,picLicense,vehicleColor);
         return AjaxResult.success();
     }
+    /**
+     * 根据id查询事件 ---视频
+     * @param id
+     * @return
+     */
+    @Override
+    public SdEvent getById(Long id) {
+        return sdEventMapper.selectSdEventById(id);
+    }
 
     private String picName(String urlName){
         String[] split = urlName.split("/");

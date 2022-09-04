@@ -1,7 +1,12 @@
 package com.tunnel.platform.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.event.SdStrategy;
+import com.tunnel.platform.domain.event.SdStrategyModel;
 import com.tunnel.platform.domain.event.SdTrigger;
+import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.platform.mapper.event.SdStrategyMapper;
 import com.tunnel.platform.mapper.event.SdTriggerMapper;
 import com.tunnel.platform.service.event.ISdTriggerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,12 @@ public class SdTriggerServiceImpl implements ISdTriggerService
     @Autowired
     private SdTriggerMapper sdTriggerMapper;
 
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdStrategyMapper sdStrategyMapper;
+
     /**
      * 查询触发器
      * 
@@ -39,8 +50,17 @@ public class SdTriggerServiceImpl implements ISdTriggerService
      * @return
      */
     @Override
-    public List<SdTrigger> selectSdTriggerByRelateId(Long relateId) {
-        return sdTriggerMapper.selectSdTriggerByRelateId(relateId);
+    public SdTrigger selectSdTriggerByRelateId(Long relateId) {
+        SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(relateId);
+        if ("2".equals(sdStrategy.getStrategyType())) {
+            SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(relateId);
+            if (!"".equals(sdTrigger.getDeviceId())) {
+                SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(sdTrigger.getDeviceId());
+                sdTrigger.setSdDevices(sdDevices);
+            }
+            return sdTrigger;
+        }
+       return new SdTrigger();
     }
 
     /**

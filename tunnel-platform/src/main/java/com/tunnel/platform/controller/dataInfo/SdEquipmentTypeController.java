@@ -91,7 +91,7 @@ public class SdEquipmentTypeController extends BaseController
     }
 
 	/**
-	 * 查询数据项中设备类型列表
+	 *
 	 *
 	 * @param sdEquipmentType
 	 * @return

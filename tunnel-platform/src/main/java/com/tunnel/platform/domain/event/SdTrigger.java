@@ -1,5 +1,7 @@
 package com.tunnel.platform.domain.event;
 
+import com.tunnel.platform.domain.dataInfo.SdDeviceTypeItem;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -26,6 +28,12 @@ public class SdTrigger extends BaseEntity
     @Excel(name = "设备类型id")
     private Long deviceTypeId;
 
+    /** 设备id */
+    @Excel(name = "设备id")
+    private String deviceId;
+
+    private SdDevices sdDevices;
+
     /** 触发类型（0:状态触发,1：数据触发） */
     @Excel(name = "触发类型", readConverterExp = "0=:状态触发,1：数据触发")
     private String triggerType;
@@ -33,6 +41,8 @@ public class SdTrigger extends BaseEntity
     /** 触发元素id(状态id;数据项id;) */
     @Excel(name = "触发元素id(状态id;数据项id;)")
     private Long elementId;
+
+    private SdDeviceTypeItem sdDeviceTypeItem;
 
     /** 比较模式(0:>；1:>=；2:<；3:<=；4:==；5:!=；6:in；7:between；) */
     @Excel(name = "比较模式(0:>；1:>=；2:<；3:<=；4:==；5:!=；6:in；7:between；)")
@@ -69,7 +79,16 @@ public class SdTrigger extends BaseEntity
     {
         return deviceTypeId;
     }
-    public void setTriggerType(String triggerType) 
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public void setTriggerType(String triggerType)
     {
         this.triggerType = triggerType;
     }
@@ -104,6 +123,22 @@ public class SdTrigger extends BaseEntity
     public String getCompareValue() 
     {
         return compareValue;
+    }
+
+    public SdDevices getSdDevices() {
+        return sdDevices;
+    }
+
+    public void setSdDevices(SdDevices sdDevices) {
+        this.sdDevices = sdDevices;
+    }
+
+    public SdDeviceTypeItem getSdDeviceTypeItem() {
+        return sdDeviceTypeItem;
+    }
+
+    public void setSdDeviceTypeItem(SdDeviceTypeItem sdDeviceTypeItem) {
+        this.sdDeviceTypeItem = sdDeviceTypeItem;
     }
 
     @Override

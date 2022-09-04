@@ -108,3 +108,12 @@ export function getStateTypeId(data) {
     params: data
   })
 }
+
+// 回显自动触发的接口
+export function getTriggersByRelateId(data) {
+  return request({
+    url: '/strategy/trigger/getTriggersByRelateId',
+    method: 'get',
+    params: data
+  })
+}

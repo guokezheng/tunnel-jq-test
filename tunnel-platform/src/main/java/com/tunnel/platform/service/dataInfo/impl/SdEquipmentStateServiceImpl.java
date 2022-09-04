@@ -261,7 +261,6 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 					iconFile.setCreateBy(SecurityUtils.getUsername());
 					iconFile.setCreateTime(DateUtils.getNowDate());
 					list.add(iconFile);
-
 					if (!filepath.exists()) {
 						filepath.mkdirs();
 					} else {
@@ -302,8 +301,9 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 	@Override
 	public int  insertSdEquipmentStateList(List<SdEquipmentState> sdEquipmentStates) {
 		Iterator<SdEquipmentState> iterator = sdEquipmentStates.iterator();
-		String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
 		while (iterator.hasNext()) {
+			// 生成guid
+			String guid = UUIDUtil.getRandom32BeginTimePK();
 			SdEquipmentState sdEquipmentState = iterator.next();
 			String[] split = sdEquipmentState.getIconFileId().split(",");
 			Iterator<String> iterator1 = Arrays.stream(split).iterator();
@@ -398,8 +398,6 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 	@Override
 	public int updateSdEquipmentStates(List<SdEquipmentState> sdEquipmentStates) {
 		int result = 0;
-		// 生成guid
-		String guid = UUIDUtil.getRandom32BeginTimePK();
 		//更新设备状态更新图片
 		List<SdEquipmentState> updateSdEquipmentStates = new ArrayList<>();
 		//新增设备状态
@@ -428,6 +426,8 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 		}
 		Iterator<SdEquipmentState> iterator2 = updateSdEquipmentStates.iterator();
 		while (iterator2.hasNext()) {
+			// 生成guid
+			String guid = UUIDUtil.getRandom32BeginTimePK();
 			List<Long> ids = new ArrayList<>();
 			List<String> iconFileIds = new ArrayList<>();
 			SdEquipmentState sdEquipmentState = iterator2.next();

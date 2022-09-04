@@ -194,7 +194,7 @@ public class SdEquipmentStateController extends BaseController
     /**
      * 删除设备类型图片(根据图标文件ID)
      * @param id
-     * @return
+     * @returnR
      */
     @ApiOperation("删除设备类型图片")
     @DeleteMapping("/delFiles/{id}")

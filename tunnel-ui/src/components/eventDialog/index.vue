@@ -66,23 +66,23 @@
    data() {
      return {
       eventList: [
-        {
-          tunnelId:'11',
-          id:111,
-          laneNo:1,
-          eventLongitude:35.632234,
-          eventLatitude:117.36434,
-          startTime:"17:34:23",
-          tunnels:"XXX",
-          eventTypeId:'火灾报警',
-          eventType:'？？？'
-          },
-        {
-          tunnelId:'22',
-          id:222},
-        {
-          tunnelId:'33',
-          id:333},
+        // {
+        //   tunnelId:'11',
+        //   id:111,
+        //   laneNo:1,
+        //   eventLongitude:35.632234,
+        //   eventLatitude:117.36434,
+        //   startTime:"17:34:23",
+        //   tunnels:"XXX",
+        //   eventTypeId:'火灾报警',
+        //   eventType:'？？？'
+        //   },
+        // {
+        //   tunnelId:'22',
+        //   id:222},
+        // {
+        //   tunnelId:'33',
+        //   id:333},
       ],
      
       urls: [
@@ -111,22 +111,22 @@
     WjEvent( event ){
       console.log(event,'websockt接收数据')
       if(event){
-        // for(var i=0;i<event.length;i++){
-        //   event[i].num = i
-        // }
-        // console.log(event)
-        // this.eventList = event;
-        // this.event = this.eventList[0]
+        for(var i=0;i<event.length;i++){
+          event[i].num = i
+        }
+        console.log(event)
+        this.eventList = event;
+        this.event = this.eventList[0]
       }
      },
      deep: true,
    },
    created() {
      
-     for(var i=0;i<this.eventList.length;i++){
-       this.eventList[i].num = i
-     }
-     this.event = this.eventList[0]
+     // for(var i=0;i<this.eventList.length;i++){
+     //   this.eventList[i].num = i
+     // }
+     // this.event = this.eventList[0]
      
     this.getUrl()
    },

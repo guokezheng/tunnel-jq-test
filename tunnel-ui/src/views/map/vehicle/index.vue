@@ -216,7 +216,7 @@
 </template>
 
 <script>
-import { listVehicle, getVehicle, delVehicle, addVehicle, updateVehicle, exportVehicle } from "@/api/special/vehicle";
+import { listVehicle, getVehicle, delVehicle, addVehicle, updateVehicle, exportVehicle } from "@/api/map/special/vehicle";
 
 export default {
   name: "Vehicle",

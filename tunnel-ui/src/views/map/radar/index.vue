@@ -273,7 +273,7 @@
 </template>
 
 <script>
-import { listData, getData, delData, addData, updateData, exportData } from "@/api/radar/data";
+import { listData, getData, delData, addData, updateData, exportData } from "@/api/map/radar/data";
 
 export default {
   name: "Data",

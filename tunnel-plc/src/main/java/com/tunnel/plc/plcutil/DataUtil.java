@@ -96,8 +96,8 @@ public class DataUtil {
                         String[] split3 = feedbackAddress4.split("\\.");
                         dataInfo.setX(3, Integer.parseInt(split3[0]));
                         dataInfo.setY(3, Integer.parseInt(split3[1]));
-                        //特殊车指
-                    } else if (device.getEqType() == DevicesTypeEnum.TU_SHU_CHE_ZHI.getCode()) {
+                        //带左转车指
+                    } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
                         String feedbackAddress1 = device.getEqFeedbackAddress1();
                         String feedbackAddress2 = device.getEqFeedbackAddress2();
                         String feedbackAddress3 = device.getEqFeedbackAddress3();
@@ -183,7 +183,7 @@ public class DataUtil {
                             dataInfo.setY(1, Integer.parseInt(split1[1]));
                         }
                         //风机
-                    } else if (device.getEqType() == DevicesTypeEnum.FENG_JI_1.getCode()) {
+                    } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
                         String feedbackAddress1 = device.getEqFeedbackAddress1();
                         String feedbackAddress2 = device.getEqFeedbackAddress2();
                         String feedbackAddress3 = device.getEqFeedbackAddress3();
@@ -203,27 +203,28 @@ public class DataUtil {
                         String[] split3 = feedbackAddress4.split("\\.");
                         dataInfo.setX(3, Integer.parseInt(split3[0]) - 20);
                         dataInfo.setY(3, Integer.parseInt(split3[1]));
-                    } else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
-                        String feedbackAddress1 = device.getEqFeedbackAddress1();
-                        String feedbackAddress2 = device.getEqFeedbackAddress2();
-                        String feedbackAddress3 = device.getEqFeedbackAddress3();
-                        String feedbackAddress4 = device.getEqFeedbackAddress4();
-                        String[] split0 = feedbackAddress1.split("\\.");
-                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
-                        dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                        String[] split1 = feedbackAddress2.split("\\.");
-                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
-                        dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                        String[] split2 = feedbackAddress3.split("\\.");
-                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
-                        dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                        String[] split3 = feedbackAddress4.split("\\.");
-                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
-                        dataInfo.setY(3, Integer.parseInt(split3[1]));
                     }
+//                    else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
+//                        String feedbackAddress1 = device.getEqFeedbackAddress1();
+//                        String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                        String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                        String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                        String[] split0 = feedbackAddress1.split("\\.");
+//                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
+//                        dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                        String[] split1 = feedbackAddress2.split("\\.");
+//                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
+//                        dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                        String[] split2 = feedbackAddress3.split("\\.");
+//                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
+//                        dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                        String[] split3 = feedbackAddress4.split("\\.");
+//                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
+//                        dataInfo.setY(3, Integer.parseInt(split3[1]));
+//                    }
                     dataInfos.add(dataInfo);
                 }
                 dataMap.put(plc.getEqId(), dataInfos);

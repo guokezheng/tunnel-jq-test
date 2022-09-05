@@ -180,9 +180,8 @@ public class SdEquipmentTypeController extends BaseController
     public AjaxResult loadPicture(String url) {
 		String src = "";
 		//区分内存位置
-		url=url.replaceAll("C:","/Users/dear_/Desktop/JQ/equipmentIcon/equipmentIcon");
+		url=url.replaceAll("/opt/suidao/file/uploadPath/upload","E:/uploadPath/upload");
 //		url=url.replaceAll("E:","D:/");
-		AjaxResult ajaxResult = null;
 		try {
 			src = ioToBase64(url);
 		} catch (IOException e) {

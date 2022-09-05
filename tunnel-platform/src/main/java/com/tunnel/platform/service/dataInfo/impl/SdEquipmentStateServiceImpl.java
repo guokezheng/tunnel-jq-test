@@ -12,6 +12,7 @@ import com.tunnel.platform.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -244,6 +245,19 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 			if (file.length > 0) {
 //				String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
 				for (int i = 0; i < file.length; i++) {
+					String imageBaseStr = null;
+					try {
+						String contentType = file[i].getContentType();
+						if(!contentType.contains("image")){
+							throw  new RuntimeException("文件类型不正确!");
+						}
+						byte[] imageBytes = file[i].getBytes();
+						BASE64Encoder base64Encoder =new BASE64Encoder();
+						imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+						imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+					} catch (IOException e) {
+						throw  new RuntimeException("图片转换base64异常");
+					}
 					// 从缓存中获取文件存储路径
 					String fileServerPath = RuoYiConfig.getUploadPath();
 					// 原图文件名
@@ -256,7 +270,7 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService
 					File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
 					File filepath = new File(fileServerPath + "/equipmentIcon");
 					SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
-					iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+					iconFile.setUrl(imageBaseStr);
 					iconFile.setStateIconName(fileName);
 					iconFile.setCreateBy(SecurityUtils.getUsername());
 					iconFile.setCreateTime(DateUtils.getNowDate());

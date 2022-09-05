@@ -47,22 +47,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdReservePlanVo">
-        select id,subarea_id, plan_type_id, plan_description, plan_name, plan_file_id, strategy_id, create_by, create_time, update_by, update_time from sd_reserve_plan
+        select id,subarea_id, plan_type_id, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
-        		 A.strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
+        		 E.strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
         		 B.event_type, C.strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
-        left join sd_strategy C on A.strategy_id = C.iddd
+        left join sd_reserve_process E on A.id = E.reserve_id
+        left join sd_strategy C on E.strategy_id = C.id
         left join sd_tunnel_subarea D on D.tunnel_id = C.tunnel_id
         <where>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
-            <if test="strategyId != null "> and A.strategy_id = #{strategyId}</if>
         </where>
         ORDER BY A.id DESC
     </select>

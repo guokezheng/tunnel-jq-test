@@ -94,4 +94,15 @@ public class SdRadarDetectDataController extends BaseController
     {
         return toAjax(sdRadarDetectDataService.deleteSdRadarDetectDataByIds(ids));
     }
+
+    /**
+     * 根据隧道id 查询24小时 感知数据
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/byId")
+    public AjaxResult eventById(@RequestParam("tunnelId") String tunnelId)
+    {
+        return AjaxResult.success(sdRadarDetectDataService.eventById(tunnelId));
+    }
 }

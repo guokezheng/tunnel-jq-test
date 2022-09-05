@@ -192,7 +192,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         int result = sdStrategyMapper.deleteSdStrategyByIds(ids);
         if (result >0) {
-            result = sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
+            sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
             for (Long id : ids) {
                 SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(id);
                 if (sdTrigger != null){
@@ -301,6 +301,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         //策略基础表
         SdStrategy sty = new SdStrategy();
         //策略类型
+        sty.setId(model.getId());
         sty.setStrategyType(model.getStrategyType());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());

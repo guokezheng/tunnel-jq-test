@@ -8,26 +8,45 @@ package com.tunnel.platform.datacenter.domain.enumeration;
  */
 public enum DevicesTypeEnum {
 
-    PU_TONG_CHE_ZHI(1, "普通车指"),
-    TU_SHU_CHE_ZHI(2, "特殊车指"),
+    PU_TONG_CHE_ZHI(1, "普通车道指示器"),
+    ZHUO_ZHUAN_CHE_ZHI(2, "带左转车道指示器"),
     JIAO_TONG_XIN_HAO_DENG(3, "交通信号灯"),
     ZUO_JIAO_TONG_XIN_HAO_DENG(4, "带左转交通信号灯"),
-    DONG_NEI_LIANG_DU(5, "洞内亮度"),
-    DONG_WAI_LIANG_DU(6, "洞外亮度"),
+    LIANG_DU_JIAN_CE(5, "亮度检测器"),
+    YING_JI_ZHAO_MING(6, "应急照明"),
     JIA_QIANG_ZHAO_MING(7, "加强照明"),
     YIN_DAO_ZHAO_MING(8, "引道照明"),
     JI_BEN_ZHAO_MING(9, "基本照明"),
-    FENG_JI_1(10, "风机1"),
-    FENG_JI_2(11, "风机2"),
-    PENG_DONG_ZHAO_MING(12, "棚洞照明"),
-	FENG_XIANG(13,"风向"),
-	CO_JIAN_CE(14,"CO检测器"),
-	VI_JIAN_CE(15,"VI检测器"),
-	FENG_SU_JIAN_CE(16,"风速检测器"),
-	JUAN_LIAN_MEN(17,"卷帘门"),
-    SHUI_BENG(18,"水泵"),
-    SHUI_BENG_ZHUANGTAI(19,"手自动状态"),
-    SHUI_BENG_YEWEI(20,"液位");
+    FENG_JI(10, "风机"),
+    PENG_DONG_ZHAO_MING(11, "光伏棚洞"),
+    JUAN_LIAN_MEN(12, "卷帘门"),
+    SHUI_BENG(13,"消防水泵"),
+	PLC(14,"PLC主机"),
+    SHUI_BENG_YE_WEI(15,"消防水池液位传感器"),
+//    情报板
+    VMS(16,"可变信息标志"),
+    FENG_SU_FENG_XIANG(17,"风速风向检测器"),
+	CO_VI(19,"CO/VI检测器"),
+    WEI_BO_CHE_JIAN(20,"微波车辆检测器"),
+    ET(21,"紧急电话"),
+    LS(22,"扬声器"),
+    CAMERA_BOX(23,"固定摄像机（枪机）"),
+    CAMERA_DOME(24,"云台摄像机（球机）"),
+    CAMERA_ZP(25,"抓拍摄像机"),
+    LIDAR(26,"激光雷达"),
+    MMW_RADAR(27,"毫米波雷达"),
+    YA_LI_BIAO(28,"远传压力表"),
+    ROBOT(29,"巡检机器人"),
+    SHU_SAN_BIAO_ZHI(30,"智能疏散标志"),
+    YOU_DAO_DENG(31,"智能诱导灯"),
+    SHENG_GUANG_BAO_JING(32,"声光报警器"),
+    XIAO_FANG_PAO(33,"智能消防炮"),
+    SHOU_BAO(34,"智能手动报警按钮"),
+    BIAN_SIAN_SUO(35,"变电所"),
+    REN_XING_HENG_DONG(40,"人行横洞指示标志"),
+    CHE_XING_HENG_DONG(41,"车行横洞指示标志"),
+    RSU(42,"路侧单元RSU"),
+    TING_CHE_DAI(43,"紧急停车带标志");
 
 
     private int code;
@@ -86,7 +105,7 @@ public enum DevicesTypeEnum {
                 case 4:
                     return "正反关闭";
             }
-        }else if(type == TU_SHU_CHE_ZHI.code){
+        }else if(type == ZHUO_ZHUAN_CHE_ZHI.code){
 
 
             switch (point){
@@ -154,7 +173,7 @@ public enum DevicesTypeEnum {
                 case 0:
                     return "照明打开";
             }
-        }else if(type == FENG_JI_1.code){
+        }else if(type == FENG_JI.code){
 
             switch (point){
                 case 1:
@@ -162,16 +181,17 @@ public enum DevicesTypeEnum {
                 case 8:
                     return "风机1反转启动";
             }
-        }else if(type == FENG_JI_2.code){
-
-            switch (point){
-
-                case 2:
-                    return "风机2正转启动";
-                case 10:
-                    return "风机2反转启动";
-            }
         }
+//        else if(type == FENG_JI_2.code){
+//
+//            switch (point){
+//
+//                case 2:
+//                    return "风机2正转启动";
+//                case 10:
+//                    return "风机2反转启动";
+//            }
+//        }
 
         return "";
     }
@@ -220,7 +240,7 @@ public enum DevicesTypeEnum {
             }
 
 
-        } else if (type == TU_SHU_CHE_ZHI.code) {
+        } else if (type == ZHUO_ZHUAN_CHE_ZHI.code) {
 
             if (point[0] == '1'
                     && point[1] == '0'
@@ -365,7 +385,7 @@ public enum DevicesTypeEnum {
             }
 
 
-        } else if (type == FENG_JI_1.code) {
+        } else if (type == FENG_JI.code) {
 
             if (point[0] == '1'
                     && point[1] == '0'

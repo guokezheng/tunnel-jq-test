@@ -22,9 +22,9 @@ public class DataInfo  {
 
 
     private String distance;
-    
+
     private Integer jlmState; //1:上限位2:下限位0:故障
-    
+
     public Integer getJlmState() {
 		return jlmState;
 	}
@@ -33,9 +33,9 @@ public class DataInfo  {
 		this.jlmState = jlmState;
 	}
 	private Long concentration;
-    
+
     private Long visibility;
-    
+
     private Long windspeed;
 
     private String sbState;
@@ -73,7 +73,7 @@ public class DataInfo  {
             this.name[1] = "正面红";
             this.name[2] = "反面绿";
             this.name[3] = "反面红";
-        } else if (deviceType == DevicesTypeEnum.TU_SHU_CHE_ZHI.getCode()) {
+        } else if (deviceType == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
             this.name[0] = "正面绿";
             this.name[1] = "正面红";
             this.name[2] = "反面绿";
@@ -97,7 +97,7 @@ public class DataInfo  {
         } else if (deviceType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
             this.name[0] = "开";
             this.name[1] = "远程";
-        } else if (deviceType == DevicesTypeEnum.FENG_JI_1.getCode()|| deviceType == DevicesTypeEnum.FENG_JI_2.getCode()) {
+        } else if (deviceType == DevicesTypeEnum.FENG_JI.getCode()) {
             this.name[0] = "自动";
             this.name[1] = "正转";
             this.name[2] = "故障";
@@ -159,7 +159,7 @@ public class DataInfo  {
             for (int i = 0; i < 4; i++) {
                 this.data[i] = a[this.x[i]][this.y[i]];
             }
-        } else if (deviceType == DevicesTypeEnum.TU_SHU_CHE_ZHI.getCode()) {
+        } else if (deviceType == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
             for (int i = 0; i < 5; i++) {
                 this.data[i] = a[this.x[i]][this.y[i]];
             }
@@ -175,7 +175,7 @@ public class DataInfo  {
             for (int i = 0; i < 2; i++) {
                 this.data[i] = a[this.x[i]][this.y[i]];
             }
-        }  else if (deviceType == DevicesTypeEnum.FENG_JI_1.getCode()||deviceType == DevicesTypeEnum.FENG_JI_2.getCode()) {
+        }  else if (deviceType == DevicesTypeEnum.FENG_JI.getCode()) {
             for (int i = 0; i < 4; i++) {
                 this.data[i] = a[this.x[i]][this.y[i]];
             }

@@ -90,4 +90,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="specialById" parameterType="String" resultMap="SdSpecialVehicleResult">
+        <include refid="selectSdSpecialVehicleVo"/>
+        where tunnel_id = #{tunnelId}
+    </select>
 </mapper>

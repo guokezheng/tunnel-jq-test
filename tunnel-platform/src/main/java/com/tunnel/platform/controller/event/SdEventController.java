@@ -116,7 +116,7 @@ public class SdEventController extends BaseController
      * @param id
      * @return
      */
-    @GetMapping("evntId")
+    @GetMapping("/evntId")
     public AjaxResult getById(@RequestParam("id") Long id){
         return AjaxResult.success(sdEventService.getById(id));
     }

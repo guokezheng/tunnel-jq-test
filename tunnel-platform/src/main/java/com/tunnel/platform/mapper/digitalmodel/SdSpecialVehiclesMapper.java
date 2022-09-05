@@ -60,4 +60,10 @@ public interface SdSpecialVehiclesMapper
      * @return 结果
      */
     public int deleteSdSpecialVehicleByIds(String[] ids);
+    /**
+     * 根据隧道id 查询24小时 重点车辆
+     * @param tunnelId
+     * @return
+     */
+    public List<SdSpecialVehicles> specialById(String tunnelId);
 }

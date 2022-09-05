@@ -25,32 +25,32 @@ public class RedisMessage {
 	 private ISdSensorMessageService sdSensorMessageService;
 	 @Autowired
 	 private ISdTrafficStatisticsService sdTrafficStatisticsService;
-	 
-	 
-	 /**
-	  * 传感器信息存储
-	  * 
-	  * @author yanghousheng
-	  * @date 2020-11-18
-	  */
-	    @Scheduled(fixedRate = 1000*60*5)
-	    public void selectRedisCache() {
-			redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
-	        List<SdDevices> list = sdDevicesService.selectSensorList();
-	        for(SdDevices sdDevice:list){
-	        	redisCache.getCacheObject(String.valueOf(sdDevice.getEqId()));
-	        	SdSensorMessage sdSensorMessage = new SdSensorMessage();
-	        	sdSensorMessage.setEqId(String.valueOf(sdDevice.getEqId()));
-	        	sdSensorMessage.setEqType(sdDevice.getEqType()+"");
-	        	sdSensorMessage.setSensorValue(redisCache.getCacheObject(String.valueOf(sdDevice.getEqId())));
-	        	sdSensorMessage.setEqTunnelId(sdDevice.getEqTunnelId());
-	        	sdSensorMessage.setGettime(DateUtils.getNowDate());
-	        	sdSensorMessage.setCreateTime(DateUtils.getNowDate());
-	        	sdSensorMessage.setEqTunnelId(sdDevice.getEqTunnelId());
-	        	sdSensorMessageService.insertSdSensorMessage(sdSensorMessage);
-	        }
-	    }
-	    
+
+
+//	 /**
+//	  * 传感器信息存储
+//	  *
+//	  * @author yanghousheng
+//	  * @date 2020-11-18
+//	  */
+//	    @Scheduled(fixedRate = 1000*60*5)
+//	    public void selectRedisCache() {
+//			redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
+//	        List<SdDevices> list = sdDevicesService.selectSensorList();
+//	        for(SdDevices sdDevice:list){
+//	        	redisCache.getCacheObject(String.valueOf(sdDevice.getEqId()));
+//	        	SdSensorMessage sdSensorMessage = new SdSensorMessage();
+//	        	sdSensorMessage.setEqId(String.valueOf(sdDevice.getEqId()));
+//	        	sdSensorMessage.setEqType(sdDevice.getEqType()+"");
+//	        	sdSensorMessage.setSensorValue(redisCache.getCacheObject(String.valueOf(sdDevice.getEqId())));
+//	        	sdSensorMessage.setEqTunnelId(sdDevice.getEqTunnelId());
+//	        	sdSensorMessage.setGettime(DateUtils.getNowDate());
+//	        	sdSensorMessage.setCreateTime(DateUtils.getNowDate());
+//	        	sdSensorMessage.setEqTunnelId(sdDevice.getEqTunnelId());
+//	        	sdSensorMessageService.insertSdSensorMessage(sdSensorMessage);
+//	        }
+//	    }
+
 	    /**
 	     * 存储微波车检（定时每分钟存储一次）//1000*1 代表5秒    一分钟：1000*12
 	     */
@@ -74,7 +74,7 @@ public class RedisMessage {
 				}
 	        }
 	    }*/
-	    
+
 	    /**
 	     * 电力监控数据
 	     */

@@ -553,7 +553,53 @@
           {{ '水位'}}
         </el-form-item>
         <!-- ====================微波检查器开始====== -->
-        <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
+        <template  v-if="stateForm.value &&stateForm.eqType == 20">
+          <el-table
+            ref="multipleTable"
+            :data="weiboList"
+            tooltip-effect="dark"
+            style="width: 100%"
+            size="mini"
+            empty-text="暂无数据"
+          >
+            <el-table-column label="车道" align="center" prop="byLane">
+              <template slot-scope="scope">
+                <span>第{{ scope.row.byLane }}车道</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="车流量(辆/分钟)"
+              align="center"
+              prop="fSpaceOccupyRation"
+            >
+              <template slot-scope="scope">
+                <span>{{ scope.row.fSpaceOccupyRation }}辆/分钟</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="平均车速" align="center" prop="bySpeed">
+              <template slot-scope="scope">
+                <span>{{ scope.row.bySpeed }}km/h</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="占有率"
+              align="center"
+              prop="fSpaceOccupyRation"
+            >
+              <template slot-scope="scope">
+                <span>{{ scope.row.fSpaceOccupyRation }}%</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="上传时间" align="center" prop="createTime">
+              <template slot-scope="scope">
+                <span>{{
+                    parseTime(scope.row.createTime, "{y}-{m}-{d} {h}:{i}:{s}")
+                  }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </template>
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
           {{ '正常'}}
         </el-form-item>
         <el-form-item label="车道:" v-if="stateForm.value && stateForm.eqType == 20">
@@ -570,7 +616,7 @@
         </el-form-item>
         <el-form-item label="上传时间:" v-if="stateForm.value && stateForm.eqType == 20">
           {{ '今天'}}
-        </el-form-item>
+        </el-form-item> -->
         <!-- ====================微博检查结束============ -->
         <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
           {{ stateForm.value }}
@@ -1993,6 +2039,11 @@
         imageTimer: null, //定时器
         isLogin: false,
         handleTableWheelSwithch: false,
+        weiboList:[
+          {id:1,byLane:'一',fSpaceOccupyRation:'29',bySpeed:'74',fSpaceOccupyRation:'47',createTime:'2022-09-05 17:44:32'},
+          {id:2,byLane:'二',fSpaceOccupyRation:'29',bySpeed:'74',fSpaceOccupyRation:'47',createTime:'2022-09-05 18:54:19'},
+          {id:3,byLane:'三',fSpaceOccupyRation:'39',bySpeed:'54',fSpaceOccupyRation:'91',createTime:'2022-09-05 19:25:52'},
+        ],//假数据
       }
     },
 
@@ -2111,6 +2162,7 @@
     watch: {
       // 设备类型
       "batchForm.eqType"(val) {
+        console.log(val)
         if (mode == "buttonSelection") {
           let param = {
             eqTunnelId: this.currentTunnel.id,
@@ -4009,7 +4061,6 @@
           })
         })
         if (this.itemEqTypeStateList != []) this.spanEqtypeDate = false
-
         // 传感器（模拟量）
         let sensorDevice = [1, 2, 3, 4, 7, 8, 9, 10, 12, 13, 14, 15, 16, 24];
         if (sensorDevice.indexOf(item.eqType) != -1) {

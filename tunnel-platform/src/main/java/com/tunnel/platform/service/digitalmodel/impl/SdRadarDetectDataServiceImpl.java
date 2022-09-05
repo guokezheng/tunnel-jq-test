@@ -3,12 +3,9 @@ package com.tunnel.platform.service.digitalmodel.impl;
 import com.tunnel.platform.domain.digitalmodel.SdRadarDetectDatas;
 import com.tunnel.platform.mapper.digitalmodel.SdRadarDetectDatasMapper;
 import com.tunnel.platform.service.digitalmodel.ISdRadarDetectDataService;
-import com.tunnel.platform.utils.date.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -101,19 +98,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService
      */
     public List<SdRadarDetectDatas> eventById(String tunnelId)
     {
-
         List<SdRadarDetectDatas> datas = sdRadarDetectDataMapper.eventById(tunnelId);
-        List<SdRadarDetectDatas> sdRadarDetectDatas = new ArrayList<>();
-        for (SdRadarDetectDatas data : datas) {
-            //获取数据库时间
-            Date detectTime = data.getDetectTime();
-            if (DateUtils.isToday(detectTime)){
-               sdRadarDetectDatas.add(data);
-            }else {
-                return null;
-            }
-
-        }
-        return sdRadarDetectDatas;
+        return datas;
     }
 }

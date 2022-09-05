@@ -3684,7 +3684,6 @@
       },
       /* 获取隧道配置信息*/
       getTunnelData(tunnelId) {
-        console.log(tunnelId, '参数餐宿参数擦擦是')
         let that = this;
         that.upList = [];
         that.downList = [];
@@ -3702,8 +3701,6 @@
             listType("").then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                // console.log(response,'responseresponseresponse')
-                console.log(res.eqList[i].focus, 'item.focus')
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4010,7 +4007,7 @@
           console.log(res, 'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
           this.stateForm.stateName = res.rows[0].stateName
         })
-        this.getTunnelData(this.currentTunnel.id);
+        // this.getTunnelData(this.currentTunnel.id);
         // 防止 ‘暂未获取’ 和 配置状态单选同时出现
         this.spanEqtypeDate = true
         let newPromise = new Promise((resolve) => {

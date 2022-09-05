@@ -80,7 +80,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planDescription != null">plan_description,</if>
             <if test="planName != null">plan_name,</if>
             <if test="planFileId != null">plan_file_id,</if>
-            <if test="strategyId != null">strategy_id,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -92,7 +91,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planDescription != null">#{planDescription},</if>
             <if test="planName != null">#{planName},</if>
             <if test="planFileId != null">#{planFileId},</if>
-            <if test="strategyId != null">#{strategyId},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -108,7 +106,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planDescription != null">plan_description = #{planDescription},</if>
             <if test="planName != null">plan_name = #{planName},</if>
             <if test="planFileId != null">plan_file_id = #{planFileId},</if>
-            <if test="strategyId != null">strategy_id = #{strategyId},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

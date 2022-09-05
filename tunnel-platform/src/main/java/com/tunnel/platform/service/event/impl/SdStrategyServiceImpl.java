@@ -6,11 +6,13 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
-import com.tunnel.platform.domain.dataInfo.*;
+import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import com.tunnel.platform.domain.event.*;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
-import com.tunnel.platform.mapper.dataInfo.SdStateStorageMapper;
 import com.tunnel.platform.mapper.event.*;
 import com.tunnel.platform.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;
@@ -162,8 +164,32 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int deleteSdStrategyById(Long id) {
-        return sdStrategyMapper.deleteSdStrategyById(id);
+        // 删除策略之前要先判断策略是否已经在预案管理中被引用
+        SdStrategy sdStrategy = new SdStrategy();
+        sdStrategy.setId(id);
+        List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(sdStrategy);
+        if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
+            List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
+            if (maps.size() > 0) {
+                throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+            }
+        } else {
+            throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
+        }
+        int result = sdStrategyMapper.deleteSdStrategyById(id);
+        if (result >0) {
+            sdStrategyRlMapper.deleteSdStrategyRlByStrategyId(id);
+            SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(id);
+            if (sdTrigger != null){
+                if (sdTrigger.getId() < 0) {
+                    sdTriggerMapper.deleteSdTriggerById(sdTrigger.getId());
+                    sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(sdTrigger.getId());
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -227,9 +253,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     public int addStrategysInfo(SdStrategyModel model) {
         List<Map> equipment = model.getEquipment();
-//        String[] equipments = model.getEquipments().split("#");
-//        String[] equipmentType = model.getEquipmentTypeId().split("#");
-//        String[] equipmentState = model.getEquipmentState().split("#");
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         SdTrigger sdTrigger = model.getTriggers();
         //策略基础表
@@ -245,32 +268,40 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-        for (int i = 0; i < equipment.size(); i++) {
-            Map<String, Object> map = equipment.get(i);
-            String equipments = map.get("equipments").toString().replaceAll("#",",");
-            String equipmentTypeId = map.get("equipmentTypeId") + "" ;
-            String eqState = (String) map.get("eqState");
-            SdStrategyRl rl = new SdStrategyRl();
-            rl.setEqTypeId(equipmentTypeId);
-            rl.setEquipments(equipments);
-            rl.setState(eqState);
-            rl.setStrategyId(sty.getId());
-            list.add(rl);
+        if (model.getEquipment() != null){
+            for (int i = 0; i < equipment.size(); i++) {
+                Map<String, Object> map = equipment.get(i);
+                String equipments = map.get("equipments").toString().replaceAll("#", ",");
+                String equipmentTypeId = map.get("equipmentTypeId") + "";
+                String eqState = (String) map.get("eqState");
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentTypeId);
+                rl.setEquipments(equipments);
+                rl.setState(eqState);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
         }
-        /*//策略关联表
-        for (int i = 0; i < equipmentState.length; i++) {
-
-            rl.setEqTypeId(equipmentType[i]);
-            rl.setEquipments(equipments[i]);
-            rl.setState(equipmentState[i]);
-            rl.setStrategyId(sty.getId());
-            list.add(rl);
-        }*/
+        if ( !"".equals(model.getEquipments()) & !"".equals(model.getEquipmentState()) & !"".equals(model.getEquipmentTypeId()) ){
+            String[] equipments = model.getEquipments().split("#");
+            String[] equipmentType = model.getEquipmentTypeId().split("#");
+            String[] equipmentState = model.getEquipmentState().split("#");
+            for (int i = 0; i < equipmentState.length; i++) {
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentType[i]);
+                rl.setEquipments(equipments[i]);
+                rl.setState(equipmentState[i]);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
+        }
         // 新增策略子表
-        int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
         int result = 1;
-        if (insertBranchResult < 0 || insetStrResult < 0) {
-            result = -1;
+        if (list.size() != 0) {
+            int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
+            if (insertBranchResult < 0 || insetStrResult < 0) {
+                result = -1;
+            }
         }
         if ("2".equals(model.getStrategyType())) {
             // 策略触发器表
@@ -281,9 +312,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sdTriggerDevice.setTriggerId(sdTrigger.getId());
                 sdTriggerDevice.setDeviceId(sdTrigger.getDeviceId());
                 int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+                if (insertSdTriggerDevice < 0) {
+                    result = -1;
+                }
             }
         }
-
         return result;
     }
 

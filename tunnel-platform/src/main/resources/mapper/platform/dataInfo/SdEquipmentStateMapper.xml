@@ -44,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stateTypeId != null "> and state_type_id = #{stateTypeId}</if>
             <if test="deviceState != null  and deviceState != ''"> and device_state = #{deviceState}</if>
             <if test="stateName != null  and stateName != ''"> and state_name like concat('%', #{stateName}, '%')</if>
-            and is_control = 1
+            and is_control = 1 and state_type = 2
         </where>
     </select>
 
@@ -60,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
             <!-- <if test="isControl != null "> and a.is_control = #{isControl}</if> -->
         </where>
+        order by a.sort asc
     </select>
 
     <select id="selectDropSdEquipmentStateList" parameterType="SdEquipmentState" resultMap="SdEquipmentStateResult">
@@ -74,6 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
             <if test="isControl != null "> and a.is_control = #{isControl}</if>
         </where>
+
     </select>
 
     <select id="selectSdEquipmentStateListGroupByStateType" parameterType="SdEquipmentState" resultMap="SdEquipmentStateResult">
@@ -88,6 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="isControl != null  and isControl != ''"> and is_control like concat('%', #{isControl}, '%')</if> -->
             <if test="isControl != null "> and a.is_control = #{isControl}</if>
         </where>
+        order by a.sort asc
     </select>
 
     <!--查询设备类型状态列表（按设备类型分组查询）-->

@@ -60,4 +60,12 @@ public interface SdRadarDetectDatasMapper
      * @return 结果
      */
     public int deleteSdRadarDetectDataByIds(String[] ids);
+    /**
+     * 根据隧道id 查询24小时 感知数据
+     * @param tunnelId
+     * @return
+     */
+    public List<SdRadarDetectDatas> eventById(String tunnelId);
+
+
 }

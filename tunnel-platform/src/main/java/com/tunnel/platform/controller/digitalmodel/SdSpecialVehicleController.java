@@ -94,4 +94,14 @@ public class SdSpecialVehicleController extends BaseController
     {
         return toAjax(sdSpecialVehicleService.deleteSdSpecialVehicleByIds(ids));
     }
+    /**
+     * 根据隧道id 查询24小时 重点车辆
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/specialById")
+    public AjaxResult specialById(@RequestParam("tunnelId") String tunnelId)
+    {
+        return AjaxResult.success(sdSpecialVehicleService.specialById(tunnelId));
+    }
 }

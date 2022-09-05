@@ -115,4 +115,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="eventById" parameterType="String" resultMap="SdRadarDetectDataResult">
+        <include refid="selectSdRadarDetectDataVo"/>
+        where tunnel_id = #{tunnelId}
+    </select>
 </mapper>

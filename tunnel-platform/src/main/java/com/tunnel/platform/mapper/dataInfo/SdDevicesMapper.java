@@ -130,4 +130,9 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
+
+	List<SdDevices> selectDeviceByTidEqtp(@Param("list") List<SdDevices> list,
+	  @Param("tunnelId") String tunnelId,@Param("lidarType") Integer lidarType,@Param("cameraType") Integer cameraType);
+
+	void updateSdDevicesBatch(List<SdDevices> list);
 }

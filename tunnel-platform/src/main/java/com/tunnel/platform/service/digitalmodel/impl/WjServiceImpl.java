@@ -1,22 +1,26 @@
 package com.tunnel.platform.service.digitalmodel.impl;
 
 import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.domain.digitalmodel.WjConfidence;
-import com.tunnel.platform.domain.digitalmodel.WjEvent;
-import com.tunnel.platform.domain.digitalmodel.WjParticipants;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.digitalmodel.*;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdRadarDetectData;
+import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.digitalmodel.WjMapper;
 import com.tunnel.platform.service.digitalmodel.WjService;
+import com.tunnel.platform.utils.constant.WjConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,12 @@ public class WjServiceImpl implements WjService {
 
     @Autowired
     private WjMapper wjMapper;
+
+    @Autowired
+    private SdDevicesMapper devicesMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     @Value("${wj.imagePath}")
     private String picUrl;
@@ -174,8 +184,66 @@ public class WjServiceImpl implements WjService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveRedis(Map<String, Object> map) {
-
-        Object lidarInfo = map.get("lidarInfo");
+        //隧道ID
+        String tunnelId = (String) map.get("tunnelId");
+        //转实体接收
+        JSON parse = JSONUtil.parse(map.get("lidarInfo"));
+        WjDevicelidar wjDevicelidar = JSONUtil.toBean(parse.toString(), WjDevicelidar.class);
+        //转集合接收
+        JSON json = JSONUtil.parse(map.get("cameraInfoList"));
+        List<WjDeviceCamera> wjDeviceCameraList = JSONUtil.toList(json.toString(), WjDeviceCamera.class);
+        List<SdDevices> devicesList=new ArrayList<>();
+        //将相机的隧道id设备类型id放入集合
+        wjDeviceCameraList.forEach(
+            f->{
+                SdDevices devices=new SdDevices();
+                devices.setIp(f.getIp());
+                devicesList.add(devices);
+            }
+        );
+        //将雷达的隧道id设备类型id放入集合
+        SdDevices devices = new SdDevices();
+        devices.setIp(wjDevicelidar.getIp());
+        devicesList.add(devices);
+        //雷达设备类型
+        Integer lidarType = wjDevicelidar.getDeviceType();
+        //相机设备类型
+        Integer cameraType = wjDeviceCameraList.get(0).getDeviceType();
+        //遍历集合查出雷达、枪机设备ID 数据库
+        List<SdDevices> list = devicesMapper.selectDeviceByTidEqtp(devicesList,tunnelId,lidarType,cameraType);
+        //将雷达的状态放入相机集合
+        WjDeviceCamera wjDeviceCamera=new WjDeviceCamera();
+        wjDeviceCamera.setIp(wjDevicelidar.getIp());
+        wjDeviceCamera.setDeviceType(wjDevicelidar.getDeviceType());
+        wjDeviceCamera.setStatus(wjDevicelidar.getStatus());
+        wjDeviceCameraList.add(wjDeviceCamera);
+        for (int i = 0; i < list.size(); i++) {
+            for (int t = 0; t < wjDeviceCameraList.size(); t++) {
+                String eqType = list.get(i).getEqType()+"";
+                if (list.get(i).getIp().equals(wjDeviceCameraList.get(t).getIp()) && eqType.equals(wjDeviceCameraList.get(t).getDeviceType()+"")){
+                    //状态赋最新值
+                    String s = wjDeviceCameraList.get(t).getStatus() + "";
+                    list.get(i).setEqStatus(s);
+                    //给传入数据赋eqId
+                    wjDeviceCameraList.get(t).setEqId(list.get(i).getEqId());
+                }
+            }
+        }
+        //将设备状态保存到设备表
+        devicesMapper.updateSdDevicesBatch(list);
+        //赋值雷达eqId
+        wjDevicelidar.setEqId(wjDeviceCameraList.get(wjDeviceCameraList.size()-1).getEqId());
+        //存储后将雷达数据从相机数据剔除
+        wjDeviceCameraList.remove(wjDeviceCameraList.size()-1);
+        //雷达数据存redis
+        redisCache.setCacheMapValue(WjConstants.WJ_LIDAR_INFO_KEY,WjConstants.WJ_LIDAR_INFO_KEY+wjDevicelidar.getEqId(),parse);
+        //相机数据存redis
+        wjDeviceCameraList.forEach(
+            v->{
+                JSON parse1 = JSONUtil.parse(v);
+                redisCache.setCacheMapValue(WjConstants.WJ_CAMERA_INFO_KEY,WjConstants.WJ_CAMERA_INFO_KEY+v.getEqId(),parse1);
+            }
+        );
     }
 
     private String picName(String urlName){

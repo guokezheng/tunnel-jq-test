@@ -104,7 +104,6 @@ public class WjEventController {
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
-
         wjService.saveRedis(map);
         //手动提交
         item.acknowledge();

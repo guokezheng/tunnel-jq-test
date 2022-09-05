@@ -346,6 +346,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </update>
 
+    <update id="updateSdDevicesBatch">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update sd_devices
+            set eq_status = #{item.eqStatus}
+            where eq_id = #{item.eqId}
+        </foreach>
+    </update>
+
 
     <delete id="deleteSdDevicesById" parameterType="String">
         delete from sd_devices where eq_id = #{eqId}
@@ -491,5 +499,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             ${params.dataScope}
         GROUP BY a.eq_name
+    </select>
+
+    <select id="selectDeviceByTidEqtp" resultMap="SdDevicesResult">
+        select eq_id,eq_type,ip,eq_tunnel_id,eq_status
+        from sd_devices
+        where eq_tunnel_id=#{tunnelId}
+        and eq_type in (#{lidarType},#{cameraType})
+        and ip in
+        <foreach collection="list" item="item" separator="," open="(" close=")">
+            #{item.ip}
+        </foreach>
     </select>
 </mapper>

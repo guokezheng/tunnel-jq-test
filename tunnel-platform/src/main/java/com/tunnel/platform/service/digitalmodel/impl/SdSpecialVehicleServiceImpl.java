@@ -3,12 +3,9 @@ package com.tunnel.platform.service.digitalmodel.impl;
 import com.tunnel.platform.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.platform.mapper.digitalmodel.SdSpecialVehiclesMapper;
 import com.tunnel.platform.service.digitalmodel.ISdSpecialVehicleService;
-import com.tunnel.platform.utils.date.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -103,15 +100,6 @@ public class SdSpecialVehicleServiceImpl implements ISdSpecialVehicleService
     @Override
     public List<SdSpecialVehicles> specialById(String tunnelId) {
         List<SdSpecialVehicles> data = sdSpecialVehicleMapper.specialById(tunnelId);
-        ArrayList<SdSpecialVehicles> list = new ArrayList<>();
-        for (SdSpecialVehicles specialVehicle : data) {
-            Date startTime = specialVehicle.getStartTime();
-            if (DateUtils.isToday(startTime)){
-                list.add(specialVehicle);
-            }else {
-                return null;
-            }
-        }
-        return list;
+        return data;
     }
 }

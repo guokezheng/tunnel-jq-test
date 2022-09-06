@@ -138,65 +138,73 @@
        <el-input style="width: 90%;" v-model="strategyForm.strategyName" placeholder="请输入策略名称" />
      </el-form-item>
      <el-form-item label="策略类型" prop="strategyType">
-       <el-radio-group v-model="strategyForm.strategyType">
+       <el-radio-group v-model="strategyForm.strategyType" >
          <el-radio border
            v-for="dict in insertStrategyTypeOptions"
            :key="dict.dictValue"
            :label="dict.dictValue"
+           @click.native="getDeviceType"
          >{{dict.dictLabel}}</el-radio>
        </el-radio-group>
      </el-form-item>
-     <el-form-item label="方向">
+
+     <template v-if="is_show">
+      <el-form-item label="方向" v-if="strategyForm.strategyType === '1' " >
        <el-select v-model="strategyForm.direction" placeholder="请选择设备方向">
-         <el-option v-for="dict in directionOptions" :key="dict.id" :label="dict.dictLabel" :value="dict.dictValue" />
+         <el-option v-for="(dict,index) in directionOptions" :key="index" :label="dict.dictLabel" :value="dict.dictValue"  @click.native="slectDirectionTime(dict.dictValue)" />
        </el-select>
      </el-form-item>
-     <!-- 手动控制 -->
-    <el-form-item label="设备类型" v-show="strategyForm.strategyType === '0' && sink=='edit'">
-      <el-select v-model="oneId1" placeholder="请选择设备类型" >
-        <el-option  v-for="item in equipmentTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId" 
-                    @click.native="eqTypeChange(item.typeId,item.typeName)"/>
-      </el-select>
-    </el-form-item>
-    <el-form-item label="设备类型" v-show="strategyForm.strategyType === '0' && sink=='add' ">
-      <el-select v-model="strategyForm.equipmentTypeId1" placeholder="请选择设备类型" >
-        <el-option  v-for="item in equipmentTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId" 
-                    @click.native="eqTypeChange(item.typeId,item.typeName)"/>
-      </el-select>
-    </el-form-item>
-    <!-- 手动控制下面 -->
-    <el-form-item v-for="(it, index) in strategyForm.addOperation" :key="index" v-show="strategyForm.strategyType === '0'">
-       <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  multiple placeholder="请选择设备" style="width: 40%">
-         <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
-         <el-option
-             v-for="(item,ix) in equipmentData"
-             :key="item.eqId+ix"
-             :label="item.eqName"
-             :value="item.eqId"/>
-         <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
-       </el-select>
-       <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='edit' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
-          style="width: 39%;margin-left:6%;" >
-         <el-option
-           v-for="item in eqState3"
-           :key="item.deviceState+1"
-           :label="item.stateName"
-           :value="item.deviceState"> 
-         </el-option>
-       </el-select>       
-       <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='add' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
-          style="width: 39%;margin-left:6%;" >
-         <el-option
-           v-for="item in eqState1"
-           :key="item.deviceState"
-           :label="item.stateName"
-           :value="item.deviceState"> 
-         </el-option>
-       </el-select>
-       <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
-    </el-form-item>
-    
-    <!-- 定时控制 -->
+      <!-- 手动控制 -->
+      <el-form-item label="设备类型" v-if="strategyForm.strategyType === '0' && sink=='edit'" >
+        <el-select v-model="oneId1" placeholder="请选择设备类型" >
+          <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
+                      @click.native="eqTypeChange(item.typeId,item.typeName)"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="设备类型" v-if="strategyForm.strategyType === '0' && sink=='add' " >
+        <el-select v-model="strategyForm.equipmentTypeId1" placeholder="请选择设备类型" >
+          <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
+                      @click.native="eqTypeChange(item.typeId,item.typeName)"/>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="方向" v-if="strategyForm.strategyType == '0'">
+        <el-select v-model="strategyForm.direction" placeholder="请选择设备方向" >
+          <el-option v-for="(dict,index) in directionOptions" :key="index" :label="dict.dictLabel" :value="dict.dictValue"   @click.native="slectDirection(dict.dictValue)"/>
+        </el-select>
+      </el-form-item>
+      <!-- 手动控制下面 -->
+      <el-form-item v-for="(it, index) in strategyForm.addOperation" :key="index" v-if="strategyForm.strategyType == '0'">
+        <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  multiple placeholder="请选择设备" style="width: 40%">
+          <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
+          <el-option
+              v-for="(item) in equipmentData"
+              :key="item.eqId"
+              :label="item.eqName"
+              :value="item.eqId"/>
+          <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
+        </el-select>
+        <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='edit' " placeholder="请选择设备需要执行的操作"
+            style="width: 39%;margin-left:6%;" >
+          <el-option
+            v-for="item in eqState3"
+            :key="item.deviceState+1"
+            :label="item.stateName"
+            :value="item.deviceState"> 
+          </el-option>
+        </el-select>       
+        <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='add' " placeholder="请选择设备需要执行的操作" 
+            style="width: 39%;margin-left:6%;" >
+          <el-option
+            v-for="item in eqState1"
+            :key="item.deviceState"
+            :label="item.stateName"
+            :value="item.deviceState"> 
+          </el-option>
+        </el-select>
+        <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
+      </el-form-item>
+      
+      <!-- 定时控制 -->
       <el-form-item v-show="strategyForm.strategyType === '1'" style="margin-top: -10px; margin-bottom:0px;">
         <cron  v-if="showCronBox" v-model.trim="strategyForm.schedulerTime" ref="cron" @changeValue='changeValue'></cron>
         <span style="color: #E6A23C; font-size: 12px;" >corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份 星期中的日期 年份</span>
@@ -225,30 +233,30 @@
             :hideSecond="false" placeholder="请设定时间策略表达式"  style="width: 80%;" /> -->
 
             <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
-               <el-button slot="append" v-if="!showCronBox" icon="el-icon-arrow-up" @click="showCronBox = true" title="打开图形配置" ></el-button>
-               <el-button slot="append" v-else icon="el-icon-arrow-down" @click="showCronBox = false" title="关闭图形配置" ></el-button>
+                <el-button slot="append" v-if="!showCronBox" icon="el-icon-arrow-up" @click="showCronBox = true" title="打开图形配置" ></el-button>
+                <el-button slot="append" v-else icon="el-icon-arrow-down" @click="showCronBox = false" title="关闭图形配置" ></el-button>
             </el-input>
       </el-form-item>
 
-     
+      
       <el-form-item v-for="(it, index) in list" :key="index" v-show="strategyForm.strategyType === '1'">
-         <el-input @click.native="openEqDialog2($event,index)" style="width: 35%;" v-model="oneId[index]" placeholder="请点击选择控制类型" />
-         <el-select v-model="twoId[index]" placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
+          <el-input @click.native="openEqDialog2($event,index)" style="width: 35%;" v-model="oneId[index]" placeholder="请点击选择控制类型" />
+          <el-select v-model="twoId[index]" placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
             style="width: 39%;margin-left:6%;" >
-           <el-option
-             v-for="item in eqState[index]"
-             :key="item.deviceState"
-             :label="item.stateName"
-             :value="item.deviceState">
-           </el-option>
-         </el-select>
-         <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
+            <el-option
+              v-for="item in eqState[index]"
+              :key="item.deviceState"
+              :label="item.stateName"
+              :value="item.deviceState">
+            </el-option>
+          </el-select>
+          <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
       </el-form-item>
       
       <!-- 自动触发 -->
       <el-form-item  label="触发器" v-show="strategyForm.strategyType === '2'"   >
         <el-select v-model="strategyForm.triggers.deviceTypeId" placeholder="请选择设备类型" 
-           style="width: 18%;" @change="slectEqName()">
+            style="width: 18%;" @change="slectEqName()">
           <el-option
             v-for="item in eqTypeList"
             :key="item.typeId"
@@ -257,7 +265,7 @@
           </el-option>
         </el-select>
         <el-select v-model="strategyForm.triggers.deviceId" placeholder="请选择设备名称"
-           style="width: 18%;margin-left:2%;"  @change="selectDataItem()">
+            style="width: 18%;margin-left:2%;"  @change="selectDataItem()">
           <el-option
             v-for="item in deviceName"
             :key="item.eqId"
@@ -266,7 +274,7 @@
           </el-option>
         </el-select>
         <el-select v-model="strategyForm.triggers.elementId" placeholder="请选择数据项"
-           style="width: 18%;margin-left:2%;" >
+            style="width: 18%;margin-left:2%;" >
           <el-option
             v-for="item in dataItem"
             :key="item.id"
@@ -275,7 +283,7 @@
           </el-option>
         </el-select>
         <el-select v-model="strategyForm.triggers.comparePattern" 
-           style="width: 12%;margin-left:2%;" >
+            style="width: 12%;margin-left:2%;" >
           <el-option  
             v-for="item in symbol"
             :key="item.dictValue"
@@ -285,47 +293,52 @@
         </el-select>
       <el-input style="width: 18%;margin-left:2%;" v-model="strategyForm.triggers.compareValue" placeholder="请输入阈值" />
       </el-form-item>
-          <!-- 自动触发下边 -->
-    <el-form-item v-for="(it, index) in strategyForm.autoAddOperation" :key="index" v-show="strategyForm.strategyType === '2'">  
-       <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  multiple placeholder="请选择设备" style="width: 40%">
-         <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
-         <el-option
-             v-for="(item,ix) in equipmentData"
-             :key="item.eqId+ix"
-             :label="item.eqName"
-             :value="item.eqId"/>
-         <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
-       </el-select>
-       <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '2' && sink=='edit' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
-          style="width: 39%;margin-left:6%;" >
-         <el-option
-           v-for="item in eqState3"
-           :key="item.deviceState+1"
-           :label="item.stateName"
-           :value="item.deviceState"> 
-         </el-option>
-       </el-select>       
-       <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '2' && sink=='add' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
-          style="width: 39%;margin-left:6%;" >
-         <el-option
-           v-for="item in eqState1"
-           :key="item.deviceState"
-           :label="item.stateName"
-           :value="item.deviceState"> 
-         </el-option>
-       </el-select>
-       <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
-    </el-form-item>
-      <!-- <el-form-item label="预警信息" v-show="strategyForm.strategyType === '2'">
-         <el-select  style="width: 80%;"  v-model="queryParams.strategyType" placeholder="请选择预警信息" clearable size="small">
-           <el-option
-             v-for="item in warningOptions"
-             :key="item.value"
-             :label="item.label"
-             :value="item.value"
-           />
-         </el-select>
-      </el-form-item> -->
+      <el-form-item label="方向" v-if="strategyForm.strategyType === '2'">
+        <el-select v-model="strategyForm.direction" placeholder="请选择设备方向">
+          <el-option v-for="dict in directionOptions" :key="dict.id" :label="dict.dictLabel" :value="dict.dictValue" @click.native="slectDirectionAuto(dict.dictValue)"/>
+        </el-select>
+      </el-form-item>
+            <!-- 自动触发下边 -->
+      <el-form-item v-for="(it, index) in strategyForm.autoAddOperation" :key="index" v-if="strategyForm.strategyType === '2'">  
+        <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  multiple placeholder="请选择设备" style="width: 40%">
+          <!-- <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option> -->
+          <el-option
+              v-for="(item,ix) in equipmentData"
+              :key="item.eqId+ix"
+              :label="item.eqName"
+              :value="item.eqId"/>
+          <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
+        </el-select>
+        <el-select v-model="it.eqState" v-if="strategyForm.strategyType === '2' && sink=='edit' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
+            style="width: 39%;margin-left:6%;" >
+          <el-option
+            v-for="item in eqState3"
+            :key="item.deviceState+1"
+            :label="item.stateName"
+            :value="item.deviceState"> 
+          </el-option>
+        </el-select>       
+        <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '2' && sink=='add' " placeholder="请选择设备需要执行的操作" @change="saveTwoList($event, index)"
+            style="width: 39%;margin-left:6%;" >
+          <el-option
+            v-for="item in eqState1"
+            :key="item.deviceState"
+            :label="item.stateName"
+            :value="item.deviceState"> 
+          </el-option>
+        </el-select>
+        <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
+      </el-form-item>
+        <!-- <el-form-item label="预警信息" v-show="strategyForm.strategyType === '2'">
+          <el-select  style="width: 80%;"  v-model="queryParams.strategyType" placeholder="请选择预警信息" clearable size="small">
+            <el-option
+              v-for="item in warningOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item> -->
       <el-form-item label="" style="" >
           <a href="#" @click= "addItem" style="color: #1890ff;">+添加执行操作</a>
       </el-form-item>
@@ -334,6 +347,7 @@
           <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >保 存</el-button>
           <el-button style="width: 30%;"  @click="strategyFormClose">取 消</el-button>
       </el-form-item>
+    </template>
     </el-form>
   </el-dialog>
 
@@ -356,11 +370,11 @@
         </el-form-item>
         <el-form-item label="选择设备" :style="{height:'300px'}" prop="equipments">
           <el-select v-model="eqForm.equipments" @change='changeSelect' :disabled="viewStrategy"  multiple placeholder="请选择设备" style="width: 90%">
-            <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
+            <!-- <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option> -->
             <el-option
                 v-for="item in equipmentData"
                 :key="item.eqId"
-                :label="item.eqId"
+                :label="item.eqName"
                 :value="item.eqId"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>
@@ -407,6 +421,7 @@ export default {
     },
   data() {
     return {
+      is_show:false,
       changeVal:false,
 	  saveDevices:'',
       //drawer遮罩层
@@ -438,9 +453,6 @@ export default {
       chooseScheduleTimeVb:false,
       // 设备方向字典
       directionOptions: [
-        { id: 1, dictValue: '', dictLabel: '全选'},
-        { id: 2, dictValue: '0', dictLabel: '下行'},
-        { id: 3, dictValue: '1', dictLabel: '上行'}
       ],
       // 策略类型字典
       strategyTypeOptions: [],
@@ -472,18 +484,20 @@ export default {
         eqType:null
       },
       queryEqTypeParams:{
-        tunnelId:null
+        tunnelId:null,
+        isControl:1
       },
       //查询设备状态params
       queryEqStateParams:{
         stateTypeId:null
       },
+      
       // 表单参数
       eqForm: {
         equipment_type:null,//设备类型ID
         direction: '',//方向
         index:null,//当前设置的
-        // equipments:[],//设备名称
+        equipments:[],//设备名称
       },
       strategyForm:{
         //策略信息表
@@ -545,7 +559,7 @@ export default {
       eqTypeName :null,
       array:[],
       oneId:[],//设备类型名称数组
-      oneId1:[],
+      oneId1:'',
       oneIdEqTypeId:[],//设备类型id数组
       eqState:[],//设备状态数组
       eqState1:[],//新增的状态设备数组
@@ -598,6 +612,9 @@ export default {
         tunnelId: [{required: true, message: '请选择隧道', trigger: 'blur'}],
         strategyName: [{required: true, message: '请输入策略名称', trigger: 'blur'}],
         strategyType: [{required: true, trigger: 'blur'}],
+        // equipmentTypeId1: [{required: true, message: '请选择设备类型', trigger: 'change'}],
+        // oneId1:[{required: true, message: '请选择设备类型', trigger: 'change'}],
+        // this.strategyForm.strategyType:[]
       },
       eqListName:[],
       eqTypeList:[],//设备类型
@@ -619,15 +636,118 @@ export default {
     this.getDicts("sd_trigger_compare_type").then(response => {
       // this.strategyTypeOptions = response.data;
       // this.insertStrategyTypeOptions = response.data;
-      console.log(response,"dayuhaodeaksjkalkfj")
+      // console.log(response,"dayuhaodeaksjkalkfj")
       this.symbol=response.data
+    });
+    this.getDicts("sd_direction").then(response => {
+      // this.strategyTypeOptions = response.data;
+      // this.insertStrategyTypeOptions = response.data;
+      console.log(response,"dayuhaodeaksjkalkfj")
+      // this.symbol=response.data
+      response.data.forEach((item)=>{
+        this.directionOptions.push(item)
+      })
+      
     });
     this.getEquipmentType();
   },
   methods: {
-    //点击设备类型 选择设备名称
+    getDeviceType(){
+      console.log(this.strategyForm.tunnelId)
+      if(!this.strategyForm.tunnelId){
+        this.is_show = false
+        return this.$modal.msgError("请首先选择隧道");
+      }else{
+        this.is_show = true
+      }
+      autoEqTypeList({isControl:1}).then(res=>{
+        this.eqTypeList= res.rows
+        console.log(res,'responseresponse')
+      })
+    },
+    //自动触发的方向
+    slectDirectionAuto(dictId){
+        this.strategyForm.autoAddOperation=[
+        {
+          equipments:[],//所选设备
+          eqState:''
+         }
+        ]       
+          listDevices({eqType:this.strategyForm.triggers.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId,eqDirection:dictId}).then(res=>{
+        console.log(res,'oooooooooooooooooo')
+        this.equipmentData=res.rows
+        this.deviceName=res.rows
+            })
+    
+      getStateTypeId({stateTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
+                  console.log(res,'点击了设备类型')
+                  if(this.sink=='edit' ){
+                    this.eqState3=res.rows
+                  }else if(this.sink=='add'){
+                    this.eqState1=res.rows
+                  }                  
+                })
+    },
+    //选择定时控制方向时
+    slectDirectionTime(id){
+      this.oneId=[]
+      this.twoId=[]
+    },
+    // 选择方向时
+    slectDirection(dictId){
+      console.log(dictId,'xuznl fangxiang')
+      // this.equipmentData=[]
+      // this.deviceName=[]
+      this.strategyForm.addOperation=[
+        {
+          equipments:[],//所选设备
+          eqState:''
+         }
+      ]
+      //给设备名称重新赋值
+      let params = {
+        eqType:this.strategyForm.equipmentTypeId1,
+        eqTunnelId:this.strategyForm.tunnelId,
+        eqDirection:dictId
+      }
+      listDevices(params).then(res=>{
+        this.equipmentData=res.rows
+      }) 
+
+      // //设备操作重新赋值
+      // getStateTypeId({stateTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
+      //             // console.log(res,'点击了设备类型')
+      //             if(this.sink=='edit' ){
+      //               this.eqState3=res.rows
+      //             }else if(this.sink=='add'){
+      //               this.eqState1=res.rows
+      //             }                  
+      //           })
+
+    },
+    //重置方法
+    rest(){
+      this.strategyForm.triggers.deviceId = null;
+      // this.strategyForm.triggers.comparePattern=null
+      // this.strategyForm.triggers.compareValue=null
+      this.strategyForm.triggers.elementId = null;
+      this.deviceName = [];
+      this.dataItem = [];
+    },
+    //点击 自动触发设备类型 
     slectEqName(){
-      listDevices({eqType:this.strategyForm.triggers.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId}).then(res=>{
+      this.rest();
+      //清空设备名称
+      //  this.strategyForm.triggers.deviceId=''
+      //清空下边两个
+      // this.strategyForm.autoAddOperation=[
+      //    {
+      //     equipments:[],//所选设备
+      //     eqState:''
+      //    }
+      // ]
+      // 选择设备名称赋值
+      listDevices({eqType:this.strategyForm.triggers.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId,eqDirection:this.strategyForm.direction}).then(res=>{
         console.log(res,'oooooooooooooooooo')
         this.equipmentData=res.rows
         this.deviceName=res.rows
@@ -639,10 +759,10 @@ export default {
                     this.eqState3=res.rows
                   }else if(this.sink=='add'){
                     this.eqState1=res.rows
-                  }
-                  
+                  }                  
                 })
-                //给设备数据项赋值
+                
+     //给设备数据项赋值
     listItem({deviceTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
        this.dataItem=res.rows
       })
@@ -681,7 +801,7 @@ export default {
       //   this.eqTypeList = typeList;
       // console.log(response,'responseresponse')
       // });
-      autoEqTypeList().then(res=>{
+      autoEqTypeList({isControl:1}).then(res=>{
         this.eqTypeList= res.rows
         console.log(res,'responseresponse')
       })
@@ -713,6 +833,7 @@ export default {
         //     return item !== '全选'
         //   })
         // }
+        this.eqForm.equipments=val
     },
     changeSelectDirection() {
         if(this.viewStrategy){
@@ -856,16 +977,59 @@ export default {
             }
           }
           this.equipmentData = a
-          console.log(this.equipmentData,"this.equipmentData")
+          // console.log(this.equipmentData,"this.equipmentData")
         });
+        //看下这个是设备类型吗
      console.log(value,value2,'value,value2value,value2')
+     
+     //点击添加的设备类型
      if(this.sink =="add"){
+      //给设备状态赋值
+         //清空设备名称和设备状态
+      this.strategyForm.addOperation=[{
+          equipments:[],//所选设备
+          eqState:''
+         }]
+         //给设备状态赋值
       getStateTypeId({stateTypeId:value}).then(res=>{
-        console.log(res,'点击了设备类型')
+        // console.log(res,'点击了设备类型')
          this.eqState1=res.rows
       })
+        // 给设备名称赋值
+        listDevices({eqType:value,eqTunnelId:this.strategyForm.tunnelId,eqDirection:this.strategyForm.direction}).then(res=>{
+              // console.log(res,'oooooooooooooooooo')
+              this.equipmentData=res.rows 
+              // this.deviceName=res.rows
+            })
+
      }
+
+    //  点击了编辑的设备类型
+    //  if( this.strategyForm.strategyType === '0' && this.sink=='edit'){
+    //   //清空设备名称和设备状态
+    //   this.strategyForm.addOperation=[{
+    //       equipments:[],//所选设备
+    //       eqState:''
+    //      }]
+    //      //给手动控制的设备名称赋值
+    //     listDevices({eqType:value,eqTunnelId:this.strategyForm.tunnelId,eqDirection:this.strategyForm.direction}).then(res=>{
+    //           // console.log(res,'oooooooooooooooooo')
+    //           this.equipmentData=res.rows 
+    //           // this.deviceName=res.rows
+    //         })
+    //         //给设备状态辅助  (传设备类型)    
+    //         getStateTypeId({stateTypeId:value}).then(res=>{
+    //               // console.log(res,'点击了设备类型')
+    //               this.eqState3=res.rows
+    //             })
+    //  }
+    
+     
     },
+
+
+
+
     viewStrategyInfo(row,index){
       if(row.strategyType=="1"){
         if(index==0){
@@ -1133,8 +1297,11 @@ export default {
         startTime: '',// 简单模式开始时间
         endTime: '',// 简单模式开始时间
       },
+      //清空 定时弹窗里的设备名称数组
+      this.eqForm.equipments=[]
       this.drawer = true;
      this.viewStrategy=false;
+     
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -1143,10 +1310,14 @@ export default {
       //   this.eqTypeList = typeList;
       // console.log(response,'responseresponse')
       // });    
-      autoEqTypeList().then(res=>{
+      autoEqTypeList({isControl:1}).then(res=>{
         console.log(res,'3333333333333333')
         this.eqTypeList = res.rows;
-      })
+      })     
+      listType(this.queryEqTypeParams).then(response => {
+        this.equipmentTypeData = response.rows;
+        console.log(response.rows,"查询设备类型列表")
+      });
       console.log(row,"row")
       this.viewStrategy=false;
       this.currentId = row.id;
@@ -1180,12 +1351,13 @@ export default {
             this.strategyForm.addOperation=[]
           }
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
-                // console.log(res,'oooooooooooooooooo')
+                console.log(res,'oooooooooooooooooo')
                 // this.deviceName=res.rows
+                //看看这的值什么东西  是先赋值的吗？
                 this.equipmentData=res.rows
               })
               getStateTypeId({stateTypeId:response.rows[0].eqTypeId}).then(res=>{
-                  // console.log(res,'点击了设备类型')
+                  console.log(res,'点击了设备类型')
                   this.eqState3=res.rows
                 })
           for ( var i = 0; i < response.rows.length; i++){
@@ -1207,7 +1379,7 @@ export default {
                           })
                 }
                 
-                    console.log(response.rows[i].equipments)
+               console.log( row.strategyType,' this.strategyForm.addOperation this.strategyForm.addOperation')
                 // this.strategyForm.addOperation[index].equipments.push(response.rows[index].equipments);//设备名称
                 // this.strategyForm.addOperation[index].eqState=response.rows[index].state//设备状态
                 // this.strategyForm.autoAddOperation[index].equipments.push(response.rows[index].equipments)//自动触发设备名称
@@ -1218,7 +1390,7 @@ export default {
             this.oneIdEqTypeId.push(response.rows[i].eqTypeId);//设备类型id数组
             this.strategyForm.equipmentTypeId.push(response.rows[i].eqTypeId);
             this.oneId.push(response.rows[i].eqType.typeName+"控制");//设备名称数组
-            this.oneId1 = response.rows[0].eqType.typeName;//设备名称数组
+            this.oneId1 =Number(response.rows[0].eqTypeId) ;//设备名称数组
             this.eqState[i] = response.rows[i].eqStateList;//设备状态 下拉option
             this.twoId.push(response.rows[i].state);//执行的操作状态码
             this.twoId2.push(response.rows[i].state);//手动控制执行的操作状态码             
@@ -1312,11 +1484,11 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          // if(row.jobRelationId !=null){
-          //   console.log(row,'row.jobRelationIdrow.jobRelationId')
-          //   // delJob(jobRelationId).then(response => {
-          //   // });
-          // }
+          if(row.jobRelationId !=null){
+            console.log(row,'row.jobRelationIdrow.jobRelationId')
+            // delJob(jobRelationId).then(response => {
+            // });
+          }
         delStrategy(ids).then(res=>{
           console.log(res,'resres')
         });
@@ -1335,6 +1507,7 @@ export default {
     /** 提交按钮 */
     submitStrategyForm() {
       var str = ""
+      console.log(this.eqForm,'this.eqFormthis.eqFormthis.eqForm')
       if(!this.strategyForm.tunnelId){
         this.$modal.msgError("请选择隧道！");
         return;
@@ -1347,6 +1520,36 @@ export default {
         this.$modal.msgError("请填写策略名称！");
         return;
       }
+      console.log(this.strategyForm.addOperation)
+      // for ( let i=0; i>this.strategyForm.addOperation.length; i++){
+      //   console.log( this.strategyForm.addOperation[i])
+      //  if( this.strategyForm.addOperation[i].eqState1 == ''){
+      //   this.$modal.msgError("请填写控制策略!!");  
+      //   console.log('111')
+      //   return
+      //  }
+      // }
+      if(this.strategyForm.strategyName == '0'){
+              if(this.strategyForm.addOperation[0].equipments.length<=0){
+            this.$modal.msgError("请填写控制策略!!");  
+              return
+          }
+          if(!this.strategyForm.addOperation[0].eqState){
+            this.$modal.msgError("请填写控制策略!!");  
+              return
+          }
+    }
+     
+        
+      
+      // console.log(this.strategyForm.addOperation,'xinzasdsadsa')
+        // this.strategyForm.addOperation.forEach((item,index)=>{
+            
+        //    if(item.equipmentTypeId ) {
+        //     this.$modal.msgError("未设置控制策略！");
+        //     return
+        //    }  
+        // })
       // if(this.strategyForm.equipmentTypeId.length < 1){
       //   this.$modal.msgError("未设置控制策略！");
       //   return;
@@ -1361,9 +1564,10 @@ export default {
           this.$modal.msgError("未设置定时！")
           return;
         }
-        if(this.model == '2'){
+        // if(this.model == '2'){
 
-        }/* else if (this.model == '1') {
+        // }
+        /* else if (this.model == '1') {
           var startTime  = this.strategyForm.startTime
           var endTime  = this.strategyForm.endTime
           debugger
@@ -1416,7 +1620,8 @@ export default {
                 getGuid().then(response => {
                     let guid = response;
                     this.addJobData(guid,str);
-                    this.addStrategysData(guid,straInfo);
+                  console.log('定时任务')
+                    this.timeAddStrategysData(guid,straInfo);
                 })
             }else if(this.strategyForm.strategyType == 2){//智能执行
                 // this.addStrategysData(null,straInfo);
@@ -1443,6 +1648,7 @@ export default {
                       this.$modal.msgSuccess("任务修改成功");
                     }
                   });
+
                 })
               }
               if(this.strategyForm.strategyType == 2){    
@@ -1484,7 +1690,11 @@ export default {
               if(flag) return
               // 执行编辑操作
               if(this.strategyForm.strategyType == 0){
-                console.log('手动控制')
+                this.strategyForm.addOperation.forEach((item)=>{
+                    item.equipments=item.equipments.join('#')
+                    item.equipmentTypeId=this.oneId1           
+                  })
+                console.log(this.oneId1,'手动控制')
                 updateStrategysInfo({
                 id : this.currentId,
                 tunnelId:this.strategyForm.tunnelId,
@@ -1495,6 +1705,7 @@ export default {
                 equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),
                 equipmentState:this.twoId.join('#'),
                 equipments:this.strategyForm.equipmentstr.join('#'),
+                equipment:this.strategyForm.addOperation,
                 schedulerTime:this.strategyForm.schedulerTime
                 }).then(response => {
                   if (response.code === 200) {
@@ -1510,10 +1721,77 @@ export default {
                 });
               }
              
+                if(this.strategyForm.strategyType == 1){
+                  //执行定时编辑操作
+                  console.log('点击了定时的保存')
+              updateStrategysInfo({
+                id : this.currentId,
+                tunnelId:this.strategyForm.tunnelId,
+                strategyInfo:straInfo,
+                strategyName:this.strategyForm.strategyName,
+                direction:this.strategyForm.direction,
+                strategyType:this.strategyForm.strategyType,
+                equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),
+                equipmentState:this.twoId.join('#'),
+                equipments:this.strategyForm.equipmentstr.join('#'),
+                schedulerTime:this.strategyForm.schedulerTime
+                }).then(response => {
+                  if (response.code === 200) {
+                    this.$modal.msgSuccess("策略修改成功");
+                    this.dloading=false;
+                    this.drawer=false;
+                    this.currentRlId = null;
+                    this.getList();
+                    setTimeout(()=>{
+                      this.resetStrategyInfo();
+                    }, 400)
+                  }
+                });
+                }
+
             }
           }
       });
     },
+
+     /** 新增定时触发 */
+     timeAddStrategysData(guid,straInfo){
+        // this.strategyForm.autoAddOperation.forEach((item)=>{
+        //   item.equipments=item.equipments.join('#')
+        //   item.equipmentTypeId=this.strategyForm.triggers.deviceTypeId
+        // })
+        // console.log(this.queryEqParams.eqType,'qqqq')
+        // return 
+        console.log(this.eqForm.equipments,'this.eqForm.equipments')
+        console.log(this.twoId[0],'this.this.twoIdthis.twoIdthis.twoId.')
+        addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
+                triggers:this.strategyForm.triggers,
+                strategyName:this.strategyForm.strategyName,
+                direction:this.strategyForm.direction,
+                strategyType:this.strategyForm.strategyType,
+                strategyInfo:straInfo,
+                equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),//设备类型id
+                equipmentState:this.twoId.join('#'),  //设备状态操作
+                equipments:this.strategyForm.equipmentstr.join('#'),
+                schedulerTime:this.strategyForm.schedulerTime,
+                // equipmentState:this.strategyForm.autoAddOperation.eqState1,
+                // equipment:this.strategyForm.autoAddOperation,
+                jobRelationId:guid,
+                }).then(response => {
+                  if (response.code === 200) {
+                    if(this.strategyForm.strategyType != 1) {
+                     this.$modal.msgSuccess("新增策略成功");
+                    }
+                    this.dloading=false;
+                    this.drawer=false;
+                    this.getList();
+                    this.resetEqForm()
+                    setTimeout(() => {
+                      this.resetStrategyInfo();
+                    }, 400);
+                  }
+              });
+        },
 
 
     /** 新增自动触发 */
@@ -1553,12 +1831,15 @@ export default {
 
     
       /** 添加策略 */
-      addStrategysData(guid,straInfo){
+      addStrategysData(guid,straInfo){    
         this.strategyForm.addOperation.forEach((item)=>{
           item.equipments=item.equipments.join('#')
-          item.equipmentTypeId=this.strategyForm.equipmentTypeId1
-       
+          item.equipmentTypeId=this.strategyForm.equipmentTypeId1       
         })
+         if(!this.strategyForm.equipmentTypeId1){
+          this.$modal.msgError("请填写设备类型!!"); 
+          return
+         }
         console.log(this.strategyForm.addOperation,'点击了新增的保存')
         addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
                 strategyName:this.strategyForm.strategyName,
@@ -1604,7 +1885,7 @@ export default {
                this.$modal.msgError("新增失败，请删除重建控制策略！");
              }
         })
-        return
+        // return
      /* }addJob({jobName:this.strategyForm.strategyName,//任务名称
           invokeTarget:"ryTask.strategyParams('"+guid+"')",//调用目标字符串
           cronExpression:str,//corn表达式

@@ -86,7 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="subareaId != null">#{subareaId}</if>
+            <if test="subareaId != null">#{subareaId},</if>
             <if test="planTypeId != null">#{planTypeId},</if>
             <if test="planDescription != null">#{planDescription},</if>
             <if test="planName != null">#{planName},</if>
@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSdReservePlan" parameterType="SdReservePlan">
         update sd_reserve_plan
         <trim prefix="SET" suffixOverrides=",">
-            <if test="subareaId != null">subarea_id = #{subareaId}</if>
+            <if test="subareaId != null">subarea_id = #{subareaId},</if>
             <if test="planTypeId != null">plan_type_id = #{planTypeId},</if>
             <if test="planDescription != null">plan_description = #{planDescription},</if>
             <if test="planName != null">plan_name = #{planName},</if>

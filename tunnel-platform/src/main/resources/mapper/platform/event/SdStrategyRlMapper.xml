@@ -37,6 +37,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdStrategyRlVo"/>
         where id = #{id}
     </select>
+
+    <select id="selectSdStrategyRlByStrategyId" parameterType="Long" resultMap="SdStrategyRlResult">
+        <include refid="selectSdStrategyRlVo"></include>
+        where strategy_id = #{strategyId}
+    </select>
         
     <insert id="insertSdStrategyRl" parameterType="SdStrategyRl" useGeneratedKeys="true" keyProperty="id">
         insert into sd_strategy_rl

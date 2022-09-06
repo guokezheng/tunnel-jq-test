@@ -77,13 +77,6 @@ public interface ISdStrategyService
      * @return
      */
     public int deleteSdStrategyByStrategyIds(Long[] ids);
-
-    /**
-     * 删除控制策略信息
-     * @param id
-     * @return
-     */
-    public int deleteSdStrategyByStrategyId(Long id);
     
     /**
      * 新增控制策略

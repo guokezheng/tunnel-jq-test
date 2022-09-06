@@ -1,18 +1,20 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
-import com.ruoyi.common.core.domain.entity.SysDictData;
-import com.ruoyi.system.mapper.SysDictDataMapper;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
-import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
-import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
-import com.tunnel.platform.service.dataInfo.ISdEquipmentTypeService;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.platform.utils.util.StringUtil;
+import com.ruoyi.system.mapper.SysDictDataMapper;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
+import com.tunnel.platform.domain.event.SdStrategy;
+import com.tunnel.platform.domain.event.SdStrategyRl;
+import com.tunnel.platform.domain.event.SdStratygeType;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
+import com.tunnel.platform.mapper.event.SdStrategyMapper;
+import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
+import com.tunnel.platform.service.dataInfo.ISdEquipmentTypeService;
 import com.tunnel.platform.utils.util.UUIDUtil;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,9 @@ import sun.misc.BASE64Encoder;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Service业务层处理
@@ -40,6 +44,12 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 
 	@Autowired
 	private SysDictDataMapper sysDictDataMapper;
+
+	@Autowired
+	private SdStrategyMapper sdStrategyMapper;
+
+	@Autowired
+	private SdStrategyRlMapper sdStrategyRlMapper;
 
 	/**
 	 * 查询设备类型
@@ -130,6 +140,30 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 					list.get(i).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
 				}
 			}
+		}
+		return list;
+	}
+
+	@Override
+	public List<SdStratygeType> selectTypeAndStrategy(SdEquipmentType sdEquipmentType) {
+		List<SdEquipmentType> sdEquipmentTypes = sdEquipmentTypeMapper.selectSdEquipmentTypeList(sdEquipmentType);
+		List<SdStratygeType> list = new ArrayList<>();
+		SdStrategy strategy = new SdStrategy();
+		strategy.setStrategyType("0");
+		for (SdEquipmentType Type : sdEquipmentTypes) {
+			List<SdStrategy> sdStrategyList = new ArrayList<>();
+			List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(strategy);
+			for (SdStrategy sdStrategy : sdStrategies) {
+				List<SdStrategyRl> sdStrategyRls = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(sdStrategy.getId());
+				if (sdStrategyRls.get(0).getEqTypeId().equals(Type.getTypeId()+"")) {
+					sdStrategyList.add(sdStrategy);
+				}
+			}
+			SdStratygeType sdStratygeType = new SdStratygeType();
+			sdStratygeType.setTypeId(Type.getTypeId());
+			sdStratygeType.setTypeName(Type.getTypeName());
+			sdStratygeType.setSdStrategies(sdStrategyList);
+			list.add(sdStratygeType);
 		}
 		return list;
 	}

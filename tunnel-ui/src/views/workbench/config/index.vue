@@ -599,24 +599,6 @@
             </el-table-column>
           </el-table>
         </template>
-        <!-- <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
-          {{ '正常'}}
-        </el-form-item>
-        <el-form-item label="车道:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '这是车道'}}
-        </el-form-item>
-        <el-form-item label="车流量:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '10辆/没分钟'}}
-        </el-form-item>
-        <el-form-item label="平均车速:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '60公里/每小时'}}
-        </el-form-item>
-        <el-form-item label="占有率:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '60%'}}
-        </el-form-item>
-        <el-form-item label="上传时间:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '今天'}}
-        </el-form-item> -->
         <!-- ====================微博检查结束============ -->
         <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
           {{ stateForm.value }}
@@ -718,7 +700,7 @@
           </div>
         </el-form-item>
         <!-- 应急照明 -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 6">
+        <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 6 && stateForm.eqType == 19">
           <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
           <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group v-for="(item, index) in eqTypeStateList" :key="index" v-model="stateForm.state" style="display: flex; flex-direction: column"
@@ -936,7 +918,7 @@
           </el-select>
         </el-form-item>
         <!-- 如果选择项为"普通车道指示器，id = 1,则二级选项显示搜索条件，为车向和车道" -->
-        <el-form-item label="方向111">
+        <el-form-item label="方向">
           <el-select v-model="batchForm.eqDirection" size="mini" clearable>
             <el-option v-if="allDirection.length > 0" v-for="item in allDirection" :key="item.eqDirection" :label="item.eqDirectionName"
               :value="item.eqDirection" />
@@ -1312,7 +1294,6 @@
         <el-button type="primary" size="mini" @click="cancel">关 闭</el-button>
       </div>
     </el-dialog>
-
     <!--查看控制策略对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog explain-table strategyClass eventDiglog" :title="title"
       :visible.sync="strategyVisible" width="70%" append-to-body>
@@ -2163,6 +2144,7 @@
       // 设备类型
       "batchForm.eqType"(val) {
         console.log(val)
+        console.log(mode);
         if (mode == "buttonSelection") {
           let param = {
             eqTunnelId: this.currentTunnel.id,
@@ -3330,11 +3312,12 @@
         if (event.button != 0) {
           return;
         }
+        // clientX 和 clientY 是起点
         let parentObj = document.getElementById("eq-wrapper");
         wrapperClientX = parentObj.getBoundingClientRect().left;
         wrapperClientY = parentObj.getBoundingClientRect().top;
-        this.px = event.clientX + event.clientX * this.moveTop - wrapperClientX - 55;
-        this.py = event.clientY + event.clientY * this.moveTop - wrapperClientY + 35;
+        this.px = event.clientX + event.clientX * this.moveTop - wrapperClientX - 30;
+        this.py = event.clientY + event.clientY * this.moveTop - wrapperClientY;
         boxEqList = [];
         this.batchForm = {
           eqType: "",
@@ -3352,6 +3335,7 @@
         let px2 = this.py;
         this.left = event.clientX + event.clientX * this.moveTop - wrapperClientX;
         this.top = event.clientY + event.clientY * this.moveTop - wrapperClientY;
+
         this.h = this.top - this.py;
         this.w = this.left - this.px;
         let hc = -this.h;
@@ -3392,6 +3376,7 @@
             if (remark != null && remark.indexOf('hjpz') == -1) {
               this.selectedIconList[i].isfocus = true;
             }
+            // debugger
             // this.selectedIconList[i].isfocus = true;
             if (boxEqList.length > 0) {
               let index = -1;
@@ -3413,14 +3398,12 @@
                 }
               }
             } else {
-
               if (!str.includes(parseInt(list[i].eqType))) {
                 boxEqList.push({
                   typeId: list[i].eqType,
                   eqlist: [list[i]],
                 });
                 this.boxType(list[i].eqType);
-
               }
             }
           } else {
@@ -3461,14 +3444,20 @@
               }
             }
             if (exist == true) {
-              this.batchVisible = true;
               mode = "boxSelection";
               this.title = "批量操作";
               if (this.$refs["batchForm"]) {
                 this.$refs["batchForm"].resetFields();
               }
               this.devicesList = this.changeDirection(boxEqList[0].eqlist);
-              console.log(this.devicesList,'可能是批量操作设备列表')
+              let param = {
+                eqTunnelId: this.currentTunnel.id,
+                eqType: this.devicesList[0].eqType,
+                lane: this.batchForm.eqlane,
+                eqDirection: this.batchForm.eqDirection
+              };
+              this.selectDirection(param);
+              this.batchVisible = true;
             }
           }
         }
@@ -3507,7 +3496,7 @@
       },
       /* 是否在范围内*/
       inRange(eqIcon) {
-        let inRange = false;
+      let inRange = false;
         if (eqIcon.display == true) {
           let maxX = Math.max(this.left + this.w, eqIcon.position.left + 60);
           let maxY = Math.max(this.top + this.h, eqIcon.position.top - 100 + 30);

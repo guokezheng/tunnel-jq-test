@@ -779,6 +779,7 @@ export default {
     },
     //选择隧道清空了下数据
     changeTunnel(){
+      this.is_show=true;
       this.oneId = [];
       this.oneIdEqTypeId=[];
       this.eqState=[];

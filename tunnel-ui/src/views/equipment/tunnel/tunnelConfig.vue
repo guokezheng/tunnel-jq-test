@@ -525,6 +525,9 @@
         let list = that.selectedIconList;
         // debugger;
         for (let i = 0; i < list.length; i++) {
+          if(list[i].eqType == 12){
+            console.log(list[i])
+          }
           var iconWidth = 30;
           var iconHeight = 30;
           if (list[i].width != "") {
@@ -590,7 +593,7 @@
           } else {
             var img3 = that.svg.paper.image(
               list[i].url[0],
-              list[i].position.left + iconWidth,
+              list[i].position.left + iconWidth,//此处增加+ iconWidth
               list[i].position.top,
               iconWidth,
               iconHeight

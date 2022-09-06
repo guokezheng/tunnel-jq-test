@@ -2,12 +2,11 @@ package com.tunnel.platform.controller.digitalmodel;
 
 import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.service.digitalmodel.WjService;
+import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,15 +23,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/wjData")
-public class WjEventController {
+public class RadarEventController {
 
     @Autowired
-    private WjService wjService;
+    private RadarEventService service;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
 
-    public static final Logger log = LoggerFactory.getLogger(WjEventController.class);
+    public static final Logger log = LoggerFactory.getLogger(RadarEventController.class);
 
     /**
      * 事件数据
@@ -41,7 +38,7 @@ public class WjEventController {
      */
     @PostMapping("/eventData")
     public AjaxResult eventData(@RequestBody Map<String,Object> map){
-        return AjaxResult.success(wjService.insertWjEvent(map));
+        return AjaxResult.success(service.insertWjEvent(map));
     }
 
     /**
@@ -50,7 +47,7 @@ public class WjEventController {
      */
     @PostMapping("/eventImage")
     public AjaxResult eventImage(@RequestBody Map<String,Object> map){
-        return AjaxResult.success(wjService.uploadPic(map));
+        return AjaxResult.success(service.uploadPic(map));
     }
 
     /**
@@ -58,7 +55,7 @@ public class WjEventController {
      */
     @PostMapping("/eventVideo")
     public AjaxResult eventVideo(@RequestBody Map<String,Object> map){
-        return AjaxResult.success(wjService.eventVideo(map));
+        return AjaxResult.success(service.eventVideo(map));
     }
 
     /**
@@ -66,7 +63,7 @@ public class WjEventController {
      */
     @PostMapping("/specialCar")
     public AjaxResult specialCar(@RequestBody Map<String,Object> map){
-        return AjaxResult.success(wjService.specialCar(map));
+        return AjaxResult.success(service.specialCar(map));
     }
 
     /**
@@ -75,11 +72,11 @@ public class WjEventController {
      * @param record
      * @param item
      */
-//    @KafkaListener(topics = "matchResultData", groupId = "TestGroup")
+//    @KafkaListener(topics = WjConstants.MATCHRESULTDATA, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
-        wjService.insertRadarDetect(map);
+        service.insertRadarDetect(map);
         System.out.println(value);
         System.out.println(record);
         log.info("-------------->>>>>>>>>>>>>>>");
@@ -94,18 +91,31 @@ public class WjEventController {
     public void send(@RequestBody Map<String,Object> map) throws ParseException {
 //        kafkaTemplate.send("matchResultData",  "key", "测试kafka消息");
 //        log.info("发送成功");
+        service.sendBaseDeviceStatus(map);
     }
 
     /**
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-//    @KafkaListener(topics = "wjDeviceRunningInfo", groupId = "TestGroup")
+//    @KafkaListener(topics = WjConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
-        wjService.saveRedis(map);
+        service.saveRedis(map);
         //手动提交
         item.acknowledge();
     }
+
+    /**
+     * 万集设备运行状态数据 发送
+     * topic	baseDeviceStatus
+     */
+    @PostMapping("/sendBaseDeviceStatus")
+    public String sendBaseDeviceStatus(@RequestBody Map<String,Object> map){
+        service.sendBaseDeviceStatus(map);
+        return "向主题发送数据信息";
+    }
+
+
 }

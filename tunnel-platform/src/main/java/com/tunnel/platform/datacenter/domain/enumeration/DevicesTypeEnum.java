@@ -1,11 +1,16 @@
 package com.tunnel.platform.datacenter.domain.enumeration;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * 设备类型
  *
  * @author yangqichao
  * @date 2019/9/18 14:45
  */
+@Getter
+@AllArgsConstructor
 public enum DevicesTypeEnum {
 
     PU_TONG_CHE_ZHI(1, "普通车道指示器"),
@@ -52,12 +57,6 @@ public enum DevicesTypeEnum {
     private int code;
     private String name;
 
-    DevicesTypeEnum(int code, String name) {
-        this.code = code;
-        this.name = name;
-    }
-
-
     /**
      * 判断是否包含
      * @param code
@@ -79,6 +78,24 @@ public enum DevicesTypeEnum {
 
         return false;
     }
+
+    /**
+     * 传code返回name
+     * @param code
+     * @return
+     */
+    public static String getValue(int code) {
+        // 遍历枚举
+        for (DevicesTypeEnum value : DevicesTypeEnum.values()) {
+            String s = value.getCode() + "";
+            if (s.equals(String.valueOf(code))){
+                return value.getName();
+            }
+        }
+        // 其他情况
+        return null;
+    }
+
 
     /**
      * 获取对应点位名称
@@ -431,5 +448,6 @@ public enum DevicesTypeEnum {
     public String getName() {
         return name;
     }
+
 
 }

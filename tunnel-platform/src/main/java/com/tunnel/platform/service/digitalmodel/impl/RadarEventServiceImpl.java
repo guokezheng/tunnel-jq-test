@@ -14,13 +14,13 @@ import com.tunnel.platform.domain.digitalmodel.*;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.platform.mapper.digitalmodel.WjMapper;
-import com.tunnel.platform.service.digitalmodel.WjService;
+import com.tunnel.platform.mapper.digitalmodel.RadarEventMapper;
+import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import com.tunnel.platform.utils.constant.WjConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,16 +35,19 @@ import java.util.Map;
  * @date 2022/9/4 16:51
  */
 @Service
-public class WjServiceImpl implements WjService {
+public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
-    private WjMapper wjMapper;
+    private RadarEventMapper wjMapper;
 
     @Autowired
     private SdDevicesMapper devicesMapper;
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${wj.imagePath}")
     private String picUrl;
@@ -245,6 +248,82 @@ public class WjServiceImpl implements WjService {
             }
         );
     }
+
+    @Override
+    public void sendBaseDeviceStatus(Map<String, Object> map) {
+        //设备ID
+        String deviceId = (String) map.get("deviceId");
+        //设备类型 后转Integer
+        String deviceType = map.get("deviceType") + "";
+        //设备监测状态 后转Integer
+        String deviceStatus = map.get("deviceStatus") + "";
+        //设备数据：包括设备实时数据、实时状态，根据deviceType区分
+        JSON parse = JSONUtil.parse(map.get("deviceData"));
+        WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+        JSONObject jsonObject = new JSONObject();
+        String tunnelId = devicesMapper.selecTunnelId(deviceId);
+        if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
+                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "34".equals(deviceType)) {
+            String runStatus = wjDeviceData.getRunStatus() + "";
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("runStatus", runStatus);
+        }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)){
+            Integer runDate = wjDeviceData.getRunDate();
+            String unit = wjDeviceData.getUnit();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("runDate",runDate);
+            jsonObject.put("unit",unit);
+        }else if ("6".equals(deviceType)||"7".equals(deviceType)||"8".equals(deviceType)||"9".equals(deviceType)){
+            Integer runStatus = wjDeviceData.getRunStatus();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("runStatus", runStatus);
+        }else if ("31".equals(deviceType)){
+            Integer runStatus = wjDeviceData.getRunStatus();
+            Integer runMode = wjDeviceData.getRunMode();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("runStatus",runStatus);
+            jsonObject.put("runMode",runMode);
+        }else if ("17".equals(deviceType)){
+            Double windSpeed = wjDeviceData.getWindSpeed();
+            String windDirection = wjDeviceData.getWindDirection();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("windSpeed",windSpeed);
+            jsonObject.put("windDirection",windDirection);
+        }else if ("19".equals(deviceType)){
+            Double co = wjDeviceData.getCO();
+            Double vi = wjDeviceData.getVI();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("co",co);
+            jsonObject.put("vi",vi);
+        }else if ("16".equals(deviceType)){
+            String message = wjDeviceData.getMessage();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("message",message);
+        }
+        kafkaTemplate.send(WjConstants.BASEDEVICESTATUS, jsonObject.toString());
+    }
+
 
     private String picName(String urlName){
         String[] split = urlName.split("/");

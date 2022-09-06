@@ -390,7 +390,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 根据设备类型查询设备列表 -->
     <select id="selectEqListByEqTypes" resultMap="SdDevicesResult">
-        select eq_id,eq_type from sd_devices WHERE eq_type in (#{eqTypes})
+        <include refid="selectSdDevicesVo"/>
+         WHERE eq_type in
+        <foreach collection="array" item="eqTypes" index="index" open="(" separator="," close=")">
+            #{eqTypes}
+        </foreach>
     </select>
 
     <select id="selectSensorList" resultMap="SdDevicesResult">
@@ -510,5 +514,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach collection="list" item="item" separator="," open="(" close=")">
             #{item.ip}
         </foreach>
+    </select>
+
+    <select id="selecTunnelId" resultType="java.lang.String">
+        select eq_tunnel_id tunnelId
+        from sd_devices
+        where eq_id=#{deviceId}
     </select>
 </mapper>

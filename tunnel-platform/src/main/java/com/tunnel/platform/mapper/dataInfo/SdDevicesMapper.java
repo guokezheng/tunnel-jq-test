@@ -135,4 +135,6 @@ public interface SdDevicesMapper
 	  @Param("tunnelId") String tunnelId,@Param("lidarType") Integer lidarType,@Param("cameraType") Integer cameraType);
 
 	void updateSdDevicesBatch(List<SdDevices> list);
+
+    String selecTunnelId(@Param("deviceId") String deviceId);
 }

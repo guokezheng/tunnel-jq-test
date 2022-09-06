@@ -511,4 +511,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{item.ip}
         </foreach>
     </select>
+
+    <select id="selecTunnelId" resultType="java.lang.String">
+        select eq_tunnel_id tunnelId
+        from sd_devices
+        where eq_id=#{deviceId}
+    </select>
 </mapper>

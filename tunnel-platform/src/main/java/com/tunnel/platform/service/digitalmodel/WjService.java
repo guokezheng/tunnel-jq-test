@@ -25,4 +25,6 @@ public interface WjService {
     void insertRadarDetect(Map<String, Object> map) throws ParseException;
 
     void saveRedis(Map<String, Object> map);
+
+    void sendBaseDeviceStatus(Map<String, Object> map);
 }

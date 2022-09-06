@@ -14,17 +14,12 @@ import com.tunnel.platform.domain.digitalmodel.*;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.platform.mapper.digitalmodel.WjMapper;
-import com.tunnel.platform.service.digitalmodel.WjService;
+import com.tunnel.platform.mapper.digitalmodel.RadarEventMapper;
+import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import com.tunnel.platform.utils.constant.WjConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +35,10 @@ import java.util.Map;
  * @date 2022/9/4 16:51
  */
 @Service
-public class WjServiceImpl implements WjService {
+public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
-    private WjMapper wjMapper;
+    private RadarEventMapper wjMapper;
 
     @Autowired
     private SdDevicesMapper devicesMapper;

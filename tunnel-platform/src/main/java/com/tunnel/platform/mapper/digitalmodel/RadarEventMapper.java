@@ -11,7 +11,7 @@ import java.util.List;
  * @author dzy
  * @date 2022/9/4 16:53
  */
-public interface WjMapper {
+public interface RadarEventMapper {
 
     void insertEventConfidence(List<WjConfidence> list);
 

@@ -9,7 +9,7 @@ import java.util.Map;
  * @author dzy
  * @date 2022/9/4 16:51
  */
-public interface WjService {
+public interface RadarEventService {
     /**
      * 新增万集事件
      * @param map

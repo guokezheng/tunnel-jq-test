@@ -77,7 +77,7 @@ public interface SdDevicesMapper
 	 * @param eqTypes
 	 * @return
 	 */
-	public List<SdDevices> selectEqListByEqTypes(String eqTypes);
+	public List<SdDevices> selectEqListByEqTypes(String[] eqTypes);
 
 	/**
 	 * 查询所有传感器
@@ -110,7 +110,7 @@ public interface SdDevicesMapper
 	 * @param eqHostId
 	 * @return
 	 */
-	public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
+	//public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
 
 	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") Long deptId);
 

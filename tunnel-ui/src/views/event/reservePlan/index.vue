@@ -81,7 +81,7 @@
       <el-table-column label="预案名称" align="center" prop="planName" />
       <el-table-column label="分区" align="center" prop="sdTunnelSubarea.sName" />
       <el-table-column label="事件类型" align="center" prop="eventType.eventType" />
-      <el-table-column label="预案描述" align="left" prop="planDescription" width="200" >      
+      <el-table-column label="预案描述" align="left" prop="planDescription" width="200" >
       <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
           <el-popover
@@ -92,7 +92,7 @@
               <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;">{{scope.row.planDescription}}</div>
             </el-popover>
         </template>
-      </el-table-column>     
+      </el-table-column>
 
       <el-table-column label="相关文档" align="center" class-name="small-padding fixed-width">
          <template slot-scope="scope">
@@ -110,7 +110,7 @@
       </el-table-column>
       <el-table-column label="相关策略" align="center"  class-name="small-padding fixed-width" width="200">
           <template slot-scope="scope">
-            <span v-show="scope.row.strategyNames != null" 
+            <span v-show="scope.row.strategyNames != null"
                   style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;"
                   @click="showStrategyContent(scope.row)">
                  {{scope.row.strategyNames}}
@@ -136,14 +136,14 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:plan:remove']"
           >删除</el-button>
-          <el-button 
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-guide"
             @click="chooseStrategyInfo(scope.row)"
             v-hasPermi="['business:plan:remove']"
-          >执行策略</el-button>         
-          <el-button 
+          >执行策略</el-button>
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-guide"
@@ -249,17 +249,17 @@
         {{item}}
       </div>
     </el-dialog>
-     
+
       <!--  预览-->
     <el-dialog
         title="预览"
         :visible.sync="workbenchOpen"
          width="86.5%"
-        :before-close="handleClose"              
+        :before-close="handleClose"
          append-to-body
          >
-         
-      <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
+
+      <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage">
         <!-- 设备图标-->
                   <div
                     class="icon-box mouseHover"
@@ -270,7 +270,7 @@
                             top: item.position.top + 52 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
-                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
+                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
                   >
                      <div
                         v-show="(item.eqType != 7 &&
@@ -332,9 +332,9 @@
                           style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
                           v-if="item.eqType == 5">
                           {{ item.value }}cd/m2
-                        </label>  
+                        </label>
                       </div>
-                
+
                     <!-- 桩号 -->
                     <!-- <input
                       :class="[
@@ -376,7 +376,7 @@
           <el-button @click="workbenchOpen = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
         </span>
-        
+
      </el-dialog>
 
 
@@ -387,13 +387,13 @@
               <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width: 80%;" @change="changeSelection">
                 <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                   :value="item.tunnelId" ></el-option>
-              </el-select>  
+              </el-select>
             </el-form-item>
             <el-form-item label="隧道分区" prop="sId">
               <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width: 80%;">
                 <el-option v-for="item in eqTunnelDataList" :key="item.sName" :label="item.sName"
                   :value="item.sId"></el-option>
-              </el-select>  
+              </el-select>
             </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId">
           <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
@@ -436,35 +436,36 @@
           <el-button type="primary" @click="submitUpload">保 存</el-button>
         </div>
       </el-dialog>
-      
+
  <!-- 配置策略 -->
  <el-dialog
         :title="addTitle"
         :visible.sync="strategyVisible"
          width="86.5%"
-        :before-close="handleClose"              
+        :before-close="handleClose"
          append-to-body
          >
-        
-         <el-form ref="form1" :model="reservePlanDrawForm" label-width="80px">
+
+         <el-form ref="form1" :model="reserveProcessDrawForm" label-width="80px">
          <el-row  :gutter="20">
             <el-col :span="8" v-for="(item,index) in planTypeIdList" :key="index" class="colflex">
-              <el-form-item label="相关策略" prop="planTypeId">
-                <el-cascader 
-                :value="item.a"        
+              <el-form-item label="相关策略" prop="planTypeId"  >
+                <el-cascader
+                :props="props"
+                v-model="reserveProcessDrawForm.strategyId"
                 :options="options"
                 @change="handleChangeStrategy()"></el-cascader>
-              </el-form-item>           
+              </el-form-item>
                 <div class="dialogButton" @click="addFrom()">添加</div>
              <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
-              </el-col>      
-            </el-row>   
+              </el-col>
+            </el-row>
 
          </el-form>
          <div>
-          
-       
-         <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
+
+
+         <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage">
         <!-- 设备图标-->
                   <div
                     class="icon-box mouseHover"
@@ -475,7 +476,7 @@
                             top: item.position.top + 104 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
-                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
+                    :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
                   >
                      <div
                         v-show="(item.eqType != 7 &&
@@ -537,9 +538,9 @@
                           style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
                           v-if="item.eqType == 5">
                           {{ item.value }}cd/m2
-                        </label>  
+                        </label>
                       </div>
-                
+
                     <!-- 桩号 -->
                     <!-- <input
                       :class="[
@@ -574,9 +575,10 @@
                   </div>
                 </div>
                   <el-form-item  style="text-align: right;width: 100%;">
-          <el-button style="width: 10%;" type="primary" @click="submitstrategy">保存</el-button>
-          <el-button style="width: 10%;"  @click="closeStrategy">取 消</el-button>
+
         </el-form-item>
+         <el-button style="width: 10%;" type="primary" @click="submitstrategy">保存</el-button>
+         <el-button style="width: 10%;"  @click="closeStrategy">取 消</el-button>
      </el-dialog>
 
 
@@ -632,18 +634,12 @@ export default {
       }],
       title:"",
       addTitle:"",
-      options: [
-         {
-          value: '',
-          label: '',
-          children:[
-          {
-            value: '',
-            label: '',
-          }
-          ]
-        }
-      ],
+      options: [],
+      props:{
+        label:'name',
+        value:'id',
+        children:'children'
+      },
       active: 0,
       //工作台
       workbenchOpen:false,
@@ -705,6 +701,13 @@ export default {
         planFileId:null,
         tunnelId:null ,//隧道
         sId:null,//分区隧道
+      },
+      reserveProcessDrawForm:{
+        reserveId:null, //预案id
+        deviceTypeId:null, //设备类型id
+        strategyId:[],//多个策略id
+        processName:null, //流程节点名称
+        processSort:null, //流程节点顺序
       },
       // 遮罩层
       dloading: false,
@@ -768,25 +771,25 @@ export default {
           this.eqTunnelData.forEach(item=>{
           item.sdTunnelSubareas.forEach((item,index)=>{
             this.eqTunnelDataList.push(item)
-           })          
+           })
          })
          console.log(this.eqTunnelDataList,'this.eqTunnelDataListthis.eqTunnelDataList')
         })
   },
   methods: {
-   //点击了取消  
+   //点击了取消
       cancelsubmitUpload(){
         this.dialogFormVisible = false
           this.resetReservePlanDrawForm()
       },
 
-   
-   
-   
-   
-   
-   
-   
+
+
+
+
+
+
+
     //删除一行
     updataDeleteForm(index){
       if( this.planTypeIdList.length<=1){
@@ -798,13 +801,21 @@ export default {
 
     //添加一行
     addFrom(){
+      console.log(this.reserveProcessDrawForm,"this.reserveProcessDrawFormthis.reserveProcessDrawForm")
+      console.log(this.planTypeIdList,"this.planTypeIdListthis.planTypeIdList")
       this.planTypeIdList.push([{
         a:[]
       }])
+      this.reserveProcessDrawForm.strategyId.push([
+
+      ])
+      /*this.reserveProcessDrawForm.strategyId.push([{
+        id:[]
+      }])*/
     },
-    ceshiTime(){     
-     this.timer=setInterval(()=>{            
-            if(this.active++ >2) this.active = 0            
+    ceshiTime(){
+     this.timer=setInterval(()=>{
+            if(this.active++ >2) this.active = 0
         },1000)
     },
     showStrategyContent(row){
@@ -816,8 +827,8 @@ export default {
         this.lightSwitch = response.msg;
       });
     },
-   
-    getTunnelData(tunnelId) {     
+
+    getTunnelData(tunnelId) {
       console.log(tunnelId,'参数餐宿参数擦擦是')
 
       let that = this;
@@ -844,7 +855,7 @@ export default {
                   arr.push(item)
                 }
               }
-             
+
             }
             this.selectedIconList = arr //这是最终需要挂载到页面上的值
             console.log(this.selectedIconList,"this.selectedIconList")
@@ -867,7 +878,7 @@ export default {
         this.strategyVisible=false
     },
     submitstrategy(){
-      console.log(this.planTypeIdList,'cecceeecceeee')
+      console.log(this.reserveProcessDrawForm,'this.reserveProcessDrawFormthis.reserveProcessDrawForm')
     },
     handleChangeStrategy(e,index){
         console.log(e,index,'cecceeecceeee')
@@ -899,12 +910,11 @@ export default {
       // });
       console.log(row,'ppppppppppppppp')
       this.strategyVisible=true
-      // getTypeAndStrategy({isControl:1}).then(res=>{
-      //     console.log(res.data,'之心测策略')
-      //     this.options=res.data
-      //     res.data.forEach((item,index)=>{
-            
-      //     })
+      this.reserveProcessDrawForm.reserveId = row.id
+      getTypeAndStrategy({isControl:1}).then(res=>{
+          console.log(res.data,'控制策略')
+          this.options=res.data
+          })
       // })
     },
     //执行策略id勾选事件
@@ -1071,7 +1081,7 @@ export default {
         this.$message.error('请检查，上传文件大小不能超过1MB!');
       } else {
         this.fileData = new FormData();  // new formData对象
-        this.$refs.upload.submit();  // 提交调用uploadFile函数      
+        this.$refs.upload.submit();  // 提交调用uploadFile函数
         this.fileData.append('planName', this.reservePlanDrawForm.planName);  // 预案名称
         this.fileData.append('planTypeId', this.reservePlanDrawForm.planTypeId);  // 事件类型
         this.fileData.append('planDescription', this.reservePlanDrawForm.planDescription==null ? "#^#" : this.reservePlanDrawForm.planDescription);  // 预案描述
@@ -1126,15 +1136,15 @@ export default {
       /** 新增按钮操作 **/
       handleAdd() {
      console.log(this.$refs['form1'],'this.$refs["form1"]')
-            
+
           //  this.$nextTick(() => {
           //       this.$refs["form1"].clearValidate();
           //   });
-        // this.resetReservePlanDrawForm();  
+        // this.resetReservePlanDrawForm();
         this.title = "新增预案";
         this.planChangeSink = "add";
         this.dialogFormVisible=true
-       
+
         this.visibleAdd=true
         // this.addForm=true
           this.$refs["form1"].clearValidate();
@@ -1159,7 +1169,7 @@ export default {
           this.eqTunnelData.forEach(item=>{
         item.sdTunnelSubareas.forEach((item,index)=>{
             this.eqTunnelDataList.push(item)
-           })          
+           })
          })
          console.log(this.eqTunnelDataList,'this.eqTunnelDataListthis.eqTunnelDataList')
         })
@@ -1169,7 +1179,7 @@ export default {
           this.reservePlanDrawForm = response.data;
           this.reservePlanDrawForm.tunnelId=response.data.sdTunnels.tunnelId
           this.reservePlanDrawForm.sId=response.data.sdTunnelSubarea.sId
- 
+
           if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
             this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
           }
@@ -1183,7 +1193,7 @@ export default {
               this.fileList.push(fileModel);
           }
           //文件回显
-         
+
         });
          // this.drawer = true;
          this.$nextTick(()=>{
@@ -1241,7 +1251,7 @@ export default {
             })
             if(number.length>0){
               this.text = '* 文件名不得超过 20 个字符  !'
-            }  
+            }
             this.fileList = fileList;
         },
         /** 查询相关策略下拉列表 */
@@ -1254,6 +1264,7 @@ export default {
         getPlanType() {
           listEventType().then(response => {
             console.log(response,'事件类型下拉')
+            console.log(response,'responseresponse')
           this.planTypeData = response.rows;
           });
         },

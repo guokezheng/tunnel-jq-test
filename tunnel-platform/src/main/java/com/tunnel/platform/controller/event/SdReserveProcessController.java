@@ -21,7 +21,7 @@ import java.util.List;
  * @date 2022-09-02
  */
 @RestController
-@RequestMapping("/system/process")
+@RequestMapping("/plan/process")
 public class SdReserveProcessController extends BaseController
 {
     @Autowired
@@ -30,7 +30,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 查询预案流程节点列表
      */
-    @PreAuthorize("@ss.hasPermi('system:process:list')")
+    @PreAuthorize("@ss.hasPermi('plan:process:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdReserveProcess sdReserveProcess)
     {
@@ -42,7 +42,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 导出预案流程节点列表
      */
-    @PreAuthorize("@ss.hasPermi('system:process:export')")
+    @PreAuthorize("@ss.hasPermi('plan:process:export')")
     @Log(title = "预案流程节点", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdReserveProcess sdReserveProcess)
@@ -55,7 +55,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 获取预案流程节点详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:process:query')")
+    @PreAuthorize("@ss.hasPermi('plan:process:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -65,7 +65,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 新增预案流程节点
      */
-    @PreAuthorize("@ss.hasPermi('system:process:add')")
+    @PreAuthorize("@ss.hasPermi('plan:process:add')")
     @Log(title = "预案流程节点", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdReserveProcess sdReserveProcess)
@@ -76,7 +76,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 修改预案流程节点
      */
-    @PreAuthorize("@ss.hasPermi('system:process:edit')")
+    @PreAuthorize("@ss.hasPermi('plan:process:edit')")
     @Log(title = "预案流程节点", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdReserveProcess sdReserveProcess)
@@ -87,7 +87,7 @@ public class SdReserveProcessController extends BaseController
     /**
      * 删除预案流程节点
      */
-    @PreAuthorize("@ss.hasPermi('system:process:remove')")
+    @PreAuthorize("@ss.hasPermi('plan:process:remove')")
     @Log(title = "预案流程节点", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

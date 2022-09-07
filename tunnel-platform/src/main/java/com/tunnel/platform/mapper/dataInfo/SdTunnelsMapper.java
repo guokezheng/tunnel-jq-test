@@ -2,7 +2,6 @@ package com.tunnel.platform.mapper.dataInfo;
 
 
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.domain.event.SdTunnelSubarea;
 
 import java.util.List;
 
@@ -64,5 +63,6 @@ public interface SdTunnelsMapper
 
 
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels);
+    public List<SdTunnels> deptId(Long deptId);
 
 }

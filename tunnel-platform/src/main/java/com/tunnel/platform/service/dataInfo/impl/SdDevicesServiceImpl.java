@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -376,14 +377,14 @@ public class SdDevicesServiceImpl implements ISdDevicesService
 
         return listMap;
     }
-    @Override
+    /*@Override
     public List<SdDevices> selectSdDevicesEqidList(Long eqHostId) {
         return sdDevicesMapper.selectSdDevicesEqidList(eqHostId);
-    }
+    }*/
 
     //根据设备类型查询相应的设备列表
     @Override
-    public List<SdDevices> selectEqListByEqTypes(String eqTypes) {
+    public List<SdDevices> selectEqListByEqTypes(String[] eqTypes) {
         return sdDevicesMapper.selectEqListByEqTypes(eqTypes);
     }
     /**

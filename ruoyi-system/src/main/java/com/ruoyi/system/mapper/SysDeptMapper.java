@@ -131,4 +131,6 @@ public interface SysDeptMapper
      * @return
      */
     public List<SysDeptUserTreeVO> childrenDeptUser(Long id);
+
+    public List<Object> tollById();
 }

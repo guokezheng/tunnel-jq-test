@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Controller
@@ -78,6 +79,17 @@ public class SdEquipmentTypeController extends BaseController
 		// 获取全部设备类型
 		List<SdEquipmentType> list = sdEquipmentTypeService.selectSdEquipmentTypeByBigType(bigType);
 		return getDataTable(list);
+	}
+
+	/**
+	 * 获得设备类型和控制策略
+	 * @param sdEquipmentType
+	 * @return
+	 */
+	@GetMapping("/getTypeAndStrategy")
+	public Result getTypeAndStrategy(SdEquipmentType sdEquipmentType) {
+		List<Map> sdEquipmentTypes = sdEquipmentTypeService.selectTypeAndStrategy(sdEquipmentType);
+		return Result.success(sdEquipmentTypes);
 	}
 
     /**
@@ -180,9 +192,8 @@ public class SdEquipmentTypeController extends BaseController
     public AjaxResult loadPicture(String url) {
 		String src = "";
 		//区分内存位置
-		url=url.replaceAll("C:","/Users/dear_/Desktop/JQ/equipmentIcon/equipmentIcon");
+		url=url.replaceAll("/opt/suidao/file/uploadPath/upload","E:/uploadPath/upload");
 //		url=url.replaceAll("E:","D:/");
-		AjaxResult ajaxResult = null;
 		try {
 			src = ioToBase64(url);
 		} catch (IOException e) {

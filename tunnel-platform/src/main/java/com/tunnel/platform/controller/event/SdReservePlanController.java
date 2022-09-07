@@ -79,7 +79,7 @@ public class SdReservePlanController extends BaseController
     /**
      * 新增预案信息
      */
-  /*  @PreAuthorize(hasPermi = "business:plan:add")
+    /*@PreAuthorize(hasPermi = "business:plan:add")
     @Log(title = "预案信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdReservePlan sdReservePlan)
@@ -87,30 +87,25 @@ public class SdReservePlanController extends BaseController
      //   return toAjax(sdReservePlanService.insertSdReservePlan(sdReservePlan));
         return toAjax(sdReservePlanService.insertSdReservePlan(null,null));
     }*/
-
-
-    /**
-     * 新增预案信息
-     */
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
+                                    @RequestParam("subareaId") Long subareaId,
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								HttpServletRequest request ) {
     	SdReservePlan sdReservePlan = new SdReservePlan();
+        sdReservePlan.setSubareaId(subareaId);
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	return Result.toResult(sdReservePlanService.insertSdReservePlan(file,sdReservePlan));
     }
 
     /**
-     * 下载文件
+     * 下载预案信息文件
      * @param response
      * @param id
      */
@@ -142,9 +137,17 @@ public class SdReservePlanController extends BaseController
 	}
 
 
-
     /**
      * 修改预案信息
+     * @param file
+     * @param id
+     * @param planTypeId
+     * @param planDescription
+     * @param planName
+     * @param planFileId
+     * @param removeIds
+     * @param request
+     * @return
      */
    /* @PreAuthorize(hasPermi = "business:plan:edit")
     @Log(title = "预案信息", businessType = BusinessType.UPDATE)
@@ -153,7 +156,6 @@ public class SdReservePlanController extends BaseController
     {
         return toAjax(sdReservePlanService.updateSdReservePlan(sdReservePlan));
     }*/
-
     @Log(title = "预案信息")
     @PostMapping(value = "/updateReservePlan")
     @ApiOperation("修改预案信息")
@@ -162,7 +164,6 @@ public class SdReservePlanController extends BaseController
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								@RequestParam("planFileId") String planFileId,
     								@RequestParam("removeIds") Long[] removeIds,
     								HttpServletRequest request
@@ -173,9 +174,7 @@ public class SdReservePlanController extends BaseController
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	sdReservePlan.setPlanFileId(planFileId);
-
     	return Result.toResult(sdReservePlanService.updateSdReservePlan(file,sdReservePlan,removeIds));
     }
 

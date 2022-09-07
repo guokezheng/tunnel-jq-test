@@ -102,4 +102,6 @@ public interface SdStrategyMapper
     /*public List<SdStrategy> selectStrategyList(SdStrategy sdStrategy);*/
 
     public List<Map<String, Object>> checkStrategyIfExist(Long id);
+
+    public List<Map<String,String>> getManualStrategy();
 }

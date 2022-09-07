@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.platform.mapper.event.SdStrategyRlMapper">
-    
+
     <resultMap type="SdStrategyRl" id="SdStrategyRlResult">
         <result property="id"    column="id"    />
         <result property="strategyId"    column="strategy_id"    />
@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="state"    column="state"    />
         <association property="eqType"    column="type_id" javaType="SdEquipmentType" resultMap="TypeResult" />
     </resultMap>
-	
+
 	<resultMap id="TypeResult" type="SdEquipmentType">
 		<id     property="typeId"   column="type_id"     />
 		<result property="typeName" column="type_name"   />
@@ -25,19 +25,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name
         from sd_strategy_rl A
         left join sd_equipment_type B ON A.eq_type_id = B.type_id
-        <where>  
+        <where>
             <if test="strategyId != null "> and A.strategy_id = #{strategyId}</if>
             <if test="eqTypeId != null "> and A.eq_type_id = #{eqTypeId}</if>
             <if test="equipments != null  and equipments != ''"> and A.equipments = #{equipments}</if>
             <if test="state != null  and state != ''"> and A.state = #{state}</if>
         </where>
     </select>
-    
+
     <select id="selectSdStrategyRlById" parameterType="Long" resultMap="SdStrategyRlResult">
         <include refid="selectSdStrategyRlVo"/>
         where id = #{id}
     </select>
-        
+
+    <select id="selectSdStrategyRlByStrategyId" parameterType="Long" resultMap="SdStrategyRlResult">
+        <include refid="selectSdStrategyRlVo"></include>
+        where strategy_id = #{strategyId}
+    </select>
+
     <insert id="insertSdStrategyRl" parameterType="SdStrategyRl" useGeneratedKeys="true" keyProperty="id">
         insert into sd_strategy_rl
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -53,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="state != null">#{state},</if>
          </trim>
     </insert>
-    
+
     	<!-- 批量新增策略关联信息 -->
 	  <insert id="batchInsertStrategyRl" parameterType="java.util.List">
 	    insert into sd_strategy_rl
@@ -67,9 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	      )
 	    </foreach>
 	  </insert>
-    
-    
-    
+
+
+
 
     <update id="updateSdStrategyRl" parameterType="SdStrategyRl">
         update sd_strategy_rl
@@ -87,21 +92,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSdStrategyRlByIds" parameterType="String">
-        delete from sd_strategy_rl where id in 
+        delete from sd_strategy_rl where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
+    <!--bigint类型直接保存到varchar会出现类型转换错误，需要cast()函数转换-->
     <delete id="deleteSdStrategyRlByStrategyId" parameterType="Long">
-        delete from sd_strategy_rl where strategy_id = #{strategyId}
+        delete from sd_strategy_rl where strategy_id = cast(#{strategyId})
     </delete>
-    
+
     <delete id="deleteSdStrategyRlByStrategyIds" parameterType="Long">
-        delete from sd_strategy_rl where strategy_id in 
+        delete from sd_strategy_rl where strategy_id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
 </mapper>

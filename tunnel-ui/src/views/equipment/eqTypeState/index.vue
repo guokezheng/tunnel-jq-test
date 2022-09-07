@@ -151,7 +151,7 @@
                 <el-form-item label="上传图标" label-width="120px">                         
                   <el-upload ref="upload" action="http://xxx.xxx.xxx/personality/uploadExcel"  list-type="picture-card" 
                     :data="{index}" :on-remove="handleRemove" :http-request="uploadFile" :on-success="handleSuccess" :file-list="item.iFileList"
-                    :on-exceed="handleExceed" :on-change="handleChange" :limit="2" :on-progress='handleChange'  :class="item.iFileList.length >= 2 ? 'showUpload':''">     
+                    :on-exceed="handleExceed" :on-change="handleChange" :limit="2" :on-progress='handleChange'  >     
                     <!-- <img :src="item.url" alt="">       -->                                                                    
                 </el-upload>  
                    
@@ -334,7 +334,8 @@
            isControl:'',
            iFileList:[],
            iconFileId:'',
-           stateTypeId:this.form.stateTypeId
+           stateTypeId:this.form.stateTypeId,
+           id:''
           }
         // this.form.equipmentList.push(item);
         this.equipmentStates.push(item);
@@ -359,12 +360,16 @@
         // this.equipmentStates.splice(index, 1)
          console.log(this.equipmentStates[index].id,'this.equipmentStatesthis.equipmentStates');
          let rowid=this.equipmentStates[index].id
-         deleteRow(rowid).then(res=>{
+         console.log(this.equipmentStates[index].id,'this.equipmentStatesthis.equipmentStates');
+           if(this.equipmentStates[index].id) {
+            deleteRow(rowid).then(res=>{
             console.log(res,'shanchu');
             if(res.code=200){
               this.$modal.msgSuccess("删除成功");
             }
-         })
+            })
+           }
+         
         this.equipmentStates.splice(index, 1)
        
         
@@ -522,17 +527,17 @@
              if (item.iFileList){
                item.iFileList.forEach(function (it,index,self) {
               // that.planRoadmapUrl(it.url);
-                     new Promise((resolve, reject) => {
-                    loadPicture({
-                      url: it.url
-                    }).then(response => {
-                      if (response.code == 200) {
-                        let base64 = response.msg
-                        it.url=base64
-                        resolve(base64) //不可缺少
-                      }
-                    })
-                  })
+                  //    new Promise((resolve, reject) => {
+                  //   loadPicture({
+                  //     url: it.url
+                  //   }).then(response => {
+                  //     if (response.code == 200) {
+                  //       let base64 = response.msg
+                  //       it.url=base64
+                  //       resolve(base64) //不可缺少
+                  //     }
+                  //   })
+                  // })
             });
 
              }
@@ -762,7 +767,8 @@
         //       console.log(res,'图片上的删除')
         //     })
         // }
-        console.log(file.id);
+        
+        // console.log(this.equipmentStates,'fileListfileListfileList');
          deletePicture(file.id).then(res=>{
             console.log(res);
             if(res.code==200){
@@ -799,7 +805,7 @@
                    item.iconFileId += ','+ res
                 }               
               })
-         console.log(this.equipmentStates,'xiugaigaigaig');
+         console.log(param,'xiugaigaigaig');
           })
         }
        

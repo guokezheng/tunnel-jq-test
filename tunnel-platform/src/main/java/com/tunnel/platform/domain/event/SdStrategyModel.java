@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 控制策略对象 (接收对象)
@@ -81,9 +82,12 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("方向")
     private String direction;
 
+    @ApiModelProperty("设备")
+    private List<Map> equipment;
+
     /** 触发器 */
     @ApiModelProperty("触发器")
-    private List<SdTrigger> triggers;
+    private SdTrigger triggers;
 
     public String getDirection() {
         return direction;
@@ -205,12 +209,20 @@ public class SdStrategyModel extends BaseEntity
 		this.tunnels = tunnels;
 	}
 
-    public List<SdTrigger> getTriggers() {
+    public SdTrigger getTriggers() {
         return triggers;
     }
 
-    public void setTriggers(List<SdTrigger> triggers) {
+    public void setTriggers(SdTrigger triggers) {
         this.triggers = triggers;
+    }
+
+    public List<Map> getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(List<Map> equipment) {
+        this.equipment = equipment;
     }
 
     @Override

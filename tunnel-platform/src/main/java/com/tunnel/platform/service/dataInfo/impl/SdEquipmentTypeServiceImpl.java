@@ -1,27 +1,29 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
-import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
+import com.tunnel.platform.mapper.event.SdStrategyMapper;
+import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
 import com.tunnel.platform.service.dataInfo.ISdEquipmentTypeService;
-import com.ruoyi.common.config.RuoYiConfig;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.platform.utils.util.StringUtil;
 import com.tunnel.platform.utils.util.UUIDUtil;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Service业务层处理
@@ -39,6 +41,12 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 
 	@Autowired
 	private SysDictDataMapper sysDictDataMapper;
+
+	@Autowired
+	private SdStrategyMapper sdStrategyMapper;
+
+	@Autowired
+	private SdStrategyRlMapper sdStrategyRlMapper;
 
 	/**
 	 * 查询设备类型
@@ -133,6 +141,31 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 		return list;
 	}
 
+	@Override
+	public List<Map> selectTypeAndStrategy(SdEquipmentType sdEquipmentType) {
+		List<SdEquipmentType> sdEquipmentTypes = sdEquipmentTypeMapper.selectSdEquipmentTypeList(sdEquipmentType);
+		List<Map> list = new ArrayList<>();
+		List<Map<String, String>> manualStrategy = sdStrategyMapper.getManualStrategy();
+		for (int i = 0; i <sdEquipmentTypes.size(); i++) {
+			SdEquipmentType equipmentType = sdEquipmentTypes.get(i);
+			Map<String, Object> hashMap = new HashMap<>();
+			hashMap.put("id", equipmentType.getTypeId());
+			hashMap.put("name", equipmentType.getTypeName());
+			List<Map> mapList = new ArrayList<>();
+			for (Map map : manualStrategy) {
+				if (map.get("eqTypeId").equals(equipmentType.getTypeId())) {
+					Map<String,Object> objectMap = new HashMap<>();
+					objectMap.put("id", map.get("strategyId"));
+					objectMap.put("name", map.get("strategyName"));
+					mapList.add(objectMap);
+					hashMap.put("children",mapList);
+				}
+			}
+			list.add(hashMap);
+		}
+		return list;
+	}
+
 	/**
 	 * 新增设备类型
 	 *
@@ -159,6 +192,20 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 				String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
 				sdEquipmentType.setIconFileId(guid);// 文件关联ID
 				for (int i = 0; i < file.length; i++) {
+					// 图片Base64
+					String imageBaseStr = null;
+					try {
+						String contentType = file[i].getContentType();
+						if(!contentType.contains("image")){
+							throw  new RuntimeException("文件类型不正确!");
+						}
+						byte[] imageBytes = file[i].getBytes();
+						BASE64Encoder base64Encoder =new BASE64Encoder();
+						imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+						imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+					} catch (IOException e) {
+						throw  new RuntimeException("图片转换base64异常");
+					}
 					// 从缓存中获取文件存储路径
 					String fileServerPath = RuoYiConfig.getUploadPath();
 					// 原图文件名
@@ -173,7 +220,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 
 					SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
 					iconFile.setStateIconId(guid);
-					iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+					iconFile.setUrl(imageBaseStr);
 					iconFile.setStateIconName(fileName);
 					iconFile.setCreateBy(SecurityUtils.getUsername());
 					iconFile.setCreateTime(DateUtils.getNowDate());
@@ -231,6 +278,20 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 			sdEquipmentType.setIconFileId(guid);// 文件关联ID
 			if (file!=null&&file.length > 0) {
 				for (int i = 0; i < file.length; i++) {
+					// 图片Base64
+					String imageBaseStr = null;
+					try {
+						String contentType = file[i].getContentType();
+						if(!contentType.contains("image")){
+							throw  new RuntimeException("文件类型不正确!");
+						}
+						byte[] imageBytes = file[i].getBytes();
+						BASE64Encoder base64Encoder =new BASE64Encoder();
+						imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+						imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+					} catch (IOException e) {
+						throw  new RuntimeException("图片转换base64异常");
+					}
 					// 从缓存中获取文件存储路径
 					String fileServerPath = RuoYiConfig.getUploadPath();
 					// 原图文件名
@@ -245,7 +306,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 
 					SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
 					iconFile.setStateIconId(guid);
-					iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+					iconFile.setUrl(imageBaseStr);
 					iconFile.setStateIconName(fileName);
 					iconFile.setCreateBy(SecurityUtils.getUsername());
 					iconFile.setCreateTime(DateUtils.getNowDate());

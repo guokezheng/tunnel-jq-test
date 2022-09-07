@@ -180,4 +180,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_reserve_process B on A.id = B.reserve_id
         where B.strategy_id like concat("%",#{id},"%")
     </select>
+    
+    <select id="getManualStrategy" resultType="hashmap" >
+        SELECT
+            s.id strategyId,
+            r.id strategyRLId,
+            s.strategy_name strategyName,
+            s.strategy_type strategyType,
+            r.eq_type_id eqTypeId
+        FROM
+            sd_strategy s
+                INNER JOIN sd_strategy_rl r ON s.id = r.strategy_id
+                AND s.strategy_type = '0'
+        GROUP BY
+            s.id;
+    </select>
+    
 </mapper>

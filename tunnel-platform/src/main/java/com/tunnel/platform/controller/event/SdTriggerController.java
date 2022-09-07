@@ -62,6 +62,11 @@ public class SdTriggerController extends BaseController
         return AjaxResult.success(sdTriggerService.selectSdTriggerById(id));
     }
 
+    /**
+     * 根据策略id查询触发器
+     * @param relateId
+     * @return
+     */
     @GetMapping("/getTriggersByRelateId")
     public AjaxResult getTriggersByRelateId(Long relateId) {
         return AjaxResult.success(sdTriggerService.selectSdTriggerByRelateId(relateId));

@@ -25,7 +25,7 @@ public interface ISdTriggerService
      * @param relateId
      * @return
      */
-    public List<SdTrigger> selectSdTriggerByRelateId(Long relateId);
+    public SdTrigger selectSdTriggerByRelateId(Long relateId);
 
     /**
      * 查询触发器列表

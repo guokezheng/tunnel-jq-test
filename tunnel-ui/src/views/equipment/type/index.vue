@@ -139,6 +139,15 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-show="scope.row.typeId==31"
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="configData(scope.row)"
+            v-hasPermi="['system:type:edit']"
+            >配置参数</el-button
+          >   
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
@@ -153,7 +162,7 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:type:remove']"
             >删除</el-button
-          >
+          >               
         </template>
       </el-table-column>
     </el-table>
@@ -333,6 +342,11 @@ export default {
       });
   },
   methods: {
+    configData(){
+      this.$router.push({
+        path:'/dev/device/param'
+      })
+    },
     getGroupByBigType(){
       groupByBigType().then((response) => {
         // console.log(response,'responseresponse')
@@ -370,7 +384,9 @@ export default {
       that.fileList = [];
       for (let i = 0; i < iFileList.length; i++) {
         let iconName = iFileList[i].stateIconName;
-        let iconUrl = await that.picture(iFileList[i].url);
+        // let iconUrl = await that.picture(iFileList[i].url);
+        let iconUrl = iFileList[i].url
+        
         that.fileList.push({
           name: iconName,
           url: iconUrl,

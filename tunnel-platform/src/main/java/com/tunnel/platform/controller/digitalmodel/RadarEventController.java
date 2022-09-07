@@ -2,13 +2,12 @@ package com.tunnel.platform.controller.digitalmodel;
 
 import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.service.event.ISdEventService;
+import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
+import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,23 +24,21 @@ import java.util.Map;
  * 万集事件传入接口
  */
 @RestController
-@RequestMapping("/wjData")
-public class WjEventController {
+@RequestMapping("/")
+public class RadarEventController {
 
     @Autowired
-    private ISdEventService service;
+    private RadarEventService service;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
 
-    public static final Logger log = LoggerFactory.getLogger(WjEventController.class);
+    public static final Logger log = LoggerFactory.getLogger(RadarEventController.class);
 
     /**
      * 事件数据
      * @param map
      * @return
      */
-    @PostMapping("/eventData")
+    @PostMapping("wjData/eventData")
     public AjaxResult eventData(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.insertWjEvent(map));
     }
@@ -49,7 +47,7 @@ public class WjEventController {
      * 事件图片
      * @param map
      */
-    @PostMapping("/eventImage")
+    @PostMapping("wjData/eventImage")
     public AjaxResult eventImage(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.uploadPic(map));
     }
@@ -57,7 +55,7 @@ public class WjEventController {
     /**
      * 事件视频
      */
-    @PostMapping("/eventVideo")
+    @PostMapping("wjData/eventVideo")
     public AjaxResult eventVideo(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.eventVideo(map));
     }
@@ -65,7 +63,7 @@ public class WjEventController {
     /**
      * 重点车辆
      */
-    @PostMapping("/specialCar")
+    @PostMapping("wjData/specialCar")
     public AjaxResult specialCar(@RequestBody Map<String,Object> map){
         return AjaxResult.success(service.specialCar(map));
     }
@@ -76,8 +74,8 @@ public class WjEventController {
      * @param record
      * @param item
      */
-//    @KafkaListener(topics = "matchResultData", groupId = "TestGroup")
-    public void topicListener1(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+//    @KafkaListener(topics = WjConstants.MATCHRESULTDATA, groupId = "TestGroup")
+    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         service.insertRadarDetect(map);
@@ -91,10 +89,49 @@ public class WjEventController {
     /**
      * 生产者测试
      */
-    @PostMapping("/send")
+    @PostMapping("wjData/send")
     public void send(@RequestBody Map<String,Object> map) throws ParseException {
 //        kafkaTemplate.send("matchResultData",  "key", "测试kafka消息");
 //        log.info("发送成功");
+        service.sendBaseDeviceStatus(map);
     }
 
+    /**
+     * 雷达-设备运行数据
+     * topic wjDeviceRunningInfo
+     */
+//    @KafkaListener(topics = WjConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
+    public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+        String value = record.value();
+        Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
+        service.saveRedis(map);
+        //手动提交
+        item.acknowledge();
+    }
+
+    /**
+     * 万集设备运行状态数据 发送
+     * topic	baseDeviceStatus
+     * 正晨调这个接口传值
+     */
+    @PostMapping("wjData/sendBaseDeviceStatus")
+    public String sendBaseDeviceStatus(@RequestBody Map<String,Object> map){
+        service.sendBaseDeviceStatus(map);
+        return "向主题发送数据信息";
+    }
+
+    /**
+     * 设备状态数据查询
+     * 万集调用
+     * 设备实时数据从缓存取
+     * key为 device_data:eqid
+     * value 按照设备类型既定格式存储
+     * 包含设备id  设备类型 还有类型独特字段
+     */
+    @PostMapping("zcData/baseDeviceStatus")
+    public AjaxResult baseDeviceStatus(@RequestBody Map<String,Object> map){
+        String tunnelId = (String) map.get("tunnelId");
+        Object sdRadarDevices = service.selectDevice(tunnelId);
+        return AjaxResult.success(sdRadarDevices);
+    }
 }

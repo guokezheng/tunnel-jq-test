@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="relateId"    column="relate_id"    />
         <result property="deviceTypeId"    column="device_type_id"    />
+        <result property="deviceId" column="device_id" />
         <result property="triggerType"    column="trigger_type"    />
         <result property="elementId"    column="element_id"    />
         <result property="comparePattern"    column="compare_pattern"    />
@@ -16,6 +17,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <association property="sdDeviceTypeItem" column="element_id" javaType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult" />
+    </resultMap>
+
+    <resultMap id="SdDeviceTypeItemResult" type="sdDeviceTypeItem">
+        <result property="id" column="element_id" />
+        <result property="itemCode" column="item_code" />
+        <result property="itemName" column="item_name" />
     </resultMap>
 
     <sql id="selectSdTriggerVo">
@@ -40,8 +48,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSdTriggerByRelateId" parameterType="Long" resultMap="SdTriggerResult">
-        select id, relate_id, device_type_id, trigger_type, element_id, compare_pattern, compare_value
-        from sd_trigger
+        select a.id, a.relate_id, a.device_type_id, b.device_id, a.trigger_type, a.element_id, a.compare_pattern, a.compare_value,
+               c.item_code,c.item_name
+        from sd_trigger a
+        left join sd_trigger_device b on a.id = b.trigger_id
+        left join sd_device_type_item c on a.element_id = c.id
         where relate_id = #{relateId}
     </select>
         
@@ -103,5 +114,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <delete id="deleteSdTriggerByRelateId" parameterType="Long">
         delete from sd_trigger where relate_id = #{rid}
+    </delete>
+
+    <delete id="deleteSdTriggerByRelateIds" parameterType="Long">
+        delete from sd_trigger where relate_id in
+        <foreach collection="array" item="relateId" open="(" close=")" separator=",">
+            #{relateId}
+        </foreach>
     </delete>
 </mapper>

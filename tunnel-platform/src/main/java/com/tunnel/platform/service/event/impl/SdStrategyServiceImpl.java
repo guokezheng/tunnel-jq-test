@@ -4,13 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
-import com.tunnel.platform.domain.dataInfo.*;
+import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import com.tunnel.platform.domain.event.*;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
-import com.tunnel.platform.mapper.dataInfo.SdStateStorageMapper;
 import com.tunnel.platform.mapper.event.*;
 import com.tunnel.platform.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;
@@ -162,8 +165,32 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int deleteSdStrategyById(Long id) {
-        return sdStrategyMapper.deleteSdStrategyById(id);
+        // 删除策略之前要先判断策略是否已经在预案管理中被引用
+        SdStrategy sdStrategy = new SdStrategy();
+        sdStrategy.setId(id);
+        List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(sdStrategy);
+        if (sdStrategies.size() > 0 && sdStrategies.size() == 1) {
+            List<Map<String, Object>> maps = sdStrategyMapper.checkStrategyIfExist(id);
+            if (maps.size() > 0) {
+                throw new RuntimeException("控制策略已经在预案管理中引用，不可删除!");
+            }
+        } else {
+            throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
+        }
+        int result = sdStrategyMapper.deleteSdStrategyById(id);
+        if (result >0) {
+            sdStrategyRlMapper.deleteSdStrategyRlByStrategyId(id);
+            SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(id);
+            if (sdTrigger != null){
+                if (sdTrigger.getId() < 0) {
+                    sdTriggerMapper.deleteSdTriggerById(sdTrigger.getId());
+                    sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(sdTrigger.getId());
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -190,22 +217,20 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
             }
         }
-        int result = sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
+        int result = sdStrategyMapper.deleteSdStrategyByIds(ids);
         if (result >0) {
-            result = sdStrategyMapper.deleteSdStrategyByIds(ids);
+            sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
+            for (Long id : ids) {
+                SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(id);
+                if (sdTrigger != null){
+                    if (sdTrigger.getId() < 0) {
+                        sdTriggerMapper.deleteSdTriggerById(sdTrigger.getId());
+                        sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(sdTrigger.getId());
+                    }
+                }
+            }
         }
         return result;
-    }
-
-    /**
-     * 删除控制策略信息
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public int deleteSdStrategyByStrategyId(Long id) {
-        return 0;
     }
 
     /**
@@ -216,12 +241,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
-        String[] equipments = model.getEquipments().split("#");
-        String[] equipmentType = model.getEquipmentTypeId().split("#");
-        String[] equipmentState = model.getEquipmentState().split("#");
+        List<Map> equipment = model.getEquipment();
+        if (StringUtils.isNotEmpty(model.getEquipment())) {
+            for (int i = 0; i < equipment.size(); i++){
+                Map<String,Object> map = equipment.get(i);
+                if (StringUtils.isEmpty(map.get("equipmentTypeId")+"")) {
+                    throw new RuntimeException("请选择设备类型！");
+                }
+            }
+        }
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
-        List<SdTrigger> sdTriggers = model.getTriggers();
+        SdTrigger sdTrigger = model.getTriggers();
         //策略基础表
         SdStrategy sty = new SdStrategy();
         //策略类型
@@ -235,34 +267,54 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-        //策略关联表
-        for (int i = 0; i < equipmentState.length; i++) {
-            SdStrategyRl rl = new SdStrategyRl();
-            rl.setEqTypeId(equipmentType[i]);
-            rl.setEquipments(equipments[i]);
-            rl.setState(equipmentState[i]);
-            rl.setStrategyId(sty.getId());
-            list.add(rl);
-        }
-        // 新增策略子表
-        int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
-        int result = 1;
-        if (insertBranchResult < 0 || insetStrResult < 0) {
-            result = -1;
-        }
-        // 策略触发器表
-        for (int i = 0; i < sdTriggers.size(); i++) {
-            SdTrigger trigger = sdTriggers.get(i);
-            trigger.setRelateId(sty.getId());
-            int insertSdTrigger = sdTriggerMapper.insertSdTrigger(trigger);
-            if (insertSdTrigger > 0) {
-                SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
-                sdTriggerDevice.setTriggerId(trigger.getId());
-                sdTriggerDevice.setDeviceId(equipments[i]);
-                int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+        if ("1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType())){
+            String[] equipments = model.getEquipments().split("#");
+            String[] equipmentType = model.getEquipmentTypeId().split("#");
+            String[] equipmentState = model.getEquipmentState().split("#");
+            for (int i = 0; i < equipmentState.length; i++) {
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentType[i]);
+                rl.setEquipments(equipments[i]);
+                rl.setState(equipmentState[i]);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
+        }else {
+            for (int i = 0; i < equipment.size(); i++) {
+                Map<String, Object> map = equipment.get(i);
+                String equipments = map.get("equipments").toString().replaceAll("#", ",");
+                String equipmentTypeId = map.get("equipmentTypeId") + "";
+                String eqState = (String) map.get("eqState");
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentTypeId);
+                rl.setEquipments(equipments);
+                rl.setState(eqState);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
             }
         }
-
+        // 新增策略子表
+        int result = 1;
+        if (list.size() != 0) {
+            int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
+            if (insertBranchResult < 0 || insetStrResult < 0) {
+                result = -1;
+            }
+        }
+        if ("2".equals(model.getStrategyType())) {
+            // 策略触发器表
+            sdTrigger.setRelateId(sty.getId());
+            int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+            if (insertSdTrigger > 0) {
+                SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
+                sdTriggerDevice.setTriggerId(sdTrigger.getId());
+                sdTriggerDevice.setDeviceId(sdTrigger.getDeviceId());
+                int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+                if (insertSdTriggerDevice < 0) {
+                    result = -1;
+                }
+            }
+        }
         return result;
     }
 
@@ -270,16 +322,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * 修改控制策略信息
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateSdStrategyInfo(SdStrategyModel model) {
-
-        String[] equipments = model.getEquipments().split("#");
-        String[] equipmentType = model.getEquipmentTypeId().split("#");
-        String[] equipmentState = model.getEquipmentState().split("#");
-        List<SdTrigger> sdTriggers = model.getTriggers();
+        List<Map> equipment = model.getEquipment();
+        SdTrigger sdTrigger = model.getTriggers();
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
         SdStrategy sty = new SdStrategy();
         //策略类型
+        sty.setId(model.getId());
         sty.setStrategyType(model.getStrategyType());
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
@@ -300,47 +351,57 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             result = -1;
         }
         //3.0  插入关联子表新的相关信息
-        //策略关联表
-        for (int i = 0; i < equipmentState.length; i++) {
-            SdStrategyRl rl = new SdStrategyRl();
-            rl.setEqTypeId(equipmentType[i]);
-            rl.setEquipments(equipments[i]);
-            rl.setState(equipmentState[i]);
-            rl.setStrategyId(model.getId());
-            list.add(rl);
+        if ( "1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType()) ){
+            String[] equipments = model.getEquipments().split("#");
+            String[] equipmentType = model.getEquipmentTypeId().split("#");
+            String[] equipmentState = model.getEquipmentState().split("#");
+            for (int i = 0; i < equipmentState.length; i++) {
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentType[i]);
+                rl.setEquipments(equipments[i]);
+                rl.setState(equipmentState[i]);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
+        } else  {
+            for (int i = 0; i < equipment.size(); i++) {
+                Map<String, Object> map = equipment.get(i);
+                String equipments = map.get("equipments").toString().replaceAll("#", ",");
+                String equipmentTypeId = map.get("equipmentTypeId") + "";
+                String eqState = (String) map.get("eqState");
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentTypeId);
+                rl.setEquipments(equipments);
+                rl.setState(eqState);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
         }
         int insertBranchInfo = sdStrategyRlMapper.batchInsertStrategyRl(list);
         if (insertBranchInfo < 0) {
             result = -1;
         }
-
         //删除触发器
         int upTrigger = sdTriggerMapper.deleteSdTriggerByRelateId(model.getId());
         if (upTrigger < 0) {
             result = -1;
         }
-
-        if ("3".equals(model.getStrategyType())) {
+        if ("2".equals(model.getStrategyType())) {
             //删除触发器关联设备
-            for(SdTrigger trigger : model.getTriggers()) {
-                int deviceByTId = sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(trigger.getId());
-                if (deviceByTId < 0) {
-                    result = -1;
-                }
+            int deviceByTId = sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(model.getTriggers().getId());
+            if (deviceByTId < 0) {
+                result = -1;
             }
             //添加触发器
-            for (int i = 0; i < sdTriggers.size(); i++) {
-                SdTrigger trigger = sdTriggers.get(i);
-                trigger.setRelateId(model.getId());
-                int insertSdTrigger = sdTriggerMapper.insertSdTrigger(trigger);
-                if (insertSdTrigger > 0) {
-                    SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
-                    sdTriggerDevice.setTriggerId(trigger.getId());
-                    sdTriggerDevice.setDeviceId(equipments[i]);
-                    int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
-                    if (insertSdTriggerDevice < 0) {
-                        result = -1;
-                    }
+            sdTrigger.setRelateId(model.getId());
+            int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+            if (insertSdTrigger > 0) {
+                SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
+                sdTriggerDevice.setTriggerId(sdTrigger.getId());
+                sdTriggerDevice.setDeviceId(sdTrigger.getDeviceId());
+                int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
+                if (insertSdTriggerDevice < 0) {
+                    result = -1;
                 }
             }
         }

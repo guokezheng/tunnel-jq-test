@@ -26,7 +26,7 @@ public interface SdTriggerMapper
      * @param relateId 策略id
      * @return 触发器
      */
-    public List<SdTrigger> selectSdTriggerByRelateId(Long relateId);
+    public SdTrigger selectSdTriggerByRelateId(Long relateId);
 
     /**
      * 查询触发器列表
@@ -74,5 +74,12 @@ public interface SdTriggerMapper
      * @return
      */
     public int deleteSdTriggerByRelateId(Long rid);
+
+    /**
+     * 根据策略id删除触发器
+     * @param ids
+     * @return
+     */
+    public int deleteSdTriggerByRelateIds(Long[] ids);
 
 }

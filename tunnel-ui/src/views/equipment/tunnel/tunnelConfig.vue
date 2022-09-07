@@ -440,7 +440,8 @@
           if (list[i].iFileList != null) {
             let imgUrl = [];
             for (let j = 0; j < list[i].iFileList.length; j++) {
-              let url = await that.picture(list[i].iFileList[j].url);
+              // let url = await that.picture(list[i].iFileList[j].url);
+              let url = list[i].iFileList[j].url
               imgUrl.push(url);
             }
             list[i].url = imgUrl;
@@ -524,6 +525,9 @@
         let list = that.selectedIconList;
         // debugger;
         for (let i = 0; i < list.length; i++) {
+          if(list[i].eqType == 12){
+            console.log(list[i])
+          }
           var iconWidth = 30;
           var iconHeight = 30;
           if (list[i].width != "") {
@@ -589,7 +593,7 @@
           } else {
             var img3 = that.svg.paper.image(
               list[i].url[0],
-              list[i].position.left + iconWidth,
+              list[i].position.left + iconWidth,//此处增加+ iconWidth
               list[i].position.top,
               iconWidth,
               iconHeight

@@ -64,7 +64,7 @@ public interface ISdDevicesService
      * 根据设备类型查询设备列表
      * @return
      */
-    public List<SdDevices> selectEqListByEqTypes(String eqTypes);
+    public List<SdDevices> selectEqListByEqTypes(String[] eqTypes);
     /**
      /**
      * 传感器信息查询
@@ -86,7 +86,7 @@ public interface ISdDevicesService
      * @param eqHostId
      * @return
      */
-    public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
+   // public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
     /**
      * 通过隧道id查询设备类型
      * @param sdDevices

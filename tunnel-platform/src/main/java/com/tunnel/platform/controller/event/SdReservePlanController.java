@@ -91,16 +91,16 @@ public class SdReservePlanController extends BaseController
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
+                                    @RequestParam("subareaId") Long subareaId,
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								HttpServletRequest request ) {
     	SdReservePlan sdReservePlan = new SdReservePlan();
+        sdReservePlan.setSubareaId(subareaId);
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	return Result.toResult(sdReservePlanService.insertSdReservePlan(file,sdReservePlan));
     }
 
@@ -144,7 +144,6 @@ public class SdReservePlanController extends BaseController
      * @param planTypeId
      * @param planDescription
      * @param planName
-     * @param strategyId
      * @param planFileId
      * @param removeIds
      * @param request
@@ -165,7 +164,6 @@ public class SdReservePlanController extends BaseController
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								@RequestParam("planFileId") String planFileId,
     								@RequestParam("removeIds") Long[] removeIds,
     								HttpServletRequest request
@@ -176,9 +174,7 @@ public class SdReservePlanController extends BaseController
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	sdReservePlan.setPlanFileId(planFileId);
-
     	return Result.toResult(sdReservePlanService.updateSdReservePlan(file,sdReservePlan,removeIds));
     }
 

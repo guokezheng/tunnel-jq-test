@@ -82,7 +82,7 @@
       <el-table-column label="分区" align="center" prop="sdTunnelSubarea.sName" />
       <el-table-column label="事件类型" align="center" prop="eventType.eventType" />
       <el-table-column label="预案描述" align="left" prop="planDescription" width="200" >      
-      <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" > -->
+      <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
           <el-popover
               placement="top-start"
@@ -136,14 +136,14 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:plan:remove']"
           >删除</el-button>
-          <el-button v-show="scope.row.strategy.strategyType == 0"
+          <el-button 
             size="mini"
             type="text"
             icon="el-icon-guide"
             @click="chooseStrategyInfo(scope.row)"
             v-hasPermi="['business:plan:remove']"
-          >执行策略</el-button>
-          <el-button v-show="scope.row.strategy.strategyType == 0"
+          >执行策略</el-button>         
+          <el-button 
             size="mini"
             type="text"
             icon="el-icon-guide"
@@ -162,78 +162,6 @@
       @pagination="getList"
     />
 
-    <!-- <el-drawer
-      class="zwsj"
-      :title="drawerTitle"
-      :visible.sync="drawer"
-      :direction="direction"
-      :before-close="handleClose"
-      destroy-on-close>
-      <el-form ref="form1" :model="reservePlanDrawForm" :rules="rules" label-width="120px">
-      <el-form-item label="所属隧道" prop="tunnelId">
-              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width: 80%;" @change="changeSelection">
-                <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
-                  :value="item.tunnelId" ></el-option>
-              </el-select>  
-            </el-form-item>
-            <el-form-item label="隧道分区" prop="sId">
-              <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width: 80%;">
-                <el-option v-for="item in eqTunnelDataList" :key="item.sName" :label="item.sName"
-                  :value="item.sId"></el-option>
-              </el-select>  
-            </el-form-item>
-        <el-form-item label="事件类型" prop="planTypeId">
-          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
-            <el-option
-                v-for="item in planTypeData"
-                :key="item.id"
-                :label="item.eventType"
-                :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="预案名称" prop="planName">
-          <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案名称" />
-        </el-form-item>
-        <el-form-item label="预案描述" prop="planDescription">
-          <el-input maxlength="250" style="width: 80%;" v-model="reservePlanDrawForm.planDescription" type="textarea" placeholder="请输入预案描述" />
-        </el-form-item>
-        <el-form-item label="相关策略" prop="strategyNames">
-          <el-input style="width: 80%;" v-model="reservePlanDrawForm.strategyNames" @focus="openAddStragegyDialog" @click.native="openAddStragegyDialog()"  placeholder="" />
-          <el-select v-model="reservePlanDrawForm.strategyId" placeholder="请选择相关策略" style="width: 80%;">
-            <el-option
-                v-for="item in strategyData"
-                :key="item.id"
-                :label="item.strategyName"
-                :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="相关文档" prop="eventLocation">
-          <el-upload  style="width: 80%;"
-            multiple
-            class="upload-demo"
-            ref="upload"
-            :limit="5"
-            action="http://xxx.xxx.xxx/personality/uploadExcel"
-            :on-preview="handlePreview"
-            :on-change="handleChange"
-            :on-remove="handleRemove"
-            :on-exceed="handleExceed"
-            :file-list="fileList"
-            :http-request="uploadFile"
-            :auto-upload="false">
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
-            </el-button> -->
-            <!-- <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;">{{text}}</span>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item  style="text-align: center;text-align: center;position: absolute;bottom: 0; width: 100%;">
-          <el-button style="width: 30%;" type="primary" @click="submitUpload" :loading="dloading">{{ dloading ? '提交中 ...' : '保存' }}</el-button>
-          <el-button style="width: 30%;"  @click="drawerClose">取 消</el-button>
-        </el-form-item>
-      </el-form>
-    </el-drawer> --> 
 
      <el-drawer
        class="zwsj"
@@ -322,7 +250,7 @@
       </div>
     </el-dialog>
      
-      <!-- 查看工作台对话框 -->
+      <!--  预览-->
     <el-dialog
         title="预览"
         :visible.sync="workbenchOpen"
@@ -330,6 +258,7 @@
         :before-close="handleClose"              
          append-to-body
          >
+         
       <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
         <!-- 设备图标-->
                   <div
@@ -452,31 +381,20 @@
 
 
     <!-- 新增弹窗 -->
-  <el-dialog
-        :title="addTitle"
-        :visible.sync="addForm"
-         width="86.5%"
-        :before-close="handleClose"              
-         append-to-body
-         >
-         <el-form ref="form1" :model="reservePlanDrawForm" :rules="rules" label-width="80px">
-        <el-col :span="4">
-         <el-form-item label="所属隧道" prop="tunnelId">
-              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width:80%;" @change="changeSelection">
+     <el-dialog :title="title" :visible.sync="dialogFormVisible">
+      <el-form ref="form1" :model="reservePlanDrawForm" :rules="rules" label-width="120px">
+      <el-form-item label="所属隧道" prop="tunnelId">
+              <el-select v-model="reservePlanDrawForm.tunnelId" placeholder="请选择所属隧道" style="width: 80%;" @change="changeSelection">
                 <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                   :value="item.tunnelId" ></el-option>
               </el-select>  
             </el-form-item>
-            </el-col>
-            <el-col :span="4">
-         <el-form-item label="隧道分区" prop="sId">
-              <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width:80%;">
+            <el-form-item label="隧道分区" prop="sId">
+              <el-select v-model="reservePlanDrawForm.sId" placeholder="请选择所属隧道" style="width: 80%;">
                 <el-option v-for="item in eqTunnelDataList" :key="item.sName" :label="item.sName"
                   :value="item.sId"></el-option>
               </el-select>  
             </el-form-item>
-         </el-col>
-           <el-col :span="4">
         <el-form-item label="事件类型" prop="planTypeId">
           <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
             <el-option
@@ -486,20 +404,14 @@
                 :value="item.id"/>
           </el-select>
         </el-form-item>
-         </el-col>
-          <el-col :span="4">
-         <el-form-item label="预案名称" prop="planName">
+        <el-form-item label="预案名称" prop="planName">
           <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案名称" />
         </el-form-item>
-         </el-col>
-          <el-col :span="4">
-         <el-form-item label="预案描述" prop="planDescription">
-          <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案描述" />
+        <el-form-item label="预案描述" prop="planDescription">
+          <el-input maxlength="250" style="width: 80%;" v-model="reservePlanDrawForm.planDescription" type="textarea" placeholder="请输入预案描述" />
         </el-form-item>
-          </el-col>
-          <el-col :span="4">
-        <el-form-item label="相关文档" prop="strategyNames">
-         <el-upload  style="width: 80%;"
+        <el-form-item label="相关文档" prop="eventLocation">
+          <el-upload  style="width: 80%;"
             multiple
             class="upload-demo"
             ref="upload"
@@ -513,64 +425,55 @@
             :http-request="uploadFile"
             :auto-upload="false">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-           <!-- <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
-            </el-button> -->
-            <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;"></span>
+          <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
+            </el-button>
+          <span slot="tip" class="el-upload__tip" style="font-style: italic;color: red;padding-left:5%;">{{text}}</span>
           </el-upload>
         </el-form-item>
-         </el-col>
+      </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="cancelsubmitUpload">取 消</el-button>
+          <el-button type="primary" @click="submitUpload">保 存</el-button>
+        </div>
+      </el-dialog>
+      
+ <!-- 配置策略 -->
+ <el-dialog
+        :title="addTitle"
+        :visible.sync="strategyVisible"
+         width="86.5%"
+        :before-close="handleClose"              
+         append-to-body
+         >
         
+         <el-form ref="form1" :model="reservePlanDrawForm" label-width="80px">
 
-        <el-col :span="6">
-        <el-form-item label="相关策略" prop="planTypeId">
-          <el-cascader
+         <el-row  :gutter="20">
+            <el-col :span="8" v-for="(item,index) in planTypeIdList" :key="index" class="colflex">
+              <el-form-item label="相关策略" prop="planTypeId">
+                <el-cascader 
+                :value="item.a"        
+                :options="options"
+                @change="handleChangeStrategy($event,index)"></el-cascader>
+              </el-form-item>           
+                <div class="dialogButton" @click="addFrom()">添加</div>
+             <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
+              </el-col>      
+            </el-row>   
+
+         </el-form>
+         <div>
           
-          :options="options"
-          @change="handleChange"></el-cascader>
-        </el-form-item>
-         </el-col>
-         <el-col :span="6">
-        <el-form-item label="红黄灯" prop="planTypeId">
-          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
-            <el-option
-                v-for="item in planTypeData"
-                :key="item.id"
-                :label="item.eventType"
-                :value="item.id"/>
-          </el-select>
-        </el-form-item>
-         </el-col>
-         <el-col :span="6">
-        <el-form-item label="红黄灯" prop="planTypeId">
-          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
-            <el-option
-                v-for="item in planTypeData"
-                :key="item.id"
-                :label="item.eventType"
-                :value="item.id"/>
-          </el-select>
-        </el-form-item>
-         </el-col>
-         <el-col :span="6">
-        <el-form-item label="红黄灯" prop="planTypeId">
-          <el-select v-model="reservePlanDrawForm.planTypeId" placeholder="请选择事件类型" style="width: 80%;">
-            <el-option
-                v-for="item in planTypeData"
-                :key="item.id"
-                :label="item.eventType"
-                :value="item.id"/>
-          </el-select>
-        </el-form-item>
-         </el-col>
-  <!-- 车道背景图 -->
-        <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
-        <div
+       
+         <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage"> 
+        <!-- 设备图标-->
+                  <div
                     class="icon-box mouseHover"
                     v-for="(item, index) in selectedIconList"
                     :key="index"
                     :style="{
                             left: item.position.left - 12 + 'px',
-                            top: item.position.top + 150 +'px',
+                            top: item.position.top + 104 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"                
@@ -670,17 +573,18 @@
                     />
                     <div v-else style="width: 80px"></div> -->
                   </div>
-             
-      <el-form-item  style="text-align: right;width: 100%;">
-          <el-button style="width: 10%;" type="primary" @click="submitUpload" :loading="dloading">{{ dloading ? '提交中 ...' : '保存' }}</el-button>
-          <el-button style="width: 10%;"  @click="drawerClose">取 消</el-button>
+                </div>
+                  <el-form-item  style="text-align: right;width: 100%;">
+          <el-button style="width: 10%;" type="primary" @click="submitstrategy">保存</el-button>
+          <el-button style="width: 10%;"  @click="closeStrategy">取 消</el-button>
         </el-form-item>
-       
-         </el-form>
-
- 
-     
      </el-dialog>
+
+
+
+
+
+
 
   </div>
 </template>
@@ -705,6 +609,7 @@ import { download } from "@/utils/request";
 import { listStrategy, getStrategy, handleStrategy } from "@/api/event/strategy";
 import {
   listType,
+  getTypeAndStrategy
 } from "@/api/equipment/type/api.js"
 import {
   getTunnels,
@@ -712,209 +617,34 @@ import {
 import {
     listTunnels
   } from "@/api/equipment/tunnel/api";
+import { fastLerp } from "zrender/lib/tool/color";
 export default {
   name: "Plan",
   data() {
     return {
       //新增弹窗
-      addForm:false,
+      dialogFormVisible:false,
+      visibleAdd:false,
+      //配置策略
+      strategyVisible:false,
+      //策略数组
+      planTypeIdList:[{
+        a:[]
+      }],
       title:"",
       addTitle:"",
-      options: [{
-          value: 'zhinan',
-          label: '指南',
-          children: [{
-            value: 'shejiyuanze',
-            label: '设计原则',
-            children: [{
-              value: 'yizhi',
-              label: '一致'
-            }, {
-              value: 'fankui',
-              label: '反馈'
-            }, {
-              value: 'xiaolv',
-              label: '效率'
-            }, {
-              value: 'kekong',
-              label: '可控'
-            }]
-          }, {
-            value: 'daohang',
-            label: '导航',
-            children: [{
-              value: 'cexiangdaohang',
-              label: '侧向导航'
-            }, {
-              value: 'dingbudaohang',
-              label: '顶部导航'
-            }]
-          }]
-        }, {
-          value: 'zujian',
-          label: '组件',
-          children: [{
-            value: 'basic',
-            label: 'Basic',
-            children: [{
-              value: 'layout',
-              label: 'Layout 布局'
-            }, {
-              value: 'color',
-              label: 'Color 色彩'
-            }, {
-              value: 'typography',
-              label: 'Typography 字体'
-            }, {
-              value: 'icon',
-              label: 'Icon 图标'
-            }, {
-              value: 'button',
-              label: 'Button 按钮'
-            }]
-          }, {
-            value: 'form',
-            label: 'Form',
-            children: [{
-              value: 'radio',
-              label: 'Radio 单选框'
-            }, {
-              value: 'checkbox',
-              label: 'Checkbox 多选框'
-            }, {
-              value: 'input',
-              label: 'Input 输入框'
-            }, {
-              value: 'input-number',
-              label: 'InputNumber 计数器'
-            }, {
-              value: 'select',
-              label: 'Select 选择器'
-            }, {
-              value: 'cascader',
-              label: 'Cascader 级联选择器'
-            }, {
-              value: 'switch',
-              label: 'Switch 开关'
-            }, {
-              value: 'slider',
-              label: 'Slider 滑块'
-            }, {
-              value: 'time-picker',
-              label: 'TimePicker 时间选择器'
-            }, {
-              value: 'date-picker',
-              label: 'DatePicker 日期选择器'
-            }, {
-              value: 'datetime-picker',
-              label: 'DateTimePicker 日期时间选择器'
-            }, {
-              value: 'upload',
-              label: 'Upload 上传'
-            }, {
-              value: 'rate',
-              label: 'Rate 评分'
-            }, {
-              value: 'form',
-              label: 'Form 表单'
-            }]
-          }, {
-            value: 'data',
-            label: 'Data',
-            children: [{
-              value: 'table',
-              label: 'Table 表格'
-            }, {
-              value: 'tag',
-              label: 'Tag 标签'
-            }, {
-              value: 'progress',
-              label: 'Progress 进度条'
-            }, {
-              value: 'tree',
-              label: 'Tree 树形控件'
-            }, {
-              value: 'pagination',
-              label: 'Pagination 分页'
-            }, {
-              value: 'badge',
-              label: 'Badge 标记'
-            }]
-          }, {
-            value: 'notice',
-            label: 'Notice',
-            children: [{
-              value: 'alert',
-              label: 'Alert 警告'
-            }, {
-              value: 'loading',
-              label: 'Loading 加载'
-            }, {
-              value: 'message',
-              label: 'Message 消息提示'
-            }, {
-              value: 'message-box',
-              label: 'MessageBox 弹框'
-            }, {
-              value: 'notification',
-              label: 'Notification 通知'
-            }]
-          }, {
-            value: 'navigation',
-            label: 'Navigation',
-            children: [{
-              value: 'menu',
-              label: 'NavMenu 导航菜单'
-            }, {
-              value: 'tabs',
-              label: 'Tabs 标签页'
-            }, {
-              value: 'breadcrumb',
-              label: 'Breadcrumb 面包屑'
-            }, {
-              value: 'dropdown',
-              label: 'Dropdown 下拉菜单'
-            }, {
-              value: 'steps',
-              label: 'Steps 步骤条'
-            }]
-          }, {
-            value: 'others',
-            label: 'Others',
-            children: [{
-              value: 'dialog',
-              label: 'Dialog 对话框'
-            }, {
-              value: 'tooltip',
-              label: 'Tooltip 文字提示'
-            }, {
-              value: 'popover',
-              label: 'Popover 弹出框'
-            }, {
-              value: 'card',
-              label: 'Card 卡片'
-            }, {
-              value: 'carousel',
-              label: 'Carousel 走马灯'
-            }, {
-              value: 'collapse',
-              label: 'Collapse 折叠面板'
-            }]
-          }]
-        }, {
-          value: 'ziyuan',
-          label: '资源',
-          children: [{
-            value: 'axure',
-            label: 'Axure Components'
-          }, {
-            value: 'sketch',
-            label: 'Sketch Templates'
-          }, {
-            value: 'jiaohu',
-            label: '组件交互文档'
-          }]
-        }],
+      options: [
+         {
+          value: '',
+          label: '',
+          children:[
+          {
+            value: '',
+            label: '',
+          }
+          ]
+        }
+      ],
       active: 0,
       //工作台
       workbenchOpen:false,
@@ -954,7 +684,7 @@ export default {
         ],
         planTypeId: { required: true, message: '请选择事件类型', trigger: 'change'},
         tunnelId: { required: true, message: '请选择隧道类型', trigger: 'change'},
-          sId: { required: true, message: '请选择分区隧道', trigger: 'change'},
+        sId: { required: true, message: '请选择分区隧道', trigger: 'change'},
         planDescription: { required: true, message: '请输入预案描述', trigger: 'blur'},
         eventLocation: {required: true, trigger: 'blur'},
         /* strategyNames: [{ required: true, trigger: 'blur'}],
@@ -1033,8 +763,46 @@ export default {
     this.getTunnelData(this.tunnelId)
     this.lightSwitchFunc()
     this.ceshiTime()
+    tunnelNames().then(res=>{
+           this.eqTunnelData=res.rows
+           console.log(res,'this.eqTunnelDatathis.eqTunnelData')
+          this.eqTunnelData.forEach(item=>{
+        item.sdTunnelSubareas.forEach((item,index)=>{
+            this.eqTunnelDataList.push(item)
+           })          
+         })
+         console.log(this.eqTunnelDataList,'this.eqTunnelDataListthis.eqTunnelDataList')
+        })
   },
   methods: {
+   //点击了取消  
+      cancelsubmitUpload(){
+        this.dialogFormVisible = false
+          this.resetReservePlanDrawForm()
+      },
+
+   
+   
+   
+   
+   
+   
+   
+    //删除一行
+    updataDeleteForm(index){
+      if( this.planTypeIdList.length<=1){
+        this.$modal.msgError('请保留一行')
+        return
+      }
+      this.planTypeIdList.splice(index,1)
+    },
+
+    //添加一行
+    addFrom(){
+      this.planTypeIdList.push([{
+        a:[]
+      }])
+    },
     ceshiTime(){     
      this.timer=setInterval(()=>{            
             if(this.active++ >2) this.active = 0            
@@ -1095,7 +863,22 @@ export default {
         }
       });
     },
-
+      //关闭策略弹窗
+    closeStrategy(){
+        this.strategyVisible=false
+    },
+    submitstrategy(){
+      console.log(this.planTypeIdList,'cecceeecceeee')
+    },
+    handleChangeStrategy(e,index){
+        console.log(e,index,'cecceeecceeee')
+        this.planTypeIdList[index].a=e
+        // for(let i=0; i<this.planTypeIdList.length; i++ ){
+        //   this.planTypeIdList[i].a=e
+        //   // console.log( this.planTypeIdList[i],' this.planTypeIdList[i] this.planTypeIdList[i] ')
+        // }
+        console.log( this.planTypeIdList,' this.planTypeIdList this.planTypeIdList')
+    },
 
   //查看工作台
   openWorkbench(){
@@ -1110,11 +893,20 @@ export default {
     }, */
     // 选择将要执行的策略
     chooseStrategyInfo(row){
-      this.handleStrategyVisible = true;
-      this.title = "执行相关策略";
-      listStrategyByPlanId(row.id).then(response => {
-        this.handleStrategyList = response.data;
-      });
+      // this.handleStrategyVisible = true;
+      // this.title = "执行相关策略";
+      // listStrategyByPlanId(row.id).then(response => {
+      //   this.handleStrategyList = response.data;
+      // });
+      console.log(row,'ppppppppppppppp')
+      this.strategyVisible=true
+      getTypeAndStrategy({isControl:1}).then(res=>{
+          console.log(res.data,'之心测策略')
+          this.options=res.data
+          res.data.forEach((item,index)=>{
+            
+          })
+      })
     },
     //执行策略id勾选事件
     handleStrategySelectionChange(selection){
@@ -1234,7 +1026,7 @@ export default {
     resetReservePlanDrawForm() {
         this.reservePlanDrawForm.planTypeId = null;
         this.reservePlanDrawForm.planName = null;
-        this.reservePlanDrawForm.strategyId = null;
+        this.reservePlanDrawForm.strategyId = '';
         this.reservePlanDrawForm.strategyNames = null;
         this.reservePlanDrawForm.planDescription = null;
         this.reservePlanDrawForm.tunnelId = null;
@@ -1247,6 +1039,7 @@ export default {
     },
     // 上传到服务器
     async submitUpload() {
+      console.log(this.reservePlanDrawForm.sId,'this.reservePlanDrawForm')
      if(!this.reservePlanDrawForm.planTypeId){
         this.$modal.msgError("请选择事件类型！");
         return;
@@ -1279,19 +1072,20 @@ export default {
         this.$message.error('请检查，上传文件大小不能超过1MB!');
       } else {
         this.fileData = new FormData();  // new formData对象
-        this.$refs.upload.submit();  // 提交调用uploadFile函数
+        this.$refs.upload.submit();  // 提交调用uploadFile函数      
         this.fileData.append('planName', this.reservePlanDrawForm.planName);  // 预案名称
         this.fileData.append('planTypeId', this.reservePlanDrawForm.planTypeId);  // 事件类型
         this.fileData.append('planDescription', this.reservePlanDrawForm.planDescription==null ? "#^#" : this.reservePlanDrawForm.planDescription);  // 预案描述
-        this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
-        // this.fileData.append('tunnelId', this.reservePlanDrawForm.tunnelId);
-        this.fileData.append('sId', this.reservePlanDrawForm.sId);
+        // this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
+        this.fileData.append('tunnelId', this.reservePlanDrawForm.tunnelId);
+        this.fileData.append('subareaId', Number(this.reservePlanDrawForm.sId));
         console.log(this.fileData,'this.fileDatathis.fileDatathis.fileData')
         if(this.planChangeSink == "add"){
           await addPlanFile(this.fileData).then((response) => {
                   if (response.code === 200) {
                     this.$modal.msgSuccess("保存成功");
-                    this.drawer = false;//关闭drawer窗体
+                    // this.drawer = false;//关闭drawer窗体
+                      this.dialogFormVisible=false
                     this.resetReservePlanDrawForm();//重置表单
                     //this.open = false;
                     this.getList();
@@ -1307,7 +1101,8 @@ export default {
             await updatePlanFile(this.fileData).then((response) => {
                     if (response.code === 200) {
                       this.$modal.msgSuccess("修改成功");
-                      this.drawer = false;//关闭drawer窗体
+                      // this.drawer = false;//关闭drawer窗体
+                      this.dialogFormVisible=false
                       this.resetReservePlanDrawForm();//重置表单
                       //this.open = false;
                       this.getList();
@@ -1323,7 +1118,7 @@ export default {
   },
       /** drawer-form表单，取消操作 **/
       drawerClose() {
-        this.$refs['form1'].resetFields();
+        this.$refs['form1'].clearValidate();
         this.resetReservePlanDrawForm();
         this.drawer = false;
         this.dloading=false
@@ -1331,16 +1126,19 @@ export default {
       },
       /** 新增按钮操作 **/
       handleAdd() {
-        this.resetReservePlanDrawForm();
-        this.addTitle = "新增预案";
+     console.log(this.$refs['form1'],'this.$refs["form1"]')
+            
+          //  this.$nextTick(() => {
+          //       this.$refs["form1"].clearValidate();
+          //   });
+        // this.resetReservePlanDrawForm();  
+        this.title = "新增预案";
         this.planChangeSink = "add";
-
-        tunnelNames().then(res=>{
-           this.eqTunnelData=res.rows
-           console.log(res,'this.eqTunnelDatathis.eqTunnelData')
-        })
-
-        this.addForm=true
+        this.dialogFormVisible=true
+       
+        this.visibleAdd=true
+        // this.addForm=true
+          this.$refs["form1"].clearValidate();
       },
       changeSelection(e){
         console.log(e,'indexindex')
@@ -1356,31 +1154,46 @@ export default {
         this.resetReservePlanDrawForm();
         this.planChangeSink = "edit";
         const id = row.id || this.ids
-        // getPlan(id).then(response => {
-        //   console.log(response,"response")
-        //   this.fileList = [];
-        //   this.reservePlanDrawForm = response.data;
-        //   if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
-        //     this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
-        //   }
+        tunnelNames().then(res=>{
+           this.eqTunnelData=res.rows
+           console.log(res,'this.eqTunnelDatathis.eqTunnelData')
+          this.eqTunnelData.forEach(item=>{
+        item.sdTunnelSubareas.forEach((item,index)=>{
+            this.eqTunnelDataList.push(item)
+           })          
+         })
+         console.log(this.eqTunnelDataList,'this.eqTunnelDataListthis.eqTunnelDataList')
+        })
+        getPlan(id).then(response => {
+          console.log(response,"response回显")
+          this.fileList = [];
+          this.reservePlanDrawForm = response.data;
+          this.reservePlanDrawForm.tunnelId=response.data.sdTunnels.tunnelId
+          this.reservePlanDrawForm.sId=response.data.sdTunnelSubarea.sId
+ 
+          if(this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null){
+            this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");
+          }
 
-        //   let fileInfo = response.data.pFileList;
-        //   for ( var i = 0; i < fileInfo.length; i++){
-        //       let fileModel = {};
-        //       fileModel.name = fileInfo[i].fileName;
-        //       fileModel.url = fileInfo[i].url;
-        //       fileModel.fId = fileInfo[i].id;
-        //       this.fileList.push(fileModel);
-        //   }
-        //   //文件回显
+          let fileInfo = response.data.pFileList;
+          for ( var i = 0; i < fileInfo.length; i++){
+              let fileModel = {};
+              fileModel.name = fileInfo[i].fileName;
+              fileModel.url = fileInfo[i].url;
+              fileModel.fId = fileInfo[i].id;
+              this.fileList.push(fileModel);
+          }
+          //文件回显
          
-        // });
+        });
          // this.drawer = true;
          this.$nextTick(()=>{
             this.$refs['form1'].resetFields();
           })
-          
-          this.addForm=true
+          this.$nextTick(() => {
+            this.$refs["form1"].clearValidate();
+        });
+          this.dialogFormVisible=true
           this.title = "修改预案信息";
       },
       /** 删除按钮操作 */
@@ -1527,6 +1340,9 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+  .colflex{
+    display: flex;
+  }
  .el-drawer__header{
        background: #dcdfe6;
        padding: 0 10px;
@@ -1564,4 +1380,20 @@ export default {
 //     }
 //   }
 // }
+.dialogButton{
+  width: 50px;
+  height: 24px;
+  border: solid 1px #ccc;
+  border-radius: 4px;
+  text-align: center;
+  line-height: 24px;
+  font-size: 12px;
+  margin-top: 5px;
+  cursor: pointer;
+  margin-left: 20px;
+  // margin-right: 10px;
+}
+.flexWrap{
+flex-wrap: nowrap;
+}
 </style>

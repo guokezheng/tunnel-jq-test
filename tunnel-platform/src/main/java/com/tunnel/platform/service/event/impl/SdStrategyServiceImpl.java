@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
 import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
@@ -233,17 +234,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     /**
-     * 删除控制策略信息
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public int deleteSdStrategyByStrategyId(Long id) {
-        return 0;
-    }
-
-    /**
      * 新增控制策略
      * 对应批量新增关联子表信息
      *
@@ -251,8 +241,17 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
         List<Map> equipment = model.getEquipment();
+        if (StringUtils.isNotEmpty(model.getEquipment())) {
+            for (int i = 0; i < equipment.size(); i++){
+                Map<String,Object> map = equipment.get(i);
+                if (StringUtils.isEmpty(map.get("equipmentTypeId")+"")) {
+                    throw new RuntimeException("请选择设备类型！");
+                }
+            }
+        }
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         SdTrigger sdTrigger = model.getTriggers();
         //策略基础表
@@ -268,7 +267,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-        if (model.getEquipment() != null){
+        if ("1".equals(model.getStrategyType())){
+            String[] equipments = model.getEquipments().split("#");
+            String[] equipmentType = model.getEquipmentTypeId().split("#");
+            String[] equipmentState = model.getEquipmentState().split("#");
+            for (int i = 0; i < equipmentState.length; i++) {
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentType[i]);
+                rl.setEquipments(equipments[i]);
+                rl.setState(equipmentState[i]);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
+        }else {
             for (int i = 0; i < equipment.size(); i++) {
                 Map<String, Object> map = equipment.get(i);
                 String equipments = map.get("equipments").toString().replaceAll("#", ",");
@@ -278,19 +289,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 rl.setEqTypeId(equipmentTypeId);
                 rl.setEquipments(equipments);
                 rl.setState(eqState);
-                rl.setStrategyId(sty.getId());
-                list.add(rl);
-            }
-        }
-        if ( !"".equals(model.getEquipments()) & !"".equals(model.getEquipmentState()) & !"".equals(model.getEquipmentTypeId()) ){
-            String[] equipments = model.getEquipments().split("#");
-            String[] equipmentType = model.getEquipmentTypeId().split("#");
-            String[] equipmentState = model.getEquipmentState().split("#");
-            for (int i = 0; i < equipmentState.length; i++) {
-                SdStrategyRl rl = new SdStrategyRl();
-                rl.setEqTypeId(equipmentType[i]);
-                rl.setEquipments(equipments[i]);
-                rl.setState(equipmentState[i]);
                 rl.setStrategyId(sty.getId());
                 list.add(rl);
             }
@@ -324,11 +322,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * 修改控制策略信息
      */
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateSdStrategyInfo(SdStrategyModel model) {
         List<Map> equipment = model.getEquipment();
-        /*String[] equipments = model.getEquipments().split("#");
-        String[] equipmentType = model.getEquipmentTypeId().split("#");
-        String[] equipmentState = model.getEquipmentState().split("#");*/
         SdTrigger sdTrigger = model.getTriggers();
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
@@ -355,26 +351,31 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             result = -1;
         }
         //3.0  插入关联子表新的相关信息
-        //策略关联表
-        /*for (int i = 0; i < equipmentState.length; i++) {
-            SdStrategyRl rl = new SdStrategyRl();
-            rl.setEqTypeId(equipmentType[i]);
-            rl.setEquipments(equipments[i]);
-            rl.setState(equipmentState[i]);
-            rl.setStrategyId(model.getId());
-            list.add(rl);
-        }*/
-        for (int i = 0; i < equipment.size(); i++) {
-            Map<String, Object> map = equipment.get(i);
-            String equipments = map.get("equipments").toString().replaceAll("#",",");
-            String equipmentTypeId = map.get("equipmentTypeId") + "" ;
-            String eqState = (String) map.get("eqState");
-            SdStrategyRl rl = new SdStrategyRl();
-            rl.setEqTypeId(equipmentTypeId);
-            rl.setEquipments(equipments);
-            rl.setState(eqState);
-            rl.setStrategyId(model.getId());
-            list.add(rl);
+        if ( "1".equals(model.getStrategyType()) ){
+            String[] equipments = model.getEquipments().split("#");
+            String[] equipmentType = model.getEquipmentTypeId().split("#");
+            String[] equipmentState = model.getEquipmentState().split("#");
+            for (int i = 0; i < equipmentState.length; i++) {
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentType[i]);
+                rl.setEquipments(equipments[i]);
+                rl.setState(equipmentState[i]);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
+        } else  {
+            for (int i = 0; i < equipment.size(); i++) {
+                Map<String, Object> map = equipment.get(i);
+                String equipments = map.get("equipments").toString().replaceAll("#", ",");
+                String equipmentTypeId = map.get("equipmentTypeId") + "";
+                String eqState = (String) map.get("eqState");
+                SdStrategyRl rl = new SdStrategyRl();
+                rl.setEqTypeId(equipmentTypeId);
+                rl.setEquipments(equipments);
+                rl.setState(eqState);
+                rl.setStrategyId(sty.getId());
+                list.add(rl);
+            }
         }
         int insertBranchInfo = sdStrategyRlMapper.batchInsertStrategyRl(list);
         if (insertBranchInfo < 0) {

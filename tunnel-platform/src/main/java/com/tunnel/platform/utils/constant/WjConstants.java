@@ -18,4 +18,21 @@ public class WjConstants {
      */
     public static final String WJ_CAMERA_INFO_KEY = "wj_camera_info:";
 
+    /**
+     * 万集感知数据topic matchResultData
+     * 消费者
+     */
+    public static final String MATCHRESULTDATA = "matchResultData";
+
+    /**
+     * 万集雷达设备运行数据topic wjDeviceRunningInfo
+     * 消费者
+     */
+    public static final String WJDEVICERUNNINGINFO = "wjDeviceRunningInfo";
+
+    /**
+     *万集 设备运行状态数据topic baseDeviceStatus
+     * 生产者
+     */
+    public static final String BASEDEVICESTATUS ="baseDeviceStatus";
 }

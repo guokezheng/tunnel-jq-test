@@ -79,12 +79,22 @@ public class RyTask {
                     SdDevices devices = sdDevicesArr.get(i);
                     String state="";
                     if (devices.getEqType()==1L){
-                        Integer eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
-                        boolean fHong = registers[eqFeedbackAddress1];
-                        boolean fLv = registers[eqFeedbackAddress1+1];
-                        boolean zHong = registers[eqFeedbackAddress1+2];
-                        boolean zLv = registers[eqFeedbackAddress1+3];
-                        state = getCheZhiState(fHong, fLv, zHong, zLv);
+                        String[] split = devices.getEqFeedbackAddress1().split(",");
+                        if (split.length>2){
+                            boolean fHong = registers[Integer.parseInt(split[0])];
+                            boolean fLv = registers[Integer.parseInt(split[1])];
+                            boolean zHong = registers[Integer.parseInt(split[2])];
+                            boolean zLv = registers[Integer.parseInt(split[3])];
+                            state = getCheZhiState(fHong, fLv, zHong, zLv);
+                        }else {
+                            Integer eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
+                            boolean fHong = registers[eqFeedbackAddress1];
+                            boolean fLv = registers[eqFeedbackAddress1+1];
+                            boolean zHong = registers[eqFeedbackAddress1+2];
+                            boolean zLv = registers[eqFeedbackAddress1+3];
+                            state = getCheZhiState(fHong, fLv, zHong, zLv);
+                        }
+
                     }else if (devices.getEqType()==17L){
                         Integer eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
                         boolean fx = registers[eqFeedbackAddress2];

@@ -165,9 +165,6 @@ public class SdEvent extends BaseEntity {
 
 //    @ApiModelProperty("事件结束时间")
 //    private Date endTime;
-
-    @ApiModelProperty("备注")
-    public String remark;
     @ApiModelProperty("清障电话")
     public String wreckerPhone;
     @ApiModelProperty("车主电话")
@@ -258,13 +255,7 @@ public class SdEvent extends BaseEntity {
         this.stakeNum = stakeNum;
     }
 
-    public String getRemark() {
-        return remark;
-    }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
 
     public String getWreckerPhone() {
         return wreckerPhone;
@@ -363,7 +354,6 @@ public class SdEvent extends BaseEntity {
                 ", videoUrl='" + videoUrl + '\'' +
                 ", stationId='" + stationId + '\'' +
                 ", stakeNum='" + stakeNum + '\'' +
-                ", remark='" + remark + '\'' +
                 ", wreckerPhone='" + wreckerPhone + '\'' +
                 ", carOwnerPhone='" + carOwnerPhone + '\'' +
                 ", tankerNum=" + tankerNum +

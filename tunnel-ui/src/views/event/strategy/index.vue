@@ -175,7 +175,7 @@
       <el-form-item v-for="(it, index) in strategyForm.addOperation" :key="index" 
         v-if="strategyForm.strategyType == '0'">
         <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  
-          multiple placeholder="请选择设备11" style="width: 40%">
+          multiple placeholder="请选择设备" style="width: 40%">
           <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
           <el-option
               v-for="(item) in equipmentData"

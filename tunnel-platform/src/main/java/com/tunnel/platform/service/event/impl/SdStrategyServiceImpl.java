@@ -267,7 +267,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-        if ("1".equals(model.getStrategyType())){
+        if ("1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType())){
             String[] equipments = model.getEquipments().split("#");
             String[] equipmentType = model.getEquipmentTypeId().split("#");
             String[] equipmentState = model.getEquipmentState().split("#");

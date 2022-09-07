@@ -286,7 +286,7 @@
       </el-form-item>
       
       <el-form-item  style="text-align: center;text-align: center; width: 90%;">
-          <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >保存</el-button>
+          <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >提交</el-button>
           <el-button style="width: 30%;"  @click="strategyFormClose">取 消</el-button>
       </el-form-item>
     </template>
@@ -327,8 +327,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button v-if="viewStrategy==false" type="primary" :loading="submitChooseEqFormLoading" 
-          @click="submitChooseEqForm">确 定</el-button>
-        <el-button @click="cancelChooseEq">取 消</el-button>
+          @click="submitChooseEqForm">确定</el-button>
+        <el-button @click="cancelChooseEq">取消</el-button>
       </div>
     </el-dialog>
 
@@ -571,7 +571,6 @@ export default {
     // 改变策略类型
     changeStrategyType(){
       this.recetForm()
-      console.log('我改变了')
     },
     recetForm(){
       this.eqForm =  {
@@ -722,11 +721,6 @@ export default {
     // 二次弹窗选择设备
     changeSelect(val) {
       let data = this.strategyForm.addOperation;
-      data.forEach((item,index)=>{
-        
-      })
-      console.log(this.strategyForm.addOperation,'=======')
-      console.log(val,'----------');
       this.eqForm.equipments = val
     },
     changeSelectDirection() {
@@ -892,7 +886,6 @@ export default {
     getEquipmentType() {
       listType(this.queryEqTypeParams).then(response => {
         this.equipmentTypeData = response.rows;
-        console.log(response.rows,"查询设备类型列表")
       });
     },
     getEquipmentHasType() {
@@ -948,20 +941,22 @@ export default {
         var strategyForm = this.strategyForm
         console.log(strategyForm,'这是啥')
         //为了比对之前的选择是否有重复项
-        for(var i=0;i<strategyForm.equipmentstr.length;i++){
-          var subArr = strategyForm.equipmentstr[i].split(',')
-          for(var j=0;j<subArr.length;j++){
-            if(this.eqForm.equipments.indexOf(subArr[j]) > -1){
-              if((!this.saveDevices) || this.saveDevices.indexOf(subArr[j]) == -1){
-                this.submitChooseEqFormLoading = false
-                return this.$modal.msgError("不能添加相同设备，请重新选择！");
-              }
-            }
-          }
-        }
+        // for(var i=0;i<strategyForm.equipmentstr.length;i++){
+        //   var subArr = strategyForm.equipmentstr[i].split(',')
+        //   for(var j=0;j<subArr.length;j++){
+        //     if(this.eqForm.equipments.indexOf(subArr[j]) > -1){
+        //       if((!this.saveDevices) || this.saveDevices.indexOf(subArr[j]) == -1){
+        //         this.submitChooseEqFormLoading = false
+        //         return this.$modal.msgError("不能添加相同设备，请重新选择！");
+        //       }
+        //     }
+        //   }
+        // }
 		    this.submitChooseEqFormLoading = false
         this.chooseEq = false;
         this.queryEqStateParams.stateTypeId =this.eqForm.equipment_type;
+        console.log(this.queryEqStateParams,'------------')
+        // 根据设备类型获取设备状态
         await listEqTypeStateIsControl({
           ...this.queryEqStateParams,
           eqDirection: this.strategyForm.direction

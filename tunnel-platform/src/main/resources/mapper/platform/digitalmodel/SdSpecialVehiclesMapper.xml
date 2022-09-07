@@ -102,19 +102,12 @@
         </foreach>
     </delete>
 
-    <select id="specialById" parameterType="String" resultMap="SdSpecialVehicleResult">
-        SELECT id,
-               vehicle_id,
-               tunnel_id,
-               vehicle_type,
-               vehicle_color,
-               vehicle_license,
-               license_color,
-               start_time,
-               end_time
-        FROM sd_special_vehicle
+    <select id="specialById" parameterType="String"  resultType="Map">
+        SELECT DATE_FORMAT(start_time, '%H') as time, COUNT(a.start_time) as num
+        FROM sd_special_vehicle a
         WHERE start_time &gt;= (NOW() - interval 24 hour)
           and start_time &lt;= NOW()
           and tunnel_id = #{tunnelId}
+        GROUP BY time
     </select>
 </mapper>

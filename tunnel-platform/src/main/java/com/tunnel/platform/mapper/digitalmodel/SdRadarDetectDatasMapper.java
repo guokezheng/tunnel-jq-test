@@ -4,6 +4,7 @@ package com.tunnel.platform.mapper.digitalmodel;
 import com.tunnel.platform.domain.digitalmodel.SdRadarDetectDatas;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 雷达监测感知数据Mapper接口
@@ -65,7 +66,7 @@ public interface SdRadarDetectDatasMapper
      * @param tunnelId
      * @return
      */
-    public List<SdRadarDetectDatas> eventById(String tunnelId);
+    public List<Map> eventById(String tunnelId);
 
 
 }

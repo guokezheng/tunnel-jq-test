@@ -1,34 +1,17 @@
 package com.tunnel.platform.service.event.impl;
 
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
-import com.ruoyi.common.config.RuoYiConfig;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.utils.ImageUtil;
-import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.domain.digitalmodel.WjConfidence;
-import com.tunnel.platform.domain.digitalmodel.WjEvent;
-import com.tunnel.platform.domain.digitalmodel.WjParticipants;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdEventFlow;
-import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.event.SdEventFlowMapper;
 import com.tunnel.platform.mapper.event.SdEventMapper;
 import com.tunnel.platform.service.event.ISdEventService;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.utils.util.UUIDUtil;
-import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 事件管理Service业务层处理
@@ -113,6 +96,14 @@ public class SdEventServiceImpl implements ISdEventService
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
     	}
+        if("2".equals(sdEvent.getEventState())){
+            SdEventFlow eventFlow = new SdEventFlow();
+            eventFlow.setEventId(sdEvent.getFlowId());
+            eventFlow.setFlowTime(sdEvent.getEventTime());
+            eventFlow.setFlowDescription("问题忽略");
+            eventFlow.setFlowHandler(SecurityUtils.getUsername());
+            sdEventFlowMapper.insertSdEventFlow(eventFlow);
+        }
         sdEvent.setUpdateTime(DateUtils.getNowDate());
         return sdEventMapper.updateSdEvent(sdEvent);
     }
@@ -151,6 +142,4 @@ public class SdEventServiceImpl implements ISdEventService
     public SdEvent getById(Long id) {
         return sdEventMapper.selectSdEventById(id);
     }
-
-
 }

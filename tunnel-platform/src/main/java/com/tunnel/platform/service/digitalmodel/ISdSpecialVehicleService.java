@@ -66,5 +66,5 @@ public interface ISdSpecialVehicleService
      * @param tunnelId
      * @return
      */
-    public List<SdSpecialVehicles> specialById(String tunnelId);
+    public  Object[]  specialById(String tunnelId);
 }

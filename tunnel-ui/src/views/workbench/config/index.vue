@@ -198,195 +198,199 @@
 
 
         <!-- 右侧侧窗 -->
-
-        <div class="indicatorLight" @click="isDrawerA()">
-          <i class="el-icon-caret-left"></i>一键车道控制模块
+        <div style="position: absolute;right: 0;display: flex;justify-content: space-between;flex-direction: column;height: 100%;">
+          <div class="indicatorLight" @click="isDrawerA()">
+            <i class="el-icon-caret-left"></i>一键车道控制模块
+          </div>
+          <!-- 定时控制模块 -->
+          <div class="brightnessControl" @click="isDrawerB()">
+            <i class="el-icon-caret-left"></i>定时控制模块
+          </div>
+          <div class="triggerControl" @click="isDrawerC()">
+            <i class="el-icon-caret-left"></i>触发控制模块
+          </div>
         </div>
-        <!-- 定时控制模块 -->
-        <div class="brightnessControl" @click="isDrawerB()">
-          <i class="el-icon-caret-left"></i>定时控制模块
-        </div>
-        <div class="triggerControl" @click="isDrawerC()">
-          <i class="el-icon-caret-left"></i>触发控制模块
-        </div>
-        <!-- 一键车道控制模块 -->
-
-        <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
-
-          <div class="bingZhou">
-            <span>济南方向：</span>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">1</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">2</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">3</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
-          </div>
-          <div class="bingZhou">
-            <span>潍坊方向：</span>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">1</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">2</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <div class="number" :style="checked?'background-color:#EC9D3C':'background-color:#00C9FF'">3</div>
-            <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
-          </div>
-        </el-drawer>
-        <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
-          <div class="ledLighting">
-            <span>引道照明时序自动控制 </span>
-            <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
+       
+          <!-- 一键车道控制模块 -->
+          <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
+          
+            <div class="bingZhou">
+              <span>济南方向：</span>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <el-button type="primary" class="control">控制</el-button>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+            <div class="bingZhou">
+              <span>潍坊方向：</span>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <el-button type="primary" class="control">控制</el-button>
             </div>
-          </div>
-          <div class="ledLighting"> <span>加强照明1时序自动控制 </span>
-            <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
+          </el-drawer>
+          <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
+            <div class="ledLighting">
+              <span>引道照明时序自动控制 </span>
+              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+              </div>
             </div>
-          </div>
-          <div class="ledLighting"> <span>加强照2时序自动控制 </span>
-            <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
+            <div class="ledLighting"> <span>加强照明1时序自动控制 </span>
+              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+              </div>
             </div>
-          </div>
-          <div class="ledLighting"> <span>加强照明2时序自动控制 </span>
-            <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
+            <div class="ledLighting"> <span>加强照2时序自动控制 </span>
+              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini">
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+              </div>
             </div>
-          </div>
-          <div class="ledLighting"> <span>基本照明2时序自动控制 </span>
-            <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
+            <div class="ledLighting"> <span>加强照明2时序自动控制 </span>
+              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker v-model="value1" :picker-options="{
-            selectableRange: '18:30:00 - 20:30:00'
-          }"
-                size="mini" :clearable="false">
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini">
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+              </div>
             </div>
-          </div>
-        </el-drawer>
-        <!-- 触发控制模块 -->
-        <el-drawer
-          title="触发控制"
-          :visible.sync="drawerC"
-          :modal="false"
-          :append-to-body="true"
-          class="drawerBottom"
-        >
-          <div class="bingZhou">
-            <!-- 设备类型 -->
-            <el-select v-model="drawerC.typeValue" placeholder="请选择设备类型">
-              <el-option
-                v-for="item in typeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-            <!-- 设备名称 -->
-            <div style="margin: 0 15px">
-              <el-select v-model="drawerC.nameValue" placeholder="请选择设备名称">
+            <div class="ledLighting"> <span>基本照明2时序自动控制 </span>
+              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              </el-switch>
+            </div>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker v-model="value1" :picker-options="{
+              selectableRange: '18:30:00 - 20:30:00'
+            }"
+                  size="mini" :clearable="false">
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass">确定 </el-button>
+              </div>
+            </div>
+          </el-drawer>
+          <!-- 触发控制模块 -->
+          <el-drawer
+            title="触发控制"
+            :visible.sync="drawerC"
+            :modal="false"
+            :append-to-body="true"
+            class="drawerBottom"
+          >
+            <div class="bingZhou">
+              <!-- 设备类型 -->
+              <el-select v-model="drawerC.typeValue" placeholder="请选择设备类型">
                 <el-option
-                  v-for="item in nameOptions"
+                  v-for="item in typeOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
                 >
                 </el-option>
               </el-select>
+              <!-- 设备名称 -->
+              <div style="margin: 0 15px">
+                <el-select v-model="drawerC.nameValue" placeholder="请选择设备名称">
+                  <el-option
+                    v-for="item in nameOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </div>
+            
+              <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
             </div>
-          
-            <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
-          </div>
-        </el-drawer>
+          </el-drawer>
+        
+
+        
       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
@@ -395,6 +399,7 @@
         <div class="footMiniBox"style="cursor: pointer;">
           <div class="footTitle">
             <div class="footTitleCont">
+              <img :src="carIcon" style="width: 18px;margin-right: 5px;"/>
               <p>车辆监测</p>
               <p>Vehicle detection</p>
             </div>
@@ -405,6 +410,7 @@
           <div class="footTitle">
             <!-- <div class="footTriangle"></div> -->
             <div class="footTitleCont">
+              <img :src="energyIcon" style="width: 18px;margin-right: 5px;"/>
               <p>能耗监测</p>
               <p>Energy consumption monitoring</p>
             </div>
@@ -415,6 +421,7 @@
         <div class="footMiniBox footerRight" style="cursor: pointer;">
           <div class="footTitle">
             <div class="footTitleCont">
+              <img :src="keyVehiclesIcon" style="width: 17px;margin-right: 5px;"/>
               <p>重点车辆</p>
               <p>Key vehicles</p>
             </div>
@@ -424,6 +431,7 @@
         <div class="footerRight footMiniBox" style="cursor: pointer;">
           <div class="footTitle">
             <div class="footTitleCont">
+              <img :src="warningIcon" style="width: 16px;margin-right: 5px;"/>
               <p>预警事件</p>
               <p>Alert event</p>
             </div>
@@ -432,7 +440,7 @@
           <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="trafficList">
             <el-row v-for="(item, index) in trafficList" :key="index" class="listRow">
               <el-col style="width: 3vw;text-align: center;">{{index+1}}</el-col>
-              <el-col style="width: 18vw;">{{item}}</el-col>
+              <el-col style="width: 18vw;">{{item.startTime}}   {{item.tunnels.tunnelName}}发生{{item.eventType.eventType}}事件</el-col>
             </el-row>
           </vue-seamless-scroll>
         </div>
@@ -500,28 +508,52 @@
       </div>
     </el-dialog>
     <!--状态切换对话框-->
-    <el-dialog v-dialogDrag class="workbench-dialog" :title="title" :visible.sync="stateSwitchVisible" width="560px"
+    <el-dialog v-dialogDrag class="workbench-dialog" :title="title" :visible.sync="stateSwitchVisible" width="450px"
       append-to-body :class="stateForm.manufacturers?'robot-dialog':''">
-      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini" style="position: relative;">
-        <el-form-item label="设备桩号:">
-          {{ stateForm.pile }}
-        </el-form-item>
-        <el-form-item label="设备类型:">
-          {{ stateForm.eqTypeName }}
-        </el-form-item>
-        <el-form-item label="方向:">
-          <div v-if="stateForm.eqDirection == 0">
-            {{ rightDirection + "方向" }}
-            <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
-          </div>
-          <div v-else-if="stateForm.eqDirection == 1">
-            {{ leftDirection + "方向" }}
-            <!--  <img
-              src="../../../assets/image/workbench/long-arrowhead.png"
-              style="transform: rotate(180deg); margin-left: 10px"
-            /> -->
-          </div>
-        </el-form-item>
+      <div style="width: 100%;height: 30px;display: flex;justify-content: space-between;">
+        <div class="dialogLine"></div>
+        <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
+      </div>
+      
+      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini" 
+                style="position: relative;padding: 20px;padding-top: 0px;">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="设备桩号:">
+              {{ stateForm.pile }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备类型:">
+              {{ stateForm.eqTypeName }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="方向:">
+              <div v-if="stateForm.eqDirection == 0">
+                {{ rightDirection + "方向" }}
+                <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
+              </div>
+              <div v-else-if="stateForm.eqDirection == 1">
+                {{ leftDirection + "方向" }}
+                <!--  <img
+                  src="../../../assets/image/workbench/long-arrowhead.png"
+                  style="transform: rotate(180deg); margin-left: 10px"
+                /> -->
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="运行状态:">
+              {{ '正常' }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        
+        
         <el-form-item label="调光强度:" v-if="stateForm.eqType == 99999999">
           <div style="width: 200px; float: left">
             <slider :min="0" :max="100" v-model="stateForm.lightValue"></slider>
@@ -530,48 +562,68 @@
             {{ stateForm.lightValue }}</label>
         </el-form-item>
         <!-- 所有设备 -->
-        <el-form-item label="运行状态:">
-          {{ '正常' }}
-        </el-form-item>
-        <!-- plc -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType == 14">
+        
+        <!-- plc、紧急电话、手报 -->
+        <el-form-item label="配置状态:" v-if="stateForm.eqType == (14 || 21 || 34) ">
           {{ '在线'}}
         </el-form-item>
-        <!-- 压力表 -->
+        <!-- 28：压力表  -->
         <el-form-item label="配置状态:" v-if="stateForm.eqType == 28">
           {{ '正常'}}
         </el-form-item>
-        <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
+       <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
           {{ '在线'}}
-        </el-form-item>
+        </el-form-item> -->
         <!-- 智能手动报警 -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType == 34">
+      <!--  <el-form-item label="配置状态:" v-if="stateForm.eqType == 34">
           {{ '在线'}}
-        </el-form-item>
+        </el-form-item> -->
         <!-- 消防水泵 -->
         <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
         </el-form-item>
 
         <!-- ====================微波检查器开始====== -->
-        <el-form-item label="配置状态:" v-if="stateForm.value &&stateForm.eqType == 20">
-          {{ '正常'}}
-        </el-form-item>
-        <el-form-item label="车道:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '这是车道'}}
-        </el-form-item>
-        <el-form-item label="车流量:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '10辆/没分钟'}}
-        </el-form-item>
-        <el-form-item label="平均车速:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '60公里/每小时'}}
-        </el-form-item>
-        <el-form-item label="占有率:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '60%'}}
-        </el-form-item>
-        <el-form-item label="上传时间:" v-if="stateForm.value && stateForm.eqType == 20">
-          {{ '今天'}}
-        </el-form-item>
+        <el-row v-if="stateForm.value && stateForm.eqType == 20">
+          <el-col :span="12">
+            <el-form-item label="配置状态:" >
+              {{ '正常'}}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="上传时间:" >
+              {{ '今天'}}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="stateForm.value && stateForm.eqType == 20">
+          <el-col :span="12">
+            <el-form-item label="车道:" >
+              {{ '这是车道'}}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="车流量:" >
+              {{ '10辆/没分钟'}}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="stateForm.value && stateForm.eqType == 20">
+          <el-col :span="12">
+            <el-form-item label="平均车速:">
+              {{ '60公里/每小时'}}
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="占有率:">
+              {{ '60%'}}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+       
+        
+        
         <!-- ====================微博检查结束============ -->
         <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
           {{ stateForm.value }}
@@ -1000,7 +1052,12 @@
     <!--摄像机对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
-      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini">
+      <div style="width: 100%;height: 30px;display: flex;justify-content: space-between;">
+        <div class="dialogLine"></div>
+        <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
+      </div>
+      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini" 
+              style="padding: 20px;padding-top: 0px;">
         <el-row>
           <el-col :span="8">
             <el-form-item label="摄像机:" label-width="60px">
@@ -1248,6 +1305,11 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- <el-dialog v-dialogDrag class="workbench-dialog" :title="title" :visible.sync="coviVisible" width="560px"
+      append-to-body>
+      <div style="height: 400px;" v-if="stateForm.eqType == 17" id="fengsu"></div>
+      <div style="height: 400px;" v-if="stateForm.eqType == 19" id="covi"></div>
+    </el-dialog> -->
     <!-- 结束 -->
     <!--图标含义对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog explain-table icon-dialog" :title="title" :visible.sync="explainVisible"
@@ -1528,14 +1590,17 @@
     getSystemWarningMsg,
     getTrafficIncident,
     proportionOfEquipment,
-    trafficFlowInformation
+    trafficFlowInformation,
+    vehicleMonitoring,
+    special
   } from "@/api/workbench/config.js"
   import {
     getDeviceBase,
     getNewBoardEditInfo,
     templateList,
   } from "@/api/workbench/config";
-  import BatteryIcon from "@/components/BatteryIcon"
+  import BatteryIcon from "@/components/BatteryIcon";
+  import { listEvent } from "@/api/event/event";
 
   let configData = {}; //配置信息
   let wrapperClientX = 0;
@@ -1555,6 +1620,7 @@
     },
     data() {
       return {
+        coviVisible:false,
         // 触发控制模块-设备类型
         typeOptions: [
           {
@@ -1679,6 +1745,10 @@
         temperature: '',
         HZdialogVisible: false,
         controlHeightVisible: false,
+        carIcon:require('@/assets/icons/carIcon.png'),
+        energyIcon:require('@/assets/icons/energyIcon.png'),
+        keyVehiclesIcon:require('@/assets/icons/keyVehiclesIcon.png'),
+        warningIcon:require('@/assets/icons/warningIcon.png'),
         railingList: [{
             position: {
               top: 325,
@@ -1796,7 +1866,8 @@
           eqType: "",
           eqList: [],
           state: "",
-          eqlane: ""
+          eqlane: "",
+          eqDirection:''
         },
         lightSwitch: 0,
         //车道按钮样式
@@ -1958,7 +2029,16 @@
         carShowTwo: false,
         light: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAYAAADOvw4PAAAAAXNSR0IArs4c6QAABUBJREFUaEPtWk9oXEUc/r63UA9JerCHQiuIVRDNoYfY6CGBrlrtIftsQ6J4Ezx4EUnxmD3uCl4aPHkTb4Uaa0wDjRR2iyJKVqRgDgGrohgv9rS7gXpIpuz7N/Nm3uzO22xA9O1ld7Pz3pf3m2++3+/3zRDRS6yiggNcAXEOwHj89xzvXQi0QFzlIjZs1xU4RmSOOG4ESADsgtH8zO/b52dtooISrkCUzoEcD6/1wnukPnu9ewKMfgvGBJ+7oNeC511leSfA6d0BYhU1CCznIFT/oUSdC6jqgwqcARE+bNxCMkWT3+/dq/NS15yfjRM1gMshoTQSpb5n/Kb/HhKuztkfqxSfYQ7AzZERLL4R4XNB3rfAcYywU9x6JIg1IlGqWLEy3mO1UdQIns/K/WTexVcn53BQupmhTBrhYlXrEU35HJBKJV+C6VNcRwNE2TEE7sMEmnwdLybpuMBxi50RNzbgsRymJhux1HSmpzVrumvy4q6cn9tnGgDLiYplEiZJiVFqtBAtSavB/9XsKVkbwIRbBHKN6nARxxOSFTiDgxemuw4XDmTcbhxrA5yI6qpslQoIqKY4p3TX4YVfJE7z2QgnJpJRa/UnVlKf6UrndXokE4OffrgRXAzXXlD3FThKEPunO87/I+O2NiZkCrMV3xmkkoW4Nd3x/LbE+WYqxLGTRRLZlhqD67UUCqIgWY71M9yiUWsmt3TH1zpy8jceFTm7O0Vx4u4vW5U405I4381EZM6jYHEqVtXLxCxINkqSOXd3KvFi9ZBqxLn7cvJvnRJmt+fc3UXKoqtL+J0vfC1xWhfSJEtUyVSmRFl15VItjUQVCyXLQTEgpWSrFG52geoluaU7XvxTTv7tMwPSmKoc+dIdpzYlzl0/wrGRSlW4rPSsP6dcPIWSDaSZVB0u7MtJuXEsJJlhVjp3dzYzE3z5nsRpTio12VDdnbVg59kvJM72G9lkVmsso8FQVVjpYpO4hLEoSKaSbEC64+UHclK+HI9IZqa7w5qZPP+TUpA/J0mWFNwO/pRDuuPkNYmz85Z8Hr1TzXL8NSLJBWf6dv9Tkg1nZtJvKwX5CWXlD9fd2cxMzmxJnO9no8I/D7GUFKp3i4oy8elPJM7P72hdrK5SmkWikizoZ9TdhnR6OEqfrMtF6b8doR83ACd/d5e5Xwd2Ofd34ieKzdOKr5TRZQ1vZnb5/B2J88MrbdCbCO0FnWhu3Z3FQ+vyqY8lzm/vtYEejsu2VMTNYOzAV/e/5/ivsgF4oXPtJOmu6a7U5Kt/KA75kw0wwsn0jfJYAaluscmpTYlz93K4I2NgxMqSZR/oqpOxwQ00+cRHEuf398PnyYpZstswkFDmAKLJ4FSEwPoQl/e/RN+DGylOKt35XNiXe3Brj1QguJ4OVsbe3SCHXDcze8/z0j2Jc2eyApTWU9swIzEzSz7Pfi5xtt+sgFxP7ynm6+7kglMWlPB8Pv6hxNldrkCIKG4jZYMf6N2/+3REv3Tn1Tn/wDxNsH68BnjRaQLr3p21uzNUA6yzvG3ifDtdA0ry1EKsNum9uz7bMUa6q3Pymomz83YNHpeThaOSOen47N1dhjrV+dgHJs5f1RqEGOFpHNZ5qlaVhd91+ACWQEwDGBuCy3sQ2IKHFfX0hX4f0Q/HzczcA7gFeCu81LGeHhG3TvoAlwBvGuSYsWWiG4fmUZU9sIdTWuFsy47TKvtAaQngNOiFOIlKZlkOip8U1lkRjrfCZz614/z6rg8hlsBS+DxOpUCqGN8DsQWBFZ6u23F2qz4oliAOwQMN5yErndtqYIc5/QAAAABJRU5ErkJggg==",
         dark: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJkAAAARCAMAAAD5Yf49AAAAAXNSR0IArs4c6QAAAUdQTFRFAAAArq6utbW1ubm5v7+/w8PDycnJzc3N09PTsLCwtra2vb29wMDAysrKzc3N1NTUsbGxt7e3wcHBzs7OsLCwtra2uLi4v7+/wcHBy8vLzc3N1dXVrq6usLCwtLS0tbW1t7e3uLi4v7+/wcHBw8PDycnJy8vLzMzMzc3N1NTU1dXVr6+vsLCwtbW1t7e3v7+/wcHBysrKzMzM1dXVr6+vsLCwtLS0uLi4vb29v7+/wsLCyMjIycnJzs7O1NTU1dXVr6+vsLCwtLS0uLi4vb29wsLCycnJzs7O1NTUr6+vsLCwsbGxsrKys7OztLS0tbW1t7e3uLi4ubm5urq6u7u7vLy8vb29vr6+v7+/wcHBwsLCw8PDxMTExcXFxsbGx8fHyMjIycnJysrKzMzMzc3Nzs7Oz8/P0NDQ0dHR0tLS09PT1NTU1dXV1E4hgwAAAEl0Uk5TAExMTExMTExMTU1NTU1NTU5OTk6EhISEhISEhL6+vr6+vr6+vr6+vr6+vvLy8vLy8vLy8vPz8/Pz8/Pz8/Pz8/T09PT09PT09GJ8jKsAAAG6SURBVEjH7dZHU8JAFMDxxQ5SLFgJKAhKsRuxK3aJGkrovffvf/YF4gwLL3jB0QPvyH928hsO+5YQomRYb/ewjIJ0ZkAxnr7DfMB8wvBu05hUVOazQDAYFIRQKBQORyLnlgmpqK2XyWQqlUqnM5lsNpe7sk1JRWu/KVcqlWq1VqvX643GrWNG/Fnv7R89+aFwHEfJeN631C7L/kCAkkWi0ZV2WY0nEpQsl8+vtct6qVSmZM1my0CIwouNkgwsHCLzqaCM+xFZTA1lMo7IChoo00VE1tIRBv0+AyfkixGVbUDZRGUWKFuobBvKDipzEhf6fReckC+7qGwPyj4qO4ByiMqOoByjshPixQdOyBcOlfmg+FFZDEr8W5bulhWgFFFZ65dkAiJL/IGMH8lGMlzW+H+yao8Mv7VY2fuMRe6zjszddZ/Rsov2fYbJrrvuM1p2N5QdwPftAAHZAb2yfM8OoGVOopTdjgMKKhP3pgqViXtTjcrEvalFZbqhvDX4vreGgLw1EBn11qBkBjHMMR7q4x5GKb2bBhTjPSV7MKmkMm9+pGRPllmpLFifKdmLTSOVRfsrJXtzwD/2Betpxj8VdhGZAAAAAElFTkSuQmCC",
-        allDirection: [], // 所有方向
+        allDirection: [
+          {
+            eqDirection:'0',
+            eqDirectionName:'济南方向',
+          },
+          {
+            eqDirection:'1',
+            eqDirectionName:'潍坊方向',
+          }
+        ], // 所有方向
         allLane: [], // 所有车道
         dialogVisible: false, // 情报板批量编辑弹窗
         aaa: '444',
@@ -1995,6 +2075,10 @@
         imageTimer: null, //定时器
         isLogin: false,
         handleTableWheelSwithch: false,
+        vehicleXData:[],
+        vehicleYData:[],
+        keyVehiclesXData:[],
+        keyVehiclesYData:[]
       }
     },
 
@@ -2075,12 +2159,12 @@
       bus.$on('process', (e) => {
         console.log(e, "-----------")
         if (e == 'theme-light') {
-          this.echartsColor = '#00c8ff'
+          this.echartsColor = '#fff'
           this.initeChartsEnd()
           this.initEnergyConsumption()
           this.loadFocusCar()
         } else if (e == 'theme-dark') {
-          this.echartsColor = '#0a88bd',
+          this.echartsColor = '#0a88bd', 
           this.initeChartsEnd()
           this.initEnergyConsumption()
           this.loadFocusCar()
@@ -2240,6 +2324,8 @@
     mounted() {
       this.initEnergyConsumption()
       this.getTimeData()
+      this.vehicleMonitoring()
+      this.special()
       let that = this;
       window.onresize = () => {
         return (() => {
@@ -2275,8 +2361,34 @@
       this.initeChartsEnd();
       this.loadFocusCar();
       this.srollAuto()
+      
     },
     methods: {
+      
+      // 车辆监测数据
+      vehicleMonitoring(){
+        // this.tunnelId
+        const param = {
+          tunnelId:1
+        }
+        vehicleMonitoring(param).then(res =>{
+          console.log(res,"车辆监测数据")
+          this.vehicleXData = res.data[0]
+          this.vehicleYData = res.data[1]
+        })
+      },
+      // 重点车辆监测数据
+      special(){
+        // this.tunnelId
+        const param = {
+          tunnelId:1
+        }
+        special(param).then(res =>{
+          console.log(res,"重点车辆监测数据")
+          this.keyVehiclesXData = res.data[0]
+          this.keyVehiclesYData = res.data[1]
+        })
+      },
       // 滚动条动画
       srollAuto() {
         var parent = document.getElementsByClassName('content')
@@ -2425,17 +2537,26 @@
         console.log(item, "item")
       },
       getWarnList() {
-        getSystemWarningMsg().then((res) => {
-          console.log(res, "系统预警")
-          res.data.forEach(val => {
-            if (val) {
-              this.SysEarlyWarning = res.data
-            }
-          })
-        })
-        getTrafficIncident().then((response) => {
-          this.trafficList = response.data
-        })
+        const param={
+          eventState:'0'
+        }
+        // getSystemWarningMsg().then((res) => {
+        //   console.log(res, "系统预警")
+        //   res.data.forEach(val => {
+        //     if (val) {
+        //       this.SysEarlyWarning = res.data
+        //     }
+        //   })
+        // })
+        // getTrafficIncident().then((response) => {
+        //   this.trafficList = response.data
+        // })
+        
+        listEvent(param).then( response => {
+          console.log(response.rows,"预警事件")
+            this.trafficList = response.rows;
+           
+          });
       },
       /** 查询部门列表 */
       getDeptList() {
@@ -2721,7 +2842,7 @@
           yAxis: {
             name: 'kw-h',
             nameTextStyle: {
-              color: '#00c8ff',
+              color: this.echartsColor,
               padding: [10, 20, 0, -40],
             },
             splitLine: {
@@ -2786,26 +2907,27 @@
             tooltip: {
               trigger: 'axis',
             },
-            legend: {
-              show: true,
-              icon: "rect",
-              itemWidth: 10,
-              itemHeight: 10,
-              x: 'center',
-              data: ['客车', '货车', '专项车'],
-              textStyle: { //图例文字的样式
-                color: this.echartsColor,
-                fontSize: 12
-              }
-            },
+            // legend: {
+            //   show: true,
+            //   icon: "rect",
+            //   itemWidth: 10,
+            //   itemHeight: 10,
+            //   x: 'center',
+            //   data: ['客车', '货车', '专项车'],
+            //   textStyle: { //图例文字的样式
+            //     color: this.echartsColor,
+            //     fontSize: 12
+            //   }
+            // },
             calculable: true,
             grid: {
-              top: '28%',
+              top: '24%',
               bottom: '20%',
               left: '14%',
               right: '14%',
             },
             xAxis: [{
+              name: '小时',
               type: 'category',
               axisTick: {
                 show: false
@@ -2813,7 +2935,7 @@
               splitLine: {
                 show: false
               },
-
+              boundaryGap: false,
               axisLabel: {
                 textStyle: {
                   color: this.echartsColor,
@@ -2826,19 +2948,19 @@
                   color: this.echartsColor
                 }
               },
-              data: this.getTimeData()
+              data: this.vehicleXData
             }],
             yAxis: [{
-              name: '辆',
+              name: '总车量',
               nameTextStyle: {
-                color: "#00c8ff",
+                color: this.echartsColor,
                 fontSize: 10,
                 padding: [0, 20, 0, 0]
               },
               type: 'value',
-              minInterval: 4,
-              min: 0,
-              max: 200,
+              minInterval: 1,
+              // min: 0,
+              // max: 200,
               axisTick: {
                 show: false
               },
@@ -2861,7 +2983,7 @@
               },
             }],
             series: [{
-              name: '客车',
+              name: '车辆总数',
               type: 'line',
               color: '#59c5f9',
               symbol: 'circle',
@@ -2872,57 +2994,77 @@
                 }
               },
               smooth: true,
-              data: [100, 80, 60, 40, 80, 120, 100, 80, 100, 140, 160, 120]
-            }, {
-              name: '货车',
-              type: 'line',
-              color: '#db72a7',
-              symbol: 'circle',
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white"
-                }
-              },
-              smooth: true,
-              stack: 'Total',
-              areaStyle: {},
-              emphasis: {
-                focus: 'series'
-              },
-              //渐变色
-              areaStyle: {
-                normal: {
-                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(
-                    0, 0, 0, 1,
-                    [{
-                        offset: 0,
-                        color: '#db72a7'
-                      },
-                      {
-                        offset: 1,
-                        color: 'rgba(219,114,167,0.3)'
-                      }
-                    ]
-                  )
-                }
-              },
-              data: [90, 70, 50, 30, 80, 90, 30, 60, 70, 80, 90, 20]
-            }, {
-              name: '专项车',
-              type: 'line',
-              color: '#ffb600',
-              symbol: 'circle',
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white"
-                }
-              },
-              smooth: true,
-              data: [20, 30, 40, 50, 70, 80, 90, 60, 40, 30, 20, 60]
-            }, ]
+              // 渐变色
+                areaStyle: {
+                  normal: {
+                    //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+                    color: new echarts.graphic.LinearGradient(
+                      0, 0, 0, 1,
+                      [{
+                          offset: 0,
+                          color: '#59c5f9'
+                        },
+                        {
+                          offset: 1,
+                          color: 'rgba(89,197,249,0.3)'
+                        }
+                      ]
+                    )
+                  }
+                },
+              data: this.vehicleYData
+            },
+            // {
+            //   name: '货车',
+            //   type: 'line',
+            //   color: '#db72a7',
+            //   symbol: 'circle',
+            //   symbolSize: [7, 7],
+            //   itemStyle: {
+            //     normal: {
+            //       borderColor: "white"
+            //     }
+            //   },
+            //   smooth: true,
+            //   stack: 'Total',
+            //   areaStyle: {},
+            //   emphasis: {
+            //     focus: 'series'
+            //   },
+            //   //渐变色
+            //   areaStyle: {
+            //     normal: {
+            //       //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+            //       color: new echarts.graphic.LinearGradient(
+            //         0, 0, 0, 1,
+            //         [{
+            //             offset: 0,
+            //             color: '#db72a7'
+            //           },
+            //           {
+            //             offset: 1,
+            //             color: 'rgba(219,114,167,0.3)'
+            //           }
+            //         ]
+            //       )
+            //     }
+            //   },
+            //   data: [90, 70, 50, 30, 80, 90, 30, 60, 70, 80, 90, 20]
+            // }, {
+            //   name: '专项车',
+            //   type: 'line',
+            //   color: '#ffb600',
+            //   symbol: 'circle',
+            //   symbolSize: [7, 7],
+            //   itemStyle: {
+            //     normal: {
+            //       borderColor: "white"
+            //     }
+            //   },
+            //   smooth: true,
+            //   data: [20, 30, 40, 50, 70, 80, 90, 60, 40, 30, 20, 60]
+            // },
+             ]
           }
           vehicle.setOption(option);
           window.addEventListener("resize", function() {
@@ -2957,7 +3099,7 @@
             xAxis: {
               type: 'category',
               boundaryGap: false,
-              data: this.getTimeData(),
+              data: this.keyVehiclesXData,
               axisLabel: {
                 textStyle: {
                   color: this.echartsColor,
@@ -2975,10 +3117,11 @@
               type: 'value',
               name: '辆',
               nameTextStyle: {
-                color: "#00c8ff",
+                color: this.echartsColor,
                 fontSize: 10,
                 padding: [0, 20, 0, 0]
               },
+              minInterval: 1,//y轴的刻度只显示整数
               axisLabel: {
                 textStyle: {
                   color: this.echartsColor,
@@ -3002,7 +3145,7 @@
             },
             series: [{
               type: 'line',
-              color: this.echartsColor,
+              color: '#00c8ff',
               symbol: 'none',
               smooth: true,
               stack: 'Total',
@@ -3032,7 +3175,7 @@
                   ])
                 }
               },
-              data: [90, 70, 50, 50, 70, 90, 50, 60, 70, 80, 90, 20]
+              data: this.keyVehiclesYData
             }]
           };
 
@@ -3701,8 +3844,6 @@
             listType("").then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                // console.log(response,'responseresponseresponse')
-                console.log(res.eqList[i].focus, 'item.focus')
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
@@ -4131,6 +4272,14 @@
           // this.flvPlayer()
           setTimeout(this.changeLoading, 2000);
           return;
+        }
+        else if(item.eqType == "17"){
+          this.title = '风速风向检测器'
+          this.coviVisible = true
+        }
+        else if(item.eqType == "19"){
+          this.title = 'CO/VI检测器'
+          this.coviVisible = true
         }
         // 水泵
         /* else if (item.eqType == "18") {
@@ -5069,7 +5218,7 @@
 <style lang="scss" scoped>
   .siblings {
     position: fixed;
-    top: 13%;
+    top: 116px;
     width: 100%;
     height: 62%;
 
@@ -5079,17 +5228,15 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: space-between;
     }
 
     //车道控制
     .indicatorLight {
-      position: absolute;
-      right: 0;
-      top: -4px;
+      
       width: 25px;
-      height: 30%;
-      background-color: #4682B4;
+      height: 33%;
+      background: linear-gradient(90deg, rgba($color: #00ACED, $alpha: 0.8), rgba($color: #0079DB, $alpha: 0.8));
       color: white;
       writing-mode: vertical-lr;
       text-align: center;
@@ -5100,12 +5247,9 @@
 
     //照明控制
     .brightnessControl {
-      position: absolute;
-      right: 0;
-      top: 31%;
       width: 25px;
-      height: 30%;
-      background-color: #4682B4;
+      height: 33%;
+      background: linear-gradient(90deg, rgba($color: #00ACED, $alpha: 0.8), rgba($color: #0079DB, $alpha: 0.8));
       color: white;
       //垂直向下
       writing-mode: vertical-lr;
@@ -5122,12 +5266,10 @@
   }
 // 触发控制模块
     .triggerControl {
-      position: absolute;
-      right: 0;
-      top: 63%;
+      
       width: 25px;
-      height: 30%;
-      background-color: #4682b4;
+      height: 33%;
+      background: linear-gradient(90deg, rgba($color: #00ACED, $alpha: 0.8), rgba($color: #0079DB, $alpha: 0.8));
       color: white;
       //垂直向下
       writing-mode: vertical-lr;
@@ -5172,27 +5314,27 @@
   }
 
   .drawerTop {
-    height: 19%;
+    height: 21%;
     top: 115px;
   }
   .drawerCenter{
-    height: 22%;
-    top: 31%;
+    height: 21%;
+    top: 33%;
   }
   .drawerBottom {
-    height: 23%;
-    top: 52%;
+    height: 20.4%;
+    top: 54%;
   }
 
   .control {
-    width: 50px !important;
-    height: 22px !important;
+    width: 40px !important;
+    height: 28px !important;
     text-align: center;
     line-height: 22px;
     padding: 0px 0px !important;
     font-size: 12px;
-    background-color: #00c2ff;
-    border-color: #00c2ff;
+    // background-color: #00c2ff;
+    // border-color: #00c2ff;
   }
 
   //小三角位置
@@ -5221,15 +5363,14 @@
 
   //title
   ::v-deep .el-drawer__header {
-    padding-bottom: 24px;
-    background-color: #00C9FE;
+    // background-color: #00C9FE;
     font-size: 14px;
     margin-bottom: 0px !important;
     height: 36px;
     line-height: 40px;
-    padding: 0 6px !important;
+    // padding: 0 10px;
     color: #fff;
-    border-left: 5px solid #F19E39;
+    // border-left: 5px solid #F19E39;
   }
 
   //开关
@@ -5245,23 +5386,23 @@
       font-size: 12px;
 
       >.number {
-        width: 22px;
-        height: 22px;
+        width: 28px;
+        height: 28px;
         // background-color:#00C7FE !important;
         color: white;
         text-align: center;
-        line-height: 22px;
+        line-height: 28px;
         vertical-align: middle;
       }
     }
 
     >.ledLighting {
       height: 36px;
-      background-color: #4EAACF;
+      // background-color: #4EAACF;
       line-height: 40px;
       padding-left: 14px;
       font-size: 14px;
-      color: #fff;
+      // color: #fff;
 
       .el-switch__core:after {
         background-color: #0F8AB9;
@@ -5306,7 +5447,7 @@
         margin-left: 10px;
         width: 40px;
         text-align: center;
-        background-color: #07C2FF !important;
+        // background-color: #07C2FF !important;
         border: none;
       }
     }
@@ -5327,7 +5468,7 @@
   //     border: solid 1px #1088B9;
   // }
   ::v-deep .el-input--medium .el-input__inner {
-    width: 107px
+    width: 5.4vw;
   }
 
   ::v-deep .el-button--medium {
@@ -5335,8 +5476,8 @@
   }
 
   ::v-deep .el-checkbox__inner {
-    width: 20px;
-    height: 22px;
+    width: 26px;
+    height: 28px;
     border: 1px solid #02C6FA;
     border-radius: 0px;
   }
@@ -5359,7 +5500,7 @@
   }
 
   .el-input-number {
-    width: 5.5vw;
+    width: 5.4vw;
     line-height: 30px;
 
     // .el-input-number__decrease, .el-input-number__increase {
@@ -5385,7 +5526,7 @@
 
   .footer {
     width: 100%;
-    height: 26%;
+    height: 25%;
     padding: 0px 30px;
     // margin-top: 10px;
     display: flex;
@@ -5394,8 +5535,8 @@
 
     .footTitle {
       padding: 5px 20px;
-      line-height: 25px;
-      font-size: 16px;
+      // line-height: 25px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       font-family: inherit;
@@ -5410,16 +5551,16 @@
 
       .footTitleCont {
         width: 100%;
-        height: 30px;
-        margin-top: -8px;
+        height: 24px;
+        margin-top: -4px;
         font-weight: bold;
-        margin-left: 10px;
         display: flex;
-
+            align-items: center;
         p:nth-of-type(2) {
           text-transform: uppercase;
-          font-weight: lighter;
-          transform: scale(0.8, 0.9);
+          // font-weight: lighter;
+          transform: scale(0.8, 0.8);
+          opacity: 0.35;
         }
       }
     }
@@ -5430,7 +5571,7 @@
     }
 
     .footMiniBox {
-      width: 24%;
+      width: 24.5%;
       height: 100%;
       // background-image: url(../../../assets/cloudControl/footer_bg.png);
       // background-position: center;
@@ -5479,23 +5620,16 @@
   .leftButtonS {
     position: relative;
     left: 0px;
-    // margin-top: 20px;
     font-size: 16px;
-    // color: #0a88bd;
-    width: 120px;
+    width: 110px;
     height: 4vh;
     line-height: 4vh;
-    // background-image: url(../../../assets/cloudControl/leftButton.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    cursor: pointer;
+    font-weight: 500;
     caret-color: rgba(0, 0, 0, 0);
-    padding-right: 20px;
-    text-align: right;
-    display: flex;
-    justify-content: right;
-
+    text-align: center;
+    margin-left: 16px;
+    border-radius: 2px;
+    cursor: pointer;
     img {
       width: 20px;
       height: 100%;
@@ -6377,8 +6511,7 @@
     .el-dialog__body {
       // color: #c0ccda;
       // background-color: #304156;
-      padding-top: 20px;
-      padding-bottom: 10px;
+      padding: 0;
     }
 
     .el-dialog__footer {

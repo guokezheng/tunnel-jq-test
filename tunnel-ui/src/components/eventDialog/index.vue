@@ -1,7 +1,10 @@
 <template>
   <div>
    <div class="eventBox" >
-     <div style="padding: 0px 20px ;height: 50px;line-height: 50px;color: white;font-size: 20px;font-weight: bold;">事件详情</div>
+     <div class="title">事件详情
+     <img src="../../assets/cloudControl/dialogHeader.png" style="height: 30px;"/>
+     </div>
+     <div class="blueLine" ></div>
      <div style="display: flex;width: 100%;height: calc(100% - 40px);">
        <div class="eventLeft">
          <div class="video">
@@ -17,6 +20,12 @@
        </div>
        <div class="eventRight">
          <div class="eventRow">
+           <div>隧道名称:</div><div>{{event.tunnels}}</div>
+         </div>
+         <div class="eventRow">
+           <div>事件类型:</div><div>{{event.eventTypeId}}</div>
+         </div>
+         <div class="eventRow">
            <div>车道号:</div><div>{{event.laneNo}}</div>
          </div>
          <div class="eventRow">
@@ -26,20 +35,15 @@
            <div>事件位置纬度:</div><div>{{event.eventLatitude}}</div>
          </div>
          <div class="eventRow">
+           <div>事件桩号:</div><div>{{event.stakeNum}}</div>
+         </div>
+         <div class="eventRow">
            <div>事件开始时间:</div><div>{{event.startTime}}</div>
          </div>
          <div class="eventRow">
-           <div>隧道ID:</div><div>{{event.tunnelId}}</div>
+           <div>事件结束时间:</div><div>{{event.endTime}}</div>
          </div>
-         <div class="eventRow">
-           <div>隧道对象:</div><div>{{event.tunnels}}</div>
-         </div>
-         <div class="eventRow">
-           <div>事件类型:</div><div>{{event.eventTypeId}}</div>
-         </div>
-         <div class="eventRow">
-           <div>事件类型对象:</div><div>{{event.eventType}}</div>
-         </div>
+        
          <div style="width: 90%;display: flex;">
            <div class="handle button" @click="handleDispatch(event)">处 理</div>
            <div class="ignore button" @click="handleIgnore(event)">忽 略</div>
@@ -66,23 +70,23 @@
    data() {
      return {
       eventList: [
-        // {
-        //   tunnelId:'11',
-        //   id:111,
-        //   laneNo:1,
-        //   eventLongitude:35.632234,
-        //   eventLatitude:117.36434,
-        //   startTime:"17:34:23",
-        //   tunnels:"XXX",
-        //   eventTypeId:'火灾报警',
-        //   eventType:'？？？'
-        //   },
-        // {
-        //   tunnelId:'22',
-        //   id:222},
-        // {
-        //   tunnelId:'33',
-        //   id:333},
+        {
+          tunnels:'11',
+          id:1,
+          laneNo:1,
+          eventLongitude:35.632234,
+          eventLatitude:117.36434,
+          startTime:"17:34:23",
+          endTime:'17:44:23',
+          eventTypeId:'火灾报警',
+          stakeNum:'K600+000'
+          },
+        {
+          tunnels:'22',
+          id:222},
+        {
+          tunnels:'33',
+          id:333},
       ],
      
       urls: [
@@ -99,7 +103,21 @@
           imgUrl:require('@/assets/images/warningPhoto.png'),
         },
         ],
-      videoUrl:require("@/assets/Example/v1.mp4")
+      videoUrl:require("@/assets/Example/v1.mp4"),
+      // videoUrl:'',
+      event:[
+        {
+          tunnelId:'',
+          id:null,
+          laneNo:null,
+          eventLongitude:null,
+          eventLatitude:null,
+          startTime:"",
+          tunnels:"",
+          eventTypeId:'',
+          eventType:''
+        }
+      ]
      }
    },
    computed: {
@@ -117,28 +135,30 @@
         console.log(event)
         this.eventList = event;
         this.event = this.eventList[0]
+        this.getUrl()
       }
      },
      deep: true,
    },
    created() {
+     this.getUrl()
+     for(var i=0;i<this.eventList.length;i++){
+       this.eventList[i].num = i
+     }
+     this.event = this.eventList[0]
      
-     // for(var i=0;i<this.eventList.length;i++){
-     //   this.eventList[i].num = i
-     // }
-     // this.event = this.eventList[0]
-     
-    this.getUrl()
    },
    methods:{
      
      getUrl(){
        console.log(this.event.id,'当前事件id')
        const param3 ={
-        businessId:this.event.id
+        businessId:111,
+        // businessId:this.event.id
        }
        const param4 ={
-        id:this.event.id
+        id:1
+        // id:this.event.id
        }
        image(param3).then(response => {
          console.log(response.data,'获取图片')
@@ -151,30 +171,33 @@
      },
      
      // 忽略事件
-     handleIgnore(item){
+     handleIgnore(event){
        const param ={
-         id:item.id,
+         id:1,
          eventState:'2'
        }
        updateEvent(param).then(response => {
          console.log(response,'修改状态')
+         this.$modal.msgSuccess("已成功忽略");
        });
        bus.$emit("closeDialog",false)
      },
      // 处理 跳转应急调度
-     handleDispatch(item){
+     handleDispatch(event){
        bus.$emit("closeDialog",false)
-       this.$router.push({ path: "/emergency/administration/dispatch", query: { item: item } });
+       this.$router.push({ path: "/emergency/administration/dispatch", query: { id: event.id } });
      },
      // 上一个事件
      handleBefore(num){
        this.event = this.eventList[num-1]
+       console.log(this.event,"this.event")
        this.getUrl()
        this.$forceUpdate()
      },
      // 下一个事件
      handleNext(num){
        this.event = this.eventList[num+1]
+       console.log(this.event,"this.event")
        this.getUrl()
        this.$forceUpdate()
      },
@@ -198,9 +221,18 @@
 
 <style lang="scss" scoped>
  .eventBox{
-   width: 52%;height: 660px;border: solid 1px #005487;border-radius: 10px;
-   position: absolute;top: 10%;left: 25%;background-color: rgba($color: #004065, $alpha: 0.8);
-   
+   width: 52%;height: 660px;border: solid 1px rgba($color: #0198FF, $alpha: 0.5);
+   position: absolute;top: 10%;left: 25%;background-color: #071930;
+   >.title{
+     padding-left: 20px ;height: 30px;line-height: 30px;color: white;font-size: 14px;
+     font-weight: bold;background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
+     border-top: solid 2px white;display: flex;justify-content: space-between;
+     border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)1 10;
+   }
+   .blueLine{
+     width: 20%;height: 1px;border-bottom: solid 1px white;margin-bottom: 20px;
+     border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)30 30;
+   }
  }
  .eventLeft{
    width: 70%;height: 590px;padding: 0px 20px;
@@ -216,11 +248,12 @@
  }
  
  .eventRight{
-   width: 30%;height: 590px;color: white;
+   width: 30%;height: 590px;color: white;font-size: 16px;
    .eventRow{
      display: flex;height: 50px;
      >div:nth-of-type(1){
        width: 140px;
+       color: #0198FF;
      }
      >div{
        line-height: 50px;

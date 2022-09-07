@@ -17,8 +17,6 @@ export default {
   },
   watch: {
    websocket({ password, path, port, interval}) {
-     console.log(password, path, port, interval)
-     console.log(location.hostname)
       // 建立 websocket 连接
       this.socket.initialize({
        

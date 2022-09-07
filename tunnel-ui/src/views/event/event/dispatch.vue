@@ -3,113 +3,116 @@
     <div style="height: 100%;display: flex;justify-content: space-between;">
       <div  style="height: 100%;width: 66%;">
         <el-card class="bottomEventForm">
-        <div class="tunnelMap">
-          <el-image
-            class="back-img"
-            :src="laneUrlList[0].url"
-            :style="{ width: laneUrlList[0].width + 'px' }"
-          ></el-image>
-          <div  class="maskClass" >
-              <div v-for="(item,index) in planList1" class="mousemoveBox"
-              @contextmenu.prevent="rightClick(index)"
-              @mouseleave='mouseleave(index)'
-              :style="{width:100/(planList1.length/2)+'%'}"
-              >
-                <div class="partitionBox"></div>
-                <div class="rightClickClass" >
-                    <div class="row1" >{{item.text}}</div>
-                    <div class="row2" >
-                      <div>执行</div>
-                      <div>预览</div>
-                    </div>
-                </div>
-              </div>
-          </div>
-          <!-- <div  class="maskClass1" >
-            <div class="rightClickClass" v-for="(item,index) in planList1"
+          <div class="tunnelBox">
+            <div class="tunnelMap">
+              <el-image
+                class="back-img"
+                :src="laneUrlList[0].url"
+                :style="{ width: laneUrlList[0].width + 'px' }"
+              ></el-image>
+              <div  class="maskClass" >
+                  <div v-for="(item,index) in planList1" class="mousemoveBox"
+                  @contextmenu.prevent="rightClick(index)"
+                  @mouseleave='mouseleave(index)'
                   :style="{width:100/(planList1.length/2)+'%'}"
-                  @contextmenu.prevent="rightClick(index)">
-                  <div class="rightClickButton">
-                    <div class="row1" >{{item.text}}</div>
-                    <div class="row2" >
-                      <div>执行</div>
-                      <div>预览</div>
+                  >
+                    <div class="partitionBox"></div>
+                    <div class="rightClickClass" >
+                        <div class="row1" >{{item.text}}</div>
+                        <div class="row2" >
+                          <div>执行</div>
+                          <div>预览</div>
+                        </div>
                     </div>
                   </div>
-            </div>
-          </div> -->
-          <div
-            class="wrapper"
-            id="eq-wrapper"
-          >
-            <div
-              class="icon-box active"
-              v-for="(item, index) in selectedIconList"
-              :key="index"
-              :style="{
-                      left: item.position.left / 1.34 + 'px',
-                      top: item.position.top / 1.3  + 'px',
-                      'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
-                    }"
-              :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
-            >
+              </div>
+              <!-- <div  class="maskClass1" >
+                <div class="rightClickClass" v-for="(item,index) in planList1"
+                      :style="{width:100/(planList1.length/2)+'%'}"
+                      @contextmenu.prevent="rightClick(index)">
+                      <div class="rightClickButton">
+                        <div class="row1" >{{item.text}}</div>
+                        <div class="row2" >
+                          <div>执行</div>
+                          <div>预览</div>
+                        </div>
+                      </div>
+                </div>
+              </div> -->
               <div
-             v-show="(item.eqType != 7 &&
-                       item.eqType != 16 &&
-                       item.eqType != 15 &&
-                       item.eqType != 9 &&
-                       item.display == true) ||
-                     ((item.eqType == 7 ||
-                       item.eqType == 8 ||
-                       item.eqType == 9 ||
-                       item.eqType == 21 ) &&
-                       item.display == true &&
-                       lightSwitch == 1)"
-             :class="{ focus: item.focus }"
+                class="wrapper"
+                id="eq-wrapper"
               >
-                <img
-                  v-for="(url, indexs) in item.url"
-                  style="position: relative;"
-                  :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
-                  :width="item.iconWidth /1.26"
-                  :height="item.iconHeight / 1.26"
-                  :key="item.deptId + indexs"
-                  :src="url"
-                />
+                <div
+                  class="icon-box active"
+                  v-for="(item, index) in selectedIconList"
+                  :key="index"
+                  :style="{
+                          left: item.position.left / 1.34 + 'px',
+                          top: item.position.top / 1.3  + 'px',
+                          'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
+                        }"
+                  :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
+                >
+                  <div
+                 v-show="(item.eqType != 7 &&
+                           item.eqType != 16 &&
+                           item.eqType != 15 &&
+                           item.eqType != 9 &&
+                           item.display == true) ||
+                         ((item.eqType == 7 ||
+                           item.eqType == 8 ||
+                           item.eqType == 9 ||
+                           item.eqType == 21 ) &&
+                           item.display == true &&
+                           lightSwitch == 1)"
+                 :class="{ focus: item.focus }"
+                  >
+                    <img
+                      v-for="(url, indexs) in item.url"
+                      style="position: relative;"
+                      :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
+                      :width="item.iconWidth /1.26"
+                      :height="item.iconHeight / 1.26"
+                      :key="item.deptId + indexs"
+                      :src="url"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div style="height: 41%;" v-show="changeVideo == 0">
+        
+        <div v-show="changeVideo == 0" class="formBox">
             <div class="formTitle" >
               <div style="float: left;">事件详情</div>
-              <div class="formButton formButton1" @click="submitEventForm">
+              <div class="formButton formButton1" @click="eventFormClose">
                 <el-image :src="require('@/assets/icons/relieve.png')"/>
                 <div>事件解除</div>
               </div>
-              <div class="formButton formButton2" @click="eventFormClose">
+              <div class="formButton formButton2" @click="submitEventForm">
                 <el-image :src="require('@/assets/icons/update.png')"/>
                 <div>更新信息</div>
               </div>
             </div>
-            <el-form ref="form" :model="eventForm" label-width="80px" style="height: calc(100% - 35px);overflow-y: auto;">
+            <el-form ref="form" :model="eventForm" label-width="80px" style="height: calc(100% - 35px);overflow-y: auto;padding-top: 10px;">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label="事件类型" prop="eventTitle">
-                    <el-input  v-model="eventForm.eventTitle" placeholder="请输入事件类型" />
+                  <el-form-item label="事件类型" prop="eventType">
+                    <el-input  v-model="eventForm.eventType" placeholder="请输入事件类型" disabled/>
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="事故类型" prop="eventTitle">
+                  <!-- <el-form-item label="事故类型" prop="eventTitle">
                     <el-select v-model="eventForm.tunnelId" placeholder="请选择事故类型" clearable size="small">
                       <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                         :value="item.tunnelId" />
                     </el-select>
-                  </el-form-item>
+                  </el-form-item> -->
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="所属路段" prop="tunnelId">
-                    <el-select v-model="eventForm.tunnelId" placeholder="请选择所属路段" clearable size="small" >
+                  <el-form-item label="所属隧道" prop="tunnelName" >
+                    <el-select v-model="eventForm.tunnelName" placeholder="请选择所属路段" clearable size="small" disabled>
                       <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                         :value="item.tunnelId" />
                     </el-select>
@@ -118,15 +121,15 @@
               </el-row>
               <el-row>
                  <el-col :span="8">
-                   <el-form-item label="桩号位置:" prop="eventTitle">
+                   <el-form-item label="桩号位置" prop="stakeNum">
                      <span>K </span>
-                     <el-input  v-model="eventForm.eventTitle" placeholder="请输入桩号位置" style="width: 250px;"/>
+                     <el-input  v-model="eventForm.stakeNum" placeholder="请输入桩号位置" style="width: 250px;"/>
                    </el-form-item>
                  </el-col>
                  <el-col :span="8">
-                   <el-form-item label="开始时间" prop="eventTime">
+                   <el-form-item label="开始时间" prop="startTime">
                      <el-date-picker clearable size="small"
-                       v-model="eventForm.eventTime"
+                       v-model="eventForm.startTime"
                        type="datetime"
                        value-format="yyyy-MM-dd HH:mm:ss"
                        placeholder="选择开始时间">
@@ -134,38 +137,38 @@
                    </el-form-item>
                  </el-col>
                  <el-col :span="8">
-                   <el-form-item label="预撤时间" prop="eventTime">
+                   <el-form-item label="结束时间" prop="endTime">
                      <el-date-picker clearable size="small"
-                       v-model="eventForm.eventTime"
+                       v-model="eventForm.endTime"
                        type="datetime"
                        value-format="yyyy-MM-dd HH:mm:ss"
-                       placeholder="选择预撤时间">
+                       placeholder="选择结束时间">
                      </el-date-picker>
                    </el-form-item>
                  </el-col>
                </el-row>
               <el-row>
-                <el-col :span="8">
+              <!--  <el-col :span="8">
                   <el-form-item label="影响程度" prop="tunnelId">
                     <el-select v-model="eventForm.tunnelId" placeholder="请选择影响程度" clearable size="small" >
                       <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                         :value="item.tunnelId" />
                     </el-select>
                   </el-form-item>
-                </el-col>
-                <el-col :span="8">
+                </el-col> -->
+               <!-- <el-col :span="8">
                   <el-form-item label="压车长度:" prop="eventTitle">
                     <el-input  v-model="eventForm.eventTitle"  style="width: 100px" />
                     <span> KM</span>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 <el-col :span="8">
                   <el-form-item label="事件等级 " prop="eventGrade">
                     <el-radio-group v-model="eventForm.eventGrade">
                       <el-radio
                         v-for="dict in eventGradeOptions"
                         :key="dict.dictValue"
-                        :label="dict.dictValue"
+                        :label="dict.dictLabel"
                       >{{dict.dictLabel}}</el-radio>
                     </el-radio-group>
                   </el-form-item>
@@ -173,60 +176,81 @@
               </el-row>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label="事件标题:" prop="eventTitle">
+                  <el-form-item label="事件标题" prop="eventTitle">
                     <el-input  v-model="eventForm.eventTitle"  />
                   </el-form-item>
                 </el-col>
                 <el-col :span="16">
-                  <el-form-item label="详细内容:" prop="eventTitle">
-                    <el-input v-model="eventForm.eventTitle"  style="width: 660px;"/>
+                  <el-form-item label="事件描述" prop="eventDescription">
+                    <el-input v-model="eventForm.eventDescription"  style="width: 660px;"/>
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-form-item label="人员伤亡:" prop="eventTitle">
+              <el-form-item label="人员伤亡" >
                <el-row>
                  <el-col :span="5">
-                  <div class="formLable">轻伤：</div>
-                  <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                  <div class="formLable">轻伤</div>
+                  <el-input v-model="eventForm.slightInjured" style="width: 100px;"/>
                   <span> 人</span>
                 </el-col>
                 <el-col :span="5">
-                  <div class="formLable">重伤：</div>
-                  <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                  <div class="formLable">重伤</div>
+                  <el-input v-model="eventForm.eventInjured" style="width: 100px;"/>
                   <span> 人</span>
                 </el-col>
                  <el-col :span="5">
-                  <div class="formLable">死亡：</div>
-                  <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                  <div class="formLable">死亡</div>
+                  <el-input v-model="eventForm.eventDeath" style="width: 100px;"/>
                   <span> 人</span>
                 </el-col>
                </el-row>
               </el-form-item>
-              <el-form-item label="车辆:" prop="eventTitle">
+              <el-form-item label="车辆" >
                 <el-row>
                   <el-col :span="5">
-                    <div class="formLable">小型车：</div>
-                    <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                    <div class="formLable">小型车</div>
+                    <el-input v-model="eventForm.smallCarNum" style="width: 100px;"/>
                     <span> 辆</span>
                   </el-col>
                   <el-col :span="5">
-                    <div class="formLable">货车：</div>
-                    <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                    <div class="formLable">货车</div>
+                    <el-input v-model="eventForm.truckNum" style="width: 100px;"/>
                     <span> 辆</span>
                   </el-col>
                   <el-col :span="5">
-                    <div class="formLable">客车：</div>
-                    <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                    <div class="formLable">客车</div>
+                    <el-input v-model="eventForm.passengerCarNum" style="width: 100px;"/>
                     <span> 辆</span>
                   </el-col>
                   <el-col :span="5">
-                    <div class="formLable">罐车：</div>
-                    <el-input v-model="eventForm.eventTitle" style="width: 100px;"/>
+                    <div class="formLable">罐车</div>
+                    <el-input v-model="eventForm.tankerNum" style="width: 100px;"/>
                     <span> 辆</span>
                   </el-col>
                 </el-row>
               </el-form-item>
               <el-row>
+                <el-col :span="8">
+                  <el-form-item label="车主电话" prop="eventTitle">
+                    <el-input  v-model="eventForm.carOwnerPhone"  />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="清障电话" prop="eventTitle">
+                    <el-input  v-model="eventForm.wreckerPhone"  />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="交警电话" prop="eventTitle">
+                    <el-input  v-model="eventForm.policePhone"  />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              
+              <el-form-item label="备注" prop="eventTitle">
+                <el-input type="textarea" v-model="eventForm.remark"  style="width: 1056px;"/>
+              </el-form-item>
+             <!-- <el-row>
                 <el-col :span="8">
                     <el-form-item label="特情处置" prop="tunnelId">
                       <el-select v-model="eventForm.tunnelId" placeholder="请选择特情处置" clearable size="small" >
@@ -248,8 +272,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row>
+              </el-row> -->
+             <!-- <el-row>
                 <el-col :span="8">
                   <el-form-item label="倒货:" prop="eventTitle">
                     <el-select v-model="eventForm.tunnelId" clearable size="small">
@@ -274,8 +298,8 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row>
+              </el-row> -->
+              <!-- <el-row>
                 <el-col :span="8">
                   <el-form-item label="施工路段:" prop="eventTitle">
                     <el-select v-model="eventForm.tunnelId" clearable size="small">
@@ -300,31 +324,11 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="8">
-                  <el-form-item label="车主电话:" prop="eventTitle">
-                    <el-input  v-model="eventForm.eventTitle"  />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="清障电话:" prop="eventTitle">
-                    <el-input  v-model="eventForm.eventTitle"  />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="8">
-                  <el-form-item label="交警电话:" prop="eventTitle">
-                    <el-input  v-model="eventForm.eventTitle"  />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-
-              <el-form-item label="经验总结:" prop="eventTitle">
-                <el-input type="textarea" v-model="eventForm.eventTitle"  style="width: 1056px;"/>
-              </el-form-item>
+              </el-row> -->
+             
             </el-form>
           </div>
-          <div style="height: 41%;" v-show="changeVideo == 1">
+          <div v-show="changeVideo == 1" class="formBox">
             <div class="formTitle" >
               <div style="float: left;">摄像视频</div>
               <div class="formButton formButton2" @click="returnDetails">
@@ -454,6 +458,7 @@
   import {
     listMaterial,
   } from "@/api/system/material";
+  import { listEvent,updateEvent} from "@/api/event/event";
   export default {
     name: "dispatch",
     data(){
@@ -486,7 +491,7 @@
          
         ],
         lightSwitch: 0,
-        changeVideo:1,
+        changeVideo:0,
         eqTunnelData:[],
         videoList:[
           {
@@ -543,18 +548,10 @@
         //车道列表
         laneUrlList: laneImage,
         eventForm:{
-          eventGrade:'0'
+          // eventType:{},
+          // tunnels:{}
         },
-        eventGradeOptions:[
-          {
-            dictValue:"0",
-            dictLabel:"一般"
-          },
-          {
-            dictValue:"1",
-            dictLabel:"较大及以上"
-          },
-        ],
+        eventGradeOptions:[],
         // 时间轴循环数据
         eventList:[
           {
@@ -597,14 +594,29 @@
       upList: [],
       downList: [],
       selectedIconList: [], //配置图标
-      selectedTunnel:[]
       }
     },
     created() {
       this.getTunnelData()
       this.getmaterialList()//应急物资
       this.getpersonnelList()//调度电话
-      this.selectedTunnel = this.$route.query
+      if(this.$route.query.id){
+        const param = {
+          id:this.$route.query.id
+        }
+        listEvent(param).then( response => {
+          console.log(response.rows,"传事件id获取事件详情")
+            this.eventForm = response.rows[0];
+            this.eventForm.eventType = response.rows[0].eventType.eventType;
+            this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
+           console.log(this.eventForm,"this.eventForm")
+        });
+      }
+      
+      this.getDicts("sd_incident_level").then(response => {
+        console.log(response.data,"response.data事件级别")
+        this.eventGradeOptions = response.data;
+      });
     },
     methods:{
       /** 查询应急人员信息列表 */
@@ -640,10 +652,22 @@
         this.changeVideo = 0
       },
       submitEventForm(){
-
+        delete this.eventForm.eventType;//删除age元素
+        updateEvent(this.eventForm).then(response => {
+            console.log(response,'修改事件详情')
+        });
       },
+      // 
       eventFormClose(){
-
+        const param ={
+          id:this.$route.query.id,
+          eventState:'2'
+        }
+        updateEvent(param).then(response => {
+          console.log(response,'修改状态')
+          this.$modal.msgSuccess("已成功忽略");
+        });
+        
       },
       /* 鼠标点击*/
       dian(event) {
@@ -728,6 +752,7 @@
   ::v-deep .el-card__body{
     height: 100%;
     overflow-y: auto;
+    padding: 0;
   }
   ::v-deep .timelineClass{
     height: calc(100% - 50px);
@@ -770,7 +795,7 @@
   }
   .back-img{
     width: 100% !important;
-    height: 98% !important;
+    height: 100% !important;
     position: absolute;
   }
   .changeMap{
@@ -784,7 +809,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       .tunnelMap{
-        height: 57%;width:100%;position: relative;margin-bottom: 10px;border-bottom: solid 1px #ccc;padding-bottom: 10px;
+        height: 100%; width:100%;position: relative;margin-bottom: 10px;padding-bottom: 10px;
         .maskClass{
           height: 98%;width: 100%;position: absolute;top: 0;left: 0;
             .mousemoveBox{
@@ -845,6 +870,13 @@
       }
     }
   }
+  .tunnelBox{
+    height: 57%;
+    padding: 15px;
+  }
+  .formBox{
+    height: 41%;padding: 15px;margin-top: 16px;padding-top: 0;
+  }
   ::v-deep .el-input{
     width: 263px;
   }
@@ -874,15 +906,22 @@
     // align-items: center;
     width: 30px !important;
   }
+  .theme-light .app-container,{
+    background-color: #010913;
+    border: none !important;
+  }
+  .theme-dark .app-container{
+    background-color: #D6EDFB;
+  }
   .app-container{
-      background-color: #D6EDFB;
+      // background-color: #D6EDFB;
       padding: 0px 16px;
       height: calc(100% + 60px);
       padding: 20px;
   }
   .formTitle{
-    width: 100%;height: 35px;line-height: 35px;border-left: 5px solid #385CD6;padding-left: 10px;
-    background-color: #E6EAFD;font-size: 16px;font-weight: bold;margin-bottom: 6px;
+    width: 100%;height: 35px;line-height: 35px;padding-left: 10px;
+    font-size: 16px;font-weight: bold;margin-bottom: 6px;
   }
   .formButton{
     width: 130px;height: 35px;float: right;color: white;border-radius: 2px;text-align: center;font-size: 14px;font-weight: 500;
@@ -902,7 +941,7 @@
     margin-left: 10px;
   }
   .cameraBox{
-    width: 100%;height: calc(100% - 35px);display: flex;justify-content: space-between;
+    width: 100%;height: calc(100% - 35px);display: flex;justify-content: space-between;padding-top: 10px;
     .el-image{
       width: 49%;
       height: 100%;
@@ -919,63 +958,63 @@
       width: 49%;
       height: 100%;
       border: solid 1px #E0E7ED;
-      border-radius: 10px;
+      
       object-fit: cover;
-      border-radius: 10px;
     }
   }
   .video1{
     width: 100%;height: 150px;object-fit: cover;z-index: -100;border-radius: 10px;
   }
   .rightBox{
-    width: 100%;border-radius: 10px;padding: 10px;background-color: #F2F9FF;
+    width: 100%;padding: 10px;
     >.video{
       width: 100%;height: 26%;display: flex;justify-content: space-between;
     }
+    
   }
 
   .videoBox{
-    border-top: solid 10px #1287B2;height: 30%;
+    height: 30%;
   }
   .planBox{
-    border-top: solid 10px #0F9CF5;margin-top: 10px;height: 35%;
+    margin-top: 10px;height: 35%;
     >.title{
-      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;border-bottom: solid 1px #E0E7ED;margin: 0px auto 0px auto;
+      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;margin: 0px auto 0px auto;
     }
-    .planMiniBox{
-      width: 43%;height: 68px;border-radius: 10px;border: solid 1px #00A0FF;display: inline-block;margin: 8px;
-      >.miniTitle{
-        width: 100%;text-align: center;font-size: 12px;line-height: 24px;font-weight: bold;border-bottom: dashed 1px #00A0FF;
-        height: 30px;line-height: 30px;
-      }
-      >.planButtonS{
-        height: 26px;width: 100%;display: flex;justify-content: space-around;padding-top: 4px;color: white;font-size: 12px;
-        text-align: center;line-height: 23px;
-        >div{
-          width: 45%;height: 100%;background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 2px;cursor: pointer;
-        }
-      }
-    }
+    // .planMiniBox{
+    //   width: 43%;height: 68px;border-radius: 10px;border: solid 1px #00A0FF;display: inline-block;margin: 8px;
+    //   >.miniTitle{
+    //     width: 100%;text-align: center;font-size: 12px;line-height: 24px;font-weight: bold;border-bottom: dashed 1px #00A0FF;
+    //     height: 30px;line-height: 30px;
+    //   }
+    //   >.planButtonS{
+    //     height: 26px;width: 100%;display: flex;justify-content: space-around;padding-top: 4px;color: white;font-size: 12px;
+    //     text-align: center;line-height: 23px;
+    //     >div{
+    //       width: 45%;height: 100%;background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 2px;cursor: pointer;
+    //     }
+    //   }
+    // }
   }
   .phoneBox{
-    border-top: solid 10px #E1AA43;margin-top: 10px;height: calc(35% - 20px);
+    margin-top: 10px;height: calc(35% - 20px);
     >.title{
-      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;border-bottom: solid 1px #E0E7ED;margin: 0px auto 0px auto;
+      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;margin: 0px auto 0px auto;
     }
 
 
     .phoneButton{
-      width: 40px;height: 23px;background: linear-gradient(2deg,#4B6AD4,#07A1FB);border-radius: 12px;
+      width: 40px;height: 23px;border-radius: 12px;
       .el-image{
         width: 14px;height: 17px;padding-top: 4px;
       }
     }
   }
   .processBox{
-    border-top: solid 10px #52B7C9;height: 65%;
+    height: 65%;
     margin-left: 10px;
     ::v-deep .el-step__icon.is-icon{
-      background: linear-gradient(114deg, #96DAFA, #5FA6F5);
+      // background: linear-gradient(114deg, #96DAFA, #5FA6F5);
       width: 40px;
       height: 40px;
       border-radius: 20px;
@@ -1024,25 +1063,23 @@
     ::v-deep .el-step__title{
       font-size: 12px;
     }
-    ::v-deep .el-step__title.is-finish,.el-step__title.is-process{
-      color: #333;
-    }
-    ::v-deep .el-step__title.is-process{
-      font-weight: 400;
-      color: #333;
-    }
+    // ::v-deep .el-step__title.is-finish,.el-step__title.is-process{
+    //   // color: #333;
+    // }
+    // ::v-deep .el-step__title.is-process{
+    //   font-weight: 400;
+    //   // color: #333;
+    // }
     ::v-deep .el-step.is-horizontal .el-step__line{
       top: 20px;
-      border-top: dashed 2px #8BCFF9;
+      // border-top: dashed 2px #8BCFF9;
       background-color: transparent;
     }
 
     ::v-deep .el-card{
-      color: #3D6CA2;
-      border: 1px solid #C4DAE7;
-      border-radius: 10px;
-      background-color: #E8F3FC;
+      // border-radius: 10px;
       margin-top: 10px;
+      width: 96%;
     }
     ::v-deep .el-card__body{
       padding: 15px !important;
@@ -1055,26 +1092,25 @@
     }
     ::v-deep .el-timeline-item__tail{
       transform: translateY(10px);
-      border-left: 2px dashed #97A8AE;
+      // border-left: 2px dashed #97A8AE;
     }
     ::v-deep .el-timeline-item__wrapper{
       margin-right: 8px;
+      padding-left: 20px;
     }
     .endButton{
       width: 90%;height: 65px;margin: 10px auto;display: flex;justify-content: space-between;
-      // background: linear-gradient(2deg, #07A1FB, #4B6AD4);border-radius: 2px;
-      color: #4B6AD4;
       font-size: 14px;
       .ButtonBox{
-        width: 45%;height: 100%;border: solid 1px #07A1FB;border-radius: 10px;background-color: #E8F3FC;box-shadow: 0 0 5px #07A1FB;
+        width: 45%;height: 100%;border-radius: 4px;
         .recovery{
-          width: 100%;height: 45%;border-bottom: dashed 1px #07A1FB;text-align: center;line-height: 2;
+          width: 100%;height: 45%;text-align: center;line-height: 2;
         }
         .button{
-          height: 55%;display: flex;justify-content: space-around;color: white;padding-top: 5%;
+          height: 55%;display: flex;justify-content: space-around;padding-top: 5%;
           div{
             width: 40%;height: 80%;text-align: center;font-size: 12px;line-height: 2;
-            background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 4px;cursor: pointer;
+            border-radius: 2px;cursor: pointer;
           }
         }
       }
@@ -1087,14 +1123,15 @@
     }
   }
   .implement{
-    border-top: solid 10px #52B7C9;height: calc(35% - 10px);
+    height: calc(35% - 10px);
     margin-left: 10px;
     margin-top: 10px;
     >.title{
-      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;border-bottom: solid 1px #E0E7ED;margin: 0px auto 0px auto;
+      font-size: 14px;font-weight: bold;height: 26px;line-height: 20px;margin: 0px auto 0px auto;
     }
     .implementContent{
-      width: 100%;height: 50px;border-bottom: dashed 1px #E0E7ED;padding-right: 10px;
+      width: 100%;height: 50px;padding-right: 10px;
+      // border-bottom: dashed 1px #E0E7ED;
       .implementIcon{
         width: 2%;height: 100%;text-align: center;padding-top: 11px;margin-left: 1%;margin-right: 6%;
       }
@@ -1103,14 +1140,15 @@
         .row1{
           display: flex;justify-content: space-between;align-items: flex-end;height: 30px;
           >div:nth-of-type(1){
-            color: #00A0FF;
+            // color: #00A0FF;
           }
           >div:nth-of-type(2){
-            color: #999999;
+            // color: #999999;
           }
         }
         .row2{
-          display: flex;align-items: flex-end;height: 20px;color: #333;
+          display: flex;align-items: flex-end;height: 20px;
+          // color: #333;
         }
       }
     }
@@ -1143,18 +1181,12 @@
     content: "11";
     visibility: hidden;
   }
-  ::v-deep .el-table .el-table__cell.is-center{
-    background-color: #F2F9FF !important;
-  }
-  ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-    background-color: #F2F9FF !important;
-  }
+  
+  
   // ::v-deep .el-table thead{
   //   color: #1287B2 !important;
   // }
-  ::v-deep .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-    color: #1287B2 !important;
-  }
+  
   /*table滚动条背景色 */
   ::v-deep .el-table__body-wrapper::-webkit-scrollbar {
     background-color: rgba($color: #00c2ff, $alpha: 0.1);
@@ -1174,7 +1206,5 @@
   ::v-deep .el-table__body{
     width: 264px !important;
   }
-  ::v-deep .rightBox .el-table__body-wrapper{
-    background-color: #F2F9FF !important;
-  }
+  
 </style>

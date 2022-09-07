@@ -110,7 +110,7 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      eventDialog:true,
+      eventDialog:false,
     }
   },
   mixins: [ResizeMixin],

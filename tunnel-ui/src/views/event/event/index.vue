@@ -10,17 +10,23 @@
                 :value="item.id"/>
           </el-select>
       </el-form-item>
-      <el-form-item label="管理机构"  prop="stagPointName">
-          <el-input style="width:180px;" v-model.number="queryParams.stagPointName"
-                    placeholder="请输入机构名称" size="small"/>
+      <el-form-item label="管理机构"  prop="tunnelStationName">
+         <el-select v-model="queryParams.tunnelStationName" placeholder="请选择管理机构" clearable size="small" style="width:180px">
+           <el-option
+                 v-for="item in mechanism"
+                 :key="item.deptId"
+                 :label="item.deptName"
+                 :value="item.deptId"
+                 @click.native="changeMechanism(item.deptId)"/>
+           </el-select>
       </el-form-item>
-      <el-form-item label="路段名称" prop="eventTypeId">
-        <el-select v-model="queryParams.eventTypeId" placeholder="请选择路段名称" clearable size="small" style="width:180px">
+      <el-form-item label="所属隧道" prop="eventTypeId">
+        <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small" style="width:180px">
           <el-option
-                v-for="item in eventTypeData"
-                :key="item.id"
-                :label="item.eventType"
-                :value="item.id"/>
+                v-for="item in tunnelList"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"/>
           </el-select>
       </el-form-item>
 
@@ -28,16 +34,6 @@
         <el-select v-model="queryParams.eventState" placeholder="请选择事件状态" clearable size="small" style="width:180px">
           <el-option
             v-for="dict in eventStateOptions"
-            :key="dict.dictValue"
-            :label="dict.dictLabel"
-            :value="dict.dictValue"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="处理状态" prop="eventGrade">
-        <el-select v-model="queryParams.eventGrade" placeholder="请选择处理状态" clearable size="small" style="width:180px">
-          <el-option
-            v-for="dict in eventGradeOptions"
             :key="dict.dictValue"
             :label="dict.dictLabel"
             :value="dict.dictValue"
@@ -86,24 +82,31 @@
       </div>
     </el-row>
 
-    <el-table v-loading="loading" :data="eventList" :default-sort = "{prop: 'eventTime', order: 'descending'}">
-      <el-table-column label="隧道名称" align="left" prop="tunnels.tunnelName"  />
-      <el-table-column label="所属机构" align="left" prop="tunnels.tunnelName" />
-      <el-table-column label="方向" align="left" prop="tunnels.tunnelName" />
-      <el-table-column label="桩号" align="left" prop="tunnels.tunnelName" />
-      <el-table-column label="车型" align="left" prop="tunnels.tunnelName" />
-      <el-table-column label="事件类型" align="center" prop="eventType.eventType" />
-      <el-table-column label="事件标题" align="center" prop="eventTitle" />
-      <el-table-column label="事件描述" align="center" prop="eventDescription"  :show-overflow-tooltip='true'/>
-      <el-table-column label="影响程度" align="center" prop="eventType.eventType" />
-      <el-table-column label="开始时间" align="center" prop="eventTime"sortable>
+    <el-table v-loading="loading" :data="eventList" :default-sort = "{prop: 'eventTime', order: 'descending'}" height="600">
+      <el-table-column label="隧道名称" align="center" prop="tunnels.tunnelName"  />
+      <el-table-column label="所属机构" align="center" prop="tunnelStationName" />
+      <el-table-column label="方向" align="center" prop="direction" >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.eventTime, '{y}-{m}-{d} {h}:{m}') }}</span>
+          <span v-show="scope.row.direction == 0">济南方向</span>
+          <span v-show="scope.row.direction == 1">潍坊方向</span>
         </template>
       </el-table-column>
-      <el-table-column label="完成时间" align="center" prop="eventTime"sortable>
+      <el-table-column label="桩号" align="center" prop="stakeNum" />
+      <el-table-column label="车道号" align="center" prop="laneNo" />
+      <!-- <el-table-column label="车型" align="center" prop="tunnels.tunnelName" /> -->
+      <el-table-column label="事件类型" align="center" prop="eventType.eventType" />
+      <el-table-column label="级别" align="center" prop="eventGrade" />
+      <el-table-column label="事件标题" align="center" prop="eventTitle" />
+      <el-table-column label="事件描述" align="center" prop="eventDescription"  :show-overflow-tooltip='true'/>
+      <!-- <el-table-column label="影响程度" align="center" prop="eventType.eventType" /> -->
+      <el-table-column label="开始时间" align="center" prop="startTime"sortable>
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.eventTime, '{y}-{m}-{d} {h}:{m}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{m}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="完成时间" align="center" prop="endTime"sortable>
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{m}') }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="状态" align="center" prop="eventState" :formatter="eventStateFormat" /> -->
@@ -113,12 +116,12 @@
             <span v-show="scope.row.eventState == 1" style="color: #00aa00;"><i class="el-icon-success" style="color: #00aa00;!important"></i>&nbsp;已处理</span>
          </template>
       </el-table-column>
-      <el-table-column label="处置时长" align="center" prop="eventType.eventType" />
-      <el-table-column label="发布时间" align="center" prop="eventTime"sortable>
+      <!-- <el-table-column label="处置时长" align="center" prop="eventType.eventType" /> -->
+     <!-- <el-table-column label="发布时间" align="center" prop="eventTime"sortable>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.eventTime, '{y}-{m}-{d} {h}:{m}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <!-- <el-table-column label="级别 " align="center" prop="eventGrade" :formatter="eventGradeFormat" />
       <el-table-column label="位置" align="center" prop="eventLocation" />
       <el-table-column prop="specs,quantityUnit" label="伤亡" align="left">
@@ -152,7 +155,7 @@
               type="text"
               icon="el-icon-chat-line-square"
               v-hasPermi="['system:event:remove']"
-              @click="handleDispatch(scope.row)"
+              @click="handleDispatch(scope.row.id)"
             >应急调度
             </el-button>
           <!-- <el-button
@@ -173,53 +176,65 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="cancel" class="addClass">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="eventFormClose" class="addClass">
       <el-form ref="form1" :model="eventForm" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
+            <el-form-item label="管理机构" prop="deptId">
+              <el-select v-model="eventForm.deptId" placeholder="请选择管理机构" clearable size="small">
+                <el-option v-for="item in mechanism" :key="item.deptId" :label="item.deptName"
+                  :value="item.deptId" @click.native="changeMechanism(item.deptId)"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="所属隧道" prop="tunnelId">
               <el-select v-model="eventForm.tunnelId" placeholder="请选择所属隧道" clearable size="small">
-                <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
+                <el-option v-for="item in tunnelList" :key="item.tunnelId" :label="item.tunnelName"
                   :value="item.tunnelId" />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="所属机构" prop="eventTitle">
-              <el-input  v-model="eventForm.eventTitle" placeholder="请输入所属机构" />
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="方向" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择方向">
+            <el-form-item label="方向" prop="direction">
+              <el-select v-model="eventForm.direction" placeholder="请选择方向">
                 <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
+                    v-for="item in dict.type.sd_direction"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"/>
+              </el-select>
+             <!-- <el-select
+                v-model="form.controlInfo.direction"
+                placeholder="请选择方向"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="dict in dict.type.sd_direction_list"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                /> -->
+                <!--<el-option-->
+                  <!--v-for="item in directionList"-->
+                  <!--:key="item.directionName"-->
+                   <!--:label="item.directionName"-->
+                  <!--:value="item.directionId"-->
+                <!--/>-->
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="桩号" prop="eventTitle">
-              <el-input  v-model="eventForm.eventTitle" placeholder="请输入桩号" />
+            <el-form-item label="桩号" prop="stakeNum">
+              <el-input  v-model="eventForm.stakeNum" placeholder="请输入桩号" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="车型" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择车型">
-                <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
+        
           <el-col :span="12">
             <el-form-item label="事件类型" prop="eventTypeId">
               <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件类型">
@@ -231,48 +246,17 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="事件标题" prop="eventTitle">
               <el-input  v-model="eventForm.eventTitle" placeholder="请输入事件标题" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="事件类型" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件类型">
-                <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="事件描述" prop="eventDescription">
-              <el-input  v-model="eventForm.eventDescription" placeholder="请输入事件描述" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="影响程度" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择影响程度">
-                <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="开始时间" prop="eventTime">
+            <el-form-item label="开始时间" prop="startTime">
               <el-date-picker clearable size="small" style="width: 200px"
-                v-model="eventForm.eventTime"
+                v-model="eventForm.startTime"
                 type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择开始时间">
@@ -280,9 +264,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="完成时间" prop="eventTime">
+            <el-form-item label="完成时间" prop="endTime">
               <el-date-picker clearable size="small" style="width: 200px"
-                v-model="eventForm.eventTime"
+                v-model="eventForm.endTime"
                 type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择完成时间">
@@ -292,36 +276,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="事件状态" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件状态">
-                <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="处置时长" prop="eventTitle">
-              <el-input  v-model="eventForm.eventTitle" placeholder="请输入处置时长" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="发布时间" prop="eventTime">
-              <el-date-picker clearable size="small" style="width: 200px"
-                v-model="eventForm.eventTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择发布时间">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="位置" prop="eventLocation">
-              <el-input style="width: 80%;" v-model="eventForm.eventLocation" placeholder="请输入位置" />
+            <el-form-item label="事件描述" prop="eventDescription">
+              <el-input  v-model="eventForm.eventDescription" placeholder="请输入事件描述" style="width: 630px !important;"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -332,7 +288,7 @@
                 <el-radio
                   v-for="dict in eventGradeOptions"
                   :key="dict.dictValue"
-                  :label="dict.dictValue"
+                  :label="dict.dictLabel"
                 >{{dict.dictLabel}}</el-radio>
               </el-radio-group>
             </el-form-item>
@@ -349,10 +305,58 @@
                          style="width: 30% !important;margin-left: 3%;" v-model="eventForm.eventInjured" placeholder="请填写重伤人数" />
               <el-input  oninput="value=value.replace(/[^0-9.]/g,'')"
                          onKeypress="return(/[\d]/.test(String.fromCharCode(event.keyCode)))"
-                         style="width: 30% !important;margin-left: 3%;" v-model="eventForm.eventInjured" placeholder="请填写轻伤人数" />
+                         style="width: 30% !important;margin-left: 3%;" v-model="eventForm.slightInjured" placeholder="请填写轻伤人数" />
             </el-form-item>
           </el-col>
         </el-row>
+        <!-- <el-col :span="12">
+            <el-form-item label="发布时间" prop="eventTime">
+              <el-date-picker clearable size="small" style="width: 200px"
+                v-model="eventForm.eventTime"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                placeholder="选择发布时间">
+              </el-date-picker>
+            </el-form-item>
+          </el-col> -->
+        <!-- <el-col :span="12">
+          <el-form-item label="车型" prop="eventTypeId">
+            <el-select v-model="eventForm.eventTypeId" placeholder="请选择车型">
+              <el-option
+                  v-for="item in eventTypeData"
+                  :key="item.id"
+                  :label="item.eventType"
+                  :value="item.id"/>
+            </el-select>
+          </el-form-item>
+        </el-col> -->
+        <!-- <el-col :span="12">
+           <el-form-item label="事件状态" prop="eventTypeId">
+             <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件状态">
+               <el-option
+                   v-for="item in eventTypeData"
+                   :key="item.id"
+                   :label="item.eventType"
+                   :value="item.id"/>
+             </el-select>
+           </el-form-item>
+         </el-col> -->
+        <!-- <el-col :span="12">
+           <el-form-item label="处置时长" prop="eventTitle">
+             <el-input  v-model="eventForm.eventTitle" placeholder="请输入处置时长" />
+           </el-form-item>
+         </el-col> -->
+         <!-- <el-col :span="12">
+            <el-form-item label="影响程度" prop="eventTypeId">
+              <el-select v-model="eventForm.eventTypeId" placeholder="请选择影响程度">
+                <el-option
+                    v-for="item in eventTypeData"
+                    :key="item.id"
+                    :label="item.eventType"
+                    :value="item.id"/>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
         <el-form-item  style="text-align: center;">
           <el-button  size="small"  type="primary" :loading="submitEventFormLoading" @click="submitEventForm">保存</el-button>
           <el-button  size="small"   @click="eventFormClose">取 消</el-button>
@@ -492,7 +496,7 @@
 </template>
 
 <script>
-import { listEvent, getEvent, delEvent, addEvent, updateEvent } from "@/api/event/event";
+import { listEvent, getEvent, delEvent, addEvent, updateEvent, toll, getTunnelList,listDevices } from "@/api/event/event";
 import { listEventType } from "@/api/event/eventType";
 import { listPlan} from "@/api/event/reservePlan";
 import {
@@ -500,8 +504,13 @@ import {
   } from "@/api/equipment/tunnel/api";
 export default {
   name: "Event",
+  dicts: ["sd_direction"],
   data() {
     return {
+      // 管理机构
+      mechanism:[],
+      // 所属隧道
+      tunnelList:[],
       // 遮罩层
       loading: true,
       // 非单个禁用
@@ -516,7 +525,7 @@ export default {
       total: 0,
       // 事件管理表格数据
       eventList: [
-        {eventTitle:'11'}
+        // {eventTitle:'11'}
       ],
       // 弹出层标题
       title: "",
@@ -528,6 +537,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        tunnelId: null,
         eventTypeId: null,
         eventTitle: null,
         eventTime: null,
@@ -537,6 +547,9 @@ export default {
         eventDeath: null,
         eventInjured: null,
         eventDescription: null,
+        startTime:null,
+        endTime:null,
+        tunnelStationName:null,
       },
       // 表单参数
       form: {},
@@ -545,8 +558,8 @@ export default {
       rules: {
       /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
         eventTitle: [{required: true, message: '请输入事件标题', trigger: 'blur'}],
-        eventTypeId: [{required: true, message: '请选择事件类型', trigger: 'blur'}],
-        eventGrade: [{required: true, trigger:'blur'}],
+        eventTypeId: [{required: true, message: '请选择事件类型', trigger: 'change'}],
+        eventGrade: [{required: true, message: '请选择事件级别',trigger:'change'}],
         eventLocation: [{required: true, message: '请输入位置', trigger:'blur'}],
         eventDescription: [{required: true, message: '请输入内容', trigger:'blur'}],
       },
@@ -556,7 +569,9 @@ export default {
       details:false,
       submitEventFormLoading: false,
       direction: 'rtl',
-      eventForm:{eventGrade: "0"},
+      eventForm:{
+        
+      },
       // 遮罩层
       dloading: false,
 
@@ -566,30 +581,59 @@ export default {
     this.getList();
     this.getEventType();
     this.getTunnel();
+    this.listDevices()
     this.getDicts("sd_event_state").then(response => {
       this.eventStateOptions = response.data;
     });
-    this.getDicts("sd_event_grade").then(response => {
-      console.log(response.data,"response.data")
+    this.getDicts("sd_incident_level").then(response => {
+      console.log(response.data,"response.data事件级别")
       this.eventGradeOptions = response.data;
     });
-
+    // 管理机构
+    toll().then(res=>{
+      console.log(res)
+      this.mechanism = res.data
+    })
   },
   methods: {
+    // 查询方向
+    listDevices(){
+      listDevices().then(res =>{
+        console.log(res,"查询方向")
+        // this.eventTypeData = 
+      })
+    },
+    // 根据管理机构筛选所属隧道
+    changeMechanism(deptId){
+      this.queryParams.tunnelId = null
+      const param = {
+        deptId:deptId
+      }
+      getTunnelList(param).then(res =>{
+        console.log(res,"根据管理机构筛选所属隧道")
+        this.tunnelList = res.data
+      })
+    },
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
-      listEvent(this.addDateRange(this.queryParams, this.dateRange)).then( response => {
-          // this.eventList = response.rows;
+      this.queryParams.startTime = this.dateRange[0]
+      this.queryParams.endTime = this.dateRange[1]
+      listEvent(this.addDateRange(this.queryParams)).then( response => {
+        console.log(response.rows,'查询事件管理列表')
+          this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
         });
     },
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then(response => {
-        this.eqTunnelData = response.rows;
-      });
+      if(!this.queryParams.deptId){
+        listTunnels().then(response => {
+          console.log(response.rows,"所属隧道")
+          this.tunnelList = response.rows;
+        });
+      }
     },
     /** 查询事件类型列表 */
     getEventType() {
@@ -628,8 +672,9 @@ export default {
       this.details = true
       this.title = '事件详情'
     },
-    handleDispatch(row){
-      this.$router.push({ path: "/emergency/administration/dispatch", query: { row: row } });
+    handleDispatch(id){
+      console.log(id,"eventeventeventeventeventeventeventevent")
+      this.$router.push({ path: "/emergency/administration/dispatch", query: { id: id } });
     },
     // 表单重置
     reset() {
@@ -686,41 +731,39 @@ export default {
         this.$modal.msgError("请选择隧道名称！");
         return;
       } */
-      if(!this.eventForm.eventTitle){
-        this.$modal.msgError("请输入事件标题！");
-        return;
-      }
-      if(!this.eventForm.eventTypeId){
-        this.$modal.msgError("请选择事件类型！");
-        return;
-      }
-      if(!this.eventForm.eventTime){
-        this.$modal.msgError("请确定事件发生时间！");
-        return;
-      }
-      if(!this.eventForm.eventGrade){
-        this.$modal.msgError("请选择事件等级！");
-        return;
-      }
-      if(!this.eventForm.eventLocation){
-        this.$modal.msgError("请输入事件位置！");
-        return;
-      }
-      if(!this.eventForm.eventDeath){
-        this.$modal.msgError("请输入死亡人数！");
-        return;
-      }
-      if(!this.eventForm.eventInjured){
-        this.$modal.msgError("请输入受伤人数！");
-        return;
-      }
+      // if(!this.eventForm.eventTitle){
+      //   this.$modal.msgError("请输入事件标题！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventTypeId){
+      //   this.$modal.msgError("请选择事件类型！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventTime){
+      //   this.$modal.msgError("请确定事件发生时间！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventGrade){
+      //   this.$modal.msgError("请选择事件等级！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventLocation){
+      //   this.$modal.msgError("请输入事件位置！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventDeath){
+      //   this.$modal.msgError("请输入死亡人数！");
+      //   return;
+      // }
+      // if(!this.eventForm.eventInjured){
+      //   this.$modal.msgError("请输入受伤人数！");
+      //   return;
+      // }
       this.dloading=true;
       if(this.submitEventFormLoading) return
       this.submitEventFormLoading = true
       this.$refs["form1"].validate(async valid => {
         if (valid) {
-          debugger
-          alert(123)
             await addEvent(this.eventForm).then(response => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");

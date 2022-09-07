@@ -40,6 +40,7 @@
         <result property="truckNum" column="truck_num"/>
         <result property="smallCarNum" column="small_car_num"/>
         <result property="direction" column="direction"/>
+        <result property="tunnelStationName" column="tunnel_station_name"/>
         <result property="slightInjured" column="slight_injured"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
@@ -92,7 +93,7 @@
         A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id,
         A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
         C.tunnel_name, A.remark, A.police_phone, A.wrecker_phone, A.car_owner_phone, A.tanker_num, A.passenger_car_num,
-        A.small_car_num, A.direction, A.slight_injured, A.truck_num
+        A.small_car_num, A.direction, A.slight_injured, A.truck_num, A.start_time, A.end_time,A.stake_num,C.tunnel_station_name
         from sd_event A
         left join sd_event_type B
         on A.event_type_id = B.id
@@ -168,6 +169,9 @@
             <if test="smallCarNum != null">small_car_num,</if>
             <if test="direction != null">direction,</if>
             <if test="slightInjured != null">slight_injured,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="stakeNum != null">stake_num,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -198,6 +202,9 @@
             <if test="smallCarNum != null">#{smallCarNum},</if>
             <if test="direction != null">#{direction},</if>
             <if test="slightInjured != null">#{slightInjured},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="stakeNum != null">#{stakeNum},</if>
         </trim>
     </insert>
 

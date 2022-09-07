@@ -454,6 +454,7 @@
                 :props="props"
                 v-model="reserveProcessDrawForm.strategyId"
                 :options="options"
+                clearable
                 @change="handleChangeStrategy()"></el-cascader>
               </el-form-item>
                 <div class="dialogButton" @click="addFrom()">添加</div>
@@ -882,12 +883,12 @@ export default {
     },
     handleChangeStrategy(e,index){
         console.log(e,index,'cecceeecceeee')
-        this.planTypeIdList[index].a=e
+        // this.planTypeIdList[index].a=e
         // for(let i=0; i<this.planTypeIdList.length; i++ ){
         //   this.planTypeIdList[i].a=e
-        //   // console.log( this.planTypeIdList[i],' this.planTypeIdList[i] this.planTypeIdList[i] ')
+        //   console.log( this.planTypeIdList[i],' this.planTypeIdList[i] this.planTypeIdList[i] ')
         // }
-        console.log( this.planTypeIdList,' this.planTypeIdList this.planTypeIdList')
+        // console.log( this.planTypeIdList,' this.planTypeIdList this.planTypeIdList')
     },
 
   //查看工作台

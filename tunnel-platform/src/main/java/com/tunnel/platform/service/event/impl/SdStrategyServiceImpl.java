@@ -351,7 +351,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             result = -1;
         }
         //3.0  插入关联子表新的相关信息
-        if ( "1".equals(model.getStrategyType()) ){
+        if ( "1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType()) ){
             String[] equipments = model.getEquipments().split("#");
             String[] equipmentType = model.getEquipmentTypeId().split("#");
             String[] equipmentState = model.getEquipmentState().split("#");

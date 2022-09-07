@@ -521,4 +521,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices
         where eq_id=#{deviceId}
     </select>
+
+    <select id="selectDevice" resultMap="SdDevicesResult">
+        select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark
+        from sd_devices
+        where eq_tunnel_id =#{tunnelId}
+    </select>
+
+
 </mapper>

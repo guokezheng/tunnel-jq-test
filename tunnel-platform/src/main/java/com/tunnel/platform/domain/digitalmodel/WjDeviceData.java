@@ -36,4 +36,20 @@ public class WjDeviceData {
 
     @ApiModelProperty("信息内容")
     private String message;
+
+    /**
+     *设备状态查询后补字段
+     */
+    @ApiModelProperty("设备ID")
+    private String deviceId;
+
+    @ApiModelProperty("设备类型")
+    private String deviceType;
+
+    @ApiModelProperty("设备名称")
+    private String deviceName;
+
+    @ApiModelProperty("设备状态")
+    private Integer deviceStatus;
+
 }

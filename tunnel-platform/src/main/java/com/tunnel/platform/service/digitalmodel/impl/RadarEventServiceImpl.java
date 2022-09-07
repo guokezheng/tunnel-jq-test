@@ -16,19 +16,27 @@ import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
-import com.tunnel.platform.utils.constant.WjConstants;
+import com.tunnel.platform.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.kafka.common.protocol.types.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.StringRedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author dzy
@@ -45,6 +53,8 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
     private RedisCache redisCache;
+
+    private static final Logger log = LoggerFactory.getLogger(RadarEventServiceImpl.class);
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -239,12 +249,12 @@ public class RadarEventServiceImpl implements RadarEventService {
         //存储后将雷达数据从相机数据剔除
         wjDeviceCameraList.remove(wjDeviceCameraList.size()-1);
         //雷达数据存redis
-        redisCache.setCacheMapValue(WjConstants.WJ_LIDAR_INFO_KEY,WjConstants.WJ_LIDAR_INFO_KEY+wjDevicelidar.getEqId(),parse);
+        redisCache.setCacheMapValue(RadarEventConstants.WJ_LIDAR_INFO_KEY, RadarEventConstants.WJ_LIDAR_INFO_KEY+wjDevicelidar.getEqId(),parse);
         //相机数据存redis
         wjDeviceCameraList.forEach(
             v->{
                 JSON parse1 = JSONUtil.parse(v);
-                redisCache.setCacheMapValue(WjConstants.WJ_CAMERA_INFO_KEY,WjConstants.WJ_CAMERA_INFO_KEY+v.getEqId(),parse1);
+                redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY+v.getEqId(),parse1);
             }
         );
     }
@@ -321,7 +331,165 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("message",message);
         }
-        kafkaTemplate.send(WjConstants.BASEDEVICESTATUS, jsonObject.toString());
+        log.info("-----测试测试测试----{}",jsonObject);
+//        kafkaTemplate.send(WjConstants.BASEDEVICESTATUS, jsonObject.toString());
+    }
+
+    @Override
+    public Object selectDevice(String tunnelId) {
+        List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
+        List<SdRadarDevice> list = new ArrayList<>();
+        //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
+        RedisTemplate redisTemplate = redisCache.redisTemplate;
+        //返回储存的集合-json
+        List<Object> redisResult = redisTemplate.executePipelined(
+            new RedisCallback<String>() {
+                // 自定义序列化
+                RedisSerializer keyS = redisTemplate.getKeySerializer();
+                @Override
+                public String doInRedis(RedisConnection redisConnection) throws DataAccessException {
+                    for (SdDevices e : devices) {
+                        redisConnection.hGet(keyS.serialize(RadarEventConstants.DEVICE_DATA), keyS.serialize(RadarEventConstants.DEVICE_DATA+e.getEqId()));
+                    }
+                    return null;
+                }
+            }, redisTemplate.getValueSerializer());
+        devices.forEach(
+            f -> {
+                SdRadarDevice sdRadarDevice = new SdRadarDevice();
+                sdRadarDevice.setDeviceId(f.getEqId());
+                sdRadarDevice.setDeviceType(f.getEqType() + "");
+                sdRadarDevice.setDeviceName(f.getEqName());
+                if (StringUtils.isNotEmpty(f.getEqStatus())){
+                    sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
+                }
+                if (StringUtils.isNotEmpty(f.getLng())){
+                    sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
+                }
+                if (StringUtils.isNotEmpty(f.getLat())){
+                    sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
+                }
+                sdRadarDevice.setDirection(f.getEqDirection());
+                sdRadarDevice.setStakeNum(f.getPile());
+                sdRadarDevice.setTransform(f.getRemark());
+                WjDeviceData deviceData = new WjDeviceData();
+                if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
+                        || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "34".equals(sdRadarDevice.getDeviceType())) {
+                    redisResult.forEach(
+                        v->{
+                            if (v!=null){
+                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                    JSON parse = JSONUtil.parse(v);
+                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                    deviceData.setRunStatus(wjDeviceData.getRunStatus());
+                                }
+                            }
+                        }
+                    );
+                }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                            v->{
+                                if (v!=null){
+                                    if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                        JSON parse = JSONUtil.parse(v);
+                                        WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                        deviceData.setRunDate(wjDeviceData.getRunDate());
+                                        deviceData.setUnit(wjDeviceData.getUnit());
+                                    }
+                                }
+                            }
+                    );
+                }else if ("6".equals(sdRadarDevice.getDeviceType())||"7".equals(sdRadarDevice.getDeviceType())||"8".equals(sdRadarDevice.getDeviceType())||"9".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                        v->{
+                            if (v!=null){
+                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                    JSON parse = JSONUtil.parse(v);
+                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                    deviceData.setRunStatus(wjDeviceData.getRunStatus());
+                                }
+                            }
+                        }
+                    );
+                }else if ("31".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                            v->{
+                                if (v!=null){
+                                    if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                        JSON parse = JSONUtil.parse(v);
+                                        WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                        deviceData.setRunStatus(wjDeviceData.getRunStatus());
+                                        deviceData.setRunMode(wjDeviceData.getRunMode());
+                                    }
+                                }
+                            }
+                    );
+                }else if ("17".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                        v->{
+                            if (v!=null){
+                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                    JSON parse = JSONUtil.parse(v);
+                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                    deviceData.setWindSpeed(wjDeviceData.getWindSpeed());
+                                    deviceData.setWindDirection(wjDeviceData.getWindDirection());
+                                }
+                            }
+                        }
+                    );
+                }else if ("19".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                        v->{
+                            if (v!=null){
+                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                    JSON parse = JSONUtil.parse(v);
+                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                    deviceData.setCO(wjDeviceData.getCO());
+                                    deviceData.setVI(wjDeviceData.getCO());
+                                }
+                            }
+                        }
+                    );
+                }else if ("16".equals(sdRadarDevice.getDeviceType())){
+                    redisResult.forEach(
+                        v->{
+                            if (v!=null){
+                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
+                                    JSON parse = JSONUtil.parse(v);
+                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
+                                    deviceData.setMessage(wjDeviceData.getMessage());
+                                }
+                            }
+                        }
+                    );
+                }
+                sdRadarDevice.setDeviceData(deviceData);
+                list.add(sdRadarDevice);
+            }
+        );
+        //在线
+        int normal = 0;
+        //离线
+        int errorNum = 0;
+        //故障
+        int offlineNum = 0;
+        for (SdRadarDevice sdRadarDevice : list) {
+            if (sdRadarDevice.getDeviceStatus()!=null){
+                if (sdRadarDevice.getDeviceStatus()==1){
+                    normal+=1;
+                }else if (sdRadarDevice.getDeviceStatus()==2){
+                    errorNum+=1;
+                }else if (sdRadarDevice.getDeviceStatus()==3){
+                    offlineNum+=1;
+                }
+            }
+        }
+        JSONObject object=new JSONObject();
+        object.put("normal",normal);
+        object.put("errorNum",errorNum);
+        object.put("offlineNum",offlineNum);
+        object.put("deviceList",list);
+        return JSONUtil.parse(object);
     }
 
 

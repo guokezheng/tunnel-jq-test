@@ -155,7 +155,7 @@
       <el-row >
         <template v-if="strategyForm.strategyType === '0'">
           <el-col :span="8">
-            <el-form-item label="设备类型111" v-if="strategyForm.strategyType === '0'">
+            <el-form-item label="设备类型" v-if="strategyForm.strategyType === '0'">
               <el-select v-model="strategyForm.equipmentTypeId1" placeholder="请选择设备类型" >
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
                             @click.native="eqTypeChange(item.typeId,item.typeName)"/>
@@ -286,7 +286,7 @@
       </el-form-item>
       
       <el-form-item  style="text-align: center;text-align: center; width: 90%;">
-          <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >保存11</el-button>
+          <el-button style="width: 30%;" type="primary" @click="submitStrategyForm" >保存</el-button>
           <el-button style="width: 30%;"  @click="strategyFormClose">取 消</el-button>
       </el-form-item>
     </template>

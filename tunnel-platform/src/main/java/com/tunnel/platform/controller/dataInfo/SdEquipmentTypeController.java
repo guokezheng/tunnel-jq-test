@@ -7,8 +7,6 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStratygeType;
 import com.tunnel.platform.service.dataInfo.ISdEquipmentTypeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -90,7 +88,7 @@ public class SdEquipmentTypeController extends BaseController
 	 */
 	@GetMapping("/getTypeAndStrategy")
 	public Result getTypeAndStrategy(SdEquipmentType sdEquipmentType) {
-		List<SdStratygeType> sdEquipmentTypes = sdEquipmentTypeService.selectTypeAndStrategy(sdEquipmentType);
+		List<Map> sdEquipmentTypes = sdEquipmentTypeService.selectTypeAndStrategy(sdEquipmentType);
 		return Result.success(sdEquipmentTypes);
 	}
 

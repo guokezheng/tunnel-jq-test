@@ -1,7 +1,9 @@
 package com.tunnel.platform.service.event.impl;
 
 import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.platform.domain.event.SdStrategyRl;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
 import com.tunnel.platform.service.event.ISdStrategyRlService;
@@ -23,6 +25,10 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService
     private SdStrategyRlMapper sdStrategyRlMapper;
     @Autowired
     private SdEquipmentStateMapper sdEquipmentStateMapper;
+
+    @Autowired
+    private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
+
     /**
      * 查询策略关联设备信息
      * 
@@ -64,6 +70,34 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService
     		List<SdEquipmentState> stateList = sdEquipmentStateMapper.selectDropSdEquipmentStateList(sdEquipmentState);
     		rlList.get(i).setEqStateList(stateList);
     	}
+        return rlList;
+    }
+
+    /**
+     * 根据策略id查询策略关联设备信息
+     * @param strategyId
+     * @return
+     */
+    @Override
+    public List<SdStrategyRl> selectSdStrategyRlListByStrategyId(Long strategyId)
+    {
+        List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
+        for (int i = 0; i < rlList.size(); i++) {
+            SdEquipmentState sdEquipmentState = new SdEquipmentState();
+            sdEquipmentState.setStateTypeId(Long.parseLong(rlList.get(i).getEqTypeId()));
+            sdEquipmentState.setIsControl(1);
+            List<SdEquipmentState> stateList = sdEquipmentStateMapper.selectDropSdEquipmentStateList(sdEquipmentState);
+            for (SdEquipmentState state : stateList) {
+                if(state.getIconFileId()!=null && !"".equals(state.getIconFileId()) && !"null".equals(state.getIconFileId())){
+                    if(!"-1".equals(state.getIconFileId())){
+                        SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                        sdEquipmentStateIconFile.setStateIconId(state.getIconFileId());
+                        state.setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+                    }
+                }
+            }
+            rlList.get(i).setEqStateList(stateList);
+        }
         return rlList;
     }
 

@@ -6,9 +6,6 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStrategyRl;
-import com.tunnel.platform.domain.event.SdStratygeType;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.platform.mapper.event.SdStrategyMapper;
@@ -145,25 +142,27 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 	}
 
 	@Override
-	public List<SdStratygeType> selectTypeAndStrategy(SdEquipmentType sdEquipmentType) {
+	public List<Map> selectTypeAndStrategy(SdEquipmentType sdEquipmentType) {
 		List<SdEquipmentType> sdEquipmentTypes = sdEquipmentTypeMapper.selectSdEquipmentTypeList(sdEquipmentType);
-		List<SdStratygeType> list = new ArrayList<>();
-		SdStrategy strategy = new SdStrategy();
-		strategy.setStrategyType("0");
-		for (SdEquipmentType Type : sdEquipmentTypes) {
-			List<SdStrategy> sdStrategyList = new ArrayList<>();
-			List<SdStrategy> sdStrategies = sdStrategyMapper.selectSdStrategyList(strategy);
-			for (SdStrategy sdStrategy : sdStrategies) {
-				List<SdStrategyRl> sdStrategyRls = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(sdStrategy.getId());
-				if (sdStrategyRls.get(0).getEqTypeId().equals(Type.getTypeId()+"")) {
-					sdStrategyList.add(sdStrategy);
+		List<Map> list = new ArrayList<>();
+		List<Map<String, String>> manualStrategy = sdStrategyMapper.getManualStrategy();
+		for (int i = 0; i <sdEquipmentTypes.size(); i++) {
+			SdEquipmentType equipmentType = sdEquipmentTypes.get(i);
+			Map<String, Object> hashMap = new HashMap<>();
+			hashMap.put("id", equipmentType.getTypeId());
+			hashMap.put("name", equipmentType.getTypeName());
+			for (Map map : manualStrategy) {
+				if (map.get("eqTypeId").equals(equipmentType.getTypeId())) {
+					List<Map> mapList = new ArrayList<>();
+					Map<String,Object> objectMap = new HashMap<>();
+					objectMap.put("id", map.get("strategyId"));
+					objectMap.put("name", map.get("strategyName"));
+					mapList.add(objectMap);
+					hashMap.put("children",mapList);
+
 				}
 			}
-			SdStratygeType sdStratygeType = new SdStratygeType();
-			sdStratygeType.setTypeId(Type.getTypeId());
-			sdStratygeType.setTypeName(Type.getTypeName());
-			sdStratygeType.setSdStrategies(sdStrategyList);
-			list.add(sdStratygeType);
+			list.add(hashMap);
 		}
 		return list;
 	}

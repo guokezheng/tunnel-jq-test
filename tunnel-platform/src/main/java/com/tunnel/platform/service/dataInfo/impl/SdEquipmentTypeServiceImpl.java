@@ -151,15 +151,14 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 			Map<String, Object> hashMap = new HashMap<>();
 			hashMap.put("id", equipmentType.getTypeId());
 			hashMap.put("name", equipmentType.getTypeName());
+			List<Map> mapList = new ArrayList<>();
 			for (Map map : manualStrategy) {
 				if (map.get("eqTypeId").equals(equipmentType.getTypeId())) {
-					List<Map> mapList = new ArrayList<>();
 					Map<String,Object> objectMap = new HashMap<>();
 					objectMap.put("id", map.get("strategyId"));
 					objectMap.put("name", map.get("strategyName"));
 					mapList.add(objectMap);
 					hashMap.put("children",mapList);
-
 				}
 			}
 			list.add(hashMap);

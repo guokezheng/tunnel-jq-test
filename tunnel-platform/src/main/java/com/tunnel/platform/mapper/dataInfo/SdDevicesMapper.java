@@ -137,4 +137,6 @@ public interface SdDevicesMapper
 	void updateSdDevicesBatch(List<SdDevices> list);
 
     String selecTunnelId(@Param("deviceId") String deviceId);
+
+	List<SdDevices> selectDevice(@Param("tunnelId") String tunnelId);
 }

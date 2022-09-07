@@ -1,5 +1,7 @@
 package com.tunnel.platform.mapper.digitalmodel;
 
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.platform.domain.digitalmodel.WjConfidence;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdRadarDetectData;

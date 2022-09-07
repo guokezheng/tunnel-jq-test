@@ -35,6 +35,14 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("隧道id")
     private String tunnelId;
 
+    public String getTunnelStationName() {
+        return tunnelStationName;
+    }
+
+    public void setTunnelStationName(String tunnelStationName) {
+        this.tunnelStationName = tunnelStationName;
+    }
+
     /**
      * 隧道对象
      */
@@ -184,6 +192,7 @@ public class SdEvent extends BaseEntity {
     public String policePhone;
     @ApiModelProperty("小型车数量")
     public int smallCarNum;
+    public String tunnelStationName;
 
 
     private Long deptId;
@@ -363,6 +372,8 @@ public class SdEvent extends BaseEntity {
                 ", slightInjured=" + slightInjured +
                 ", policePhone='" + policePhone + '\'' +
                 ", smallCarNum=" + smallCarNum +
+                ", tunnelStationName='" + tunnelStationName + '\'' +
+                ", deptId=" + deptId +
                 '}';
     }
 

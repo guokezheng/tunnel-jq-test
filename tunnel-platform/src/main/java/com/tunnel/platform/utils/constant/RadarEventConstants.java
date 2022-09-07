@@ -6,7 +6,7 @@ package com.tunnel.platform.utils.constant;
  * @author zs
  * @date 2022/9/5
  */
-public class WjConstants {
+public class RadarEventConstants {
 
     /**
      * 万集雷达信息 redis cache key
@@ -17,6 +17,11 @@ public class WjConstants {
      * 万集摄像机信息 redis cache key
      */
     public static final String WJ_CAMERA_INFO_KEY = "wj_camera_info:";
+
+    /**
+     * 万集设备状态数据redis cache key
+     */
+    public static final String DEVICE_DATA = "device_data:";
 
     /**
      * 万集感知数据topic matchResultData

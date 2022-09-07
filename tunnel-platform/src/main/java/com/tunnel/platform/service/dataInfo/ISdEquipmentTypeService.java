@@ -1,8 +1,6 @@
 package com.tunnel.platform.service.dataInfo;
 
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStratygeType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -90,5 +88,5 @@ public interface ISdEquipmentTypeService
      * @param sdEquipmentType
      * @return
      */
-    public List<SdStratygeType> selectTypeAndStrategy(SdEquipmentType sdEquipmentType);
+    public List<Map> selectTypeAndStrategy(SdEquipmentType sdEquipmentType);
 }

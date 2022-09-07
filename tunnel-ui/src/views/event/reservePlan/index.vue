@@ -447,14 +447,13 @@
          >
         
          <el-form ref="form1" :model="reservePlanDrawForm" label-width="80px">
-
          <el-row  :gutter="20">
             <el-col :span="8" v-for="(item,index) in planTypeIdList" :key="index" class="colflex">
               <el-form-item label="相关策略" prop="planTypeId">
                 <el-cascader 
                 :value="item.a"        
                 :options="options"
-                @change="handleChangeStrategy($event,index)"></el-cascader>
+                @change="handleChangeStrategy()"></el-cascader>
               </el-form-item>           
                 <div class="dialogButton" @click="addFrom()">添加</div>
              <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
@@ -759,7 +758,7 @@ export default {
   created() {
     this.getList();
     this.getPlanType();//事件类型下拉
-    this.getStrategyInfo();//策略下拉
+    // this.getStrategyInfo();//策略下拉
     this.getTunnelData(this.tunnelId)
     this.lightSwitchFunc()
     this.ceshiTime()
@@ -767,7 +766,7 @@ export default {
            this.eqTunnelData=res.rows
            console.log(res,'this.eqTunnelDatathis.eqTunnelData')
           this.eqTunnelData.forEach(item=>{
-        item.sdTunnelSubareas.forEach((item,index)=>{
+          item.sdTunnelSubareas.forEach((item,index)=>{
             this.eqTunnelDataList.push(item)
            })          
          })
@@ -900,13 +899,13 @@ export default {
       // });
       console.log(row,'ppppppppppppppp')
       this.strategyVisible=true
-      getTypeAndStrategy({isControl:1}).then(res=>{
-          console.log(res.data,'之心测策略')
-          this.options=res.data
-          res.data.forEach((item,index)=>{
+      // getTypeAndStrategy({isControl:1}).then(res=>{
+      //     console.log(res.data,'之心测策略')
+      //     this.options=res.data
+      //     res.data.forEach((item,index)=>{
             
-          })
-      })
+      //     })
+      // })
     },
     //执行策略id勾选事件
     handleStrategySelectionChange(selection){
@@ -1254,6 +1253,7 @@ export default {
         /** 查询事件类型下拉列表 */
         getPlanType() {
           listEventType().then(response => {
+            console.log(response,'事件类型下拉')
           this.planTypeData = response.rows;
           });
         },

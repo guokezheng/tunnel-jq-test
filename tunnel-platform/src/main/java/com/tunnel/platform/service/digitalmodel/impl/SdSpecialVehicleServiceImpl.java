@@ -6,7 +6,9 @@ import com.tunnel.platform.service.digitalmodel.ISdSpecialVehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 重点车辆Service业务层处理
@@ -98,8 +100,20 @@ public class SdSpecialVehicleServiceImpl implements ISdSpecialVehicleService
      * @return
      */
     @Override
-    public List<SdSpecialVehicles> specialById(String tunnelId) {
-        List<SdSpecialVehicles> data = sdSpecialVehicleMapper.specialById(tunnelId);
-        return data;
-    }
+    public Object[] specialById(String tunnelId)
+        {
+            List<Map> maps = sdSpecialVehicleMapper.specialById(tunnelId);
+            ArrayList<Object> time = new ArrayList<>();
+            ArrayList<Object> num = new ArrayList<>();
+            Object[] resArr = new Object[2];
+            for (Map map : maps) {
+                Object timeData = map.get("time");
+                time.add(timeData);
+                Object numData = map.get("num");
+                num.add(numData);
+            }
+            resArr[0] = time;
+            resArr[1] = num;
+            return resArr;
+        }
 }

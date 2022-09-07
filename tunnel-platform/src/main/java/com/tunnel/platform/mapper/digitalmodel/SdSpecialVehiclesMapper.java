@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.digitalmodel;
 import com.tunnel.platform.domain.digitalmodel.SdSpecialVehicles;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -65,5 +66,5 @@ public interface SdSpecialVehiclesMapper
      * @param tunnelId
      * @return
      */
-    public List<SdSpecialVehicles> specialById(String tunnelId);
+    public List<Map> specialById(String tunnelId);
 }

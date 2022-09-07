@@ -1,10 +1,6 @@
 package com.tunnel.platform.mapper.event;
 
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.domain.digitalmodel.WjConfidence;
 import com.tunnel.platform.domain.event.SdEvent;
-import com.tunnel.platform.domain.event.SdRadarDetectData;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -68,5 +64,6 @@ public interface SdEventMapper
      * @return 结果
      */
     public int deleteSdEventByIds(Long[] ids);
+
 
 }

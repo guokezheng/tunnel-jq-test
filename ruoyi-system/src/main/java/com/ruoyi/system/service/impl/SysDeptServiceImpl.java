@@ -346,6 +346,11 @@ public class SysDeptServiceImpl implements ISysDeptService
         return sysDeptUserTreeVOS;
     }
 
+    @Override
+    public List<Object> tollById() {
+        return  deptMapper.tollById();
+    }
+
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {
         for (SysDeptUserTreeVO sysDeptUserTreeVO : list) {
             if(sysDeptUserTreeVO.getIsUser() != 1) {

@@ -184,7 +184,7 @@
               :value="item.eqId"/>
           <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
         </el-select>
-        <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='edit' " placeholder="请选择设备需要执行的操作"
+        <el-select v-model="it.eqState" v-show="strategyForm.strategyType == '0' && sink=='edit' " placeholder="请选择设备需要执行的操作"
             style="width: 39%;margin-left:6%;" >
           <el-option
             v-for="item in eqState3"
@@ -193,7 +193,7 @@
             :value="item.deviceState"> 
           </el-option>
         </el-select>       
-        <el-select v-model="it.eqState" v-show="strategyForm.strategyType === '0' && sink=='add' " 
+        <el-select v-model="it.eqState" v-show="strategyForm.strategyType == '0' && sink=='add' " 
           placeholder="请选择设备需要执行的操作" 
             style="width: 39%;margin-left:6%;" >
           <el-option
@@ -207,11 +207,11 @@
       </el-form-item>
       
       <!-- 定时控制 -->
-      <el-form-item v-show="strategyForm.strategyType === '1'" style="margin-top: -10px; margin-bottom:0px;">
+      <el-form-item v-show="strategyForm.strategyType == '1'" style="margin-top: -10px; margin-bottom:0px;">
         <cron  v-if="showCronBox" v-model.trim="strategyForm.schedulerTime" ref="cron" @changeValue='changeValue'></cron>
         <span style="color: #E6A23C; font-size: 12px;" >corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份 星期中的日期 年份</span>
       </el-form-item>
-      <el-form-item v-show="strategyForm.strategyType === '1'" style="width: 90%;">
+      <el-form-item v-show="strategyForm.strategyType == '1'" style="width: 90%;">
             <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
                 <el-button slot="append" v-if="!showCronBox" icon="el-icon-arrow-up" @click="showCronBox = true" title="打开图形配置" ></el-button>
                 <el-button slot="append" v-else icon="el-icon-arrow-down" @click="showCronBox = false" title="关闭图形配置" ></el-button>
@@ -219,7 +219,7 @@
       </el-form-item>
 
       <!-- 自动触发 -->
-      <template v-if="strategyForm.strategyType === '2'">
+      <template v-if="strategyForm.strategyType == '2'">
         <el-form-item  label="触发器">
           <el-select v-model="strategyForm.triggers.deviceTypeId" placeholder="请选择设备类型" 
               style="width: 18%;" @change="slectEqName()">
@@ -419,7 +419,7 @@ export default {
         pageSize: 10,
         tunnelId: null,
         strategyName: null,
-        strategyType: 0,
+        strategyType: null,
         strategyInfo: null,
         schedulerTime: null,
         jobTime:null,
@@ -445,7 +445,7 @@ export default {
         //策略信息表
         equipmentTypeId1:'',//新增设备id
         equipmentTypeId: [],
-        strategyType:  0,//策略类型
+        strategyType: null,//策略类型
         tunnelId:null,//隧道id
         strategyName:null,//策略名称
         equipments:[],//所选设备

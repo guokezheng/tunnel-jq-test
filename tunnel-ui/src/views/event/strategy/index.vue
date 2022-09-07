@@ -1407,7 +1407,6 @@ export default {
                       this.$modal.msgSuccess("任务修改成功");
                     }
                   });
-
                 })
               }
               if(this.strategyForm.strategyType == 2){    

@@ -2141,7 +2141,7 @@
         vehicleXData:[],
         vehicleYData:[],
         keyVehiclesXData:[],
-        keyVehiclesYData:[]
+        keyVehiclesYData:[],
 
         weiboList:[
           {id:1,byLane:'一',fSpaceOccupyRation:'29',bySpeed:'74',fSpaceOccupyRation:'47',createTime:'2022-09-05 17:44:32'},

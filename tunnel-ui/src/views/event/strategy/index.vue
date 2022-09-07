@@ -367,7 +367,7 @@ export default {
     },
   data() {
     return {
-      
+      guid:'',
       is_show:false,
       changeVal:false,
 	    saveDevices:'',
@@ -579,10 +579,10 @@ export default {
         index:null,//当前设置的
         equipments:[],//设备名称
       },
-      this.strategyForm.direction = null;
-      this.strategyForm.equipmentTypeId1 = null;
-      this.eqTypeList = [];
-      this.strategyForm.triggers.deviceTypeId = null;
+      // this.strategyForm.direction = null;
+      // this.strategyForm.equipmentTypeId1 = null;
+      // this.eqTypeList = [];
+      // this.strategyForm.triggers.deviceTypeId = null;
       this.strategyForm.autoAddOperation=[
         {
           equipments:[],//所选设备
@@ -1044,10 +1044,7 @@ export default {
       this.chooseScheduleTimeVb = false;
     },
     openEqDialog2(event,index){
-      if(!this.strategyForm.direction){
-        return this.$modal.msgError("请先选择方向");
-      }
-	  this.saveDevices = ''
+	    this.saveDevices = ''
       if(this.strategyForm.tunnelId !=null){
         this.eqForm.index = index;//设定当前策略index
         this.eqForm.equipment_type = this.strategyForm.equipmentTypeId[index];
@@ -1273,7 +1270,7 @@ export default {
       }, `system_strategy.xlsx`)
     },
     /** 提交按钮 */
-    submitStrategyForm() {
+    async submitStrategyForm() {
       var str = ""
       if(!this.strategyForm.tunnelId){
         this.$modal.msgError("请选择隧道");
@@ -1379,6 +1376,7 @@ export default {
               // straInfo = "当******时执行：";
           }
           // 新增
+          console.log(str,'123123')
           getGuid().then(response => {
             this.guid = response;
           })
@@ -1386,13 +1384,11 @@ export default {
             if(this.strategyForm.strategyType == 0){//手动执行
               this.addStrategysData(this.guid,straInfo);
             }else if(this.strategyForm.strategyType == 1){//定时执行
-              this.addJobData(this.guid,str);
+              this.addJobData(this.guid,str);//表达式
               this.timeAddStrategysData(this.guid,straInfo);
             }else if(type == 2){//自动触发
-              this.addJobData(this.guid,str);
-              // this.addStrategysData(null,straInfo);
-              console.log('点击了自动触发')
-              this.autoaddStrategysData(this.guid,straInfo);
+              // this.addJobData(this.guid,str);
+              this.timeAddStrategysData(this.guid,straInfo);
             }
           }
           // 编辑
@@ -1522,32 +1518,32 @@ export default {
         console.log(this.eqForm.equipments,'this.eqForm.equipments')
         console.log(this.twoId[0],'this.this.twoIdthis.twoIdthis.twoId.')
         addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
-                triggers:this.strategyForm.triggers,
-                strategyName:this.strategyForm.strategyName,
-                direction:this.strategyForm.direction,
-                strategyType:this.strategyForm.strategyType,
-                strategyInfo:straInfo,
-                equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),//设备类型id
-                equipmentState:this.twoId.join('#'),  //设备状态操作
-                equipments:this.strategyForm.equipmentstr.join('#'),
-                schedulerTime:this.strategyForm.schedulerTime,
-                // equipmentState:this.strategyForm.autoAddOperation.eqState1,
-                // equipment:this.strategyForm.autoAddOperation,
-                jobRelationId:guid,
-                }).then(response => {
-                  if (response.code === 200) {
-                    if(this.strategyForm.strategyType != 1) {
-                     this.$modal.msgSuccess("新增策略成功");
-                    }
-                    this.dloading=false;
-                    this.drawer=false;
-                    this.getList();
-                    this.resetEqForm()
-                    setTimeout(() => {
-                      this.resetStrategyInfo();
-                    }, 400);
-                  }
-              });
+            triggers:this.strategyForm.triggers,
+            strategyName:this.strategyForm.strategyName,
+            direction:this.strategyForm.direction,
+            strategyType:this.strategyForm.strategyType,
+            strategyInfo:straInfo,
+            equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),//设备类型id
+            equipmentState:this.twoId.join('#'),  //设备状态操作
+            equipments:this.strategyForm.equipmentstr.join('#'),
+            schedulerTime:this.strategyForm.schedulerTime,
+            // equipmentState:this.strategyForm.autoAddOperation.eqState1,
+            // equipment:this.strategyForm.autoAddOperation,
+            jobRelationId:this.guid,
+            }).then(response => {
+              if (response.code === 200) {
+                if(this.strategyForm.strategyType != 1) {
+                  this.$modal.msgSuccess("新增策略成功");
+                }
+                this.dloading=false;
+                this.drawer=false;
+                this.getList();
+                this.resetEqForm()
+                setTimeout(() => {
+                  this.resetStrategyInfo();
+                }, 400);
+              }
+          });
         },
 
 
@@ -1570,7 +1566,7 @@ export default {
                 schedulerTime:this.strategyForm.schedulerTime,
                 equipmentState:this.strategyForm.autoAddOperation.eqState1,
                 equipment:this.strategyForm.autoAddOperation,
-                jobRelationId:guid,
+                jobRelationId:this.guid,
                 }).then(response => {
                   if (response.code === 200) {
                     if(this.strategyForm.strategyType != 1) {
@@ -1609,7 +1605,7 @@ export default {
                 schedulerTime:this.strategyForm.schedulerTime,
                 equipmentState:this.strategyForm.addOperation.eqState1,
                 equipment:this.strategyForm.addOperation,
-                jobRelationId:guid,
+                jobRelationId:this.guid,
                 }).then(response => {
                   if (response.code === 200) {
                     if(this.strategyForm.strategyType != 1) {
@@ -1629,18 +1625,18 @@ export default {
     addJobData(guid,str){
     //  if(this.model == '2'){
         addJob({jobName:this.strategyForm.strategyName,//任务名称
-            invokeTarget:"ryTask.strategyParams('"+guid+"')",//调用目标字符串
-            cronExpression:this.strategyForm.schedulerTime,//corn表达式
-            misfirePolicy:'1',//计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-            concurrent:'0',//'是否并发执行（0允许 1禁止）'
-            status:'0',//状态（0正常 1暂停）'
-            relationId:guid
-            }).then(response => {
-            if (response.code === 200) {
-                this.$modal.msgSuccess("新增任务成功");
-             }else{
-               this.$modal.msgError("新增失败，请删除重建控制策略！");
-             }
+          invokeTarget:"ryTask.strategyParams('"+guid+"')",//调用目标字符串
+          cronExpression:this.strategyForm.schedulerTime,//corn表达式
+          misfirePolicy:'1',//计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+          concurrent:'0',//'是否并发执行（0允许 1禁止）'
+          status:'0',//状态（0正常 1暂停）'
+          relationId:this.guid
+          }).then(response => {
+          if (response.code === 200) {
+            this.$modal.msgSuccess("新增任务成功");
+          }else{
+            this.$modal.msgError("新增失败，请删除重建控制策略！");
+          }
         })
         // return
      /* }addJob({jobName:this.strategyForm.strategyName,//任务名称

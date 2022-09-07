@@ -175,11 +175,11 @@ public class SdStateStorageController extends BaseController {
             }
             //控制
             if (sdStateStorage.getState().equals("1")){
-                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress2) ,true );
+                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress2) ,false );
             }else  if (sdStateStorage.getState().equals("2")){
-                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress3) ,true );
-            } if (sdStateStorage.getState().equals("3")){
                 boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress4) ,true );
+            } if (sdStateStorage.getState().equals("3")){
+                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress3) ,true );
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -187,7 +187,7 @@ public class SdStateStorageController extends BaseController {
 
 
 
-        return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
+        return toAjax(1);//sdStateStorageService.updateSdStateStorage(sdStateStorage)
     }
 
     /**

@@ -101,6 +101,7 @@
         <where>
             1=1
             <if test="id != null  and id != ''">and A.id = #{id}</if>
+           <!-- <if test="tunnelStationName != null  and tunnelStationName != ''">and C.id = #{id}</if>-->
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
             <if test="tunnelId != null  and tunnelId != ''">and A.tunnel_id = #{tunnelId}</if>
             <if test="eventTypeId != null  and eventTypeId != ''">and A.event_type_id = #{eventTypeId}</if>
@@ -114,11 +115,12 @@
             <if test="eventDescription != null  and eventDescription != ''">and A.event_description =
                 #{eventDescription}
             </if>
-            <if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(A.event_time,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and date_format(A.start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(A.event_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(A.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
             </if>
             order by create_time desc
 

@@ -40,4 +40,8 @@ public class RadarEventConstants {
      * 生产者
      */
     public static final String BASEDEVICESTATUS ="baseDeviceStatus";
+
+    public static final String TEST ="test";
+
+
 }

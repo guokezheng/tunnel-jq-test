@@ -1,39 +1,36 @@
-package com.tunnel.platform.datacenter.util;/*
-package com.tunnel.workbench.util;
 
+package com.tunnel.platform.datacenter.util;
 
-import org.quartz.CronExpression;
-import org.quartz.CronScheduleBuilder;
-import org.springframework.scheduling.support.CronTrigger;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 public class CronUtil {
+    /**
+     * 时分秒转换Cron表达式
+     * @param time
+     * @return
+     */
+    public static String CronDate(String time){
 
-    //上次执行时间
-    public static long getLastTriggerTime(String cron){
-        if(!CronExpression.isValidExpression(cron)){
-            return 0;
+        SimpleDateFormat dataformatter = new SimpleDateFormat("HH:mm:ss");
+      //  String cron = "08:00:00";
+        Date date = null;
+        try {
+            date = dataformatter.parse(time);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
-        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity("Caclulate Date").withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
-        Date time0 = trigger.getStartTime();
-        Date time1 = trigger.getFireTimeAfter(time0);
-        Date time2 = trigger.getFireTimeAfter(time1);
-        Date time3 = trigger.getFireTimeAfter(time2);
-        long l = time1.getTime() -(time3.getTime() -time2.getTime());
-//		Date date = new Date(l);
-//		SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return l;
-    }
-    //获取下次执行时间（getFireTimeAfter，也可以下下次...）
-    public static long getNextTriggerTime(String cron){
-        if(!CronExpression.isValidExpression(cron)){
-            return 0;
+        String dateFormat = "ss mm HH ";
+        SimpleDateFormat sd = new SimpleDateFormat(dateFormat);
+        String formatTime = null;
+        if (date != null) {
+            formatTime = sd.format(date);
         }
-        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity("Caclulate Date").withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
-        Date time0 = trigger.getStartTime();
-        Date time1 = trigger.getFireTimeAfter(time0);
-        return time1.getTime();
+        String cronDate = formatTime + "?" + " *" + " *" + " *";
+
+        return cronDate;
     }
-}*/
+}
+

@@ -41,8 +41,8 @@ public class SdStrategyRlController extends BaseController
      * @param strategyId
      * @return
      */
-    @GetMapping("/getStrategyRlByStrategyId")
-    public TableDataInfo getStrategyRlByStrategyId(Long strategyId) {
+    @GetMapping("/getStrategyRlByStrategyId/{strategyId}")
+    public TableDataInfo getStrategyRlByStrategyId(@PathVariable("strategyId") Long strategyId) {
         startPage();
         List<SdStrategyRl> rlList = sdStrategyRlService.selectSdStrategyRlListByStrategyId(strategyId);
         return getDataTable(rlList);

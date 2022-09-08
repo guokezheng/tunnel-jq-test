@@ -2,7 +2,9 @@ package com.tunnel.platform.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.platform.domain.dataInfo.SdDeviceTypeItem;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import com.tunnel.platform.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.platform.service.dataInfo.ISdDeviceTypeItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class SdDeviceTypeItemServiceImpl implements ISdDeviceTypeItemService
 {
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Autowired
+    private SdEquipmentTypeMapper sdEquipmentTypeMapper;
 
     /**
      * 查询设备类型数据项
@@ -43,7 +48,12 @@ public class SdDeviceTypeItemServiceImpl implements ISdDeviceTypeItemService
     @Override
     public List<SdDeviceTypeItem> selectSdDeviceTypeItemList(SdDeviceTypeItem sdDeviceTypeItem)
     {
-        return sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+        for (SdDeviceTypeItem item : sdDeviceTypeItems) {
+            SdEquipmentType sdEquipmentType = sdEquipmentTypeMapper.selectSdEquipmentTypeById(item.getDeviceTypeId());
+            item.setTypeName(sdEquipmentType.getTypeName());
+        }
+        return sdDeviceTypeItems;
     }
 
     /**

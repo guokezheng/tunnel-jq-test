@@ -475,7 +475,7 @@
                 :options="options"
                 clearable
                 collapse-tags
-                @change="handleChangeStrategy(options, index)"></el-cascader>
+                @change="handleChangeStrategy(handleStrategyList)"></el-cascader>
             </el-form-item>
             <div class="dialogButton" @click="addFrom()">添加</div>
             <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
@@ -490,28 +490,26 @@
           v-for="(item, index) in selectedIconList"
           :key="index"
           :style="{
-                            left: item.position.left - 12 + 'px',
-                            top: item.position.top + 104 +'px',
-                            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
-                          }"
+            left: item.position.left - 12 + 'px',
+            top: item.position.top + 104 +'px',
+            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
+          }"
           :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
         >
           <div
             v-show="(item.eqType != 7 &&
-
-                                  item.eqType != 16 &&
-
-                                  item.eqType != 15 &&
-                                  item.eqType != 8 &&
-                                  item.eqType != 9 &&
-                                  item.eqType != 21 &&
-                                  item.display == true) ||
-                                ((item.eqType == 7 ||
-                                  item.eqType == 8 ||
-                                  item.eqType == 9 ||
-                                  item.eqType == 21 ) &&
-                                  item.display == true &&
-                                  lightSwitch == 1)"
+              item.eqType != 16 &&
+              item.eqType != 15 &&
+              item.eqType != 8 &&
+              item.eqType != 9 &&
+              item.eqType != 21 &&
+              item.display == true) ||
+            ((item.eqType == 7 ||
+              item.eqType == 8 ||
+              item.eqType == 9 ||
+              item.eqType == 21 ) &&
+              item.display == true &&
+              lightSwitch == 1)"
             :class="{ focus: item.focus }"
           >
             <img
@@ -527,12 +525,12 @@
             <!-- 调光数值 -->
             <label
               style="
-                                  color: yellow;
-                                  position: absolute;
-                                  left: 30px;
-                                  bottom: 2px;
-                                  pointer-events: none;
-                                "
+                color: yellow;
+                position: absolute;
+                left: 30px;
+                bottom: 2px;
+                pointer-events: none;
+              "
               v-if="item.eqType == 21"
             >{{ item.lightValue }}</label
             >
@@ -621,7 +619,7 @@ import {
 import {listEventType} from "@/api/event/eventType";
 import {listReservePlanFile} from "@/api/event/reservePlanFile";
 import {download} from "@/utils/request";
-import {listStrategy, getStrategy, handleStrategy} from "@/api/event/strategy";
+import {listStrategy, getStrategy, handleStrategy, getRl} from "@/api/event/strategy";
 import {
   listType,
   getTypeAndStrategy
@@ -655,7 +653,8 @@ export default {
         label: 'name',
         value: 'id',
         children: 'children',
-        multiple: true
+        multiple: true,
+        emitPath:false
       },
       active: 0,
       //工作台
@@ -776,7 +775,8 @@ export default {
       eqTunnelData: [],//隧道下拉
       eqTunnelDataList: [], //分区隧道下拉
       timer: null,//步骤条定时器
-      planCategory: [] //预案类别下拉
+      planCategory: [], //预案类别下拉
+      strategyRlData: [] //返回策略设备和状态
     };
   },
   created() {
@@ -896,19 +896,25 @@ export default {
     submitstrategy() {
       const data = this.reserveProcessDrawForm;
       data.strategyId = this.handleStrategyList.join(",");
-      data.deviceTypeId = this.handleStrategyList
+
       console.log(data, 'this.reserveProcessDrawFormthis.reserveProcessDrawForm')
     },
-    handleChangeStrategy(e, index) {
+    handleChangeStrategy(e) {
       //this.reserveProcessDrawForm.strategyId.push({})
-      console.log(this.reserveProcessDrawForm, "this.reserveProcessDrawFormthis.reserveProcessDrawForm")
       // this.planTypeIdList[index].a=e
       // for(let i=0; i<this.planTypeIdList.length; i++ ){
       //   this.planTypeIdList[i].a=e
       //   console.log( this.planTypeIdList[i],' this.planTypeIdList[i] this.planTypeIdList[i] ')
       // }
-      // console.log( this.planTypeIdList,' this.planTypeIdList this.planTypeIdList')
-
+      console.log(e);
+      this.strategyRlData = [];
+      e.forEach((item,index) => {
+        getRl(item).then( res => {
+          console.log(res,'resres');
+          this.strategyRlData.push(res.rows);
+        })
+      })
+      console.log(this.strategyRlData, 'this.strategyRlDatathis.strategyRlData')
     },
 
     //查看工作台

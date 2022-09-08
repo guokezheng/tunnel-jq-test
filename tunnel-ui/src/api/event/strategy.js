@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// ²éÑ¯¿ØÖÆ²ßÂÔÁĞ±í
+// æŸ¥è¯¢æ§åˆ¶ç­–ç•¥åˆ—è¡¨
 export function listStrategy(query) {
   return request({
     url: '/strategy/list',
@@ -9,7 +9,7 @@ export function listStrategy(query) {
   })
 }
 
-// ²éÑ¯¿ØÖÆ²ßÂÔÏêÏ¸
+// æŸ¥è¯¢æ§åˆ¶ç­–ç•¥è¯¦ç»†
 export function getStrategy(id) {
   return request({
     url: '/strategy/' + id,
@@ -17,7 +17,7 @@ export function getStrategy(id) {
   })
 }
 
-// ĞÂÔö¿ØÖÆ²ßÂÔ
+// æ–°å¢æ§åˆ¶ç­–ç•¥
 export function addStrategy(data) {
   return request({
     url: '/strategy',
@@ -26,7 +26,7 @@ export function addStrategy(data) {
   })
 }
 
-// ĞŞ¸Ä¿ØÖÆ²ßÂÔ
+// ä¿®æ”¹æ§åˆ¶ç­–ç•¥
 export function updateStrategy(data) {
   return request({
     url: '/strategy',
@@ -35,14 +35,14 @@ export function updateStrategy(data) {
   })
 }
 
-// É¾³ı¿ØÖÆ²ßÂÔ
+// åˆ é™¤æ§åˆ¶ç­–ç•¥
 export function delStrategy(id) {
   return request({
     url: '/strategy/' + id,
     method: 'delete'
   })
 }
-// ĞÂÔö¿ØÖÆ²ßÂÔ
+// æ–°å¢æ§åˆ¶ç­–ç•¥
 export function addStrategysInfo(data) {
   return request({
     url: '/strategy/addStrategysInfo',
@@ -50,7 +50,7 @@ export function addStrategysInfo(data) {
     data: data
   })
 }
-// ĞŞ¸Ä¿ØÖÆ²ßÂÔ
+// ä¿®æ”¹æ§åˆ¶ç­–ç•¥
 export function updateStrategysInfo(data) {
   return request({
     url: '/strategy/updateStrategysInfo',
@@ -59,7 +59,7 @@ export function updateStrategysInfo(data) {
   })
 }
 
-// »ñÈ¡guid
+// è·å–guid
 export function getGuid() {
   return request({
     url: '/strategy/getGuid',
@@ -67,10 +67,18 @@ export function getGuid() {
   })
 }
 
-// ÊÖ¶¯¿ØÖÆ²ßÂÔ
+// æ‰‹åŠ¨æ§åˆ¶ç­–ç•¥
 export function handleStrategy(id) {
   return request({
     url: '/strategy/handleStrategy/' + id,
+    method: 'get'
+  })
+}
+
+// è¿”å›æ§åˆ¶ç­–ç•¥çš„è®¾å¤‡å’ŒçŠ¶æ€
+export function getRl(id) {
+  return request({
+    url: '/strategyRl/getStrategyRlByStrategyId/' + id,
     method: 'get'
   })
 }

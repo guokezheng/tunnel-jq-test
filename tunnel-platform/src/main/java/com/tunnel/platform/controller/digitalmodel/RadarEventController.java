@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
+import com.tunnel.platform.utils.constant.RadarEventConstants;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,7 +76,7 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-//    @KafkaListener(topics = WjConstants.MATCHRESULTDATA, groupId = "TestGroup")
+    @KafkaListener(topics = RadarEventConstants.MATCHRESULTDATA, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
@@ -100,7 +102,7 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-//    @KafkaListener(topics = WjConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
+    @KafkaListener(topics = RadarEventConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);

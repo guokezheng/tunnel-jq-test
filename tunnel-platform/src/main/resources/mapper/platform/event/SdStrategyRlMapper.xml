@@ -100,7 +100,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--bigint类型直接保存到varchar会出现类型转换错误，需要cast()函数转换-->
     <delete id="deleteSdStrategyRlByStrategyId" parameterType="Long">
-        delete from sd_strategy_rl where strategy_id = cast(#{strategyId})
+        delete from sd_strategy_rl where strategy_id = #{strategyId}
     </delete>
 
     <delete id="deleteSdStrategyRlByStrategyIds" parameterType="Long">

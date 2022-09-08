@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="subareaId" column="subarea_id" />
         <result property="planTypeId"    column="plan_type_id"    />
+        <result property="category" column="category" />
         <result property="planDescription"    column="plan_description"    />
         <result property="planName"    column="plan_name"    />
         <result property="planFileId"    column="plan_file_id"    />
@@ -47,7 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdReservePlanVo">
-        select id,subarea_id, plan_type_id, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time from sd_reserve_plan
+        select id,subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
@@ -77,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="subareaId != null">subarea_id,</if>
             <if test="planTypeId != null">plan_type_id,</if>
+            <if test="category != null">category,</if>
             <if test="planDescription != null">plan_description,</if>
             <if test="planName != null">plan_name,</if>
             <if test="planFileId != null">plan_file_id,</if>
@@ -88,6 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="subareaId != null">#{subareaId},</if>
             <if test="planTypeId != null">#{planTypeId},</if>
+            <if test="category != null" >#{category},</if>
             <if test="planDescription != null">#{planDescription},</if>
             <if test="planName != null">#{planName},</if>
             <if test="planFileId != null">#{planFileId},</if>
@@ -103,6 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="subareaId != null">subarea_id = #{subareaId},</if>
             <if test="planTypeId != null">plan_type_id = #{planTypeId},</if>
+            <if test="category != null">category = #{category},</if>
             <if test="planDescription != null">plan_description = #{planDescription},</if>
             <if test="planName != null">plan_name = #{planName},</if>
             <if test="planFileId != null">plan_file_id = #{planFileId},</if>
@@ -138,6 +142,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planName != null  and planName != ''"> and plan_name = #{planName}</if>
             <if test="planDescription != null and planDescription != ''"> and plan_description = #{planDescription}</if>
         </where>
+    </select>
+
+    <select id="selectPlanCategory" resultType="map" >
+        select id id, plan_type name
+        from sd_plan_type
     </select>
 
 </mapper>

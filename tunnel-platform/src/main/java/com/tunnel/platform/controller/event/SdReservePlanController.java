@@ -92,12 +92,14 @@ public class SdReservePlanController extends BaseController
     @ApiOperation("新增预案信息")
     public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
                                     @RequestParam("subareaId") Long subareaId,
+                                    @RequestParam("category") String category,
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
     								HttpServletRequest request ) {
     	SdReservePlan sdReservePlan = new SdReservePlan();
         sdReservePlan.setSubareaId(subareaId);
+        sdReservePlan.setCategory(category);
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
@@ -161,7 +163,8 @@ public class SdReservePlanController extends BaseController
     @ApiOperation("修改预案信息")
     public Result updateReservePlan( MultipartFile[] file,
     								@RequestParam("id") Long id,
-    								@RequestParam("planTypeId") String planTypeId,
+    								@RequestParam("planTypeId") Long planTypeId,
+                                    @RequestParam("category") String category,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
     								@RequestParam("planFileId") String planFileId,
@@ -171,7 +174,8 @@ public class SdReservePlanController extends BaseController
     {
     	SdReservePlan sdReservePlan = new SdReservePlan();
     	sdReservePlan.setId(id);
-    	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
+    	sdReservePlan.setPlanTypeId(planTypeId);
+        sdReservePlan.setCategory(category);
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
     	sdReservePlan.setPlanFileId(planFileId);
@@ -218,6 +222,15 @@ public class SdReservePlanController extends BaseController
     public Result selectStrategyListByPlanId(@PathVariable("id") Long id)
     {
         return Result.success(sdReservePlanService.selectStrategyListByPlanId(id));
+    }
+
+    /**
+     * 查询预案类型
+     * @return
+     */
+    @GetMapping("/getPlanCateGory")
+    public Result selectPlanCategory() {
+        return Result.success(sdReservePlanService.selectPlanCategory());
     }
 
 

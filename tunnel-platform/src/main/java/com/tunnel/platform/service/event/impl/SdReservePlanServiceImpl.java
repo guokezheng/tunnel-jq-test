@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案信息Service业务层处理
@@ -360,5 +361,12 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
         return list;
     }
 
-
+	/**
+	 * 查询预案类型
+	 * @return
+	 */
+	@Override
+	public List<Map> selectPlanCategory() {
+		return sdReservePlanMapper.selectPlanCategory();
+	}
 }

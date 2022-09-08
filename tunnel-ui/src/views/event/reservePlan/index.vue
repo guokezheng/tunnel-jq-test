@@ -1120,7 +1120,7 @@ export default {
           this.$refs.upload.submit();  // 提交调用uploadFile函数
           this.fileData.append('planName', this.reservePlanDrawForm.planName);  // 预案名称
           this.fileData.append('planTypeId', this.reservePlanDrawForm.planTypeId);  // 事件类型
-          this.fileData.append('category', this.reservePlanDrawForm.planTypeId); // 预案类型
+          this.fileData.append('category', this.reservePlanDrawForm.category); // 预案类型
           this.fileData.append('planDescription', this.reservePlanDrawForm.planDescription == null ? "#^#" : this.reservePlanDrawForm.planDescription);  // 预案描述
           // this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
           this.fileData.append('tunnelId', this.reservePlanDrawForm.tunnelId);

@@ -332,7 +332,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("message",message);
         }
         log.info("-----测试测试测试----{}",jsonObject);
-//        kafkaTemplate.send(WjConstants.BASEDEVICESTATUS, jsonObject.toString());
+        kafkaTemplate.send(RadarEventConstants.BASEDEVICESTATUS, jsonObject.toString());
     }
 
     @Override

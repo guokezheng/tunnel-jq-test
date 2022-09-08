@@ -3,12 +3,12 @@ package com.ruoyi.quartz.task;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
-import com.tunnel.platform.domain.dataInfo.SdDataTrafficHour;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
-import com.tunnel.platform.domain.dataInfo.SdStateStorage;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.platform.domain.dataInfo.*;
 import com.tunnel.platform.domain.event.SdStrategy;
 import com.tunnel.platform.domain.event.SdStrategyRl;
+import com.tunnel.platform.firealarm.FireNettyServerHandler;
+import com.tunnel.platform.mapper.dataInfo.SdSensorMessageMapper;
 import com.tunnel.platform.service.dataInfo.*;
 import com.tunnel.platform.service.event.ISdStrategyRlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -26,6 +26,7 @@ import com.ruoyi.common.utils.StringUtils;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,8 @@ public class RyTask {
     private ISdDataTrafficMonthService sdDataTrafficMonthService;
     @Autowired
     private ISdStateStorageService sdStateStorageService;
+    @Autowired
+    private SdSensorMessageMapper sdSensorMessageMapper;
 
     private static  ModbusMaster master = ModbusTcpMaster.getMaster();
 
@@ -142,9 +145,30 @@ public class RyTask {
                         }
                     }
                     updateSdStateStorage(devices.getEqId(),state);
+//                    SdSensorMessage sdSensorMessage = new SdSensorMessage();
+//                    sdSensorMessage.setEqId(devices.getEqId());
+//                    sdSensorMessage.setEqType(devices.getEqType().toString());
+//                    sdSensorMessage.setEqTunnelId(devices.getEqTunnelId());
+//                    sdSensorMessage.setSensorValue(state);
+//                    sdSensorMessage.setCreateTime(new Date());
+//                    sdSensorMessageMapper.insertSdSensorMessage(sdSensorMessage);
                 }
             }catch (Exception e){
                 e.printStackTrace();
+            }
+        } else if (params.equals("is_host_alive")) {
+            SdDevices sdDevices = new SdDevices();
+            long hostType = Long.parseLong(String.valueOf(DevicesTypeEnum.HUO_ZAI_BAO_JING_HOST.getCode()));
+            sdDevices.setEqType(hostType);
+            List<SdDevices> devicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+            for (int i = 0;i < devicesList.size();i++) {
+                if (FireNettyServerHandler.clients.size() == 0){
+                    //消防主机已经离线，更改设备状态
+                    SdDevices devices = devicesList.get(i);
+                    devices.setEqStatus("2");
+                    devices.setEqStatusTime(new Date());
+                    sdDevicesService.updateSdDevices(devices);
+                }
             }
         }
     }

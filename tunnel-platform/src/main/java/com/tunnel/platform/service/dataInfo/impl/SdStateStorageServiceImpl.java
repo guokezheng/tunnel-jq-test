@@ -92,11 +92,12 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService
             inductionlampControlStatusDetails.setEquipmentId(deviceId);
             List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
             if (statusDetails.size() == 0) {
-                inductionlampControlStatusDetails.setEquipmentModeType(Integer.parseInt(sdStateStorage.getState()));
+                inductionlampControlStatusDetails.setEquipmentModeType(controlModeType);
                 inductionlampControlStatusDetails.setFrequency(sdStateStorage.getFrequency());
                 inductionlampControlStatusDetails.setBrightness(sdStateStorage.getBrightness());
                 iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
             } else {
+                statusDetails.get(0).setEquipmentModeType(controlModeType);
                 statusDetails.get(0).setFrequency(sdStateStorage.getFrequency());
                 statusDetails.get(0).setBrightness(sdStateStorage.getBrightness());
                 iInductionlampControlStatusDetailsService.updateInductionlampControlStatusDetails(statusDetails.get(0));

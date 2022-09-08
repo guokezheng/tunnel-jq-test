@@ -126,7 +126,24 @@
             <groupId>com.infiniteautomation</groupId>
             <artifactId>modbus4j</artifactId>
             <version>3.0.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/modbus4j-3.0.3.jar</systemPath>
         </dependency>
+
+        <dependency>
+            <groupId>com.sansi</groupId>
+            <artifactId>fcms</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/FCMSLib.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.32.Final</version>
+        </dependency>
+
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>

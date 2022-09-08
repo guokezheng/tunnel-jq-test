@@ -384,6 +384,14 @@ public class StringUtil {
         return codeStr;
     }
 
+    public static String hexToDecimal(String hex) {
+        if (hex.startsWith("0x")) {
+            return String.valueOf(Integer.parseInt(hex.substring(2), 16));
+        } else {
+            return String.valueOf(Integer.parseInt(hex, 16));
+        }
+    }
+
 
     /**
      * GBK ：  先将字符串转化为GBK ，再转化为 BYTE[] 。 bytesString16将byte[]进制转化为16进制

@@ -51,7 +51,12 @@ public enum DevicesTypeEnum {
     REN_XING_HENG_DONG(40,"人行横洞指示标志"),
     CHE_XING_HENG_DONG(41,"车行横洞指示标志"),
     RSU(42,"路侧单元RSU"),
-    TING_CHE_DAI(43,"紧急停车带标志");
+    TING_CHE_DAI(43,"紧急停车带标志"),
+    SHU_SAN_BIAO_ZHI_CONTROL(185,"疏散标志控制器"),
+    YOU_DAO_DENG_CONTROL(186,"诱导灯控制器"),
+    HUO_YAN_TAN_CE_QI(189,"火焰探测器"),
+    XIAO_FANG_SHUAN(190,"消防栓"),
+    HUO_ZAI_BAO_JING_HOST(194,"火灾报警主机");
 
 
     private int code;

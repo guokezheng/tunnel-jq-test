@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.serotonin.modbus4j.ModbusMaster;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdStateStorage;
@@ -152,6 +153,10 @@ public class SdStateStorageController extends BaseController {
         //改变车指
         try{
             SdDevices devices = sdDevicesService.selectSdDevicesById(sdStateStorage.getDeviceId());
+            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+            if (devices.getEqType().longValue() == yddType.longValue()) {
+                return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
+            }
             String eqFeedbackAddress2 = devices.getEqFeedbackAddress2();
             String eqFeedbackAddress3 = devices.getEqFeedbackAddress3();
             String eqFeedbackAddress4 = devices.getEqFeedbackAddress4();

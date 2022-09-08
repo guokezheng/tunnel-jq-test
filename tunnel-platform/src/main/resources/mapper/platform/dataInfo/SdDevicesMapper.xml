@@ -528,5 +528,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_tunnel_id =#{tunnelId}
     </select>
 
+    <select id="selectDeviceByHost" resultType="String">
+        select a.eq_id from sd_firefighting_components_address a
+        where host = #{host} and eq_loop = #{loop} and address = #{address}
+    </select>
+
+    <select id="selectDeviceByHost" resultType="String">
+        select a.eq_id from sd_firefighting_components_address a
+        where host = #{host} and eq_id = #{eqId}
+    </select>
 
 </mapper>

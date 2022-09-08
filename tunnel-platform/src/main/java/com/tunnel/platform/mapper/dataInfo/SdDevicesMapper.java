@@ -139,4 +139,9 @@ public interface SdDevicesMapper
     String selecTunnelId(@Param("deviceId") String deviceId);
 
 	List<SdDevices> selectDevice(@Param("tunnelId") String tunnelId);
+
+	public String selectDeviceByHost(@Param("host") String host,@Param("loop") String loop,@Param("address") String address);
+
+	public String selectDeviceByHostAndEqId(@Param("host") String host,@Param("eqId") String eqId);
+
 }

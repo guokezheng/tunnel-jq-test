@@ -98,7 +98,7 @@
                   <!-- 设备图标-->
                   <div class="icon-box mouseHover" v-for="(item, index) in selectedIconList" :key="index" :style="{
                             left: item.position.left  + 'px',
-                            top: item.position.top + 'px',
+                            top: (item.position.top + item.iconHeight) + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"

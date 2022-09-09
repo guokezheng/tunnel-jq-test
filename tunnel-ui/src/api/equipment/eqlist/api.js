@@ -1,9 +1,17 @@
 import request from '@/utils/request'
 
-// 查询设备列表
+// old查询设备列表
 export function listDevices(query) {
   return request({
     url: '/devices/list',
+    method: 'get',
+    params: query
+  })
+}
+// new查询设备列表
+export function newListDevices(query) {
+  return request({
+    url: '/devices/getDevicesByTypeAndTunnel',
     method: 'get',
     params: query
   })

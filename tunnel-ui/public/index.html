@@ -9,9 +9,13 @@
     <title><%= webpackConfig.name %></title>
     <!--[if lt IE 11]><script>window.location.href='/html/ie.html';</script><![endif]-->
     <!--引入系统配置-->
+    <script src="/static/video/jquery-3.1.1.js"></script>
     <script type="text/javascript" src="<%=BASE_URL%>static/systemConfig.js"></script>
     <!--调用微信公众号接口需要引入的js-->
     <script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+  <script src="/static/video/platform.js"></script>
+  <script src="/static/video/h5splayer.js"></script>
+  <script src="/static/video/h5splayerhelper.js"></script>
     <script>
       document.title = systemConfig.title(systemConfig.systemType);
     </script>

@@ -181,7 +181,7 @@
   import DragItDude from "vue-drag-it-dude";
   import Snap from "imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js";
   import {
-    listDevices,
+    newListDevices,
     getDevices,
     updateDevices,
   } from "@/api/equipment/eqlist/api";
@@ -528,8 +528,8 @@
           if(list[i].eqType == 12){
             console.log(list[i])
           }
-          var iconWidth = 30;
-          var iconHeight = 30;
+          var iconWidth = 0;
+          var iconHeight = 0;
           if (list[i].width != "") {
             iconWidth = list[i].width;
             iconHeight = list[i].height;
@@ -543,6 +543,7 @@
           }
           //矩形框
           if (list[i].url.length > 1) {
+            console.log('矩形框')
             //设备图标
             let img1 = that.svg.paper.image(
               list[i].url[0],
@@ -846,7 +847,7 @@
       /* 查询设备*/
       selectEquipment(param) {
         var that = this;
-        listDevices(param).then((response) => {
+        newListDevices(param).then((response) => {
           that.equipmentList = that.addMask(response.rows);
           if (this.equipmentList.length > 0) {
             this.equipmentVisible = true;

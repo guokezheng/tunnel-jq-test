@@ -10,8 +10,8 @@
                 :value="item.id"/>
           </el-select>
       </el-form-item>
-      <el-form-item label="管理机构"  prop="tunnelStationName">
-         <el-select v-model="queryParams.tunnelStationName" placeholder="请选择管理机构" clearable size="small" style="width:180px">
+      <el-form-item label="管理机构"  prop="deptId">
+         <el-select v-model="queryParams.deptId" placeholder="请选择管理机构" clearable size="small" style="width:180px">
            <el-option
                  v-for="item in mechanism"
                  :key="item.deptId"
@@ -549,7 +549,7 @@ export default {
         eventDescription: null,
         startTime:null,
         endTime:null,
-        tunnelStationName:null,
+        deptId:null,
       },
       // 表单参数
       form: {},

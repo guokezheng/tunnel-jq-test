@@ -129,7 +129,7 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/modbus4j-3.0.3.jar</systemPath>
         </dependency>
-<!-- -->
+
 <!--        <dependency>-->
 <!--            <groupId>com.sansi</groupId>-->
 <!--            <artifactId>fcms</artifactId>-->

@@ -371,6 +371,11 @@
   .leftButtonS{
     color: #0a88bd;
     background-image: url(../cloudControl/leftButton.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+    border-top-right-radius: 30px !important;
+    border-bottom-right-radius: 30px !important;
   }
   .rightButton_hover{
       color: #fff !important;

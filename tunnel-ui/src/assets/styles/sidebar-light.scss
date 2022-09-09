@@ -311,17 +311,17 @@
       color: #01AAFD;
     }
     .el-dialog__header {
-      padding: 0;
-      padding-left: 20px;
-      height: 30px;
-      line-height: 30px;
-      font-size: 14px;
+      // padding: 0;
+      // padding-left: 20px;
+      // height: 30px;
+      // line-height: 30px;
+      // font-size: 14px;
       background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
     }
     .el-dialog__title {
       color: #fff;
-      font-size: 14px;
-      line-height: 30px;
+      // font-size: 14px;
+      // line-height: 30px;
     }
     .el-dialog__body {
       color: #fff;
@@ -368,15 +368,12 @@
       background-color: #eebf00 !important;
       border: solid 1px #c77700 !important;
     }
-    .el-dialog__headerbtn{
-      top: 6px !important;
-      
-    }
+   
     .el-dialog__headerbtn .el-dialog__close{
       color: #B9D4ED !important;
     }
     .el-dialog__headerbtn {
-        top: 8px !important;
+      
         background: url('https://你路径资源的url图片') left no-repeat;
         background-size: cover;
     }

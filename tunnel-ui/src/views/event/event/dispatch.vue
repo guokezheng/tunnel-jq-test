@@ -88,7 +88,7 @@
               <div style="float: left;">事件详情</div>
               <div class="formButton formButton1" @click="eventFormClose">
                 <el-image :src="require('@/assets/icons/relieve.png')"/>
-                <div>事件解除</div>
+                <div>结束事件</div>
               </div>
               <div class="formButton formButton2" @click="submitEventForm">
                 <el-image :src="require('@/assets/icons/update.png')"/>
@@ -661,11 +661,11 @@
       eventFormClose(){
         const param ={
           id:this.$route.query.id,
-          eventState:'2'
+          eventState:'1'
         }
         updateEvent(param).then(response => {
           console.log(response,'修改状态')
-          this.$modal.msgSuccess("已成功忽略");
+          this.$modal.msgSuccess("事件处理成功");
         });
         
       },

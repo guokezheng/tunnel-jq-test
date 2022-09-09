@@ -98,7 +98,7 @@
                   <!-- 设备图标-->
                   <div class="icon-box mouseHover" v-for="(item, index) in selectedIconList" :key="index" :style="{
                             left: item.position.left  + 'px',
-                            top: (item.position.top + item.iconHeight) + 'px',
+                            top: item.position.top + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
@@ -520,20 +520,25 @@
       <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini" 
                 style="position: relative;padding: 20px;padding-top: 0px;">
         <el-row>
+         <el-col :span="12">
+           <el-form-item label="设备类型:">
+             {{ stateForm.eqTypeName }}
+           </el-form-item>
+         </el-col>
+         <el-col :span="12">
+           <el-form-item label="隧道名称:">
+             {{ stateForm.tunnelName }}
+           </el-form-item>
+         </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="设备桩号:">
+            <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型:">
-              {{ stateForm.eqTypeName }}
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="方向:">
+            <el-form-item label="所属方向:">
               <div v-if="stateForm.eqDirection == 0">
                 {{ rightDirection + "方向" }}
                 <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
@@ -547,6 +552,20 @@
               </div>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
+         <el-col :span="12">
+           <el-form-item label="所属机构:">
+             {{ stateForm.eqTypeName }}
+           </el-form-item>
+         </el-col>
+         <el-col :span="12">
+           <el-form-item label="设备厂商:">
+             {{ stateForm.tunnelName }}
+           </el-form-item>
+         </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="运行状态:">
               {{ '正常' }}
@@ -590,11 +609,8 @@
         <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
 
           {{ '在线'}}
-        </el-form-item> -->
-        <!-- 智能手动报警 -->
-
-          {{ '在线'}}
-        </el-form-item> -->
+        </el-form-item> 
+       
         <!-- 消防水泵 -->
         <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
@@ -1111,7 +1127,8 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-
+   <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23" 
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-video>
     <!--摄像机对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -1626,6 +1643,7 @@
   import videoPlayer from "@/views/event/vedioRecord/myVideo";
   import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
   import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑
+  import comVideo from "@/views/workbench/config/components/video"; //批量编辑
   import {
     getLocalIP
   } from "@/api/event/vedioRecord";
@@ -1679,6 +1697,7 @@
       vmsContentUpdate,
       BatteryIcon,
       contentBatchEdit,
+      comVideo,
     },
     data() {
       return {
@@ -2148,7 +2167,9 @@
           {id:2,byLane:'二',fSpaceOccupyRation:'29',bySpeed:'74',fSpaceOccupyRation:'47',createTime:'2022-09-05 18:54:19'},
           {id:3,byLane:'三',fSpaceOccupyRation:'39',bySpeed:'54',fSpaceOccupyRation:'91',createTime:'2022-09-05 19:25:52'},
         ],//假数据
-
+        clickEqType:'',//点击设备的eqType
+        equipmentId:''
+        
       }
     },
 
@@ -2436,7 +2457,10 @@
       
     },
     methods: {
-      
+      // 关闭弹窗子组件
+      dialogClose(){
+        this.clickEqType = 0
+      },
       // 车辆监测数据
       vehicleMonitoring(){
         // this.tunnelId
@@ -4213,6 +4237,8 @@
       /* 打开配置界面*/
       async openStateSwitch(item) {
         console.log(item, '点击的设备');
+        this.clickEqType = item.eqType
+        this.equipmentId = item.eqId
         let StateTypeId = {
           StateTypeId: item.eqType
         }
@@ -4292,6 +4318,7 @@
             value: item.value,
             lightValue: !item.lightValue ? 0 : item.lightValue,
             fjState: item.state,
+            tunnelName:item.tunnelName.tunnelName
           };
           this.title = item.eqName;
           this.stateSwitchVisible = true;
@@ -4331,7 +4358,7 @@
             eqFeedbackAddress2: item.eqFeedbackAddress2,
           };
           this.title = item.eqName;
-          this.cameraVisible = true;
+          // this.cameraVisible = true;
           this.loading = true;
           // this.flvPlayer()
           setTimeout(this.changeLoading, 2000);
@@ -6558,15 +6585,26 @@
     //   color: #c0ccda;
     // }
 
-    // .el-dialog__header {
-    //   background-color: #455d79;
-    //   color: #fff;
-    // }
+    .el-dialog__header {
+      // background-color: #455d79;
+      // color: #fff;
+       height: 30px;
+       padding: 0;
+       padding-left: 20px;
+       height: 30px;
+       line-height: 30px;
+       font-size: 14px;
+    }
 
-    // .el-dialog__title {
-    //   color: #fff;
-    // }
-
+    .el-dialog__title {
+      // color: #fff;
+      font-size: 14px;
+      line-height: 30px;
+    }
+     .el-dialog__headerbtn{
+     top: 6px !important;
+      
+     }
     .el-dialog__body {
       // color: #c0ccda;
       // background-color: #304156;

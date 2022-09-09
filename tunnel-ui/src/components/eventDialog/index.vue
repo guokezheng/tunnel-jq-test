@@ -184,6 +184,14 @@
      },
      // 处理 跳转应急调度
      handleDispatch(event){
+       const param ={
+         id:1,
+         eventState:'0'
+       }
+       updateEvent(param).then(response => {
+         console.log(response,'修改状态')
+         this.$modal.msgSuccess("开始处理事件");
+       });
        bus.$emit("closeDialog",false)
        this.$router.push({ path: "/emergency/administration/dispatch", query: { id: event.id } });
      },

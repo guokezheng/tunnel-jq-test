@@ -63,6 +63,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
+    <insert id="batchSdReserveProcess" useGeneratedKeys="true" keyProperty="id">
+    insert into sd_reserve_process (
+        reserve_id,
+        device_type_id,
+        strategy_id,
+        process_name,
+        process_sort,
+        create_by,
+        create_time
+        ) value
+        <foreach collection="sdReserveProcesses" separator="," item="resp" index="index">
+        (
+            #{resp.reserveId},
+            #{resp.deviceTypeId},
+            #{resp.strategyId},
+            #{resp.processName},
+            #{resp.processSort},
+            #{resp.createBy},
+            #{resp.createTime}
+        )
+    </foreach>
+</insert>
+
     <update id="updateSdReserveProcess" parameterType="SdReserveProcess">
         update sd_reserve_process
         <trim prefix="SET" suffixOverrides=",">
@@ -88,5 +111,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteSdReserveProcessByPlanId" parameterType="Long">
+        delete from sd_reserve_process where reserve_id = #{id}
     </delete>
 </mapper>

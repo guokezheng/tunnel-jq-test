@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="tunnelId"    column="tunnel_id"    />
         <result property="strategyName"    column="strategy_name"    />
         <result property="strategyType"    column="strategy_type"    />
+        <result property="strategyState" column="strategy_state" />
         <result property="strategyInfo"    column="strategy_info"    />
         <result property="warningId"    column="warning_id"    />
         <result property="schedulerTime"    column="scheduler_time"    />
@@ -28,11 +29,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdStrategyVo">
-        select id, tunnel_id, strategy_name, strategy_type, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
+        select id, tunnel_id, strategy_name, strategy_type, strategy_state, strategy_info, warning_id, scheduler_time, job_relation_id,direction, create_by, create_time, update_by, update_time from sd_strategy
     </sql>
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
-        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state
         		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name
         from sd_strategy A

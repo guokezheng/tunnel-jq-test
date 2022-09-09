@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.digitalmodel;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.platform.domain.digitalmodel.WjConfidence;
+import com.tunnel.platform.domain.digitalmodel.WjEvent;
 import com.tunnel.platform.domain.event.SdEvent;
 import com.tunnel.platform.domain.event.SdRadarDetectData;
 import org.apache.ibatis.annotations.Param;
@@ -28,4 +29,8 @@ public interface RadarEventMapper {
                    @Param("picLicense") String picLicense,@Param("vehicleColor") String vehicleColor);
 
     void insertRadarDetect(List<SdRadarDetectData> list);
+
+    Integer selectID(@Param("eventId") Long eventId);
+
+    void updateEvent(SdEvent sdEvent);
 }

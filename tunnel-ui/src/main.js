@@ -45,7 +45,12 @@ import eventDialog from '@/components/eventDialog'
 // jQuery
 import $ from 'jquery'
 import preventClick from './api/clickOnceAtime'
+// gisMap
+import gisMap from 'gis-map-tunnel'
+import config from '../public/config'
 
+
+import request from '../public/config'
 import moment from 'moment'
  //定义全局过滤器
  Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
@@ -68,8 +73,11 @@ Vue.prototype.selectDictLabel = selectDictLabel
 Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.handleTree = handleTree
 Vue.prototype.socket = Socket
+// gis 
+Vue.prototype.$GlobalConfig = config.GlobalConfig
 Vue.use(preventClick)
 // 全局组件挂载
+
 Vue.component('DictTag', DictTag)
 Vue.component('Pagination', Pagination)
 Vue.component('RightToolbar', RightToolbar)
@@ -82,6 +90,7 @@ Vue.component('eventDialog', eventDialog)
 
 Vue.use(directive)
 Vue.use(plugins)
+Vue.use(gisMap)
 Vue.use(VueMeta)
 DictData.install()
 

@@ -19,6 +19,7 @@ import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import com.tunnel.platform.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.kafka.common.protocol.types.Field;
 import org.slf4j.Logger;
@@ -73,6 +74,22 @@ public class RadarEventServiceImpl implements RadarEventService {
         List<SdEvent> eventList=new ArrayList<>();
         list.forEach(f->{
             SdEvent sdEvent=new SdEvent();
+            Integer integer=wjMapper.selectID(f.getEventId());
+            if (integer!=0){
+                Byte eventType = f.getEventType();
+                sdEvent.setEventTypeId(eventType.longValue());
+                sdEvent.setTunnelId(tunnelId);
+                sdEvent.setStationId(f.getStationId()+"");
+                sdEvent.setStakeNum(f.getStakeNum());
+                sdEvent.setLaneNo(f.getLaneNo()+"");
+                sdEvent.setEventLongitude(f.getEventLongitude()+"");
+                sdEvent.setEventLatitude(f.getEventLatitude()+"");
+                sdEvent.setStartTime(f.getEventTimeStampStart());
+                sdEvent.setEndTime(f.getEventTimeStampEnd());
+                sdEvent.setId(f.getEventId());
+                wjMapper.updateEvent(sdEvent);
+                return;
+            }else {
             sdEvent.setId(f.getEventId());
             Byte eventType = f.getEventType();
             sdEvent.setEventTypeId(eventType.longValue());
@@ -88,9 +105,12 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<WjConfidence> targetList = f.getTargetList();
             targetList.forEach(s->s.setEventIds(f.getEventId()));
             wjMapper.insertEventConfidence(targetList);
+            }
         });
-        wjMapper.insertWjEvent(eventList);
-        WebSocketService.broadcast("WjEvent",eventList);
+        if (CollectionUtils.isNotEmpty(eventList)){
+            wjMapper.insertWjEvent(eventList);
+            WebSocketService.broadcast("WjEvent",eventList);
+        }
         return AjaxResult.success();
     }
 
@@ -168,7 +188,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String timeStamp = (String) map.get("timeStamp");
         //隧道ID
         String tunnelId = (String) map.get("tunnelId");
-        Date date = DateUtils.parseDate(timeStamp, "yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = DateUtils.parseDate(timeStamp, "yyyy-MM-dd HH:mm:ss:SSS");
         JSON parse = JSONUtil.parse(map.get("participants"));
         List<WjParticipants> list = JSONUtil.toList(parse.toString(), WjParticipants.class);
         List<SdRadarDetectData> dataList=new ArrayList<>();
@@ -177,7 +197,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                     SdRadarDetectData sdRadarDetectData=new SdRadarDetectData();
                     sdRadarDetectData.setTunnelId(tunnelId);
                     sdRadarDetectData.setDetectTime(date);
-                    sdRadarDetectData.setId(f.getRecordSerialNumber());
+                    sdRadarDetectData.setRecordSerialNumber(f.getRecordSerialNumber());
                     sdRadarDetectData.setVehicleId(f.getId()+"");
                     sdRadarDetectData.setVehicleType(f.getOriginalType()+"");
                     sdRadarDetectData.setVehicleColor(f.getOriginalColor()+"");

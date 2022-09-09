@@ -1,6 +1,7 @@
 package com.tunnel.platform.mapper.event;
 
 import com.tunnel.platform.domain.event.SdReserveProcess;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -37,6 +38,12 @@ public interface SdReserveProcessMapper
     public int insertSdReserveProcess(SdReserveProcess sdReserveProcess);
 
     /**
+     * 批量新增预案流程节点
+     * @param sdReserveProcesses
+     * @return
+     */
+    public int batchSdReserveProcess(@Param("sdReserveProcesses") List<SdReserveProcess> sdReserveProcesses);
+    /**
      * 修改预案流程节点
      * 
      * @param sdReserveProcess 预案流程节点
@@ -59,4 +66,11 @@ public interface SdReserveProcessMapper
      * @return 结果
      */
     public int deleteSdReserveProcessByIds(Long[] ids);
+
+    /**
+     * 根据预案id删除预案流程节点信息
+     * @param id
+     * @return
+     */
+    public int deleteSdReserveProcessByPlanId(Long id);
 }

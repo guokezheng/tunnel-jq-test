@@ -144,4 +144,6 @@ public interface SdDevicesMapper
 
 	public String selectDeviceByHostAndEqId(@Param("host") String host,@Param("eqId") String eqId);
 
+	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
+
 }

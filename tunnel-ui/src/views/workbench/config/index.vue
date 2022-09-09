@@ -98,7 +98,7 @@
                   <!-- 设备图标-->
                   <div class="icon-box mouseHover" v-for="(item, index) in selectedIconList" :key="index" :style="{
                             left: item.position.left  + 'px',
-                            top: (item.position.top + item.iconHeight) + 'px',
+                            top: item.position.top + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
@@ -1127,7 +1127,7 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23" 
+   <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23" 
               :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-video>
     <!--摄像机对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"

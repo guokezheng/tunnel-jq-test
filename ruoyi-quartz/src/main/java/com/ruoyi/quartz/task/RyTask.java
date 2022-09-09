@@ -147,6 +147,7 @@ public class RyTask {
                     updateSdStateStorage(devices.getEqId(),state);
 //                    SdSensorMessage sdSensorMessage = new SdSensorMessage();
 //                    sdSensorMessage.setEqId(devices.getEqId());
+//
 //                    sdSensorMessage.setEqType(devices.getEqType().toString());
 //                    sdSensorMessage.setEqTunnelId(devices.getEqTunnelId());
 //                    sdSensorMessage.setSensorValue(state);

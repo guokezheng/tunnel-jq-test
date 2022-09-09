@@ -1,15 +1,18 @@
 package com.tunnel.platform.controller.digitalmodel;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import com.tunnel.platform.utils.constant.RadarEventConstants;
+import com.tunnel.platform.utils.util.StringEscapeUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,8 +79,15 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-    @KafkaListener(topics = RadarEventConstants.MATCHRESULTDATA, groupId = "TestGroup")
+//    @KafkaListener(topics = RadarEventConstants.MATCHRESULTDATA, groupId = "TestGroup")
+//    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+//        byte[] value = (byte[]) record.value();
+//        String kafkaJsonStr = new String(value);
+//        if (kafkaJsonStr.startsWith("\"") && kafkaJsonStr.endsWith("\"")) {
+//            kafkaJsonStr = kafkaJsonStr.substring(1, kafkaJsonStr.length() - 1);
+//            kafkaJsonStr = StringEscapeUtils.unescapeJson(kafkaJsonStr);
+//        }
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         service.insertRadarDetect(map);

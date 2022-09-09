@@ -9,8 +9,10 @@ spring:
       buffer-memory: 33554432 #缓冲存储大，32M
       acks: 1
       # 指定消息key和消息体的编解码方式
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     # 消费者
     consumer:
       # 消费者组
@@ -21,7 +23,10 @@ spring:
       # none：如果没有为消费者找到先前的offset的值,即没有自动维护偏移量,也没有手动维护偏移量,则抛出异常
       # earliest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从头开始消费
       # latest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从最新的数据开始消费
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
+#      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+#      key-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      bootstrap-servers: 10.3.16.40:9092
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     # 监听

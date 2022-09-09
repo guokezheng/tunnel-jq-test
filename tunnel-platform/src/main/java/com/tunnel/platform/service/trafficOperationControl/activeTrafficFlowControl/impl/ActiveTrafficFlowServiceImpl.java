@@ -3,6 +3,7 @@ package com.tunnel.platform.service.trafficOperationControl.activeTrafficFlowCon
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysDictTypeService;
+import com.tunnel.platform.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
 import com.tunnel.platform.domain.dataInfo.SdTrafficStatistics;
 import com.tunnel.platform.domain.intelligent.SdWeatherReport;

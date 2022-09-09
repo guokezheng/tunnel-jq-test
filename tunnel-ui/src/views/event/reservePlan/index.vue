@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form v-show="showSearch" ref="queryForm" :inline="true" :model="queryParams" label-width="68px">
       <el-form-item label="事件类型" prop="planTypeId">
-        <el-select v-model="queryParams.planTypeId" placeholder="请选择事件类型" clearable size="small">
+        <el-select v-model="queryParams.planTypeId" clearable placeholder="请选择事件类型" size="small">
           <el-option
             v-for="(item,index) in planTypeData"
             :key="index"
@@ -14,14 +14,14 @@
       <el-form-item label="预案名称" prop="planName">
         <el-input
           v-model="queryParams.planName"
-          placeholder="请输入预案名称"
           clearable
+          placeholder="请输入预案名称"
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-search" size="mini" type="cyan" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
@@ -29,11 +29,11 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          v-hasPermi="['business:plan:add']"
           icon="el-icon-plus"
           size="mini"
+          type="primary"
           @click="handleAdd()"
-          v-hasPermi="['business:plan:add']"
         >新增
         </el-button>
       </el-col>
@@ -67,11 +67,11 @@
         >导出</el-button>
       </el-col> -->
       <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery"/>
+        <el-tooltip class="item" content="刷新" effect="dark" placement="top">
+          <el-button circle icon="el-icon-refresh" size="mini" @click="handleQuery"/>
         </el-tooltip>
-        <el-tooltip class="item" effect="dark" :content="showSearch ? '隐藏搜索' : '显示搜索'" placement="top">
-          <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch"/>
+        <el-tooltip :content="showSearch ? '隐藏搜索' : '显示搜索'" class="item" effect="dark" placement="top">
+          <el-button circle icon="el-icon-search" size="mini" @click="showSearch=!showSearch"/>
         </el-tooltip>
       </div>
     </el-row>
@@ -80,17 +80,17 @@
               @row-click="handleRowClick">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
-      <el-table-column label="预案名称" align="center" prop="planName"/>
-      <el-table-column label="分区" align="center" prop="sdTunnelSubarea.sName"/>
-      <el-table-column label="事件类型" align="center" prop="eventType.eventType"/>
-      <el-table-column label="预案描述" align="left" prop="planDescription" width="200">
+      <el-table-column align="center" label="预案名称" prop="planName"/>
+      <el-table-column align="center" label="分区" prop="sdTunnelSubarea.sName"/>
+      <el-table-column align="center" label="事件类型" prop="eventType.eventType"/>
+      <el-table-column align="left" label="预案描述" prop="planDescription" width="200">
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
           <el-popover
+            :content="scope.row.planDescription"
             placement="top-start"
-            width="200"
             trigger="hover"
-            :content="scope.row.planDescription">
+            width="200">
             <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;">
               {{ scope.row.planDescription }}
             </div>
@@ -98,14 +98,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="相关文档" align="center" class-name="small-padding fixed-width">
+      <el-table-column align="center" class-name="small-padding fixed-width" label="相关文档">
         <template slot-scope="scope">
           <el-button v-show="scope.row.planFileId !=null"
-                     size="mini"
-                     type="text"
                      icon="el-icon-link"
-                     @click="openFileDrawer(scope.row)"
+                     size="mini"
                      style="cursor:pointer;"
+                     type="text"
+                     @click="openFileDrawer(scope.row)"
           >点击查看
           </el-button>
           <div v-show="scope.row.planFileId == null">
@@ -113,7 +113,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="相关策略" align="center" class-name="small-padding fixed-width" width="200">
+      <el-table-column align="center" class-name="small-padding fixed-width" label="相关策略" width="200">
         <template slot-scope="scope">
             <span v-show="scope.row.strategyNames != null"
                   style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;"
@@ -125,38 +125,38 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
         <template slot-scope="scope">
           <el-button
+            v-hasPermi="['business:plan:edit']"
+            icon="el-icon-edit"
             size="mini"
             type="text"
-            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:plan:edit']"
           >修改
           </el-button>
           <el-button
+            v-hasPermi="['business:plan:remove']"
+            icon="el-icon-delete"
             size="mini"
             type="text"
-            icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['business:plan:remove']"
           >删除
           </el-button>
           <el-button
+            v-hasPermi="['business:plan:remove']"
+            icon="el-icon-guide"
             size="mini"
             type="text"
-            icon="el-icon-guide"
             @click="chooseStrategyInfo(scope.row)"
-            v-hasPermi="['business:plan:remove']"
           >配置策略
           </el-button>
           <el-button
+            v-hasPermi="['business:plan:remove']"
+            icon="el-icon-guide"
             size="mini"
             type="text"
-            icon="el-icon-guide"
             @click="openWorkbench(scope.row)"
-            v-hasPermi="['business:plan:remove']"
           >预览
           </el-button>
         </template>
@@ -165,34 +165,34 @@
 
     <pagination
       v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.pageNum"
+      :total="total"
       @pagination="getList"
     />
 
 
     <el-drawer
-      class="zwsj"
+      :before-close="handleFileClose"
+      :direction="direction"
       :title="drawerFileTitle"
       :visible.sync="drawerFile"
-      :direction="direction"
-      :before-close="handleFileClose">
+      class="zwsj">
       <el-table v-loading="loading" :data="planFileList">
-        <el-table-column label="序号" width="100px" align="center">
+        <el-table-column align="center" label="序号" width="100px">
           <template slot-scope="scope">
             {{ scope.$index + 1 }}
           </template>
         </el-table-column>
-        <el-table-column label="文件名称" align="center" prop="fileName"/>
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column align="center" label="文件名称" prop="fileName"/>
+        <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
           <template slot-scope="scope">
             <el-button
+              v-hasPermi="['business:plan:edit']"
+              :loading="loadFileLoading"
               size="mini"
               type="text"
-              :loading="loadFileLoading"
               @click="loadFile(scope.row)"
-              v-hasPermi="['business:plan:edit']"
             >下载
             </el-button>
           </template>
@@ -201,15 +201,15 @@
     </el-drawer>
 
     <!-- 配置策略选择窗口-->
-    <el-dialog :title="title" :visible.sync="handleStrategyVisible" width="60%" append-to-body>
+    <el-dialog :title="title" :visible.sync="handleStrategyVisible" append-to-body width="60%">
       <div style="width: 100%;height: 31.25rem; overflow: auto;">
-        <el-table ref="multipleTable" :data="handleStrategyList" @selection-change="handleStrategySelectionChange"
-                  @row-click="multipleTableRowClick"
-                  empty-text="暂无策略" row-key="id">
-          <el-table-column type="selection" width="55" align="center"/>
-          <el-table-column label="隧道名称" align="center" prop="tunnels.tunnelName" width="200"/>
-          <el-table-column label="策略名称" align="center" prop="strategyName" width="200"/>
-          <el-table-column label="策略信息" align="center" prop="slist">
+        <el-table ref="multipleTable" :data="handleStrategyList" empty-text="暂无策略"
+                  row-key="id"
+                  @selection-change="handleStrategySelectionChange" @row-click="multipleTableRowClick">
+          <el-table-column align="center" type="selection" width="55"/>
+          <el-table-column align="center" label="隧道名称" prop="tunnels.tunnelName" width="200"/>
+          <el-table-column align="center" label="策略名称" prop="strategyName" width="200"/>
+          <el-table-column align="center" label="策略信息" prop="slist">
             <template slot-scope="scope">
               <div v-for="(item,index) in scope.row.slist" :key="index">
                  <span style="color: #005CBF;">
@@ -228,15 +228,15 @@
 
 
     <!-- 相关策略策略，选择对话框-->
-    <el-dialog :title="addStrategyTitle" :visible.sync="addStrategyVisible" width="60%" append-to-body>
+    <el-dialog :title="addStrategyTitle" :visible.sync="addStrategyVisible" append-to-body width="60%">
       <div style="width: 100%;height: 31.25rem; overflow: auto;">
-        <el-table ref="addMultipleTable" :data="addStrategyList" @selection-change="handleSelectionAddSChange"
-                  @row-click="addMultipleTableRowClick"
-                  empty-text="暂无策略" row-key="id">
-          <el-table-column type="selection" width="55" align="center"/>
-          <el-table-column label="隧道名称" align="center" prop="tunnels.tunnelName" width="200"/>
-          <el-table-column label="策略名称" align="center" prop="strategyName" width="200"/>
-          <el-table-column label="策略信息" align="center" prop="slist">
+        <el-table ref="addMultipleTable" :data="addStrategyList" empty-text="暂无策略"
+                  row-key="id"
+                  @selection-change="handleSelectionAddSChange" @row-click="addMultipleTableRowClick">
+          <el-table-column align="center" type="selection" width="55"/>
+          <el-table-column align="center" label="隧道名称" prop="tunnels.tunnelName" width="200"/>
+          <el-table-column align="center" label="策略名称" prop="strategyName" width="200"/>
+          <el-table-column align="center" label="策略信息" prop="slist">
             <template slot-scope="scope">
               <div v-for="(item,index) in scope.row.slist" :key="index">
                     <span style="color: #005CBF;">
@@ -253,8 +253,8 @@
       </div>
     </el-dialog>
     <el-dialog
-      title="相关策略"
       :visible.sync="strategyDialog"
+      title="相关策略"
       width="30%"
     >
       <div v-for="(item,index) of str_arr" :key='index' style="font-size: 16px;line-height: 40px;padding-left: 20px;">
@@ -264,25 +264,25 @@
 
     <!--  预览-->
     <el-dialog
-      title="预览"
-      :visible.sync="workbenchOpen"
-      width="86.5%"
       :before-close="handleClose"
+      :visible.sync="workbenchOpen"
       append-to-body
+      title="预览"
+      width="86.5%"
     >
 
-      <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage">
+      <img alt="" class="chedaoImage" src="../../../assets/image/lane/3duan.png">
       <!-- 设备图标-->
       <div
-        class="icon-box mouseHover"
         v-for="(item, index) in selectedIconList"
         :key="index"
+        :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
         :style="{
                             left: item.position.left - 12 + 'px',
                             top: item.position.top + 52 +'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
                           }"
-        :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
+        class="icon-box mouseHover"
       >
         <div
           v-show="(item.eqType != 7 &&
@@ -304,16 +304,17 @@
         >
           <img
             v-for="(url, indexs) in item.url"
-            style="position: relative;"
+            :key="item.deptId + indexs"
+            :height="item.iconHeight"
+            :src="url"
             :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
             :width="item.iconWidth"
-            :height="item.iconHeight"
-            :key="item.deptId + indexs"
-            :src="url"
+            style="position: relative;"
           />
 
           <!-- 调光数值 -->
           <label
+            v-if="item.eqType == 21"
             style="
                                   color: yellow;
                                   position: absolute;
@@ -321,28 +322,27 @@
                                   bottom: 2px;
                                   pointer-events: none;
                                 "
-            v-if="item.eqType == 21"
           >{{ item.lightValue }}</label
           >
           <!-- CO/VI -->
           <label
-            style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;"
-            v-if="item.eqType == 19">
+            v-if="item.eqType == 19"
+            style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;">
             {{ item.value }}
             <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
             <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
           </label>
           <!-- 风速风向 -->
           <label
-            style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;"
-            v-if="item.eqType == 17">
+            v-if="item.eqType == 17"
+            style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;">
             {{ item.value }}
             <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
           </label>
           <!-- 洞内洞外 -->
           <label
-            style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
-            v-if="item.eqType == 5">
+            v-if="item.eqType == 5"
+            style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;">
             {{ item.value }}cd/m2
           </label>
         </div>
@@ -424,28 +424,29 @@
           </el-select>
         </el-form-item>
         <el-form-item label="预案名称" prop="planName">
-          <el-input style="width: 80%;" v-model="reservePlanDrawForm.planName" placeholder="请输入预案名称"/>
+          <el-input v-model="reservePlanDrawForm.planName" placeholder="请输入预案名称" style="width: 80%;"/>
         </el-form-item>
         <el-form-item label="预案描述" prop="planDescription">
-          <el-input maxlength="250" style="width: 80%;" v-model="reservePlanDrawForm.planDescription" type="textarea"
-                    placeholder="请输入预案描述"/>
+          <el-input v-model="reservePlanDrawForm.planDescription" maxlength="250" placeholder="请输入预案描述"
+                    style="width: 80%;"
+                    type="textarea"/>
         </el-form-item>
         <el-form-item label="相关文档" prop="eventLocation">
-          <el-upload style="width: 80%;"
-                     multiple
-                     class="upload-demo"
-                     ref="upload"
-                     :limit="5"
-                     action="http://xxx.xxx.xxx/personality/uploadExcel"
-                     :on-preview="handlePreview"
-                     :on-change="handleChange"
-                     :on-remove="handleRemove"
-                     :on-exceed="handleExceed"
+          <el-upload ref="upload"
+                     :auto-upload="false"
                      :file-list="fileList"
                      :http-request="uploadFile"
-                     :auto-upload="false">
+                     :limit="5"
+                     :on-change="handleChange"
+                     :on-exceed="handleExceed"
+                     :on-preview="handlePreview"
+                     :on-remove="handleRemove"
+                     action="http://xxx.xxx.xxx/personality/uploadExcel"
+                     class="upload-demo"
+                     multiple
+                     style="width: 80%;">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button style="margin-left: 133px;" size="small" type="success" @click="submitUpload">上传到服务器
+            <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
             </el-button>
             <span slot="tip" class="el-upload__tip"
                   style="font-style: italic;color: red;padding-left:5%;">{{ text }}</span>
@@ -460,41 +461,53 @@
 
     <!-- 配置策略 -->
     <el-dialog
+      :before-close="handleClose"
       :title="addTitle"
       :visible.sync="strategyVisible"
-      width="86.5%"
-      :before-close="handleClose"
-      append-to-body>
-      <el-form ref="form1" :model="reserveProcessDrawForm" label-width="120px">
+      append-to-body
+      width="86.5%">
+      <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm" label-width="120px" size="medium">
         <el-row :gutter="20">
-          <el-col :span="8" v-for="(item,index) in planTypeIdList" :key="index" class="colflex">
-            <el-form-item label="相关策略" prop="planTypeId" label-width="100px">
+          <el-col v-for="(item,index) in planTypeIdList" :key="index" :span="24" class="colflex">
+            <el-form-item label="节点名称" prop="processName">
+              <el-input v-model="reserveProcessDrawForm.processName" placeholder="请输入流程节点名称"></el-input>
+            </el-form-item>
+            <el-form-item label="节点顺序" prop="processSort">
+              <el-input-number v-model="reserveProcessDrawForm.processSort" :max="10" :min="1"
+                               label="描述文字"></el-input-number>
+            </el-form-item>
+            <el-form-item label="相关策略" prop="planTypeId">
               <el-cascader
-                :props="props"
                 v-model="handleStrategyList"
                 :options="options"
+                :props="props"
+                :show-all-levels="false"
                 clearable
                 collapse-tags
                 @change="handleChangeStrategy(handleStrategyList)"></el-cascader>
             </el-form-item>
-            <div class="dialogButton" @click="addFrom()">添加</div>
-            <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
+            <el-form-item>
+              <el-button type="text">添加</el-button>
+              <el-button type="text">删除</el-button>
+              <!--          <div class="dialogButton" ">添加</div>
+                        <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>-->
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div>
-        <img src="../../../assets/image/lane/3duan.png" alt="" class="chedaoImage">
+        <img alt="" class="chedaoImage" src="../../../assets/image/lane/3duan.png">
         <!-- 设备图标-->
         <div
-          class="icon-box mouseHover"
           v-for="(item, index) in selectedIconList"
           :key="index"
+          :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
           :style="{
             left: item.position.left - 12 + 'px',
             top: item.position.top + 104 +'px',
             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
           }"
-          :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
+          class="icon-box mouseHover"
         >
           <div
             v-show="(item.eqType != 7 &&
@@ -514,16 +527,17 @@
           >
             <img
               v-for="(url, indexs) in item.url"
-              style="position: relative;"
+              :key="item.deptId + indexs"
+              :height="item.iconHeight"
+              :src="url"
               :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
               :width="item.iconWidth"
-              :height="item.iconHeight"
-              :key="item.deptId + indexs"
-              :src="url"
+              style="position: relative;"
             />
 
             <!-- 调光数值 -->
             <label
+              v-if="item.eqType == 21"
               style="
                 color: yellow;
                 position: absolute;
@@ -531,28 +545,27 @@
                 bottom: 2px;
                 pointer-events: none;
               "
-              v-if="item.eqType == 21"
             >{{ item.lightValue }}</label
             >
             <!-- CO/VI -->
             <label
-              style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;"
-              v-if="item.eqType == 19">
+              v-if="item.eqType == 19"
+              style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;">
               {{ item.value }}
               <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
               <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
             </label>
             <!-- 风速风向 -->
             <label
-              style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;"
-              v-if="item.eqType == 17">
+              v-if="item.eqType == 17"
+              style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;">
               {{ item.value }}
               <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
             </label>
             <!-- 洞内洞外 -->
             <label
-              style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
-              v-if="item.eqType == 5">
+              v-if="item.eqType == 5"
+              style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;">
               {{ item.value }}cd/m2
             </label>
           </div>
@@ -631,7 +644,7 @@ import {
   listTunnels
 } from "@/api/equipment/tunnel/api";
 import {fastLerp} from "zrender/lib/tool/color";
-import { addProcess, } from "@/api/event/reserveProcess";
+import {addProcess,} from "@/api/event/reserveProcess";
 
 export default {
   name: "Plan",
@@ -654,7 +667,7 @@ export default {
         value: 'id',
         children: 'children',
         multiple: true,
-        emitPath:false
+        emitPath: false
       },
       active: 0,
       //工作台
@@ -723,9 +736,10 @@ export default {
       reserveProcessDrawForm: {
         reserveId: null, //预案id
         deviceTypeId: null, //设备类型id
-        strategyId: [{}],//多个策略id
+        strategyId: null,//策略id
         processName: null, //流程节点名称
         processSort: null, //流程节点顺序
+        strategyIds: null, //多个策略id
       },
       strategyId: [{}],
       // 遮罩层
@@ -824,7 +838,6 @@ export default {
       this.planTypeIdList.push({
         a: []
       })
-      this.strategyId.push({})
       /*this.reserveProcessDrawForm.strategyId.push([{
         id:[]
       }])*/
@@ -895,9 +908,15 @@ export default {
     },
     submitstrategy() {
       const data = this.reserveProcessDrawForm;
-      data.strategyId = this.handleStrategyList.join(",");
-
+      data.strategyIds = this.handleStrategyList.join(",");
       console.log(data, 'this.reserveProcessDrawFormthis.reserveProcessDrawForm')
+      addProcess(data).then(res => {
+        console.log(res, '添加策略返回');
+        if (res.code === 200) {
+          this.strategyVisible = false
+          this.getList();
+        }
+      })
     },
     handleChangeStrategy(e) {
       //this.reserveProcessDrawForm.strategyId.push({})
@@ -908,9 +927,9 @@ export default {
       // }
       console.log(e);
       this.strategyRlData = [];
-      e.forEach((item,index) => {
-        getRl(item).then( res => {
-          console.log(res,'resres');
+      e.forEach((item, index) => {
+        getRl(item).then(res => {
+          console.log(res, 'resres');
           this.strategyRlData.push(res.rows);
         })
       })
@@ -940,11 +959,12 @@ export default {
       this.reserveProcessDrawForm = {
         reserveId: null, //预案id
         deviceTypeId: null, //设备类型id
-        strategyId: [],//多个策略id
+        strategyId: null,//多个策略id
         processName: null, //流程节点名称
         processSort: null, //流程节点顺序
       },
-        this.reserveProcessDrawForm.reserveId = row.id
+        this.handleStrategyList = []
+      this.reserveProcessDrawForm.reserveId = row.id
       getTypeAndStrategy({isControl: 1}).then(res => {
         console.log(res.data, '控制策略')
         this.options = res.data
@@ -1403,7 +1423,7 @@ export default {
   }
 };
 </script>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .colflex {
   display: flex;
 }

@@ -80,7 +80,7 @@ public class RadarEventController {
      * @param item
      */
 //    @KafkaListener(topics = RadarEventConstants.MATCHRESULTDATA, groupId = "TestGroup")
-//    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
+    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
 //        byte[] value = (byte[]) record.value();
 //        String kafkaJsonStr = new String(value);

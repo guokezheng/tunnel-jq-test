@@ -76,8 +76,8 @@ public class RadarEventServiceImpl implements RadarEventService {
             SdEvent sdEvent=new SdEvent();
             Integer integer=wjMapper.selectID(f.getEventId());
             if (integer!=0){
-                Byte eventType = f.getEventType();
-                sdEvent.setEventTypeId(eventType.longValue());
+                String eventType = WJEnum.getValue(f.getEventType());
+                sdEvent.setEventTypeId(Long.parseLong(eventType));
                 sdEvent.setTunnelId(tunnelId);
                 sdEvent.setStationId(f.getStationId()+"");
                 sdEvent.setStakeNum(f.getStakeNum());
@@ -91,8 +91,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                 return;
             }else {
             sdEvent.setId(f.getEventId());
-            Byte eventType = f.getEventType();
-            sdEvent.setEventTypeId(eventType.longValue());
+            String eventType = WJEnum.getValue(f.getEventType());
+            sdEvent.setEventTypeId(Long.parseLong(eventType));
             sdEvent.setTunnelId(tunnelId);
             sdEvent.setStationId(f.getStationId()+"");
             sdEvent.setStakeNum(f.getStakeNum());

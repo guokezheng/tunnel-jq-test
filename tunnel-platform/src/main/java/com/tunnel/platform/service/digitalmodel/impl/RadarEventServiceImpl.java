@@ -123,26 +123,26 @@ public class RadarEventServiceImpl implements RadarEventService {
         String thirdVideoImage = (String) map.get("thirdVideoImage");
         if (StringUtils.isNotBlank(eventId)){
             // 从缓存中获取文件存储路径
-            String fileServerPath = RuoYiConfig.getUploadPath();
+//            String fileServerPath = RuoYiConfig.getUploadPath();
             //新路径
-            String url = fileServerPath + picUrl+"/";
+//            String url = fileServerPath + picUrl+"/";
             if (StringUtils.isNotBlank(videoImage)) {
                 String e1 ="事件前";
-                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
-                String s1 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,imgUrl,s1);
+//                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
+//                String s1 = this.picName(imgUrl);
+                wjMapper.insertPic(eventId,videoImage,e1);
             }
             if (StringUtils.isNotEmpty(secondVideoImage)) {
                 String e2 ="事件中";
-                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
-                String s2 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,imgUrl,s2);
+//                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
+//                String s2 = this.picName(imgUrl);
+                wjMapper.insertPic(eventId,secondVideoImage,e2);
             }
             if (StringUtils.isNotEmpty(thirdVideoImage)) {
                 String e3 ="事件后";
-                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
-                String s3 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,imgUrl,s3);
+//                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
+//                String s3 = this.picName(imgUrl);
+                wjMapper.insertPic(eventId,thirdVideoImage,e3);
             }
         }
         return AjaxResult.success();

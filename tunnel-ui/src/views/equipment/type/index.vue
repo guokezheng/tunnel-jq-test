@@ -131,7 +131,7 @@
           <span>{{ scope.row.iconHeight }} px</span>
         </template>
       </el-table-column>
-      
+
       <el-table-column
         label="操作"
         align="center"
@@ -146,7 +146,7 @@
             @click="configData(scope.row)"
             v-hasPermi="['system:type:edit']"
             >配置参数</el-button
-          >   
+          >
           <el-button
             size="mini"
             type="text"
@@ -162,7 +162,7 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:type:remove']"
             >删除</el-button
-          >               
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -336,7 +336,7 @@ export default {
     this.getList();
     this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
-    this.getDicts("sys_type_control").then(response => {          
+    this.getDicts("sys_type_control").then(response => {
         this.isControlOptions = response.data;
         console.log(this.isControlOptions,'this.isControlOptions')
       });
@@ -344,7 +344,7 @@ export default {
   methods: {
     configData(){
       this.$router.push({
-        path:'/dev/device/param'
+        path:'/inductionLamp'
       })
     },
     getGroupByBigType(){
@@ -386,7 +386,7 @@ export default {
         let iconName = iFileList[i].stateIconName;
         // let iconUrl = await that.picture(iFileList[i].url);
         let iconUrl = iFileList[i].url
-        
+
         that.fileList.push({
           name: iconName,
           url: iconUrl,
@@ -493,7 +493,7 @@ export default {
       this.fileData.append("typeAbbr",this.form.typeAbbr);
       this.fileData.append("iconWidth", this.form.iconWidth);
       this.fileData.append("iconHeight", this.form.iconHeight);
-      this.fileData.append("isControl", this.form.isControl);  
+      this.fileData.append("isControl", this.form.isControl);
 	    this.fileData.append("bigType", this.form.bigType.join(','));
       this.$refs["form"].validate((valid) => {
         if (valid) {

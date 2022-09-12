@@ -225,6 +225,12 @@ export const constantRoutes = [
     component: (resolve) => require(['@/views/bigscreen/index2'], resolve),
     hidden: true
   },
+  //诱导灯参数配置
+  {
+    path: '/inductionLamp',
+    component: (resolve) => require(['@/views/equipment/param/index'], resolve),
+    hidden: true
+  }
 
 ]
 

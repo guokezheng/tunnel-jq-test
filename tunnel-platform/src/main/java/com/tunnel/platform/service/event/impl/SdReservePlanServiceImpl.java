@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.event.impl;
 
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.platform.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
@@ -62,6 +63,9 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
 	@Autowired
 	private SdTunnelsMapper sdTunnelsMapper;
 
+	@Autowired
+	private SdReserveProcessMapper sdReserveProcessMapper;
+
     /**
      * 查询预案信息
      *
@@ -117,26 +121,36 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
 			Long subareaId = list.get(i).getSubareaId();
 			SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
 			list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
-			String strategys = list.get(i).getStrategyId();
-			if(strategys!=null && !"".equals(strategys)){
-				if(!"-1".equals(strategys)){
-					String[] strategyAyy = strategys.split("；");
+			if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
+				String[] strategys = list.get(i).getStrategyId().split(",");
+				int index = 0;
+				for (String strategy : strategys) {
 					String things = "";
-					int index = 0;
-					for (String s : strategyAyy) {
-						if(s == null || s.equals("")){
-							continue;
+					if (strategy != null && !"".equals(strategy)) {
+						if (!"-1".equals(strategy)) {
+							String[] strategyAyy = strategy.split("；");
+
+							for (String s : strategyAyy) {
+								if (s == null || s.equals("")) {
+									continue;
+								}
+								index++;
+								SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
+								if (sds == null) {
+									logger.error("策略未找到！");
+									continue;
+								}
+								//things = things + sds.getStrategyName();
+								things = things + index + "、" + sds.getStrategyName() + "；";
+							}
 						}
-						index++;
-						SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
-						if(sds == null){
-							logger.error("策略未找到！");
-							continue;
-						}
-						//things = things + sds.getStrategyName();
-						things = things + index + "、" + sds.getStrategyName()+"；";
 					}
-					list.get(i).setStrategyNames(things);
+					if (StringUtils.isNotEmpty(things)) {
+						if (StringUtils.isNotEmpty(list.get(i).getStrategyNames())) {
+							things = list.get(i).getStrategyNames() + things;
+						}
+						list.get(i).setStrategyNames(things);
+					}
 				}
 			}
 		}
@@ -317,7 +331,11 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
     @Override
     public int deleteSdReservePlanById(Long id)
     {
-        return sdReservePlanMapper.deleteSdReservePlanById(id);
+		int i = sdReservePlanMapper.deleteSdReservePlanById(id);
+		if (i > -1) {
+			sdReserveProcessMapper.deleteSdReserveProcessByPlanId(id);
+		}
+		return i;
     }
 
     /**

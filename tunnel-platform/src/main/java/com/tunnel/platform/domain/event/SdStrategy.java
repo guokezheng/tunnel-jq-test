@@ -48,6 +48,10 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("策略类型")
     private String strategyType;
 
+    @Excel(name = "预案状态")
+    @ApiModelProperty("预案状态")
+    private String strategyState;
+
     /** 策略信息 */
     @Excel(name = "策略信息")
     @ApiModelProperty("策略信息策略信息")
@@ -172,7 +176,16 @@ public class SdStrategy extends BaseEntity
     public void setDirection(String direction) {
         this.direction = direction;
     }
-	@Override
+
+    public void setStrategyState(String strategyState) {
+        this.strategyState = strategyState;
+    }
+
+    public String getStrategyState() {
+        return strategyState;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())

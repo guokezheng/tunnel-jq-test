@@ -58,6 +58,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="controlStatus" column="control_status" />
+        <result property="iconWidth" column="icon_width"/>
+        <result property="iconHeight" column="icon_height"/>
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -536,6 +538,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDeviceByHost" resultType="String">
         select a.eq_id from sd_firefighting_components_address a
         where host = #{host} and eq_id = #{eqId}
+    </select>
+
+    <select id="getDevicesByTypeAndTunnel" parameterType="SdDevices" resultType="hashmap">
+        select a.eq_id as eqId, a.eq_tunnel_id as eqTunnelId, a.eq_name as eqName, a.eq_type as eqType,
+               b.icon_width as iconWidth, b.icon_height as iconHeight, a.pile
+        from sd_devices a
+        left join sd_equipment_type b on a.eq_type = b.type_id
+        <where>
+            <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+        </where>
+        order by a.create_time desc, a.update_time desc
     </select>
 
 </mapper>

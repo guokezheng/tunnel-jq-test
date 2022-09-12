@@ -813,4 +813,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService
         return devicesList;
     }
 
+    @Override
+    public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices) {
+        List<Map<String, Object>> devicesByTypeAndTunnel = sdDevicesMapper.getDevicesByTypeAndTunnel(sdDevices);
+        return devicesByTypeAndTunnel;
+    }
+
 }

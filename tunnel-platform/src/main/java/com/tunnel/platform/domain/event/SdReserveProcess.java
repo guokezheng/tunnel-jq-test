@@ -38,6 +38,8 @@ public class SdReserveProcess extends BaseEntity
     @Excel(name = "流程节点顺序")
     private Integer processSort;
 
+    private String strategyIds;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -91,6 +93,14 @@ public class SdReserveProcess extends BaseEntity
     public Integer getProcessSort() 
     {
         return processSort;
+    }
+
+    public String getStrategyIds() {
+        return strategyIds;
+    }
+
+    public void setStrategyIds(String strategyIds) {
+        this.strategyIds = strategyIds;
     }
 
     @Override

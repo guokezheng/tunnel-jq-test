@@ -49,6 +49,10 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("策略类型")
     private String strategyType;
 
+    @Excel(name = "策略状态")
+    @ApiModelProperty("策略状态")
+    private String strategyState;
+
     /** 策略信息 */
     @Excel(name = "策略信息")
     @ApiModelProperty("策略信息")
@@ -223,6 +227,14 @@ public class SdStrategyModel extends BaseEntity
 
     public void setEquipment(List<Map> equipment) {
         this.equipment = equipment;
+    }
+
+    public String getStrategyState() {
+        return strategyState;
+    }
+
+    public void setStrategyState(String strategyState) {
+        this.strategyState = strategyState;
     }
 
     @Override

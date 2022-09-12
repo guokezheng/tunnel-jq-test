@@ -148,4 +148,6 @@ public interface ISdDevicesService
     public List<SdDevices> updateCarFingerById(List<SdDevices> sdDevices);
 
     public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
+
+    public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 }

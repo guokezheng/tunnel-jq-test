@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询预案流程节点列表
 export function listProcess(query) {
   return request({
-    url: '/system/process/list',
+    url: '/plan/process/list',
     method: 'get',
     params: query
   })
@@ -12,7 +12,7 @@ export function listProcess(query) {
 // 查询预案流程节点详细
 export function getProcess(id) {
   return request({
-    url: '/system/process/' + id,
+    url: '/plan/process/' + id,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getProcess(id) {
 // 新增预案流程节点
 export function addProcess(data) {
   return request({
-    url: '/system/process',
+    url: '/plan/process',
     method: 'post',
     data: data
   })
@@ -29,7 +29,7 @@ export function addProcess(data) {
 // 修改预案流程节点
 export function updateProcess(data) {
   return request({
-    url: '/system/process',
+    url: '/plan/process',
     method: 'put',
     data: data
   })

@@ -104,7 +104,7 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService
             }
             //根据查询到的设备配置信息拿到设备报文发送种类和内容
             try {
-                String code = "0GH+STATUS?\r\n";
+                String code = "1GH+STATUS?\r\n";
                 NettyClient client = new NettyClient(ip, port,code,1);
                 client.start(null);
                 Map codeMap = InductionlampUtil.getPilotLightMode(controlModeType,brightness,frequency);

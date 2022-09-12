@@ -80,6 +80,7 @@ public class RadarEventController {
      * @param item
      */
 //    @KafkaListener(topics = RadarEventConstants.MATCHRESULTDATA, groupId = "TestGroup")
+//    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = "test", partitions = "0")}, groupId = "TestGroup")
     @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
 //        byte[] value = (byte[]) record.value();
@@ -90,10 +91,13 @@ public class RadarEventController {
 //        }
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
-        service.insertRadarDetect(map);
-        System.out.println(value);
-        System.out.println(record);
-        log.info("-------------->>>>>>>>>>>>>>>");
+        String participantNum = map.get("participantNum")+"";
+        if (Integer.parseInt(participantNum)>0){
+            service.insertRadarDetect(map);
+        }
+//        System.out.println(value);
+//        System.out.println(record);
+//        log.info("-------------->>>>>>>>>>>>>>>");
         //手动提交
         item.acknowledge();
     }

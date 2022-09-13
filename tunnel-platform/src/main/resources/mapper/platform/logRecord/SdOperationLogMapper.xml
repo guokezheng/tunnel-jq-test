@@ -158,4 +158,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where create_time <![CDATA[ < ]]> DATE_SUB(CURDATE(),INTERVAL 3 month)
     </select>
 
+    <insert id="operationLog" parameterType="SdOperationLog" >
+        insert into sd_operation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">eq_id,</if>
+            <if test="operationState != null">operation_state,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eqId != null">#{eqId},</if>
+            <if test="operationState != null">#{operationState},</if>
+        </trim>
+    </insert>
+
 </mapper>

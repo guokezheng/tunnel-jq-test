@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdStateStorage;
@@ -81,7 +82,9 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService
     {
         String deviceId = sdStateStorage.getDeviceId();
         SdDevices sdDevices = iSdDevicesService.selectSdDevicesById(deviceId);
-        if (sdDevices.getEqType() == 31L && sdDevices.getControlStatus().equals("1")) {
+        Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+        if (sdDevices.getEqType().longValue() == yddType.longValue()){
+//        if (sdDevices.getEqType() == 31L && sdDevices.getControlStatus().equals("1")) {
             //如果当前是诱导灯走通信更改模式
             String ip = sdDevices.getIp();
             int port = Integer.parseInt(sdDevices.getPort());

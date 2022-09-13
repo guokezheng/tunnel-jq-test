@@ -78,7 +78,8 @@ public class SdStateStorageController extends BaseController {
                 json.put("state", sdStateStorage.getState());
             }
             //诱导灯设备增加亮度和频率
-            if (sdDevice.getEqType() == 31L) {
+            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+            if (sdDevice.getEqType().longValue() == yddType.longValue()) {
                 InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
                 inductionlampControlStatusDetails.setEquipmentId(sdDevice.getEqId());
                 List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);

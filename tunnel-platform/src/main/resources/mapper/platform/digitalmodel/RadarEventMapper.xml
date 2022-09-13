@@ -53,6 +53,11 @@
         start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum}
     where id=#{id}
     </update>
+    <update id="updateVideoById">
+        update sd_event
+        set  video_url=#{eventVideoUrl}
+        where id=#{eventId}
+    </update>
 
     <select id="selectID" resultType="java.lang.Integer">
         select COUNT(1) from sd_event where id=#{eventId}

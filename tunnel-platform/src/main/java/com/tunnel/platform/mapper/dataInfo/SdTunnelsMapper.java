@@ -61,7 +61,11 @@ public interface SdTunnelsMapper
      */
     public int deleteSdTunnelsByIds(String[] tunnelIds);
 
-
+    /**
+     * 查询隧道分区
+     * @param sdTunnels
+     * @return
+     */
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels);
     public List<SdTunnels> deptId(Long deptId);
 

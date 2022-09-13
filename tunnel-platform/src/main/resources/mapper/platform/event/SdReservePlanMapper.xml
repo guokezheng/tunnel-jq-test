@@ -149,5 +149,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id id, plan_type name
         from sd_plan_type
     </select>
+    
+    <select id="selectSdReservePlanBySubareaId" parameterType="sdReservePlan" resultMap="SdReservePlanResult">
+        select id, subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id 
+        from sd_reserve_plan
+        <where>
+            <if test="subareaId != null"> and subarea_id = #{subareaId}</if>
+            <if test="category != null"> and category = #{category}</if>
+        </where>
+    </select>
 
 </mapper>

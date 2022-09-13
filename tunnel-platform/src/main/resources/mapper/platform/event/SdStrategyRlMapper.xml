@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="strategyId"    column="strategy_id"    />
         <result property="eqTypeId"    column="eq_type_id"    />
+        <result property="controlTime" column="control_time" />
         <result property="equipments"    column="equipments"    />
         <result property="state"    column="state"    />
         <association property="eqType"    column="type_id" javaType="SdEquipmentType" resultMap="TypeResult" />
@@ -18,11 +19,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="typeName" column="type_name"   />
 	</resultMap>
     <sql id="selectSdStrategyRlVo">
-        select id, strategy_id, eq_type_id, equipments, state from sd_strategy_rl
+        select id, strategy_id, eq_type_id, control_time, equipments, state from sd_strategy_rl
     </sql>
 
     <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
-        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name
+        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time
         from sd_strategy_rl A
         left join sd_equipment_type B ON A.eq_type_id = B.type_id
         <where>
@@ -47,12 +48,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sd_strategy_rl
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">strategy_id,</if>
+            <if test="controlTime != null">control_time,</if>
             <if test="eqTypeId != null">eq_type_id,</if>
             <if test="equipments != null">equipments,</if>
             <if test="state != null">state,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">#{strategyId},</if>
+            <if test="controlTime != null">#{controlTime}</if>
             <if test="eqTypeId != null">#{eqTypeId},</if>
             <if test="equipments != null">#{equipments},</if>
             <if test="state != null">#{state},</if>
@@ -63,12 +66,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	  <insert id="batchInsertStrategyRl" parameterType="java.util.List">
 	    insert into sd_strategy_rl
 	    (
-	      strategy_id, eq_type_id, equipments, state
+	      strategy_id, eq_type_id, equipments, state, control_time
 	    )
 	    values
 	    <foreach collection="list" index="index" item="item" separator=",">
 	      (
-	        #{item.strategyId}, #{item.eqTypeId}, #{item.equipments}, #{item.state}
+	        #{item.strategyId}, #{item.eqTypeId}, #{item.equipments}, #{item.state}, #{item.controlTime}
 	      )
 	    </foreach>
 	  </insert>
@@ -83,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
             <if test="equipments != null">equipments = #{equipments},</if>
             <if test="state != null">state = #{state},</if>
+            <if test="controlTime != null">control_time = #{controlTime}</if>
         </trim>
         where id = #{id}
     </update>

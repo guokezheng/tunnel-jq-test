@@ -94,4 +94,14 @@ public class SdReserveProcessController extends BaseController
     {
         return toAjax(sdReserveProcessService.deleteSdReserveProcessByIds(ids));
     }
+
+    /**
+     * 根据预案id获得预案节点信息
+     * @param reserveId
+     * @return
+     */
+    @GetMapping("/getListByRId")
+    public AjaxResult getReserveProcessByReserveId(Long reserveId) {
+        return AjaxResult.success(sdReserveProcessService.selectSdReserveProcessByRId(reserveId));
+    }
 }

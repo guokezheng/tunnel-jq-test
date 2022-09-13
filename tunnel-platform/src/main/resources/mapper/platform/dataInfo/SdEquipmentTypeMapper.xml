@@ -36,8 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectHasItemEqTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
         select a.type_id, a.type_name, a.type_abbr, a.icon_width, a.icon_height, a.is_control, a.icon_file_id, a.big_type
-        from sd_device_type_item b
-        LEFT JOIN sd_equipment_type a on a.type_id = b.device_type_id
+        from sd_equipment_type a
+        LEFT JOIN sd_device_type_item b on a.type_id = b.device_type_id
         <where>
             <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>

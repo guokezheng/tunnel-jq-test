@@ -73,4 +73,10 @@ public interface SdReserveProcessMapper
      * @return
      */
     public int deleteSdReserveProcessByPlanId(Long id);
+
+    /**
+     * 根据预案id获得预案流程节点信息
+     * @return
+     */
+    public List<SdReserveProcess> selectSdReserveProcessByRid(SdReserveProcess sdReserveProcess);
 }

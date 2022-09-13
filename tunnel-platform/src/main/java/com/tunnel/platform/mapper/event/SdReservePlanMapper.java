@@ -70,5 +70,17 @@ public interface SdReservePlanMapper
 
     public List<SdReservePlan> checkIfSingleReservePlan(SdReservePlan sdReservePlan);
 
+    /**
+     * 查询预案类别
+     *
+     * @return
+     */
     public List<Map> selectPlanCategory();
+
+    /**
+     * 根据分区Id查询预案
+     *
+     * @return
+     */
+    public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
 }

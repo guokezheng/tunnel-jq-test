@@ -495,9 +495,9 @@
           </el-col>
         </el-row>
       </el-form>
-      <div>
+      <!--  <div>
         <img alt="" class="chedaoImage" src="../../../assets/image/lane/3duan.png">
-        <!-- 设备图标-->
+        &lt;!&ndash; 设备图标&ndash;&gt;
         <div
           v-for="(item, index) in selectedIconList"
           :key="index"
@@ -535,7 +535,7 @@
               style="position: relative;"
             />
 
-            <!-- 调光数值 -->
+            &lt;!&ndash; 调光数值 &ndash;&gt;
             <label
               v-if="item.eqType == 21"
               style="
@@ -547,22 +547,22 @@
               "
             >{{ item.lightValue }}</label
             >
-            <!-- CO/VI -->
+            &lt;!&ndash; CO/VI &ndash;&gt;
             <label
               v-if="item.eqType == 19"
               style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;">
               {{ item.value }}
-              <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
-              <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
+              <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> &ndash;&gt;
+              &lt;!&ndash; <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>&ndash;&gt;
             </label>
-            <!-- 风速风向 -->
+            &lt;!&ndash; 风速风向 &ndash;&gt;
             <label
               v-if="item.eqType == 17"
               style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;">
               {{ item.value }}
               <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
             </label>
-            <!-- 洞内洞外 -->
+            &lt;!&ndash; 洞内洞外 &ndash;&gt;
             <label
               v-if="item.eqType == 5"
               style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;">
@@ -570,8 +570,8 @@
             </label>
           </div>
 
-          <!-- 桩号 -->
-          <!-- <input
+          &lt;!&ndash; 桩号 &ndash;&gt;
+          &lt;!&ndash; <input
             :class="[
                     item.eqType == 7 ||
                     item.eqType == 8 ||
@@ -600,9 +600,9 @@
             disabled="true"
             style="color: #055270;"
           />
-          <div v-else style="width: 80px"></div> -->
+          <div v-else style="width: 80px"></div> &ndash;&gt;
         </div>
-      </div>
+      </div>-->
       <el-form-item style="text-align: right;width: 100%;">
 
       </el-form-item>
@@ -644,7 +644,7 @@ import {
   listTunnels
 } from "@/api/equipment/tunnel/api";
 import {fastLerp} from "zrender/lib/tool/color";
-import {addProcess,} from "@/api/event/reserveProcess";
+import {addProcess, getListByRId} from "@/api/event/reserveProcess";
 
 export default {
   name: "Plan",
@@ -963,13 +963,24 @@ export default {
         processName: null, //流程节点名称
         processSort: null, //流程节点顺序
       },
-        this.handleStrategyList = []
+      this.handleStrategyList = []
       this.reserveProcessDrawForm.reserveId = row.id
       getTypeAndStrategy({isControl: 1}).then(res => {
         console.log(res.data, '控制策略')
         this.options = res.data
       })
-      // })
+      getListByRId({ reserveId:row.id }).then(res => {
+        console.log(res,'根据预案id返回的预案流程节点');
+        if (res.code === 200) {
+          res.data.forEach((item, index) => {
+            this.reserveProcessDrawForm.processSort = item.processSort;
+            this.reserveProcessDrawForm.processName = item.processName;
+            this.handleStrategyList = item.strategyIds.split(",");
+            console.log(this.handleStrategyList,'this.handleStrategyListthis.handleStrategyList');
+          })
+        }
+
+      })
     },
     //执行策略id勾选事件
     handleStrategySelectionChange(selection) {

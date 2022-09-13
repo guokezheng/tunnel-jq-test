@@ -8,6 +8,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.platform.domain.event.SdTrigger;
 import com.tunnel.platform.service.event.ISdTriggerService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -68,6 +69,7 @@ public class SdTriggerController extends BaseController
      * @return
      */
     @GetMapping("/getTriggersByRelateId")
+    @ApiOperation("根据策略id查询触发器")
     public AjaxResult getTriggersByRelateId(Long relateId) {
         return AjaxResult.success(sdTriggerService.selectSdTriggerByRelateId(relateId));
     }

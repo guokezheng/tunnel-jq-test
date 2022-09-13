@@ -61,6 +61,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
     @Override
     public int insertSdReserveProcess(SdReserveProcess sdReserveProcess)
     {
+        sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcess.getReserveId());
         sdReserveProcess.setCreateTime(DateUtils.getNowDate());
         String[] strategyIds = sdReserveProcess.getStrategyIds().split(",");
         List<SdReserveProcess> list = new ArrayList<>();
@@ -89,7 +90,12 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
     public int updateSdReserveProcess(SdReserveProcess sdReserveProcess)
     {
         sdReserveProcess.setUpdateTime(DateUtils.getNowDate());
-        return sdReserveProcessMapper.updateSdReserveProcess(sdReserveProcess);
+        int result = -1;
+        result = sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcess.getReserveId());
+        if (result > -1) {
+            result = sdReserveProcessMapper.updateSdReserveProcess(sdReserveProcess);
+        }
+        return result;
     }
 
     /**
@@ -124,5 +130,17 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
     @Override
     public int deleteSdReserveProcessByPlanId(Long id) {
         return sdReserveProcessMapper.deleteSdReserveProcessByPlanId(id);
+    }
+
+    /**
+     * 根据预案id查找预案流程节点信息
+     * @param RId
+     * @return
+     */
+    @Override
+    public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId) {
+        SdReserveProcess sdReserveProcess = new SdReserveProcess();
+        sdReserveProcess.setReserveId(RId);
+        return sdReserveProcessMapper.selectSdReserveProcessByRid(sdReserveProcess);
     }
 }

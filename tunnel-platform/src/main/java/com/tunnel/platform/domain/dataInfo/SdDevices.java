@@ -401,25 +401,6 @@ public class SdDevices extends BaseEntity {
     @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
     private String controlStatus;
 
-    private String iconWidth;
-
-    private String iconHeight;
-
-    public String getIconWidth() {
-        return iconWidth;
-    }
-
-    public void setIconWidth(String iconWidth) {
-        this.iconWidth = iconWidth;
-    }
-
-    public String getIconHeight() {
-        return iconHeight;
-    }
-
-    public void setIconHeight(String iconHeight) {
-        this.iconHeight = iconHeight;
-    }
 
     public String getControlStatus() {
         return controlStatus;

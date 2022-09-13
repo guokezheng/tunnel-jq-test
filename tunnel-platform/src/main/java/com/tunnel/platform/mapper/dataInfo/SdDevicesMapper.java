@@ -24,6 +24,15 @@ public interface SdDevicesMapper
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
 
+
+	/**
+	 * 查询设备详情
+	 *
+	 * @param eqId 设备ID
+	 * @return 设备
+	 */
+	Map<String,String> queryDeviceById(String eqId);
+
 	/**
 	 * 查询设备列表
 	 *

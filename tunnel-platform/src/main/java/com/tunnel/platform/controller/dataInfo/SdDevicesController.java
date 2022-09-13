@@ -169,6 +169,20 @@ public class SdDevicesController extends BaseController
         return Result.success(sd);
     }
 
+
+    /**
+     * 获取设备详细信息
+     */
+    @GetMapping(value = "/getDevice/{eqId}")
+    @ApiOperation("获取设备详细信息")
+    @ApiImplicitParam(name = "eqId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getDevice(@PathVariable("eqId") String eqId)
+    {
+        Map<String,String> sd = sdDevicesService.queryDeviceById(eqId);
+        return Result.success(sd);
+    }
+
+
     /**
      * 通过隧道id查询设备类型名称
      */

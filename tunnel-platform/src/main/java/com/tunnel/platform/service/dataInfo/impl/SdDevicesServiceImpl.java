@@ -65,6 +65,17 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     }
 
     /**
+     * 查询设备详情
+     *
+     * @param eqId 设备ID
+     * @return 设备
+     */
+    @Override
+    public Map<String,String> queryDeviceById(String eqId) {
+        return sdDevicesMapper.queryDeviceById(eqId);
+    }
+
+    /**
      * 查询设备列表
      *
      * @param sdDevices 设备

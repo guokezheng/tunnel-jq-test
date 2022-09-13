@@ -75,4 +75,11 @@ public interface ISdReservePlanService
      * @return
      */
     public List<Map> selectPlanCategory();
+
+    /**
+     * 根据分区id查询预案
+     * @param sdReservePlan
+     * @return
+     */
+    public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
 }

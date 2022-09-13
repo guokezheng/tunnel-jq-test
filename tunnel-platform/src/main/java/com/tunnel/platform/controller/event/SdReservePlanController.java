@@ -229,10 +229,20 @@ public class SdReservePlanController extends BaseController
      * @return
      */
     @GetMapping("/getPlanCateGory")
+    @ApiOperation("查询预案类型")
     public Result selectPlanCategory() {
         return Result.success(sdReservePlanService.selectPlanCategory());
     }
 
-
+    /**
+     * 根据分区id查询预案(非恢复预案)
+     *
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getListBySId")
+    public Result selectPlanBySid(@RequestBody SdReservePlan sdReservePlan) {
+        return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
+    }
 
 }

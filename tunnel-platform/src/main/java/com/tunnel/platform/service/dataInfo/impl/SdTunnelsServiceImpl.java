@@ -103,6 +103,11 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService
         return sdTunnelsMapper.deleteSdTunnelsById(tunnelId);
     }
 
+    /**
+     * 查询隧道分区
+     * @param sdTunnels
+     * @return
+     */
     @Override
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels) {
         return sdTunnelsMapper.selectSdTunnelsSubList(sdTunnels);

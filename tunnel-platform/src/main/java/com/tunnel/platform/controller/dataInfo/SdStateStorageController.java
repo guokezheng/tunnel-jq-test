@@ -83,8 +83,16 @@ public class SdStateStorageController extends BaseController {
                 inductionlampControlStatusDetails.setEquipmentId(sdDevice.getEqId());
                 List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
                 if (statusDetails.size() == 0) {
-                    json.put("brightness", "10");
-                    json.put("frequency", "10");
+                    json.put("brightness", "50");
+                    json.put("frequency", "69");
+                    sdStateStorage.setBrightness("50");
+                    sdStateStorage.setFrequency("69");
+                    sdStateStorage.setTunnelId(tunnelId);
+                    if (sdStateStorage == null || sdStateStorage.getState() == null || sdStateStorage.getState().equals("")) {
+                        sdStateStorage.setState("2");
+                    }
+                    sdStateStorage.setDeviceId(sdDevice.getEqId());
+                    sdStateStorageService.updateSdStateStorage(sdStateStorage);
                 } else {
                     json.put("brightness", statusDetails.get(0).getBrightness());
                     json.put("frequency", statusDetails.get(0).getFrequency());

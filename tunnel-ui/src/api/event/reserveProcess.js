@@ -38,7 +38,7 @@ export function updateProcess(data) {
 // 删除预案流程节点
 export function delProcess(id) {
   return request({
-    url: '/system/process/' + id,
+    url: '/plan/process/' + id,
     method: 'delete'
   })
 }
@@ -46,7 +46,16 @@ export function delProcess(id) {
 // 导出预案流程节点
 export function exportProcess(query) {
   return request({
-    url: '/system/process/export',
+    url: '/plan/process/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 根据预案id查找预案流程节点
+export function getListByRId(query) {
+  return request({
+    url: '/plan/process/getListByRId',
     method: 'get',
     params: query
   })

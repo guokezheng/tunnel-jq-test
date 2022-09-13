@@ -111,7 +111,8 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-    @KafkaListener(topics = RadarEventConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
+//    @KafkaListener(topics = RadarEventConstants.WJDEVICERUNNINGINFO, groupId = "TestGroup")
+    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
@@ -121,7 +122,9 @@ public class RadarEventController {
     }
 
     /**
-     * 万集设备运行状态数据 发送
+     * 基础设施-万集设备运行状态数据 发送
+     * 这个接口谁调谁传值  然后发送kafka
+     * 1.4.1
      * topic	baseDeviceStatus
      * 正晨调这个接口传值
      */
@@ -132,6 +135,7 @@ public class RadarEventController {
     }
 
     /**
+     * 2.2.5
      * 设备状态数据查询
      * 万集调用
      * 设备实时数据从缓存取

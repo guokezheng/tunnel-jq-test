@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,9 @@ public class SdStrategyRl extends BaseEntity
     /** 设备类型ID */
     @Excel(name = "设备类型ID")
     private String eqTypeId;
+
+    /** 控制时间 */
+    private Date controlTime;
 
     private List<SdEquipmentState> eqStateList;
     
@@ -122,9 +126,15 @@ public class SdStrategyRl extends BaseEntity
 		this.eqStateList = equipmentState;
 	}
 
-    
-    
-	@Override
+    public Date getControlTime() {
+        return controlTime;
+    }
+
+    public void setControlTime(Date controlTime) {
+        this.controlTime = controlTime;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())

@@ -66,4 +66,11 @@ public interface ISdReserveProcessService
      * @return
      */
     public int deleteSdReserveProcessByPlanId(Long id);
+
+    /**
+     * 根据预案id查找预案流程节点信息
+     * @param RId
+     * @return
+     */
+    public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId);
 }

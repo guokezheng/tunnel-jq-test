@@ -76,8 +76,8 @@ public class SdStrategyModel extends BaseEntity
     private String equipmentTypeId;
 
     /** 设备,以#分割 */
-    @ApiModelProperty("设备,以#分割")
-    private String equipments;
+    /*@ApiModelProperty("设备,以#分割")
+    private String equipments;*/
 
     /** 设备状态 */
     @ApiModelProperty("设备状态")
@@ -92,6 +92,12 @@ public class SdStrategyModel extends BaseEntity
     /** 触发器 */
     @ApiModelProperty("触发器")
     private SdTrigger triggers;
+
+    @ApiModelProperty("手动控制设备状态和设备名")
+    private List<Map> manualControl;
+
+    @ApiModelProperty("定时控制及自动触发设备状态和设备名")
+    private List<Map> autoControl;
 
     public String getDirection() {
         return direction;
@@ -182,7 +188,8 @@ public class SdStrategyModel extends BaseEntity
     {
         return equipmentTypeId;
     }
-    public void setEquipments(String equipments)
+
+    /*public void setEquipments(String equipments)
     {
         this.equipments = equipments;
     }
@@ -190,7 +197,8 @@ public class SdStrategyModel extends BaseEntity
     public String getEquipments()
     {
         return equipments;
-    }
+    }*/
+
     public void setEquipmentState(String equipmentState)
     {
         this.equipmentState = equipmentState;
@@ -237,6 +245,22 @@ public class SdStrategyModel extends BaseEntity
         this.strategyState = strategyState;
     }
 
+    public List<Map> getManualControl() {
+        return manualControl;
+    }
+
+    public void setManualControl(List<Map> manualControl) {
+        this.manualControl = manualControl;
+    }
+
+    public List<Map> getAutoControl() {
+        return autoControl;
+    }
+
+    public void setAutoControl(List<Map> autoControl) {
+        this.autoControl = autoControl;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -248,7 +272,6 @@ public class SdStrategyModel extends BaseEntity
             .append("warningId", getWarningId())
             .append("schedulerTime", getSchedulerTime())
             .append("equipmentTypeId", getEquipmentTypeId())
-            .append("equipments", getEquipments())
             .append("equipmentState", getEquipmentState())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

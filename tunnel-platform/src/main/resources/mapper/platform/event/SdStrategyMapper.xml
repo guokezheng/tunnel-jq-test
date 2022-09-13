@@ -33,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdStrategyList" parameterType="SdStrategy" resultMap="SdStrategyResult">
-        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.direction,A.create_by,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name
         from sd_strategy A
@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
-        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
         		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
         		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name
         from sd_strategy A
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSdStrategyAndSdTriggerById" parameterType="Long" resultMap="SdStrategyResult">
-        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id,
+        select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
                A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
                A.create_time, A.update_by, A.update_time, B.tunnel_name,
                d.id, relate_id, d.device_type_id, d.trigger_type, d.element_id, d.compare_pattern, d.compare_value, d.element_id, d.compare_pattern, d.compare_value
@@ -86,6 +86,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="strategyName != null">strategy_name,</if>
             <if test="strategyType != null">strategy_type,</if>
+            <if test="strategyState != null">strategy_state,</if>
             <if test="strategyInfo != null">strategy_info,</if>
             <if test="warningId != null">warning_id,</if>
             <if test="schedulerTime != null">scheduler_time,</if>
@@ -97,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="strategyName != null">#{strategyName},</if>
             <if test="strategyType != null">#{strategyType},</if>
+ 		    <if test="strategyState != null">#{strategyState},</if>
             <if test="strategyInfo != null">#{strategyInfo},</if>
             <if test="warningId != null">#{warningId},</if>
             <if test="schedulerTime != null">#{schedulerTime},</if>
@@ -113,6 +115,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="strategyName != null">strategy_name = #{strategyName},</if>
             <if test="strategyType != null">strategy_type = #{strategyType},</if>
+            <if test="strategyState != null">strategy_state = #{strategyState},</if>
             <if test="strategyInfo != null">strategy_info = #{strategyInfo},</if>
             <if test="warningId != null">warning_id = #{warningId},</if>
             <if test="schedulerTime != null">scheduler_time = #{schedulerTime},</if>

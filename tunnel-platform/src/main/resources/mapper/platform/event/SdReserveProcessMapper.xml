@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="reserveId"    column="reserve_id"    />
         <result property="deviceTypeId"    column="device_type_id"    />
         <result property="strategyId"    column="strategy_id"    />
+        <result property="strategyIds" column="strategy_ids" />
         <result property="processName"    column="process_name"    />
         <result property="processSort"    column="process_sort"    />
         <result property="createBy"    column="create_by"    />
@@ -116,4 +117,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <delete id="deleteSdReserveProcessByPlanId" parameterType="Long">
         delete from sd_reserve_process where reserve_id = #{id}
     </delete>
+
+    <select id="selectSdReserveProcessByRid" parameterType="SdReserveProcess" resultMap="SdReserveProcessResult">
+        select id, reserve_id, device_type_id, GROUP_CONCAT(strategy_id) strategy_ids , process_name, process_sort
+        from sd_reserve_process
+        <where>
+            <if test="reserveId != null "> and reserve_id = #{reserveId}</if>
+            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
+            <if test="strategyId != null "> and strategy_id = #{strategyId}</if>
+            <if test="processName != null  and processName != ''"> and process_name like concat('%', #{processName}, '%')</if>
+            <if test="processSort != null "> and process_sort = #{processSort}</if>
+        </where>
+        group by reserve_id
+    </select>
 </mapper>

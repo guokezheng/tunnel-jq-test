@@ -372,7 +372,7 @@ export default {
           state:'',
           type:'',
         }],
-        equipmentTypeId: [],
+        equipmentTypeId: '',
         strategyType: null,//策略类型
         tunnelId:null,//隧道id
         strategyName:null,//策略名称
@@ -1017,34 +1017,20 @@ export default {
           this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
-          console.log(response,'zzzzzzzzzzzzzzzzz')
-          if(row.strategyType =='0'){
-            this.strategyForm.addOperation=[]
-          }
+          console.log(response.rows,'zzzzzzzzzzzzzzzzz')
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
             this.equipmentData=res.rows
           })
           for ( var i = 0; i < response.rows.length; i++){
-            if(row.strategyType =='0'){
-              this.strategyForm.addOperation.push({
-                equipments:response.rows[i].equipments.split(','),
-                eqState:response.rows[i].state
-              })
+            var attr = response.rows[i];
+            if(this.strategyForm.strategyType =='0'){
+              this.strategyForm.manualControl[i].value = attr.equipments.split(',')
+            }else{
+              this.strategyForm.autoControl[i].value = attr.equipments.split(',')
             }
-            this.strategyForm.equipmentstr.push(response.rows[i].equipments);
-            // this.oneIdEqTypeId.push(response.rows[i].eqTypeId);//设备类型id数组
-            this.oneId.push(response.rows[i].eqType.typeName+"控制");//设备名称数组
-            this.oneId1 =Number(response.rows[0].eqTypeId) ;//设备名称数组
-            this.eqState[i] = response.rows[i].eqStateList;//设备状态 下拉option
-            this.twoId.push(response.rows[i].state);//执行的操作状态码
-            this.twoId2.push(response.rows[i].state);//手动控制执行的操作状态码             
-            this.strategyForm.equipments.push(response.rows[0].equipments)//设备名称
-            this.turnToStateName(this.eqState[i], i, response.rows[i].state);
           }
+          console.log(this.strategyForm,'xxxxxxxxxxxxxx')
         })
-        if(row.strategyType =='2'){
-
-        }
       });
     },
     //状态码转换状态名称

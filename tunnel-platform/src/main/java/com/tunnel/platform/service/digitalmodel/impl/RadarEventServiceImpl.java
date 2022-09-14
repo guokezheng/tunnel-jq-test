@@ -270,7 +270,11 @@ public class RadarEventServiceImpl implements RadarEventService {
         }
         //将设备状态保存到设备表
         if (CollectionUtils.isNotEmpty(list)){
-            devicesMapper.updateSdDevicesBatch(list);
+            list.forEach(
+                    t->{
+                     devicesMapper.updateSdDevicesBatch(t.getEqId(),t.getEqStatus());
+                    }
+            );
         }
         //赋值雷达eqId
         wjDevicelidar.setEqId(wjDeviceCameraList.get(wjDeviceCameraList.size()-1).getEqId());
@@ -303,62 +307,69 @@ public class RadarEventServiceImpl implements RadarEventService {
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
                 || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "34".equals(deviceType)) {
-            String runStatus = wjDeviceData.getRunStatus() + "";
+//            String runStatus = wjDeviceData.getRunStatus() + "";
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("runStatus", runStatus);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("runStatus", runStatus);
         }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)){
-            String runDate = wjDeviceData.getRunDate();
-            String unit = wjDeviceData.getUnit();
+//            String runDate = wjDeviceData.getRunDate();
+//            String unit = wjDeviceData.getUnit();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("runDate",runDate);
-            jsonObject.put("unit",unit);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("runDate",runDate);
+//            jsonObject.put("unit",unit);
         }else if ("6".equals(deviceType)||"7".equals(deviceType)||"8".equals(deviceType)||"9".equals(deviceType)){
-            Integer runStatus = wjDeviceData.getRunStatus();
+//            Integer runStatus = wjDeviceData.getRunStatus();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("runStatus", runStatus);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("runStatus", runStatus);
         }else if ("31".equals(deviceType)){
-            Integer runStatus = wjDeviceData.getRunStatus();
-            Integer runMode = wjDeviceData.getRunMode();
+//            Integer runStatus = wjDeviceData.getRunStatus();
+//            Integer runMode = wjDeviceData.getRunMode();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("runStatus",runStatus);
-            jsonObject.put("runMode",runMode);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("runStatus",runStatus);
+//            jsonObject.put("runMode",runMode);
         }else if ("17".equals(deviceType)){
-            Double windSpeed = wjDeviceData.getWindSpeed();
-            String windDirection = wjDeviceData.getWindDirection();
+//            Double windSpeed = wjDeviceData.getWindSpeed();
+//            String windDirection = wjDeviceData.getWindDirection();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("windSpeed",windSpeed);
-            jsonObject.put("windDirection",windDirection);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("windSpeed",windSpeed);
+//            jsonObject.put("windDirection",windDirection);
         }else if ("19".equals(deviceType)){
-            Double co = wjDeviceData.getCO();
-            Double vi = wjDeviceData.getVI();
+//            Double co = wjDeviceData.getCO();
+//            Double vi = wjDeviceData.getVI();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("co",co);
-            jsonObject.put("vi",vi);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("co",co);
+//            jsonObject.put("vi",vi);
         }else if ("16".equals(deviceType)){
-            String message = wjDeviceData.getMessage();
+//            String message = wjDeviceData.getMessage();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
             jsonObject.put("deviceType", Integer.parseInt(deviceType));
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
-            jsonObject.put("message",message);
+            jsonObject.put("deviceData",parse);
+//            jsonObject.put("message",message);
         }
         log.info("-----测试测试测试----{}",jsonObject);
         kafkaTemplate.send(RadarEventConstants.BASEDEVICESTATUS, jsonObject.toString());
@@ -442,8 +453,12 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                     );*/
                     SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                    deviceData.setRunDate(sdDeviceDataItem.getData());
-                    deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("6".equals(sdRadarDevice.getDeviceType())||"7".equals(sdRadarDevice.getDeviceType())||"8".equals(sdRadarDevice.getDeviceType())||"9".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(
                         v->{
@@ -493,8 +508,12 @@ public class RadarEventServiceImpl implements RadarEventService {
                         }
                     );*/
                     SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                    deviceData.setRunDate(sdDeviceDataItem.getData());
-                    deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("19".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                         v->{
@@ -509,8 +528,12 @@ public class RadarEventServiceImpl implements RadarEventService {
                         }
                     );*/
                     SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                    deviceData.setRunDate(sdDeviceDataItem.getData());
-                    deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("16".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                         v->{

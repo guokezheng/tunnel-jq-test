@@ -1,15 +1,19 @@
 package com.ruoyi.quartz.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
 import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.platform.domain.dataInfo.*;
 import com.tunnel.platform.domain.event.SdStrategy;
 import com.tunnel.platform.domain.event.SdStrategyRl;
 import com.tunnel.platform.firealarm.FireNettyServerHandler;
+import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.platform.mapper.dataInfo.SdSensorMessageMapper;
 import com.tunnel.platform.service.dataInfo.*;
+import com.tunnel.platform.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.platform.service.event.ISdStrategyRlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.tunnel.platform.service.event.ISdWarningInfoService;
@@ -25,10 +29,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 定时任务调度测试
@@ -38,6 +39,10 @@ import java.util.Map;
 public class RyTask {
 
     private static final Logger log = LoggerFactory.getLogger(RyTask.class);
+
+    private static final List<Long> deviceTypeList = new ArrayList<>(Arrays.asList(5L, 17L, 19L));
+
+    private boolean isCheckState = false;
 
     @Autowired
     private ISdStrategyService sdStrategyService;
@@ -61,6 +66,10 @@ public class RyTask {
     private ISdStateStorageService sdStateStorageService;
     @Autowired
     private SdSensorMessageMapper sdSensorMessageMapper;
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
+    @Autowired
+    private RadarEventServiceImpl radarEventService;
 
     private static  ModbusMaster master = ModbusTcpMaster.getMaster();
 
@@ -97,7 +106,25 @@ public class RyTask {
                             boolean zLv = registers[eqFeedbackAddress1+3];
                             state = getCheZhiState(fHong, fLv, zHong, zLv);
                         }
-
+                        if ((state != null || !("").equals(state)) && !devices.getEqStatus().equals("1")) {
+                            devices.setEqStatus("1");
+                            devices.setEqStatusTime(new Date());
+                            sdDevicesService.updateSdDevices(devices);
+                        } else {
+                            devices.setEqStatus("2");
+                            devices.setEqStatusTime(new Date());
+                            sdDevicesService.updateSdDevices(devices);
+                        }
+                        //推送数据
+                        if (isCheckState) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("deviceId", devices.getEqId());
+                            map.put("deviceType", devices.getEqType());
+                            JSONObject jsonObject = new JSONObject();
+                            jsonObject.put("runStatus", state);
+                            map.put("deviceData", jsonObject);
+                            radarEventService.sendBaseDeviceStatus(map);
+                        }
                     }else if (devices.getEqType()==17L){
                         Integer eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
                         boolean fx = registers[eqFeedbackAddress2];
@@ -134,24 +161,61 @@ public class RyTask {
                         Integer eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
                         Integer eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
                         state = co_vi_ws_dn_dw.get(eqFeedbackAddress1)+","+co_vi_ws_dn_dw.get(eqFeedbackAddress2);
+                        if (devices.getEqType()==19L) {
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.CO.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress1));
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.VI.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress2));
+                            if (isCheckState) {
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("deviceId", devices.getEqId());
+                                map.put("deviceType", devices.getEqType());
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("CO", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress1)));
+                                jsonObject.put("VI", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress2)));
+                                map.put("deviceData", jsonObject);
+                                radarEventService.sendBaseDeviceStatus(map);
+                            }
+                        } else {
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress1));
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress2));
+                            if (isCheckState) {
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("deviceId", devices.getEqId());
+                                map.put("deviceType", devices.getEqType());
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("runDate", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress1)));
+                                jsonObject.put("unit", "lux");
+                                map.put("deviceData", jsonObject);
+                                radarEventService.sendBaseDeviceStatus(map);
+                                jsonObject = new JSONObject();
+                                jsonObject.put("runDate", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress2)));
+                                jsonObject.put("unit", "cd/㎡");
+                                map.put("deviceData", jsonObject);
+                                radarEventService.sendBaseDeviceStatus(map);
+                            }
+                        }
                     }else if (devices.getEqType()==17L){
                         Integer eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
                         //查询存在的风向
                         SdStateStorage storage = sdStateStorageService.selectSdStateStorage(devices.getEqId());
                         if (storage!=null){
                             String[] split = storage.getState().split(",");
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.FENG_SU.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress1));
+                            insertIntoDeviceData(devices, DevicesTypeItemEnum.FENG_XIANG.getCode(), split[1]);
                             //风速、风向
+                            if (isCheckState) {
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("deviceId", devices.getEqId());
+                                map.put("deviceType", devices.getEqType());
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("windSpeed", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress1)));
+                                jsonObject.put("windDirection", split[1]);
+                                map.put("deviceData", jsonObject);
+                                radarEventService.sendBaseDeviceStatus(map);
+                            }
                             state= co_vi_ws_dn_dw.get(eqFeedbackAddress1)+","+split[1];
                         }
                     }
                     updateSdStateStorage(devices.getEqId(),state);
-//                    SdSensorMessage sdSensorMessage = new SdSensorMessage();
-//                    sdSensorMessage.setEqId(devices.getEqId());
-//                    sdSensorMessage.setEqType(devices.getEqType().toString());
-//                    sdSensorMessage.setEqTunnelId(devices.getEqTunnelId());
-//                    sdSensorMessage.setSensorValue(state);
-//                    sdSensorMessage.setCreateTime(new Date());
-//                    sdSensorMessageMapper.insertSdSensorMessage(sdSensorMessage);
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -170,8 +234,67 @@ public class RyTask {
                     sdDevicesService.updateSdDevices(devices);
                 }
             }
+        } else if (params.equals("check_devices_is_online")) {
+            for (int i = 0;i < deviceTypeList.size();i++) {
+                Long deviceTypeId = deviceTypeList.get(i);
+                SdDevices sdDevices = new SdDevices();
+                sdDevices.setEqType(deviceTypeId);
+                List<SdDevices> devicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+                for (int j = 0;j < devicesList.size();j++) {
+                    SdDevices devices = devicesList.get(j);
+                    String eqId = devices.getEqId();
+                    SdDeviceData sdDeviceData = new SdDeviceData();
+                    sdDeviceData.setDeviceId(eqId);
+                    SdDeviceData data = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
+                    if (data != null) {
+                        Date createTime = data.getCreateTime();
+                        if(createTime != null){
+                            Date nowdate = new Date();
+                            long sec = (nowdate.getTime()-createTime.getTime()) / 1000L / 60L;
+                            if(sec > 5L){
+                                log.info("当前设备离线");
+                                if (devices.getEqStatus().equals("2")) {
+                                    return;
+                                }
+                                devices.setEqStatus("2");
+                                devices.setEqStatusTime(new Date());
+                                sdDevicesService.updateSdDevices(devices);
+                            } else {
+                                if (devices.getEqStatus() == null || !devices.getEqStatus().equals("1")) {
+                                    devices.setEqStatus("1");
+                                    devices.setEqStatusTime(new Date());
+                                    sdDevicesService.updateSdDevices(devices);
+                                }
+                            }
+                        }
+                        isCheckState = true;
+                    }
+                }
+            }
         }
     }
+
+    public void insertIntoDeviceData(SdDevices devices, int itemId, String value) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(devices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(itemId));
+        SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
+        if(deviceData != null){
+            Date createTime = deviceData.getCreateTime();
+            if(createTime != null) {
+                Date nowdate = new Date();
+                long sec = (nowdate.getTime()-createTime.getTime()) / 1000L / 60L;
+                if(sec < 5L){
+                    log.info("当前设备类型为{}的数据记录时间小于5分钟，不需要新增数据", itemId);
+                    return;
+                }
+            }
+        }
+        sdDeviceData.setData(value);
+        sdDeviceData.setCreateTime(new Date());
+        sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+    }
+
     public void updateSdStateStorage(String deviceId,String state) {
         SdStateStorage sdStateStorage=new SdStateStorage();
         sdStateStorage.setDeviceId(deviceId);

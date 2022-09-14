@@ -86,6 +86,9 @@ public class SdStateStorageController extends BaseController {
                 if (statusDetails.size() == 0) {
                     json.put("brightness", "50");
                     json.put("frequency", "69");
+                    if (sdStateStorage == null) {
+                        sdStateStorage = new SdStateStorage();
+                    }
                     sdStateStorage.setBrightness("50");
                     sdStateStorage.setFrequency("69");
                     sdStateStorage.setTunnelId(tunnelId);
@@ -93,7 +96,11 @@ public class SdStateStorageController extends BaseController {
                         sdStateStorage.setState("2");
                     }
                     sdStateStorage.setDeviceId(sdDevice.getEqId());
-                    sdStateStorageService.updateSdStateStorage(sdStateStorage);
+                    if (null == sdStateStorage.getId()) {
+                        sdStateStorageService.insertSdStateStorage(sdStateStorage);
+                    } else {
+                        sdStateStorageService.updateSdStateStorage(sdStateStorage);
+                    }
                 } else {
                     json.put("brightness", statusDetails.get(0).getBrightness());
                     json.put("frequency", statusDetails.get(0).getFrequency());

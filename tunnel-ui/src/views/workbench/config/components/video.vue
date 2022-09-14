@@ -3,13 +3,28 @@
     <el-dialog
       v-dialogDrag
       class="workbench-dialog"
-      title="固定摄像机"
+      :title="title"
       width="450px"
       append-to-body
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-      <div style="width: 100%; height: 30px; padding: 0 15px"></div>
+    <div
+        style="
+          width: 100%;
+          height: 30px;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <div class="dialogLine"></div>
+        <img
+          :src="titleIcon"
+          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          @click="handleClosee"
+        />
+      </div>
+      <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
       <div style="width: 100%; height: 200px; padding: 0 15px">
         <!--   <video class="h5video_" id="h5sVideo1" muted="muted" style="width:100%;height:100%;"></video> -->
         <video
@@ -149,7 +164,7 @@
     <el-dialog
       v-dialogDrag
       class="workbench-dialog"
-      title="摄像机K20+060"
+      :title="title"
       width="1000px"
       append-to-body
       :visible="historyVisible"
@@ -256,6 +271,9 @@ export default {
   props: ["equipmentId", "clickEqType", "brandList", "directionList"],
   data() {
     return {
+      titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+
+      title:'',
       cameraVisible: true, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
@@ -281,6 +299,8 @@ export default {
       getDeviceById(eqId).then((res) => {
         console.log(res, "查询摄像机弹窗信息");
         obj = res.data;
+        this.title = obj.eqName ;
+
         displayH5sVideoAll(res.data.secureKey);
 
         getInfo(this.clickEqType).then((response) => {

@@ -20,7 +20,8 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px)"
+          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          @click="handleClosee"
         />
       </div>
       <el-form
@@ -107,7 +108,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           obj = res.data;
 
-          this.title = obj.typeName + " " + obj.pile;
+          this.title = obj.eqName ;
           this.stateForm = {
             brandName: that.getBrandName(obj.brandId), //厂商
             eqDirection: that.getDirection(obj.eqDirection),

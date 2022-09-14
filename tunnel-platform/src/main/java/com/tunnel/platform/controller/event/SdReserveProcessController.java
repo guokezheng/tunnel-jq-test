@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.platform.domain.event.SdReserveProcess;
+import com.tunnel.platform.domain.event.SdReserveProcessModel;
 import com.tunnel.platform.service.event.ISdReserveProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,10 +68,24 @@ public class SdReserveProcessController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('plan:process:add')")
     @Log(title = "预案流程节点", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/add")
     public AjaxResult add(@RequestBody SdReserveProcess sdReserveProcess)
     {
         return toAjax(sdReserveProcessService.insertSdReserveProcess(sdReserveProcess));
+    }
+
+    /**
+     * 批量添加预案流程节点
+     *
+     * @param sdReserveProcess
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('plan:process:add')")
+    @Log(title = "预案流程节点", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody SdReserveProcessModel sdReserveProcess)
+    {
+        return toAjax(sdReserveProcessService.batchSdReserveProcessed(sdReserveProcess));
     }
 
     /**

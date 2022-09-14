@@ -241,6 +241,7 @@ public class SdReservePlanController extends BaseController
      * @return
      */
     @GetMapping("/getListBySId")
+    @ApiOperation("根据分区id查询预案")
     public Result selectPlanBySid(@RequestBody SdReservePlan sdReservePlan) {
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }

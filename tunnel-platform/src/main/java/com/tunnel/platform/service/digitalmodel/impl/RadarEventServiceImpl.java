@@ -255,7 +255,6 @@ public class RadarEventServiceImpl implements RadarEventService {
         wjDeviceCamera.setIp(wjDevicelidar.getIp());
         wjDeviceCamera.setDeviceType(wjDevicelidar.getDeviceType());
         wjDeviceCamera.setStatus(wjDevicelidar.getStatus());
-        wjDeviceCamera.setEqId(wjDevicelidar.getEqId());
         wjDeviceCameraList.add(wjDeviceCamera);
         for (int i = 0; i < list.size(); i++) {
             for (int t = 0; t < wjDeviceCameraList.size(); t++) {

@@ -3,6 +3,7 @@
     background-color: #00588f;
     height: 56px;
     line-height: 56px;
+    border-radius: 0;
     i{
       color: white;
     }
@@ -246,6 +247,11 @@
         background: #99a9bf;
         border-radius: 20px;
       }
+    }
+  }
+  .comCovi{
+    .el-radio-button--medium .el-radio-button__inner{
+      color: #fff;
     }
   }
   .my-back{
@@ -514,11 +520,13 @@
   }
   .menu-button-group{
     .el-button--info {
-      width: 100px;
+      // width: 100px;
       color: #fff;
       background: linear-gradient(177deg, #00ACED, #0079DB);
       opacity: 0.8;
       border: none;
+      text-align: center;
+    border-radius: 2px;
     }
   }
   .header{
@@ -554,24 +562,25 @@
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #00c8ff;
     }
+    .switchStyle .el-switch__core:after{
+      background: #0a88bd;
+    }
+    .is-checked .el-switch__core:after{
+      background: #e2f3fa !important;
+    }
+    .el-switch__core{
+      background: linear-gradient(2deg, #00070D, #005AA8);
+      border: solid 1px #0a88bd !important;
+    }
+    .el-switch.is-checked .el-switch__core{
+      background-color: #0a88bd !important;
+      border: solid 1px #0a88bd !important;
+    }
+    .display-box .el-switch__core:after{
+      background: #00c8ff;
+    }
   }
-  .switchStyle .el-switch__core:after{
-    background: #0a88bd;
-  }
-  .is-checked .el-switch__core:after{
-    background: #e2f3fa !important;
-  }
-  .el-switch__core{
-    background: linear-gradient(2deg, #00070D, #005AA8);
-    border: solid 1px #0a88bd !important;
-  }
-  .el-switch.is-checked .el-switch__core{
-    background-color: #0a88bd !important;
-    border: solid 1px #0a88bd !important;
-  }
-  .display-box .el-switch__core:after{
-    background: #00c8ff;
-  }
+  
   .rightButtonS{
     color: #fff;
     background-image: linear-gradient(to left,#004375,#0086ba);

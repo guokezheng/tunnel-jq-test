@@ -20,7 +20,7 @@ export default {
       // 建立 websocket 连接
       this.socket.initialize({
        
-		     url: 'ws://10.168.64.171' + ':' + port + path,
+		     url: 'ws://'+location.hostname + ':' + port + path,
 		        password: password,
 		        tokenSN: this.token,
 		        heartRate: interval

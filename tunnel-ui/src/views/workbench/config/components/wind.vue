@@ -20,7 +20,8 @@
           <div class="dialogLine"></div>
           <img
             :src="titleIcon"
-            style="height: 30px; transform: translateY(-30px)"
+            style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+            @click="handleClosee"
           />
         </div>
         <el-form
@@ -92,12 +93,12 @@
         <el-radio-group v-model="tab" style="margin-bottom: 10px;margin-top: -10px;">
           <el-radio-button label="co">风速风向实时趋势</el-radio-button>
         </el-radio-group>
-        <div id="feng" ></div>
+        <div id="feng" style="margin-bottom:10px"></div>
         <div slot="footer">
           <el-button
             type="primary"
             size="mini"
-            @click="videoViewing()"
+            @click="handleClosee()"
             style="width: 80px"
             class="submitButton"
             >确 定</el-button
@@ -201,14 +202,14 @@
             },
           },
           grid: {
-            top: "20%",
+            top: "24%",
             bottom: "18%",
             left: "14%",
-            right: "14%",
+            right: "12%",
           },
           xAxis: {
             type: "category",
-            boundaryGap: false,
+            boundaryGap: true,
             data: XData,
             axisLabel: {
               textStyle: {
@@ -227,7 +228,7 @@
             type: "value",
             name: yName,
             nameTextStyle: {
-              color: '#00AAF2',
+              color: '#FFB500',
               fontSize: 10,
               padding: [0, 20, 0, 0],
             },
@@ -339,5 +340,9 @@
     height: 150px !important;
     }
   }
+  ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  background: #00aaf2 !important;
+  border-radius: 20px !important;
+}
   </style>
   

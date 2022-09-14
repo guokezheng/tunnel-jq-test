@@ -169,7 +169,7 @@
         <template v-if="strategyForm.strategyType == '0'">
           <el-col :span="8">
             <el-form-item label="设备类型">
-              <el-select v-model="strategyForm.equipmentType" placeholder="请选择设备类型" title="手动控制">
+              <el-select v-model="strategyForm.equipmentTypeId" placeholder="请选择设备类型" title="手动控制">
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
                   @click.native="eqTypeChange"/>
               </el-select>
@@ -372,7 +372,7 @@ export default {
           state:'',
           type:'',
         }],
-        equipmentType: [],
+        equipmentTypeId: [],
         strategyType: null,//策略类型
         tunnelId:null,//隧道id
         strategyName:null,//策略名称
@@ -772,7 +772,7 @@ export default {
     //查询设备控制状态和设备列表
     eqTypeChange() {
       if(Number(this.strategyForm.strategyType) == 0){
-        var stateTypeId = this.strategyForm.equipmentType
+        var stateTypeId = this.strategyForm.equipmentTypeId
         var direction  =  this.strategyForm.direction
         let params = {'stateTypeId':stateTypeId,'direction':direction,'isControl': 1}
         this.listEqTypeStateIsControl(params)
@@ -788,7 +788,7 @@ export default {
     // public查询设备列表
     listDevices(){
       if(Number(this.strategyForm.strategyType) == 0){
-        var eqType = this.strategyForm.equipmentType;
+        var eqType = this.strategyForm.equipmentTypeId;
       }else{ 
         var eqType = this.eqForm.equipment_type;
       }
@@ -1026,7 +1026,6 @@ export default {
             }
             this.strategyForm.equipmentstr.push(response.rows[i].equipments);
             // this.oneIdEqTypeId.push(response.rows[i].eqTypeId);//设备类型id数组
-            this.strategyForm.equipmentTypeId.push(response.rows[i].eqTypeId);
             this.oneId.push(response.rows[i].eqType.typeName+"控制");//设备名称数组
             this.oneId1 =Number(response.rows[0].eqTypeId) ;//设备名称数组
             this.eqState[i] = response.rows[i].eqStateList;//设备状态 下拉option
@@ -1056,7 +1055,6 @@ export default {
       this.twoId=[];
       this.list=[{"oneId":'',"twoId":''}];
       this.selectedList=[];//存储每次option选中的集合
-      this.strategyForm.equipmentTypeId = [];
       this.strategyForm.strategyType=null;
       this.strategyForm.tunnelId=null;
       this.strategyForm.strategyName=null;
@@ -1151,44 +1149,6 @@ export default {
         }, 400);
       })
     },
-      /** 添加策略 */
-      addStrategysData(guid,straInfo){    
-        this.strategyForm.addOperation.forEach((item)=>{
-          item.equipments=item.equipments.join('#')
-          item.equipmentTypeId=this.strategyForm.equipmentTypeId1       
-        })
-        if(!this.strategyForm.equipmentTypeId1){
-        this.$modal.msgError("请填写设备类型"); 
-        return
-        }
-        console.log(this.strategyForm.addOperation,'点击了新增的保存')
-        addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
-                strategyName:this.strategyForm.strategyName,
-                direction:this.strategyForm.direction,
-                strategyType:this.strategyForm.strategyType,
-                strategyInfo:straInfo,
-                equipmentTypeId:this.strategyForm.equipmentTypeId1,//设备类型id
-                // equipmentState:this.twoId.join('#'),
-                // equipments:this.strategyForm.equipments.join('#'),
-                schedulerTime:this.strategyForm.schedulerTime,
-                equipmentState:this.strategyForm.addOperation.eqState1,
-                equipment:this.strategyForm.addOperation,
-                jobRelationId:this.guid,
-                }).then(response => {
-                  if (response.code === 200) {
-                    if(this.strategyForm.strategyType != 1) {
-                     this.$modal.msgSuccess("新增策略成功");
-                    }
-                    this.dloading=false;
-                    this.drawer=false;
-                    this.getList();
-                    setTimeout(() => {
-                      this.resetStrategyInfo();
-                    }, 400);
-                  }
-              });
-        },
-
     /** 添加定时任务 */
     addJobData(guid,str){
     //  if(this.model == '2'){

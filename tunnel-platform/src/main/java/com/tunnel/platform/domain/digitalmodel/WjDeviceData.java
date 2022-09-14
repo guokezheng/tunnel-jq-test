@@ -14,7 +14,7 @@ public class WjDeviceData {
     private Integer runStatus;
 
     @ApiModelProperty("设备实时运行数据（开关）无单位")
-    private Integer runDate;
+    private String runDate;
 
     @ApiModelProperty("单位")
     private String	unit;

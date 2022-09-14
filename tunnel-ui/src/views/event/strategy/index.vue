@@ -168,7 +168,7 @@
       <el-row >
         <template v-if="strategyForm.strategyType == '0'">
           <el-col :span="8">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型11">
               <el-select v-model="strategyForm.equipmentTypeId" placeholder="请选择设备类型" title="手动控制">
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
                   @click.native="eqTypeChange"/>
@@ -980,22 +980,57 @@ export default {
     },
     //打开drawer
     openInsertStrategy() {
+      this.strategyForm = {
+        manualControl:[
+          {value:'',state:''}
+        ],//手动控制数组
+        autoControl:[{
+          value:'',
+          state:'',
+          type:'',
+        }],
+        equipmentTypeId: '',
+        strategyType: null,//策略类型
+        tunnelId:null,//隧道id
+        strategyName:null,//策略名称
+        equipments:[],//所选设备
+        schedulerTime:null,
+        direction: '',// 方向
+        triggers:{
+          deviceTypeId:'',//设备类型
+          deviceId:'',
+          elementId:'',//设备数据项
+          comparePattern:'',//比较的符号
+          compareValue:'',//比较符号
+        },
+        eqState1:'',
+        //策略关系表
+        equipmentStates:[],//动态策略所有选择状态
+        jobRelationId:null,//定时任务Uid
+        startTime: '',// 简单模式开始时间
+        endTime: '',// 简单模式开始时间
+        automaticEqType:'',//自动触发时设备类型
+        automaticEqName:'',//自动触发时设备名称
+        automaticSymbol:'',//自动触发时符号 >= <= ..
+        threshold:'',//自动触发时阈值输入框
+        autodataItem:"",//自动触发设备类型数据项
+      },
       this.getEquipmentType();
       this.drawerTitle = "新增策略";
       this.sink = "add";
       //清空 定时弹窗里的设备名称数组
-      this.eqForm.equipments=[]
+      this.eqForm.equipments = []
       this.drawer = true;
       this.viewStrategy=false;
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    async handleUpdate(row) {
       this.is_show = true;
       //获取设备
       autoEqTypeList().then(res=>{
         this.eqTypeList = res.rows;
       })
-      listType(this.queryEqTypeParams).then(response => {
+      await listType(this.queryEqTypeParams).then(response => {
         this.equipmentTypeData = response.rows;
       });
       this.viewStrategy=false;
@@ -1010,26 +1045,61 @@ export default {
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
+        this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.drawerTitle = "编辑策略";
         this.drawer = true;
         this.strategyForm.jobRelationId = data.jobRelationId;
+        listItem({deviceTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
+          this.dataItem = res.rows
+          console.log(this.dataItem.deviceTypeId,'asdasdas')
+        })
+        // 如果是2.则获取触发器数据
+        if(this.strategyForm.strategyType == '2'){
+          // 获取触发器的数据
+          getTriggersByRelateId({relateId:response.data.id}).then(res=>{
+            console.log(res,'kkkkkkkkkkkkkkk')
+            this.strategyForm.triggers.comparePattern = res.data.comparePattern
+            this.strategyForm.triggers.compareValue = res.data.compareValue
+            this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId
+            this.strategyForm.triggers.elementId = res.data.elementId
+            console.log(this.strategyForm.triggers.elementId,'赋的值')
+            this.strategyForm.triggers.deviceId = res.data.deviceId
+          })
+        }
         if(this.strategyForm.strategyType ==1 ){
           this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
           console.log(response.rows,'zzzzzzzzzzzzzzzzz')
+          this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
+          if(this.strategyForm.strategyType == '0'){
+            this.eqTypeChange();
+          }
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
             this.equipmentData=res.rows
           })
+          this.strategyForm.manualControl = response.rows;
           for ( var i = 0; i < response.rows.length; i++){
+            // debugger
             var attr = response.rows[i];
             if(this.strategyForm.strategyType =='0'){
+              // this.strategyForm.manualControl.push({value:'',state:'',})
               this.strategyForm.manualControl[i].value = attr.equipments.split(',')
+              this.strategyForm.manualControl[i].state = attr.state
+              this.strategyForm.equipmentTypeId = Number(attr.eqTypeId)
             }else{
-              this.strategyForm.autoControl[i].value = attr.equipments.split(',')
+              if(this.strategyForm.autoControl[i].value){
+                this.strategyForm.autoControl[i].value = attr.equipments.split(',')
+              }else{
+                // this.strategyForm.autoControl.push({value:'',type:'',state:'',eqStateList:''})
+                this.strategyForm.autoControl[i].value = attr.equipments.split(',')
+                this.strategyForm.autoControl[i].eqStateList = attr.eqStateList
+                this.strategyForm.autoControl[i].state = attr.state
+                this.strategyForm.autoControl[i].type = attr.eqTypeId
+                this.strategyForm.autoControl[i].typeName = attr.eqType.typeName
+              }
             }
           }
-          console.log(this.strategyForm,'xxxxxxxxxxxxxx')
         })
       });
     },
@@ -1177,6 +1247,41 @@ export default {
      },
     //关闭drawer
     strategyFormClose() {
+      this.strategyForm = {
+        manualControl:[
+          {value:'',state:''}
+        ],//手动控制数组
+        autoControl:[{
+          value:'',
+          state:'',
+          type:'',
+        }],
+        equipmentTypeId: '',
+        strategyType: null,//策略类型
+        tunnelId:null,//隧道id
+        strategyName:null,//策略名称
+        equipments:[],//所选设备
+        schedulerTime:null,
+        direction: '',// 方向
+        triggers:{
+          deviceTypeId:'',//设备类型
+          deviceId:'',
+          elementId:'',//设备数据项
+          comparePattern:'',//比较的符号
+          compareValue:'',//比较符号
+        },
+        eqState1:'',
+        //策略关系表
+        equipmentStates:[],//动态策略所有选择状态
+        jobRelationId:null,//定时任务Uid
+        startTime: '',// 简单模式开始时间
+        endTime: '',// 简单模式开始时间
+        automaticEqType:'',//自动触发时设备类型
+        automaticEqName:'',//自动触发时设备名称
+        automaticSymbol:'',//自动触发时符号 >= <= ..
+        threshold:'',//自动触发时阈值输入框
+        autodataItem:"",//自动触发设备类型数据项
+      },
       this.resetStrategyInfo();
       this.currentId = null;
       this.drawer = false;

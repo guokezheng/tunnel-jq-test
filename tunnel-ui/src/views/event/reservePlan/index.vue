@@ -270,7 +270,6 @@
       title="预览"
       width="86.5%"
     >
-
       <img alt="" class="chedaoImage" src="../../../assets/image/lane/3duan.png">
       <!-- 设备图标-->
       <div
@@ -286,20 +285,18 @@
       >
         <div
           v-show="(item.eqType != 7 &&
-
-                                  item.eqType != 16 &&
-
-                                  item.eqType != 15 &&
-                                  item.eqType != 8 &&
-                                  item.eqType != 9 &&
-                                  item.eqType != 21 &&
-                                  item.display == true) ||
-                                ((item.eqType == 7 ||
-                                  item.eqType == 8 ||
-                                  item.eqType == 9 ||
-                                  item.eqType == 21 ) &&
-                                  item.display == true &&
-                                  lightSwitch == 1)"
+            item.eqType != 16 &&
+            item.eqType != 15 &&
+            item.eqType != 8 &&
+            item.eqType != 9 &&
+            item.eqType != 21 &&
+            item.display == true) ||
+            ((item.eqType == 7 ||
+            item.eqType == 8 ||
+            item.eqType == 9 ||
+            item.eqType == 21 ) &&
+            item.display == true &&
+            lightSwitch == 1)"
           :class="{ focus: item.focus }"
         >
           <img
@@ -311,17 +308,16 @@
             :width="item.iconWidth"
             style="position: relative;"
           />
-
           <!-- 调光数值 -->
           <label
             v-if="item.eqType == 21"
             style="
-                                  color: yellow;
-                                  position: absolute;
-                                  left: 30px;
-                                  bottom: 2px;
-                                  pointer-events: none;
-                                "
+              color: yellow;
+              position: absolute;
+              left: 30px;
+              bottom: 2px;
+              pointer-events: none;
+            "
           >{{ item.lightValue }}</label
           >
           <!-- CO/VI -->
@@ -346,38 +342,6 @@
             {{ item.value }}cd/m2
           </label>
         </div>
-
-        <!-- 桩号 -->
-        <!-- <input
-          :class="[
-                  item.eqType == 7 ||
-                  item.eqType == 8 ||
-                  item.eqType == 9 ||
-                  item.eqType == 21
-                    ? 's-config-img-input'
-                    : 'config-img-input',
-                ]"
-            v-if="(item.display == true &&
-                    displayNumb == true &&
-                    item.eqType != 7 &&
-                    item.eqType != 8 &&
-                    item.eqType != 9 &&
-                    item.eqType != 21) ||
-                  ((item.eqType == 7 ||
-                    item.eqType == 8 ||
-                    item.eqType == 9 ||
-                    item.eqType == 21) &&
-                    item.display == true &&
-                    lightSwitch == 1 &&
-                    displayNumb == true)
-                "
-          v-show="item.eqType || item.eqType==0"
-          type="text"
-          v-model="item.pile"
-          disabled="true"
-          style="color: #055270;"
-        />
-        <div v-else style="width: 80px"></div> -->
       </div>
       <el-steps :active="active" finish-status="success">
         <el-step title="步骤 1"></el-step>
@@ -388,9 +352,7 @@
           <el-button @click="workbenchOpen = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
         </span>
-
     </el-dialog>
-
 
     <!-- 新增弹窗 -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
@@ -473,8 +435,7 @@
               <el-input v-model="item.processName" placeholder="请输入流程节点名称"></el-input>
             </el-form-item>
             <el-form-item label="节点顺序" prop="processSort">
-              <el-input-number v-model="item.processSort" :max="10" :min="1"
-                               label="描述文字"></el-input-number>
+              <el-input-number v-model="item.processSort" :max="10" :min="1" label="描述文字"></el-input-number>
             </el-form-item>
             <el-form-item label="相关策略" prop="planTypeId">
               <el-cascader
@@ -533,7 +494,7 @@ import {
   listTunnels
 } from "@/api/equipment/tunnel/api";
 import {fastLerp} from "zrender/lib/tool/color";
-import {addProcess,} from "@/api/event/reserveProcess";
+import {addProcess,getListByRId} from "@/api/event/reserveProcess";
 
 export default {
   name: "Plan",
@@ -843,9 +804,15 @@ export default {
 
     //查看工作台
     openWorkbench() {
+      console.log('sssssssssss');
+      this.getListData();
       this.workbenchOpen = true
     },
-
+    getListData(){
+      getListByRId({'reserveId':this.reserveId}).then(res=>{
+        console.log(res);
+      })
+    },
 //=========================执行相关预案开始=====================
     //执行策略
     /* executionStrategy(row){

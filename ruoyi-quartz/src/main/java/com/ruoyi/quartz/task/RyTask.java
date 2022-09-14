@@ -168,10 +168,12 @@ public class RyTask {
                     SdDevices devices = sdDevicesArr.get(i);
                     String state="";
                     if (devices.getEqType()==19L || devices.getEqType()==5L){
-                        Integer eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
-                        Integer eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
-                        state = co_vi_ws_dn_dw.get(eqFeedbackAddress1)+","+co_vi_ws_dn_dw.get(eqFeedbackAddress2);
+                        Integer eqFeedbackAddress1;
+                        Integer eqFeedbackAddress2;
                         if (devices.getEqType()==19L) {
+                            eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
+                            eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
+                            state = co_vi_ws_dn_dw.get(eqFeedbackAddress1)+","+co_vi_ws_dn_dw.get(eqFeedbackAddress2);
                             insertIntoDeviceData(devices, DevicesTypeItemEnum.CO.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress1));
                             insertIntoDeviceData(devices, DevicesTypeItemEnum.VI.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress2));
                             if (isCheckState) {
@@ -185,19 +187,29 @@ public class RyTask {
                                 radarEventService.sendBaseDeviceStatus(map);
                             }
                         } else {
-                            insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress1));
-                            insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode(), co_vi_ws_dn_dw.get(eqFeedbackAddress2));
+                            String tunnelInside = "";
+                            String tunnelOutside = "";
+                            if (!devices.getEqFeedbackAddress1().equals(null)) {
+                                eqFeedbackAddress1 =Integer.parseInt(devices.getEqFeedbackAddress1()) ;
+                                tunnelInside = co_vi_ws_dn_dw.get(eqFeedbackAddress1);
+                                insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(), tunnelInside);
+                            }
+                            if (!devices.getEqFeedbackAddress2().equals(null)) {
+                                eqFeedbackAddress2 =Integer.parseInt(devices.getEqFeedbackAddress2()) ;
+                                tunnelOutside = co_vi_ws_dn_dw.get(eqFeedbackAddress2);
+                                insertIntoDeviceData(devices, DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode(), tunnelOutside);
+                            }
                             if (isCheckState) {
                                 Map<String, Object> map = new HashMap<>();
                                 map.put("deviceId", devices.getEqId());
                                 map.put("deviceType", devices.getEqType());
                                 JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("runDate", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress1)));
+                                jsonObject.put("runDate", Double.valueOf(tunnelInside));
                                 jsonObject.put("unit", "lux");
                                 map.put("deviceData", jsonObject);
                                 radarEventService.sendBaseDeviceStatus(map);
                                 jsonObject = new JSONObject();
-                                jsonObject.put("runDate", Double.valueOf(co_vi_ws_dn_dw.get(eqFeedbackAddress2)));
+                                jsonObject.put("runDate", Double.valueOf(tunnelOutside));
                                 jsonObject.put("unit", "cd/㎡");
                                 map.put("deviceData", jsonObject);
                                 radarEventService.sendBaseDeviceStatus(map);

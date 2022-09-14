@@ -32,7 +32,13 @@ export function getDevices(eqId) {
     method: 'get'
   })
 }
-
+// 查询设备详细
+export function getDeviceById(eqId) {
+  return request({
+    url: '/devices/getDevice/' + eqId,
+    method: 'get'
+  })
+}
 //通过隧道查询设备类型信息
 export function getEquipmentTypeName(tunnelId){
   return request({

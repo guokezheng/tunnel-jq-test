@@ -294,7 +294,27 @@
   .robotTabs .el-tabs__header .el-tabs__nav .el-tabs__item{
     color: #2c5ea2 !important;
   }
+  .videoTabs .el-tabs__item {
+    color: #fff !important;
+  }
+  .videoTabs .el-tabs__item.is-active{
+    color: #0198FF !important;
+  }
+ 
   .workbench-dialog{
+    .lineClass{
+      width: 100%;
+      height: 1px;
+      background-image: linear-gradient(
+        to right,
+        #00c8fe 0%,
+        #00c8fe 80%,
+        transparent 80%
+      );
+      background-size: 15px 1px;
+
+      background-repeat: repeat-x;
+    }
     .el-dialog{
       background-color: #01162C;
       border-bottom: solid 2px white;
@@ -338,10 +358,11 @@
     }
     .el-radio {
       color: #fff;
-      width: 240px;
+      // width: 240px;
       &:hover {
        background-color: #0A6591;
        border: solid 1px #01AAFD;
+      //  width: 240px;
       }
     }
     .el-radio-selcted {
@@ -351,9 +372,29 @@
     }
     /*select选择框的背景颜色*/
     .el-input__inner {
-      background-color: #fff;
-      color: #2c5ea2;
-      border: solid 1px #acdeff;
+      background-color: #00152B;
+      color: #01AAFD;
+      border: solid 1px #01AAFD;
+    }
+    .el-date-editor .el-range-input{
+      background-color: #00152B !important;
+
+    }
+   .el-pagination__total,.el-pagination__jump{
+      color: #01AAFD;
+    }
+    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, 
+    .el-pagination.is-background .el-pager li{
+      background-color: #00152B !important;
+      border: solid 1px #01AAFD;
+      color: #01AAFD;
+
+    }
+    .el-pagination.is-background .btn-prev:disabled, .el-pagination.is-background .btn-next:disabled{
+      color:'#01AAFD !important'
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active{
+      color: #01AAFD;
     }
     /* 按钮*/
     .el-button {
@@ -374,8 +415,8 @@
     }
     .el-dialog__headerbtn {
       
-        background: url('https://你路径资源的url图片') left no-repeat;
-        background-size: cover;
+        background: url(../../assets/cloudControl/closeIcon.png) left no-repeat;
+        background-size: 54% 50%;
     }
     .el-dialog__headerbtn i {
         content: '修改下面的font-size可以改变图片的大小';
@@ -413,6 +454,15 @@
       color: white !important;
     }
     .el-button--mini {padding: 0 !important;}
+    .el-table tr{
+      background-color: #00152B;
+      color: white;
+    }
+    .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+      background-color: #00152B;
+      color: white;
+      
+    }
   }
   .siteClass {
     line-height: unset;

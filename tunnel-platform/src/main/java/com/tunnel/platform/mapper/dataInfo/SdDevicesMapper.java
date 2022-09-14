@@ -155,4 +155,5 @@ public interface SdDevicesMapper
 
 	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 
+	List<SdDevices> selectStateStorage();
 }

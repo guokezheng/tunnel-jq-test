@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.digitalmodel.impl;
 
+import cn.hutool.core.lang.Dict;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -21,6 +22,7 @@ import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.kafka.common.protocol.types.Field;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,8 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Value("${wj.imagePath}")
     private String picUrl;
+    @Value("${wj.url}")
+    private String prefix;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -130,19 +134,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 String e1 ="事件前";
 //                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
 //                String s1 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,videoImage,e1);
+                wjMapper.insertPic(eventId,prefix+videoImage,e1);
             }
             if (StringUtils.isNotEmpty(secondVideoImage)) {
                 String e2 ="事件中";
 //                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
 //                String s2 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,secondVideoImage,e2);
+                wjMapper.insertPic(eventId,prefix+secondVideoImage,e2);
             }
             if (StringUtils.isNotEmpty(thirdVideoImage)) {
                 String e3 ="事件后";
 //                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
 //                String s3 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId,thirdVideoImage,e3);
+                wjMapper.insertPic(eventId,prefix+thirdVideoImage,e3);
             }
         }
         return AjaxResult.success();
@@ -154,7 +158,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String eventId =map.get("eventId")+"";
         String eventVideoUrl = (String) map.get("eventVideoUrl");
         if (StringUtils.isNotBlank(eventVideoUrl)){
-            wjMapper.updateVideoById(Long.parseLong(eventId),eventVideoUrl);
+            wjMapper.updateVideoById(Long.parseLong(eventId),prefix+eventVideoUrl);
             return AjaxResult.success();
         }
         return AjaxResult.error();
@@ -219,12 +223,14 @@ public class RadarEventServiceImpl implements RadarEventService {
     public void saveRedis(Map<String, Object> map) {
         //隧道ID
         String tunnelId = (String) map.get("tunnelId");
-        //转实体接收
-        JSON parse = JSONUtil.parse(map.get("lidarInfo"));
-        WjDevicelidar wjDevicelidar = JSONUtil.toBean(parse.toString(), WjDevicelidar.class);
         //转集合接收
         JSON json = JSONUtil.parse(map.get("cameraInfoList"));
         List<WjDeviceCamera> wjDeviceCameraList = JSONUtil.toList(json.toString(), WjDeviceCamera.class);
+        //转实体接收
+        JSON parse = JSONUtil.parse(map.get("lidarInfo"));
+        List<WjDevicelidar> devicelidar = JSONUtil.toList(parse.toString(), WjDevicelidar.class);
+        devicelidar.forEach(
+            wjDevicelidar->{
         List<SdDevices> devicesList=new ArrayList<>();
         //将相机的隧道id设备类型id放入集合
         wjDeviceCameraList.forEach(
@@ -277,6 +283,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 redisCache.setCacheMapValue(RadarEventConstants.WJ_CAMERA_INFO_KEY, RadarEventConstants.WJ_CAMERA_INFO_KEY+v.getEqId(),parse1);
             }
         );
+        });
     }
 
     @Override
@@ -359,6 +366,7 @@ public class RadarEventServiceImpl implements RadarEventService {
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
         List<SdRadarDevice> list = new ArrayList<>();
+        /*
         //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
         RedisTemplate redisTemplate = redisCache.redisTemplate;
         //返回储存的集合-json
@@ -374,6 +382,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                     return null;
                 }
             }, redisTemplate.getValueSerializer());
+            */
         devices.forEach(
             f -> {
                 SdRadarDevice sdRadarDevice = new SdRadarDevice();
@@ -395,7 +404,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 WjDeviceData deviceData = new WjDeviceData();
                 if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
                         || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "34".equals(sdRadarDevice.getDeviceType())) {
-                    redisResult.forEach(
+                    /*redisResult.forEach(
                         v->{
                             if (v!=null){
                                 if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -405,9 +414,20 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                         }
+                    );*/
+                    /**
+                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
+                     */
+                    List<SdDevices> devicesList = devicesMapper.selectStateStorage();
+                    devicesList.forEach(
+                            v->{
+                                if (f.getEqId().equals(v.getEqId())){
+                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
+                                }
+                            }
                     );
                 }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                    /*redisResult.forEach(
                             v->{
                                 if (v!=null){
                                     if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -418,9 +438,10 @@ public class RadarEventServiceImpl implements RadarEventService {
                                     }
                                 }
                             }
-                    );
+                    );*/
+
                 }else if ("6".equals(sdRadarDevice.getDeviceType())||"7".equals(sdRadarDevice.getDeviceType())||"8".equals(sdRadarDevice.getDeviceType())||"9".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                   /* redisResult.forEach(
                         v->{
                             if (v!=null){
                                 if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -430,9 +451,20 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                         }
+                    );*/
+                    /**
+                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
+                     */
+                    List<SdDevices> devicesList = devicesMapper.selectStateStorage();
+                    devicesList.forEach(
+                            v->{
+                                if (f.getEqId().equals(v.getEqId())){
+                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
+                                }
+                            }
                     );
                 }else if ("31".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                   /* redisResult.forEach(
                             v->{
                                 if (v!=null){
                                     if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -443,9 +475,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                                     }
                                 }
                             }
-                    );
+                    );*/
                 }else if ("17".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                    /*redisResult.forEach(
                         v->{
                             if (v!=null){
                                 if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -456,9 +488,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                         }
-                    );
+                    );*/
                 }else if ("19".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                    /*redisResult.forEach(
                         v->{
                             if (v!=null){
                                 if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -469,9 +501,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                         }
-                    );
+                    );*/
                 }else if ("16".equals(sdRadarDevice.getDeviceType())){
-                    redisResult.forEach(
+                    /*redisResult.forEach(
                         v->{
                             if (v!=null){
                                 if (v.toString().contains(sdRadarDevice.getDeviceId())){
@@ -481,7 +513,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                         }
-                    );
+                    );*/
                 }
                 sdRadarDevice.setDeviceData(deviceData);
                 list.add(sdRadarDevice);

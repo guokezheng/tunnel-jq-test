@@ -310,7 +310,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("runStatus", runStatus);
         }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)){
-            Integer runDate = wjDeviceData.getRunDate();
+            String runDate = wjDeviceData.getRunDate();
             String unit = wjDeviceData.getUnit();
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);

@@ -269,7 +269,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             }
         }
         //将设备状态保存到设备表
-        devicesMapper.updateSdDevicesBatch(list);
+        if (CollectionUtils.isNotEmpty(list)){
+            devicesMapper.updateSdDevicesBatch(list);
+        }
         //赋值雷达eqId
         wjDevicelidar.setEqId(wjDeviceCameraList.get(wjDeviceCameraList.size()-1).getEqId());
         //存储后将雷达数据从相机数据剔除
@@ -365,6 +367,7 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
+        List<SdDevices> devicesList = devicesMapper.selectStateStorage();
         List<SdRadarDevice> list = new ArrayList<>();
         /*
         //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
@@ -418,7 +421,6 @@ public class RadarEventServiceImpl implements RadarEventService {
                     /**
                      * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
                      */
-                    List<SdDevices> devicesList = devicesMapper.selectStateStorage();
                     devicesList.forEach(
                             v->{
                                 if (f.getEqId().equals(v.getEqId())){
@@ -440,7 +442,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                     );*/
                     SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-
+                    deviceData.setRunDate(sdDeviceDataItem.getData());
+                    deviceData.setUnit(sdDeviceDataItem.getUnit());
                 }else if ("6".equals(sdRadarDevice.getDeviceType())||"7".equals(sdRadarDevice.getDeviceType())||"8".equals(sdRadarDevice.getDeviceType())||"9".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(
                         v->{
@@ -456,7 +459,6 @@ public class RadarEventServiceImpl implements RadarEventService {
                     /**
                      * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
                      */
-                    List<SdDevices> devicesList = devicesMapper.selectStateStorage();
                     devicesList.forEach(
                             v->{
                                 if (f.getEqId().equals(v.getEqId())){
@@ -490,6 +492,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    deviceData.setRunDate(sdDeviceDataItem.getData());
+                    deviceData.setUnit(sdDeviceDataItem.getUnit());
                 }else if ("19".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                         v->{
@@ -503,6 +508,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    deviceData.setRunDate(sdDeviceDataItem.getData());
+                    deviceData.setUnit(sdDeviceDataItem.getUnit());
                 }else if ("16".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                         v->{

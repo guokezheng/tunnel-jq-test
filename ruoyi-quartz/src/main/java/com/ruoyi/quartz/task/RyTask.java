@@ -143,7 +143,6 @@ public class RyTask {
                     }
                     updateSdStateStorage(devices.getEqId(),state);
                 }
-
             }catch (Exception e){
                 e.printStackTrace();
             }

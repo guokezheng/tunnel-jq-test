@@ -20,7 +20,8 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px)"
+          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          @click="handleClosee"
         />
       </div>
       <el-form
@@ -79,23 +80,23 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="CO值:">
-              {{ stateForm.deptName }}
+              <!-- {{ stateForm.deptName }} -->
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              {{ stateForm.brandName }}
+              <!-- {{ stateForm.brandName }} -->
             </el-form-item>
           </el-col>
         </el-row>
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin-bottom: 30px">
+      <el-radio-group v-model="tab" style="margin-bottom: 10px">
         <el-radio-button label="co">CO实时趋势</el-radio-button>
         <el-radio-button label="vi">VI实时趋势</el-radio-button>
       </el-radio-group>
-      <div id="co" v-show="tab == 'co'"></div>
-      <div id="vi" v-show="tab == 'vi'"></div>
+      <div id="co" v-show="tab == 'co'" style="margin-bottom:10px"></div>
+      <div id="vi" v-show="tab == 'vi'" style="margin-bottom:10px"></div>
       <div slot="footer">
         <el-button
           type="primary"
@@ -165,7 +166,7 @@ export default {
         await getDeviceById(this.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
           obj = res.data;
-          this.title = obj.typeName + " " + obj.pile;
+          this.title = obj.eqName;
           this.stateForm = {
             brandName: that.getBrandName(obj.brandId), //厂商
             eqDirection: that.getDirection(obj.eqDirection),
@@ -364,8 +365,10 @@ export default {
 }
 #co,
 #vi {
-  width: 100%;
+  width: 90%;
   height: 150px;
+  background: #fff;
+  margin-left: 5%;
   div {
     width: 100%;
     height: 150px !important;

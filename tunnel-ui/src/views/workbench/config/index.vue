@@ -1135,10 +1135,10 @@
     <com-covi style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 19" :brandList="this.brandList" :directionList="this.directionList"
               :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-covi>
     <com-bright style="position: absolute;top: 0;left: 0;" :brandList="this.brandList" :directionList="this.directionList"
-              v-if="[5, 14, 21, 32, 33, 15, 16, 17,20, 28, 29, 30, 31, 34,35 ].includes(this.clickEqType)" 
+              v-if="[5, 14, 21, 32, 33, 15, 16, 20, 28, 29, 30, 31, 34,35 ].includes(this.clickEqType)" 
               :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-bright>
-    <!-- <com-wind style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 17" 
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-wind>           -->
+    <com-wind style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 17" 
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-wind>          
     <!-- <com-indicator style="position: absolute;top: 0;left: 0;"
               v-if="[1, 2, 3, 4].includes(this.clickEqType)"  
               :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-indicator> -->

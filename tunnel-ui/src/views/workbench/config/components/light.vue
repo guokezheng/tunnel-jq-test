@@ -9,6 +9,7 @@
       :visible="visible"
       :before-close="handleClosee"
     >
+    
       <div
         style="
           width: 100%;
@@ -20,7 +21,8 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px)"
+          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          @click="handleClosee"
         />
       </div>
       <el-form
@@ -168,7 +170,7 @@ export default {
             // debugger
             obj.state = response.data.state;
 
-            this.title = obj.typeName + " " + obj.pile;
+            this.title = obj.eqName;
             this.stateForm = {
               brandName: that.getBrandName(obj.brandId), //厂商
               eqDirection: that.getDirection(obj.eqDirection),

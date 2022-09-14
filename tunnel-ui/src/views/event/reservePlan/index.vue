@@ -465,20 +465,20 @@
       :title="addTitle"
       :visible.sync="strategyVisible"
       append-to-body
-      width="86.5%">
+      width="60%">
       <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm" label-width="120px" size="medium">
         <el-row :gutter="20">
           <el-col v-for="(item,index) in planTypeIdList" :key="index" :span="24" class="colflex">
             <el-form-item label="节点名称" prop="processName">
-              <el-input v-model="reserveProcessDrawForm.processName" placeholder="请输入流程节点名称"></el-input>
+              <el-input v-model="item.processName" placeholder="请输入流程节点名称"></el-input>
             </el-form-item>
             <el-form-item label="节点顺序" prop="processSort">
-              <el-input-number v-model="reserveProcessDrawForm.processSort" :max="10" :min="1"
+              <el-input-number v-model="item.processSort" :max="10" :min="1"
                                label="描述文字"></el-input-number>
             </el-form-item>
             <el-form-item label="相关策略" prop="planTypeId">
               <el-cascader
-                v-model="handleStrategyList"
+                v-model="item.handleStrategyList"
                 :options="options"
                 :props="props"
                 :show-all-levels="false"
@@ -486,131 +486,20 @@
                 collapse-tags
                 @change="handleChangeStrategy(handleStrategyList)"></el-cascader>
             </el-form-item>
-            <el-form-item>
-              <el-button type="text">添加</el-button>
-              <el-button type="text">删除</el-button>
-              <!--          <div class="dialogButton" ">添加</div>
-                        <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>-->
-            </el-form-item>
+            <div class="dialog-footer">
+              <el-button type="text" @click.native="addStrategy">添加</el-button>
+              <el-button type="text" @click.native="deleteStrategy">删除</el-button>
+            </div>
           </el-col>
         </el-row>
       </el-form>
-      <!--  <div>
-        <img alt="" class="chedaoImage" src="../../../assets/image/lane/3duan.png">
-        &lt;!&ndash; 设备图标&ndash;&gt;
-        <div
-          v-for="(item, index) in selectedIconList"
-          :key="index"
-          :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
-          :style="{
-            left: item.position.left - 12 + 'px',
-            top: item.position.top + 104 +'px',
-            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
-          }"
-          class="icon-box mouseHover"
-        >
-          <div
-            v-show="(item.eqType != 7 &&
-              item.eqType != 16 &&
-              item.eqType != 15 &&
-              item.eqType != 8 &&
-              item.eqType != 9 &&
-              item.eqType != 21 &&
-              item.display == true) ||
-            ((item.eqType == 7 ||
-              item.eqType == 8 ||
-              item.eqType == 9 ||
-              item.eqType == 21 ) &&
-              item.display == true &&
-              lightSwitch == 1)"
-            :class="{ focus: item.focus }"
-          >
-            <img
-              v-for="(url, indexs) in item.url"
-              :key="item.deptId + indexs"
-              :height="item.iconHeight"
-              :src="url"
-              :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
-              :width="item.iconWidth"
-              style="position: relative;"
-            />
-
-            &lt;!&ndash; 调光数值 &ndash;&gt;
-            <label
-              v-if="item.eqType == 21"
-              style="
-                color: yellow;
-                position: absolute;
-                left: 30px;
-                bottom: 2px;
-                pointer-events: none;
-              "
-            >{{ item.lightValue }}</label
-            >
-            &lt;!&ndash; CO/VI &ndash;&gt;
-            <label
-              v-if="item.eqType == 19"
-              style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;">
-              {{ item.value }}
-              <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> &ndash;&gt;
-              &lt;!&ndash; <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>&ndash;&gt;
-            </label>
-            &lt;!&ndash; 风速风向 &ndash;&gt;
-            <label
-              v-if="item.eqType == 17"
-              style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;">
-              {{ item.value }}
-              <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
-            </label>
-            &lt;!&ndash; 洞内洞外 &ndash;&gt;
-            <label
-              v-if="item.eqType == 5"
-              style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;">
-              {{ item.value }}cd/m2
-            </label>
-          </div>
-
-          &lt;!&ndash; 桩号 &ndash;&gt;
-          &lt;!&ndash; <input
-            :class="[
-                    item.eqType == 7 ||
-                    item.eqType == 8 ||
-                    item.eqType == 9 ||
-                    item.eqType == 21
-                      ? 's-config-img-input'
-                      : 'config-img-input',
-                  ]"
-              v-if="(item.display == true &&
-                      displayNumb == true &&
-                      item.eqType != 7 &&
-                      item.eqType != 8 &&
-                      item.eqType != 9 &&
-                      item.eqType != 21) ||
-                    ((item.eqType == 7 ||
-                      item.eqType == 8 ||
-                      item.eqType == 9 ||
-                      item.eqType == 21) &&
-                      item.display == true &&
-                      lightSwitch == 1 &&
-                      displayNumb == true)
-                  "
-            v-show="item.eqType || item.eqType==0"
-            type="text"
-            v-model="item.pile"
-            disabled="true"
-            style="color: #055270;"
-          />
-          <div v-else style="width: 80px"></div> &ndash;&gt;
-        </div>
-      </div>-->
       <el-form-item style="text-align: right;width: 100%;">
-
       </el-form-item>
-      <el-button style="width: 10%;" type="primary" @click="submitstrategy">保存</el-button>
-      <el-button style="width: 10%;" @click="closeStrategy">取 消</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button style="width: 10%;" type="primary" @click="submitstrategy">保存</el-button>
+        <el-button style="width: 10%;" @click="closeStrategy">取 消</el-button>
+      </div>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -644,12 +533,13 @@ import {
   listTunnels
 } from "@/api/equipment/tunnel/api";
 import {fastLerp} from "zrender/lib/tool/color";
-import {addProcess, getListByRId} from "@/api/event/reserveProcess";
+import {addProcess,} from "@/api/event/reserveProcess";
 
 export default {
   name: "Plan",
   data() {
     return {
+      reserveId:'',
       //新增弹窗
       dialogFormVisible: false,
       visibleAdd: false,
@@ -657,7 +547,9 @@ export default {
       strategyVisible: false,
       //策略数组
       planTypeIdList: [{
-        a: []
+        processName:'',
+        processSort:'',
+        handleStrategyList:'',
       }],
       title: "",
       addTitle: "",
@@ -813,6 +705,21 @@ export default {
     this.selectPlanType()
   },
   methods: {
+    deleteStrategy(){
+      
+      var index = this.planTypeIdList.length;
+      if(index == 1){
+        return this.$modal.msgError('至少保留一行')
+      }
+      this.planTypeIdList.splice(index-1,1)
+    },
+    addStrategy(){
+      this.planTypeIdList.push({
+        processName:'',
+        processSort:'',
+        handleStrategyList:'',
+      })
+    },
     //获得预案类别
     selectPlanType() {
       getPlanType().then((res) => {
@@ -907,13 +814,11 @@ export default {
       this.strategyVisible = false
     },
     submitstrategy() {
-      const data = this.reserveProcessDrawForm;
-      data.strategyIds = this.handleStrategyList.join(",");
-      console.log(data, 'this.reserveProcessDrawFormthis.reserveProcessDrawForm')
+      let data = {'reserveId':this.reserveId,'sdReserveProcesses':this.planTypeIdList}
       addProcess(data).then(res => {
-        console.log(res, '添加策略返回');
         if (res.code === 200) {
           this.strategyVisible = false
+          this.$modal.msgSuccess(res.msg);
           this.getList();
         }
       })
@@ -949,12 +854,7 @@ export default {
      }, */
     // 选择将要执行的策略
     chooseStrategyInfo(row) {
-      // this.handleStrategyVisible = true;
-      // this.title = "执行相关策略";
-      // listStrategyByPlanId(row.id).then(response => {
-      //   this.handleStrategyList = response.data;
-      // });
-      console.log(row, 'ppppppppppppppp')
+      this.reserveId = row.id;
       this.strategyVisible = true
       this.reserveProcessDrawForm = {
         reserveId: null, //预案id
@@ -963,24 +863,13 @@ export default {
         processName: null, //流程节点名称
         processSort: null, //流程节点顺序
       },
-      this.handleStrategyList = []
+        this.handleStrategyList = []
       this.reserveProcessDrawForm.reserveId = row.id
       getTypeAndStrategy({isControl: 1}).then(res => {
         console.log(res.data, '控制策略')
         this.options = res.data
       })
-      getListByRId({ reserveId:row.id }).then(res => {
-        console.log(res,'根据预案id返回的预案流程节点');
-        if (res.code === 200) {
-          res.data.forEach((item, index) => {
-            this.reserveProcessDrawForm.processSort = item.processSort;
-            this.reserveProcessDrawForm.processName = item.processName;
-            this.handleStrategyList = item.strategyIds.split(",");
-            console.log(this.handleStrategyList,'this.handleStrategyListthis.handleStrategyList');
-          })
-        }
-
-      })
+      // })
     },
     //执行策略id勾选事件
     handleStrategySelectionChange(selection) {

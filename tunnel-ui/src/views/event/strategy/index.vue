@@ -83,7 +83,19 @@
 
       </el-table-column>
 
-      <!-- <el-table-column label="时间表" align="center" prop="schedulerTime" /> -->
+      <el-table-column label="状态" align="center" prop="schedulerTime" >
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.strategyState"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value="1"
+            inactive-value="2"
+            active-text="开启"
+            inactive-text="关闭">
+          </el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button v-show="scope.row.strategyType == 0"
@@ -135,16 +147,18 @@
              :value="item.tunnelId"/>
        </el-select>
      </el-form-item>
+
      <el-form-item label="策略名称" prop="strategyName">
        <el-input style="width: 90%;" v-model="strategyForm.strategyName" placeholder="请输入策略名称" />
      </el-form-item>
+
      <el-form-item label="策略类型" prop="strategyType">
-       <el-radio-group v-model="strategyForm.strategyType" >
+       <el-radio-group v-model="strategyForm.strategyType">
          <el-radio border
            v-for="dict in insertStrategyTypeOptions"
            :key="dict.dictValue"
            :label="dict.dictValue"
-           @click.native="getDeviceType"
+           @change.native="getDeviceType"
          >{{dict.dictLabel}}</el-radio>
        </el-radio-group>
      </el-form-item>
@@ -152,12 +166,12 @@
      <template v-if="is_show">
       <!-- 手动控制 -->
       <el-row >
-        <template v-if="strategyForm.strategyType === '0'">
+        <template v-if="strategyForm.strategyType == '0'">
           <el-col :span="8">
-            <el-form-item label="设备类型" v-if="strategyForm.strategyType === '0'">
-              <el-select v-model="strategyForm.equipmentTypeId1" placeholder="请选择设备类型" >
+            <el-form-item label="设备类型">
+              <el-select v-model="strategyForm.equipmentType" placeholder="请选择设备类型" title="手动控制">
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
-                            @click.native="eqTypeChange(item.typeId,item.typeName)"/>
+                  @click.native="eqTypeChange"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -166,46 +180,34 @@
           <el-form-item label="方向">
             <el-select v-model="strategyForm.direction" placeholder="请选择设备方向" >
               <el-option v-for="(dict,index) in directionOptions" :key="index" :label="dict.dictLabel" 
-              :value="dict.dictValue"   @click.native="slectDirection(dict.dictValue)"/>
+              :value="dict.dictValue"   @click.native="eqTypeChange(dict.dictValue)"/>
             </el-select>
           </el-form-item>
         </el-col>
       </el-row>
       <!-- 手动控制下面 -->
-      <el-form-item v-for="(it, index) in strategyForm.addOperation" :key="index" 
-        v-if="strategyForm.strategyType == '0'">
-        <el-select v-model="it.equipments" @change='changeSelect' :disabled="viewStrategy"  
-          multiple placeholder="请选择设备" style="width: 40%">
-          <el-option label='全选' value='全选' v-show="equipmentData.length > 1" @click.native='selectAll'></el-option>
-          <el-option
+      <template v-if="strategyForm.strategyType == 0">
+        <el-form-item v-for="(items, index) in strategyForm.manualControl" :key="index">
+          <el-select v-model="items.value" @change='changeSelect' multiple placeholder="请选择设备00" style="width: 40%">
+            <el-option
               v-for="(item) in equipmentData"
               :key="item.eqId"
               :label="item.eqName"
               :value="item.eqId"/>
-          <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
-        </el-select>
-        <el-select v-model="it.eqState" v-show="strategyForm.strategyType == '0' && sink=='edit' " placeholder="请选择设备需要执行的操作"
-            style="width: 39%;margin-left:6%;" >
-          <el-option
-            v-for="item in eqState3"
-            :key="item.deviceState+1"
-            :label="item.stateName"
-            :value="item.deviceState"> 
-          </el-option>
-        </el-select>       
-        <el-select v-model="it.eqState" v-show="strategyForm.strategyType == '0' && sink=='add' " 
-          placeholder="请选择设备需要执行的操作" 
-            style="width: 39%;margin-left:6%;" >
-          <el-option
-            v-for="item in eqState1"
-            :key="item.deviceState"
-            :label="item.stateName"
-            :value="item.deviceState"> 
-          </el-option>
-        </el-select>
-        <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
-      </el-form-item>
-      
+            <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
+          </el-select>
+          <el-select v-model="items.state" placeholder="请选择设备需要执行的操作"
+              style="width: 39%;margin-left:6%;" >
+            <el-option
+              v-for="item in manualControlStateList"
+              :key="item.deviceState+1"
+              :label="item.stateName"
+              :value="item.deviceState"> 
+            </el-option>
+          </el-select>
+          <el-button type="" icon="el-icon-delete" circle  @click="removeItem(items, index)" style="margin-left:2%;" ></el-button>
+        </el-form-item>
+      </template>
       <!-- 定时控制 -->
       <el-form-item v-show="strategyForm.strategyType == '1'" style="margin-top: -10px; margin-bottom:0px;">
         <cron  v-if="showCronBox" v-model.trim="strategyForm.schedulerTime" ref="cron" @changeValue='changeValue'></cron>
@@ -263,26 +265,26 @@
       </template>
       <!-- 自动触发下边 -->
       <template v-if="strategyForm.strategyType != 0">
-        <el-form-item v-for="(it, index) in strategyForm.autoAddOperation" :key="index">  
-            <el-form-item v-for="(it, index) in list" :key="index">
+        <el-form-item v-for="(dain, index) in strategyForm.autoControl" :key="index">  
+            <el-form-item>
               <el-input @click.native="openEqDialog2($event,index)" style="width: 35%;margin-top:20px;"
-                v-model="oneId[index]" placeholder="请点击选择控制类型" />
-              <el-select v-model="twoId[index]" placeholder="请选择设备需要执行的操作" 
-                @change="saveTwoList($event, index)"
+                v-model="dain.typeName" placeholder="请点击选择控制类型" />
+              <el-select v-model="dain.state" placeholder="请选择设备需要执行的操作"
                 style="width: 39%;margin-left:6%;" >
                 <el-option
-                  v-for="item in eqState[index]"
+                  v-for="(item,indx) in dain.eqStateList"
                   :key="item.deviceState"
                   :label="item.stateName"
                   :value="item.deviceState">
                 </el-option>
               </el-select>
-              <el-button type="" icon="el-icon-delete" circle  @click="removeItem(it, index)" style="margin-left:2%;" ></el-button>
+              <el-button type="" icon="el-icon-delete" circle  @click="removeItem(dain, index)" style="margin-left:2%;" ></el-button>
           </el-form-item>
         </el-form-item>
       </template>
+
       <el-form-item label="" style="" >
-          <a href="#" @click= "addItem" style="color: #1890ff;">+添加执行操作</a>
+          <a href="#" @click="addItem" style="color: #1890ff;">+添加执行操作</a>
       </el-form-item>
       
       <el-form-item  style="text-align: center;text-align: center; width: 90%;">
@@ -295,39 +297,32 @@
 
     <!-- 选择设备-对话框 定时控制里的弹窗-->
     <el-dialog :title="title" :visible.sync="chooseEq"  :close-on-click-modal="false" width="40%" style="height: 100%;" append-to-body>
-      <el-form ref="eqForm" :model="eqForm" :rules="rules" label-width="80px">
-        <el-form-item label="" v-if="viewStrategy==true">
-           隧道名称： {{eqForm.sdName}} <br>
-           策略名称： {{eqForm.clName}} <br>
-           策略信息： {{eqForm.clInfoName}}
-        </el-form-item>
+      <el-form ref="eqForm" :model="strategyForm" :rules="rules" label-width="80px">
         <el-form-item label="设备类型" v-if="equipmentTypeData.length" :style="{height: viewStrategy? '2.75rem':'13.75rem',overflow: 'auto'}" prop="equipment_type">
-          <el-radio-group v-model="eqForm.equipment_type" v-for="item in equipmentTypeData" :key="item.typeId" 
-          @click.native="eqTypeChange(item.typeId,item.typeName)" >
-              <el-radio-button v-if="eqForm.eqType==item.typeId && viewStrategy!=false" 
-              :label="item.typeId" :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName}}</el-radio-button>
-              <el-radio-button v-if="viewStrategy==false" :label="item.typeId" 
-              :disabled="viewStrategy" style="margin: 3px;" >{{item.typeName}}</el-radio-button>
+          <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange">
+              <el-radio-button :label="item.typeId" v-for="item in equipmentTypeData" :key="item.typeId"  style="margin: 3px;">
+                {{item.typeName}}
+              </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="设备类型" v-else>
           <span v-if="!equipmentTypeData.length">暂无设备类型</span>
         </el-form-item>
         <el-form-item label="选择设备" :style="{height:'300px'}" prop="equipments">
-          <el-select v-model="eqForm.equipments" @change='changeSelect' :disabled="viewStrategy"  
+          <el-select v-model="eqForm.equipments" :disabled="viewStrategy"  
             multiple placeholder="请选择设备" style="width: 90%">
             <el-option
-                v-for="item in equipmentData"
-                :key="item.eqId"
-                :label="item.eqName"
-                :value="item.eqId"/>
+              v-for="item in equipmentData"
+              :key="item.eqId"
+              :label="item.eqName"
+              :value="item.eqId"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button v-if="viewStrategy==false" type="primary" :loading="submitChooseEqFormLoading" 
-          @click="submitChooseEqForm">确定</el-button>
+          @click.native="submitChooseEqForm">确定</el-button>
         <el-button @click="cancelChooseEq">取消</el-button>
       </div>
     </el-dialog>
@@ -367,6 +362,42 @@ export default {
     },
   data() {
     return {
+      manualControlStateList:[],//当前选择设备状态选项
+      strategyForm:{
+        manualControl:[
+          {value:'',state:''}
+        ],//手动控制数组
+        autoControl:[{
+          value:'',
+          state:'',
+          type:'',
+        }],
+        equipmentType: [],
+        strategyType: null,//策略类型
+        tunnelId:null,//隧道id
+        strategyName:null,//策略名称
+        equipments:[],//所选设备
+        schedulerTime:null,
+        direction: '',// 方向
+        triggers:{
+          deviceTypeId:'',//设备类型
+          deviceId:'',
+          elementId:'',//设备数据项
+          comparePattern:'',//比较的符号
+          compareValue:'',//比较符号
+        },
+        eqState1:'',
+        //策略关系表
+        equipmentStates:[],//动态策略所有选择状态
+        jobRelationId:null,//定时任务Uid
+        startTime: '',// 简单模式开始时间
+        endTime: '',// 简单模式开始时间
+        automaticEqType:'',//自动触发时设备类型
+        automaticEqName:'',//自动触发时设备名称
+        automaticSymbol:'',//自动触发时符号 >= <= ..
+        threshold:'',//自动触发时阈值输入框
+        autodataItem:"",//自动触发设备类型数据项
+      },
       guid:'',
       is_show:false,
       changeVal:false,
@@ -440,48 +471,6 @@ export default {
         direction: '',//方向
         index:null,//当前设置的
         equipments:[],//设备名称
-      },
-      strategyForm:{
-        //策略信息表
-        equipmentTypeId1:'',//新增设备id
-        equipmentTypeId: [],
-        strategyType: null,//策略类型
-        tunnelId:null,//隧道id
-        strategyName:null,//策略名称
-        equipments:[],//所选设备
-        schedulerTime:null,
-        direction: '',// 方向
-        triggers:{
-          deviceTypeId:'',//设备类型
-          deviceId:'',
-          elementId:'',//设备数据项
-          comparePattern:'',//比较的符号
-          compareValue:'',//比较符号
-        },
-        addOperation:[
-          {
-            equipments:[],//所选设备
-            eqState:''
-          }
-        ],//手动控制添加执行操作数组
-        autoAddOperation:[
-          {
-            equipments:[],//所选设备
-            eqState:''
-          }
-        ],//自动触发控制添加执行操作数组
-        eqState1:'',
-        //策略关系表
-        equipmentstr:[],//动态策略所有选则设备(名称)
-        equipmentStates:[],//动态策略所有选择状态
-        jobRelationId:null,//定时任务Uid
-        startTime: '',// 简单模式开始时间
-        endTime: '',// 简单模式开始时间
-        automaticEqType:'',//自动触发时设备类型
-        automaticEqName:'',//自动触发时设备名称
-        automaticSymbol:'',//自动触发时符号 >= <= ..
-        threshold:'',//自动触发时阈值输入框
-        autodataItem:"",//自动触发设备类型数据项
       },
 /*      scheduleForm:{
         cronExpression:'',
@@ -567,7 +556,17 @@ export default {
     });
     // this.getEquipmentType();
   },
+  watch: {
+    //监听策略类型变化
+    'strategyForm.strategyType'(val){
+      console.log(val,'当前策略类型值');
+    },
+  },
   methods: {
+    // dialogChange(){
+    //   console.log('选择了');
+    //   this.strategyForm.autoControl[index].state = this.
+    // },
     // 改变策略类型
     changeStrategyType(){
       this.resetForm()
@@ -577,39 +576,24 @@ export default {
         equipment_type:null,//设备类型ID
         direction: '',//方向
         index:null,//当前设置的
-        equipments:[],//设备名称
-      },
-      // this.strategyForm.direction = null;
-      // this.strategyForm.equipmentTypeId1 = null;
-      // this.eqTypeList = [];
-      // this.strategyForm.triggers.deviceTypeId = null;
-      this.strategyForm.autoAddOperation=[
-        {
-          equipments:[],//所选设备
-          eqState:''
-        }
-      ]
+      }
     },
     getDeviceType(){
-      this.resetForm();
       if(!this.strategyForm.tunnelId){
-        this.is_show = false
-        return this.$modal.msgError("请首先选择隧道");
-      }else{
-        this.is_show = true
+        return this.$modal.msgError("请选择隧道");
       }
-      autoEqTypeList().then(res=>{
-        this.eqTypeList= res.rows
-      })
+      if(!this.strategyForm.strategyName){
+        return this.$modal.msgError("请填写策略名称");
+      }
+      if(this.strategyForm.strategyType == '2'){
+        autoEqTypeList().then(res=>{
+          this.eqTypeList = res.rows;
+        })
+      }
+      this.is_show = true;
     },
     //自动触发的方向
-    slectDirectionAuto(dictId){
-      this.strategyForm.autoAddOperation=[
-        {
-          equipments:[],//所选设备
-          eqState:''
-        }
-      ]     
+    slectDirectionAuto(dictId){    
       listDevices({eqType:this.strategyForm.triggers.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId,eqDirection:dictId}).then(res=>{
         this.equipmentData=res.rows
         this.deviceName=res.rows
@@ -629,24 +613,20 @@ export default {
     },
     // 选择方向时
     slectDirection(dictId){
-      if(this.strategyForm.strategyType == 1){
-
+      if(Number(this.strategyForm.strategyType) ==  0){
+        if(!this.strategyForm.equipmentType){
+          return this.$modal.msgError("请选择设备类型");
+        }
       }
-      this.strategyForm.addOperation=[
-        {
-          equipments:[],//所选设备
-          eqState:''
-         }
-      ]
       //给设备名称重新赋值
       let params = {
-        eqType:this.strategyForm.equipmentTypeId1,
+        eqType:this.strategyForm.equipmentType,
         eqTunnelId:this.strategyForm.tunnelId,
-        eqDirection:dictId
+        eqDirection:this.strategyForm.direction,
       }
       listDevices(params).then(res=>{
         this.equipmentData = res.rows
-      }) 
+      })
     },
     //重置方法
     rest(){
@@ -682,32 +662,18 @@ export default {
     },
     // 设备名称查询设备数据类型项
     selectDataItem(e){
-      console.log(e,'{{{{{{{}}}}}}}');
       listItem({deviceTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
        this.dataItem=res.rows
       })
-      // this.strategyForm.equipmentstr = e
     },
-    //选择隧道清空了下数据
+    //选择隧道
     changeTunnel(){
-      this.is_show=true;
-      this.oneId = [];
-      this.oneIdEqTypeId=[];
-      this.eqState=[];
-      this.twoId=[];
-      this.list=[{"oneId":'',"twoId":''}];
-      this.list2=[{"twoId":''}];
-      this.selectedList=[];//存储每次option选中的集合
-      this.strategyForm.equipmentTypeId = [];
-      this.strategyForm.strategyName=null;
-      this.strategyForm.equipments=null;
-      this.strategyForm.equipmentstr=[];
-      this.strategyForm.equipmentStates=[];
-      this.strategyForm.schedulerTime = null;
-      let currentTunnelId = this.strategyForm.tunnelId
-      autoEqTypeList().then(res=>{
-        this.eqTypeList= res.rows
-      })
+      if(this.strategyForm.strategyType == 2){
+        autoEqTypeList().then(res=>{
+          this.eqTypeList = res.rows
+          console.log(this.eqTypeList,'获取所有设备列表')
+        })
+      }
     },
     selectAll() {
       if (this.eqForm.equipments.length < this.equipmentData.length) {
@@ -730,6 +696,9 @@ export default {
     },
     // 二次弹窗选择设备
     changeSelect(val) {
+      eqForm.equipment_type
+      this.strategyForm.direction
+      console.log(val);
       let data = this.strategyForm.addOperation;
       this.eqForm.equipments = val
     },
@@ -766,89 +735,78 @@ export default {
       })
       .catch(_ => {});
     },
+    // 添加执行操作
     addItem(){
       let addItemBoolean = true;
-      if(this.strategyForm.strategyType == 0){
-        this.strategyForm.addOperation.push({         
-          equipments:[],//所选设备
-          eqState1:''        
+      let strategyType = this.strategyForm.strategyType;
+      switch (strategyType) {
+        case '0' :
+        this.strategyForm.manualControl.push({         
+          value:'',
+          state:''       
         })
-      }else if(this.strategyForm.strategyType == 1 || this.strategyForm.strategyType == 2){
-        for ( var i = 0; i < this.list.length; i++){
-          if(this.strategyForm.equipmentTypeId[i] ==null || this.twoId[i] ==null){
-            addItemBoolean = false;
-          }
-        }
-        if(addItemBoolean){
-          this.list.push({"oneId": '',"twoId":'', "twoName":''});
-        }
+        break;
+        case '2' :
+        this.strategyForm.autoControl.push({         
+          value:'',
+          state:'',
+          type:'',    
+        })
+        break;
       }
     },
     removeItem(it, index){
-      this.strategyForm.addOperation.splice(index,1)
-      if(this.list.length > 1){
-          this.strategyForm.equipmentTypeId.splice(index,1);//设备类型数组
-          this.oneId.splice(index,1);//设备类型对应的状态数组
-          this.strategyForm.equipmentstr.splice(index,1);//设备数组
-          this.eqState.splice(index,1);
-          this.twoId.splice(index,1);
-          this.list.splice(index, 1);//去除一行
-      }
-    },
-    saveTwoList(event, index){
-      //当每选一个option时，我们需要将这个选中的oneId放入对应的list中即可，
-      //最后都选中完后，我们只要获取这个list，即可拿到所有的数据
-      this.list[index].twoId = event;
-      let obj = {};
-      obj = this.eqState[index].find((item)=>{
-        return item.deviceState == event;
-      });
-      this.list[index].twoName = obj.stateName;
-    },
-    //设备类型查询设备
-    eqTypeChange(value,value2) {
-      if(this.viewStrategy){
-        return false;
-      }
-      this.eqTypeName = value2;
-      this.queryEqParams.eqType = value;
-      this.queryEqParams.eqTunnelId = this.strategyForm.tunnelId;
-      this.queryEqParams.eqDirection = this.strategyForm.direction;
-      this.eqForm.equipments = null;
-      listDevices(this.queryEqParams).then(response => {
-        let a = response.rows;
-        if(response.rows!=null && response.rows.length>0){
-          for(let i=0;i < a.length;i++){
-            if(a[i].remark==null){
-              a[i].remark = "无备注"
-            }
-          }
+      
+      if(this.strategyForm.strategyType == 0){
+        if(this.strategyForm.manualControl.length == 1){
+          return this.$modal.msgSuccess('请至少保留一行');
         }
-        this.equipmentData = a
-      });
-      //看下这个是设备类型吗
-     
-     //点击添加的设备类型
-     if(this.sink =="add"){
-      //给设备状态赋值
-         //清空设备名称和设备状态
-      this.strategyForm.addOperation=[{
-        equipments:[],//所选设备
-        eqState:''
-      }]
-         //给设备状态赋值
-      getStateTypeId({stateTypeId:value}).then(res=>{
-         this.eqState1=res.rows
-      })
-        // 给设备名称赋值
-        listDevices({
-          eqType:value,
-          eqTunnelId:this.strategyForm.tunnelId,
-          eqDirection:this.strategyForm.direction
-        }).then(res=>{
-          this.equipmentData=res.rows 
-        })
+        this.strategyForm.manualControl.splice(index,1)
+      }else{
+        if(this.strategyForm.autoControl.length == 1){
+          return this.$modal.msgSuccess('请至少保留一行');
+        }
+        this.strategyForm.autoControl.splice(index,1)
       }
+    },
+    //查询设备控制状态和设备列表
+    eqTypeChange() {
+      if(Number(this.strategyForm.strategyType) == 0){
+        var stateTypeId = this.strategyForm.equipmentType
+        var direction  =  this.strategyForm.direction
+        let params = {'stateTypeId':stateTypeId,'direction':direction,'isControl': 1}
+        this.listEqTypeStateIsControl(params)
+        this.listDevices();
+      }else{
+        if(this.eqForm.equipments.length > 1){//二次弹窗内更改设备类型清空设备列表
+          this.eqForm.equipments = ''
+        }
+        console.log(this.strategyForm.strategyType,'this.strategyForm.strategyTypethis.strategyForm.strategyType')
+        this.listDevices();
+      }
+    },
+    // public查询设备列表
+    listDevices(){
+      if(Number(this.strategyForm.strategyType) == 0){
+        var eqType = this.strategyForm.equipmentType;
+      }else{ 
+        var eqType = this.eqForm.equipment_type;
+      }
+      console.log(eqType,'这是车指的类型id');
+      listDevices({
+        eqType:eqType,
+        eqTunnelId:this.strategyForm.tunnelId,
+        eqDirection:this.strategyForm.direction
+      }).then(res=>{
+        this.equipmentData = res.rows
+        console.log(this.equipmentData,'我查了，这是证据')
+      })
+    },
+    //public 查询设备可控状态
+    listEqTypeStateIsControl(params){
+      listEqTypeStateIsControl(params).then(response => {
+        this.manualControlStateList = response.rows
+      })
     },
     viewStrategyInfo(row,index){
       if(row.strategyType=="1"){
@@ -901,6 +859,7 @@ export default {
     getEquipmentHasType() {
       listHasType(this.strategyForm.tunnelId).then(response => {
         this.equipmentTypeData = response.rows;
+        console.log(this.equipmentTypeData,'==============')
       });
     },
     /** 根据设备类型查询设备列表 */
@@ -938,62 +897,26 @@ export default {
       return this.selectDictLabel(this.directionOptions, row.direction);
     },
     //选择设备提交按钮
-    async submitChooseEqForm() {
-      if(this.strategyForm.strategyType == 2){
-        // this.strategyForm.autoAddOperation.oneId 
-        console.log(this.eqForm.equipment_type,'当前的设备值')
-      }
-      console.log(this.eqForm.equipments,'-------------');//选择的设备列表
-	    if (this.eqForm.equipment_type == null) {
-        return this.$modal.msgError("未选择设备类型");
-      } else if (this.eqForm.equipments !=null && this.eqForm.equipments.length > 0){
-        this.submitChooseEqFormLoading = true
-        var strategyForm = this.strategyForm
-        console.log(strategyForm,'这是啥')
-        //为了比对之前的选择是否有重复项
-        // for(var i=0;i<strategyForm.equipmentstr.length;i++){
-        //   var subArr = strategyForm.equipmentstr[i].split(',')
-        //   for(var j=0;j<subArr.length;j++){
-        //     if(this.eqForm.equipments.indexOf(subArr[j]) > -1){
-        //       if((!this.saveDevices) || this.saveDevices.indexOf(subArr[j]) == -1){
-        //         this.submitChooseEqFormLoading = false
-        //         return this.$modal.msgError("不能添加相同设备，请重新选择！");
-        //       }
-        //     }
-        //   }
-        // }
-		    this.submitChooseEqFormLoading = false
-        this.chooseEq = false;
-        this.queryEqStateParams.stateTypeId =this.eqForm.equipment_type;
-        console.log(this.queryEqStateParams,'------------')
-        // 根据设备类型获取设备状态
-        await listEqTypeStateIsControl({
-          ...this.queryEqStateParams,
-          eqDirection: this.strategyForm.direction
+    submitChooseEqForm() {
+      // 1.赋值 2.比对之前的是否重复   3.根据设备类型查询控制状态  66666
+        console.log(this.eqForm.equipments);
+        let index = this.strategyForm.autoControl.length - 1;//求最后一位
+        this.strategyForm.autoControl[index].value = this.eqForm.equipments;
+        this.strategyForm.autoControl[index].type = this.eqForm.equipment_type;
+        this.equipmentTypeData.forEach(item=>{
+          if(item.typeId == this.eqForm.equipment_type){
+            this.strategyForm.autoControl[index].typeName = item.typeName;
+          }
+        })
+        console.log(this.strategyForm.autoControl,'当前选择设备');
+        this.chooseEq = false;//关闭弹窗
+        listEqTypeStateIsControl({
+          stateTypeId:this.eqForm.equipment_type,
         }).then(response => {
-          this.eqState[this.eqForm.index] = response.rows;
-          if(!this.eqTypeName){
-            for(var item of this.equipmentTypeData){
-              if(item.typeId == this.eqForm.equipment_type){
-                this.eqTypeName = item.typeName
-              }
-            }
-          }
-          this.strategyForm.equipmentType = this.eqTypeName+"控制";
-          this.oneId[this.eqForm.index] = this.eqTypeName+"控制";
-          this.eqTypeName = null
-          if(this.oneId[this.eqForm.index] !=null){
-            this.twoId[this.eqForm.index] = null;
-          }
-          this.strategyForm.equipmentTypeId[this.eqForm.index] = this.eqForm.equipment_type;
-          this.strategyForm.equipmentstr[this.eqForm.index] = this.eqForm.equipments.join(',');
-          this.resetEqForm();
-        });
-        this.submitChooseEqFormLoading = false
-      }else{
-        this.submitChooseEqFormLoading = false
-        return this.$modal.msgError("未选择设备！");
-      }
+          console.log(response,'设备状态');
+          this.strategyForm.autoControl[index].eqStateList = response.rows
+          this.$forceUpdate();
+        })
     },
     // 选择设备取消按钮
     cancelChooseEq() {
@@ -1044,72 +967,15 @@ export default {
       this.chooseScheduleTimeVb = false;
     },
     openEqDialog2(event,index){
-	    this.saveDevices = ''
-      if(this.strategyForm.tunnelId !=null){
-        this.eqForm.index = index;//设定当前策略index
-        this.eqForm.equipment_type = this.strategyForm.equipmentTypeId[index];
-        listDevices({eqType:this.eqForm.equipment_type,eqTunnelId:this.strategyForm.tunnelId, eqDirection: this.eqForm.direction}).then(response => {
-          let a = response.rows;
-          if(response.rows!=null && response.rows.length>0){
-            for(let i=0;i < a.length;i++){
-              if(a[i].remark==null){
-                a[i].remark = "无备注"
-              }
-            }
-          }
-          this.equipmentData = a
-        if(this.strategyForm.equipmentstr[index] !=null){
-          this.eqForm.equipments = this.strategyForm.equipmentstr[index].split(',');
-		      this.saveDevices = this.eqForm.equipments
-        }
-        });
-        this.chooseEq = true;
-        this.title = "选择设备";
-        this.getEquipmentHasType();
-      }else{
-        this.$modal.msgError("请先选择隧道！");
-      }
+      this.chooseEq = true;
+      this.title = "选择设备";
+      this.getEquipmentHasType();
     },
     //打开drawer
     openInsertStrategy() {
       this.getEquipmentType();
       this.drawerTitle = "新增策略";
       this.sink = "add";
-      this.strategyForm = {
-        //策略信息表
-        equipmentTypeId: [],
-        strategyType: null,//策略类型
-        tunnelId:null,//隧道id
-        strategyName:null,//策略名称
-        equipments:null,//所选设备
-        schedulerTime:null,
-        direction: '',// 方向
-        triggers:{
-          deviceTypeId:'',//设备类型
-          deviceId:'',
-          elementId:'',//设备数据项
-          comaparePattern:'',//比较的符号
-          comapareValue:'',//比较符号
-        },
-        addOperation:[
-          {
-            equipments:[],//所选设备
-            eqState1:''
-          }
-        ],
-        autoAddOperation:[
-          {
-            equipments:[],//所选设备
-            eqState1:''
-          }
-        ],
-        //策略关系表
-        equipmentstr:[],//动态策略所有选则设备
-        equipmentStates:[],//动态策略所有选择状态
-        jobRelationId:null,//定时任务Uid
-        startTime: '',// 简单模式开始时间
-        endTime: '',// 简单模式开始时间
-      },
       //清空 定时弹窗里的设备名称数组
       this.eqForm.equipments=[]
       this.drawer = true;
@@ -1118,7 +984,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.is_show = true;
-      autoEqTypeList({isControl:1}).then(res=>{
+      //获取设备
+      autoEqTypeList().then(res=>{
         this.eqTypeList = res.rows;
       })
       listType(this.queryEqTypeParams).then(response => {
@@ -1128,50 +995,37 @@ export default {
       this.currentId = row.id;
       this.sink = "edit";
       const id = row.id || this.ids
-      this.strategyForm.strategyType = "0";
+      // this.strategyForm.strategyType = "0";
       getStrategy(id).then(response => {
         console.log(response.data,'修改按钮操作')
-        this.strategyForm.strategyName = response.data.strategyName;
-        this.strategyForm.tunnelId = response.data.tunnelId;
-        this.strategyForm.strategyType = response.data.strategyType;
-        this.strategyForm.direction = response.data.direction;
+        let data = response.data;
+        this.strategyForm.strategyName = data.strategyName;
+        this.strategyForm.tunnelId = data.tunnelId;
+        this.strategyForm.strategyType = data.strategyType;
+        this.strategyForm.direction = data.direction;
         this.drawerTitle = "编辑策略";
         this.drawer = true;
-        this.strategyForm.jobRelationId = response.data.jobRelationId;
+        this.strategyForm.jobRelationId = data.jobRelationId;
         if(this.strategyForm.strategyType ==1 ){
-          this.strategyForm.schedulerTime = response.data.schedulerTime;
+          this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
-          if(row.strategyType =='2'){
-            this.strategyForm.autoAddOperation=[]
-          }
+          console.log(response,'zzzzzzzzzzzzzzzzz')
           if(row.strategyType =='0'){
             this.strategyForm.addOperation=[]
           }
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
             this.equipmentData=res.rows
           })
-          getStateTypeId({stateTypeId:response.rows[0].eqTypeId}).then(res=>{
-            this.eqState3=res.rows
-          })
           for ( var i = 0; i < response.rows.length; i++){
-            if(i != 0){
-              this.list.push({"oneId": '',"twoId":''});
-            }
             if(row.strategyType =='0'){
               this.strategyForm.addOperation.push({
                 equipments:response.rows[i].equipments.split(','),
                 eqState:response.rows[i].state
               })
             }
-            if(row.strategyType =='2'){
-              this.strategyForm.autoAddOperation.push({
-                equipments:response.rows[i].equipments.split(','),
-                eqState:response.rows[i].state
-              })
-            }
             this.strategyForm.equipmentstr.push(response.rows[i].equipments);
-            this.oneIdEqTypeId.push(response.rows[i].eqTypeId);//设备类型id数组
+            // this.oneIdEqTypeId.push(response.rows[i].eqTypeId);//设备类型id数组
             this.strategyForm.equipmentTypeId.push(response.rows[i].eqTypeId);
             this.oneId.push(response.rows[i].eqType.typeName+"控制");//设备名称数组
             this.oneId1 =Number(response.rows[0].eqTypeId) ;//设备名称数组
@@ -1183,22 +1037,7 @@ export default {
           }
         })
         if(row.strategyType =='2'){
-          getTriggersByRelateId({relateId:row.id}).then(res=>{
-            //给设备下拉赋值
-            listDevices({eqType:res.data.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId}).then(res=>{
-              this.equipmentData=res.rows
-              this.deviceName=res.rows
-            })
-            listItem({deviceTypeId:res.data.deviceTypeId}).then(res=>{
-              this.dataItem=res.rows
-            })
-            this.strategyForm.triggers.deviceTypeId=res.data.deviceTypeId //设备类型
-            this.strategyForm.triggers.deviceId=res.data.deviceId  //设备名称
-            this.strategyForm.triggers.elementId=res.data.elementId//设备数据项
-            this.strategyForm.triggers.comparePattern=res.data.comparePattern //比较的符号
-            this.strategyForm.triggers.compareValue=res.data.compareValue//比较值
-            this.strategyForm.triggers.id=res.data.id
-          })
+
         }
       });
     },
@@ -1225,18 +1064,6 @@ export default {
       this.strategyForm.equipmentstr=[];
       this.strategyForm.equipmentStates=[];
       this.strategyForm.schedulerTime = null;
-      this.strategyForm.addOperation=[
-      {
-          equipments:[],//所选设备
-          eqState1:''
-         }
-      ],
-      this.strategyForm.autoAddOperation=[
-      {
-          equipments:[],//所选设备
-          eqState1:''
-         }
-      ]
     },
 
     /** 删除按钮操作 */
@@ -1271,31 +1098,17 @@ export default {
     },
     /** 提交按钮 */
     async submitStrategyForm() {
+      console.log(this.strategyForm,'要提交数据');
+      // return
       var str = ""
-      if(!this.strategyForm.tunnelId){
-        this.$modal.msgError("请选择隧道");
-        return;
-      }
-      if(!this.strategyForm.strategyType){
-        this.$modal.msgError("请选择策略类型");
-        return;
-      }
-      if(!this.strategyForm.strategyName){
-        this.$modal.msgError("请填写策略名称");
-        return;
-      }
-      if(!this.strategyForm.direction){
-        this.$modal.msgError("请选择方向");
-        return;
-      }
       let type = this.strategyForm.strategyType;
       //手动控制
-      if(type == 0){
-        console.log(this.strategyForm.addOperation[0].equipments.length)
-        if(this.strategyForm.addOperation[0].equipments.length == 0){
-          return this.$modal.msgError("请选择设备并添加执行操作");
-        }
-      }
+      // if(type == 0){
+      //   console.log(this.strategyForm.addOperation[0].equipments.length)
+      //   if(this.strategyForm.addOperation[0].equipments.length == 0){
+      //     return this.$modal.msgError("请选择设备并添加执行操作");
+      //   }
+      // }
       // 自动触发
       if(type == 2){
         if(!this.strategyForm.triggers.deviceTypeId){
@@ -1314,274 +1127,30 @@ export default {
           return this.$modal.msgError("请输入阈值")
         }
       }
-      // 检查定时检查或者自动触发设备数组
-      if(type == 1 || type == 2){
-        console.log(this.strategyForm);
-        // if(this.eqForm.equipments)
-        console.log(this.eqForm.equipments,'123123')
-        // if(this.eqForm.equipments.length < 1){
-        //   return this.$modal.msgError("请选择设备")
-        // }
-        // if(!this.strategyForm.autoAddOperation[0].equipments.length){
-        //   return this.$modal.msgError("请选择设备并添加执行操作");
-        // }
-      }
       if(this.strategyForm.strategyType == 1){
         if(this.strategyForm.schedulerTime==null || !this.strategyForm.schedulerTime){
           this.$modal.msgError("未设置定时！")
           return;
         }
-        // if(this.model == '2'){
-
-        // }
-        /* else if (this.model == '1') {
-          var startTime  = this.strategyForm.startTime
-          var endTime  = this.strategyForm.endTime
-          debugger
-          if(startTime == "" || endTime == "" || startTime == null || endTime == null){
-            this.$modal.msgError("请选择开始或结束时间！");
-            return;
-          }
-          if(endTime < startTime){
-            this.$modal.msgError("开始时间需要小于结束时间！");
-            return;
-          }
-          str += startTime.toString() +'-' + endTime.toString()
-        } */
       }
-      // let strategyBoolean = true;
-      // for ( var i = 0; i < this.list.length; i++){
-      //     if(this.strategyForm.equipmentTypeId[i] ==null || this.twoId[i] ==null){
-      //       strategyBoolean = false;
-      //     }
-      // }
-      // if(!strategyBoolean){
-      //     this.$modal.msgError("控制策略不完整！");
-      //     return;
-      // }
-      this.dloading = true;
-      this.$refs["form1"].validate(valid => {
-        if (valid) {
-          let straInfo = "";//策略信息
-          if(this.strategyForm.strategyType == 0){//手动执行
-
-          }else if(this.strategyForm.strategyType == 1){//定时执行
-            // 复杂模式
-            var cronstrue = require('cronstrue/i18n');
-            console.log(this.strategyForm.schedulerTime,"this.strategyForm.schedulerTime")
-            straInfo = cronstrue.toString(this.strategyForm.schedulerTime, { locale: "zh_CN" });
-            straInfo = straInfo+"：";
-            straInfo = "每天" + straInfo + str;
-          }else if(this.strategyForm.strategyType == 2){//智能执行
-              // straInfo = "当******时执行：";
-          }
-          // 新增
-          console.log(str,'123123')
-          getGuid().then(response => {
-            this.guid = response;
-          })
-          if(this.sink =="add"){
-            if(this.strategyForm.strategyType == 0){//手动执行
-              this.addStrategysData(this.guid,straInfo);
-            }else if(this.strategyForm.strategyType == 1){//定时执行
-              this.addJobData(this.guid,str);//表达式
-              this.timeAddStrategysData(this.guid,straInfo);
-            }else if(type == 2){//自动触发
-              // this.addJobData(this.guid,str);
-              this.timeAddStrategysData(this.guid,straInfo);
-            }
-          }
-          // 编辑
-          else{
-              let flag = false
-              if(this.strategyForm.strategyType == 1){//定时执行策略
-                console.log(this.strategyForm,"this.strategyForm.jobRelationId");
-                getJobByRelationId(this.strategyForm.jobRelationId).then(response => {
-                  if(response.code === 200 && response.msg == '定时任务存在') {
-                    flag = true
-                    return this.$modal.msgWarning(response.msg)
-                  }
-                  response.data.cronExpression = this.strategyForm.schedulerTime;
-                  updateJob(response.data).then(response => {
-                    if (response.code === 200) {
-                      this.$modal.msgSuccess("任务修改成功");
-                    }
-                  });
-                })
-              }
-              if(this.strategyForm.strategyType == 2){    
-                this.strategyForm.autoAddOperation.forEach((item)=>{
-                    item.equipments=item.equipments.join('#')
-                    item.equipmentTypeId=this.strategyForm.triggers.deviceTypeId
-                  })       
-                  console.log(this.strategyForm.triggers,'点击了自动触发')     
-                  updateStrategysInfo({
-               triggers:this.strategyForm.triggers,
-                id : this.currentId,
-                tunnelId:this.strategyForm.tunnelId,
-                strategyInfo:straInfo,
-                strategyName:this.strategyForm.strategyName,
-                direction:this.strategyForm.direction,
-                strategyType:this.strategyForm.strategyType,
-                equipment:this.strategyForm.autoAddOperation,
-                // equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),
-                equipmentState:this.twoId.join('#'),
-                // equipments:this.strategyForm.equipmentstr.join('#'),
-                schedulerTime:this.strategyForm.schedulerTime,
-                triggers:this.strategyForm.triggers
-                  }).then(res=>{
-                    if (res.code === 200) {
-                      this.$modal.msgSuccess("策略修改成功");
-                      this.dloading=false;
-                      this.drawer=false;
-                      // this.currentId = null;
-                      this.getList();
-                      this.resetStrategyInfo();
-                      setTimeout(()=>{
-                        this.resetStrategyInfo();
-                      }, 400)
-                    }
-                  })
-                }
-              if(flag) return
-              // 执行编辑操作
-              if(this.strategyForm.strategyType == 0){
-                this.strategyForm.addOperation.forEach((item)=>{
-                    item.equipments=item.equipments.join('#')
-                    item.equipmentTypeId=this.oneId1           
-                  })
-                updateStrategysInfo({
-                  id : this.currentId,
-                  tunnelId:this.strategyForm.tunnelId,
-                  strategyInfo:straInfo,
-                  strategyName:this.strategyForm.strategyName,
-                  direction:this.strategyForm.direction,
-                  strategyType:this.strategyForm.strategyType,
-                  equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),
-                  equipmentState:this.twoId.join('#'),
-                  equipments:this.strategyForm.equipmentstr.join('#'),
-                  equipment:this.strategyForm.addOperation,
-                  schedulerTime:this.strategyForm.schedulerTime
-                }).then(response => {
-                  if (response.code === 200) {
-                    this.$modal.msgSuccess("策略修改成功");
-                    this.dloading=false;
-                    this.drawer=false;
-                    this.currentId = null;
-                    this.getList();
-                    setTimeout(()=>{
-                      this.resetStrategyInfo();
-                    }, 400)
-                  }
-                });
-              }
-            if(type == 1){
-                  //执行定时编辑操作
-              console.log('点击了定时的保存')
-              updateStrategysInfo({
-                id : this.currentId,
-                tunnelId:this.strategyForm.tunnelId,
-                strategyInfo:straInfo,
-                strategyName:this.strategyForm.strategyName,
-                direction:this.strategyForm.direction,
-                strategyType:this.strategyForm.strategyType,
-                equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),
-                equipmentState:this.twoId.join('#'),
-                equipments:this.strategyForm.equipmentstr.join('#'),
-                schedulerTime:this.strategyForm.schedulerTime
-              }).then(response => {
-                if (response.code === 200) {
-                  this.$modal.msgSuccess("策略修改成功");
-                  this.dloading=false;
-                  this.drawer=false;
-                  this.currentRlId = null;
-                  this.getList();
-                  setTimeout(()=>{
-                    this.resetStrategyInfo();
-                  }, 400)
-                }
-              });
-            }
-          }
-        }
-      });
+      this.addStrategyInfoData();
     },
-     /** 新增定时触发 */
-     timeAddStrategysData(guid,straInfo){
-        // this.strategyForm.autoAddOperation.forEach((item)=>{
-        //   item.equipments=item.equipments.join('#')
-        //   item.equipmentTypeId=this.strategyForm.triggers.deviceTypeId
-        // })
-        // console.log(this.queryEqParams.eqType,'qqqq')
-        // return 
-        console.log(this.eqForm.equipments,'this.eqForm.equipments')
-        console.log(this.twoId[0],'this.this.twoIdthis.twoIdthis.twoId.')
-        addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
-            triggers:this.strategyForm.triggers,
-            strategyName:this.strategyForm.strategyName,
-            direction:this.strategyForm.direction,
-            strategyType:this.strategyForm.strategyType,
-            strategyInfo:straInfo,
-            equipmentTypeId:this.strategyForm.equipmentTypeId.join('#'),//设备类型id
-            equipmentState:this.twoId.join('#'),  //设备状态操作
-            equipments:this.strategyForm.equipmentstr.join('#'),
-            schedulerTime:this.strategyForm.schedulerTime,
-            // equipmentState:this.strategyForm.autoAddOperation.eqState1,
-            // equipment:this.strategyForm.autoAddOperation,
-            jobRelationId:this.guid,
-            }).then(response => {
-              if (response.code === 200) {
-                if(this.strategyForm.strategyType != 1) {
-                  this.$modal.msgSuccess("新增策略成功");
-                }
-                this.dloading=false;
-                this.drawer=false;
-                this.getList();
-                this.resetEqForm()
-                setTimeout(() => {
-                  this.resetStrategyInfo();
-                }, 400);
-              }
-          });
-        },
-
-
-    /** 新增自动触发 */
-    autoaddStrategysData(guid,straInfo){
-        this.strategyForm.autoAddOperation.forEach((item)=>{
-          item.equipments=item.equipments.join('#')
-          item.equipmentTypeId=this.strategyForm.triggers.deviceTypeId
-        })
-        console.log(this.strategyForm.triggers,'点击了新增的保存')
-        addStrategysInfo({tunnelId:this.strategyForm.tunnelId,
-                triggers:this.strategyForm.triggers,
-                strategyName:this.strategyForm.strategyName,
-                direction:this.strategyForm.direction,
-                strategyType:this.strategyForm.strategyType,
-                strategyInfo:straInfo,
-                // equipmentTypeId:this.strategyForm.equipmentTypeId1,//设备类型id
-                equipmentState:this.twoId.join('#'),
-                // equipments:this.strategyForm.equipments.join('#'),
-                schedulerTime:this.strategyForm.schedulerTime,
-                equipmentState:this.strategyForm.autoAddOperation.eqState1,
-                equipment:this.strategyForm.autoAddOperation,
-                jobRelationId:this.guid,
-                }).then(response => {
-                  if (response.code === 200) {
-                    if(this.strategyForm.strategyType != 1) {
-                     this.$modal.msgSuccess("新增策略成功");
-                    }
-                    this.dloading=false;
-                    this.drawer=false;
-                    this.getList();
-                    setTimeout(() => {
-                      this.resetStrategyInfo();
-                    }, 400);
-                  }
-              });
-        },
-
-    
+    // 提交保存方法
+    async addStrategyInfoData(){
+      await getGuid().then(res=>{
+        this.strategyForm.jobRelationId = res
+      });
+      let params = this.strategyForm;
+      addStrategysInfo(params).then(res=>{
+        this.$modal.msgSuccess("新增策略成功");
+        this.dloading=false;
+        this.drawer=false;
+        this.getList();
+        setTimeout(() => {
+          this.resetStrategyInfo();
+        }, 400);
+      })
+    },
       /** 添加策略 */
       addStrategysData(guid,straInfo){    
         this.strategyForm.addOperation.forEach((item)=>{

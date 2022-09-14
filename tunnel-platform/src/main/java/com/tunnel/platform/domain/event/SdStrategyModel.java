@@ -80,8 +80,8 @@ public class SdStrategyModel extends BaseEntity
     private String equipments;*/
 
     /** 设备状态 */
-    @ApiModelProperty("设备状态")
-    private String equipmentState;
+    /*@ApiModelProperty("设备状态")
+    private String equipmentState;*/
 
     @ApiModelProperty("方向")
     private String direction;
@@ -199,7 +199,7 @@ public class SdStrategyModel extends BaseEntity
         return equipments;
     }*/
 
-    public void setEquipmentState(String equipmentState)
+    /*public void setEquipmentState(String equipmentState)
     {
         this.equipmentState = equipmentState;
     }
@@ -207,7 +207,7 @@ public class SdStrategyModel extends BaseEntity
     public String getEquipmentState()
     {
         return equipmentState;
-    }
+    }*/
 
     public SdTunnels getTunnels() {
 		if (tunnels == null)
@@ -272,13 +272,11 @@ public class SdStrategyModel extends BaseEntity
             .append("warningId", getWarningId())
             .append("schedulerTime", getSchedulerTime())
             .append("equipmentTypeId", getEquipmentTypeId())
-            .append("equipmentState", getEquipmentState())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("jobRelationId", getJobRelationId())
-
             .append("tunnels", getTunnels())
             .toString();
     }

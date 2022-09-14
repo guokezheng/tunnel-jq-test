@@ -292,12 +292,12 @@ public class RadarEventServiceImpl implements RadarEventService {
         String deviceId = (String) map.get("deviceId");
         //设备类型 后转Integer
         String deviceType = map.get("deviceType") + "";
-        //设备监测状态 后转Integer
-        String deviceStatus = map.get("deviceStatus") + "";
         //设备数据：包括设备实时数据、实时状态，根据deviceType区分
         JSON parse = JSONUtil.parse(map.get("deviceData"));
         WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
         JSONObject jsonObject = new JSONObject();
+        //设备监测状态 后转Integer
+        String deviceStatus= devicesMapper.selectEqStatus(deviceId);
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
                 || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "34".equals(deviceType)) {

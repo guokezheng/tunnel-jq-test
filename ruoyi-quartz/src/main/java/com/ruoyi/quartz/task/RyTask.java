@@ -106,14 +106,25 @@ public class RyTask {
                             boolean zLv = registers[eqFeedbackAddress1+3];
                             state = getCheZhiState(fHong, fLv, zHong, zLv);
                         }
-                        if ((state != null || !("").equals(state)) && !devices.getEqStatus().equals("1")) {
-                            devices.setEqStatus("1");
-                            devices.setEqStatusTime(new Date());
-                            sdDevicesService.updateSdDevices(devices);
-                        } else {
-                            devices.setEqStatus("2");
-                            devices.setEqStatusTime(new Date());
-                            sdDevicesService.updateSdDevices(devices);
+                        Date eqStatusTime = devices.getEqStatusTime();
+                        if(eqStatusTime != null){
+                            Date nowdate = new Date();
+                            long sec = (nowdate.getTime()-eqStatusTime.getTime()) / 1000L / 60L;
+                            if(sec > 5L){
+                                log.info("当前设备离线");
+                                if (devices.getEqStatus().equals("2")) {
+                                    return;
+                                }
+                                devices.setEqStatus("2");
+                                devices.setEqStatusTime(new Date());
+                                sdDevicesService.updateSdDevices(devices);
+                            } else {
+                                if (devices.getEqStatus() == null || !devices.getEqStatus().equals("1")) {
+                                    devices.setEqStatus("1");
+                                    devices.setEqStatusTime(new Date());
+                                    sdDevicesService.updateSdDevices(devices);
+                                }
+                            }
                         }
                         //推送数据
                         if (isCheckState) {

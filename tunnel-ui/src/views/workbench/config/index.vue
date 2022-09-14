@@ -3943,15 +3943,15 @@
             listType("").then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
-                // for (let j = 0; j < response.rows.length; j++) {
-                //   if (response.rows[j].typeId == res.eqList[i].eqType) {
-                //     let iconWidth = Number(response.rows[j].iconWidth);
-                //     let iconHeight = Number(response.rows[j].iconHeight);
-                //     res.eqList[i].iconWidth = iconWidth;
-                //     res.eqList[i].iconHeight = iconHeight;
-                //     break;
-                //   }
-                // }
+                for (let j = 0; j < response.rows.length; j++) {
+                  if (response.rows[j].typeId == res.eqList[i].eqType) {
+                    let iconWidth = Number(response.rows[j].iconWidth);
+                    let iconHeight = Number(response.rows[j].iconHeight);
+                    res.eqList[i].iconWidth = iconWidth;
+                    res.eqList[i].iconHeight = iconHeight;
+                    break;
+                  }
+                }
               }
               that.selectedIconList = res.eqList //设备
             }).then(() => {

@@ -144,7 +144,7 @@ public interface SdDevicesMapper
 	List<SdDevices> selectDeviceByTidEqtp(@Param("list") List<SdDevices> list,
 	  @Param("tunnelId") String tunnelId,@Param("lidarType") Integer lidarType,@Param("cameraType") Integer cameraType);
 
-	void updateSdDevicesBatch(List<SdDevices> list);
+//	void updateSdDevicesBatch(List<SdDevices> list);
 
     String selecTunnelId(@Param("deviceId") String deviceId);
 
@@ -161,4 +161,6 @@ public interface SdDevicesMapper
     String selectEqStatus(@Param("deviceId") String deviceId);
 
 	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);
+
+	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
 }

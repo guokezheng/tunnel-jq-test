@@ -439,6 +439,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                                 }
                             }
                     );*/
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
 
                 }else if ("6".equals(sdRadarDevice.getDeviceType())||"7".equals(sdRadarDevice.getDeviceType())||"8".equals(sdRadarDevice.getDeviceType())||"9".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(

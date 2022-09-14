@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.dataInfo;
 import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
+import com.tunnel.platform.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -156,4 +157,8 @@ public interface SdDevicesMapper
 	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 
 	List<SdDevices> selectStateStorage();
+
+    String selectEqStatus(@Param("deviceId") String deviceId);
+
+	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);
 }

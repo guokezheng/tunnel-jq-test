@@ -577,4 +577,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_state_storage
     </select>
 
+    <select id="selectEqStatus" resultType="java.lang.String">
+       select eq_status deviceStatus from sd_devices
+        where eq_id=#{deviceId}
+    </select>
+
+    <select id="selectDataUnit" resultType="com.tunnel.platform.domain.digitalmodel.SdDeviceDataItem">
+        select
+        sdd.data data,
+        sdt.unit unit,
+        sdd.device_id deviceId
+        from sd_device_data sdd
+        left join sd_device_type_item sdt on
+        sdd.item_id=sdt.id
+        where device_id=#{eqId}
+    </select>
+
 </mapper>

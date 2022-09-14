@@ -79,7 +79,7 @@
           <el-row style="margin-top: 10px">
             <el-col :span="13">
               <el-form-item label="风速:">
-                {{ stateForm.deptName }}
+                <!-- {{ stateForm.deptName }} -->
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -89,7 +89,7 @@
             </el-col>
           </el-row>
         </el-form>
-        <el-radio-group v-model="tab" style="margin-bottom: 30px">
+        <el-radio-group v-model="tab" style="margin-bottom: 10px;margin-top: -10px;">
           <el-radio-button label="co">风速风向实时趋势</el-radio-button>
         </el-radio-group>
         <div id="feng" ></div>
@@ -182,13 +182,13 @@
           // var lincolor = []
           // var yName=""
        
-          var lincolor = ["#FC61AB","#FFA9D1","#FFE3F0"]
+          var lincolor = ["#EECA8A","#FFE29A","#FFEFD0"]
           var yName = 'm/s'
         
         var XData = [0,2,4,6,8,10,12,14,16,18]
         var YData = [1000, 1200, 1250, 1350, 1439, 1446, 1235, 1256, 1363, 1153];
-        // console.log(document.getElementById('co'),"document.getElementById(this.tab)");
-        var echarts = echarts.init(document.getElementById('feng'));
+        console.log(document.getElementById('feng'),"document.getElementById(this.tab)");
+        var mychart = echarts.init(document.getElementById('feng'));
         var option = {
           tooltip: {
             trigger: "axis",
@@ -293,9 +293,9 @@
           ],
         };
   
-        echarts.setOption(option);
+        mychart.setOption(option);
         window.addEventListener("resize", function () {
-          echarts.resize();
+          mychart.resize();
         });
       },
       // 根据字典表查设备品牌
@@ -328,6 +328,16 @@
   }
   ::v-deep .el-radio-button{
       margin: 0 10px;
+  }
+  #feng{
+    width: 90%;
+  height: 150px;
+  background: #fff;
+  margin-left: 5%;
+    div{
+      width: 100%;
+    height: 150px !important;
+    }
   }
   </style>
   

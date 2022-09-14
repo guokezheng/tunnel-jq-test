@@ -80,12 +80,12 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="CO值:">
-              {{ stateForm.deptName }}
+              <!-- {{ stateForm.deptName }} -->
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              {{ stateForm.brandName }}
+              <!-- {{ stateForm.brandName }} -->
             </el-form-item>
           </el-col>
         </el-row>

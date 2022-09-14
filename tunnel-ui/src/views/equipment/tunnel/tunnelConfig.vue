@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;"
+  <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;background-color: #D3EBFF;"
     element-loading-background="rgba(0, 0, 0, 0.8)">
     <div class="header config-header">
     </div>
@@ -1467,22 +1467,31 @@
   /*自定义info类型按钮样式*/
   .el-button--info {
     // color: #C0CCDA;
-    color: #ccd7e4;
-    background-color: #2e354f;
-    border: 1px solid #4f5c69;
+    color: #fff ;
+    background: linear-gradient(
+177deg, #00ACED, #0079DB);
+opacity: 0.8;
+color:#fff !important;
+
+    // background-color: #2e354f;
+    border: none;
   }
 
   /* 鼠标在按钮上悬浮*/
   .el-button:hover {
-    background-color: #4e5e89;
-    border: 1px solid #7f8c98;
+    background: linear-gradient(
+177deg, #00ACED, #0079DB);
+opacity: 0.8;
+    border: none;
+color:#fff !important;
+    // border: 1px solid #7f8c98;
   }
 
   /*自定义primary类型按钮样式*/
   .el-button--primary {
     color: #c0ccda;
-    background-color: #2e354f;
-    border: 1px solid #2e354f;
+    // background-color: #2e354f;
+    // border: 1px solid #2e354f;
   }
 
   /* 显示编号*/
@@ -1500,13 +1509,14 @@
   .menu-title {
     // color: rgb(191, 203, 217);
     font-size: 14px;
+    color: #005E96;
   }
 
   .menu-button-group {
     width: 90%;
 
     .el-button {
-      margin: 5px 0;
+      margin: 5px 1px;
     }
   }
 

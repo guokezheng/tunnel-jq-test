@@ -20,7 +20,7 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          style="height: 30px; transform: translateY(-30px); cursor: pointer"
           @click="handleClosee"
         />
       </div>
@@ -91,17 +91,17 @@
         </el-row>
         <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin-bottom: 10px">
+      <el-radio-group v-model="tab" style="margin-bottom: 10px" class="comCovi">
         <el-radio-button label="co">CO实时趋势</el-radio-button>
         <el-radio-button label="vi">VI实时趋势</el-radio-button>
       </el-radio-group>
-      <div id="co" v-show="tab == 'co'" style="margin-bottom:10px"></div>
-      <div id="vi" v-show="tab == 'vi'" style="margin-bottom:10px"></div>
+      <div id="co" v-show="tab == 'co'" style="margin-bottom: 10px"></div>
+      <div id="vi" v-show="tab == 'vi'" style="margin-bottom: 10px"></div>
       <div slot="footer">
         <el-button
           type="primary"
           size="mini"
-          @click="videoViewing()"
+          @click="handleClosee()"
           style="width: 80px"
           class="submitButton"
           >确 定</el-button
@@ -130,7 +130,7 @@ export default {
           console.log(newValue, "newValue");
           // this.mychart.dispose()
           this.$nextTick(() => {
-            this.initChart();
+            this.initChart(newValue);
           });
         }
       },
@@ -185,16 +185,23 @@ export default {
       }
     },
     // 获取图表数据信息
-    initChart() {
+    initChart(val) {
+      console.log(val);
       var lincolor = [];
       var yName = "";
-      if (this.tab == "co") {
+      if (val) {
+        if (val == "vi") {
+          lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
+          yName = "VI/KM";
+        } else {
+          lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
+          yName = "CO/PPM";
+        }
+      } else {
         lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
         yName = "CO/PPM";
-      } else {
-        lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-        yName = "VI/KM";
       }
+
       console.log(yName, "yName");
       var XData = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18];
       var YData = [1000, 1200, 1250, 1350, 1439, 1446, 1235, 1256, 1363, 1153];
@@ -216,7 +223,7 @@ export default {
           },
         },
         grid: {
-          top: "10%",
+          top: "24%",
           bottom: "18%",
           left: "14%",
           right: "12%",
@@ -240,9 +247,9 @@ export default {
         },
         yAxis: {
           type: "value",
-          name: "yName",
+          name: yName,
           nameTextStyle: {
-            color: "#fff",
+            color: "#FFB500",
             fontSize: 10,
             // padding: [0, 20, 0, 0],
           },
@@ -325,14 +332,13 @@ export default {
     },
     getBrandName(num) {
       // 根据字典表查设备厂商--------------------------
-      if(num){
+      if (num) {
         for (var item of this.brandList) {
-        if (Number(item.dictValue) == num) {
-          return item.dictLabel;
+          if (Number(item.dictValue) == num) {
+            return item.dictLabel;
+          }
         }
       }
-      }
-     
     },
     // 关闭弹窗
     handleClosee() {
@@ -345,12 +351,13 @@ export default {
 <style  lang="scss" scoped>
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
   padding: 5px 10px !important;
-}
-::v-deep .el-radio-button--medium .el-radio-button__inner {
   background: transparent;
   border: 1px solid transparent;
-  color: #fff;
+  // color: #fff;
 }
+// ::v-deep .el-radio-button--medium .el-radio-button__inner {
+
+// }
 ::v-deep .el-radio-group > .is-active {
   background: #00aaf2 !important;
   border-radius: 20px !important;

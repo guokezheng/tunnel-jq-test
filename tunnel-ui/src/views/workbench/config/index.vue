@@ -124,7 +124,7 @@
                                   lightSwitch == 1)"
                         :class="{ focus: item.focus }">
                         <img v-for="(url, indexs) in item.url" style="position: relative;" :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
-                          :width="item.iconWidth" :height="item.iconHeight" :key="item.deptId + indexs" :src="url" />
+                          :width="item.iconWidth" :height="item.iconHeight" :key="item.eqId + indexs" :src="url" />
 
                         <!-- 调光数值 -->
                         <label style="
@@ -2498,9 +2498,9 @@
       },
       // 车辆监测数据
       vehicleMonitoring(){
-        // this.tunnelId
+        // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
         const param = {
-          tunnelId:1
+          tunnelId:'WLJD-JiNan-YanJiuYuan-FHS'
         }
         vehicleMonitoring(param).then(res =>{
           console.log(res,"车辆监测数据")
@@ -2512,7 +2512,7 @@
       special(){
         // this.tunnelId
         const param = {
-          tunnelId:1
+          tunnelId:"1"
         }
         special(param).then(res =>{
           console.log(res,"重点车辆监测数据")
@@ -3990,6 +3990,7 @@
                 }
               }
               that.selectedIconList = res.eqList //设备
+              console.log(that.selectedIconList,"所有设备图标")
             }).then(() => {
               that.initEharts()
               // 切换隧道配置信息时，联动大类查询

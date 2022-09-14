@@ -69,5 +69,11 @@ public interface ISdEventService
      */
     public SdEvent getById(Long id);
 
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    public List<SdEvent> getEvent();
+
 
 }

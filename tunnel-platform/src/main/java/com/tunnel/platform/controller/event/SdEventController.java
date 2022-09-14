@@ -120,4 +120,14 @@ public class SdEventController extends BaseController
     public AjaxResult getById(@RequestParam("id") Long id){
         return AjaxResult.success(sdEventService.getById(id));
     }
+
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    @GetMapping("/getEvent")
+    public AjaxResult getEvent()
+    {
+        return AjaxResult.success(sdEventService.getEvent());
+    }
 }

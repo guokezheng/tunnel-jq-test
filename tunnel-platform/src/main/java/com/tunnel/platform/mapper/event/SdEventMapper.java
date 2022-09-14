@@ -64,6 +64,11 @@ public interface SdEventMapper
      * @return 结果
      */
     public int deleteSdEventByIds(Long[] ids);
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    public List<SdEvent> getEvent();
 
 
 }

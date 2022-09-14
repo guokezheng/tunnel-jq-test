@@ -142,4 +142,12 @@ public class SdEventServiceImpl implements ISdEventService
     public SdEvent getById(Long id) {
         return sdEventMapper.selectSdEventById(id);
     }
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    @Override
+    public List<SdEvent>getEvent() {
+        return sdEventMapper.getEvent();
+    }
 }

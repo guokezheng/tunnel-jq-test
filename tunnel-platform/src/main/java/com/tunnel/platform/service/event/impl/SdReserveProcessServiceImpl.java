@@ -3,6 +3,7 @@ package com.tunnel.platform.service.event.impl;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.domain.event.SdReserveProcess;
+import com.tunnel.platform.domain.event.SdReserveProcessModel;
 import com.tunnel.platform.domain.event.SdStrategyRl;
 import com.tunnel.platform.mapper.event.SdReserveProcessMapper;
 import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
@@ -78,6 +79,35 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
             list.add(reserveProcess);
         }
         return sdReserveProcessMapper.batchSdReserveProcess(list);
+    }
+
+    /**
+     * 批量添加预案流程节点
+     *
+     * @param sdReserveProcesses
+     * @return
+     */
+    @Override
+    public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
+        List<SdReserveProcess> list = new ArrayList<>();
+        sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
+        for (SdReserveProcess process : sdReserveProcesses.getSdReserveProcesses()) {
+            for (Long sid : process.getHandleStrategyList()) {
+                List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(sid);
+                SdReserveProcess reserveProcess = new SdReserveProcess();
+                reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
+                reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
+                reserveProcess.setProcessName(process.getProcessName());
+                reserveProcess.setProcessSort(process.getProcessSort());
+                reserveProcess.setStrategyId(sid);
+                reserveProcess.setCreateTime(DateUtils.getNowDate());
+                reserveProcess.setCreateBy(SecurityUtils.getUsername());
+                list.add(reserveProcess);
+            }
+        }
+        int result = -1;
+        result = sdReserveProcessMapper.batchSdReserveProcess(list);
+        return result;
     }
 
     /**

@@ -96,7 +96,7 @@
                     </div>
                   </template>
                   <!-- 设备图标-->
-                  <div class="icon-box mouseHover" v-for="(item, index) in selectedIconList" :key="item.eqId" :style="{
+                  <div class="icon-box mouseHover" v-for="(item, index) in selectedIconList" :key="index" :style="{
                             left: item.position.left  + 'px',
                             top: item.position.top + 'px',
                             'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
@@ -109,7 +109,9 @@
                       :disabled="sensorDisabledTwo(item)" style="position: relative;top: 0px;left: 0px;" popper-class="tipCase">
 
                       <div v-show="(item.eqType != 7 &&
+
                                   item.eqType != 16 &&
+
                                   item.eqType != 15 &&
                                   item.eqType != 8 &&
                                   item.eqType != 9 &&
@@ -122,7 +124,7 @@
                                   lightSwitch == 1)"
                         :class="{ focus: item.focus }">
                         <img v-for="(url, indexs) in item.url" style="position: relative;" :style="item.eqType || item.eqType==0 ? 'cursor: pointer;' : ''"
-                          :width="item.iconWidth" :height="item.iconHeight" :key="item.eqId+indexs" :src="url" />
+                          :width="item.iconWidth" :height="item.iconHeight" :key="item.deptId + indexs" :src="url" />
 
                         <!-- 调光数值 -->
                         <label style="
@@ -193,6 +195,8 @@
             <div>{{ item.label }}</div>
           </div>
         </div>
+
+
         <!-- 右侧侧窗 -->
         <div style="position: absolute;right: 0;display: flex;justify-content: space-between;flex-direction: column;height: 100%;">
           <div class="indicatorLight" @click="isDrawerA()">
@@ -206,8 +210,10 @@
             <i class="el-icon-caret-left"></i>触发控制模块
           </div>
         </div>
+       
           <!-- 一键车道控制模块 -->
           <el-drawer title="车道指示灯-车道控制" :visible.sync="drawerA" :modal="false" :append-to-body="true" class="drawerTop">
+          
             <div class="bingZhou">
               <span>济南方向：</span>
               <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
@@ -504,7 +510,7 @@
       </div>
     </el-dialog>
     <!--状态切换对话框-->
-    <el-dialog v-dialogDrag class="workbench-dialog" :title="title" :visible.sync="stateSwitchVisible" width="450px"
+    <!-- <el-dialog v-dialogDrag class="workbench-dialog" :title="title" :visible.sync="stateSwitchVisible" width="450px"
       append-to-body :class="stateForm.manufacturers?'robot-dialog':''">
       <div style="width: 100%;height: 30px;display: flex;justify-content: space-between;">
         <div class="dialogLine"></div>
@@ -534,16 +540,16 @@
           <el-col :span="12">
             <el-form-item label="所属方向:">
               <div v-if="stateForm.eqDirection == 0">
-                {{ rightDirection + "方向" }}
+                {{ rightDirection + "方向" }} -->
                 <!-- <img src="../../../assets/image/workbench/long-arrowhead.png"/> -->
-              </div>
+              <!-- </div>
               <div v-else-if="stateForm.eqDirection == 1">
-                {{ leftDirection + "方向" }}
+                {{ leftDirection + "方向" }} -->
                 <!--  <img
                   src="../../../assets/image/workbench/long-arrowhead.png"
                   style="transform: rotate(180deg); margin-left: 10px"
                 /> -->
-              </div>
+              <!-- </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -575,24 +581,24 @@
           </div>
           <label style="color: yellow; margin-left: 10px; pointer-events: none">
             {{ stateForm.lightValue }}</label>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 所有设备 -->
 
         
-        <!-- plc、紧急电话、手报 -->
+        <!-- plc、紧急电话、手报
         <el-form-item label="配置状态:" v-if="stateForm.eqType == (14 || 21 || 34) ">
           {{ '在线'}}
-        </el-form-item>
+        </el-form-item> -->
         <!-- 28：压力表  -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType == 28">
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 28">
           {{ '正常'}}
-        </el-form-item>
+        </el-form-item> -->
        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
 
         <el-form-item label="运行状态:">
           {{ '正常' }}
         </el-form-item>
-        <!-- plc -->
+         plc -->
         <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 14">
           {{ '在线'}}
         </el-form-item> -->
@@ -600,13 +606,13 @@
         <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 28">
           {{ '正常'}}
         </el-form-item> -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType == 21">
 
           {{ '在线'}}
-        </el-form-item> 
+        </el-form-item>  -->
        
         <!-- 消防水泵 -->
-        <el-form-item label="水位:" v-if="stateForm.eqType == 13">
+        <!-- <el-form-item label="水位:" v-if="stateForm.eqType == 13">
           {{ '水位'}}
         </el-form-item>
 
@@ -696,10 +702,10 @@
               </template>
             </el-table-column>
           </el-table>
-        </template>
+        </template> -->
 
         <!-- ====================微博检查结束============ -->
-        <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
+        <!-- <el-form-item label="状态:" v-if="stateForm.value && ![5, 6, 14, 13,15, 16,20].includes(stateForm.eqType)">
           {{ stateForm.value }}
         </el-form-item>
         <el-form-item label="检测值:" v-if="stateForm.value && stateForm.eqType == 999">
@@ -719,10 +725,9 @@
         </el-form-item>
         <el-form-item label="检测值:" v-if="stateForm.eqType == 123">
           {{ stateForm.state }}
-        </el-form-item>
-        <el-form-item label="配置状态:" v-if="stateForm.eqType != 33 && stateForm.eqType != 21 && !stateForm.value && stateForm.eqType != 123 && stateForm.eqType != 28  && stateForm.eqType != 34"">
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <div class="wrap" v-if="stateForm.eqType != 111">
+        </el-form-item> -->
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType != 33 && stateForm.eqType != 21 && !stateForm.value && stateForm.eqType != 123 && stateForm.eqType != 28  && stateForm.eqType != 34""> -->
+          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group v-for="(item, index) in eqTypeStateList" :key="index" v-model="stateForm.state" style="display: flex; flex-direction: column"
               :disabled="getFjDisabled(stateForm, item.state)">
               <el-radio v-if="stateForm.eqType == item.type && item.control == 1" class="el-radio flex-row" :label="item.state"
@@ -797,11 +802,10 @@
               </el-form-item>
             </el-form>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 应急照明 -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 6 && stateForm.eqType == 19">
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <div class="wrap" v-if="stateForm.eqType != 111">
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 6 "> -->
+          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group v-for="(item, index) in eqTypeStateList" :key="index" v-model="stateForm.state" style="display: flex; flex-direction: column"
               :disabled="getFjDisabled(stateForm, item.state)">
               <el-radio v-if="stateForm.eqType == item.type && item.control == 1" class="el-radio flex-row" :label="item.state"
@@ -857,11 +861,10 @@
               </el-form-item>
             </el-form>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 消防水泵 -->
-        <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 13">
-          <!-- <div v-if="spanEqtypeDate" style="white-space: nowrap;">暂未获取</div> -->
-          <div class="wrap" v-if="stateForm.eqType != 111">
+        <!-- <el-form-item label="配置状态:" v-if="stateForm.eqType != 21 && stateForm.value && stateForm.eqType != 123 && stateForm.eqType == 13"> -->
+          <!-- <div class="wrap" v-if="stateForm.eqType != 111">
             <el-radio-group v-for="(item, index) in eqTypeStateList" :key="index" v-model="stateForm.state" style="display: flex; flex-direction: column"
               :disabled="getFjDisabled(stateForm, item.state)">
               <el-radio v-if="stateForm.eqType == item.type && item.control == 1" class="el-radio flex-row" :label="item.state"
@@ -984,9 +987,7 @@
             </el-tab-pane>
           </el-tabs>
         </template>
-        <!-- <el-form-item label="模拟量:" v-if="stateForm.value">
-          <div id="analogQuantity"></div>
-        </el-form-item> -->
+      
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" v-if="stateForm.eqType != 21 && !stateForm.value" @click="submitState"
@@ -997,13 +998,17 @@
         </el-button>
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
 
     <!--批量管理对话框-->
     <el-dialog v-dialogDrag class="workbench-dialog batch-table batch-dialog" :title="title" :visible.sync="batchVisible"
       width="560px" append-to-body @close="batchForm.eqDirection = ''">
+      <div style="width: 100%;height: 30px;display: flex;justify-content: space-between;">
+        <div class="dialogLine"></div>
+        <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
+      </div>
       <el-form ref="batchForm" :rules="rules" :model="batchForm" label-width="80px" label-position="left" size="mini"
-        hide-required-asterisk>
+        hide-required-asterisk style="padding: 0px 20px 20px;">
         <el-form-item label="设备类型:">
           <el-select v-model="batchForm.eqType" size="mini">
             <el-option v-for="item in eqTypeList" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
@@ -1121,10 +1126,24 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-   <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23" 
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-video>
+   <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23 || this.clickEqType == 24" 
+              :equipmentId="equipmentId" @dialogClose = "dialogClose" :clickEqType = "this.clickEqType" :brandList="this.brandList" :directionList="this.directionList"></com-video>
+    <com-light style="position: absolute;top: 0;left: 0;" 
+              v-if="[1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13 ].includes(this.clickEqType)"  
+              :equipmentId="equipmentId"  :clickEqType = "this.clickEqType" :brandList="this.brandList" :directionList="this.directionList"
+               @dialogClose = "dialogClose"></com-light>
+    <com-covi style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 19" :brandList="this.brandList" :directionList="this.directionList"
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-covi>
+    <com-bright style="position: absolute;top: 0;left: 0;" :brandList="this.brandList" :directionList="this.directionList"
+              v-if="[5, 14, 21, 32, 33, 15, 16, 17,20, 28, 29, 30, 31, 34,35 ].includes(this.clickEqType)" 
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-bright>
+    <!-- <com-wind style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 17" 
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-wind>           -->
+    <!-- <com-indicator style="position: absolute;top: 0;left: 0;"
+              v-if="[1, 2, 3, 4].includes(this.clickEqType)"  
+              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-indicator> -->
     <!--摄像机对话框-->
-    <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
+    <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
       <div style="width: 100%;height: 30px;display: flex;justify-content: space-between;">
         <div class="dialogLine"></div>
@@ -1157,16 +1176,13 @@
           </el-col>
         </el-row>
         <el-form-item label="实时视频:" label-width="80px">
-          <div class="video_box">
-            <video class="h5video_" id="h5sVideo1" muted="muted" style="width:100%;height:100%;"></video>
-          </div>
-          <!-- <video id="videoBox" controls muted autoplay loop style="width: 80%;"></video> -->
+          <video id="videoBox" controls muted autoplay loop style="width: 80%;"></video>
         </el-form-item>
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
 
     <el-dialog v-dialogDrag class="workbench-dialog batch-table" :title="title" :visible.sync="shuibengVisible" width="40vw"
       append-to-body style="left: 30%">
@@ -1578,7 +1594,6 @@
 </template>
 
 <script>
-  import {displayH5sVideoAll,stopVideoAll} from  "@/api/icyH5stream";
   import flvjs from "flv.js";
   import vueSeamlessScroll from 'vue-seamless-scroll';
   import $ from "jquery";
@@ -1641,7 +1656,14 @@
   import videoPlayer from "@/views/event/vedioRecord/myVideo";
   import vmsContentUpdate from "@/views/workbench/config/vms-content-update"; //单个编辑
   import contentBatchEdit from "@/views/workbench/config/content-batch-edit"; //批量编辑
-  import comVideo from "@/views/workbench/config/components/video"; //批量编辑
+  import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
+  import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
+  import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
+  import comBright from "@/views/workbench/config/components/bright"; //亮度检测器等只有基本信息的弹窗
+  import comWind from "@/views/workbench/config/components/wind"; //亮度检测器等只有基本信息的弹窗
+
+
+  
   import {
     getLocalIP
   } from "@/api/event/vedioRecord";
@@ -1696,9 +1718,15 @@
       BatteryIcon,
       contentBatchEdit,
       comVideo,
+      comLight,
+      comCovi,
+      comBright,
+      comWind
     },
     data() {
       return {
+        brandList:[],
+        directionList:[],
         coviVisible:false,
         // 触发控制模块-设备类型
         typeOptions: [
@@ -2280,6 +2308,15 @@
       this.getDicts("sd_operation_log_state").then(response => {
         this.operationStateOptions = response.data;
       });
+      this.getDicts("brand").then((data) => {
+        console.log(data, "设备厂商");
+        this.brandList = data.data
+      })
+        this.getDicts("sd_direction").then((data) => {
+        console.log(data, "方向");
+        this.directionList = data.data
+
+      })
       //调取滚动条
       this.srollAuto()
     },
@@ -3294,7 +3331,6 @@
         this.HZdialogVisible = false
       },
       handleClosee() {
-        stopVideoAll();
         this.cameraVisible = false
       },
       controlHeightClose() {
@@ -3578,10 +3614,11 @@
           let inRange = this.inRange(list[i]);
           if (inRange == true) {
             //判断当前圈选设备的remark字段中是否为null，且是否包含“hjpz”，如果不包含，则返回-1，证明是正常设备，则可以显示圈选效果
-            // const remark = this.selectedIconList[i].remark;
-            // if (remark != null && remark.indexOf('hjpz') == -1) {
-            //   this.selectedIconList[i].isfocus = true;
-            // }
+            const remark = this.selectedIconList[i].remark;
+            if (remark != null && remark.indexOf('hjpz') == -1) {
+              this.selectedIconList[i].isfocus = true;
+            }
+            // debugger
             // this.selectedIconList[i].isfocus = true;
             if (boxEqList.length > 0) {
               let index = -1;
@@ -3619,7 +3656,6 @@
           if (boxEqList.length == 1 && boxEqList[0].eqlist.length == 1) {
             //单个配置
             // console.log(boxEqList[0].eqlist[0])
-            console.log(boxEqList[0].eqlist[0],'boxEqList[0].eqlist[0]boxEqList[0].eqlist[0]')
             this.openStateSwitch(boxEqList[0].eqlist[0]);
           } else {
             //超过1个设备进行批量配置
@@ -3874,6 +3910,7 @@
           isControl: null,
         };
         await getStateByData(queryParams).then((response) => {
+          console.log("查询设备状态图标",response.rows)
           let list = response.rows;
           that.getEqUrl(list);
         });
@@ -3939,7 +3976,6 @@
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
-            console.log(res,'^^^^^^^^^^^^^^^^^^');
             listType("").then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
@@ -4049,7 +4085,6 @@
           })
           .then((response) => {
             for (let i = 0; i < response.length; i++) {
-              
               let type = response[i].devType;
               if (type != "" && type != undefined) {
                 for (let j = 0; j < this.selectedIconList.length; j++) {
@@ -4237,13 +4272,10 @@
       //================================================单个配置开始==================================
       /* 打开配置界面*/
       async openStateSwitch(item) {
-        await getDevices(item.eqId).then(res=>{
-          console.log(res,'12313123')
-          this.stateForm = res.data
-        })
         console.log(item, '点击的设备');
         this.clickEqType = item.eqType
         this.equipmentId = item.eqId
+
         let StateTypeId = {
           StateTypeId: item.eqType
         }
@@ -4265,125 +4297,120 @@
         })
         if (this.itemEqTypeStateList != []) this.spanEqtypeDate = false
         // 传感器（模拟量）
-        let sensorDevice = [1, 2, 3, 4, 7, 8, 9, 10, 12, 13, 14, 15, 16, 24];
-        if (sensorDevice.indexOf(item.eqType) != -1) {
-          // this.stateSwitchVisible = true;
-          // this.stateForm = {
-          //   value: item.value,
-          // };
-          // this.$nextTick(()=>{
-          //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
-          // })
-        }
+        // let sensorDevice = [1, 2, 3, 4, 7, 8, 9, 10, 12, 13, 14, 15, 16];
+        // if (sensorDevice.indexOf(item.eqType) != -1) {
+        //   // this.stateSwitchVisible = true;
+        //   // this.stateForm = {
+        //   //   value: item.value,
+        //   // };
+        //   // this.$nextTick(()=>{
+        //   //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
+        //   // })
+        // }
 
         //跳转微波车检
-        if (item.eqType == "108") {
-          this.weiboList = eval(item.wbList);
-          this.title = item.eqName;
-          this.weiboVisible = true;
-          return;
-        }
-        // 跳转路面状态
-        else if (item.eqType == "120") {
+        // if (item.eqType == "108") {
+        //   this.weiboList = eval(item.wbList);
+        //   this.title = item.eqName;
+        //   this.weiboVisible = true;
+        //   return;
+        // }
+        // // 跳转路面状态
+        // else if (item.eqType == "120") {
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: "", //默认状态
+        //     pile: item.pile,
+        //     eqFeedbackAddress1: item.eqFeedbackAddress1,
+        //   };
+        //   const eqId = {
+        //     eqId: item.eqId
+        //   };
+        //   selectByEqDeno(eqId).then(response => {
+        //     this.lumianList = response.data;
+        //   })
+        //   if (item.lmList) {
+        //     this.lmList = JSON.parse(item.lmList)
+        //   }
+        //   this.title = item.eqName;
+        //   this.lumianVisible = true;
+        //   return;
+        // } 
+        // else if (item.eqType == "10") {
+        //   this.spanEqtypeDate = false
+        //   // 风机
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: item.state, //默认状态
+        //     pile: item.pile,
+        //     value: item.value,
+        //     lightValue: !item.lightValue ? 0 : item.lightValue,
+        //     fjState: item.state,
+        //     tunnelName:item.tunnelName.tunnelName
+        //   };
+        //   this.title = item.eqName;
+        //   this.stateSwitchVisible = true;
+        // } 
+        // else if (item.eqType == "8") {
+        //   this.spanEqtypeDate = false
+        //   // 引道照明
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: item.state, //默认状态
+        //     pile: item.pile,
+        //     value: item.value,
+        //     lightValue: !item.lightValue ? 0 : item.lightValue,
+        //     fjState: item.state,
+        //   };
+        //   this.title = item.eqName;
+        //   this.stateSwitchVisible = true;
 
-          this.stateForm = {
-            eqId: item.eqId,
-            eqHostId: item.eqHostId,
-            eqName: item.eqName,
-            eqType: item.eqType,
-            eqTypeName: item.typeName.typeName,
-            eqDirection: item.eqDirection,
-            state: "", //默认状态
-            pile: item.pile,
-            eqFeedbackAddress1: item.eqFeedbackAddress1,
-          };
-          const eqId = {
-            eqId: item.eqId
-          };
-          selectByEqDeno(eqId).then(response => {
-            this.lumianList = response.data;
-          })
-          if (item.lmList) {
-            this.lmList = JSON.parse(item.lmList)
-          }
-          this.title = item.eqName;
-          this.lumianVisible = true;
-          return;
-        } else if (item.eqType == "10") {
-          this.spanEqtypeDate = false
-          // 风机
-          // this.stateForm = {
-          //   eqId: item.eqId,
-          //   eqHostId: item.eqHostId,
-          //   eqName: item.eqName,
-          //   eqType: item.eqType,
-          //   eqTypeName: item.typeName.typeName,
-          //   eqDirection: item.eqDirection,
-          //   state: item.state, //默认状态
-          //   pile: item.pile,
-          //   value: item.value,
-          //   lightValue: !item.lightValue ? 0 : item.lightValue,
-          //   fjState: item.state,
-          //   tunnelName:item.tunnelName.tunnelName
-          // };
-          this.title = item.eqName;
-          this.stateSwitchVisible = true;
-        } else if (item.eqType == "8") {
-          this.spanEqtypeDate = false
-          // 引道照明
-          // this.stateForm = {
-          //   eqId: item.eqId,
-          //   eqHostId: item.eqHostId,
-          //   eqName: item.eqName,
-          //   eqType: item.eqType,
-          //   eqTypeName: item.typeName.typeName,
-          //   eqDirection: item.eqDirection,
-          //   state: item.state, //默认状态
-          //   pile: item.pile,
-          //   value: item.value,
-          //   lightValue: !item.lightValue ? 0 : item.lightValue,
-          //   fjState: item.state,
-          // };
-          this.title = item.eqName;
-          this.stateSwitchVisible = true;
-
-        }
+        // }
         //跳转 摄像机
-        else if (item.eqType == "24" || item.eqType == "23" || item.eqType == "25") {
-          console.log("点击摄像机")
-          getDevices(item.eqId).then(res=>{
-            displayH5sVideoAll(res.data.secureKey);
-          })
-          // getSecureKey().then(token=>{
-          //   console.log(token,'&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-          //   displayH5sVideoAll(token);
-          // })
-          // this.stateForm = {
-          //   eqId: item.eqId,
-          //   eqHostId: item.eqHostId,
-          //   eqName: item.eqName,
-          //   eqType: item.eqType,
-          //   // eqTypeName: item.typeName.typeName,
-          //   eqDirection: item.eqDirection,
-          //   state: "", //默认状态
-          //   pile: item.pile,
-          //   // eqFeedbackAddress1: item.eqFeedbackAddress1,
-          //   // eqFeedbackAddress2: item.eqFeedbackAddress2,
-          // };
-          this.title = item.eqName;
-          // this.cameraVisible = true;
-          this.loading = true;
-          setTimeout(this.changeLoading, 2000);
-          return;
-        }
-        else if(item.eqType == "17"){
-          this.title = '风速风向检测器'
-          this.coviVisible = true
-        }
-        else if(item.eqType == "19"){
-          this.title = 'CO/VI检测器'
-          this.coviVisible = true
-        }
+        // else if (item.eqType == "24" || item.eqType == "23") {
+        //   console.log("点击摄像机")
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: "", //默认状态
+        //     pile: item.pile,
+        //     eqFeedbackAddress1: item.eqFeedbackAddress1,
+        //     eqFeedbackAddress2: item.eqFeedbackAddress2,
+        //   };
+        //   this.title = item.eqName;
+        //   // this.cameraVisible = true;
+        //   this.loading = true;
+        //   // this.flvPlayer()
+        //   setTimeout(this.changeLoading, 2000);
+        //   return;
+        // }
+        // else if(item.eqType == "17"){
+        //   this.title = '风速风向检测器'
+        //   this.coviVisible = true
+        // }
+        // else if(item.eqType == "19"){
+        //   this.title = 'CO/VI检测器'
+        //   this.coviVisible = true
+        // }
         // 水泵
         /* else if (item.eqType == "18") {
           if (item.shuibeng && item.shuibeng!='null') {
@@ -4399,128 +4426,128 @@
           return;
         } */
         //跳转道路结冰
-        else if (item.eqType == "110") {
-          // this.stateForm = {
-          //   eqId: item.eqId,
-          //   eqHostId: item.eqHostId,
-          //   eqName: item.eqName,
-          //   eqType: item.eqType,
-          //   eqTypeName: item.typeName.typeName,
-          //   eqDirection: item.eqDirection,
-          //   state: "", //默认状态
-          //   pile: item.pile,
-          //   eqFeedbackAddress1: item.eqFeedbackAddress1,
-          // };
-          if (item.dljb) {
-            this.dljbObj = JSON.parse(item.dljb);
-          }
-          this.title = item.eqName;
-          this.daolujiebingVisible = true;
-          return;
-        }
-        //打开情报板
-        else if (item.eqType == "100") {
-          await getDeviceBase(item.eqId).then((data) => {
-            console.log('情报板大小')
-            this.$refs.vmsContentUpdate.vmsSize = data.data.devicePixel;
-          });
-          console.log(item, '情报板信息');
-          this.dialogVisible = true;
-          this.$refs.vmsContentUpdate.deviceId = item.eqId;
-          this.$refs.vmsContentUpdate.isAdd = true;
-          // this.$refs.contentBatchEdit.list = item;
-          this.$refs.vmsContentUpdate.init();
-          // this.dialogVisible = true;
-          // this.$refs.intelligenceBoard.childerfunction(this.dialogVisible,item);
-        } else if (item.eqType == "111") {
-          const eqId = {
-            equipmentId: item.eqId,
-            tunnelId: this.tunnelId
-          }
-          this.spanEqtypeDate = false
-          var pressureData = {}
-          pressure(eqId).then(response => {
-            console.log(response, "压力表")
-            pressureData = response.data[0]
-            // this.stateForm = {
-            //   eqType: item.eqType,
-            //   eqTypeName: item.typeName.typeName,
-            //   eqDirection: item.eqDirection,
-            //   pile: item.pile,
-            //   value: item.value,
-            //   equipmentName: pressureData.equipmentName,
-            //   position: pressureData.position,
-            //   tunnelName: pressureData.tunnelName,
-            //   analogQuantity: pressureData.analogQuantity,
-            //   highest: pressureData.highest,
-            //   low: pressureData.low,
-            //   createTime: pressureData.createTime
-            // };
-          });
-          this.title = item.eqName;
-          this.stateSwitchVisible = true;
-        } else if (item.eqType == "112") {
-          // 巡检机器人
-          // this.stateForm = {
-          //   ...item,
-          //   value: item.value,
-          //   state: '正常',
-          //   electricQuantity: '80',
-          //   eqTypeName: item.typeName.typeName,
-          //   eqTunnelName: item.tunnelName.tunnelName,
-          //   manufacturers: '苹果AI',
-          //   dateOfManufacture: '2022/2/23 14:30:45',
-          // };
-          this.robotInformationCollectionData = {}
-          // 状态记录
-          this.robotRecordList = [{
-              robotName: '巡检机器人-001',
-              tunnelName: '马家峪隧道',
-              DateTime: '2022-2-23 15:45:13',
-              state: '离线'
-            },
-            {
-              robotName: '巡检机器人-001',
-              tunnelName: '马家峪隧道',
-              DateTime: '2022-2-23 10:23:00',
-              state: '正常'
-            },
-          ]
-          this.title = item.eqName;
-          this.stateSwitchVisible = true;
+        // else if (item.eqType == "110") {
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: "", //默认状态
+        //     pile: item.pile,
+        //     eqFeedbackAddress1: item.eqFeedbackAddress1,
+        //   };
+        //   if (item.dljb) {
+        //     this.dljbObj = JSON.parse(item.dljb);
+        //   }
+        //   this.title = item.eqName;
+        //   this.daolujiebingVisible = true;
+        //   return;
+        // }
+        // //打开情报板
+        // else if (item.eqType == "100") {
+        //   await getDeviceBase(item.eqId).then((data) => {
+        //     console.log('情报板大小')
+        //     this.$refs.vmsContentUpdate.vmsSize = data.data.devicePixel;
+        //   });
+        //   console.log(item, '情报板信息');
+        //   this.dialogVisible = true;
+        //   this.$refs.vmsContentUpdate.deviceId = item.eqId;
+        //   this.$refs.vmsContentUpdate.isAdd = true;
+        //   // this.$refs.contentBatchEdit.list = item;
+        //   this.$refs.vmsContentUpdate.init();
+        //   // this.dialogVisible = true;
+        //   // this.$refs.intelligenceBoard.childerfunction(this.dialogVisible,item);
+        // } else if (item.eqType == "111") {
+        //   const eqId = {
+        //     equipmentId: item.eqId,
+        //     tunnelId: this.tunnelId
+        //   }
+        //   this.spanEqtypeDate = false
+        //   var pressureData = {}
+        //   pressure(eqId).then(response => {
+        //     console.log(response, "压力表")
+        //     pressureData = response.data[0]
+        //     this.stateForm = {
+        //       eqType: item.eqType,
+        //       eqTypeName: item.typeName.typeName,
+        //       eqDirection: item.eqDirection,
+        //       pile: item.pile,
+        //       value: item.value,
+        //       equipmentName: pressureData.equipmentName,
+        //       position: pressureData.position,
+        //       tunnelName: pressureData.tunnelName,
+        //       analogQuantity: pressureData.analogQuantity,
+        //       highest: pressureData.highest,
+        //       low: pressureData.low,
+        //       createTime: pressureData.createTime
+        //     };
+        //   });
+        //   this.title = item.eqName;
+        //   this.stateSwitchVisible = true;
+        // } else if (item.eqType == "112") {
+        //   // 巡检机器人
+        //   this.stateForm = {
+        //     ...item,
+        //     value: item.value,
+        //     state: '正常',
+        //     electricQuantity: '80',
+        //     eqTypeName: item.typeName.typeName,
+        //     eqTunnelName: item.tunnelName.tunnelName,
+        //     manufacturers: '苹果AI',
+        //     dateOfManufacture: '2022/2/23 14:30:45',
+        //   };
+        //   this.robotInformationCollectionData = {}
+        //   // 状态记录
+        //   this.robotRecordList = [{
+        //       robotName: '巡检机器人-001',
+        //       tunnelName: '马家峪隧道',
+        //       DateTime: '2022-2-23 15:45:13',
+        //       state: '离线'
+        //     },
+        //     {
+        //       robotName: '巡检机器人-001',
+        //       tunnelName: '马家峪隧道',
+        //       DateTime: '2022-2-23 10:23:00',
+        //       state: '正常'
+        //     },
+        //   ]
+        //   this.title = item.eqName;
+        //   this.stateSwitchVisible = true;
 
-        } else if (item.eqType == "118") {
-          if (!item.eqFeedbackAddress1) {
-            this.$modal.msgWarning('没有给设备配置点位地址')
-            this.youdaoVisible = false
-            return
-          }
-          this.title = item.eqName
-          this.stateForm = {
-            eqId: item.eqId,
-            eqDirection: item.eqDirection,
-            eqFeedbackAddress1: item.eqFeedbackAddress1
-          }
-          // 诱导灯
-          getHostData({
-            hostIP: item.eqFeedbackAddress1
-          }).then(response => {
-            // this.stateForm = {
-            //   eqId: item.eqId,
-            //   eqDirection: item.eqDirection,
-            //   eqFeedbackAddress1: item.eqFeedbackAddress1,
-            //   corModel: response.corModel,
-            //   Zlane: (response.Zlane == "true" ? true : false),
-            //   Ylane: (response.Ylane == "true" ? true : false),
-            //   whiteLight: parseInt(response.whiteLight),
-            //   yellowLight: parseInt(response.yellowLight),
-            //   twinkleModel: response.twinkleModel,
-            //   twinkleFrequency: response.twinkleFrequency,
-            //   lightTime: response.lightTime
-            // }
-          })
-          this.youdaoVisible = true
-        }
+        // } else if (item.eqType == "118") {
+        //   if (!item.eqFeedbackAddress1) {
+        //     this.$modal.msgWarning('没有给设备配置点位地址')
+        //     this.youdaoVisible = false
+        //     return
+        //   }
+        //   this.title = item.eqName
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqDirection: item.eqDirection,
+        //     eqFeedbackAddress1: item.eqFeedbackAddress1
+        //   }
+        //   // 诱导灯
+        //   getHostData({
+        //     hostIP: item.eqFeedbackAddress1
+        //   }).then(response => {
+        //     this.stateForm = {
+        //       eqId: item.eqId,
+        //       eqDirection: item.eqDirection,
+        //       eqFeedbackAddress1: item.eqFeedbackAddress1,
+        //       corModel: response.corModel,
+        //       Zlane: (response.Zlane == "true" ? true : false),
+        //       Ylane: (response.Ylane == "true" ? true : false),
+        //       whiteLight: parseInt(response.whiteLight),
+        //       yellowLight: parseInt(response.yellowLight),
+        //       twinkleModel: response.twinkleModel,
+        //       twinkleFrequency: response.twinkleFrequency,
+        //       lightTime: response.lightTime
+        //     }
+        //   })
+        //   this.youdaoVisible = true
+        // }
         // else if (item.eqType == 1){
         //   this.batchVisible = false;
         //   this.stateForm = {
@@ -4537,106 +4564,68 @@
         //     fjState: item.state,
         //   };
         // }
-        else if (item.eqType == "123") {
-          this.stateForm = {
-            eqId: item.eqId,
-            eqHostId: item.eqHostId,
-            eqName: item.eqName,
-            eqType: item.eqType,
-            // eqTypeName: item.typeName.typeName,
-            eqDirection: item.eqDirection,
-            state: item.state == '1' ? '已报警' : '未报警',
-            pile: item.pile,
-          };
-          console.log(this.stateForm, "声光报警")
-          this.title = item.eqName;
-          this.stateSwitchVisible = true;
-          return;
-        } else if(item.eqType == "1"){
-          this.spanEqtypeDate = false
-              // this.stateForm = {
-              //   eqId: item.eqId,
-              //   eqHostId: item.eqHostId,
-              //   eqName: item.eqName,
-              //   eqType: item.eqType,
-              //   eqTypeName: item.typeName.typeName,
-              //   eqDirection: item.eqDirection,
-              //   state: item.state, //默认状态
-              //   pile: item.pile,
-              //   value: item.value,
-              //   lightValue: !item.lightValue ? 0 : item.lightValue,
-              //   fjState: item.state,
-              // };
-              this.title = item.eqName;
-              // this.stateSwitchVisible = true;
-              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34,33,31];
-              if (sensorDevice.indexOf(item.eqType) != -1) {
-                this.stateSwitchVisible = true;
-                // this.stateForm = {
-                //   value: item.value,
-                // };
-                // this.$nextTick(()=>{
-                //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
-                // })
-              }
-          return;
-        }else if(item.display){
-          this.title = item.eqName;
-          let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34,33,31];
-              if (sensorDevice.indexOf(item.eqType) != -1) {
-                this.stateSwitchVisible = true;
-              }
-        }else {
-          //配置
-          if (item.environmentType == undefined) {
-            this.batchVisible = false;
-            if (
-              item.eqDirection == undefined ||
-              item.eqDirection == null
-            ) {
-              this.$message({
-                message: "未能获取设备信息,请重新配置！1111",
-                type: "warning",
-                customClass: "workbench-msg",
-              });
-              this.cleanUp();
-              this.empty();
-            } else {
-              // 红绿灯
-              this.spanEqtypeDate = false
-              this.stateForm = {
-                eqId: item.eqId,
-                eqHostId: item.eqHostId,
-                eqName: item.eqName,
-                eqType: item.eqType,
-                eqTypeName: item.typeName.typeName,
-                eqDirection: item.eqDirection,
-                state: item.state, //默认状态
-                pile: item.pile,
-                value: item.value,
-                lightValue: !item.lightValue ? 0 : item.lightValue,
-                fjState: item.state,
-              };
-              this.title = item.eqName;
-              // this.stateSwitchVisible = true;
-              let sensorDevice = [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 20, 24, 28, 21, 34,33,31];
-              if (sensorDevice.indexOf(item.eqType) != -1) {
-                this.stateSwitchVisible = true;
-                // this.stateForm = {
-                //   value: item.value,
-                // };
-                // this.$nextTick(()=>{
-                //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
-                // })
-              }
-            }
-          }
-        }
-      },
-      getSecureKey(item){
-        getDevices(item.eqId).then(res=>{
-          return res.data.secureKey
-        })
+        // else if (item.eqType == "123") {
+        //   this.stateForm = {
+        //     eqId: item.eqId,
+        //     eqHostId: item.eqHostId,
+        //     eqName: item.eqName,
+        //     eqType: item.eqType,
+        //     eqTypeName: item.typeName.typeName,
+        //     eqDirection: item.eqDirection,
+        //     state: item.state == '1' ? '已报警' : '未报警',
+        //     pile: item.pile,
+        //   };
+        //   console.log(this.stateForm, "声光报警")
+        //   this.title = item.eqName;
+        //   this.stateSwitchVisible = true;
+        //   return;
+        // } else {
+        //   //配置
+        //   if (item.environmentType == undefined) {
+        //     this.batchVisible = false;
+        //     if (
+        //       item.typeName == undefined ||
+        //       item.eqDirection == undefined ||
+        //       item.eqDirection == null
+        //     ) {
+        //       this.$message({
+        //         message: "未能获取设备信息,请重新配置！",
+        //         type: "warning",
+        //         customClass: "workbench-msg",
+        //       });
+        //       this.cleanUp();
+        //       this.empty();
+        //     } else {
+        //       // 红绿灯
+        //       this.spanEqtypeDate = false
+        //       this.stateForm = {
+        //         eqId: item.eqId,
+        //         eqHostId: item.eqHostId,
+        //         eqName: item.eqName,
+        //         eqType: item.eqType,
+        //         eqTypeName: item.typeName.typeName,
+        //         eqDirection: item.eqDirection,
+        //         state: item.state, //默认状态
+        //         pile: item.pile,
+        //         value: item.value,
+        //         lightValue: !item.lightValue ? 0 : item.lightValue,
+        //         fjState: item.state,
+        //       };
+        //       this.title = item.eqName;
+        //       // this.stateSwitchVisible = true;
+        //       let sensorDevice = [ 15, 16, 20, 28,  34,31];
+        //       if (sensorDevice.indexOf(item.eqType) != -1) {
+        //         this.stateSwitchVisible = true;
+        //         // this.stateForm = {
+        //         //   value: item.value,
+        //         // };
+        //         // this.$nextTick(()=>{
+        //         //    if(item.value == '0'||item.value)this.alarmsCharts(item.eqType)
+        //         // })
+        //       }
+        //     }
+        //   }
+        // }
       },
       loadFlv() {
         if (flvjs.isSupported()) {
@@ -6694,7 +6683,7 @@
     }
 
     .el-radio-selcted {
-      padding: 5px 300px 5px 20px;
+      padding: 5px 220px 5px 20px;
       margin: 2px 0px;
       color: #c0ccda;
       border-radius: 4px;

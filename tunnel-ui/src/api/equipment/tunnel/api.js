@@ -100,3 +100,10 @@ export function sendAnalogCom(data) {
     data: data
   })
 }
+// 查询单个设备的实时数据状态
+export function getInfo(eqId) {
+  return request({
+    url: '/system/storage/' + eqId,
+    method: 'get'
+  })
+}

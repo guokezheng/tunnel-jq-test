@@ -92,7 +92,8 @@
             active-value="1"
             inactive-value="2"
             active-text="开启"
-            inactive-text="关闭">
+            inactive-text="关闭"
+            disabled>
           </el-switch>
         </template>
       </el-table-column>

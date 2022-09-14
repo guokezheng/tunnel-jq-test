@@ -188,7 +188,7 @@
       <!-- 手动控制下面 -->
       <template v-if="strategyForm.strategyType == 0">
         <el-form-item v-for="(items, index) in strategyForm.manualControl" :key="index">
-          <el-select v-model="items.value" @change='changeSelect' multiple placeholder="请选择设备00" style="width: 40%">
+          <el-select v-model="items.value" @change='changeSelect' multiple placeholder="请选择设备" style="width: 40%">
             <el-option
               v-for="(item) in equipmentData"
               :key="item.eqId"
@@ -744,6 +744,13 @@ export default {
         this.strategyForm.manualControl.push({         
           value:'',
           state:''       
+        })
+        break;
+        case '1' :
+        this.strategyForm.autoControl.push({         
+          value:'',
+          state:'',
+          type:'',    
         })
         break;
         case '2' :

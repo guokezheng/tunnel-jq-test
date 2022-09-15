@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Controller
@@ -80,6 +81,17 @@ public class SdEquipmentTypeController extends BaseController
 		return getDataTable(list);
 	}
 
+	/**
+	 * 获得设备类型和控制策略
+	 * @param sdEquipmentType
+	 * @return
+	 */
+	@GetMapping("/getTypeAndStrategy")
+	public Result getTypeAndStrategy(SdEquipmentType sdEquipmentType) {
+		List<Map> sdEquipmentTypes = sdEquipmentTypeService.selectTypeAndStrategy(sdEquipmentType);
+		return Result.success(sdEquipmentTypes);
+	}
+
     /**
      * 查询设备类型列表（非分页）
      */
@@ -91,7 +103,7 @@ public class SdEquipmentTypeController extends BaseController
     }
 
 	/**
-	 *
+	 * 查询数据项中设备类型列表
 	 *
 	 * @param sdEquipmentType
 	 * @return

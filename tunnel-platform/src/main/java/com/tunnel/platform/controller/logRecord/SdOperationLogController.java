@@ -97,4 +97,15 @@ public class SdOperationLogController extends BaseController
     {
         return toAjax(sdOperationLogService.deleteSdOperationLogByIds(ids));
     }
+
+    /**
+     * 新增时 设备执行记录接口 websocket推送
+     * @param sdOperationLog
+     * @return
+     */
+    @PostMapping("/operationLog")
+    public AjaxResult operationLog(@RequestBody SdOperationLog sdOperationLog)
+    {
+        return AjaxResult.success(sdOperationLogService.operationLog(sdOperationLog));
+    }
 }

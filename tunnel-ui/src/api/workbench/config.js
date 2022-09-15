@@ -23,6 +23,22 @@ export function proportionOfEquipment(query) {
     params: query
   })
 }
+// 车辆监测数据
+export function vehicleMonitoring(query) {
+  return request({
+    url: '/radar/data/byId',
+    method: 'get',
+    params: query
+  })
+}
+// 重点车辆监测数据
+export function special(query) {
+  return request({
+    url: '/special/vehicle/specialById',
+    method: 'get',
+    params: query
+  })
+}
 // 获取情报板基础信息
 export function getDeviceBase(deviceId) {
   return request({

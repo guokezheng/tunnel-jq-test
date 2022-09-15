@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.logRecord;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.platform.domain.logRecord.SdOperationLog;
 
 import java.util.List;
@@ -64,4 +65,11 @@ public interface ISdOperationLogService
      * 定时清理3个月前的操作日志
      */
     public int deleteOprationLogOver3month();
+
+    /**
+     * 新增时 设备执行记录接口 websocket推送
+     * @param sdOperationLog
+     * @return
+     */
+    public AjaxResult operationLog(SdOperationLog sdOperationLog);
 }

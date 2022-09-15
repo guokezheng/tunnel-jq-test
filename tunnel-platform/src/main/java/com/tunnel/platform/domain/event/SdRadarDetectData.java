@@ -12,8 +12,8 @@ import java.util.Date;
 @Data
 public class SdRadarDetectData {
 
-    @ApiModelProperty("主键")
-    private  String id;
+    @ApiModelProperty("数据流水号")
+    private  String recordSerialNumber;
 
     @ApiModelProperty("车辆id")
     private  String vehicleId;

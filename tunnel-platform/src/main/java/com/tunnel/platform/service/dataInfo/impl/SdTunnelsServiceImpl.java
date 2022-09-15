@@ -1,11 +1,9 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
-import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.domain.event.SdTunnelSubarea;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
-import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -105,9 +103,18 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService
         return sdTunnelsMapper.deleteSdTunnelsById(tunnelId);
     }
 
+    /**
+     * 查询隧道分区
+     * @param sdTunnels
+     * @return
+     */
     @Override
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels) {
         return sdTunnelsMapper.selectSdTunnelsSubList(sdTunnels);
     }
 
+    @Override
+    public List<SdTunnels> deptId(Long deptId) {
+        return sdTunnelsMapper.deptId(deptId);
+    }
 }

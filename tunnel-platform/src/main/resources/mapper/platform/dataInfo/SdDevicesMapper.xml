@@ -126,8 +126,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </select>
 
+    <!--查询设备详情-->
+    <select id="queryDeviceById" parameterType="String" resultType="java.util.Map">
+        select a.eq_id eqId,a.eq_name eqName, a.f_eq_id fEqId,b.tunnel_id tunnelId, b.tunnel_name tunnelName,
+        a.eq_type eqType,t.type_name typeName,s.dept_id deptId, s.dept_name deptName,
+        a.eq_model eqModel, a.brand_id brandId,
+        <!-- a.brand_name brandName, -->
+        a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
+        a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.protocol, a.protocol_url protocolUrl,
+        a.protocol_version protocolVersion, a.protocol_name protocolName, a.data_type dataType, a.data_source dataSource,
+        <!-- a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, -->
+    <!-- a.use_status, a.is_monitor,port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time,-->
+    a.eq_status eqStatus,a.eq_status_time eqStatusTime,
+        <!--  a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+      a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, -->
+          a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
+      <!-- a.control_status -->
+     from sd_devices a
+     left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
+     left join sd_equipment_type t on a.eq_type = t.type_id
+     left join sys_dept s on s.dept_id = b.dept_id
+     where eq_id = #{eqId}
+</select>
 
-    <!-- 下拉查询 -->
+
+<!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
         <!-- a.brand_name, -->
@@ -345,14 +368,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where eq_id = #{eqId}
     </update>
-
     <update id="updateSdDevicesBatch">
-        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-            update sd_devices
-            set eq_status = #{item.eqStatus}
-            where eq_id = #{item.eqId}
-        </foreach>
+        update sd_devices
+        set eq_status = #{eqStatus}
+        where eq_id = #{eqId}
     </update>
+
+    <!--    <update id="updateSdDevicesBatch">-->
+<!--        <foreach collection="list" item="item" index="index" open="" close="" separator=",">-->
+<!--            update sd_devices-->
+<!--            set eq_status = #{item.eqStatus}-->
+<!--            where eq_id = #{item.eqId}-->
+<!--        </foreach>-->
+<!--    </update>-->
 
 
     <delete id="deleteSdDevicesById" parameterType="String">
@@ -390,7 +418,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!-- 根据设备类型查询设备列表 -->
     <select id="selectEqListByEqTypes" resultMap="SdDevicesResult">
-        select eq_id,eq_type from sd_devices WHERE eq_type in (#{eqTypes})
+        <include refid="selectSdDevicesVo"/>
+         WHERE eq_type in
+        <foreach collection="array" item="eqTypes" index="index" open="(" separator="," close=")">
+            #{eqTypes}
+        </foreach>
     </select>
 
     <select id="selectSensorList" resultMap="SdDevicesResult">
@@ -511,4 +543,59 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{item.ip}
         </foreach>
     </select>
+
+    <select id="selecTunnelId" resultType="java.lang.String">
+        select eq_tunnel_id tunnelId
+        from sd_devices
+        where eq_id=#{deviceId}
+    </select>
+
+    <select id="selectDevice" resultMap="SdDevicesResult">
+        select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark
+        from sd_devices
+        where eq_tunnel_id =#{tunnelId}
+    </select>
+
+    <select id="selectDeviceByHost" resultType="String">
+        select a.eq_id from sd_firefighting_components_address a
+        where host = #{host} and eq_loop = #{loop} and address = #{address}
+    </select>
+
+    <select id="selectDeviceByHost" resultType="String">
+        select a.eq_id from sd_firefighting_components_address a
+        where host = #{host} and eq_id = #{eqId}
+    </select>
+
+    <select id="getDevicesByTypeAndTunnel" parameterType="SdDevices" resultType="hashmap">
+        select a.eq_id as eqId, a.eq_tunnel_id as eqTunnelId, a.eq_name as eqName, a.eq_type as eqType,
+              a.pile
+        from sd_devices a
+        left join sd_equipment_type b on a.eq_type = b.type_id
+        <where>
+            <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+        </where>
+        order by a.create_time desc, a.update_time desc
+    </select>
+    <select id="selectStateStorage" resultType="com.tunnel.platform.domain.dataInfo.SdDevices">
+        select device_id eqId,state eqStatus
+        from sd_state_storage
+    </select>
+
+    <select id="selectEqStatus" resultType="java.lang.String">
+       select eq_status deviceStatus from sd_devices
+        where eq_id=#{deviceId}
+    </select>
+
+    <select id="selectDataUnit" resultType="com.tunnel.platform.domain.digitalmodel.SdDeviceDataItem">
+        select
+        sdd.data data,
+        sdt.unit unit,
+        sdd.device_id deviceId
+        from sd_device_data sdd
+        left join sd_device_type_item sdt on
+        sdd.item_id=sdt.id
+        where device_id=#{eqId}
+    </select>
+
 </mapper>

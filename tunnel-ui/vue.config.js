@@ -34,7 +34,7 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         // target: `http://127.0.0.1:8000`, // 服务器
-        // target: `http://10.168.56.206:7075`, // 服务器
+        target: `http://192.168.31.174:8080`, // 服务器
         // target: `http://10.168.64.171:8000`, // 服务器
         // target: `http://10.168.56.206:7075`, // 服务器、
         // target: `http://10.168.65.230:8080/`, // 服务器、
@@ -42,10 +42,18 @@ module.exports = {
         // target: `http://10.168.66.254:8000`, //张浩程 服务器、
         // target: `http://10.168.57.31:7075`, // 杜振宇服务器、
         // target: `http://10.168.70.120:8000`, // 张国利服务器、
-        target: `http://10.168.64.171:8000`, //玉伟服务器、
+        // target: `http://10.168.64.171:8000`, //玉伟服务器、
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      },
+      '/gdLayer':{
+        target: `https://tm.amap.com/trafficengine/mapabc/traffictile`, // 服务器
+        secure: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/gdLayer': ''
         }
       }
     },

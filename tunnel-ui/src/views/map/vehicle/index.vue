@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="车辆id" prop="vehicleId">
+      <!-- <el-form-item label="车辆id" prop="vehicleId">
         <el-input
           v-model="queryParams.vehicleId"
           placeholder="请输入车辆id"
@@ -9,7 +9,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="隧道id" prop="tunnelId">
         <el-input
           v-model="queryParams.tunnelId"
@@ -21,19 +21,25 @@
       </el-form-item>
       <el-form-item label="车辆类型" prop="vehicleType">
         <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-option 
+           v-for="(item) in vehicleType"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
         </el-select>
       </el-form-item>
       <el-form-item label="车辆颜色" prop="vehicleColor">
-        <el-input
-          v-model="queryParams.vehicleColor"
-          placeholder="请输入车辆颜色"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.vehicleColor" placeholder="请选择车辆颜色" clearable size="small">
+          <el-option 
+           v-for="(item) in vehicleColor"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
+        </el-select>
       </el-form-item>
-      <el-form-item label="车牌号" prop="vehicleLicense">
+      <!-- <el-form-item label="车牌号" prop="vehicleLicense">
         <el-input
           v-model="queryParams.vehicleLicense"
           placeholder="请输入车牌号"
@@ -41,15 +47,16 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="车牌颜色" prop="licenseColor">
-        <el-input
-          v-model="queryParams.licenseColor"
-          placeholder="请输入车牌颜色"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.licenseColor" placeholder="请选择车牌颜色" clearable size="small">
+          <el-option 
+           v-for="(item) in licenseColor"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
+        </el-select>
       </el-form-item>
       <el-form-item label="开始时间" prop="startTime">
         <el-date-picker clearable size="small"
@@ -122,13 +129,13 @@
 
     <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="车辆id" align="center" prop="vehicleId" />
+      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
+      <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
       <el-table-column label="隧道id" align="center" prop="tunnelId" />
-      <el-table-column label="车辆类型" align="center" prop="vehicleType" />
-      <el-table-column label="车辆颜色" align="center" prop="vehicleColor" />
+      <el-table-column label="车辆类型" align="center" prop="vehicleType"  :formatter="vehicleTypeFormat" />
+      <el-table-column label="车辆颜色" align="center" prop="vehicleColor"  :formatter="vehicleColorFormat" />
       <el-table-column label="车牌号" align="center" prop="vehicleLicense" />
-      <el-table-column label="车牌颜色" align="center" prop="licenseColor" />
+      <el-table-column label="车牌颜色" align="center" prop="licenseColor"  :formatter="licenseColorFormat"/>
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
@@ -222,6 +229,9 @@ export default {
   name: "Vehicle",
   data() {
     return {
+      licenseColor:[],//车牌颜色
+      vehicleColor:[],//车辆颜色
+      vehicleType:[],//车辆类型
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -264,8 +274,38 @@ export default {
   },
   created() {
     this.getList();
+     //车辆类型
+     this.getDicts("sd_wj_vehicle_type").then(response => {
+      // console.log(response,'车辆类型')
+      this.vehicleType = response.data;
+    });
+    //车辆颜色
+    this.getDicts("sd_wj_vehicle_color").then(response => {
+      // console.log(response,'车辆颜色')
+      this.vehicleColor = response.data;
+    });
+     //车牌颜色
+     this.getDicts("sd_wj_vehicle_color").then(response => {
+      // console.log(response,'车辆颜色')
+      this.licenseColor = response.data;
+    });
   },
   methods: {
+     //车辆类型字典给翻译
+     vehicleTypeFormat(row, column) {
+      // console.log(row)
+      return this.selectDictLabel(this.vehicleType, row.vehicleType);
+    },
+    //车辆颜色字典翻译
+    vehicleColorFormat(row, column){
+        // console.log(row)
+      return this.selectDictLabel(this.vehicleColor, row.vehicleColor);
+    },
+    //车牌颜色字典翻译
+    licenseColorFormat(row, column){
+      console.log(row)
+      return this.selectDictLabel(this.licenseColor, row.licenseColor);
+    },
     /** 查询重点车辆列表 */
     getList() {
       this.loading = true;
@@ -330,6 +370,7 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+      
         if (valid) {
           if (this.form.id != null) {
             updateVehicle(this.form).then(response => {

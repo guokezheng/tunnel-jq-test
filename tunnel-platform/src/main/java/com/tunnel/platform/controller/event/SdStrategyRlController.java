@@ -37,6 +37,18 @@ public class SdStrategyRlController extends BaseController
     }
 
     /**
+     * 根据策略id查询策略设备信息
+     * @param strategyId
+     * @return
+     */
+    @GetMapping("/getStrategyRlByStrategyId/{strategyId}")
+    public TableDataInfo getStrategyRlByStrategyId(@PathVariable("strategyId") Long strategyId) {
+        startPage();
+        List<SdStrategyRl> rlList = sdStrategyRlService.selectSdStrategyRlListByStrategyId(strategyId);
+        return getDataTable(rlList);
+    }
+
+    /**
      * 导出策略关联设备信息列表
      */
    /* @PreAuthorize(hasPermi = "system:strategyRl:export")

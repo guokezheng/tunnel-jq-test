@@ -160,3 +160,4 @@ aj:
 #万集接口对接
 wj:
   imagePath: /eventimage
+  url: http://10.3.16.4/img

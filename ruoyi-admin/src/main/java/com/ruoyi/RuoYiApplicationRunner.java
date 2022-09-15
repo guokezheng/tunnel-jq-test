@@ -1,5 +1,6 @@
 package com.ruoyi;
 
+import com.tunnel.platform.firealarm.FireNettyServer;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import com.zc.common.constant.RedisChannelConstants;
 import com.zc.common.core.redis.RedisPubSub;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @auther Athena-YangChao
@@ -24,6 +28,9 @@ public class RuoYiApplicationRunner  implements ApplicationRunner {
 
     @Autowired
     private RedisPubSub redisPubSub;
+
+    @Autowired
+    private FireNettyServer fireNettyServer;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -53,5 +60,14 @@ public class RuoYiApplicationRunner  implements ApplicationRunner {
                 });
             }
         }
+
+        List<Integer> portList = new ArrayList<Integer>();
+        List<String> handlerList = new ArrayList<String>();
+        // 消防设备通信
+        portList.add(60000);
+        handlerList.add("com.tunnel.platform.firealarm.FireNettyServerHandler");
+        fireNettyServer.setPortList(portList);
+        fireNettyServer.setHandlerList(handlerList);
+        new Thread(fireNettyServer).start();
     }
 }

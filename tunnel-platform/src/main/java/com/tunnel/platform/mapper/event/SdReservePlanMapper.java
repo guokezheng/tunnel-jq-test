@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.event;
 import com.tunnel.platform.domain.event.SdReservePlan;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案信息Mapper接口
@@ -68,4 +69,18 @@ public interface SdReservePlanMapper
     public int deleteSdReservePlanByRlIds(String[] planFileIds);
 
     public List<SdReservePlan> checkIfSingleReservePlan(SdReservePlan sdReservePlan);
+
+    /**
+     * 查询预案类别
+     *
+     * @return
+     */
+    public List<Map> selectPlanCategory();
+
+    /**
+     * 根据分区Id查询预案
+     *
+     * @return
+     */
+    public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
 }

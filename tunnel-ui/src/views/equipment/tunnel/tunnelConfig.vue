@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;"
+  <div class="app-container configurePage" v-loading="saveLoading" style="position: relative;background-color: #D3EBFF;"
     element-loading-background="rgba(0, 0, 0, 0.8)">
     <div class="header config-header">
     </div>
@@ -181,7 +181,7 @@
   import DragItDude from "vue-drag-it-dude";
   import Snap from "imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js";
   import {
-    listDevices,
+    newListDevices,
     getDevices,
     updateDevices,
   } from "@/api/equipment/eqlist/api";
@@ -525,8 +525,11 @@
         let list = that.selectedIconList;
         // debugger;
         for (let i = 0; i < list.length; i++) {
-          var iconWidth = 30;
-          var iconHeight = 30;
+          if(list[i].eqType == 12){
+            console.log(list[i])
+          }
+          var iconWidth = 0;
+          var iconHeight = 0;
           if (list[i].width != "") {
             iconWidth = list[i].width;
             iconHeight = list[i].height;
@@ -540,6 +543,7 @@
           }
           //矩形框
           if (list[i].url.length > 1) {
+            console.log('矩形框')
             //设备图标
             let img1 = that.svg.paper.image(
               list[i].url[0],
@@ -590,7 +594,7 @@
           } else {
             var img3 = that.svg.paper.image(
               list[i].url[0],
-              list[i].position.left + iconWidth,
+              list[i].position.left + iconWidth,//此处增加+ iconWidth
               list[i].position.top,
               iconWidth,
               iconHeight
@@ -843,7 +847,7 @@
       /* 查询设备*/
       selectEquipment(param) {
         var that = this;
-        listDevices(param).then((response) => {
+        newListDevices(param).then((response) => {
           that.equipmentList = that.addMask(response.rows);
           if (this.equipmentList.length > 0) {
             this.equipmentVisible = true;
@@ -1463,22 +1467,31 @@
   /*自定义info类型按钮样式*/
   .el-button--info {
     // color: #C0CCDA;
-    color: #ccd7e4;
-    background-color: #2e354f;
-    border: 1px solid #4f5c69;
+    color: #fff ;
+    background: linear-gradient(
+177deg, #00ACED, #0079DB);
+opacity: 0.8;
+color:#fff !important;
+
+    // background-color: #2e354f;
+    border: none;
   }
 
   /* 鼠标在按钮上悬浮*/
   .el-button:hover {
-    background-color: #4e5e89;
-    border: 1px solid #7f8c98;
+    background: linear-gradient(
+177deg, #00ACED, #0079DB);
+opacity: 0.8;
+    border: none;
+color:#fff !important;
+    // border: 1px solid #7f8c98;
   }
 
   /*自定义primary类型按钮样式*/
   .el-button--primary {
     color: #c0ccda;
-    background-color: #2e354f;
-    border: 1px solid #2e354f;
+    // background-color: #2e354f;
+    // border: 1px solid #2e354f;
   }
 
   /* 显示编号*/
@@ -1496,13 +1509,14 @@
   .menu-title {
     // color: rgb(191, 203, 217);
     font-size: 14px;
+    color: #005E96;
   }
 
   .menu-button-group {
     width: 90%;
 
     .el-button {
-      margin: 5px 0;
+      margin: 5px 1px;
     }
   }
 

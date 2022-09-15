@@ -117,3 +117,12 @@ export function getTriggersByRelateId(data) {
     params: data
   })
 }
+
+// 相关策略查询
+export function getTypeAndStrategy(data) {
+  return request({
+    url: '/type/getTypeAndStrategy',
+    method: 'get',
+    params: data
+  })
+}

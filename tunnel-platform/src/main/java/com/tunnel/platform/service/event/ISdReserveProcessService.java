@@ -1,6 +1,7 @@
 package com.tunnel.platform.service.event;
 
 import com.tunnel.platform.domain.event.SdReserveProcess;
+import com.tunnel.platform.domain.event.SdReserveProcessModel;
 
 import java.util.List;
 
@@ -37,6 +38,14 @@ public interface ISdReserveProcessService
     public int insertSdReserveProcess(SdReserveProcess sdReserveProcess);
 
     /**
+     * 批量添加预案流程节点
+     *
+     * @param sdReserveProcesses
+     * @return
+     */
+    public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses);
+
+    /**
      * 修改预案流程节点
      * 
      * @param sdReserveProcess 预案流程节点
@@ -59,4 +68,18 @@ public interface ISdReserveProcessService
      * @return 结果
      */
     public int deleteSdReserveProcessById(Long id);
+
+    /**
+     * 根据预案id删除预案流程节点信息
+     * @param id
+     * @return
+     */
+    public int deleteSdReserveProcessByPlanId(Long id);
+
+    /**
+     * 根据预案id查找预案流程节点信息
+     * @param RId
+     * @return
+     */
+    public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId);
 }

@@ -37,6 +37,10 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("预案类型ID")
     private Long planTypeId;
 
+    @Excel(name = "预案类别")
+    @ApiModelProperty("预案类型")
+    private String category;
+
     /** 预案类型对象 */
     @Excels({
         @Excel(name = "预案类型", targetAttr = "planType"),
@@ -125,7 +129,13 @@ public class SdReservePlan extends BaseEntity
         return serialVersionUID;
     }
 
+    public String getCategory() {
+        return category;
+    }
 
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public SdEventType getEventType() {
 		if (eventType == null)

@@ -6,7 +6,9 @@ import com.tunnel.platform.service.digitalmodel.ISdRadarDetectDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 雷达监测感知数据Service业务层处理
@@ -93,12 +95,24 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService
     }
     /**
      * 根据隧道id 查询24小时 感知数据
+     *
      * @param tunnelId
      * @return
      */
-    public List<SdRadarDetectDatas> eventById(String tunnelId)
+    public Object[] eventById(String tunnelId)
     {
-        List<SdRadarDetectDatas> datas = sdRadarDetectDataMapper.eventById(tunnelId);
-        return datas;
+        List<Map> maps = sdRadarDetectDataMapper.eventById(tunnelId);
+        ArrayList<Object> time = new ArrayList<>();
+        ArrayList<Object> num = new ArrayList<>();
+        Object[] resArr = new Object[2];
+        for (Map map : maps) {
+            Object timeData = map.get("time");
+            time.add(timeData);
+            Object numData = map.get("num");
+            num.add(numData);
+        }
+        resArr[0] = time;
+        resArr[1] = num;
+        return resArr;
     }
 }

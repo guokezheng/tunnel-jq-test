@@ -100,9 +100,9 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
-      <el-table-column label="设备类型" align="center" prop="typeName">           
+      <el-table-column label="设备类型" align="center" prop="typeName">
       </el-table-column>
-     
+
       <el-table-column label="单位" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -209,18 +209,18 @@ export default {
               message: "数据项编号不能为空",
               trigger: "blur"
             },
-            {
-              pattern: /^[0-9]*$/,
-              message: "数据项编号需为数字",
-              trigger: "blur"
-            },
+            // {
+            //   pattern: /^[0-9]*$/,
+            //   message: "数据项编号需为数字",
+            //   trigger: "blur"
+            // },
           ],
           itemName: [
             { required: true, message: '请输入数据项名称', trigger: 'change' }
           ],
           deviceTypeId: [
             { required: true, message: '请输入设备类型ID', trigger: 'change' }
-          ], 
+          ],
           unit: [
             { required: true, message: '请输入单位', trigger: 'change' }
           ],
@@ -231,11 +231,11 @@ export default {
       eqTypeData:[]//设备类型
     };
   },
-  created() {  
-    this.getList();  
+  created() {
+    this.getList();
   },
   mounted(){
-    this.getEqType()  
+    this.getEqType()
   },
   methods: {
      /** 设备类型 */
@@ -261,9 +261,9 @@ export default {
         this.itemList = response.rows;
         this.total = response.total;
         this.loading = false;
-       
+
       });
-      
+
     },
     // 取消按钮
     cancel() {
@@ -326,14 +326,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
-              this.getEqType()  
+              this.getEqType()
             });
           } else {
             addItem(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
-              this.getEqType()  
+              this.getEqType()
             });
           }
         }
@@ -348,7 +348,7 @@ export default {
         this.getList();
         this.getEqType()
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});     
+      }).catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {

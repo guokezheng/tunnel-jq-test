@@ -42,3 +42,28 @@ export function delEvent(id) {
     method: 'delete'
   })
 }
+
+// 管理机构
+export function toll() {
+  return request({
+    url: '/system/dept/toll',
+    method: 'get'
+  })
+}
+// 所属隧道
+export function getTunnelList(query) {
+  return request({
+    url: '/tunnels/deptId',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询方向
+export function listDevices(query) {
+  return request({
+    url: '/devices/list',
+    method: 'get',
+    params: query
+  })
+}

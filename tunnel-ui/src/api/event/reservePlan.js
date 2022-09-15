@@ -80,3 +80,10 @@ export function tunnelNames() {
     method: 'get',
   })
 }
+
+export function getPlanType() {
+  return request({
+    url:'/plan/getPlanCateGory',
+    method: 'get',
+  })
+}

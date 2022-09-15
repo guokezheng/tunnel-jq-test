@@ -1,10 +1,14 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.alibaba.fastjson.JSON;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.serotonin.modbus4j.ModbusMaster;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdStateStorage;
@@ -12,25 +16,16 @@ import com.tunnel.platform.service.dataInfo.IInductionlampControlStatusDetailsSe
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;
 import com.tunnel.platform.service.dataInfo.ISdStateStorageService;
 import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
-
-import org.springframework.security.access.prepost.PreAuthorize;
+import com.tunnel.platform.utils.mpdbus4j.Modbus4jWriteUtils;
+import com.tunnel.platform.utils.mpdbus4j.ModbusTcpMaster;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSON;
-import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道数据存储表Controller
@@ -83,13 +78,29 @@ public class SdStateStorageController extends BaseController {
                 json.put("state", sdStateStorage.getState());
             }
             //诱导灯设备增加亮度和频率
-            if (sdDevice.getEqType() == 31L) {
+            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+            if (sdDevice.getEqType().longValue() == yddType.longValue()) {
                 InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
                 inductionlampControlStatusDetails.setEquipmentId(sdDevice.getEqId());
                 List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
                 if (statusDetails.size() == 0) {
-                    json.put("brightness", "10");
-                    json.put("frequency", "10");
+                    json.put("brightness", "50");
+                    json.put("frequency", "69");
+                    if (sdStateStorage == null) {
+                        sdStateStorage = new SdStateStorage();
+                    }
+                    sdStateStorage.setBrightness("50");
+                    sdStateStorage.setFrequency("69");
+                    sdStateStorage.setTunnelId(tunnelId);
+                    if (sdStateStorage == null || sdStateStorage.getState() == null || sdStateStorage.getState().equals("")) {
+                        sdStateStorage.setState("2");
+                    }
+                    sdStateStorage.setDeviceId(sdDevice.getEqId());
+                    if (null == sdStateStorage.getId()) {
+                        sdStateStorageService.insertSdStateStorage(sdStateStorage);
+                    } else {
+                        sdStateStorageService.updateSdStateStorage(sdStateStorage);
+                    }
                 } else {
                     json.put("brightness", statusDetails.get(0).getBrightness());
                     json.put("frequency", statusDetails.get(0).getFrequency());
@@ -154,8 +165,41 @@ public class SdStateStorageController extends BaseController {
     @Log(title = "隧道数据存储表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdStateStorage sdStateStorage) {
+        ModbusMaster master = ModbusTcpMaster.master;
+        //改变车指
+        try{
+            SdDevices devices = sdDevicesService.selectSdDevicesById(sdStateStorage.getDeviceId());
+            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+            if (devices.getEqType().longValue() == yddType.longValue()) {
+                return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
+            }
+            String eqFeedbackAddress2 = devices.getEqFeedbackAddress2();
+            String eqFeedbackAddress3 = devices.getEqFeedbackAddress3();
+            String eqFeedbackAddress4 = devices.getEqFeedbackAddress4();
+            boolean[] fuWei={false,false,false};
+            //复位
+            if (sdStateStorage.getState().equals("1")){
+                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress2) ,fuWei );
+            }else  if (sdStateStorage.getState().equals("2")){
+                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress3)-1 ,fuWei );
+            } if (sdStateStorage.getState().equals("3")){
+                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress4)-2 ,fuWei );
+            }
+            //控制
+            if (sdStateStorage.getState().equals("1")){
+                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress2) ,false );
+            }else  if (sdStateStorage.getState().equals("2")){
+                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress4) ,true );
+            } if (sdStateStorage.getState().equals("3")){
+                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress3) ,true );
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
+
+
+        return toAjax(1);//sdStateStorageService.updateSdStateStorage(sdStateStorage)
     }
 
     /**

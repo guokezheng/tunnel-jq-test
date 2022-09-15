@@ -3,6 +3,7 @@ package com.tunnel.platform.mapper.dataInfo;
 import com.tunnel.platform.domain.dataInfo.SdDeviceCmd;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
+import com.tunnel.platform.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,6 +24,15 @@ public interface SdDevicesMapper
 	 * @return 设备
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
+
+
+	/**
+	 * 查询设备详情
+	 *
+	 * @param eqId 设备ID
+	 * @return 设备
+	 */
+	Map<String,String> queryDeviceById(String eqId);
 
 	/**
 	 * 查询设备列表
@@ -77,7 +87,7 @@ public interface SdDevicesMapper
 	 * @param eqTypes
 	 * @return
 	 */
-	public List<SdDevices> selectEqListByEqTypes(String eqTypes);
+	public List<SdDevices> selectEqListByEqTypes(String[] eqTypes);
 
 	/**
 	 * 查询所有传感器
@@ -110,7 +120,7 @@ public interface SdDevicesMapper
 	 * @param eqHostId
 	 * @return
 	 */
-	public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
+	//public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
 
 	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") Long deptId);
 
@@ -134,5 +144,23 @@ public interface SdDevicesMapper
 	List<SdDevices> selectDeviceByTidEqtp(@Param("list") List<SdDevices> list,
 	  @Param("tunnelId") String tunnelId,@Param("lidarType") Integer lidarType,@Param("cameraType") Integer cameraType);
 
-	void updateSdDevicesBatch(List<SdDevices> list);
+//	void updateSdDevicesBatch(List<SdDevices> list);
+
+    String selecTunnelId(@Param("deviceId") String deviceId);
+
+	List<SdDevices> selectDevice(@Param("tunnelId") String tunnelId);
+
+	public String selectDeviceByHost(@Param("host") String host,@Param("loop") String loop,@Param("address") String address);
+
+	public String selectDeviceByHostAndEqId(@Param("host") String host,@Param("eqId") String eqId);
+
+	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
+
+	List<SdDevices> selectStateStorage();
+
+    String selectEqStatus(@Param("deviceId") String deviceId);
+
+	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);
+
+	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
 }

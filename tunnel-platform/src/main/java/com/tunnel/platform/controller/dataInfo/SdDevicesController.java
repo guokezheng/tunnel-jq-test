@@ -69,6 +69,13 @@ public class SdDevicesController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/getDevicesByTypeAndTunnel")
+    @ApiOperation("根据设备类型和隧道ID查询设备列表")
+    public TableDataInfo<List<Map<String, Object>>> getDevicesByTypeAndTunnel(SdDevices sdDevices) {
+        List<Map<String, Object>> devicesByTypeAndTunnel = sdDevicesService.getDevicesByTypeAndTunnel(sdDevices);
+        return getDataTable(devicesByTypeAndTunnel);
+    }
+
     /**
      * 查询传感器设备列表
      */
@@ -161,6 +168,20 @@ public class SdDevicesController extends BaseController
         SdDevices sd = sdDevicesService.selectSdDevicesById(eqId);
         return Result.success(sd);
     }
+
+
+    /**
+     * 获取设备详细信息
+     */
+    @GetMapping(value = "/getDevice/{eqId}")
+    @ApiOperation("获取设备详细信息")
+    @ApiImplicitParam(name = "eqId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getDevice(@PathVariable("eqId") String eqId)
+    {
+        Map<String,String> sd = sdDevicesService.queryDeviceById(eqId);
+        return Result.success(sd);
+    }
+
 
     /**
      * 通过隧道id查询设备类型名称

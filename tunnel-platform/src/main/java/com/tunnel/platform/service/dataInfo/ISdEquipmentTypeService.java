@@ -4,6 +4,7 @@ import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 设备类型Service接口
@@ -81,4 +82,11 @@ public interface ISdEquipmentTypeService
 	public List<SdEquipmentType> selectSdEquipmentTypeGroupByBigType();
 
     List<SdEquipmentType> selectList();
+
+    /**
+     * 查找可控的设备类型和手动控制的控制策略
+     * @param sdEquipmentType
+     * @return
+     */
+    public List<Map> selectTypeAndStrategy(SdEquipmentType sdEquipmentType);
 }

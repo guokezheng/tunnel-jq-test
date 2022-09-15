@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.List;
+
 /**
  * 预案流程节点对象 sd_reserve_process
  * 
@@ -37,6 +39,10 @@ public class SdReserveProcess extends BaseEntity
     /** 流程节点顺序 */
     @Excel(name = "流程节点顺序")
     private Integer processSort;
+
+    private String strategyIds;
+
+    private List<Long> handleStrategyList;
 
     public void setId(Long id) 
     {
@@ -92,6 +98,24 @@ public class SdReserveProcess extends BaseEntity
     {
         return processSort;
     }
+
+    public String getStrategyIds() {
+        return strategyIds;
+    }
+
+    public void setStrategyIds(String strategyIds) {
+        this.strategyIds = strategyIds;
+    }
+
+    public List<Long> getHandleStrategyList() {
+        return handleStrategyList;
+    }
+
+    public void setHandleStrategyList(List<Long> handleStrategyList) {
+        this.handleStrategyList = handleStrategyList;
+    }
+
+
 
     @Override
     public String toString() {

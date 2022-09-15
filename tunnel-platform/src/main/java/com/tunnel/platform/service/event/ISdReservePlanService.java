@@ -5,6 +5,7 @@ import com.tunnel.platform.domain.event.SdStrategy;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案信息Service接口
@@ -68,4 +69,17 @@ public interface ISdReservePlanService
      * @return 预案信息集合
      */
     public List<SdStrategy> selectStrategyListByPlanId(Long id);
+
+    /**
+     * 查询预案类型
+     * @return
+     */
+    public List<Map> selectPlanCategory();
+
+    /**
+     * 根据分区id查询预案
+     * @param sdReservePlan
+     * @return
+     */
+    public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
 }

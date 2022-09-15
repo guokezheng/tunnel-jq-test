@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -61,6 +62,17 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     public SdDevices selectSdDevicesById(String eqId)
     {
         return sdDevicesMapper.selectSdDevicesById(eqId);
+    }
+
+    /**
+     * 查询设备详情
+     *
+     * @param eqId 设备ID
+     * @return 设备
+     */
+    @Override
+    public Map<String,String> queryDeviceById(String eqId) {
+        return sdDevicesMapper.queryDeviceById(eqId);
     }
 
     /**
@@ -376,14 +388,14 @@ public class SdDevicesServiceImpl implements ISdDevicesService
 
         return listMap;
     }
-    @Override
+    /*@Override
     public List<SdDevices> selectSdDevicesEqidList(Long eqHostId) {
         return sdDevicesMapper.selectSdDevicesEqidList(eqHostId);
-    }
+    }*/
 
     //根据设备类型查询相应的设备列表
     @Override
-    public List<SdDevices> selectEqListByEqTypes(String eqTypes) {
+    public List<SdDevices> selectEqListByEqTypes(String[] eqTypes) {
         return sdDevicesMapper.selectEqListByEqTypes(eqTypes);
     }
     /**
@@ -810,6 +822,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectIsControlSdDevicesList(sdDevices);
         return devicesList;
+    }
+
+    @Override
+    public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices) {
+        List<Map<String, Object>> devicesByTypeAndTunnel = sdDevicesMapper.getDevicesByTypeAndTunnel(sdDevices);
+        return devicesByTypeAndTunnel;
     }
 
 }

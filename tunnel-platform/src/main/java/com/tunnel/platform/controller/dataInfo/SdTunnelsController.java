@@ -1,19 +1,20 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import com.ruoyi.common.core.page.Result;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.domain.event.SdSafetyIndex;
-import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import io.swagger.annotations.*;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.platform.domain.dataInfo.SdTunnels;
+import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.PathParam;
 import java.util.List;
 
 /**
@@ -100,6 +101,13 @@ public class SdTunnelsController extends BaseController
     {
         List<SdTunnels> list = sdTunnelsService.selectSdTunnelsSubList(sdTunnels);
         return getDataTable(list);
+    }
+
+
+    @GetMapping("/deptId")
+    public Result<List<SdTunnels>> deptId(@PathParam("deptId") Long deptId)
+    {
+        return Result.success(sdTunnelsService.deptId(deptId));
     }
 
 }

@@ -29,6 +29,13 @@ public interface ISdStrategyRlService
     public List<SdStrategyRl> selectSdStrategyRlList(SdStrategyRl sdStrategyRl);
 
     /**
+     * 根据策略id查询策略关联设备信息
+     * @param strategyId
+     * @return
+     */
+    List<SdStrategyRl> selectSdStrategyRlListByStrategyId(Long strategyId);
+
+    /**
      * 新增策略关联设备信息
      * 
      * @param sdStrategyRl 策略关联设备信息

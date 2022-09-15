@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="车辆id" prop="vehicleId">
+      <!-- <el-form-item label="车辆id" prop="vehicleId">
         <el-input
           v-model="queryParams.vehicleId"
           placeholder="请输入车辆id"
@@ -9,7 +9,7 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="隧道id" prop="tunnelId">
         <el-input
           v-model="queryParams.tunnelId"
@@ -21,19 +21,25 @@
       </el-form-item>
       <el-form-item label="车辆类型" prop="vehicleType">
         <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
+          <el-option 
+           v-for="(item) in vehicleType"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
         </el-select>
       </el-form-item>
       <el-form-item label="车辆颜色" prop="vehicleColor">
-        <el-input
-          v-model="queryParams.vehicleColor"
-          placeholder="请输入车辆颜色"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.vehicleColor" placeholder="请选择车辆颜色" clearable size="small">
+          <el-option 
+           v-for="(item) in vehicleColor"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
+        </el-select>
       </el-form-item>
-      <el-form-item label="经度,分辨率1e-7°，东经为正，西经为负" prop="longitude">
+      <!-- <el-form-item label="经度" prop="longitude">
         <el-input
           v-model="queryParams.longitude"
           placeholder="请输入经度,分辨率1e-7°，东经为正，西经为负"
@@ -42,7 +48,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="纬度,分辨率1e-7°，北纬为正，南纬为负" prop="latitude">
+      <el-form-item label="纬度" prop="latitude">
         <el-input
           v-model="queryParams.latitude"
           placeholder="请输入纬度,分辨率1e-7°，北纬为正，南纬为负"
@@ -50,8 +56,8 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="速度，单位：Km/h" prop="speed">
+      </el-form-item> -->
+      <!-- <el-form-item label="速度" prop="speed">
         <el-input
           v-model="queryParams.speed"
           placeholder="请输入速度，单位：Km/h"
@@ -59,8 +65,8 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="车道号,沿行车方向从左往右依次为1,2,3,4…" prop="laneNum">
+      </el-form-item> -->
+      <!-- <el-form-item label="车道号" prop="laneNum">
         <el-input
           v-model="queryParams.laneNum"
           placeholder="请输入车道号,沿行车方向从左往右依次为1,2,3,4…"
@@ -69,7 +75,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="航向角，单位：°，保留1位小数，车头与正北夹角" prop="courseAngle">
+      <el-form-item label="航向角" prop="courseAngle">
         <el-input
           v-model="queryParams.courseAngle"
           placeholder="请输入航向角，单位：°，保留1位小数，车头与正北夹角"
@@ -86,17 +92,18 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="车牌颜色" prop="licenseColor">
-        <el-input
-          v-model="queryParams.licenseColor"
-          placeholder="请输入车牌颜色"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.licenseColor" placeholder="请选择车牌颜色" clearable size="small">
+          <el-option 
+           v-for="(item) in licenseColor"
+           :key="item.dictValue"
+           :label="item.dictLabel"
+           :value="item.dictValue"
+           />
+        </el-select>
       </el-form-item>
-      <el-form-item label="桩号" prop="stakeNum">
+      <!-- <el-form-item label="桩号" prop="stakeNum">
         <el-input
           v-model="queryParams.stakeNum"
           placeholder="请输入桩号"
@@ -104,14 +111,23 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="监测时间" prop="detectTime">
-        <el-date-picker clearable size="small"
+        <!-- <el-date-picker clearable size="small"
           v-model="queryParams.detectTime"
           type="date"
           value-format="yyyy-MM-dd"
           placeholder="选择监测时间">
-        </el-date-picker>
+        </el-date-picker> -->
+        <el-date-picker clearable size="small"
+            v-model="queryParams.detectTime"
+            type="daterange"
+            value-format="yyyy-MM-dd"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            placeholder="选择监测时间">
+      </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -168,19 +184,20 @@
 
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="车辆id" align="center" prop="vehicleId" />
+      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
+      <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
       <el-table-column label="隧道id" align="center" prop="tunnelId" />
-      <el-table-column label="车辆类型" align="center" prop="vehicleType" />
-      <el-table-column label="车辆颜色" align="center" prop="vehicleColor" />
-      <el-table-column label="经度,分辨率1e-7°，东经为正，西经为负" align="center" prop="longitude" />
-      <el-table-column label="纬度,分辨率1e-7°，北纬为正，南纬为负" align="center" prop="latitude" />
-      <el-table-column label="速度，单位：Km/h" align="center" prop="speed" />
-      <el-table-column label="车道号,沿行车方向从左往右依次为1,2,3,4…" align="center" prop="laneNum" />
-      <el-table-column label="航向角，单位：°，保留1位小数，车头与正北夹角" align="center" prop="courseAngle" />
-      <el-table-column label="车牌号" align="center" prop="vehicleLicense" />
-      <el-table-column label="车牌颜色" align="center" prop="licenseColor" />
+      <el-table-column label="车辆类型" align="center" prop="vehicleType" :formatter="vehicleTypeFormat" />
+      <el-table-column label="车辆颜色" align="center" prop="vehicleColor" :formatter="vehicleColorFormat"/>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
+      <el-table-column label="经度" align="center" prop="longitude" />
+      <el-table-column label="纬度" align="center" prop="latitude" />
+      <el-table-column label="速度" align="center" prop="speed" />
+      <el-table-column label="车道号" align="center" prop="laneNum" />
+      <el-table-column label="航向角" align="center" prop="courseAngle" />
+      <el-table-column label="车牌号" align="center" prop="vehicleLicense" />
+      <el-table-column label="车牌颜色" align="center" prop="licenseColor"  :formatter="licenseColorFormat"/>
+     
       <el-table-column label="监测时间" align="center" prop="detectTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.detectTime, '{y}-{m}-{d}') }}</span>
@@ -217,9 +234,9 @@
     <!-- 添加或修改雷达监测感知数据对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="车辆id" prop="vehicleId">
+        <!-- <el-form-item label="车辆id" prop="vehicleId">
           <el-input v-model="form.vehicleId" placeholder="请输入车辆id" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
         </el-form-item>
@@ -231,19 +248,19 @@
         <el-form-item label="车辆颜色" prop="vehicleColor">
           <el-input v-model="form.vehicleColor" placeholder="请输入车辆颜色" />
         </el-form-item>
-        <el-form-item label="经度,分辨率1e-7°，东经为正，西经为负" prop="longitude">
+        <el-form-item label="经度" prop="longitude">
           <el-input v-model="form.longitude" placeholder="请输入经度,分辨率1e-7°，东经为正，西经为负" />
         </el-form-item>
-        <el-form-item label="纬度,分辨率1e-7°，北纬为正，南纬为负" prop="latitude">
+        <el-form-item label="纬度" prop="latitude">
           <el-input v-model="form.latitude" placeholder="请输入纬度,分辨率1e-7°，北纬为正，南纬为负" />
         </el-form-item>
-        <el-form-item label="速度，单位：Km/h" prop="speed">
+        <el-form-item label="速度" prop="speed">
           <el-input v-model="form.speed" placeholder="请输入速度，单位：Km/h" />
         </el-form-item>
-        <el-form-item label="车道号,沿行车方向从左往右依次为1,2,3,4…" prop="laneNum">
+        <el-form-item label="车道号" prop="laneNum">
           <el-input v-model="form.laneNum" placeholder="请输入车道号,沿行车方向从左往右依次为1,2,3,4…" />
         </el-form-item>
-        <el-form-item label="航向角，单位：°，保留1位小数，车头与正北夹角" prop="courseAngle">
+        <el-form-item label="航向角" prop="courseAngle">
           <el-input v-model="form.courseAngle" placeholder="请输入航向角，单位：°，保留1位小数，车头与正北夹角" />
         </el-form-item>
         <el-form-item label="车牌号" prop="vehicleLicense">
@@ -258,8 +275,11 @@
         <el-form-item label="监测时间" prop="detectTime">
           <el-date-picker clearable size="small"
             v-model="form.detectTime"
-            type="date"
+            type="daterange"
             value-format="yyyy-MM-dd"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
             placeholder="选择监测时间">
           </el-date-picker>
         </el-form-item>
@@ -279,6 +299,9 @@ export default {
   name: "Data",
   data() {
     return {
+      licenseColor:[],//车牌颜色
+      vehicleColor:[],//车辆颜色
+      vehicleType:[],//车辆类型
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -326,8 +349,39 @@ export default {
   },
   created() {
     this.getList();
+    //车辆类型
+    this.getDicts("sd_wj_vehicle_type").then(response => {
+      // console.log(response,'车辆类型')
+      this.vehicleType = response.data;
+    });
+    //车辆颜色
+    this.getDicts("sd_wj_vehicle_color").then(response => {
+      // console.log(response,'车辆颜色')
+      this.vehicleColor = response.data;
+    });
+     //车牌颜色
+     this.getDicts("sd_wj_vehicle_color").then(response => {
+      // console.log(response,'车辆颜色')
+      this.licenseColor = response.data;
+    });
   },
   methods: {
+    //车辆类型字典给翻译
+    vehicleTypeFormat(row, column) {
+      // console.log(row)
+      return this.selectDictLabel(this.vehicleType, row.vehicleType);
+    },
+    //车辆颜色字典翻译
+    vehicleColorFormat(row, column){
+        // console.log(row)
+      return this.selectDictLabel(this.vehicleColor, row.vehicleColor);
+    },
+    //车牌颜色字典翻译
+    licenseColorFormat(row, column){
+      console.log(row)
+      return this.selectDictLabel(this.licenseColor, row.licenseColor);
+    },
+    
     /** 查询雷达监测感知数据列表 */
     getList() {
       this.loading = true;
@@ -364,6 +418,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
+      // console.log(this.form,'表单值')
       this.queryParams.pageNum = 1;
       this.getList();
     },

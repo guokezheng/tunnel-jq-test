@@ -1,15 +1,17 @@
 package com.tunnel.platform.service.digitalmodel;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.platform.domain.digitalmodel.SdRadarDevice;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author dzy
  * @date 2022/9/4 16:51
  */
-public interface WjService {
+public interface RadarEventService {
     /**
      * 新增万集事件
      * @param map
@@ -25,4 +27,8 @@ public interface WjService {
     void insertRadarDetect(Map<String, Object> map) throws ParseException;
 
     void saveRedis(Map<String, Object> map);
+
+    void sendBaseDeviceStatus(Map<String, Object> map);
+
+    Object selectDevice(String tunnelId);
 }

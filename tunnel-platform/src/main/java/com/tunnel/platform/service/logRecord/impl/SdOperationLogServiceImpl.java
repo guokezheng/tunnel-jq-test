@@ -1,9 +1,12 @@
 package com.tunnel.platform.service.logRecord.impl;
 
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.domain.logRecord.SdOperationLog;
 import com.tunnel.platform.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.platform.service.logRecord.ISdOperationLogService;
-import com.ruoyi.common.utils.DateUtils;
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -106,5 +109,21 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * 新增时 设备执行记录接口 websocket推送
+     * @param sdOperationLog
+     * @return
+     */
+    @Override
+    public AjaxResult operationLog(SdOperationLog sdOperationLog) {
+        sdOperationLog.setCreateTime(DateUtils.getNowDate());
+        sdOperationLog.setCreateBy(SecurityUtils.getUsername());
+        int i = sdOperationLogMapper.operationLog(sdOperationLog);
+        if (i > -1){
+            WebSocketService.broadcast("operationLog",sdOperationLog);
+        }
+        return AjaxResult.success();
     }
 }

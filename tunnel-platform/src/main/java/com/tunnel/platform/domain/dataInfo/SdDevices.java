@@ -401,6 +401,7 @@ public class SdDevices extends BaseEntity {
     @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
     private String controlStatus;
 
+
     public String getControlStatus() {
         return controlStatus;
     }

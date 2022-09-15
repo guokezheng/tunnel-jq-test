@@ -1,4 +1,4 @@
-package com.tunnel.platform.domain.trafficOperationControl.controlConfig;
+package com.tunnel.platform.datacenter.domain.enumeration;
 
 /**
  * describe: 字典类型枚举类
@@ -7,6 +7,11 @@ package com.tunnel.platform.domain.trafficOperationControl.controlConfig;
  * @date 2022/3/4
  */
 public enum DictTypeEnum {
+
+    /**
+     * 设备方向
+     */
+    sd_direction("sd_direction","设备方向"),
 
     /**
      * 管控类别

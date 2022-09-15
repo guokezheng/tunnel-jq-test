@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdStateStorage;
@@ -81,7 +82,9 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService
     {
         String deviceId = sdStateStorage.getDeviceId();
         SdDevices sdDevices = iSdDevicesService.selectSdDevicesById(deviceId);
-        if (sdDevices.getEqType() == 31L && sdDevices.getControlStatus().equals("1")) {
+        Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+        if (sdDevices.getEqType().longValue() == yddType.longValue()){
+//        if (sdDevices.getEqType() == 31L && sdDevices.getControlStatus().equals("1")) {
             //如果当前是诱导灯走通信更改模式
             String ip = sdDevices.getIp();
             int port = Integer.parseInt(sdDevices.getPort());
@@ -92,18 +95,19 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService
             inductionlampControlStatusDetails.setEquipmentId(deviceId);
             List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
             if (statusDetails.size() == 0) {
-                inductionlampControlStatusDetails.setEquipmentModeType(Integer.parseInt(sdStateStorage.getState()));
+                inductionlampControlStatusDetails.setEquipmentModeType(controlModeType);
                 inductionlampControlStatusDetails.setFrequency(sdStateStorage.getFrequency());
                 inductionlampControlStatusDetails.setBrightness(sdStateStorage.getBrightness());
                 iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
             } else {
+                statusDetails.get(0).setEquipmentModeType(controlModeType);
                 statusDetails.get(0).setFrequency(sdStateStorage.getFrequency());
                 statusDetails.get(0).setBrightness(sdStateStorage.getBrightness());
                 iInductionlampControlStatusDetailsService.updateInductionlampControlStatusDetails(statusDetails.get(0));
             }
             //根据查询到的设备配置信息拿到设备报文发送种类和内容
             try {
-                String code = "0GH+STATUS?\r\n";
+                String code = "1GH+STATUS?\r\n";
                 NettyClient client = new NettyClient(ip, port,code,1);
                 client.start(null);
                 Map codeMap = InductionlampUtil.getPilotLightMode(controlModeType,brightness,frequency);

@@ -32,7 +32,7 @@
               </div>
             </div>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeader?'padding-top:50px;margin-left:0px;':'margin-left:0px;'">
-              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
+              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
               <app-main />
               <right-panel>
                 <settings />
@@ -110,7 +110,7 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      eventDialog:true,
+      eventDialog:false,
     }
   },
   mixins: [ResizeMixin],
@@ -170,6 +170,7 @@ export default {
   },
   
   created(){
+    console.log(this.$route.path,'路由')
     if(this.$route.path == '/tunnel'){
       if(this.sideTheme == 'theme-blue' || this.sideTheme == 'theme-dark' && this.topNav || this.sideTheme == 'theme-light' && this.topNav){
         this.tunnelStyle = 'margin-left:0px;background-color:#181b2c;'

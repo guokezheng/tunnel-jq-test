@@ -61,4 +61,11 @@ public interface SdOperationLogMapper
     public int deleteSdOperationLogByIds(Long[] ids);
 
     public List<SdOperationLog> selectOprationLogOver3month();
+
+    /**
+     * 新增时 设备执行记录接口 websocket推送
+     * @param sdOperationLog
+     * @return
+     */
+    public int operationLog(SdOperationLog sdOperationLog);
 }

@@ -91,16 +91,18 @@ public class SdReservePlanController extends BaseController
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
+                                    @RequestParam("subareaId") Long subareaId,
+                                    @RequestParam("category") String category,
     								@RequestParam("planTypeId") String planTypeId,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								HttpServletRequest request ) {
     	SdReservePlan sdReservePlan = new SdReservePlan();
+        sdReservePlan.setSubareaId(subareaId);
+        sdReservePlan.setCategory(category);
     	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	return Result.toResult(sdReservePlanService.insertSdReservePlan(file,sdReservePlan));
     }
 
@@ -144,7 +146,6 @@ public class SdReservePlanController extends BaseController
      * @param planTypeId
      * @param planDescription
      * @param planName
-     * @param strategyId
      * @param planFileId
      * @param removeIds
      * @param request
@@ -162,10 +163,10 @@ public class SdReservePlanController extends BaseController
     @ApiOperation("修改预案信息")
     public Result updateReservePlan( MultipartFile[] file,
     								@RequestParam("id") Long id,
-    								@RequestParam("planTypeId") String planTypeId,
+    								@RequestParam("planTypeId") Long planTypeId,
+                                    @RequestParam("category") String category,
     								@RequestParam("planDescription") String planDescription,
     								@RequestParam("planName") String planName,
-    								@RequestParam("strategyId") String strategyId,
     								@RequestParam("planFileId") String planFileId,
     								@RequestParam("removeIds") Long[] removeIds,
     								HttpServletRequest request
@@ -173,12 +174,11 @@ public class SdReservePlanController extends BaseController
     {
     	SdReservePlan sdReservePlan = new SdReservePlan();
     	sdReservePlan.setId(id);
-    	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
+    	sdReservePlan.setPlanTypeId(planTypeId);
+        sdReservePlan.setCategory(category);
     	sdReservePlan.setPlanName(planName);
     	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setStrategyId(strategyId);
     	sdReservePlan.setPlanFileId(planFileId);
-
     	return Result.toResult(sdReservePlanService.updateSdReservePlan(file,sdReservePlan,removeIds));
     }
 
@@ -224,6 +224,26 @@ public class SdReservePlanController extends BaseController
         return Result.success(sdReservePlanService.selectStrategyListByPlanId(id));
     }
 
+    /**
+     * 查询预案类型
+     * @return
+     */
+    @GetMapping("/getPlanCateGory")
+    @ApiOperation("查询预案类型")
+    public Result selectPlanCategory() {
+        return Result.success(sdReservePlanService.selectPlanCategory());
+    }
 
+    /**
+     * 根据分区id查询预案(非恢复预案)
+     *
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getListBySId")
+    @ApiOperation("根据分区id查询预案")
+    public Result selectPlanBySid(@RequestBody SdReservePlan sdReservePlan) {
+        return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
+    }
 
 }

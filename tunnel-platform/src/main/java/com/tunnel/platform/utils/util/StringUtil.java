@@ -1,5 +1,8 @@
 package com.tunnel.platform.utils.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
@@ -133,7 +136,54 @@ public class StringUtil {
         }
         return str.toUpperCase();
     }
+    public static String hexStringByShort(short num,int byteNum){
+        String str = "";
+        str = Integer.toHexString(num);
+        if(byteNum == 1){
+            if(str.length() == 1){
+                str = "0"+str;
+            }
+        }else if(byteNum == 2){
+            if(str.length() == 1){
+                str = "000"+str;
+            }else if(str.length() == 2){
+                str = "00"+str;
+            }else if(str.length() == 3){
+                str = "0"+str;
+            }
+        }else{
+            int len = str.length();
+            for (int i = 0; i < byteNum*2-len; i++) {
+                str = "0"+str;
+            }
+        }
+        return str.toUpperCase();
+    }
+    public static Float HexConvertToString(String hex) throws IOException {
+        byte[] bytes = HexString2Bytes(hex);
+        DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
+        float value = dataInputStream.readFloat();
+        return value;
+    }
+    public static byte[] HexString2Bytes(String src) {
+        if (null == src || 0 == src.length()) {
+            return null;
+        }
+        byte[] ret = new byte[src.length() / 2];
+        byte[] tmp = src.getBytes();
+        for (int i = 0; i < (tmp.length / 2); i++) {
+            ret[i] = uniteBytes(tmp[i * 2], tmp[i * 2 + 1]);
+        }
+        return ret;
+    }
 
+    public static byte uniteBytes(byte src0, byte src1) {
+        byte _b0 = Byte.decode("0x" + new String(new byte[] {src0})).byteValue();
+        _b0 = (byte) (_b0 << 4);
+        byte _b1 = Byte.decode("0x" + new String(new byte[] { src1 })).byteValue();
+        byte ret = (byte) (_b0 ^ _b1);
+        return ret;
+    }
     /**
      * 16进制 补位
      */
@@ -332,6 +382,14 @@ public class StringUtil {
             codeStr="0"+codeStr;
         }
         return codeStr;
+    }
+
+    public static String hexToDecimal(String hex) {
+        if (hex.startsWith("0x")) {
+            return String.valueOf(Integer.parseInt(hex.substring(2), 16));
+        } else {
+            return String.valueOf(Integer.parseInt(hex, 16));
+        }
     }
 
 

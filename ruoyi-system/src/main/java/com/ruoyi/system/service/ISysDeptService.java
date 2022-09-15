@@ -122,4 +122,7 @@ public interface ISysDeptService
      * @return
      */
     public List<SysDeptUserTreeVO> treeDeptUser();
+
+    public List<Object> tollById();
+
 }

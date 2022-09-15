@@ -102,7 +102,7 @@
 
       <!-- 添加/修改应急资源对话框 -->
       <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :before-close="cancel">
-        <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form ref="form" :model="form" :rules="rules" label-width="106px">
           <el-form-item label="机构" prop="orgId">
             <!-- <el-input v-model="form.orgId" placeholder="请输入机构名称" /> -->
              <el-select

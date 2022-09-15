@@ -1,7 +1,6 @@
 package com.tunnel.platform.service.dataInfo;
 
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.domain.event.SdTunnelSubarea;
 
 import java.util.List;
 
@@ -61,8 +60,13 @@ public interface ISdTunnelsService
      */
     public int deleteSdTunnelsById(String tunnelId);
 
-
+    /**
+     * 查询隧道分区
+     * @param sdTunnels
+     * @return
+     */
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels);
+    public List<SdTunnels> deptId(Long deptId);
 
 
 }

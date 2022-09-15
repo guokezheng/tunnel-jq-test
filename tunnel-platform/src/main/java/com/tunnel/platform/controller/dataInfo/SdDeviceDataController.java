@@ -3,6 +3,8 @@ package com.tunnel.platform.controller.dataInfo;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.common.core.page.Result;
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,10 +105,11 @@ public class SdDeviceDataController extends BaseController
         return toAjax(sdDeviceDataService.deleteSdDeviceDataByIds(ids));
     }
 
-    @GetMapping("/getTodayCOVIData")
-    public AjaxResult getTodayCOVIData(String deviceId)
+    @GetMapping("/getTodayCOVIData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayCOVIData(@PathVariable("deviceId") String deviceId)
     {
         Map<String, Object> todayCOVIData = sdDeviceDataService.getTodayCOVIData(deviceId);
-        return AjaxResult.success(todayCOVIData);
+        return Result.success(todayCOVIData);
     }
 }

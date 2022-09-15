@@ -1,7 +1,10 @@
 package com.tunnel.platform.mapper.dataInfo;
 
 import java.util.List;
+import java.util.Map;
+
 import com.tunnel.platform.domain.dataInfo.SdDeviceData;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 设备实时数据（存储模拟量）Mapper接口
@@ -60,4 +63,6 @@ public interface SdDeviceDataMapper
     public int deleteSdDeviceDataByIds(Long[] ids);
 
     public SdDeviceData selectLastRecord(SdDeviceData sdDeviceData);
+
+    public List<Map<String, Object>> getTodayCOVIData(@Param("deviceId") String deviceId,@Param("itemId") Long itemId,@Param("today") String today);
 }

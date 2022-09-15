@@ -1,6 +1,8 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,5 +101,12 @@ public class SdDeviceDataController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDeviceDataService.deleteSdDeviceDataByIds(ids));
+    }
+
+    @GetMapping("/getTodayCOVIData")
+    public AjaxResult getTodayCOVIData(String deviceId)
+    {
+        Map<String, Object> todayCOVIData = sdDeviceDataService.getTodayCOVIData(deviceId);
+        return AjaxResult.success(todayCOVIData);
     }
 }

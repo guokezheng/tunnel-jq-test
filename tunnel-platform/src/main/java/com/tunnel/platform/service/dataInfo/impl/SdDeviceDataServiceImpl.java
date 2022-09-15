@@ -1,7 +1,13 @@
 package com.tunnel.platform.service.dataInfo.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
@@ -92,5 +98,19 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
     public int deleteSdDeviceDataById(Long id)
     {
         return sdDeviceDataMapper.deleteSdDeviceDataById(id);
+    }
+
+    @Override
+    public Map<String, Object> getTodayCOVIData(String deviceId) {
+        Long itemId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String today = simpleDateFormat.format(new Date());
+        List<Map<String, Object>> todayCOData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        itemId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
+        List<Map<String, Object>> todayVIData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        Map<String, Object> map = new HashMap<String,Object>();
+        map.put("todayCOData", todayCOData);
+        map.put("todayVIData", todayVIData);
+        return map;
     }
 }

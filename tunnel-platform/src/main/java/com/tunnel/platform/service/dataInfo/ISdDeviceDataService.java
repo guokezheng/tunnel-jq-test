@@ -62,4 +62,8 @@ public interface ISdDeviceDataService
     public int deleteSdDeviceDataById(Long id);
 
     public Map<String, Object> getTodayCOVIData(String deviceId);
+
+    public Map<String, Object> getTodayFSFXData(String deviceId);
+
+    public Map<String, Object> getTodayLDData(String deviceId);
 }

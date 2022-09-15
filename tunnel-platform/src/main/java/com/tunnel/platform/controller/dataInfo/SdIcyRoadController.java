@@ -1,6 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import com.tunnel.platform.business.board.core.DevicesManager;
+import com.tunnel.platform.business.vms.core.DevicesManager;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
 import com.tunnel.platform.service.dataInfo.ISdDevicesService;

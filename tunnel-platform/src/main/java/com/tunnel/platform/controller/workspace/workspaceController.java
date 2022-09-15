@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.tunnel.platform.business.board.core.DevicesManager;
+import com.tunnel.platform.business.vms.core.DevicesManager;
 import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;

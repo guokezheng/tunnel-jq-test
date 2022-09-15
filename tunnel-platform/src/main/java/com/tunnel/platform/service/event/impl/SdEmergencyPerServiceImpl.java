@@ -2,7 +2,6 @@ package com.tunnel.platform.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.tunnel.platform.business.board.display.GuangDianAndSanSiDeviceDisplay;
 import com.tunnel.platform.domain.event.SdEmergencyPer;
 import com.tunnel.platform.mapper.event.SdEmergencyPerMapper;
 import com.tunnel.platform.service.event.ISdEmergencyPerService;

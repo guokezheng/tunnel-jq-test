@@ -195,7 +195,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
             List<List> iFileList = new ArrayList<>();
             for (SdStrategyRl rl : rlList) {
                 // 设备类型名称
-                String typeName = DevicesTypeEnum.getValue(Integer.parseInt(rl.getEqTypeId()));
+                String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
                 SdEquipmentState state = new SdEquipmentState();
                 state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
                 state.setDeviceState(rl.getState());

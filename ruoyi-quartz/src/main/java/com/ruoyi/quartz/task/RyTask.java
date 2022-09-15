@@ -11,6 +11,7 @@ import com.tunnel.platform.domain.event.SdStrategy;
 import com.tunnel.platform.domain.event.SdStrategyRl;
 import com.tunnel.platform.firealarm.FireNettyServerHandler;
 import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.platform.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.platform.mapper.dataInfo.SdSensorMessageMapper;
 import com.tunnel.platform.service.dataInfo.*;
 import com.tunnel.platform.service.digitalmodel.impl.RadarEventServiceImpl;
@@ -70,6 +71,8 @@ public class RyTask {
     private SdDeviceDataMapper sdDeviceDataMapper;
     @Autowired
     private RadarEventServiceImpl radarEventService;
+    @Autowired
+    private SdDeviceDataRecordMapper sdDeviceDataRecordMapper;
 
     private static  ModbusMaster master = ModbusTcpMaster.getMaster();
 
@@ -297,12 +300,26 @@ public class RyTask {
     }
 
     public void insertIntoDeviceData(SdDevices devices, int itemId, String value) {
+        //实时数据存储
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));
         SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
-        if(deviceData != null){
-            Date createTime = deviceData.getCreateTime();
+        sdDeviceData.setData(value);
+        sdDeviceData.setUpdateTime(new Date());
+        if(deviceData != null) {
+            sdDeviceDataMapper.updateSdDeviceData(sdDeviceData);
+        } else {
+            sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+        }
+        //每5分钟记录一次数据存储
+        SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
+        sdDeviceDataRecord.setDeviceId(devices.getEqId());
+        sdDeviceDataRecord.setItemId(Long.valueOf(itemId));
+        List<SdDeviceDataRecord> sdDeviceDataRecords = sdDeviceDataRecordMapper.selectSdDeviceDataRecordList(sdDeviceDataRecord);
+        SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecords.get(sdDeviceDataRecords.size() - 1);
+        if(deviceDataRecord != null){
+            Date createTime = deviceDataRecord.getCreateTime();
             if(createTime != null) {
                 Date nowdate = new Date();
                 long sec = (nowdate.getTime()-createTime.getTime()) / 1000L / 60L;
@@ -312,9 +329,9 @@ public class RyTask {
                 }
             }
         }
-        sdDeviceData.setData(value);
-        sdDeviceData.setCreateTime(new Date());
-        sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+        sdDeviceDataRecord.setData(value);
+        sdDeviceDataRecord.setCreateTime(new Date());
+        sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
     }
 
     public void updateSdStateStorage(String deviceId,String state) {

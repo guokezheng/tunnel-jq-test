@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -85,9 +86,17 @@ public class CmdProcess {
     public static class CmdUtil {
 
         private static final Logger logger = LoggerFactory.getLogger(CmdUtil.class);
-        public static Map<String, SdHosts> hostList = new HashMap<>();
-        public static Map<String, SdDevices> deviceList = new HashMap<>();
+
         private static Map<String, CmdInfo> cmdMap = new HashMap<>();
+
+        public static Map<String, SdHosts> hostList = new HashMap<>();
+
+        public static Map<String, SdDevices> deviceList = new HashMap<>();
+
+        public static Map<String, CmdInfo> getCmdMap() {
+            return cmdMap;
+        }
+
         @Resource
         ISdTunnelsService tunnelService;
         @Resource
@@ -95,15 +104,12 @@ public class CmdProcess {
         @Resource
         ISdDevicesService devicesService;
 
-        public static Map<String, CmdInfo> getCmdMap() {
-            return cmdMap;
-        }
 
         // 在构造方法执行后执行
         @PostConstruct
         public void init() throws UnknownHostException {
             //此处表结构改变，逻辑需要重新修改 todo
-            //        initMap();
+    //        initMap();
         }
 
         //初始化内存
@@ -219,16 +225,208 @@ public class CmdProcess {
 
         @Autowired
         private static RedisCache redisCache;
-        private static Map<String, List<DataInfo>> dataMap = new HashMap<>();
-        private static JSONObject object = new JSONObject();
+
         @Autowired
         ISdTunnelsService tunnelService;
+
         @Autowired
         ISdDevicesService devicesService;
+
+        private static Map<String, List<DataInfo>> dataMap = new HashMap<>();
+
+        private static JSONObject object = new JSONObject();
 
         public static Map<String, List<DataInfo>> getDataMap() {
             return dataMap;
         }
+
+        // 在构造方法执行后执行
+        @PostConstruct
+        public void init() {
+            initMap();
+        }
+
+        //初始化内存
+        public void initMap() {
+            SdTunnels tunnelModel = new SdTunnels();
+            tunnelModel.setPoll(1L);
+            List<SdTunnels> tunnelList = tunnelService.selectSdTunnelsList(tunnelModel);
+            for (SdTunnels tunnel : tunnelList) {
+                //查询需要巡检的PLC
+                SdDevices sdDevice = new SdDevices();
+                sdDevice.setEqTunnelId(tunnel.getTunnelId());//隧道ID
+                sdDevice.setEqType(0L);//设备类型
+                sdDevice.setIsMonitor(0L);//是否监控
+                sdDevice.setProtocol("CIO");//CIO类型
+                List<SdDevices> plcLists = devicesService.selectSdDevicesList(sdDevice);
+                for (SdDevices plc : plcLists) {
+                    SdDevices dev = new SdDevices();
+                    dev.setFEqId(plc.getEqId());
+                    List<SdDevices> devLists = devicesService.selectSdDevicesList(dev);
+                    List<DataInfo> dataInfos = new ArrayList<>();
+                    for (SdDevices device : devLists) {
+                        DataInfo dataInfo = new DataInfo();
+                        dataInfo.setDeviceId(device.getEqId());
+                        dataInfo.setDeviceType(device.getEqType());
+                        dataInfo.setDeviceName(device.getEqName());
+                        dataInfo.setStakeMark(device.getPile());
+                        //普通车指
+                        if (device.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+                            String[] split0 = feedbackAddress1.split("\\.");
+                            dataInfo.setX(0, Integer.parseInt(split0[0]));
+                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+
+                            String[] split1 = feedbackAddress2.split("\\.");
+                            dataInfo.setX(1, Integer.parseInt(split1[0]));
+                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+
+                            String[] split2 = feedbackAddress3.split("\\.");
+                            dataInfo.setX(2, Integer.parseInt(split2[0]));
+                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+
+                            String[] split3 = feedbackAddress4.split("\\.");
+                            dataInfo.setX(3, Integer.parseInt(split3[0]));
+                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+                            //带左转车指
+                        } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
+                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+                            String feedbackAddress5 = device.getEqFeedbackAddress5();
+                            String[] split0 = feedbackAddress1.split("\\.");
+                            dataInfo.setX(0, Integer.parseInt(split0[0]));
+                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+
+                            String[] split1 = feedbackAddress2.split("\\.");
+                            dataInfo.setX(1, Integer.parseInt(split1[0]));
+                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+
+                            String[] split2 = feedbackAddress3.split("\\.");
+                            dataInfo.setX(2, Integer.parseInt(split2[0]));
+                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+
+                            String[] split3 = feedbackAddress4.split("\\.");
+                            dataInfo.setX(3, Integer.parseInt(split3[0]));
+                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+                            String[] split5 = feedbackAddress5.split("\\.");
+                            dataInfo.setX(4, Integer.parseInt(split5[0]));
+                            dataInfo.setY(4, Integer.parseInt(split5[1]));
+                            //交通信号灯
+                        } else if (device.getEqType() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode()) {
+                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+                            String[] split0 = feedbackAddress1.split("\\.");
+                            dataInfo.setX(0, 0);
+                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+
+                            String[] split1 = feedbackAddress2.split("\\.");
+                            dataInfo.setX(1, 0);
+                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+
+                            String[] split2 = feedbackAddress3.split("\\.");
+                            dataInfo.setX(2, 0);
+                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+
+                            //带左转交通信号灯
+                        } else if (device.getEqType() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
+                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+                            String[] split0 = feedbackAddress1.split("\\.");
+                            dataInfo.setX(0, 0);
+                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+
+                            String[] split1 = feedbackAddress2.split("\\.");
+                            dataInfo.setX(1, 0);
+                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+
+                            String[] split2 = feedbackAddress3.split("\\.");
+                            dataInfo.setX(2, 0);
+                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+
+                            String[] split3 = feedbackAddress4.split("\\.");
+                            dataInfo.setX(3, 0);
+                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+
+                            //加强照明 引道照明 基本照明
+                        } else if (device.getEqType() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
+                            //如果此处为乐疃的设备,做特殊处理
+                            if (plc.getEqId().equals("S29-ZiBoCompany-BoShanStation-001-PLC-006")  || plc.getEqId().equals("S29-ZaoZhuangCompany-ShanTingStation-001-PLC-001"))  {
+                                String feedbackAddress1 = device.getEqFeedbackAddress1();
+                                String feedbackAddress2 = device.getEqFeedbackAddress2();
+                                String[] split0 = feedbackAddress1.split("\\.");
+                                dataInfo.setX(0, Integer.parseInt(split0[0]) - 2);
+                                dataInfo.setY(0, Integer.parseInt(split0[1]));
+                                String[] split1 = feedbackAddress2.split("\\.");
+                                dataInfo.setX(1, Integer.parseInt(split1[0]) - 2);
+                                dataInfo.setY(1, Integer.parseInt(split1[1]));
+                            } else {
+                                String feedbackAddress1 = device.getEqFeedbackAddress1();
+                                String feedbackAddress2 = device.getEqFeedbackAddress2();
+                                String[] split0 = feedbackAddress1.split("\\.");
+                                dataInfo.setX(0, Integer.parseInt(split0[0]));
+                                dataInfo.setY(0, Integer.parseInt(split0[1]));
+                                String[] split1 = feedbackAddress2.split("\\.");
+                                dataInfo.setX(1, Integer.parseInt(split1[0]));
+                                dataInfo.setY(1, Integer.parseInt(split1[1]));
+                            }
+                            //风机
+                        } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
+                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+                            String[] split0 = feedbackAddress1.split("\\.");
+                            dataInfo.setX(0, Integer.parseInt(split0[0]) - 20);
+                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+
+                            String[] split1 = feedbackAddress2.split("\\.");
+                            dataInfo.setX(1, Integer.parseInt(split1[0]) - 20);
+                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+
+                            String[] split2 = feedbackAddress3.split("\\.");
+                            dataInfo.setX(2, Integer.parseInt(split2[0]) - 20);
+                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+
+                            String[] split3 = feedbackAddress4.split("\\.");
+                            dataInfo.setX(3, Integer.parseInt(split3[0]) - 20);
+                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+                        }
+    //                    else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
+    //                        String feedbackAddress1 = device.getEqFeedbackAddress1();
+    //                        String feedbackAddress2 = device.getEqFeedbackAddress2();
+    //                        String feedbackAddress3 = device.getEqFeedbackAddress3();
+    //                        String feedbackAddress4 = device.getEqFeedbackAddress4();
+    //                        String[] split0 = feedbackAddress1.split("\\.");
+    //                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
+    //                        dataInfo.setY(0, Integer.parseInt(split0[1]));
+    //
+    //                        String[] split1 = feedbackAddress2.split("\\.");
+    //                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
+    //                        dataInfo.setY(1, Integer.parseInt(split1[1]));
+    //
+    //                        String[] split2 = feedbackAddress3.split("\\.");
+    //                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
+    //                        dataInfo.setY(2, Integer.parseInt(split2[1]));
+    //
+    //                        String[] split3 = feedbackAddress4.split("\\.");
+    //                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
+    //                        dataInfo.setY(3, Integer.parseInt(split3[1]));
+    //                    }
+                        dataInfos.add(dataInfo);
+                    }
+                    dataMap.put(plc.getEqId(), dataInfos);
+                }
+            }
+        }
+
 
         //解析DM全部设备的状态数据 id：设备id  content 设备状态反馈报文
         public static void parsingDMContent(String id, String content) {
@@ -459,8 +657,9 @@ public class CmdProcess {
                 }
                 redisCache.setCacheObject(id, devState);
 
-            }
         }
+        }
+
 
         //解析CIO全部设备的状态数据 id：设备id  content 设备状态反馈报文
         public static void parsingCIOContent(String id, String devType, String content) {
@@ -498,7 +697,7 @@ public class CmdProcess {
                     break;
                 case "jlm":
                     DataUtil.parsingJLM(id, content);
-                    if ("S29-LinYiCompany-BaiYanStation-003-PLC-005".equals(id) || "S29-ZiBoCompany-BoShanStation-001-PLC-003".equals(id)) {
+                    if ("S29-LinYiCompany-BaiYanStation-003-PLC-005".equals(id)  || "S29-ZiBoCompany-BoShanStation-001-PLC-003".equals(id)) {
                         DataUtil.parsingFX(id, content);
                     }
                     break;
@@ -522,6 +721,7 @@ public class CmdProcess {
             }
 
         }
+
 
         public static String transJsgs(String strNums1, String strNums2) {
             // 整数部分
@@ -607,6 +807,7 @@ public class CmdProcess {
             //SpringUtils.getBean(ISdTrafficStatisticsService.class).insertSdTrafficStatistics(sdTrs);
         }
 
+
         /**
          * 十六进制转二进制后补位反转
          *
@@ -624,6 +825,7 @@ public class CmdProcess {
             result = new StringBuilder(result).reverse().toString();
             return result;
         }
+
 
         private static void parsingKZ(String id, String content) {
         }
@@ -908,7 +1110,7 @@ public class CmdProcess {
             redisCache.setCacheObject(dev.getEqId().toString(), devState);
         }
 
-        //解析车指数据
+       //解析车指数据
         public static void parsingCZ(String id, String content) {
 
             //去除空格
@@ -1100,7 +1302,7 @@ public class CmdProcess {
                     redisCache.setCacheObject(info.getDeviceId(), devState);
                 }
             }
-            if (id.equals("S29-LinYiCompany-BaiYanStation-003-PLC-004") || id.equals("S29-LinYiCompany-BaiYanStation-003-PLC-006") || id.equals("S29-ZiBoCompany-BoShanStation-001-PLC-002") || id.equals("S29-ZiBoCompany-BoShanStation-001-PLC-004")) {
+            if (id.equals("S29-LinYiCompany-BaiYanStation-003-PLC-004") || id.equals("S29-LinYiCompany-BaiYanStation-003-PLC-006")  || id.equals("S29-ZiBoCompany-BoShanStation-001-PLC-002") || id.equals("S29-ZiBoCompany-BoShanStation-001-PLC-004")) {
                 char data2[][] = new char[1][15];
                 String substring2 = substring.substring(4, 8);
 
@@ -1448,193 +1650,6 @@ public class CmdProcess {
             }
         }
 
-        // 在构造方法执行后执行
-        @PostConstruct
-        public void init() {
-            initMap();
-        }
-
-        //初始化内存
-        public void initMap() {
-            SdTunnels tunnelModel = new SdTunnels();
-            tunnelModel.setPoll(1L);
-            List<SdTunnels> tunnelList = tunnelService.selectSdTunnelsList(tunnelModel);
-            for (SdTunnels tunnel : tunnelList) {
-                //查询需要巡检的PLC
-                SdDevices sdDevice = new SdDevices();
-                sdDevice.setEqTunnelId(tunnel.getTunnelId());//隧道ID
-                sdDevice.setEqType(0L);//设备类型
-                sdDevice.setIsMonitor(0L);//是否监控
-                sdDevice.setProtocol("CIO");//CIO类型
-                List<SdDevices> plcLists = devicesService.selectSdDevicesList(sdDevice);
-                for (SdDevices plc : plcLists) {
-                    SdDevices dev = new SdDevices();
-                    dev.setFEqId(plc.getEqId());
-                    List<SdDevices> devLists = devicesService.selectSdDevicesList(dev);
-                    List<DataInfo> dataInfos = new ArrayList<>();
-                    for (SdDevices device : devLists) {
-                        DataInfo dataInfo = new DataInfo();
-                        dataInfo.setDeviceId(device.getEqId());
-                        dataInfo.setDeviceType(device.getEqType());
-                        dataInfo.setDeviceName(device.getEqName());
-                        dataInfo.setStakeMark(device.getPile());
-                        //普通车指
-                        if (device.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]));
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]));
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]));
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]));
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                            //带左转车指
-                        } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String feedbackAddress5 = device.getEqFeedbackAddress5();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]));
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]));
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]));
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]));
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                            String[] split5 = feedbackAddress5.split("\\.");
-                            dataInfo.setX(4, Integer.parseInt(split5[0]));
-                            dataInfo.setY(4, Integer.parseInt(split5[1]));
-                            //交通信号灯
-                        } else if (device.getEqType() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, 0);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, 0);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, 0);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            //带左转交通信号灯
-                        } else if (device.getEqType() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, 0);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, 0);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, 0);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, 0);
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-
-                            //加强照明 引道照明 基本照明
-                        } else if (device.getEqType() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
-                            //如果此处为乐疃的设备,做特殊处理
-                            if (plc.getEqId().equals("S29-ZiBoCompany-BoShanStation-001-PLC-006") || plc.getEqId().equals("S29-ZaoZhuangCompany-ShanTingStation-001-PLC-001")) {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
-                                String feedbackAddress2 = device.getEqFeedbackAddress2();
-                                String[] split0 = feedbackAddress1.split("\\.");
-                                dataInfo.setX(0, Integer.parseInt(split0[0]) - 2);
-                                dataInfo.setY(0, Integer.parseInt(split0[1]));
-                                String[] split1 = feedbackAddress2.split("\\.");
-                                dataInfo.setX(1, Integer.parseInt(split1[0]) - 2);
-                                dataInfo.setY(1, Integer.parseInt(split1[1]));
-                            } else {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
-                                String feedbackAddress2 = device.getEqFeedbackAddress2();
-                                String[] split0 = feedbackAddress1.split("\\.");
-                                dataInfo.setX(0, Integer.parseInt(split0[0]));
-                                dataInfo.setY(0, Integer.parseInt(split0[1]));
-                                String[] split1 = feedbackAddress2.split("\\.");
-                                dataInfo.setX(1, Integer.parseInt(split1[0]));
-                                dataInfo.setY(1, Integer.parseInt(split1[1]));
-                            }
-                            //风机
-                        } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]) - 20);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]) - 20);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]) - 20);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]) - 20);
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                        }
-                        //                    else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
-                        //                        String feedbackAddress1 = device.getEqFeedbackAddress1();
-                        //                        String feedbackAddress2 = device.getEqFeedbackAddress2();
-                        //                        String feedbackAddress3 = device.getEqFeedbackAddress3();
-                        //                        String feedbackAddress4 = device.getEqFeedbackAddress4();
-                        //                        String[] split0 = feedbackAddress1.split("\\.");
-                        //                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
-                        //                        dataInfo.setY(0, Integer.parseInt(split0[1]));
-                        //
-                        //                        String[] split1 = feedbackAddress2.split("\\.");
-                        //                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
-                        //                        dataInfo.setY(1, Integer.parseInt(split1[1]));
-                        //
-                        //                        String[] split2 = feedbackAddress3.split("\\.");
-                        //                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
-                        //                        dataInfo.setY(2, Integer.parseInt(split2[1]));
-                        //
-                        //                        String[] split3 = feedbackAddress4.split("\\.");
-                        //                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
-                        //                        dataInfo.setY(3, Integer.parseInt(split3[1]));
-                        //                    }
-                        dataInfos.add(dataInfo);
-                    }
-                    dataMap.put(plc.getEqId(), dataInfos);
-                }
-            }
-        }
-
     }
 
     /**
@@ -1707,224 +1722,224 @@ public class CmdProcess {
          * 本机地址：第二个##
          *
          * */
-        //    public static String itemContent(SdDevices sdDevices, SdHosts sdHosts, Integer deviceType, String state) {
-        //        String commands = null;
-        //        //设备控制状态
-        //        int states = Integer.parseInt(state);
-        //        //获取上位机的控制地址
-        //        String controlPointAddress = sdDevices.getDmcontrolSeat();
-        //        if (deviceType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || deviceType == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() ||
-        //                deviceType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode() || deviceType == DevicesTypeEnum.PENG_DONG_ZHAO_MING.getCode()) {
-        //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
-        //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
-        //            String[] split = controlPointAddress.split(",");
-        //            String controlAddressDevice = split[states];
-        //            int x = controlAddressDevice.lastIndexOf(".");
-        //            //10.00   前两位位上位机地址码
-        //            String controlAddress = controlAddressDevice.substring(0, x);
-        //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
-        //            //获取PlcIP地址
-        //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
-        //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
-        //            //获取本机IP地址
-        //            String heXipByLocalIp = getHEXipByLocalIp();
-        //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
-        //            //获取上位机地址10 即为0A
-        //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
-        //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
-        //            //创建长度为16的字符串
-        //            //10.01   后两位位上位机设备码
-        //            String controlDevice = controlAddressDevice.substring(x + 1, controlAddressDevice.length());
-        //            int i = Integer.parseInt(controlDevice);
-        //            String commandStart = "0000000000000000";
-        //            char[] chars = commandStart.toCharArray();
-        //            chars[i] = '1';
-        //            String commandChars = String.valueOf(chars);
-        //            String commandReverse = new StringBuilder(commandChars).reverse().toString();
-        //            String s = RadixUtil.binary2Hex(commandReverse);
-        //            StringBuffer str = new StringBuffer();
-        //            for (int q = 0; q < 4 - s.length(); q++) {
-        //                str.append("0");
-        //            }
-        //            s = str.toString() + s;//0001
-        //            StringBuffer stringBuffer = new StringBuffer();
-        //            StringBuffer cmd = stringBuffer.append(replaceByAddress).append(s);
-        //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
-        //                cmd.insert(q, " ");
-        //            }
-        //            commands = cmd.toString();
-        //        } else if (deviceType == DevicesTypeEnum.FENG_JI_1.getCode() || deviceType == DevicesTypeEnum.FENG_JI_2.getCode()) {
-        //            Map<String, List<DataInfo>> dataMap = DataUtil.getDataMap();
-        //            //state = "3,3,3";
-        //            String[] stateSplit = state.split(",");
-        //            int state1 = Integer.parseInt(stateSplit[0]);
-        //            int state2 = Integer.parseInt(stateSplit[1]);
-        //            int state3 = Integer.parseInt(stateSplit[2]);
-        //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
-        //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
-        //            String[] split = controlPointAddress.split(",");
-        //            String controlAddressDevice = split[0];
-        //            int x = controlAddressDevice.lastIndexOf(".");
-        //            //10.00   前两位位上位机地址码
-        //            String controlAddress = controlAddressDevice.substring(0, x);
-        //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
-        //            //获取PlcIP地址
-        //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
-        //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
-        //            //获取本机IP地址
-        //            String heXipByLocalIp = getHEXipByLocalIp();
-        //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
-        //            //获取上位机地址10 即为0A
-        //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
-        //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
-        //            //创建长度为16的字符串
-        //            //10.01   后两位位上位机设备码
-        //            StringBuffer commandEnd = new StringBuffer("");
-        //            for (int i = 0; i < stateSplit.length; i++) {
-        //                if ("1".equals(stateSplit[i])) {
-        //                    commandEnd.append("1");
-        //                } else if ("2".equals(stateSplit[i])) {
-        //                    commandEnd.append("0");
-        //                } else if ("3".equals(stateSplit[i])) {
-        //                    commandEnd.append("0");
-        //                }
-        //            }
-        //            for (int i = 0; i < stateSplit.length; i++) {
-        //                if ("1".equals(stateSplit[i])) {
-        //                    commandEnd.append("0");
-        //                } else if ("2".equals(stateSplit[i])) {
-        //                    commandEnd.append("1");
-        //                } else if ("3".equals(stateSplit[i])) {
-        //                    commandEnd.append("0");
-        //                }
-        //            }
-        //            commandEnd.append("0000000000");
-        //            String commandReverse = new StringBuilder(commandEnd).reverse().toString();
-        //            String s = RadixUtil.binary2Hex(commandReverse);
-        //            StringBuffer commandStart = new StringBuffer();
-        //            for (int q = 0; q < 4 - s.length(); q++) {
-        //                commandStart.append("0");
-        //            }
-        //            s = commandStart.toString() + s;//0001
-        //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(s);
-        //            //分割
-        //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
-        //                cmd.insert(q, " ");
-        //            }
-        //            commands = cmd.toString();
-        //
-        //        } else if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode() || deviceType == DevicesTypeEnum.TU_SHU_CHE_ZHI.getCode() ||
-        //                deviceType == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() || deviceType == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
-        //            //DM101->101
-        //            String controlAddress = null;
-        //            if (deviceType == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() || deviceType == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
-        //                if ("5".equals(state) || "6".equals(state)) {
-        //                    controlAddress = "7A";
-        //                } else {
-        //                    controlAddress = RadixUtil.intToHex(Integer.parseInt(controlPointAddress.substring(2, 5)));
-        //                }
-        //
-        //            } else {
-        //                controlAddress = RadixUtil.intToHex(Integer.parseInt(controlPointAddress.substring(2, 5)));
-        //            }
-        //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
-        //            //获取PlcIP地址
-        //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
-        //            //获取本机IP地址
-        //            String heXipByLocalIp = getHEXipByLocalIp();
-        //
-        //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
-        //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
-        //            String replaceCon = replaceLocal.replace("##", controlAddress);
-        //
-        //            StringBuffer cmd = new StringBuffer().append(replaceCon).append(state);
-        //            for (int i = cmd.length() - 2; i > 0; i -= 2) {
-        //                cmd.insert(i, " ");
-        //            }
-        //            commands = cmd.toString();
-        //        } else if (deviceType == DevicesTypeEnum.JUAN_LIAN_MEN.getCode()) {
-        //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
-        //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
-        //            String[] split = controlPointAddress.split(",");
-        //            String controlAddressDevice = split[states];
-        //            int x = controlAddressDevice.lastIndexOf(".");
-        //            //10.00   前两位位上位机地址码
-        //            String controlAddress = controlAddressDevice.substring(0, x);
-        //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
-        //            //获取PlcIP地址
-        //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
-        //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
-        //            //获取本机IP地址
-        //            String heXipByLocalIp = getHEXipByLocalIp();
-        //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
-        //            //获取上位机地址10 即为0A
-        //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
-        //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
-        //            //创建长度为16的字符串
-        //            //10.01   后两位位上位机设备码
-        //            String controlDevice = controlAddressDevice.substring(x + 1, controlAddressDevice.length());
-        //            int i = Integer.parseInt(controlDevice);
-        //            String commandStart = "0000000000000000";
-        //            char[] chars = commandStart.toCharArray();
-        //            chars[i] = '1';
-        //            String commandChars = String.valueOf(chars);
-        //            String commandReverse = new StringBuilder(commandChars).reverse().toString();
-        //            String s = RadixUtil.binary2Hex(commandReverse);
-        //            StringBuffer str = new StringBuffer();
-        //            for (int q = 0; q < 4 - s.length(); q++) {
-        //                str.append("0");
-        //            }
-        //            s = str.toString() + s;//0001
-        //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(s);
-        //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
-        //                cmd.insert(q, " ");
-        //            }
-        //            commands = cmd.toString();
-        //        } else if (deviceType == DevicesTypeEnum.SHUI_BENG.getCode()) {
-        //            String stakeMark = sdDevices.getStakeMark();
-        //            Map<String, List<DataInfo>> dataMap = DataUtil.getDataMap();
-        //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
-        //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
-        //            String[] split = controlPointAddress.split(",");
-        //            String controlAddressDevice = split[0];
-        //            int x = controlAddressDevice.lastIndexOf(".");
-        //            //10.00   前两位位上位机地址码
-        //            String controlAddress = controlAddressDevice.substring(0, x);
-        //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
-        //            //获取PlcIP地址
-        //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
-        //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
-        //            //获取本机IP地址
-        //            String heXipByLocalIp = getHEXipByLocalIp();
-        //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
-        //            //获取上位机地址10 即为0A
-        //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
-        //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
-        //            //创建长度为16的字符串
-        //            //10.01   后两位位上位机设备码
-        //            StringBuffer commandEnd = new StringBuffer("");
-        //            if ("1#水泵".equals(stakeMark)) {
-        //                if ("1".equals(state)) {
-        //                    commandEnd.append("0001");
-        //                } else if ("0".equals(state)) {
-        //                    commandEnd.append("0000");
-        //                }
-        //            } else {
-        //                if ("1".equals(state)) {
-        //                    commandEnd.append("0002");
-        //                } else if ("0".equals(state)) {
-        //                    commandEnd.append("0000");
-        //                }
-        //            }
-        //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(commandEnd);
-        //            //分割
-        //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
-        //                cmd.insert(q, " ");
-        //            }
-        //            commands = cmd.toString();
-        //        }
-        //        return commands;
-        //    }
+    //    public static String itemContent(SdDevices sdDevices, SdHosts sdHosts, Integer deviceType, String state) {
+    //        String commands = null;
+    //        //设备控制状态
+    //        int states = Integer.parseInt(state);
+    //        //获取上位机的控制地址
+    //        String controlPointAddress = sdDevices.getDmcontrolSeat();
+    //        if (deviceType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || deviceType == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() ||
+    //                deviceType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode() || deviceType == DevicesTypeEnum.PENG_DONG_ZHAO_MING.getCode()) {
+    //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
+    //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
+    //            String[] split = controlPointAddress.split(",");
+    //            String controlAddressDevice = split[states];
+    //            int x = controlAddressDevice.lastIndexOf(".");
+    //            //10.00   前两位位上位机地址码
+    //            String controlAddress = controlAddressDevice.substring(0, x);
+    //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
+    //            //获取PlcIP地址
+    //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
+    //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
+    //            //获取本机IP地址
+    //            String heXipByLocalIp = getHEXipByLocalIp();
+    //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
+    //            //获取上位机地址10 即为0A
+    //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
+    //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
+    //            //创建长度为16的字符串
+    //            //10.01   后两位位上位机设备码
+    //            String controlDevice = controlAddressDevice.substring(x + 1, controlAddressDevice.length());
+    //            int i = Integer.parseInt(controlDevice);
+    //            String commandStart = "0000000000000000";
+    //            char[] chars = commandStart.toCharArray();
+    //            chars[i] = '1';
+    //            String commandChars = String.valueOf(chars);
+    //            String commandReverse = new StringBuilder(commandChars).reverse().toString();
+    //            String s = RadixUtil.binary2Hex(commandReverse);
+    //            StringBuffer str = new StringBuffer();
+    //            for (int q = 0; q < 4 - s.length(); q++) {
+    //                str.append("0");
+    //            }
+    //            s = str.toString() + s;//0001
+    //            StringBuffer stringBuffer = new StringBuffer();
+    //            StringBuffer cmd = stringBuffer.append(replaceByAddress).append(s);
+    //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
+    //                cmd.insert(q, " ");
+    //            }
+    //            commands = cmd.toString();
+    //        } else if (deviceType == DevicesTypeEnum.FENG_JI_1.getCode() || deviceType == DevicesTypeEnum.FENG_JI_2.getCode()) {
+    //            Map<String, List<DataInfo>> dataMap = DataUtil.getDataMap();
+    //            //state = "3,3,3";
+    //            String[] stateSplit = state.split(",");
+    //            int state1 = Integer.parseInt(stateSplit[0]);
+    //            int state2 = Integer.parseInt(stateSplit[1]);
+    //            int state3 = Integer.parseInt(stateSplit[2]);
+    //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
+    //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
+    //            String[] split = controlPointAddress.split(",");
+    //            String controlAddressDevice = split[0];
+    //            int x = controlAddressDevice.lastIndexOf(".");
+    //            //10.00   前两位位上位机地址码
+    //            String controlAddress = controlAddressDevice.substring(0, x);
+    //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
+    //            //获取PlcIP地址
+    //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
+    //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
+    //            //获取本机IP地址
+    //            String heXipByLocalIp = getHEXipByLocalIp();
+    //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
+    //            //获取上位机地址10 即为0A
+    //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
+    //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
+    //            //创建长度为16的字符串
+    //            //10.01   后两位位上位机设备码
+    //            StringBuffer commandEnd = new StringBuffer("");
+    //            for (int i = 0; i < stateSplit.length; i++) {
+    //                if ("1".equals(stateSplit[i])) {
+    //                    commandEnd.append("1");
+    //                } else if ("2".equals(stateSplit[i])) {
+    //                    commandEnd.append("0");
+    //                } else if ("3".equals(stateSplit[i])) {
+    //                    commandEnd.append("0");
+    //                }
+    //            }
+    //            for (int i = 0; i < stateSplit.length; i++) {
+    //                if ("1".equals(stateSplit[i])) {
+    //                    commandEnd.append("0");
+    //                } else if ("2".equals(stateSplit[i])) {
+    //                    commandEnd.append("1");
+    //                } else if ("3".equals(stateSplit[i])) {
+    //                    commandEnd.append("0");
+    //                }
+    //            }
+    //            commandEnd.append("0000000000");
+    //            String commandReverse = new StringBuilder(commandEnd).reverse().toString();
+    //            String s = RadixUtil.binary2Hex(commandReverse);
+    //            StringBuffer commandStart = new StringBuffer();
+    //            for (int q = 0; q < 4 - s.length(); q++) {
+    //                commandStart.append("0");
+    //            }
+    //            s = commandStart.toString() + s;//0001
+    //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(s);
+    //            //分割
+    //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
+    //                cmd.insert(q, " ");
+    //            }
+    //            commands = cmd.toString();
+    //
+    //        } else if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode() || deviceType == DevicesTypeEnum.TU_SHU_CHE_ZHI.getCode() ||
+    //                deviceType == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() || deviceType == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
+    //            //DM101->101
+    //            String controlAddress = null;
+    //            if (deviceType == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() || deviceType == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
+    //                if ("5".equals(state) || "6".equals(state)) {
+    //                    controlAddress = "7A";
+    //                } else {
+    //                    controlAddress = RadixUtil.intToHex(Integer.parseInt(controlPointAddress.substring(2, 5)));
+    //                }
+    //
+    //            } else {
+    //                controlAddress = RadixUtil.intToHex(Integer.parseInt(controlPointAddress.substring(2, 5)));
+    //            }
+    //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
+    //            //获取PlcIP地址
+    //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
+    //            //获取本机IP地址
+    //            String heXipByLocalIp = getHEXipByLocalIp();
+    //
+    //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
+    //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
+    //            String replaceCon = replaceLocal.replace("##", controlAddress);
+    //
+    //            StringBuffer cmd = new StringBuffer().append(replaceCon).append(state);
+    //            for (int i = cmd.length() - 2; i > 0; i -= 2) {
+    //                cmd.insert(i, " ");
+    //            }
+    //            commands = cmd.toString();
+    //        } else if (deviceType == DevicesTypeEnum.JUAN_LIAN_MEN.getCode()) {
+    //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
+    //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
+    //            String[] split = controlPointAddress.split(",");
+    //            String controlAddressDevice = split[states];
+    //            int x = controlAddressDevice.lastIndexOf(".");
+    //            //10.00   前两位位上位机地址码
+    //            String controlAddress = controlAddressDevice.substring(0, x);
+    //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
+    //            //获取PlcIP地址
+    //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
+    //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
+    //            //获取本机IP地址
+    //            String heXipByLocalIp = getHEXipByLocalIp();
+    //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
+    //            //获取上位机地址10 即为0A
+    //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
+    //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
+    //            //创建长度为16的字符串
+    //            //10.01   后两位位上位机设备码
+    //            String controlDevice = controlAddressDevice.substring(x + 1, controlAddressDevice.length());
+    //            int i = Integer.parseInt(controlDevice);
+    //            String commandStart = "0000000000000000";
+    //            char[] chars = commandStart.toCharArray();
+    //            chars[i] = '1';
+    //            String commandChars = String.valueOf(chars);
+    //            String commandReverse = new StringBuilder(commandChars).reverse().toString();
+    //            String s = RadixUtil.binary2Hex(commandReverse);
+    //            StringBuffer str = new StringBuffer();
+    //            for (int q = 0; q < 4 - s.length(); q++) {
+    //                str.append("0");
+    //            }
+    //            s = str.toString() + s;//0001
+    //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(s);
+    //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
+    //                cmd.insert(q, " ");
+    //            }
+    //            commands = cmd.toString();
+    //        } else if (deviceType == DevicesTypeEnum.SHUI_BENG.getCode()) {
+    //            String stakeMark = sdDevices.getStakeMark();
+    //            Map<String, List<DataInfo>> dataMap = DataUtil.getDataMap();
+    //            //例子： "10.00,10.01"   分割后位[0]:10.00   [1]10.01
+    //            //states   为设备开关状态  0表示取第0位 , 1表示取第1位
+    //            String[] split = controlPointAddress.split(",");
+    //            String controlAddressDevice = split[0];
+    //            int x = controlAddressDevice.lastIndexOf(".");
+    //            //10.00   前两位位上位机地址码
+    //            String controlAddress = controlAddressDevice.substring(0, x);
+    //            String command = EnumUtil.getType(deviceType, CommandEnum.class);
+    //            //获取PlcIP地址
+    //            String heXipByPlcIp = getHEXipByPlcIp(sdHosts.getPlcIp());
+    //            String replacePLC = command.replaceFirst("##", heXipByPlcIp);
+    //            //获取本机IP地址
+    //            String heXipByLocalIp = getHEXipByLocalIp();
+    //            String replaceLocal = replacePLC.replaceFirst("@@", heXipByLocalIp);
+    //            //获取上位机地址10 即为0A
+    //            String heXipByAddress = RadixUtil.intToHex(Integer.parseInt(controlAddress));
+    //            String replaceByAddress = replaceLocal.replace("##", heXipByAddress);
+    //            //创建长度为16的字符串
+    //            //10.01   后两位位上位机设备码
+    //            StringBuffer commandEnd = new StringBuffer("");
+    //            if ("1#水泵".equals(stakeMark)) {
+    //                if ("1".equals(state)) {
+    //                    commandEnd.append("0001");
+    //                } else if ("0".equals(state)) {
+    //                    commandEnd.append("0000");
+    //                }
+    //            } else {
+    //                if ("1".equals(state)) {
+    //                    commandEnd.append("0002");
+    //                } else if ("0".equals(state)) {
+    //                    commandEnd.append("0000");
+    //                }
+    //            }
+    //            StringBuffer cmd = new StringBuffer().append(replaceByAddress).append(commandEnd);
+    //            //分割
+    //            for (int q = cmd.length() - 2; q > 0; q -= 2) {
+    //                cmd.insert(q, " ");
+    //            }
+    //            commands = cmd.toString();
+    //        }
+    //        return commands;
+    //    }
 
 
         /*

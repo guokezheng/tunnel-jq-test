@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 报警信息回调函数
- *
  * @author wangxiao
+ *
  */
 @Component
 public class ExceptionCallBack implements HCNetSDK.FExceptionCallBack {

@@ -2,9 +2,9 @@ package com.tunnel.plc.fins.mina;
 
 
 import com.tunnel.platform.datacenter.config.MapCache;
-import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
 import com.tunnel.plc.fins.CmdProcess;
 import com.tunnel.plc.fins.PlcProcess;
+import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +24,15 @@ public class DevicesManager {
      */
     private static DevicesManager instance;
 
-    private DevicesManager() {
-
-    }
-
     public static DevicesManager getInstance() {
         if (instance == null) {
             instance = new DevicesManager();
         }
         return instance;
+    }
+
+    private DevicesManager() {
+
     }
 
     /**

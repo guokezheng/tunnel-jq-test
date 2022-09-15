@@ -18,11 +18,6 @@ public class PlcProcess {
 
     private static final Logger logger = LoggerFactory.getLogger(PlcProcess.class);
 
-    public static void shutdown() {
-        Thread thread = Thread.currentThread();
-        thread.interrupt();
-    }
-
     public void insertMlgDB() {
         List<String> plcList = CmdProcess.PlcList;
         //线程池
@@ -64,5 +59,10 @@ public class PlcProcess {
         }
 
 
+    }
+
+    public static void shutdown() {
+        Thread thread = Thread.currentThread();
+        thread.interrupt();
     }
 }

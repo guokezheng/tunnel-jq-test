@@ -1,3 +1,4 @@
+
 package com.tunnel.hik;
 
 import com.ruoyi.common.core.redis.RedisCache;
@@ -60,7 +61,7 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                 try {
                     String sLicense = new String(strItsPlateResult.struPlateInfo.sLicense, "GBK");
                     byte VehicleType = strItsPlateResult.byVehicleType;  //0-其他车辆，1-小型车，2-大型车，3- 行人触发，4- 二轮车触发，5- 三轮车触发，6- 机动车触发
-                    MonitoringSiteID = new String(strItsPlateResult.byMonitoringSiteID);
+                     MonitoringSiteID = new String(strItsPlateResult.byMonitoringSiteID);
                     System.out.println("车牌号：" + sLicense + ":车辆类型：" + VehicleType + ":监控点编号：" + MonitoringSiteID);
                 } catch (UnsupportedEncodingException e1) {
                     // TODO Auto-generated catch block
@@ -98,7 +99,7 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                     }
                 }
                 break;
-            case HCNetSDK.COMM_ALARM_TFS: //道路违章取证报警
+            case HCNetSDK.COMM_ALARM_TFS : //道路违章取证报警
                 HCNetSDK.NET_DVR_TFS_ALARM strTfsAlarm = new HCNetSDK.NET_DVR_TFS_ALARM();
                 strTfsAlarm.write();
                 Pointer pTfsAlarm = strTfsAlarm.getPointer();
@@ -106,11 +107,11 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                 strTfsAlarm.read();
                 sTime = CommonUtil.parseTime(strTfsAlarm.dwAbsTime); //报警绝对时间
                 int IllegalType = strTfsAlarm.dwIllegalType; // 违章类型
-                MonitoringSiteID = strTfsAlarm.byMonitoringSiteID.toString(); //监控点编号
+                MonitoringSiteID=strTfsAlarm.byMonitoringSiteID.toString(); //监控点编号
                 // 车牌信息
                 try {
-                    String PlateInfo = "车牌号：" + new String(strTfsAlarm.struPlateInfo.sLicense, "GBK");
-                    System.out.println("【道路违章取证报警】时间：" + sTime + "违章类型：" + IllegalType + "车牌信息：" + PlateInfo);
+                    String PlateInfo="车牌号："+new String(strTfsAlarm.struPlateInfo.sLicense, "GBK");
+                    System.out.println("【道路违章取证报警】时间："+sTime+"违章类型："+IllegalType+"车牌信息："+PlateInfo);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -147,35 +148,35 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                 Pointer pstrAIDAlarmV41 = strAIDAlarmV41.getPointer();
                 pstrAIDAlarmV41.write(0, pAlarmInfo.getByteArray(0, strAIDAlarmV41.size()), 0, strAIDAlarmV41.size());
                 strAIDAlarmV41.read();
-                sTime = CommonUtil.parseTime(strAIDAlarmV41.dwAbsTime); //报警触发绝对时间
-                MonitoringSiteID = strAIDAlarmV41.byMonitoringSiteID.toString(); //监控点编号
-                int AIDType = strAIDAlarmV41.struAIDInfo.dwAIDType; //    交通事件类型
-                int AIDTypeEx = strAIDAlarmV41.struAIDInfo.dwAIDTypeEx; //交通事件类型扩展
-                System.out.println("【道路事件检测】" + "时间：" + sTime + "监控点：" + MonitoringSiteID + "交通事件类型：" + AIDType + "交通事件类型扩展：" + AIDTypeEx);
+                sTime=CommonUtil.parseTime(strAIDAlarmV41.dwAbsTime); //报警触发绝对时间
+                 MonitoringSiteID=strAIDAlarmV41.byMonitoringSiteID.toString(); //监控点编号
+                int AIDType=strAIDAlarmV41.struAIDInfo.dwAIDType; //    交通事件类型
+                int AIDTypeEx=strAIDAlarmV41.struAIDInfo.dwAIDTypeEx; //交通事件类型扩展
+                System.out.println("【道路事件检测】"+"时间："+sTime+"监控点："+MonitoringSiteID+"交通事件类型："+AIDType+"交通事件类型扩展："+AIDTypeEx);
                 //报警图片信息
-                if (strAIDAlarmV41.dwPicDataLen > 0 && strAIDAlarmV41.pImage != null) {
-                    SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
-                    String newName = sf.format(new Date());
-                    FileOutputStream fout;
-                    try {
-                        String filename = "../pic/" + newName + "_AIDalarm.jpg";
-                        fout = new FileOutputStream(filename);
-                        //将字节写入文件
-                        long offset = 0;
-                        ByteBuffer buffers = strAIDAlarmV41.pImage.getByteBuffer(offset, strAIDAlarmV41.dwPicDataLen);
-                        byte[] bytes = new byte[strAIDAlarmV41.dwPicDataLen];
-                        buffers.rewind();
-                        buffers.get(bytes);
-                        fout.write(bytes);
-                        fout.close();
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                    if (strAIDAlarmV41.dwPicDataLen > 0 &&strAIDAlarmV41.pImage != null) {
+                        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+                        String newName = sf.format(new Date());
+                        FileOutputStream fout;
+                        try {
+                            String filename = "../pic/" + newName + "_AIDalarm.jpg";
+                            fout = new FileOutputStream(filename);
+                            //将字节写入文件
+                            long offset = 0;
+                            ByteBuffer buffers = strAIDAlarmV41.pImage.getByteBuffer(offset, strAIDAlarmV41.dwPicDataLen);
+                            byte[] bytes = new byte[strAIDAlarmV41.dwPicDataLen];
+                            buffers.rewind();
+                            buffers.get(bytes);
+                            fout.write(bytes);
+                            fout.close();
+                        } catch (FileNotFoundException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                     }
-                }
                 break;
             case HCNetSDK.COMM_ALARM_TPS_V41://交通数据统计的报警
                 HCNetSDK.NET_DVR_TPS_ALARM_V41 strTPSalarmV41 = new HCNetSDK.NET_DVR_TPS_ALARM_V41();
@@ -183,20 +184,21 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                 Pointer pstrTPSalarmV41 = strTPSalarmV41.getPointer();
                 pstrTPSalarmV41.write(0, pAlarmInfo.getByteArray(0, strTPSalarmV41.size()), 0, strTPSalarmV41.size());
                 strTPSalarmV41.read();
-                sTime = CommonUtil.parseTime(strTPSalarmV41.dwAbsTime);
-                MonitoringSiteID = strTPSalarmV41.byMonitoringSiteID.toString(); //监控点编号
-                String StartTime = CommonUtil.parseTime(strTPSalarmV41.dwStartTime); //开始统计时间；
-                String StopTime = CommonUtil.parseTime(strTPSalarmV41.dwStopTime); //结束统计时间；
-                System.out.println("【交通数据统计】" + "时间：" + sTime + "监控点编号：" + MonitoringSiteID + "开始统计时间：" + StartTime + "结束统计时间：" + StopTime);
+                sTime=CommonUtil.parseTime(strTPSalarmV41.dwAbsTime);
+                MonitoringSiteID=strTPSalarmV41.byMonitoringSiteID.toString(); //监控点编号
+                String StartTime=CommonUtil.parseTime(strTPSalarmV41.dwStartTime); //开始统计时间；
+                String StopTime=CommonUtil.parseTime(strTPSalarmV41.dwStopTime); //结束统计时间；
+                System.out.println("【交通数据统计】"+"时间："+sTime+"监控点编号："+MonitoringSiteID+"开始统计时间："+StartTime+"结束统计时间："+StopTime);
                 //车道统计参数信息
-                for (int i = 0; i <= HCNetSDK.MAX_TPS_RULE; i++) {
-                    byte LaneNo = strTPSalarmV41.struTPSInfo.struLaneParam[i].byLaneNo; //车道号
-                    byte TrafficState = strTPSalarmV41.struTPSInfo.struLaneParam[i].byTrafficState; //车道状态 0-无效，1-畅通，2-拥挤，3-堵塞
-                    int TpsType = strTPSalarmV41.struTPSInfo.struLaneParam[i].dwTpsType; //数据变化类型标志，表示当前上传的统计参数中，哪些数据有效，按位区分
-                    int LaneVolume = strTPSalarmV41.struTPSInfo.struLaneParam[i].dwLaneVolume; //车道流量
-                    int LaneVelocity = strTPSalarmV41.struTPSInfo.struLaneParam[i].dwLaneVelocity; //车道平均速度
-                    float SpaceOccupyRation = strTPSalarmV41.struTPSInfo.struLaneParam[i].fSpaceOccupyRation;  //车道占有率，百分比计算（空间上，车辆长度与监控路段总长度的比值)
-                    System.out.println("车道号：" + LaneNo + "车道状态：" + TrafficState + "车道流量：" + LaneVolume + "车道占有率：" + SpaceOccupyRation + "\n");
+                for (int i=0;i<=HCNetSDK.MAX_TPS_RULE;i++)
+                {
+                    byte LaneNo=strTPSalarmV41.struTPSInfo.struLaneParam[i].byLaneNo; //车道号
+                    byte TrafficState=strTPSalarmV41.struTPSInfo.struLaneParam[i].byTrafficState; //车道状态 0-无效，1-畅通，2-拥挤，3-堵塞
+                    int TpsType=strTPSalarmV41.struTPSInfo.struLaneParam[i].dwTpsType; //数据变化类型标志，表示当前上传的统计参数中，哪些数据有效，按位区分
+                    int LaneVolume=strTPSalarmV41.struTPSInfo.struLaneParam[i].dwLaneVolume; //车道流量
+                    int LaneVelocity=strTPSalarmV41.struTPSInfo.struLaneParam[i].dwLaneVelocity; //车道平均速度
+                    float SpaceOccupyRation=strTPSalarmV41.struTPSInfo.struLaneParam[i].fSpaceOccupyRation;  //车道占有率，百分比计算（空间上，车辆长度与监控路段总长度的比值)
+                    System.out.println("车道号："+LaneNo+"车道状态："+TrafficState+"车道流量："+LaneVolume+"车道占有率："+SpaceOccupyRation+"\n");
                 }
                 break;
             //实时过车数据数据,包含车速信息
@@ -246,17 +248,17 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
 //                        + ";当前车道 从上到下车流量：" + dwDownwardFlow + ";当前车道 从下到上车流量：" + dwUpwardFlow
 //                        + ";对应车速：" + bySpeed + "KM/H;当前车道拥挤状态：" + byLaneStateName;
                 Map<String, Object> realTimeTrafficFlowInformationMap = new HashMap<>();
-                realTimeTrafficFlowInformationMap.put("channel", channel);
-                realTimeTrafficFlowInformationMap.put("struTime", struTime);
-                realTimeTrafficFlowInformationMap.put("byLane", byLane);
-                realTimeTrafficFlowInformationMap.put("dwDownwardFlow", dwDownwardFlow);
-                realTimeTrafficFlowInformationMap.put("dwUpwardFlow", dwUpwardFlow);
-                realTimeTrafficFlowInformationMap.put("bySpeed", bySpeed);
-                realTimeTrafficFlowInformationMap.put("byLaneStateName", byLaneStateName);
-                realTimeTrafficFlowInformationMap.put("eqDirection", sdDevices1.getEqDirection());
+                realTimeTrafficFlowInformationMap.put("channel",channel);
+                realTimeTrafficFlowInformationMap.put("struTime",struTime);
+                realTimeTrafficFlowInformationMap.put("byLane",byLane);
+                realTimeTrafficFlowInformationMap.put("dwDownwardFlow",dwDownwardFlow);
+                realTimeTrafficFlowInformationMap.put("dwUpwardFlow",dwUpwardFlow);
+                realTimeTrafficFlowInformationMap.put("bySpeed",bySpeed);
+                realTimeTrafficFlowInformationMap.put("byLaneStateName",byLaneStateName);
+                realTimeTrafficFlowInformationMap.put("eqDirection",sdDevices1.getEqDirection());
                 //存储实时车流量到redis
 //                redisCache.setCacheObject(redisKeyName,realTimeTrafficFlowInformation);
-                redisCache.setCacheMap(redisKeyName, realTimeTrafficFlowInformationMap);
+                redisCache.setCacheMap(redisKeyName,realTimeTrafficFlowInformationMap);
                 break;
 
             case HCNetSDK.COMM_ALARM_TPS_STATISTICS: //统计过车数据
@@ -281,7 +283,7 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                 List<SdDevices> devicesLists = iSdDevicesService.selectSdDevicesList(devices);
                 SdDevices devices1 = devicesLists.get(0);
                 //统计数据存库，有几条有效车道就要存多少条数据到小时车流量统计表
-                for (int j = 0; j < TotalLaneNum; j++) {
+                for (int j = 0;j < TotalLaneNum;j++) {
                     SdDataTrafficHour sdDataTrafficHour = new SdDataTrafficHour();
                     try {
                         sdDataTrafficHour.setStatTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(struStartTime));
@@ -299,7 +301,7 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                         int lightVehicle = 0;
                         int midVehicle = 0;
                         int heavyVehicle = 0;
-                        for (int i = 0; i <= HCNetSDK.MAX_TPS_RULE; i++) {
+                        for (int i=0;i<=HCNetSDK.MAX_TPS_RULE;i++) {
                             byte byLane1 = netDvrTpsStatisticsInfo.struTPSStatisticsInfo.struLaneParam[i].byLane;
                             if (byLane1 != 0 && "null".equals(String.valueOf(byLane1))) {
                                 lane = byLane1;
@@ -339,7 +341,7 @@ public class FMSGCallBack_V31 implements HCNetSDK.FMSGCallBack_V31 {
                         sdDataTrafficHour.setDeviceId(devices1.getEqId());
                         sdDataTrafficHour.setEqType(devices1.getEqType());
                         iSdDataTrafficHourService.insertSdDataTrafficHour(sdDataTrafficHour);
-                    } catch (Exception e) {
+                    } catch(Exception e) {
                         e.printStackTrace();
                     }
                 }

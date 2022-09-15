@@ -20,12 +20,23 @@ import java.util.Map;
 public class ModbusTcpMaster {
 
 
-    public static Map<String, ModbusMaster> masterMap = new HashMap<>();
     /**
      * 懒汉模式实例化
      */
     private static ModbusTcpMaster instance;
+
+    public static ModbusTcpMaster getInstance() {
+        if (instance == null) {
+            instance = new ModbusTcpMaster();
+        }
+        return instance;
+    }
+
+    private ModbusTcpMaster() {
+    }
+
     private static ModbusFactory modbusFactory;
+    public static Map<String, ModbusMaster> masterMap = new HashMap<>();
 
     static {
         if (modbusFactory == null) {
@@ -37,16 +48,6 @@ public class ModbusTcpMaster {
     ISdTunnelsService tunnelService;
     @Autowired
     ISdDevicesService devicesService;
-
-    private ModbusTcpMaster() {
-    }
-
-    public static ModbusTcpMaster getInstance() {
-        if (instance == null) {
-            instance = new ModbusTcpMaster();
-        }
-        return instance;
-    }
 
     // 在构造方法执行后执行
     public void init() {

@@ -3,6 +3,8 @@ package com.tunnel.plc.redisHandle;
 import com.alibaba.fastjson.JSON;
 import com.google.auto.service.AutoService;
 import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
+
+
 import com.tunnel.plc.fins.CmdProcess;
 import com.zc.common.core.redis.RedisMessageDispatcher;
 import org.slf4j.Logger;
@@ -64,7 +66,6 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
             cmdInfo.setCmdList(cmdList2);
         }
     }
-
     //照明设备需要二次复位
     public void resetZM(String cmd, Long plcId) {
         Thread thread = new Thread(new Runnable() {

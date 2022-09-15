@@ -113,6 +113,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         });
         if (CollectionUtils.isNotEmpty(eventList)){
             wjMapper.insertWjEvent(eventList);
+            log.info("---插入数据list---{}",eventList);
             WebSocketService.broadcast("WjEvent",eventList);
         }
         return AjaxResult.success();

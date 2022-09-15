@@ -4,6 +4,7 @@ import com.tunnel.platform.domain.event.SdReserveProcess;
 import com.tunnel.platform.domain.event.SdReserveProcessModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案流程节点Service接口
@@ -82,4 +83,12 @@ public interface ISdReserveProcessService
      * @return
      */
     public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId);
+
+    /**
+     * 查询预览展示
+     *
+     * @param reserveId
+     * @return
+     */
+    public List<Map> selectPreviewDisplay(Long reserveId);
 }

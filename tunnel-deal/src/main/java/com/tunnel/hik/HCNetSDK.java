@@ -8,7 +8,7 @@
  * Created on 2009-9-14, 19:31:34
  */
 
-package com.tunnel.platform.hkdevice;
+package com.tunnel.hik;
 
 import com.sun.jna.*;
 import com.sun.jna.examples.win32.GDI32.RECT;

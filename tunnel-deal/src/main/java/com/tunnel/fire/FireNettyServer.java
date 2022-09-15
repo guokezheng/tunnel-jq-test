@@ -1,4 +1,4 @@
-package com.tunnel.platform.firealarm;
+package com.tunnel.fire;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;

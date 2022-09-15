@@ -1,9 +1,8 @@
-package com.tunnel.platform.firealarm;
+package com.tunnel.fire;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.framework.web.domain.server.Sys;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
 import com.tunnel.platform.domain.event.SdWarningInfo;
@@ -12,19 +11,15 @@ import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.platform.mapper.event.SdWarningInfoMapper;
 import com.tunnel.platform.mapper.event.SdWarningTypeMapper;
-import com.tunnel.platform.utils.util.StringUtil;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

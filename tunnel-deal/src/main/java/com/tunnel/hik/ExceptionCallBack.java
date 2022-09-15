@@ -1,4 +1,4 @@
-package com.tunnel.platform.hkdevice;
+package com.tunnel.hik;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;

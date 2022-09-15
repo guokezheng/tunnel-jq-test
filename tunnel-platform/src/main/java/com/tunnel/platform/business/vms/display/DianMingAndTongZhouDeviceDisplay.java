@@ -1,4 +1,4 @@
-package com.tunnel.platform.business.board.display;
+package com.tunnel.platform.business.vms.display;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.platform.utils.exception.BusinessException;

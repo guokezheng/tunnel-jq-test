@@ -1,5 +1,5 @@
 
-package com.tunnel.platform.hkdevice;
+package com.tunnel.hik;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.sun.jna.Pointer;

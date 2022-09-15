@@ -1,10 +1,10 @@
-package com.tunnel.platform.business.board.core;
+package com.tunnel.platform.business.vms.core;
 
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.business.board.DevicesBean;
-import com.tunnel.platform.business.board.DevicesConfig;
-import com.tunnel.platform.business.board.DriverBean;
-import com.tunnel.platform.business.board.DriverConfig;
+import com.tunnel.platform.business.vms.DevicesConfig;
+import com.tunnel.platform.business.vms.DriverBean;
+import com.tunnel.platform.business.vms.DriverConfig;
+import com.tunnel.platform.business.vms.DevicesBean;
 import com.tunnel.platform.utils.exception.BusinessException;
 import com.tunnel.platform.utils.util.CommonUtil;
 import org.slf4j.Logger;

@@ -1,10 +1,10 @@
-package com.tunnel.plc.mina;
+package com.tunnel.plc.fins.mina;
 
 
 import com.tunnel.platform.datacenter.config.MapCache;
-import com.tunnel.plc.datascheduler.PlcProcess;
+import com.tunnel.plc.fins.CmdProcess;
+import com.tunnel.plc.fins.PlcProcess;
 import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
-import com.tunnel.plc.plcutil.CmdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class DevicesManager {
         /*
          * 1.查询设备的配置信息。
          */
-        Map<String, CmdInfo> cmdMap = CmdUtil.getCmdMap();
+        Map<String, CmdInfo> cmdMap = CmdProcess.CmdUtil.getCmdMap();
         CmdInfo cmdInfo = cmdMap.get(plcId);
         /*
          * 2.mina连接，并获取指令执行返回的结果

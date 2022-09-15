@@ -1,4 +1,4 @@
-package com.tunnel.platform.business.board;
+package com.tunnel.platform.business.vms;
 
 import com.tunnel.platform.domain.informationBoard.IotDeviceProtocol;
 import com.tunnel.platform.service.informationBoard.IIotDeviceProtocolService;

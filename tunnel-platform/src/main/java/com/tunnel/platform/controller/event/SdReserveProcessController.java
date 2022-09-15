@@ -9,11 +9,13 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.platform.domain.event.SdReserveProcess;
 import com.tunnel.platform.domain.event.SdReserveProcessModel;
 import com.tunnel.platform.service.event.ISdReserveProcessService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案流程节点Controller
@@ -33,6 +35,7 @@ public class SdReserveProcessController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('plan:process:list')")
     @GetMapping("/list")
+    @ApiOperation("查询预案流程节点列表")
     public TableDataInfo list(SdReserveProcess sdReserveProcess)
     {
         startPage();
@@ -44,8 +47,8 @@ public class SdReserveProcessController extends BaseController
      * 导出预案流程节点列表
      */
     @PreAuthorize("@ss.hasPermi('plan:process:export')")
-    @Log(title = "预案流程节点", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出预案流程节点列表")
     public AjaxResult export(SdReserveProcess sdReserveProcess)
     {
         List<SdReserveProcess> list = sdReserveProcessService.selectSdReserveProcessList(sdReserveProcess);
@@ -58,6 +61,7 @@ public class SdReserveProcessController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('plan:process:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取预案流程节点详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdReserveProcessService.selectSdReserveProcessById(id));
@@ -67,8 +71,8 @@ public class SdReserveProcessController extends BaseController
      * 新增预案流程节点
      */
     @PreAuthorize("@ss.hasPermi('plan:process:add')")
-    @Log(title = "预案流程节点", businessType = BusinessType.INSERT)
     @PostMapping("/add")
+    @ApiOperation("添加预案流程节点")
     public AjaxResult add(@RequestBody SdReserveProcess sdReserveProcess)
     {
         return toAjax(sdReserveProcessService.insertSdReserveProcess(sdReserveProcess));
@@ -81,8 +85,8 @@ public class SdReserveProcessController extends BaseController
      * @return
      */
     @PreAuthorize("@ss.hasPermi('plan:process:add')")
-    @Log(title = "预案流程节点", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("批量添加预案流程节点")
     public AjaxResult add(@RequestBody SdReserveProcessModel sdReserveProcess)
     {
         return toAjax(sdReserveProcessService.batchSdReserveProcessed(sdReserveProcess));
@@ -92,8 +96,8 @@ public class SdReserveProcessController extends BaseController
      * 修改预案流程节点
      */
     @PreAuthorize("@ss.hasPermi('plan:process:edit')")
-    @Log(title = "预案流程节点", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("修改预案流程节点")
     public AjaxResult edit(@RequestBody SdReserveProcess sdReserveProcess)
     {
         return toAjax(sdReserveProcessService.updateSdReserveProcess(sdReserveProcess));
@@ -103,8 +107,8 @@ public class SdReserveProcessController extends BaseController
      * 删除预案流程节点
      */
     @PreAuthorize("@ss.hasPermi('plan:process:remove')")
-    @Log(title = "预案流程节点", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("批量删除节点信息")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdReserveProcessService.deleteSdReserveProcessByIds(ids));
@@ -116,7 +120,20 @@ public class SdReserveProcessController extends BaseController
      * @return
      */
     @GetMapping("/getListByRId")
+    @ApiOperation("根据预案id获得预案节点信息")
     public AjaxResult getReserveProcessByReserveId(Long reserveId) {
         return AjaxResult.success(sdReserveProcessService.selectSdReserveProcessByRId(reserveId));
+    }
+
+    /**
+     * 预览展示
+     * @param reserveId
+     * @return
+     */
+    @GetMapping("/previewDisplay")
+    @ApiOperation("预览展示")
+    public List<Map> previewDisplay(Long reserveId) {
+        List<Map> mapList = sdReserveProcessService.selectPreviewDisplay(reserveId);
+        return mapList;
     }
 }

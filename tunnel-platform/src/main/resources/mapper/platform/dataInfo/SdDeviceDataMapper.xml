@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LEFT JOIN
         (SELECT HOUR(create_time) AS order_hour, cast(sum(data)/count(id) as DECIMAL(9, 3)) count
         FROM
-        sd_device_data
+            sd_device_data_record
         WHERE
         item_id = #{itemId} and device_id = #{deviceId}
             and

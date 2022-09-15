@@ -1,7 +1,6 @@
 package com.tunnel.plc.fins.mina;
 
 import com.tunnel.platform.datacenter.config.MapCache;
-
 import com.tunnel.platform.utils.util.CommonUtil;
 import com.tunnel.platform.utils.util.RadixUtil;
 import com.tunnel.plc.fins.CmdProcess;
@@ -20,12 +19,12 @@ import java.util.Map;
 public class MinaClient {
 
 
-    private final String ip;
-    public final String id;
-    private final int port;
-
     // 缓存Iot设备执行命令侯返回的数据。
     public static Map<String, String> dataCache = new HashMap<String, String>();
+    public final String id;
+    private final String ip;
+    private final int port;
+    private MinaConnection connection;
 
     public MinaClient(String id, String ip, int port) {
         this.id = id;
@@ -33,8 +32,6 @@ public class MinaClient {
         this.port = port;
         init();
     }
-
-    private MinaConnection connection;
 
     /**
      * @Description: 初始化Mina连接

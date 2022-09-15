@@ -12,13 +12,13 @@ public class WorkScheduler {
     private RedisCache redisCache;
 
 
-//    @Scheduled(fixedRate = 1000 * 60)
+    //    @Scheduled(fixedRate = 1000 * 60)
     public void updateCmdCache() {
         cmdProcess.updateCmdCache();
     }
 
 
-//    @Scheduled(fixedRate = 1000)
+    //    @Scheduled(fixedRate = 1000)
     public void insertMlgDB() {
         //获取可用的plc
         plcProcess.insertMlgDB();

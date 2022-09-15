@@ -1,4 +1,4 @@
-package com.tunnel.platform.business.board;
+package com.tunnel.platform.business.vms;
 
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.platform.utils.util.CommonUtil;

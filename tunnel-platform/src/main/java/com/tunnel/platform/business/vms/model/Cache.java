@@ -1,4 +1,4 @@
-package com.tunnel.platform.business.board.model;
+package com.tunnel.platform.business.vms.model;
 
 import java.util.ArrayList;
 

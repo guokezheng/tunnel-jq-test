@@ -1,8 +1,8 @@
-package com.tunnel.platform.business.board.display;
+package com.tunnel.platform.business.vms.display;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.platform.business.board.core.IDeviceDisplay;
+import com.tunnel.platform.business.vms.core.IDeviceDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

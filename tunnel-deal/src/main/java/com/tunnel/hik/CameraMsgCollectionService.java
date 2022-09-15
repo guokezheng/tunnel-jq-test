@@ -1,4 +1,4 @@
-package com.tunnel.platform.hkdevice;
+package com.tunnel.hik;
 
 public class CameraMsgCollectionService {
 }

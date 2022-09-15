@@ -1,6 +1,6 @@
 
 
-package com.tunnel.platform.hkdevice;
+package com.tunnel.hik;
 
 /**
  * @author

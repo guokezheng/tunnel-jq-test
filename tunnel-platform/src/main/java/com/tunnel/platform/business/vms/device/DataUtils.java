@@ -1,12 +1,12 @@
-package com.tunnel.platform.business.board.device;
+package com.tunnel.platform.business.vms.device;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.tunnel.platform.business.board.core.DevicesManager;
-import com.tunnel.platform.business.board.core.IDeviceProtocol;
-import com.tunnel.platform.business.board.protocol.ProtocolCheckAlgorithm;
+import com.tunnel.platform.business.vms.core.DevicesManager;
+import com.tunnel.platform.business.vms.core.IDeviceProtocol;
+import com.tunnel.platform.business.vms.protocol.ProtocolCheckAlgorithm;
 import com.tunnel.platform.utils.util.CommonUtil;
 import com.tunnel.platform.utils.util.RadixUtil;
 

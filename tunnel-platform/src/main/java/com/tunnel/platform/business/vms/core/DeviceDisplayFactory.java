@@ -1,9 +1,9 @@
-package com.tunnel.platform.business.board.core;
+package com.tunnel.platform.business.vms.core;
 
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.business.board.DevicesBean;
-import com.tunnel.platform.business.board.DevicesConfig;
-import com.tunnel.platform.business.board.display.*;
+import com.tunnel.platform.business.vms.DevicesConfig;
+import com.tunnel.platform.business.vms.display.*;
+import com.tunnel.platform.business.vms.DevicesBean;
 
 import java.util.List;
 

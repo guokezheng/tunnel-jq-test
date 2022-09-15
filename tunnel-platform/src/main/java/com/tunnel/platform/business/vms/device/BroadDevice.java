@@ -1,10 +1,10 @@
-package com.tunnel.platform.business.board.device;
+package com.tunnel.platform.business.vms.device;
 
 import com.github.pagehelper.util.StringUtil;
-import com.tunnel.platform.business.board.DriverBean;
-import com.tunnel.platform.business.board.core.DeviceDisplayFactory;
-import com.tunnel.platform.business.board.core.DevicesManager;
-import com.tunnel.platform.business.board.core.IDeviceProtocol;
+import com.tunnel.platform.business.vms.DriverBean;
+import com.tunnel.platform.business.vms.core.DeviceDisplayFactory;
+import com.tunnel.platform.business.vms.core.DevicesManager;
+import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.utils.exception.BusinessException;
 import com.tunnel.platform.utils.util.CommonUtil;
 

@@ -105,6 +105,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             sdEvent.setEventLatitude(f.getEventLatitude()+"");
             sdEvent.setStartTime(f.getEventTimeStampStart());
             sdEvent.setEndTime(f.getEventTimeStampEnd());
+            sdEvent.setEventSource("0");
             eventList.add(sdEvent);
             List<WjConfidence> targetList = f.getTargetList();
             targetList.forEach(s->s.setEventIds(f.getEventId()));

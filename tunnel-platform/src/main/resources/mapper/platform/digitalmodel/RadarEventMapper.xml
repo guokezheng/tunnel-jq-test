@@ -14,10 +14,10 @@
 
     <insert id="insertWjEvent">
         insert into sd_event
-        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num)
+        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num,event_source)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},#{item.startTime},#{item.endTime},#{item.stakeNum})
+            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},#{item.startTime},#{item.endTime},#{item.stakeNum},#{item.eventSource})
         </foreach>
     </insert>
 

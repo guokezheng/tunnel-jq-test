@@ -39,7 +39,7 @@ public class RadarEventController {
     public static final Logger log = LoggerFactory.getLogger(RadarEventController.class);
 
     /**
-     * 事件数据
+     * 事件数据雷达的  event_source=0
      * @param map
      * @return
      */

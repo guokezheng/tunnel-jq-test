@@ -112,4 +112,20 @@ public class SdDeviceDataController extends BaseController
         Map<String, Object> todayCOVIData = sdDeviceDataService.getTodayCOVIData(deviceId);
         return Result.success(todayCOVIData);
     }
+
+    @GetMapping("/getTodayFSFXData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayFSFXData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayFSFXData = sdDeviceDataService.getTodayFSFXData(deviceId);
+        return Result.success(todayFSFXData);
+    }
+
+    @GetMapping("/getTodayLDData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayLDData = sdDeviceDataService.getTodayLDData(deviceId);
+        return Result.success(todayLDData);
+    }
 }

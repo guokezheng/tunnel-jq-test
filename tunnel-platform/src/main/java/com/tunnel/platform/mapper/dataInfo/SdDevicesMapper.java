@@ -156,8 +156,6 @@ public interface SdDevicesMapper
 
 	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 
-	List<SdDevices> selectStateStorage();
-
     String selectEqStatus(@Param("deviceId") String deviceId);
 
 	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);

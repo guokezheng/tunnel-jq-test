@@ -380,7 +380,6 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
-        List<SdDevices> devicesList = devicesMapper.selectStateStorage();
         List<SdRadarDevice> list = new ArrayList<>();
         /*
         //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
@@ -431,16 +430,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                             v->{
@@ -473,16 +469,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("31".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(
                             v->{

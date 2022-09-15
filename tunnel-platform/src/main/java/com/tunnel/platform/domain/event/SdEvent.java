@@ -158,6 +158,8 @@ public class SdEvent extends BaseEntity {
 
     @ApiModelProperty("事件位置纬度")
     private String eventLatitude;
+    @ApiModelProperty("事件来源")
+    private String eventSource;
 
     @ApiModelProperty("事件开始时间")
     private String startTime;

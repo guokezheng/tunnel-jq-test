@@ -6,6 +6,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdFixedCode;
 import com.tunnel.platform.domain.dataInfo.*;
 import com.tunnel.platform.mapper.dataInfo.InductionlampControlStatusParamMapper;
@@ -99,15 +100,17 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     {
         sdDevices.setCreateTime(DateUtils.getNowDate());
         //判断当前是否是诱导灯设备
-        if (sdDevices.getEqType() == 31L && (sdDevices.getControlStatus() == null || "".equals(sdDevices.getControlStatus()))) {
+        Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+        if (null != sdDevices.getEqType() && sdDevices.getEqType().longValue() == yddEqTypeId.longValue()
+                && (sdDevices.getControlStatus() == null || "".equals(sdDevices.getControlStatus()))) {
             String eqId = sdDevices.getEqId();
             //诱导灯设备暂时只对接手动控制模式，直接指定并默认运行模式为0
             sdDevices.setControlStatus("1");
             InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
             inductionlampControlStatusDetails.setEquipmentId(eqId);
             inductionlampControlStatusDetails.setEquipmentModeType(0);
-            inductionlampControlStatusDetails.setBrightness("10");
-            inductionlampControlStatusDetails.setFrequency("10");
+            inductionlampControlStatusDetails.setBrightness("50");
+            inductionlampControlStatusDetails.setFrequency("69");
             inductionlampControlStatusDetails.setCreateTime(DateUtils.getNowDate());
             iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
             InductionlampControlStatusParam inductionlampControlStatusParam = new InductionlampControlStatusParam();
@@ -155,36 +158,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService
                 //闪烁/每秒
                 statusParam2.setTimeSecond(30);
                 inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam2);
-
-//                InductionlampControlStatusParam statusParam3 = new InductionlampControlStatusParam();
-//                statusParam3.setEquipmentId(eqId);
-//                statusParam3.setModeName("模式3");
-//                statusParam3.setModeCode(3);
-//                //光照
-//                statusParam3.setIlluminationEnd(300);
-//                //闪烁/每秒
-//                statusParam3.setTimeSecond(30);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam3);
-
-//                InductionlampControlStatusParam statusParam4 = new InductionlampControlStatusParam();
-//                statusParam4.setEquipmentId(eqId);
-//                statusParam4.setModeName("模式4");
-//                statusParam4.setModeCode(4);
-//                //光照
-//                statusParam4.setIlluminationEnd(100);
-//                //闪烁/每秒
-//                statusParam4.setTimeSecond(60);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam4);
-
-//                InductionlampControlStatusParam statusParam5 = new InductionlampControlStatusParam();
-//                statusParam5.setEquipmentId(eqId);
-//                statusParam5.setModeName("模式5");
-//                statusParam5.setModeCode(5);
-//                //光照
-//                statusParam5.setIlluminationEnd(50);
-//                //亮度
-//                statusParam5.setBrightnessParam(50);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam5);
             }
         }
         return sdDevicesMapper.insertSdDevices(sdDevices);
@@ -201,14 +174,15 @@ public class SdDevicesServiceImpl implements ISdDevicesService
     {
         sdDevices.setUpdateTime(DateUtils.getNowDate());
         String eqId = sdDevices.getEqId();
-        if (sdDevices.getEqType() == 31L) {
+        Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
+        if (null != sdDevices.getEqType() && sdDevices.getEqType().longValue() == yddEqTypeId.longValue()) {
             InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
             inductionlampControlStatusDetails.setEquipmentId(eqId);
             List<InductionlampControlStatusDetails> controlStatusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
             if (controlStatusDetails == null || controlStatusDetails.size() == 0) {
                 inductionlampControlStatusDetails.setEquipmentModeType(0);
-                inductionlampControlStatusDetails.setBrightness("10");
-                inductionlampControlStatusDetails.setFrequency("10");
+                inductionlampControlStatusDetails.setBrightness("50");
+                inductionlampControlStatusDetails.setFrequency("69");
                 iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
             }
             sdDevices.setControlStatus("1");
@@ -257,36 +231,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService
                 //闪烁/每秒
                 statusParam2.setTimeSecond(30);
                 inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam2);
-
-//                InductionlampControlStatusParam statusParam3 = new InductionlampControlStatusParam();
-//                statusParam3.setEquipmentId(eqId);
-//                statusParam3.setModeName("模式3");
-//                statusParam3.setModeCode(3);
-//                //光照
-//                statusParam3.setIlluminationEnd(300);
-//                //闪烁/每秒
-//                statusParam3.setTimeSecond(30);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam3);
-
-//                InductionlampControlStatusParam statusParam4 = new InductionlampControlStatusParam();
-//                statusParam4.setEquipmentId(eqId);
-//                statusParam4.setModeName("模式4");
-//                statusParam4.setModeCode(4);
-//                //光照
-//                statusParam4.setIlluminationEnd(100);
-//                //闪烁/每秒
-//                statusParam4.setTimeSecond(60);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam4);
-
-//                InductionlampControlStatusParam statusParam5 = new InductionlampControlStatusParam();
-//                statusParam5.setEquipmentId(eqId);
-//                statusParam5.setModeName("模式5");
-//                statusParam5.setModeCode(5);
-//                //光照
-//                statusParam5.setIlluminationEnd(50);
-//                //亮度
-//                statusParam5.setBrightnessParam(50);
-//                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam5);
             }
         } else {
             InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();

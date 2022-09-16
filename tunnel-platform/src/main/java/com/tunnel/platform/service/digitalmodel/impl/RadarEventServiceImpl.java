@@ -316,7 +316,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String deviceStatus= devicesMapper.selectEqStatus(deviceId);
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
-                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "34".equals(deviceType)) {
+                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "32".equals(deviceType)) {
 //            String runStatus = wjDeviceData.getRunStatus() + "";
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
@@ -324,7 +324,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData",parse);
 //            jsonObject.put("runStatus", runStatus);
-        }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)){
+        }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)||"18".equals(deviceType)){
 //            String runDate = wjDeviceData.getRunDate();
 //            String unit = wjDeviceData.getUnit();
             jsonObject.put("deviceId", deviceId);
@@ -426,7 +426,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdRadarDevice.setTransform(f.getRemark());
                 WjDeviceData deviceData = new WjDeviceData();
                 if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
-                        || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "34".equals(sdRadarDevice.getDeviceType())) {
+                        || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "32".equals(sdRadarDevice.getDeviceType())) {
                     /*redisResult.forEach(
                         v->{
                             if (v!=null){
@@ -445,7 +445,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                     if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
                         deviceData.setUnit(sdDeviceDataItem.getUnit());
                     }
-                }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
+                }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())||"18".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                             v->{
                                 if (v!=null){

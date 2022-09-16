@@ -1,5 +1,6 @@
 package com.tunnel.fire;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -13,6 +14,7 @@ import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.platform.mapper.event.SdWarningInfoMapper;
 import com.tunnel.platform.mapper.event.SdWarningTypeMapper;
+import com.tunnel.platform.service.digitalmodel.RadarEventService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
@@ -27,7 +29,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +43,7 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 	private EventLoopGroup group;
 
 	private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+	private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
 
 	public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
@@ -201,6 +206,18 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 		   fireComponentDevice.setEqStatus(status);
 		   fireComponentDevice.setEqStatusTime(new Date());
 		   sdDevicesMapper.updateSdDevicesByFEqId(fireComponentDevice);
+		   List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(fireComponentDevice);
+		   for (int j = 0;j < fireComponentsList.size();j++) {
+			   //声光报警器数据推送到万基
+			   SdDevices fireComponent = fireComponentsList.get(j);
+			   Map<String, Object> map = new HashMap<>();
+			   map.put("deviceId", fireComponent.getEqId());
+			   map.put("deviceType", fireComponent.getEqType());
+			   JSONObject jsonObject = new JSONObject();
+			   jsonObject.put("runStatus", status);
+			   map.put("deviceData", jsonObject);
+			   radarEventService.sendBaseDeviceStatus(map);
+		   }
 	   }
    }
 

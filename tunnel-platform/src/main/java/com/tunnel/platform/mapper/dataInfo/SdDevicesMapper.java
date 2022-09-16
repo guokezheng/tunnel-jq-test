@@ -163,4 +163,6 @@ public interface SdDevicesMapper
 	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
 
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
+
+	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
 }

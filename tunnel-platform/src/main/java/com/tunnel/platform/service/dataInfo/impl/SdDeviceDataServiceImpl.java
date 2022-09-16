@@ -100,6 +100,17 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
         return sdDeviceDataMapper.deleteSdDeviceDataById(id);
     }
 
+    /**
+     * 根据隧道id查询当前设备的监测状态、实时数据或状态
+     *
+     * @param tunnelId 隧道id
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> getDeviceDataByTunnelId(String tunnelId) {
+        return sdDeviceDataMapper.getDeviceDataByTunnelId(tunnelId);
+    }
+
     @Override
     public Map<String, Object> getTodayCOVIData(String deviceId) {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());

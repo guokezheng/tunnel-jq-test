@@ -62,6 +62,13 @@ public interface SdDeviceDataMapper
      */
     public int deleteSdDeviceDataByIds(Long[] ids);
 
+    /**
+     * 根据隧道id查询当前设备的监测状态、实时数据或状态
+     * @param tunnelId 隧道id
+     * @return
+     */
+    List<Map<String,String>> getDeviceDataByTunnelId(String tunnelId);
+
     public SdDeviceData selectLastRecord(SdDeviceData sdDeviceData);
 
     public List<Map<String, Object>> getTodayCOVIData(@Param("deviceId") String deviceId,@Param("itemId") Long itemId,@Param("today") String today);

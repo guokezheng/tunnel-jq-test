@@ -3,6 +3,8 @@ package com.tunnel.fire;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
 import com.tunnel.platform.domain.event.SdWarningInfo;
@@ -25,9 +27,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -38,9 +38,9 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 
 	private EventLoopGroup group;
 
-	public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+	private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 
-	public static Map<String, String> statusMap = new HashMap<String, String>(1000);
+	public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
 	private static final Logger log = LoggerFactory.getLogger(FireNettyServerHandler.class);
 
@@ -90,7 +90,7 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 				for (int i = 0;i < list.size();i++) {
 					SdWarningInfo info1 = list.get(i);
 					String eqId = info1.getEqId();
-					String result = SpringUtils.getBean(SdDevicesMapper.class).selectDeviceByHostAndEqId(host, eqId);
+					String result = sdDevicesMapper.selectDeviceByHostAndEqId(host, eqId);
 					if (!result.equals("") || result != null) {
 						info1.setProcessState("2");
 						SpringUtils.getBean(SdWarningInfoMapper.class).updateSdWarningInfo(info1);
@@ -112,8 +112,8 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 			} catch (Exception e) {
 				log.error("火灾报警日期转换出现异常：" + e.getMessage());
 			}
-			String eqId = SpringUtils.getBean(SdDevicesMapper.class).selectDeviceByHost(host, loop, address);
-			SdDevices sdDevices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
+			String eqId = sdDevicesMapper.selectDeviceByHost(host, loop, address);
+			SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(eqId);
 			SdWarningInfo warningInfo = new SdWarningInfo();
 			warningInfo.setTunnelId(sdDevices.getEqTunnelId());
 			warningInfo.setWarningTypeId(20L);
@@ -135,14 +135,14 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 			log.info("当前设备运行正常");
 			SdDevices sdDevices = new SdDevices();
 			sdDevices.setIp(clientIp);
-			List<SdDevices> devicesList = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(sdDevices);
+			List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
 			for (int i = 0;i < devicesList.size();i++) {
 				SdDevices devices = devicesList.get(i);
 				String eqStatus = devices.getEqStatus();
 				if (!eqStatus.equals("1")) {
 					devices.setEqStatus("1");
 					devices.setEqStatusTime(new Date());
-					SpringUtils.getBean(SdDevicesMapper.class).updateSdDevices(devices);
+					sdDevicesMapper.updateSdDevices(devices);
 				}
 			}
 		} else {
@@ -162,10 +162,14 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
      */
    @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("address:" + ctx.channel().remoteAddress());
-        ctx.writeAndFlush("client"+ InetAddress.getLocalHost().getHostName() + "connect！ \n");
-        clients.add(ctx.channel());
-        super.channelActive(ctx);
+	   System.out.println("address:" + ctx.channel().remoteAddress());
+	   String remoteAddress = ctx.channel().remoteAddress().toString();
+	   remoteAddress = remoteAddress.substring(1,remoteAddress.indexOf(":"));
+	   //获取到客户端IP，根据客户端IP查询需要更改状态的主机设备信息
+	   changeFireAlarmHostAndComponentStatus(remoteAddress, DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+	   ctx.writeAndFlush("client"+ InetAddress.getLocalHost().getHostName() + "connect！ \n");
+	   clients.add(ctx.channel());
+	   super.channelActive(ctx);
     }
    /**
     * 通道读取完成
@@ -173,7 +177,31 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
    @Override
    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
        super.channelReadComplete(ctx);
-       ctx.flush();
+	   //断开链接的IP
+	   String remoteAddress = ctx.channel().remoteAddress().toString();
+	   remoteAddress = remoteAddress.substring(1,remoteAddress.indexOf(":"));
+	   changeFireAlarmHostAndComponentStatus(remoteAddress, DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+	   ctx.flush();
+   }
+
+   private void changeFireAlarmHostAndComponentStatus(String ip, String status) {
+	   SdDevices hostDevice = new SdDevices();
+	   SdDevices fireComponentDevice = new SdDevices();
+	   hostDevice.setIp(ip);
+	   Long fireHostEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.FIRE_ALARM_HOST.getCode()));
+	   hostDevice.setEqType(fireHostEqTypeId);
+	   List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(hostDevice);
+	   for (int i = 0;i < devicesList.size();i++) {
+		   SdDevices devices = devicesList.get(i);
+		   devices.setEqStatus(status);
+		   devices.setEqStatusTime(new Date());
+		   sdDevicesMapper.updateSdDevices(devices);
+		   String feqId = devices.getEqId();
+		   fireComponentDevice.setFEqId(feqId);
+		   fireComponentDevice.setEqStatus(status);
+		   fireComponentDevice.setEqStatusTime(new Date());
+		   sdDevicesMapper.updateSdDevicesByFEqId(fireComponentDevice);
+	   }
    }
 
    private byte[] hexString2Bytes(String src) {

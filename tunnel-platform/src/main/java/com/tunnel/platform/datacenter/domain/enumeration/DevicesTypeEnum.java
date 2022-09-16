@@ -46,7 +46,7 @@ public enum DevicesTypeEnum {
     YOU_DAO_DENG(31L, "智能诱导灯"),
     SHENG_GUANG_BAO_JING(32L, "声光报警器"),
     XIAO_FANG_PAO(33L, "智能消防炮"),
-    SHOU_BAO(34L, "智能手动报警按钮"),
+    FIRE_ALARM_HOST(34L, "火灾报警主机"),
     BIAN_SIAN_SUO(35L, "变电所"),
     REN_XING_HENG_DONG(40L, "人行横洞指示标志"),
     CHE_XING_HENG_DONG(41L, "车行横洞指示标志"),

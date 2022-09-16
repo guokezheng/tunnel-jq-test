@@ -77,7 +77,7 @@ const GlobalConfig = {
 
   /*深色图层服务地址*/
   // BaseMapUrl: "http://10.168.10.200.1.8928.37:6080/arcgis/rest/services/testBack01/MapServer",
-  BaseMapUrl: "http://:6080/arcgis/rest/services/BaseService/darkColor/MapServer",
+  BaseMapUrl: "http://10.200.1.89:6080/arcgis/rest/services/BaseService/darkColor/MapServer",
   /*浅色图层服务地址*/
   BaseMapUrl_L: "http://10.200.1.89:6080/arcgis/rest/services/lightColor/MapServer",
 

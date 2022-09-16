@@ -67,8 +67,7 @@ public class PlcTask {
                             System.out.println("------------------------------------");
                             System.out.printf("桩号:" + sdDevice.getPile() + "，状态：" + state);
                             System.out.println("------------------------------------");
-                            int itemId = DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode();
-                            insertIntoDeviceData(sdDevice, itemId, state);
+                            insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode(), state);
                             //推送设备状态
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
@@ -91,14 +90,12 @@ public class PlcTask {
                             System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + FS);
                             System.out.printf("桩号:" + sdDevice.getPile() + "，状态：" + FX);
                             System.out.println("------------------------------------");
-                            int itemId = DevicesTypeItemEnum.FENG_SU.getCode();
-                            insertIntoDeviceData(sdDevice, itemId, FS.toString());
-                            itemId = DevicesTypeItemEnum.FENG_XIANG.getCode();
+                            insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.FENG_SU.getCode(), FS.toString());
                             String windDirection = "正向";
                             if (FX[0]) {
                                 windDirection = "反向";
                             }
-                            insertIntoDeviceData(sdDevice, itemId, windDirection);
+                            insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.FENG_XIANG.getCode(), windDirection);
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
                             map.put("deviceType", sdDevice.getEqType());
@@ -118,8 +115,7 @@ public class PlcTask {
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
                         System.out.println("------------------------------------");
-                        int itemId = DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode();
-                        insertIntoDeviceData(sdDevice, itemId, number.toString());
+                        insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(), number.toString());
                         Map<String, Object> map = new HashMap<>();
                         map.put("deviceId", sdDevice.getEqId());
                         map.put("deviceType", sdDevice.getEqType());
@@ -138,8 +134,7 @@ public class PlcTask {
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
                         System.out.println("------------------------------------");
-                        int itemId = DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode();
-                        insertIntoDeviceData(sdDevice, itemId, number.toString());
+                        insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode(), number.toString());
                         Map<String, Object> map = new HashMap<>();
                         map.put("deviceId", sdDevice.getEqId());
                         map.put("deviceType", sdDevice.getEqType());
@@ -161,10 +156,8 @@ public class PlcTask {
                             System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + CO);
                             System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + VI);
                             System.out.println("------------------------------------");
-                            int itemId = DevicesTypeItemEnum.CO.getCode();
-                            insertIntoDeviceData(sdDevice, itemId, CO.toString());
-                            itemId = DevicesTypeItemEnum.VI.getCode();
-                            insertIntoDeviceData(sdDevice, itemId, VI.toString());
+                            insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.CO.getCode(), CO.toString());
+                            insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.VI.getCode(), VI.toString());
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
                             map.put("deviceType", sdDevice.getEqType());
@@ -217,7 +210,10 @@ public class PlcTask {
         } else {
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
         }
-        //每5分钟记录一次数据存储
+        //每5分钟记录一次数据存储，车指不需要存储
+        if (DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId) {
+            return;
+        }
         SdDeviceDataRecord sdDeviceDataRecord = new SdDeviceDataRecord();
         sdDeviceDataRecord.setDeviceId(devices.getEqId());
         sdDeviceDataRecord.setItemId(Long.valueOf(itemId));

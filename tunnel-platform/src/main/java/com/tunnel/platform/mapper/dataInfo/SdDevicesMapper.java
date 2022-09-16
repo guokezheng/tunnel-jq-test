@@ -161,4 +161,6 @@ public interface SdDevicesMapper
 	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);
 
 	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
+
+	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 }

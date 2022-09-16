@@ -13,6 +13,7 @@ import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.utils.util.SpringContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,9 +87,15 @@ public class ModbusTcpMaster {
      */
     public ModbusMaster getMaster(String plcId, String ip, int port) {
         devicesService = (ISdDevicesService) SpringContextUtils.getBean(ISdDevicesService.class);
-        SdDevices sdDevices = new SdDevices();
-        sdDevices.setEqId(plcId);
-        sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+        //查询PLC主机，并修改实时状态
+        SdDevices plcDev = new SdDevices();
+        plcDev.setEqId(plcId);
+        plcDev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+        plcDev.setEqStatusTime(new Date());
+        //查询PLC主机关联设备，并根据PLC状态修改其关联设备实时状态
+        SdDevices plcDevList = new SdDevices();
+        plcDevList.setFEqId(plcId);
+        plcDevList.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
         IpParameters params = new IpParameters();
         params.setHost(ip);
         params.setPort(port);
@@ -105,11 +112,14 @@ public class ModbusTcpMaster {
             //初始化
             master.init();
         } catch (ModbusInitException e) {
-            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
-            devicesService.updateSdDevices(sdDevices);
+            plcDev.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            devicesService.updateSdDevices(plcDev);
+            plcDevList.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            devicesService.updateSdDevicesByFEqId(plcDevList);
             return null;
         }
-        devicesService.updateSdDevices(sdDevices);
+        devicesService.updateSdDevices(plcDev);
+        devicesService.updateSdDevicesByFEqId(plcDevList);
         return master;
     }
 

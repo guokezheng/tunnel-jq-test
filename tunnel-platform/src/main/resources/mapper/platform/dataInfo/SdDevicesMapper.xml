@@ -374,6 +374,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </update>
 
+    <update id="updateSdDevicesByFEqId">
+        update sd_devices
+        set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
+        where f_eq_id = #{fEqId}
+    </update>
+
     <!--    <update id="updateSdDevicesBatch">-->
 <!--        <foreach collection="list" item="item" index="index" open="" close="" separator=",">-->
 <!--            update sd_devices-->

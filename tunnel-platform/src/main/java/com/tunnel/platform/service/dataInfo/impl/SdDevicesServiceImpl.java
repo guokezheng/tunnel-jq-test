@@ -774,4 +774,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService
         return devicesByTypeAndTunnel;
     }
 
+    @Override
+    public int updateSdDevicesByFEqId(SdDevices sdDevices) {
+        sdDevices.setEqStatusTime(new Date());
+        return sdDevicesMapper.updateSdDevicesByFEqId(sdDevices);
+    }
+
 }

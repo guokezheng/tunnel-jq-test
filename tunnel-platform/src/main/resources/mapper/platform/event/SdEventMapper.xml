@@ -58,35 +58,7 @@
     </resultMap>
 
     <sql id="selectSdEventVo">
-        select id,
-               tunnel_id,
-               event_type_id,
-               event_title,
-               event_time,
-               event_state,
-               event_grade,
-               event_location,
-               event_death,
-               event_injured,
-               event_description,
-               reserve_plan_id,
-               flow_id,
-               warning_id,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               remark,
-               police_phone,
-               wrecker_phone,
-               car_owner_phone,
-               tanker_num,
-               passenger_car_num,
-               small_car_num,
-               direction,
-               slight_injured,
-               truck_num,
-               event_source
+        select id, tunnel_id, event_type_id, event_title, event_source, event_time, event_state, event_grade, event_location, event_death, event_injured, slight_injured, event_description, reserve_plan_id, flow_id, warning_id, station_id, lane_no, longitude, latitude, stake_num, start_time, end_time, video_url, create_by, create_time, update_by, update_time, direction, small_car_num, truck_num, passenger_car_num, tanker_num, car_owner_phone, wrecker_phone, police_phone, remark
         from sd_event
     </sql>
 
@@ -293,11 +265,12 @@
 
     <!--根据事件id列表查询事件信息-->
     <select id="getEventList" parameterType="Long" resultMap="SdEventResult">
-                select A.id, A.tunnel_id, A.event_type_id, A.event_title, A.event_time, A.event_state, A.event_grade,
-        A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id,
-        A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
-        C.tunnel_name, A.remark, A.police_phone, A.wrecker_phone, A.car_owner_phone, A.tanker_num, A.passenger_car_num,
-        A.small_car_num, A.direction, A.slight_injured, A.truck_num, A.start_time, A.end_time,A.stake_num,C.tunnel_station_name
+                select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
+        A.event_location, A.event_death, A.event_injured, A.slight_injured,A.event_description, A.reserve_plan_id,
+        A.flow_id, A.warning_id,A.station_id, A.lane_no, A.longitude, A.latitude, A.stake_num, A.start_time, A.end_time, A.video_url,
+        A.create_by, A.create_time, A.update_by, A.update_time, A.direction,A.small_car_num,A.truck_num, A.passenger_car_num,A.tanker_num,
+        A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,
+        B.event_type,C.tunnel_name, C.tunnel_station_name
         from sd_event A
         left join sd_event_type B on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id

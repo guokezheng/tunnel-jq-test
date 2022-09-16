@@ -1,15 +1,14 @@
-package com.tunnel.platform.bigScreenApi.service.fullView.impl;
+package com.tunnel.platform.service.bigScreenApi.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.bigScreenApi.mapper.fullView.SdTunnelDetailsMapper;
-import com.tunnel.platform.bigScreenApi.service.fullView.ISdTunnelDetailsService;
+import com.tunnel.platform.mapper.bigScreenApi.SdTunnelDetailsMapper;
+import com.tunnel.platform.service.bigScreenApi.ISdTunnelDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

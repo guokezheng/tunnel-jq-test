@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.platform.bigScreenApi.mapper.fullView.SdControlRecordMapper">
+<mapper namespace="com.tunnel.platform.mapper.bigScreenApi.SdControlRecordMapper">
 
     <select id="getRecentControlRecordMsg" resultType="hashmap">
         SELECT sol.id,st.tunnel_name name,sol.create_time time,concat(devc.eq_name,e.state_name) operation

@@ -1,13 +1,12 @@
-package com.tunnel.platform.bigScreenApi.service.fullView.impl;
+package com.tunnel.platform.service.bigScreenApi.impl;
 
-import com.tunnel.platform.bigScreenApi.mapper.fullView.SdAlarmNumberMapper;
-import com.tunnel.platform.bigScreenApi.service.fullView.ISdAlarmNumberService;
+import com.tunnel.platform.mapper.bigScreenApi.SdAlarmNumberMapper;
+import com.tunnel.platform.service.bigScreenApi.ISdAlarmNumberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

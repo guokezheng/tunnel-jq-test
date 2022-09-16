@@ -1,7 +1,7 @@
-package com.tunnel.platform.bigScreenApi.service.fullView.impl;
+package com.tunnel.platform.service.bigScreenApi.impl;
 
-import com.tunnel.platform.bigScreenApi.mapper.fullView.SdControlRecordMapper;
-import com.tunnel.platform.bigScreenApi.service.fullView.ISdControlRecordService;
+import com.tunnel.platform.mapper.bigScreenApi.SdControlRecordMapper;
+import com.tunnel.platform.service.bigScreenApi.ISdControlRecordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

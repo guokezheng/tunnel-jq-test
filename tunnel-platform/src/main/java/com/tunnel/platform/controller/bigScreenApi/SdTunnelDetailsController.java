@@ -1,9 +1,9 @@
-package com.tunnel.platform.bigScreenApi.controller.fullView;
+package com.tunnel.platform.controller.bigScreenApi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.bigScreenApi.service.fullView.ISdTunnelDetailsService;
+import com.tunnel.platform.service.bigScreenApi.ISdTunnelDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

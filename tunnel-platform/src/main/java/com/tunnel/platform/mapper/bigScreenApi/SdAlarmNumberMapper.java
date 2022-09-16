@@ -1,4 +1,4 @@
-package com.tunnel.platform.bigScreenApi.mapper.fullView;
+package com.tunnel.platform.mapper.bigScreenApi;
 
 import java.util.List;
 import java.util.Map;

@@ -1,6 +1,6 @@
 package com.ruoyi;
 
-import com.tunnel.fire.FireNettyServer;
+import com.tunnel.deal.fire.FireNettyServer;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import com.zc.common.constant.RedisChannelConstants;
 import com.zc.common.core.redis.RedisPubSub;

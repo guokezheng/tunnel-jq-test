@@ -1,7 +1,7 @@
-package com.tunnel.platform.bigScreenApi.service.fullView.impl;
+package com.tunnel.platform.service.bigScreenApi.impl;
 
-import com.tunnel.platform.bigScreenApi.mapper.fullView.SdProportionOfEquipmentMapper;
-import com.tunnel.platform.bigScreenApi.service.fullView.ISdProportionOfEquipmentServcie;
+import com.tunnel.platform.mapper.bigScreenApi.SdProportionOfEquipmentMapper;
+import com.tunnel.platform.service.bigScreenApi.ISdProportionOfEquipmentServcie;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import org.slf4j.Logger;

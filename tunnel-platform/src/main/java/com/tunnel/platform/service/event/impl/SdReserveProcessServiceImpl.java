@@ -2,9 +2,15 @@ package com.tunnel.platform.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
+import com.tunnel.platform.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.platform.domain.event.SdReserveProcess;
 import com.tunnel.platform.domain.event.SdReserveProcessModel;
 import com.tunnel.platform.domain.event.SdStrategyRl;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentIconFileMapper;
+import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.event.SdReserveProcessMapper;
 import com.tunnel.platform.mapper.event.SdStrategyRlMapper;
 import com.tunnel.platform.service.event.ISdReserveProcessService;
@@ -12,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案流程节点Service业务层处理
@@ -26,8 +34,6 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
     @Autowired
     private SdReserveProcessMapper sdReserveProcessMapper;
 
-    @Autowired
-    private SdStrategyRlMapper sdStrategyRlMapper;
 
     /**
      * 查询预案流程节点
@@ -63,22 +69,18 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
     public int insertSdReserveProcess(SdReserveProcess sdReserveProcess)
     {
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcess.getReserveId());
-        sdReserveProcess.setCreateTime(DateUtils.getNowDate());
-        String[] strategyIds = sdReserveProcess.getStrategyIds().split(",");
-        List<SdReserveProcess> list = new ArrayList<>();
-        for (int i = 0; i < strategyIds.length; i++) {
-            SdReserveProcess reserveProcess = new SdReserveProcess();
-            List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(Long.parseLong(strategyIds[i]));
-            reserveProcess.setReserveId(sdReserveProcess.getReserveId());
-            reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
-            reserveProcess.setProcessName(sdReserveProcess.getProcessName());
-            reserveProcess.setProcessSort(sdReserveProcess.getProcessSort());
-            reserveProcess.setStrategyId(Long.parseLong(strategyIds[i]));
-            reserveProcess.setCreateTime(DateUtils.getNowDate());
-            reserveProcess.setCreateBy(SecurityUtils.getUsername());
-            list.add(reserveProcess);
-        }
-        return sdReserveProcessMapper.batchSdReserveProcess(list);
+        List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(sdReserveProcess.getHandleStrategyList());
+        SdReserveProcess reserveProcess = new SdReserveProcess();
+        reserveProcess.setReserveId(sdReserveProcess.getReserveId());
+        reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
+        reserveProcess.setProcessName(sdReserveProcess.getProcessName());
+        reserveProcess.setProcessSort(sdReserveProcess.getProcessSort());
+        reserveProcess.setStrategyId(sdReserveProcess.getHandleStrategyList());
+        reserveProcess.setCreateTime(DateUtils.getNowDate());
+        reserveProcess.setCreateBy(SecurityUtils.getUsername());
+        int result = -1;
+        result = sdReserveProcessMapper.insertSdReserveProcess(reserveProcess);
+        return result;
     }
 
     /**
@@ -92,18 +94,16 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
         List<SdReserveProcess> list = new ArrayList<>();
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         for (SdReserveProcess process : sdReserveProcesses.getSdReserveProcesses()) {
-            for (Long sid : process.getHandleStrategyList()) {
-                List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(sid);
-                SdReserveProcess reserveProcess = new SdReserveProcess();
-                reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
-                reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
-                reserveProcess.setProcessName(process.getProcessName());
-                reserveProcess.setProcessSort(process.getProcessSort());
-                reserveProcess.setStrategyId(sid);
-                reserveProcess.setCreateTime(DateUtils.getNowDate());
-                reserveProcess.setCreateBy(SecurityUtils.getUsername());
-                list.add(reserveProcess);
-            }
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getHandleStrategyList());
+            SdReserveProcess reserveProcess = new SdReserveProcess();
+            reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
+            reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
+            reserveProcess.setProcessName(process.getProcessName());
+            reserveProcess.setProcessSort(process.getProcessSort());
+            reserveProcess.setStrategyId(process.getHandleStrategyList());
+            reserveProcess.setCreateTime(DateUtils.getNowDate());
+            reserveProcess.setCreateBy(SecurityUtils.getUsername());
+            list.add(reserveProcess);
         }
         int result = -1;
         result = sdReserveProcessMapper.batchSdReserveProcess(list);
@@ -172,5 +172,48 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
         SdReserveProcess sdReserveProcess = new SdReserveProcess();
         sdReserveProcess.setReserveId(RId);
         return sdReserveProcessMapper.selectSdReserveProcessByRid(sdReserveProcess);
+    }
+
+    @Override
+    public List<Map> selectPreviewDisplay(Long reserveId) {
+        SdReserveProcess reserveProcess = new SdReserveProcess();
+        reserveProcess.setReserveId(reserveId);
+        List<Map> mapList = new ArrayList<>();
+        // 预案流程节点
+        List<SdReserveProcess> list = sdReserveProcessMapper.selectSdReserveProcessList(reserveProcess);
+        for (SdReserveProcess process : list) {
+            HashMap<String, Object> map = new HashMap<>();
+            // 预案Id
+            map.put("reserveId",process.getReserveId());
+            // 策略Id
+            map.put("strategyId",process.getStrategyId());
+            // 设备类型Id
+            map.put("deviceTypeId",process.getDeviceTypeId());
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            map.put("strategyRl",rlList);
+            List<String> strings = new ArrayList<>();
+            List<List> iFileList = new ArrayList<>();
+            for (SdStrategyRl rl : rlList) {
+                // 设备类型名称
+                String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
+                SdEquipmentState state = new SdEquipmentState();
+                state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
+                state.setDeviceState(rl.getState());
+                List<SdEquipmentState> sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
+                // 设备状态名称
+                String stateName = sdEquipmentStates.get(0).getStateName();
+                strings.add(typeName+ " 控制执行: " + stateName + ";");
+                SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                sdEquipmentStateIconFile.setStateIconId(sdEquipmentStates.get(0).getIconFileId());
+                List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
+                iFileList.add(sdEquipmentStateIconFiles);
+            }
+            // 策略信息
+            map.put("policyInformation", strings);
+            // 图片
+            map.put("iFileList",iFileList);
+            mapList.add(map);
+        }
+        return mapList;
     }
 }

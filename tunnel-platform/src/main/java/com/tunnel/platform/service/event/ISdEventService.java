@@ -6,15 +6,15 @@ import java.util.List;
 
 /**
  * 事件管理Service接口
- * 
+ *
  * @author gongfanfei
  * @date 2020-08-24
  */
-public interface ISdEventService 
+public interface ISdEventService
 {
     /**
      * 查询事件管理
-     * 
+     *
      * @param id 事件管理ID
      * @return 事件管理
      */
@@ -22,7 +22,7 @@ public interface ISdEventService
 
     /**
      * 查询事件管理列表
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 事件管理集合
      */
@@ -30,7 +30,7 @@ public interface ISdEventService
 
     /**
      * 新增事件管理
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 结果
      */
@@ -38,7 +38,7 @@ public interface ISdEventService
 
     /**
      * 修改事件管理
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 结果
      */
@@ -46,7 +46,7 @@ public interface ISdEventService
 
     /**
      * 批量删除事件管理
-     * 
+     *
      * @param ids 需要删除的事件管理ID
      * @return 结果
      */
@@ -54,7 +54,7 @@ public interface ISdEventService
 
     /**
      * 删除事件管理信息
-     * 
+     *
      * @param id 事件管理ID
      * @return 结果
      */
@@ -69,5 +69,17 @@ public interface ISdEventService
      */
     public SdEvent getById(Long id);
 
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    public List<SdEvent> getEvent();
 
+
+    /**
+     * 根据事件id列表查询事件信息
+     * @param eventIdList 事件id列表
+     * @return
+     */
+    List<SdEvent> getEventList(List<Long> eventIdList);
 }

@@ -15,12 +15,12 @@ import java.util.List;
 
 /**
  * 事件管理Service业务层处理
- * 
+ *
  * @author gongfanfei
  * @date 2020-08-24
  */
 @Service
-public class SdEventServiceImpl implements ISdEventService 
+public class SdEventServiceImpl implements ISdEventService
 {
     @Autowired
     private SdEventMapper sdEventMapper;
@@ -31,7 +31,7 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 查询事件管理
-     * 
+     *
      * @param id 事件管理ID
      * @return 事件管理
      */
@@ -43,7 +43,7 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 查询事件管理列表
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 事件管理
      */
@@ -55,7 +55,7 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 新增事件管理
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 结果
      */
@@ -80,14 +80,14 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 修改事件管理
-     * 
+     *
      * @param sdEvent 事件管理
      * @return 结果
      */
     @Override
     public int updateSdEvent(SdEvent sdEvent)
     {
-    	
+
     	if("1".equals(sdEvent.getEventState())){
     		SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
@@ -110,7 +110,7 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 批量删除事件管理
-     * 
+     *
      * @param ids 需要删除的事件管理ID
      * @return 结果
      */
@@ -122,7 +122,7 @@ public class SdEventServiceImpl implements ISdEventService
 
     /**
      * 删除事件管理信息
-     * 
+     *
      * @param id 事件管理ID
      * @return 结果
      */
@@ -141,5 +141,24 @@ public class SdEventServiceImpl implements ISdEventService
     @Override
     public SdEvent getById(Long id) {
         return sdEventMapper.selectSdEventById(id);
+    }
+    /**
+     * 预警事件查询全部
+     * @return
+     */
+    @Override
+    public List<SdEvent>getEvent() {
+        return sdEventMapper.getEvent();
+    }
+
+    /**
+     * 根据事件id列表查询事件信息
+     *
+     * @param eventIdList 事件id列表
+     * @return
+     */
+    @Override
+    public List<SdEvent> getEventList(List<Long> eventIdList) {
+        return sdEventMapper.getEventList(eventIdList);
     }
 }

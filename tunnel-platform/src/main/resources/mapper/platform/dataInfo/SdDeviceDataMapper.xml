@@ -88,4 +88,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         ORDER BY id desc LIMIT 1
     </select>
+
+    <select id="getTodayCOVIData" resultType="hashmap">
+        SELECT
+        a.order_hour as order_hour, IFNULL(b.count,0) as count
+        FROM(
+        SELECT 0 AS order_hour UNION ALL SELECT 1 AS order_hour UNION ALL
+        SELECT 2 AS order_hour UNION ALL SELECT 3 AS order_hour UNION ALL
+        SELECT 4 AS order_hour UNION ALL SELECT 5 AS order_hour UNION ALL
+        SELECT 6 AS order_hour UNION ALL SELECT 7 AS order_hour UNION ALL
+        SELECT 8 AS order_hour UNION ALL SELECT 9 AS order_hour UNION ALL
+        SELECT 10 AS order_hour UNION ALL SELECT 11 AS order_hour UNION ALL
+        SELECT 12 AS order_hour UNION ALL SELECT 13 AS order_hour UNION ALL
+        SELECT 14 AS order_hour UNION ALL SELECT 15 AS order_hour UNION ALL
+        SELECT 16 AS order_hour UNION ALL SELECT 17 AS order_hour UNION ALL
+        SELECT 18 AS order_hour UNION ALL SELECT 19 AS order_hour UNION ALL
+        SELECT 20 AS order_hour UNION ALL SELECT 21 AS order_hour UNION ALL
+        SELECT 22 AS order_hour UNION ALL SELECT 23 AS order_hour) as a
+        LEFT JOIN
+        (SELECT HOUR(create_time) AS order_hour, cast(sum(data)/count(id) as DECIMAL(9, 3)) count
+        FROM
+            sd_device_data_record
+        WHERE
+        item_id = #{itemId} and device_id = #{deviceId}
+            and
+        DATE_FORMAT(create_time, '%Y-%m-%d')
+        BETWEEN
+        str_to_date(concat(#{today}," 00:00:00"),'%Y-%m-%d %T')
+        AND
+        str_to_date(concat(#{today}," 23:59:59"),'%Y-%m-%d %T')
+        GROUP BY
+        order_hour) as b
+        ON a.order_hour = b.order_hour
+        WHERE a.order_hour <![CDATA[ <= ]]> HOUR(now()) ORDER BY order_hour
+    </select>
 </mapper>

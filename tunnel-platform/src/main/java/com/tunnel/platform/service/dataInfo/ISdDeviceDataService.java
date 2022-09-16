@@ -1,6 +1,8 @@
 package com.tunnel.platform.service.dataInfo;
 
 import java.util.List;
+import java.util.Map;
+
 import com.tunnel.platform.domain.dataInfo.SdDeviceData;
 
 /**
@@ -58,4 +60,10 @@ public interface ISdDeviceDataService
      * @return 结果
      */
     public int deleteSdDeviceDataById(Long id);
+
+    public Map<String, Object> getTodayCOVIData(String deviceId);
+
+    public Map<String, Object> getTodayFSFXData(String deviceId);
+
+    public Map<String, Object> getTodayLDData(String deviceId);
 }

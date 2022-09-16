@@ -1,6 +1,10 @@
 package com.tunnel.platform.controller.dataInfo;
 
 import java.util.List;
+import java.util.Map;
+
+import com.ruoyi.common.core.page.Result;
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,5 +103,29 @@ public class SdDeviceDataController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDeviceDataService.deleteSdDeviceDataByIds(ids));
+    }
+
+    @GetMapping("/getTodayCOVIData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayCOVIData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayCOVIData = sdDeviceDataService.getTodayCOVIData(deviceId);
+        return Result.success(todayCOVIData);
+    }
+
+    @GetMapping("/getTodayFSFXData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayFSFXData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayFSFXData = sdDeviceDataService.getTodayFSFXData(deviceId);
+        return Result.success(todayFSFXData);
+    }
+
+    @GetMapping("/getTodayLDData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayLDData = sdDeviceDataService.getTodayLDData(deviceId);
+        return Result.success(todayLDData);
     }
 }

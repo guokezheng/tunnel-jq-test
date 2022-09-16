@@ -42,6 +42,7 @@
         <result property="direction" column="direction"/>
         <result property="tunnelStationName" column="tunnel_station_name"/>
         <result property="slightInjured" column="slight_injured"/>
+        <result property="eventSource" column="event_source"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -84,7 +85,8 @@
                small_car_num,
                direction,
                slight_injured,
-               truck_num
+               truck_num,
+               event_source
         from sd_event
     </sql>
 
@@ -174,6 +176,7 @@
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="stakeNum != null">stake_num,</if>
+            <if test="eventSource != null">event_source,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -207,6 +210,7 @@
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="eventSource != null">#{eventSource},</if>
         </trim>
     </insert>
 
@@ -240,6 +244,7 @@
             <if test="smallCarNum != null">small_car_num = #{smallCarNum},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="slightInjured != null">slight_injured = #{slightInjured},</if>
+            <if test="eventSource != null">event_source = #{eventSource},</if>
         </trim>
         where id = #{id}
     </update>
@@ -268,6 +273,38 @@
         from sys_dept
         where parent_id in
               (select dept_id from sys_dept where parent_id in (SELECT dept_id FROM `sys_dept` where parent_id = '0'))
+    </select>
+
+    <select id="getEvent" parameterType="SdEvent" resultMap="SdEventResult">
+        select A.id, A.tunnel_id, A.event_type_id, A.event_title, A.event_time, A.event_state, A.event_grade,
+        A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id,
+        A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
+        C.tunnel_name, A.remark, A.police_phone, A.wrecker_phone, A.car_owner_phone, A.tanker_num, A.passenger_car_num,
+        A.small_car_num, A.direction, A.slight_injured, A.truck_num, A.start_time, A.end_time,A.stake_num,C.tunnel_station_name
+        from sd_event A
+        left join sd_event_type B
+        on A.event_type_id = B.id
+        left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+       where
+            A.start_time &gt;= (NOW() - interval 24 hour)
+            and A.start_time &lt;= NOW()
+            order by create_time desc
+    </select>
+
+    <!--根据事件id列表查询事件信息-->
+    <select id="getEventList" parameterType="Long" resultMap="SdEventResult">
+                select A.id, A.tunnel_id, A.event_type_id, A.event_title, A.event_time, A.event_state, A.event_grade,
+        A.event_location, A.event_death, A.event_injured, A.event_description, A.reserve_plan_id,
+        A.flow_id, A.warning_id, A.create_by, A.create_time, A.update_by, A.update_time, B.event_type,
+        C.tunnel_name, A.remark, A.police_phone, A.wrecker_phone, A.car_owner_phone, A.tanker_num, A.passenger_car_num,
+        A.small_car_num, A.direction, A.slight_injured, A.truck_num, A.start_time, A.end_time,A.stake_num,C.tunnel_station_name
+        from sd_event A
+        left join sd_event_type B on A.event_type_id = B.id
+        left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        where A.id in
+        <foreach collection="list" item="eventId" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
     </select>
 
 </mapper>

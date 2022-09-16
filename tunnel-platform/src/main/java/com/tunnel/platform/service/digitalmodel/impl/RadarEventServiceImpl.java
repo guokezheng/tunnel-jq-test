@@ -10,6 +10,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.EventSourceEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.digitalmodel.*;
 import com.tunnel.platform.domain.event.SdEvent;
@@ -17,6 +18,7 @@ import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
+import com.tunnel.platform.service.event.ISdEventService;
 import com.tunnel.platform.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,6 +51,9 @@ import java.util.*;
 public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
+    private ISdEventService sdEventService;
+
+    @Autowired
     private RadarEventMapper wjMapper;
 
     @Autowired
@@ -76,6 +81,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSON parse = JSONUtil.parse(map.get("b5eventList"));
         List<WjEvent> list = JSONUtil.toList(parse.toString(), WjEvent.class);
         List<SdEvent> eventList=new ArrayList<>();
+        List<Long> eventIdList = new ArrayList<>();
         list.forEach(f->{
             SdEvent sdEvent=new SdEvent();
             Integer integer=wjMapper.selectID(f.getEventId());
@@ -105,7 +111,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             sdEvent.setEventLatitude(f.getEventLatitude()+"");
             sdEvent.setStartTime(f.getEventTimeStampStart());
             sdEvent.setEndTime(f.getEventTimeStampEnd());
+            sdEvent.setEventSource(EventSourceEnum.radar.getCode());
             eventList.add(sdEvent);
+            eventIdList.add(sdEvent.getId());
             List<WjConfidence> targetList = f.getTargetList();
             targetList.forEach(s->s.setEventIds(f.getEventId()));
             wjMapper.insertEventConfidence(targetList);
@@ -113,7 +121,9 @@ public class RadarEventServiceImpl implements RadarEventService {
         });
         if (CollectionUtils.isNotEmpty(eventList)){
             wjMapper.insertWjEvent(eventList);
-            WebSocketService.broadcast("WjEvent",eventList);
+            log.info("---插入数据list---{}",eventList);
+            List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
+            WebSocketService.broadcast("WjEvent",sdEventList);
         }
         return AjaxResult.success();
     }
@@ -378,7 +388,6 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
-        List<SdDevices> devicesList = devicesMapper.selectStateStorage();
         List<SdRadarDevice> list = new ArrayList<>();
         /*
         //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
@@ -429,16 +438,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                             v->{
@@ -471,16 +477,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("31".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(
                             v->{

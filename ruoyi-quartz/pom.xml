@@ -39,6 +39,12 @@
             <artifactId>tunnel-platform</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.tunnel</groupId>
+            <artifactId>tunnel-deal</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

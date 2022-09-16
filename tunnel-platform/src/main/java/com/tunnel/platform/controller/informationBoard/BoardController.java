@@ -3,9 +3,9 @@ package com.tunnel.platform.controller.informationBoard;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.platform.business.board.core.IDeviceProtocol;
-import com.tunnel.platform.business.board.device.DataUtils;
-import com.tunnel.platform.business.board.device.DeviceManagerFactory;
+import com.tunnel.platform.business.vms.core.IDeviceProtocol;
+import com.tunnel.platform.business.vms.device.DataUtils;
+import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.informationBoard.IotBoradFont;
 import com.tunnel.platform.domain.informationBoard.SdIotDevice;

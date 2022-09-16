@@ -577,10 +577,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc, a.update_time desc
     </select>
-    <select id="selectStateStorage" resultType="com.tunnel.platform.domain.dataInfo.SdDevices">
-        select device_id eqId,state eqStatus
-        from sd_state_storage
-    </select>
 
     <select id="selectEqStatus" resultType="java.lang.String">
        select eq_status deviceStatus from sd_devices

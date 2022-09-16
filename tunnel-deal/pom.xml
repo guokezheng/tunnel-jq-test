@@ -13,31 +13,61 @@
     <artifactId>tunnel-deal</artifactId>
     <version>1.0.0</version>
 
+    <description>
+        隧道数据采集处理模块
+    </description>
+
+    <!-- 若想引用modbus4j需要引入下列repository id:ias-snapshots id:ias-releases 两个 ，使用默认仓库下载，不要使用阿里云仓库-->
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>ias-snapshots</id>
+            <name>Infinite Automation Snapshot Repository</name>
+            <url>https://maven.mangoautomation.net/repository/ias-snapshot/</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>ias-releases</id>
+            <name>Infinite Automation Release Repository</name>
+            <url>https://maven.mangoautomation.net/repository/ias-release/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>com.tunnel</groupId>
             <artifactId>tunnel-platform</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.infiniteautomation</groupId>
+            <artifactId>modbus4j</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jna.examples</groupId>
+            <artifactId>jna</artifactId>
+            <version>3.0.9</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/examples.jar</systemPath>
+        </dependency>
 
-        <!-- 添加对485接口的依赖 -->
-        <dependency>
-            <groupId>org.rxtx</groupId>
-            <artifactId>rxtx</artifactId>
-            <version>2.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.20.Final</version>
-        </dependency>
+
+
     </dependencies>
-
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
 
 </project>

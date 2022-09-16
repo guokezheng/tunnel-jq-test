@@ -174,6 +174,11 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
         return sdReserveProcessMapper.selectSdReserveProcessByRid(sdReserveProcess);
     }
 
+    /**
+     * 查询预览
+     * @param reserveId
+     * @return
+     */
     @Override
     public List<Map> selectPreviewDisplay(Long reserveId) {
         SdReserveProcess reserveProcess = new SdReserveProcess();
@@ -196,6 +201,8 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService
             for (SdStrategyRl rl : rlList) {
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
+                // 设备类型
+                map.put("typeName",typeName);
                 SdEquipmentState state = new SdEquipmentState();
                 state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
                 state.setDeviceState(rl.getState());

@@ -1,5 +1,5 @@
 
-package com.tunnel.hik;
+package com.tunnel.deal.hik;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.sun.jna.Pointer;

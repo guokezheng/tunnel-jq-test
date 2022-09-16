@@ -1,4 +1,4 @@
-package com.tunnel.hik;
+package com.tunnel.deal.hik;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;

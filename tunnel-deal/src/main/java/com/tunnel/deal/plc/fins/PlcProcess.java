@@ -1,7 +1,7 @@
-package com.tunnel.plc.fins;
+package com.tunnel.deal.plc.fins;
 
 import com.tunnel.platform.datacenter.config.MapCache;
-import com.tunnel.plc.fins.mina.DevicesManager;
+import com.tunnel.deal.plc.fins.mina.DevicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

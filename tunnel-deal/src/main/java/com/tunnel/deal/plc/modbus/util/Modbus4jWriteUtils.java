@@ -1,4 +1,4 @@
-package com.tunnel.plc.modbus.util;
+package com.tunnel.deal.plc.modbus.util;
 
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ErrorResponseException;

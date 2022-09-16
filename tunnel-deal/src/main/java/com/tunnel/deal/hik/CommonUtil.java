@@ -1,6 +1,6 @@
 
 
-package com.tunnel.hik;
+package com.tunnel.deal.hik;
 
 /**
  * @author

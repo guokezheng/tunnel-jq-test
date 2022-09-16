@@ -1,4 +1,4 @@
-package com.tunnel.fire;
+package com.tunnel.deal.fire;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,4 +1,4 @@
-package com.tunnel.plc.modbus;
+package com.tunnel.deal.plc.modbus;
 
 import com.serotonin.modbus4j.ModbusFactory;
 import com.serotonin.modbus4j.ModbusMaster;

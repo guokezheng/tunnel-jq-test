@@ -8,7 +8,7 @@
  * Created on 2009-9-14, 19:31:34
  */
 
-package com.tunnel.hik;
+package com.tunnel.deal.hik;
 
 import com.sun.jna.*;
 import com.sun.jna.examples.win32.GDI32.RECT;
@@ -37,7 +37,7 @@ public interface HCNetSDK extends Library {
     }
 
     // 动态库中结构体、接口描述
-    public static class NET_DVR_USER_LOGIN_INFO extends HIKSDKStructure{
+    public static class NET_DVR_USER_LOGIN_INFO extends HIKSDKStructure {
         public byte[] sDeviceAddress = new byte[NET_DVR_DEV_ADDRESS_MAX_LEN];
         public byte byUseTransport;
         public short wPort;

@@ -1,4 +1,4 @@
-package com.tunnel.hik;
+package com.tunnel.deal.hik;
 
 import java.io.*;
 import java.nio.ByteBuffer;

@@ -1,9 +1,9 @@
-package com.tunnel.plc.fins.mina;
+package com.tunnel.deal.plc.fins.mina;
 
 
+import com.tunnel.deal.plc.fins.CmdProcess;
+import com.tunnel.deal.plc.fins.PlcProcess;
 import com.tunnel.platform.datacenter.config.MapCache;
-import com.tunnel.plc.fins.CmdProcess;
-import com.tunnel.plc.fins.PlcProcess;
 import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.tunnel.fire;
+package com.tunnel.deal.fire;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;

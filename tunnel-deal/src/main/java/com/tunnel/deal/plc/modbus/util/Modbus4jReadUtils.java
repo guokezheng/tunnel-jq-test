@@ -1,4 +1,4 @@
-package com.tunnel.plc.modbus.util;
+package com.tunnel.deal.plc.modbus.util;
 
 import com.serotonin.modbus4j.BatchRead;
 import com.serotonin.modbus4j.BatchResults;

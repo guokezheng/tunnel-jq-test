@@ -1,4 +1,4 @@
-package com.tunnel.plc.fins.mina;
+package com.tunnel.deal.plc.fins.mina;
 
 import org.apache.mina.core.service.IoHandler;
 

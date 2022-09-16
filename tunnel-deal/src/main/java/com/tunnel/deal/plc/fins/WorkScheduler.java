@@ -1,4 +1,4 @@
-package com.tunnel.plc.fins;
+package com.tunnel.deal.plc.fins;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4085,6 +4085,8 @@
             tunnelId: this.currentTunnel.id
           })
           .then((response) => {
+            console.log(this.eqTypeStateList,'zxxxxxxxxxxxxxxxxx')
+            console.log(response,'cccccccccccccccccccccccc')
             for (let i = 0; i < response.length; i++) {
               let type = response[i].devType;
               if (type != "" && type != undefined) {

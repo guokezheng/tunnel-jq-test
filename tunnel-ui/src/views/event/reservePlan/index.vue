@@ -277,10 +277,10 @@
         :key="index"
         :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
         :style="{
-                            left: item.position.left - 12 + 'px',
-                            top: item.position.top + 52 +'px',
-                            'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
-                          }"
+          left: item.position.left - 12 + 'px',
+          top: item.position.top + 52 +'px',
+          'z-index': item.eqType || item.eqType == 0 ? '' : '-1'
+        }"
         class="icon-box mouseHover"
       >
         <div
@@ -308,45 +308,10 @@
             :width="item.iconWidth"
             style="position: relative;"
           />
-          <!-- 调光数值 -->
-          <label
-            v-if="item.eqType == 21"
-            style="
-              color: yellow;
-              position: absolute;
-              left: 30px;
-              bottom: 2px;
-              pointer-events: none;
-            "
-          >{{ item.lightValue }}</label
-          >
-          <!-- CO/VI -->
-          <label
-            v-if="item.eqType == 19"
-            style="font-size:14px;position: absolute;color: #79e0a9; text-decoration:underline;padding-left: 5px;width: 100px;text-align: left;">
-            {{ item.value }}
-            <label v-if="item.eqType == 19" style="font-size:14px;">ppm</label> -->
-            <!-- <label v-if="item.eqType == 15" style="font-size:14px;">x10-3m<sup>-1</sup></label>-->
-          </label>
-          <!-- 风速风向 -->
-          <label
-            v-if="item.eqType == 17"
-            style="font-size:14px;position: absolute; text-decoration:underline;color:#79e0a9;padding-left: 5px;width: 100px;text-align: left;">
-            {{ item.value }}
-            <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label>
-          </label>
-          <!-- 洞内洞外 -->
-          <label
-            v-if="item.eqType == 5"
-            style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;">
-            {{ item.value }}cd/m2
-          </label>
         </div>
       </div>
       <el-steps :active="active" finish-status="success">
-        <el-step title="步骤 1"></el-step>
-        <el-step title="步骤 2"></el-step>
-        <el-step title="步骤 3"></el-step>
+        <el-step v-for="item in previewList" :key="item.strategyId" :title="item.typeName"></el-step>
       </el-steps>
       <span slot="footer" class="dialog-footer">
           <el-button @click="workbenchOpen = false">取 消</el-button>
@@ -441,11 +406,11 @@
               <el-cascader
                 v-model="item.handleStrategyList"
                 :options="options"
-                :props="props"
+                :props="checkStrictly"
                 :show-all-levels="false"
                 clearable
                 collapse-tags
-                @change="handleChangeStrategy(handleStrategyList)"></el-cascader>
+                @change="handleChangeStrategy(item.handleStrategyList)"></el-cascader>
             </el-form-item>
             <div class="dialog-footer">
               <el-button type="text" @click.native="addStrategy">添加</el-button>
@@ -486,7 +451,7 @@ import {listStrategy, getStrategy, handleStrategy, getRl} from "@/api/event/stra
 import {
   listType,
   getTypeAndStrategy
-} from "@/api/equipment/type/api.js"
+} from "@/api/equipment/type/api.js";
 import {
   getTunnels,
 } from "@/api/equipment/tunnel/api.js";
@@ -494,12 +459,21 @@ import {
   listTunnels
 } from "@/api/equipment/tunnel/api";
 import {fastLerp} from "zrender/lib/tool/color";
-import {addProcess,getListByRId} from "@/api/event/reserveProcess";
+import {addProcess,getListByRId,previewDisplay} from "@/api/event/reserveProcess";
 
 export default {
   name: "Plan",
   data() {
     return {
+      previewList:[],//预览数据
+      checkStrictly:{
+        multiple: false,
+        value:'id',
+        label: 'name',
+        children: 'children',
+        emitPath:false,
+        // checkStrictly
+      },
       reserveId:'',
       //新增弹窗
       dialogFormVisible: false,
@@ -613,7 +587,6 @@ export default {
       planFileList: [],
       // 遮罩层
       fileLoading: true,
-
       //需要移除的文件ids
       removeIds: [],
       //添加or编辑标志；add/edit
@@ -623,8 +596,6 @@ export default {
       handleStrategyList: [],
       // title:'',
       handleIds: [],
-
-
       //选择---新增控制策略
       addStrategyVisible: false,
       addStrategyList: [],
@@ -655,19 +626,17 @@ export default {
     this.ceshiTime()
     tunnelNames().then(res => {
       this.eqTunnelData = res.rows
-      console.log(res, 'this.eqTunnelDatathis.eqTunnelData')
       this.eqTunnelData.forEach(item => {
         item.sdTunnelSubareas.forEach((item, index) => {
           this.eqTunnelDataList.push(item)
         })
       })
-      console.log(this.eqTunnelDataList, 'this.eqTunnelDataListthis.eqTunnelDataList')
     })
     this.selectPlanType()
   },
   methods: {
+
     deleteStrategy(){
-      
       var index = this.planTypeIdList.length;
       if(index == 1){
         return this.$modal.msgError('至少保留一行')
@@ -702,7 +671,6 @@ export default {
     },
     //添加一行
     addFrom() {
-      console.log(this.planTypeIdList, "this.planTypeIdListthis.planTypeIdList")
       this.planTypeIdList.push({
         a: []
       })
@@ -726,8 +694,6 @@ export default {
     },
 
     getTunnelData(tunnelId) {
-      console.log(tunnelId, '参数餐宿参数擦擦是')
-
       let that = this;
       // that.upList = [];
       // that.downList = [];
@@ -739,9 +705,7 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res, "res")
           listType({isControl: 1}).then((response) => {
-            console.log(response, 'response')
             var arr = []
             for (let item1 of response.rows) {
               for (let item of res.eqList) {
@@ -752,7 +716,6 @@ export default {
                   arr.push(item)
                 }
               }
-
             }
             this.selectedIconList = arr //这是最终需要挂载到页面上的值
             console.log(this.selectedIconList, "this.selectedIconList")
@@ -785,33 +748,39 @@ export default {
       })
     },
     handleChangeStrategy(e) {
-      //this.reserveProcessDrawForm.strategyId.push({})
-      // this.planTypeIdList[index].a=e
-      // for(let i=0; i<this.planTypeIdList.length; i++ ){
-      //   this.planTypeIdList[i].a=e
-      //   console.log( this.planTypeIdList[i],' this.planTypeIdList[i] this.planTypeIdList[i] ')
-      // }
-      console.log(e);
       this.strategyRlData = [];
       e.forEach((item, index) => {
         getRl(item).then(res => {
-          console.log(res, 'resres');
           this.strategyRlData.push(res.rows);
         })
       })
-      console.log(this.strategyRlData, 'this.strategyRlDatathis.strategyRlData')
     },
 
     //查看工作台
-    openWorkbench() {
-      console.log('sssssssssss');
-      this.getListData();
-      this.workbenchOpen = true
+    openWorkbench(row) {
+      // console.log(row,'进入预览');
+      this.getPreview(row);
     },
-    getListData(){
-      getListByRId({'reserveId':this.reserveId}).then(res=>{
-        console.log(res);
+    async getPreview(row){
+      await previewDisplay(row.id).then(res=>{
+        this.previewList = res;
+        console.log(this.previewList)
+        var deviceList = [];
+        for(let i = 0;i < this.previewList.length;i++){
+          var item = this.previewList[i].strategyRl;
+          for(let z = 0;z < item.length;z++){
+            if(item[z].equipments.indexOf(',')){
+              console.log(item[z].equipments.split(','));
+              deviceList.push({'list':item[z].equipments.split(','),'state':item[z].state})
+            }else{
+              deviceList.push({'list':item[z].equipments,'state':item[z].state})
+              console.log(item[z].equipments)
+            }
+          }
+        }
+        console.log(deviceList)
       })
+      this.workbenchOpen = true
     },
 //=========================执行相关预案开始=====================
     //执行策略
@@ -820,22 +789,33 @@ export default {
        handleStrategy(row.strategyId);
      }, */
     // 选择将要执行的策略
-    chooseStrategyInfo(row) {
+    async chooseStrategyInfo(row) {
       this.reserveId = row.id;
-      this.strategyVisible = true
-      this.reserveProcessDrawForm = {
-        reserveId: null, //预案id
-        deviceTypeId: null, //设备类型id
-        strategyId: null,//多个策略id
-        processName: null, //流程节点名称
-        processSort: null, //流程节点顺序
-      },
-        this.handleStrategyList = []
-      this.reserveProcessDrawForm.reserveId = row.id
-      getTypeAndStrategy({isControl: 1}).then(res => {
-        console.log(res.data, '控制策略')
+      await getTypeAndStrategy({isControl: 1}).then(res => {
         this.options = res.data
       })
+      getListByRId({'reserveId':this.reserveId}).then(res=>{
+        this.planTypeIdList = res.data;
+        if(this.planTypeIdList.length == 0){
+          this.planTypeIdList =  [{
+            processName:'',
+            processSort:'',
+            handleStrategyList:'',
+          }]
+        }else{
+          let data = res.data;
+          data.forEach((item,index)=>{
+            this.planTypeIdList[index].handleStrategyList = item.strategyId
+            this.planTypeIdList[index].processSort = item.processSort
+            this.planTypeIdList[index].processName = item.processName
+          })
+        }
+      })
+      console.log(this.planTypeIdList,'xxxxxxxxxxx')
+      this.handleStrategyList = []
+      this.reserveProcessDrawForm.reserveId = row.id
+
+      this.strategyVisible = true
       // })
     },
     //执行策略id勾选事件

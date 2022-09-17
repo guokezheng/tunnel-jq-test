@@ -43,7 +43,7 @@
             </el-carousel>
           </div>
         </div>
-        <!-- <div class="eventRight">
+        <div class="eventRight">
           <div class="eventRow">
             <div>隧道名称:</div>
             <div>{{ eventMes.tunnels.tunnelName }}</div>
@@ -86,8 +86,7 @@
             </div>
           </div>
         
-        </div> -->
-        <!-- {{row11}} -->
+        </div>
       </div>
     </div>
   </div>
@@ -101,40 +100,33 @@ import { image, video } from "@/api/eventDialog/api.js";
 import { updateEvent } from "@/api/event/event";
 export default {
   name: "eventDialog",
-  props: ["eventMes"],
+  // props: ["eventMes"],
   data() {
     return {
-      eventList: [],
+      // eventList: [],
       urls: [],
-      videoUrl: require("@/assets/Example/v1.mp4"),
+      videoUrl: '',
       row11:null,
-      event: [{}],
+      // event: [{}],
+      eventMes:[]
     };
   },
   created() {
-    console.log(this.eventMes, "eventMeseventMeseventMeseventMes");
+    // console.log(this.eventMes, "eventMeseventMeseventMeseventMes");
     this.getDicts("sd_event_source").then((data) => {
       console.log(data, "事件来源");
       this.tabList = data.data;
     });
-      console.log(this.row11);
+      // console.log(this.row11,"9999999999");
 
-    // const param = {
-    //       id:this.$route.query.id
-    //     }
-    //     listEvent(param).then( response => {
-    //       console.log(response.rows,"传事件id获取事件详情")
-    //         this.eventForm = response.rows[0];
-    //         this.eventForm.eventType = response.rows[0].eventType.eventType;
-    //         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
-    //        console.log(this.eventForm,"this.eventForm")
-    //     });
+   
   },
   methods: {
-    // init(){
-    //   console.log(this.row11);
-    //   console.log('12312312321')
-    // },
+    init(row){
+      console.log(row,"initrow");
+      this.eventMes = row
+      this.getUrl()
+    },
     getEventSource(num) {
       for (var item of this.tabList) {
         if (num == item.eventSource) {
@@ -143,12 +135,12 @@ export default {
       }
     },
     getUrl() {
-      console.log(this.event.id, "当前事件id");
+      console.log(this.eventMes.id, "当前事件id");
       const param3 = {
-        businessId: this.event.id,
+        businessId: this.eventMes.id,
       };
       const param4 = {
-        id: this.event.id,
+        id: this.eventMes.id,
       };
       image(param3).then((response) => {
         console.log(response.data, "获取图片");
@@ -161,19 +153,23 @@ export default {
     },
 
     // 忽略事件
-    handleIgnore(event) {
-      const param = {
-        id: event.id,
-        eventState: "2",
-      };
-      updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
-        this.$modal.msgSuccess("已成功忽略");
-      });
-      bus.$emit("closeDialog", false);
+    handleIgnore() {
+      // console.log(event,"三图一视忽略按钮")
+      // const param = {
+      //   id: event.id,
+      //   eventState: "2",
+      // };
+      // updateEvent(param).then((response) => {
+      //   console.log(response, "修改状态");
+      //   this.$modal.msgSuccess("已成功忽略");
+      // });
+      // bus.$emit("closeDialog", false);
+      // this.$parent("closeDialog")
+      this.$emit('fMethod');
     },
     // 处理 跳转应急调度
     handleDispatch(event) {
+      console.log(event,"三图一视处理 跳转应急调度")
       const param = {
         id: event.id,
         eventState: "0",

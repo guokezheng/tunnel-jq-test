@@ -11,7 +11,7 @@
                 :style="{ width: laneUrlList[0].width + 'px' }"
               ></el-image>
               <div  class="maskClass" >
-                  <div v-for="(item,index) in planList1" class="mousemoveBox"
+                  <div v-for="(item,index) in planList1" :key="index" class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   @mouseleave='mouseleave(index)'
                   :style="{width:100/(planList1.length/2)+'%'}"
@@ -122,7 +122,7 @@
               <el-row>
                  <el-col :span="8">
                    <el-form-item label="桩号位置" prop="stakeNum">
-                     <span>K </span>
+                     <!-- <span>K </span> -->
                      <el-input  v-model="eventForm.stakeNum" placeholder="请输入桩号位置" style="width: 250px;"/>
                    </el-form-item>
                  </el-col>
@@ -352,6 +352,15 @@
             <div class="rightBox videoBox">
               <video :src='videoUrl' controls muted autoplay loop class="video1"></video>
                 <!-- <video controls muted autoplay loop :src="require('@/assets/Example/d1.mp4')" class="video1" ></video> -->
+                <!-- <video
+          id="h5sVideo1"
+          class="h5video_ video1"
+          controls
+          muted
+          autoplay
+          loop
+          style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+        ></video> -->
                 <div class="video">
                   <img v-for="(item,index) in urls" :key="index" :src="item.imgUrl" style="width: 32%;border-radius: 6px;" />
                 </div>
@@ -459,13 +468,14 @@
   import {
     listMaterial,
   } from "@/api/system/material";
-  import { listEvent,updateEvent,getSubareaByTunnelId} from "@/api/event/event";
+  import { listEvent,updateEvent} from "@/api/event/event";
   import { image, video } from "@/api/eventDialog/api.js";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
   export default {
     name: "dispatch",
     data(){
-      return{ 
-        tunnelList:[],//隧道配置信息
+      return{
         planList1:[
           {
             text:'火灾报警1区'
@@ -602,17 +612,20 @@
       }
     },
     created() {
-      this.getTunnelData();
-      this.getmaterialList();//应急物资
-      this.getpersonnelList();//调度电话
+      console.log(this.$route.query.id,"this.$route.query.id");
+      this.getTunnelData()
+      this.getmaterialList()//应急物资
+      this.getpersonnelList()//调度电话
       if(this.$route.query.id){
         const param = {
           id:this.$route.query.id
         }
         listEvent(param).then( response => {
+          console.log(response.rows,"传事件id获取事件详情")
             this.eventForm = response.rows[0];
             this.eventForm.eventType = response.rows[0].eventType.eventType;
             this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
+           console.log(this.eventForm,"this.eventForm")
         });
       }
       
@@ -625,38 +638,23 @@
       /** 查询应急人员信息列表 */
       getpersonnelList() {
         const params = {
-          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+          tunnelId: this.$route.query.id
         }
         listSdEmergencyPer(params).then((response) => {
           this.personnelList = response.rows;
+          
+
         });
       },
       getmaterialList(){
         const params = {
-          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+          tunnelId: this.$route.query.id
         }
-        listMaterial(tunnelId).then(response => {
+        listMaterial(params).then(response => {
           this.materialList = response.rows;
         });
       },
-      getSubareaBy(){
-        const params = 'JQ-JiNan-WenZuBei-MJY';
-        getSubareaByTunnelId(params).then(result=>{
-          console.log(result.data)
-          let data = result.data;
-          console.log(this.selectedIconList)
-          for(let i = 0;i < data.length;i++){
-            for(let z = 0 ;z < this.selectedIconList.length;z++){
-              let brr = this.selectedIconList[z];
-              if(data[i].eqIdMax == brr.eqId){
-                console.log(brr);
-              }
-              if(data[i].eqIdMin == brr.feqId){
-              }
-            }
-          }
-        })
-      },
+      
       rightClick(index){
          $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
          $(".icon-box").removeClass("active")
@@ -673,6 +671,8 @@
         delete this.eventForm.eventType;//删除age元素
         updateEvent(this.eventForm).then(response => {
             console.log(response,'修改事件详情')
+          this.$modal.msgSuccess("事件更新成功");
+
         });
       },
       // 
@@ -682,6 +682,7 @@
           eventState:'1'
         }
         updateEvent(param).then(response => {
+          console.log(response,'修改状态')
           this.$modal.msgSuccess("事件处理成功");
         });
         
@@ -704,14 +705,11 @@
         };
       },
       /* 获取隧道配置信息*/
-      getTunnelData(tunnelId) {
-        var tunnelId = "JQ-JiNan-WenZuBei-MJY"
+      getTunnelData() {
+        var tunnelId = this.$route.query.id
         let that = this;
         that.upList = [];
         that.downList = [];
-        const params = {
-          tunnelId: tunnelId
-        }
         
         getTunnels(tunnelId).then((response) => {
           console.log(response,"应急调度获取设备信息");
@@ -719,10 +717,9 @@
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
-            console.log(res,'res');
-            this.tunnelList = res.eqList;
-            
+            console.log(res,"res")
             listType({isControl:1}).then((response) => {
+              console.log(response,'response')
               var arr = []
               for(let item1 of response.rows) {
                 for(let item of res.eqList){
@@ -736,7 +733,7 @@
                
               }
               this.selectedIconList = arr //这是最终需要挂载到页面上的值
-              this.getSubareaBy();
+              console.log(this.selectedIconList,"this.selectedIconList")
             }).then(() => {
             });
           } else {
@@ -942,7 +939,7 @@
     // align-items: center;
     width: 30px !important;
   }
-  .theme-light .app-container{
+  .theme-light .app-container,{
     background-color: #010913;
     border: none !important;
   }

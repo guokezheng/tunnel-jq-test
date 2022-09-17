@@ -12,8 +12,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @auther Athena-YangChao
@@ -60,14 +58,5 @@ public class RuoYiApplicationRunner  implements ApplicationRunner {
                 });
             }
         }
-
-        List<Integer> portList = new ArrayList<Integer>();
-        List<String> handlerList = new ArrayList<String>();
-        // 火灾报警设备通信
-        portList.add(60000);
-        handlerList.add("com.tunnel.fire.FireNettyServerHandler");
-        fireNettyServer.setPortList(portList);
-        fireNettyServer.setHandlerList(handlerList);
-        new Thread(fireNettyServer).start();
     }
 }

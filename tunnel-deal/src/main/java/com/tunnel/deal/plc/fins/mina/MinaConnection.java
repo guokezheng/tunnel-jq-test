@@ -1,9 +1,8 @@
 package com.tunnel.deal.plc.fins.mina;
 
-import com.tunnel.platform.datacenter.config.MapCache;
 import com.tunnel.deal.plc.fins.CmdProcess;
 import com.tunnel.deal.plc.fins.PlcProcess;
-
+import com.tunnel.platform.datacenter.config.MapCache;
 import com.tunnel.platform.utils.util.RadixUtil;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.ConnectFuture;
@@ -27,23 +26,20 @@ import java.util.Map;
 public class MinaConnection implements IConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(MinaConnection.class);
-
-    // 1.服务端ip
-    private String ip;
-    // 2.服务端端口
-    private int port;
-
-    private String id;
     // 3.中断循环标识
     public static boolean isExit = false;
+    private final String handshake;
+    private final List<Map<String, String>> commands;
+    private final String hostControlType;
     // 5.mina连接
     NioSocketConnector connector = null;
     // 6.获取连接session
     IoSession ioSession = null;
-
-    private final String handshake;
-    private final List<Map<String, String>> commands;
-    private final String hostControlType;
+    // 1.服务端ip
+    private String ip;
+    // 2.服务端端口
+    private int port;
+    private String id;
 
     public MinaConnection(String id, String ip, int port) {
         this.id = id;
@@ -71,9 +67,9 @@ public class MinaConnection implements IConnection {
         //connector.getFilterChain().addLast("logger", loggingFilter);
         connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(new TextLineCodecFactory(Charset.forName("UTF-8"))));
         if ("DM".equals(hostControlType)) {
-            connector.setHandler(new DMMinaCallBack(id,commands));
-        }else {
-            connector.setHandler(new CIOMinaCallBack(id,commands));
+            connector.setHandler(new DMMinaCallBack(id, commands));
+        } else {
+            connector.setHandler(new CIOMinaCallBack(id, commands));
         }
         logger.info(" [init()] 连接Iot设备的初始化参数成功！ Iot设备： [" + ip + ":" + port + "] ");
         if (commands.size() > 0) {

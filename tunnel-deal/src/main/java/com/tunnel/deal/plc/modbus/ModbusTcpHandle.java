@@ -13,15 +13,22 @@ public class ModbusTcpHandle {
      * 懒汉模式实例化
      */
     private static ModbusTcpHandle instance;
+    //复位-正向通行-1
+    boolean[] one = {false, false, false};
+    //复位-关闭-2
+    boolean[] four = {true, false, false};
+    //复位-禁行-3
+    boolean[] three = {false, true, false};
+    //复位-逆向通行-4
+    boolean[] two = {false, false, true};
+    private ModbusTcpHandle() {
+    }
 
     public static ModbusTcpHandle getInstance() {
         if (instance == null) {
             instance = new ModbusTcpHandle();
         }
         return instance;
-    }
-
-    private ModbusTcpHandle() {
     }
 
     /*
@@ -52,14 +59,5 @@ public class ModbusTcpHandle {
             System.out.println("编号为" + slaveId + "的设备：控制失败");
         }
     }
-
-    //复位-正向通行-1
-    boolean[] one = {false, false, false};
-    //复位-关闭-2
-    boolean[] four = {true, false, false};
-    //复位-禁行-3
-    boolean[] three = {false, true, false};
-    //复位-逆向通行-4
-    boolean[] two = {false, false, true};
 
 }

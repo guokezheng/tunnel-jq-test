@@ -75,28 +75,35 @@
               {{ "在线" }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <div class="lineClass"></div>
-      <el-row style="margin-top: 10px">
-          <el-col :span="13">
-            <el-form-item label="洞内亮度:">
-              {{ inValue }}
-            </el-form-item>
-          </el-col>
-          <el-col :span="11">
+          <el-col :span="11" v-if="this.eqInfo.clickEqType == 5">
             <el-form-item label="洞外亮度:">
-              {{ outValue }}
+              {{ brightValue }}
+              <span style="padding-left: 10px">cd/m2</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="11" v-if="this.eqInfo.clickEqType == 18">
+            <el-form-item label="洞内亮度:">
+              {{ brightValue }}
+              <span style="padding-left: 10px">cd/m2</span>
             </el-form-item>
           </el-col>
         </el-row>
-      <div class="lineClass"></div>
+
+        <div class="lineClass"></div>
       </el-form>
-      <el-radio-group v-model="tab" style="margin-bottom: 10px;margin-left: 10px;" class="comCovi">
-        <el-radio-button label="Inside">洞内亮度</el-radio-button>
-        <el-radio-button label="Outside">洞外亮度</el-radio-button>
+      <el-radio-group
+        v-model="tab"
+        style="margin-bottom: 10px; margin-left: 10px"
+        class="comCovi"
+      >
+        <el-radio-button label="Inside" v-if="this.eqInfo.clickEqType == 18"
+          >洞内亮度</el-radio-button
+        >
+        <el-radio-button label="Inside" v-if="this.eqInfo.clickEqType == 5"
+          >洞外亮度</el-radio-button
+        >
       </el-radio-group>
-      <div id="Inside" v-show="tab == 'Inside'" style="margin-bottom: 10px"></div>
-      <div id="Outside" v-show="tab == 'Outside'" style="margin-bottom: 10px"></div>
+      <div id="Inside" style="margin-bottom: 10px"></div>
       <div slot="footer">
         <el-button
           type="primary"
@@ -122,7 +129,6 @@ import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数据信息
 import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
-
 export default {
   props: ["eqInfo", "brandList", "directionList"],
   watch: {
@@ -130,8 +136,7 @@ export default {
       handler(newValue, oldValue) {
         if (newValue) {
           console.log(newValue, "newValue");
-            this.getChartMes(newValue);
-       
+          this.getChartMes(newValue);
         }
       },
     },
@@ -143,13 +148,13 @@ export default {
       visible: true,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       tab: "Inside",
-      outValue:'',
-      inValue:'',
+      brightValue: "",
     };
   },
   created() {
     this.getMessage();
-    this.getChartMes()
+    this.getChartMes();
+    console.log(this.eqInfo,"eqInfo")
   },
   methods: {
     // 查设备详情
@@ -165,29 +170,32 @@ export default {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    getChartMes(){
-       getTodayLDData(this.eqInfo.equipmentId).then((response) => {
-          console.log(response, "亮度检测器数据");
-          var inXdata = []
-            var inYdata = []
-            var outXdata = []
-            var outYdata = []
+    getChartMes() {
+      getTodayLDData(this.eqInfo.equipmentId).then((response) => {
+        console.log(response, "亮度检测器数据");
+        var xData = [];
+        var yData = [];
 
-            for(var item of response.data.todayLDInsideData){
-              inXdata.push(item.order_hour)
-              inYdata.push(item.count)
-              this.inValue = inYdata[inYdata.length-1]
-            }
-            for(var item of response.data.todayLDOutsideData){
-              outXdata.push(item.order_hour)
-              outYdata.push(item.count)
-              this.outValue = outYdata[outYdata.length-1]
+        if (this.eqInfo.clickEqType == 5) {
+          for (var item of response.data.todayLDOutsideData) {
+            xData.push(item.order_hour);
+            yData.push(item.count);
+          }
+        } else if (this.eqInfo.clickEqType == 18) {
+          for (var item of response.data.todayLDInsideData) {
+            xData.push(item.order_hour);
+            yData.push(item.count);
+           
+          }
+        }
+        this.brightValue = yData[yData.length - 1];
+       console.log(xData,"xData")
+       console.log(yData,"yData")
 
-            }
-            this.$nextTick(() => {
-              this.initChart(inXdata,inYdata,outXdata,outYdata);
-            })
+        this.$nextTick(() => {
+          this.initChart(xData, yData);
         });
+      });
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -208,23 +216,22 @@ export default {
     handleClosee() {
       this.$emit("dialogClose");
     },
-    initChart(inXdata,inYdata,outXdata,outYdata) {
-      var lincolor = [];
-      var XData = [];
-      var YData = [];
-      
-        if (this.tab == "Inside") {
-          XData = inXdata;
-          YData = inYdata
-          lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-        } else {
-          XData = outXdata;
-          YData = outYdata;
-          lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
-        }
-      
+    initChart(xData, yData) {
+      // var lincolor = [];
+      // var XData = [];
+      // var YData = [];
 
-      this.mychart = echarts.init(document.getElementById(this.tab));
+      // if (this.tab == "Inside") {
+      // XData = inXdata;
+      // YData = inYdata;
+      // lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
+      // } else {
+      //   XData = outXdata;
+      //   YData = outYdata;
+      //   lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
+      // }
+
+      this.mychart = echarts.init(document.getElementById("Inside"));
       var option = {
         tooltip: {
           trigger: "axis",
@@ -245,7 +252,7 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: true,
-          data: XData,
+          data: xData,
           axisLabel: {
             textStyle: {
               color: "#00AAF2",
@@ -261,7 +268,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          name: 'cd/m2',
+          name: "cd/m2",
           nameTextStyle: {
             color: "#FFB500",
             fontSize: 10,
@@ -293,7 +300,7 @@ export default {
         series: [
           {
             type: "line",
-            color: lincolor[0],
+            color: "#00AAF2",
             symbol: "none",
             smooth: true,
             stack: "Total",
@@ -315,16 +322,16 @@ export default {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   {
                     offset: 0,
-                    color: lincolor[1],
+                    color: "#8DEDFF",
                   },
                   {
                     offset: 1,
-                    color: lincolor[2],
+                    color: "#E3FAFF",
                   },
                 ]),
               },
             },
-            data: YData,
+            data: yData,
           },
         ],
       };
@@ -353,7 +360,8 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
-#Outside,#Inside{
+#Outside,
+#Inside {
   width: 90%;
   height: 150px;
   background: #fff;

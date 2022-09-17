@@ -190,7 +190,7 @@ export default {
             for(var item of response.data.todayVIData){
               viXdata.push(item.order_hour)
               viYdata.push(item.count)
-              this.viValue = coYdata[coYdata.length-1]
+              this.viValue = viYdata[viYdata.length-1]
 
             }
             this.$nextTick(() => {

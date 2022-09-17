@@ -87,11 +87,10 @@
                             'z-index': '1000',
                             'pointer-events': 'none',
                           }"></div>
-                  <!-- 巡检机器人 -->
                   <template>
                     <div style="width: 80%;height: 15px;border-bottom: 4px #ccc solid;position: relative;top: 242px;
                                 left: 166px;"
-                      v-show="robotShow">
+                      v-show="robotShow" @click="clickRobot">
                       <img src="../../../assets/logo/equipment_log/robot_zaixian.png" class="robotAnimation" />
                     </div>
                   </template>
@@ -104,10 +103,11 @@
                     :class="item.eqType == 7 || item.eqType == 8 || item.eqType == 9?'light-' + item.position.left:''"
                     @click="openStateSwitch(item)" @mousemove="openTooltip(item,index)" @mouseleave="closeTooltip(item)">
                     <!-- <div class="tooltip" v-if="showTooltipIndex == index && showTooltip">{{ sensorContent(item) }}</div> -->
-
+                    
                     <el-tooltip effect="dark" :content="sensorContent(item)" placement="right" :title="item.pile"
                       :disabled="sensorDisabledTwo(item)" style="position: relative;top: 0px;left: 0px;" popper-class="tipCase">
-
+                          <!-- 巡检机器人 -->
+                 
                       <div v-show="(item.eqType != 7 &&
 
                                   item.eqType != 16 &&
@@ -384,15 +384,9 @@
                   </el-option>
                 </el-select>
               </div>
-            
               <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
             </div>
-
           </el-drawer>
-        
-
-        
-
       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
@@ -1126,22 +1120,39 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-   <com-video style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 23 || this.clickEqType == 24" 
-              :equipmentId="equipmentId" @dialogClose = "dialogClose" :clickEqType = "this.clickEqType" :brandList="this.brandList" :directionList="this.directionList"></com-video>
-    <com-light style="position: absolute;top: 0;left: 0;" 
-              v-if="[1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13 ].includes(this.clickEqType)"  
-              :equipmentId="equipmentId"  :clickEqType = "this.clickEqType" :brandList="this.brandList" :directionList="this.directionList"
-               @dialogClose = "dialogClose"></com-light>
-    <com-covi style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 19" :brandList="this.brandList" :directionList="this.directionList"
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-covi>
-    <com-bright style="position: absolute;top: 0;left: 0;" :brandList="this.brandList" :directionList="this.directionList"
-              v-if="[5, 14, 21, 32, 33, 15, 16, 20, 28, 29, 30, 31, 34,35 ].includes(this.clickEqType)" 
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-bright>
-    <com-wind style="position: absolute;top: 0;left: 0;" v-if="this.clickEqType == 17" 
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-wind>          
-    <!-- <com-indicator style="position: absolute;top: 0;left: 0;"
-              v-if="[1, 2, 3, 4].includes(this.clickEqType)"  
-              :equipmentId="equipmentId" @dialogClose = "dialogClose"></com-indicator> -->
+   <com-video class="comClass"
+              v-if="this.eqInfo.clickEqType == 23 || this.eqInfo.clickEqType == 24" 
+               @dialogClose = "dialogClose" :eqInfo = "this.eqInfo" 
+               :brandList="this.brandList" :directionList="this.directionList"></com-video>
+    <com-light class="comClass" 
+              v-if="[1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13 ].includes(this.eqInfo.clickEqType)"  
+               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"
+               :brandList="this.brandList" :directionList="this.directionList"></com-light>
+    <com-covi class="comClass" v-if="this.eqInfo.clickEqType == 19" 
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-covi>
+    <com-data class="comClass" 
+              :brandList="this.brandList" :directionList="this.directionList"
+              v-if="[ 14, 21, 32, 33, 15, 16, 30, 31, 35 ].includes(this.eqInfo.clickEqType)" 
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-data>
+    <com-wind class="comClass"  v-if="this.eqInfo.clickEqType == 17" 
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-wind>    
+    <com-pressure class="comClass" v-if="this.eqInfo.clickEqType == 28"
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-pressure>  
+    <com-vehicleDetec class="comClass" v-if="this.eqInfo.clickEqType == 20"
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-vehicleDetec>    
+    <com-callPolice class="comClass" v-if="this.eqInfo.clickEqType == 34"
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-callPolice>   
+    <com-robot class="comClass" v-if="this.eqInfo.clickEqType == 29"
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-robot>  
+    <com-bright class="comClass" v-if="this.eqInfo.clickEqType == 5"
+              :brandList="this.brandList" :directionList="this.directionList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-bright>
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -1599,7 +1610,9 @@
   import $ from "jquery";
   import "jquery-ui-dist/jquery-ui";
   import "jquery-ui-dist/jquery-ui.min.css";
-  import bus from '@/utils/bus'
+  import bus from '@/utils/bus';
+  import { mapState } from 'vuex';
+
   import {
     getLiPowerDevices,
     //initLipowerDevice
@@ -1660,10 +1673,13 @@
   import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
   import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
   import comBright from "@/views/workbench/config/components/bright"; //亮度检测器等只有基本信息的弹窗
-  import comWind from "@/views/workbench/config/components/wind"; //亮度检测器等只有基本信息的弹窗
+  import comWind from "@/views/workbench/config/components/wind"; //风速风向弹窗
+  import comPressure from "@/views/workbench/config/components/pressure"; //压力表弹窗
+  import comVehicleDetec from "@/views/workbench/config/components/vehicleDetec"; //微波车检弹窗
+  import comCallPolice from "@/views/workbench/config/components/callPolice"; //声光报警弹窗
+  import comRobot from "@/views/workbench/config/components/robot"; //机器人弹窗
+  import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
 
-
-  
   import {
     getLocalIP
   } from "@/api/event/vedioRecord";
@@ -1700,7 +1716,7 @@
     templateList,
   } from "@/api/workbench/config";
   import BatteryIcon from "@/components/BatteryIcon";
-  import { listEvent } from "@/api/event/event";
+  import { listEvent,getWarnEvent } from "@/api/event/event";
 
   let configData = {}; //配置信息
   let wrapperClientX = 0;
@@ -1721,10 +1737,16 @@
       comLight,
       comCovi,
       comBright,
-      comWind
+      comWind,
+      comPressure,
+      comVehicleDetec,
+      comCallPolice,
+      comRobot,
+      comData
     },
     data() {
       return {
+        eqInfo:{},
         brandList:[],
         directionList:[],
         coviVisible:false,
@@ -2194,7 +2216,8 @@
           {id:3,byLane:'三',fSpaceOccupyRation:'39',bySpeed:'54',fSpaceOccupyRation:'91',createTime:'2022-09-05 19:25:52'},
         ],//假数据
         clickEqType:'',//点击设备的eqType
-        equipmentId:''
+        equipmentId:'',
+        eqInfo:{}
         
       }
     },
@@ -2321,6 +2344,13 @@
       this.srollAuto()
     },
     watch: {
+      WjEvent( event ){
+      console.log(event,'websockt工作台接收数据')
+      for(var item of event){
+        this.trafficList.push(item)
+
+      }
+     },
       // 设备类型
       "batchForm.eqType"(val) {
         console.log(val)
@@ -2447,13 +2477,16 @@
         }
 
         return h
-      }
+      },
+      ...mapState({
+       WjEvent: state => state.websocket.WjEvent,
+     }),
     },
     mounted() {
       this.initEnergyConsumption()
       this.getTimeData()
-      this.vehicleMonitoring()
-      this.special()
+      // this.vehicleEcharts()
+      // this.specialEcharts()
       let that = this;
       window.onresize = () => {
         return (() => {
@@ -2494,13 +2527,13 @@
     methods: {
       // 关闭弹窗子组件
       dialogClose(){
-        this.clickEqType = 0
+        this.eqInfo.clickEqType = 0
       },
       // 车辆监测数据
-      vehicleMonitoring(){
+      vehicleEcharts(tunnelId){
         // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
         const param = {
-          tunnelId:'WLJD-JiNan-YanJiuYuan-FHS'
+          tunnelId:tunnelId
         }
         vehicleMonitoring(param).then(res =>{
           console.log(res,"车辆监测数据")
@@ -2509,10 +2542,9 @@
         })
       },
       // 重点车辆监测数据
-      special(){
-        // this.tunnelId
+      specialEcharts(tunnelId){
         const param = {
-          tunnelId:"1"
+          tunnelId:tunnelId
         }
         special(param).then(res =>{
           console.log(res,"重点车辆监测数据")
@@ -2683,9 +2715,9 @@
         //   this.trafficList = response.data
         // })
         
-        listEvent(param).then( response => {
-          console.log(response.rows,"预警事件")
-            this.trafficList = response.rows;
+        getWarnEvent(param).then( response => {
+          console.log(response.data,"预警事件")
+            this.trafficList = response.data;
            
           });
       },
@@ -3787,6 +3819,8 @@
           }
           this.tunnelNameEarlyWarn = response.rows[0].tunnelName
           this.tunnelId = response.rows[0].tunnelId
+          this.specialEcharts(this.tunnelId)
+          this.vehicleEcharts(this.tunnelId)
           var newDict = this.dict.type.sd_sys_name
           if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
             this.robotShow = false
@@ -4085,9 +4119,8 @@
             tunnelId: this.currentTunnel.id
           })
           .then((response) => {
-            console.log(this.eqTypeStateList,'zxxxxxxxxxxxxxxxxx')
-            console.log(response,'cccccccccccccccccccccccc')
             for (let i = 0; i < response.length; i++) {
+              // 实时状态
               let type = response[i].devType;
               if (type != "" && type != undefined) {
                 for (let j = 0; j < this.selectedIconList.length; j++) {
@@ -4272,12 +4305,18 @@
           return false;
         }
       },
+      clickRobot(){
+        this.eqInfo.clickEqType = 29
+      },
       //================================================单个配置开始==================================
       /* 打开配置界面*/
       async openStateSwitch(item) {
         console.log(item, '点击的设备');
-        this.clickEqType = item.eqType
-        this.equipmentId = item.eqId
+        this.eqInfo = {
+          clickEqType :item.eqType,
+          equipmentId:item.eqId
+        }
+       
 
         let StateTypeId = {
           StateTypeId: item.eqType
@@ -4630,18 +4669,18 @@
         //   }
         // }
       },
-      loadFlv() {
-        if (flvjs.isSupported()) {
-          var videoElement = document.getElementById("videoBox");
-          var flvPlayer = flvjs.createPlayer({
-            type: 'flv',
-            url: 'http://10.166.139.12:8081/live/22456.flv' //你的url地址
-          });
-          flvPlayer.attachMediaElement(videoElement);
-          flvPlayer.load();
-          flvPlayer.play();
-        }
-      },
+      // loadFlv() {
+      //   if (flvjs.isSupported()) {
+      //     var videoElement = document.getElementById("videoBox");
+      //     var flvPlayer = flvjs.createPlayer({
+      //       type: 'flv',
+      //       url: 'http://10.166.139.12:8081/live/22456.flv' //你的url地址
+      //     });
+      //     flvPlayer.attachMediaElement(videoElement);
+      //     flvPlayer.load();
+      //     flvPlayer.play();
+      //   }
+      // },
       /* 确认配置（单项）*/
       submitState() {
         this.stateSwitchVisible = false;
@@ -6614,6 +6653,11 @@
       }
     }
   }
+  .comClass{
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 
   /*单个设备配置框 */
   .workbench-dialog {
@@ -6997,6 +7041,7 @@
     animation: mymove 60s infinite linear;
     float: left;
     z-index: 10;
+    cursor: pointer;
   }
 
   @keyframes mymove {

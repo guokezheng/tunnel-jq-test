@@ -86,3 +86,27 @@ export function trafficFlowInformation() {
     method: 'post',
   })
 }
+
+// covi弹窗数据
+export function getTodayCOVIData(deviceId){
+  return request({
+    url:'/system/data/getTodayCOVIData/' + deviceId,
+    method: 'get',
+  })
+}
+
+// 风速风向弹窗数据
+export function getTodayFSFXData(deviceId){
+  return request({
+    url:'/system/data/getTodayFSFXData/' + deviceId,
+    method: 'get',
+  })
+}
+
+// 亮度检测器弹窗数据
+export function getTodayLDData(deviceId){
+  return request({
+    url:'/system/data/getTodayLDData/' + deviceId,
+    method: 'get',
+  })
+}

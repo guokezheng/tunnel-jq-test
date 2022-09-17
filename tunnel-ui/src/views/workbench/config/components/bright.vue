@@ -20,7 +20,7 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          style="height: 30px; transform: translateY(-30px); cursor: pointer"
           @click="handleClosee"
         />
       </div>
@@ -35,7 +35,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备类型:">
-              {{ stateForm.eqTypeName }}
+              {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="所属方向:">
-              {{ stateForm.eqDirection }}
+              {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ getBrandName(stateForm.brandName) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -76,55 +76,118 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div class="lineClass"></div>
+      <el-row style="margin-top: 10px">
+          <el-col :span="13">
+            <el-form-item label="洞内亮度:">
+              {{ inValue }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="洞外亮度:">
+              {{ outValue }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+      <div class="lineClass"></div>
       </el-form>
+      <el-radio-group v-model="tab" style="margin-bottom: 10px;margin-left: 10px;" class="comCovi">
+        <el-radio-button label="Inside">洞内亮度</el-radio-button>
+        <el-radio-button label="Outside">洞外亮度</el-radio-button>
+      </el-radio-group>
+      <div id="Inside" v-show="tab == 'Inside'" style="margin-bottom: 10px"></div>
+      <div id="Outside" v-show="tab == 'Outside'" style="margin-bottom: 10px"></div>
+      <div slot="footer">
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleClosee()"
+          style="width: 80px"
+          class="submitButton"
+          >确 定</el-button
+        >
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleClosee()"
+          style="width: 80px"
+          >取 消</el-button
+        >
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
+import * as echarts from "echarts";
+import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数据信息
+import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
+
 
 export default {
-  props: ["equipmentId", "clickEqType", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList"],
+  watch: {
+    tab: {
+      handler(newValue, oldValue) {
+        if (newValue) {
+          console.log(newValue, "newValue");
+            this.getChartMes(newValue);
+       
+        }
+      },
+    },
+  },
   data() {
     return {
       stateForm: {},
       title: "",
       visible: true,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+      tab: "Inside",
+      outValue:'',
+      inValue:'',
     };
   },
   created() {
     this.getMessage();
+    this.getChartMes()
   },
   methods: {
     // 查设备详情
     async getMessage() {
-      var that = this;
-      if (this.equipmentId) {
-        var obj = {};
-        var state = "";
+      if (this.eqInfo.equipmentId) {
         // 查询单选框弹窗信息 -----------------------
-        await getDeviceById(this.equipmentId).then((res) => {
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          obj = res.data;
-
-          this.title = obj.eqName ;
-          this.stateForm = {
-            brandName: that.getBrandName(obj.brandId), //厂商
-            eqDirection: that.getDirection(obj.eqDirection),
-
-            pile: obj.pile, //桩号
-            eqTypeName: obj.typeName, //设备类型名称
-            tunnelName: obj.tunnelName, //隧道名称
-            deptName: obj.deptName, //所属机构
-            eqType: obj.eqType, //设备类型号
-            state: obj.state,
-          };
-          console.log(this.stateForm, "stateForm");
+          this.stateForm = res.data;
+          this.title = this.stateForm.eqName;
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
+    },
+    getChartMes(){
+       getTodayLDData(this.eqInfo.equipmentId).then((response) => {
+          console.log(response, "亮度检测器数据");
+          var inXdata = []
+            var inYdata = []
+            var outXdata = []
+            var outYdata = []
+
+            for(var item of response.data.todayLDInsideData){
+              inXdata.push(item.order_hour)
+              inYdata.push(item.count)
+              this.inValue = inYdata[inYdata.length-1]
+            }
+            for(var item of response.data.todayLDOutsideData){
+              outXdata.push(item.order_hour)
+              outYdata.push(item.count)
+              this.outValue = outYdata[outYdata.length-1]
+
+            }
+            this.$nextTick(() => {
+              this.initChart(inXdata,inYdata,outXdata,outYdata);
+            })
+        });
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -145,6 +208,173 @@ export default {
     handleClosee() {
       this.$emit("dialogClose");
     },
+    initChart(inXdata,inYdata,outXdata,outYdata) {
+      var lincolor = [];
+      var XData = [];
+      var YData = [];
+      
+        if (this.tab == "Inside") {
+          XData = inXdata;
+          YData = inYdata
+          lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
+        } else {
+          XData = outXdata;
+          YData = outYdata;
+          lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
+        }
+      
+
+      this.mychart = echarts.init(document.getElementById(this.tab));
+      var option = {
+        tooltip: {
+          trigger: "axis",
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            // magicType: { show: true, type: ['stack', 'tiled'] },
+            // saveAsImage: { show: true }
+          },
+        },
+        grid: {
+          top: "24%",
+          bottom: "18%",
+          left: "14%",
+          right: "12%",
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: true,
+          data: XData,
+          axisLabel: {
+            textStyle: {
+              color: "#00AAF2",
+              fontSize: 10,
+            },
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "#386D88",
+            },
+          },
+        },
+        yAxis: {
+          type: "value",
+          name: 'cd/m2',
+          nameTextStyle: {
+            color: "#FFB500",
+            fontSize: 10,
+            // padding: [0, 20, 0, 0],
+          },
+          // minInterval: 1, //y轴的刻度只显示整数
+          axisLabel: {
+            textStyle: {
+              color: "#00AAF2",
+              fontSize: 10,
+            },
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              //分割线的样式
+              color: ["rgba(0,0,0,0.3)"],
+              width: 1,
+              type: "dashed",
+            },
+          },
+        },
+        series: [
+          {
+            type: "line",
+            color: lincolor[0],
+            symbol: "none",
+            smooth: true,
+            stack: "Total",
+            areaStyle: {},
+            symbol: "circle",
+            symbolSize: [7, 7],
+            itemStyle: {
+              normal: {
+                borderColor: "white",
+              },
+            },
+            emphasis: {
+              focus: "series",
+            },
+            //渐变色
+            areaStyle: {
+              normal: {
+                //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: lincolor[1],
+                  },
+                  {
+                    offset: 1,
+                    color: lincolor[2],
+                  },
+                ]),
+              },
+            },
+            data: YData,
+          },
+        ],
+      };
+
+      this.mychart.setOption(option);
+      window.addEventListener("resize", function () {
+        this.mychart.resize();
+      });
+    },
   },
 };
 </script>
+<style lang="scss" scoped>
+.tunnelDialogButton {
+  width: 100px;
+  height: 26px;
+  border-radius: 13px;
+  background-color: #00aaf2;
+  color: #fff;
+  text-align: center;
+  line-height: 26px;
+  margin: 15px 0 10px 15px;
+}
+.el-row {
+  margin-bottom: -10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+#Outside,#Inside{
+  width: 90%;
+  height: 150px;
+  background: #fff;
+  margin-left: 5%;
+  div {
+    width: 100%;
+    height: 150px !important;
+  }
+}
+::v-deep .el-radio-button--medium .el-radio-button__inner {
+  padding: 5px 10px !important;
+  background: transparent;
+  border: 1px solid transparent;
+  // color: #fff;
+}
+::v-deep .el-radio-group > .is-active {
+  background: #00aaf2 !important;
+  border-radius: 20px !important;
+}
+
+::v-deep .el-radio-button {
+  margin: 0 10px;
+}
+</style>

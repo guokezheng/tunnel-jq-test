@@ -337,7 +337,7 @@
               </div>
             </div>
             <div class="cameraBox">
-              <video controls muted autoplay loop :src=item.src  v-for="item in videoList"></video>
+              <video controls muted autoplay loop :src=item.src  v-for="(item,index) in videoList" :key="index"></video>
               <el-image :src="require('@/assets/icons/outline.png')" v-show="videoList.length<2"/>
             </div>
           </div>
@@ -350,9 +350,10 @@
           <el-col :span="11" style="height: 100%;">
             <!-- 视频 -->
             <div class="rightBox videoBox">
-                <video controls muted autoplay loop :src="require('@/assets/Example/d1.mp4')" class="video1" ></video>
+              <video :src='videoUrl' controls muted autoplay loop class="video1"></video>
+                <!-- <video controls muted autoplay loop :src="require('@/assets/Example/d1.mp4')" class="video1" ></video> -->
                 <div class="video">
-                  <img :src="require('@/assets/images/warningPhoto.png')" style="width: 32%;border-radius: 6px;" v-for="item in 3"/>
+                  <img v-for="(item,index) in urls" :key="index" :src="item.imgUrl" style="width: 32%;border-radius: 6px;" />
                 </div>
             </div>
             <!-- 预案 -->
@@ -391,7 +392,7 @@
                 <el-step title="处置结束" icon="el-icon-s-tools"></el-step>
               </el-steps>
               <el-timeline style="height: calc(100% - 150px);overflow: auto;">
-                  <el-timeline-item placement="top" v-for="(item,index) in eventList" color="#00A0FF">
+                  <el-timeline-item placement="top" v-for="(item,index) in eventList" :key="index" color="#00A0FF">
                     <div>{{item.time}}</div>
                     <el-card>
                       <p>{{item.content}}</p>
@@ -459,6 +460,7 @@
     listMaterial,
   } from "@/api/system/material";
   import { listEvent,updateEvent} from "@/api/event/event";
+  import { image, video } from "@/api/eventDialog/api.js";
   export default {
     name: "dispatch",
     data(){
@@ -493,6 +495,8 @@
         lightSwitch: 0,
         changeVideo:0,
         eqTunnelData:[],
+        urls:[],
+        videoUrl:'',
         videoList:[
           {
             src:require('@/assets/Example/v1.mp4')
@@ -697,6 +701,7 @@
         }
         
         getTunnels(tunnelId).then((response) => {
+          console.log(response,"应急调度获取设备信息");
           let res = response.data.storeConfigure;
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
@@ -732,6 +737,23 @@
           }
         });
       },
+      getUrl(){
+       console.log(this.$route.query.id,'当前事件id')
+       const param3 ={
+        businessId:this.$route.query.id,
+       }
+       const param4 ={
+        id:this.$route.query.id,
+       }
+       image(param3).then(response => {
+         console.log(response.data,'获取图片')
+         this.urls = response.data;
+       });
+       video(param4).then(response => {
+         console.log(response.data,'获取视频')
+         this.videoUrl = response.data;
+       });
+     },
     }
     }
 </script>

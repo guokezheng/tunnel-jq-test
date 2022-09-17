@@ -790,7 +790,6 @@ export default {
     ChangeDeviceState(){
       // console.log(this.selectedIconList);
       for(let i = 0;i < this.selectedIconList.length;i++){
-        
         for(let x = 0;x < this.deviceList.length;x++){
           var eqType = this.selectedIconList[i].eqType
           if((eqType??'') !== ''){

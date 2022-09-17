@@ -151,7 +151,6 @@
    methods:{
      
      getUrl(){
-       console.log(this.event.id,'当前事件id')
        const param3 ={
         businessId:111,
         // businessId:this.event.id

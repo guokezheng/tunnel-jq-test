@@ -55,8 +55,15 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService
     @Override
     public int insertSdTunnelSubarea(SdTunnelSubarea sdTunnelSubarea)
     {
+        int result = -1;
         sdTunnelSubarea.setCreateTime(DateUtils.getNowDate());
-        return sdTunnelSubareaMapper.insertSdTunnelSubarea(sdTunnelSubarea);
+        List<SdTunnelSubarea> sdTunnelSubareas = sdTunnelSubareaMapper.selectSdTunnelSubareaList(sdTunnelSubarea);
+        if (sdTunnelSubareas.size() == 0) {
+            result = sdTunnelSubareaMapper.insertSdTunnelSubarea(sdTunnelSubarea);
+        } else {
+            throw new RuntimeException("该隧道分区已存在!");
+        }
+        return result;
     }
 
     /**

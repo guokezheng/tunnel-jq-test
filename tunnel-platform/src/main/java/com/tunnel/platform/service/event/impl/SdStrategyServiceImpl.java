@@ -260,7 +260,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdStrategy sty = new SdStrategy();
         //策略类型
         sty.setStrategyType(model.getStrategyType());
-        sty.setStrategyState(model.getStrategyState());
+        sty.setStrategyState("0");
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());

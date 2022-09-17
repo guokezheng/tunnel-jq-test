@@ -27,6 +27,13 @@ public interface SdTunnelSubareaMapper
 
     /**
      * 查询隧道分区列表
+     * @param sdTunnelSubarea
+     * @return
+     */
+    public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea);
+
+    /**
+     * 查询隧道分区列表
      *
      * @param sdTunnelSubarea 隧道分区
      * @return 隧道分区集合

@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
@@ -25,6 +28,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
 {
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -144,15 +149,20 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
 
     @Override
     public Map<String, Object> getTodayLDData(String deviceId) {
-        Long itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
+        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
+        Long ldInsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode();
+        Long ldOutsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String today = simpleDateFormat.format(new Date());
-        List<Map<String, Object>> todayLDInsideData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
-        itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
-        List<Map<String, Object>> todayLDOutsideData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        List<Map<String, Object>> todayLDData = null;
         Map<String, Object> map = new HashMap<String,Object>();
-        map.put("todayLDInsideData", todayLDInsideData);
-        map.put("todayLDOutsideData", todayLDOutsideData);
+        if (sdDevices != null && sdDevices.getEqType().longValue() == ldInsideTypeCode.longValue()) {
+            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
+            map.put("todayLDInsideData", todayLDData);
+        } else if (sdDevices != null && sdDevices.getEqType().longValue() == ldOutsideTypeCode.longValue()) {
+            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
+            map.put("todayLDOutsideData", todayLDData);
+        }
         return map;
     }
 }

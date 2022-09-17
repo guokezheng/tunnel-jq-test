@@ -337,8 +337,8 @@
         </el-form-item>
         <el-form-item label="预案类别" prop="category">
           <el-select v-model="reservePlanDrawForm.category" placeholder="请选择预案类别" style="width: 80%;">
-            <el-option v-for="(item,index) in planCategory" :key="index" :label="item.name"
-                       :value="item.id"></el-option>
+            <el-option v-for="(item,index) in planCategory" :key="index" :label="item.dictLabel"
+                       :value="item.dictValue"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="事件类型" prop="planTypeId">
@@ -633,7 +633,10 @@ export default {
         })
       })
     })
-    this.selectPlanType()
+    this.getDicts("sd_reserve_plan_category").then(response => {
+      console.log(response.data,'ssssssssssssssssssssssssssssss')
+      this.planCategory = response.data;
+    });
   },
   methods: {
 
@@ -768,7 +771,7 @@ export default {
         console.log(this.previewList)
         var deviceList = [];
         for(let i = 0;i < this.previewList.length;i++){
-          
+
           var item = this.previewList[i].strategyRl;
           for(let z = 0;z < item.length;z++){
             var arr = this.previewList[i].iFileList[z];
@@ -780,7 +783,7 @@ export default {
           }
         }
         console.log(deviceList)
-        this.deviceList =  deviceList; 
+        this.deviceList =  deviceList;
         this.ChangeDeviceState()
       })
       this.workbenchOpen = true
@@ -1094,9 +1097,10 @@ export default {
           this.eqTunnelDataList = item.sdTunnelSubareas
         }
       })
-      getPlanType().then(res => {
-        this.planCategory = res.data
-      })
+      this.getDicts("sd_reserve_plan_category").then(response => {
+        console.log(response.data,'ssssssssssssssssssssssssssssss')
+        this.planCategory = response.data;
+      });
       console.log(this.eqTunnelDataList, ' this.eqTunnelDataList this.eqTunnelDataList')
     },
     /** 修改按钮操作 */
@@ -1114,16 +1118,17 @@ export default {
         })
         console.log(this.eqTunnelDataList, 'this.eqTunnelDataListthis.eqTunnelDataList')
       })
-      getPlanType().then(res => {
-        this.planCategory = res.data
-      })
+      this.getDicts("sd_reserve_plan_category").then(response => {
+        console.log(response.data,'ssssssssssssssssssssssssssssss')
+        this.planCategory = response.data;
+      });
       getPlan(id).then(response => {
         console.log(response, "response回显")
         this.fileList = [];
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId
-        this.reservePlanDrawForm.category = Number(response.data.category)
+        this.reservePlanDrawForm.category = response.data.category
 
         if (this.reservePlanDrawForm.strategyId != -1 && this.reservePlanDrawForm.strategyId != "-1" && this.reservePlanDrawForm.strategyId != null) {
           this.multipleSelectionIds = this.reservePlanDrawForm.strategyId.split("；");

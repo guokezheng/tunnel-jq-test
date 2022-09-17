@@ -2,6 +2,10 @@ package com.ruoyi.quartz.service.impl;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.platform.domain.event.SdStrategy;
+import com.tunnel.platform.mapper.event.SdStrategyMapper;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -250,5 +254,28 @@ public class SysJobServiceImpl implements ISysJobService
     public boolean checkCronExpressionIsValid(String cronExpression)
     {
         return CronUtils.isValid(cronExpression);
+    }
+
+    /**
+     * 修改定时任务状态
+     * @param job
+     * @return
+     */
+    @Override
+    public int updateState(SysJob job) {
+        int result = -1;
+        SysJob sysJob = new SysJob();
+        sysJob.setInvokeTarget(job.getInvokeTarget());
+        List<SysJob> sysJobs = jobMapper.selectJobList(sysJob);
+        for (SysJob job1 : sysJobs) {
+            job1.setStatus(job.getStatus());
+            result = jobMapper.updateJob(job1);
+            if (result > -1) {
+                SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyByJobRelationId(job.getInvokeTarget());
+                sdStrategy.setStrategyState(job.getStatus());
+                result = SpringUtils.getBean(SdStrategyMapper.class).updateSdStrategyById(sdStrategy);
+            }
+        }
+        return result;
     }
 }

@@ -59,10 +59,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     private static RedisCache redisCache;
 
     @Autowired
-    SdTriggerMapper sdTriggerMapper;
+    private SdTriggerMapper sdTriggerMapper;
 
     @Autowired
-    SdTriggerDeviceMapper sdTriggerDeviceMapper;
+    private SdTriggerDeviceMapper sdTriggerDeviceMapper;
+
 
     /**
      * 查询控制策略

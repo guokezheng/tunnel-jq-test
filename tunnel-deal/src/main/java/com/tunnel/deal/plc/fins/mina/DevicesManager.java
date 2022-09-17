@@ -24,15 +24,15 @@ public class DevicesManager {
      */
     private static DevicesManager instance;
 
+    private DevicesManager() {
+
+    }
+
     public static DevicesManager getInstance() {
         if (instance == null) {
             instance = new DevicesManager();
         }
         return instance;
-    }
-
-    private DevicesManager() {
-
     }
 
     /**

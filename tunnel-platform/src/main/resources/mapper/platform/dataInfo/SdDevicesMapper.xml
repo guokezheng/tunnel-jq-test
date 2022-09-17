@@ -114,6 +114,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="protocol != null and protocol !=''">
                 and a.protocol = #{protocol}
             </if>
+            <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
+            <if test="secureKey != null  and secureKey != ''">and a.secure_key = #{secureKey}</if>
             <if test="deptId != null ">
                 AND (b.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>

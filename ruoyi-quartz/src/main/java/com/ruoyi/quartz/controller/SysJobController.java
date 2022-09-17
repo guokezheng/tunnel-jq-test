@@ -1,6 +1,12 @@
 package com.ruoyi.quartz.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.platform.domain.event.SdStrategy;
+import com.tunnel.platform.domain.event.SdStrategyModel;
+import com.tunnel.platform.service.event.ISdStrategyService;
+import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -191,5 +197,15 @@ public class SysJobController extends BaseController
             jobService.deleteJob(rjob);
         }
         return AjaxResult.success();
+    }
+
+    /**
+     * 修改定时任务执行状态
+     * @param job
+     * @return
+     */
+    @PutMapping("/updateState")
+    public AjaxResult updateState(@RequestBody SysJob job) {
+        return AjaxResult.success(jobService.updateState(job));
     }
 }

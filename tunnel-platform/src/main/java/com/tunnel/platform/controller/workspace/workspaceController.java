@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.vms.core.DevicesManager;
-import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
@@ -17,6 +17,7 @@ import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.service.event.ISdEventService;
 import com.tunnel.platform.utils.util.CRC8Util;
 import com.tunnel.platform.utils.util.SpringContextUtils;
+import com.zc.common.core.redis.RedisPubSub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -167,8 +168,17 @@ public class workspaceController extends BaseController {
     }*///gongfanfei
     @PostMapping("/controlDevice")
     public void controlDevice(String devId, String hostId,String tunnelId, String devType, String state) {
-        EquipmentControlInstruction eci = new EquipmentControlInstruction();
-        eci.controlInstructionHandleOne(Long.parseLong(devType),tunnelId, devId, "0", null, state);
+        Map<String, Object> instruction = new HashMap<>();
+        //设备id
+        instruction.put("deviceId", devId);
+        instruction.put("ctrState", state);
+        SpringUtils.getBean(RedisPubSub.class).publish("PLC:CONTROL", JSON.toJSONString(instruction));
+    }
+
+    @PostMapping("/controlYddDevice")
+    public void controlYddDevice(String brightness, String devType, String devId, String frequency, String state, String tunnelId) {
+//        GuidanceLampControlInstruction glci = new GuidanceLampControlInstruction();
+//        glci.controlInstructionHandleOne(brightness, Long.parseLong(devType), devId, frequency, state, tunnelId);
     }
 
     /**

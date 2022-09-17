@@ -29,3 +29,4 @@ hs_err_pid*
 /.settings/
 /tunnel-platform/.settings
 tunnel-ui/vue.config.js
+tunnel-ui/vue.config.js

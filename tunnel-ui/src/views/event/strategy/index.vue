@@ -69,21 +69,18 @@
         </template> -->
         <template slot-scope="scope">
             <div  v-for="(item,index) in scope.row.slist" :key="index" >
-                <el-button v-if="scope.row.strategyType=='0' || index > 0"
+                <el-button
                   size="mini"
                   type="text"
                   icon="el-icon-view"
                   @click="viewStrategyInfo(scope.row,index)"
                 >{{item}}</el-button>
-                <span v-else>
-                  {{item}}
-                </span>
             </div>
         </template>
 
       </el-table-column>
 
-      <el-table-column label="状态" align="center" prop="schedulerTime" >
+      <el-table-column label="状态" align="center" prop="schedulerTime">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.strategyState"
@@ -92,8 +89,7 @@
             active-value="1"
             inactive-value="2"
             active-text="开启"
-            inactive-text="关闭"
-            disabled>
+            inactive-text="关闭">
           </el-switch>
         </template>
       </el-table-column>
@@ -169,10 +165,10 @@
       <el-row >
         <template v-if="strategyForm.strategyType == '0'">
           <el-col :span="8">
-            <el-form-item label="设备类型11">
+            <el-form-item label="设备类型">
               <el-select v-model="strategyForm.equipmentTypeId" placeholder="请选择设备类型" title="手动控制">
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
-                  @click.native="eqTypeChange"/>
+                  @change.native="eqTypeChange" @click.native="resetData"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -181,7 +177,7 @@
           <el-form-item label="方向">
             <el-select v-model="strategyForm.direction" placeholder="请选择设备方向" >
               <el-option v-for="(dict,index) in directionOptions" :key="index" :label="dict.dictLabel" 
-              :value="dict.dictValue"   @click.native="eqTypeChange(dict.dictValue)"/>
+              :value="dict.dictValue" @click.native="resetData"   @change.native="eqTypeChange(dict.dictValue)"/>
             </el-select>
           </el-form-item>
         </el-col>
@@ -300,7 +296,7 @@
     <el-dialog :title="title" :visible.sync="chooseEq"  :close-on-click-modal="false" width="40%" style="height: 100%;" append-to-body>
       <el-form ref="eqForm" :model="strategyForm" :rules="rules" label-width="80px">
         <el-form-item label="设备类型" v-if="equipmentTypeData.length" :style="{height: viewStrategy? '2.75rem':'13.75rem',overflow: 'auto'}" prop="equipment_type">
-          <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange">
+          <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange" @click.native="repeatData">
               <el-radio-button :label="item.typeId" v-for="item in equipmentTypeData" :key="item.typeId"  style="margin: 3px;">
                 {{item.typeName}}
               </el-radio-button>
@@ -316,7 +312,8 @@
               v-for="item in equipmentData"
               :key="item.eqId"
               :label="item.eqName"
-              :value="item.eqId"/>
+              :value="item.eqId"
+              :disabled="item.disabled"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>
         </el-form-item>
@@ -557,13 +554,17 @@ export default {
     });
     // this.getEquipmentType();
   },
-  watch: {
-    //监听策略类型变化
-    'strategyForm.strategyType'(val){
-      console.log(val,'当前策略类型值');
-    },
-  },
   methods: {
+    // 待定
+    repeatData(val){
+      if(this.strategyForm.autoControl.length > 1){
+        let data = this.strategyForm.autoControl;
+        console.log(data);
+        for(let i= 0;i < data.length;i++){
+          // if(val)
+        }
+      }
+    },
     // dialogChange(){
     //   console.log('选择了');
     //   this.strategyForm.autoControl[index].state = this.
@@ -587,25 +588,11 @@ export default {
         return this.$modal.msgError("请填写策略名称");
       }
       if(this.strategyForm.strategyType == '2'){
-        autoEqTypeList().then(res=>{
+        autoEqTypeList({isControl: 1}).then(res=>{
           this.eqTypeList = res.rows;
         })
       }
       this.is_show = true;
-    },
-    //自动触发的方向
-    slectDirectionAuto(dictId){    
-      listDevices({eqType:this.strategyForm.triggers.deviceTypeId,eqTunnelId:this.strategyForm.tunnelId,eqDirection:dictId}).then(res=>{
-        this.equipmentData=res.rows
-        this.deviceName=res.rows
-      })
-      getStateTypeId({stateTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
-        if(this.sink=='edit' ){
-          this.eqState3=res.rows
-        }else if(this.sink=='add'){
-          this.eqState1=res.rows
-        }                 
-      })
     },
     //选择定时控制方向时
     slectDirectionTime(id){
@@ -647,14 +634,6 @@ export default {
       }).then(res=>{
         this.equipmentData=res.rows
         this.deviceName=res.rows
-      })  
-      //给设备状态赋值
-      getStateTypeId({stateTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
-        if(this.sink=='edit' ){
-          this.eqState3=res.rows
-        }else if(this.sink=='add'){
-          this.eqState1=res.rows
-        }                  
       })   
      //给设备数据项赋值
       listItem({deviceTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
@@ -694,34 +673,6 @@ export default {
             this.eqForm.equipments.push(item.eqId)
         }
       })
-    },
-    // 二次弹窗选择设备
-    changeSelect(val) {
-      eqForm.equipment_type
-      this.strategyForm.direction
-      console.log(val);
-      let data = this.strategyForm.addOperation;
-      this.eqForm.equipments = val
-    },
-    changeSelectDirection() {
-      if(this.viewStrategy){
-        return false;
-      }
-      this.queryEqParams.eqType = this.eqForm.equipment_type;
-      this.queryEqParams.eqTunnelId = this.strategyForm.tunnelId;
-      this.queryEqParams.eqDirection = this.strategyForm.direction;
-      this.eqForm.equipments = null;
-      listDevices(this.queryEqParams).then(response => {
-        let a = response.rows;
-        if(response.rows!=null && response.rows.length>0){
-          for(let i=0;i < a.length;i++){
-              if(a[i].remark==null){
-                  a[i].remark = "无备注"
-              }
-          }
-        }
-        this.equipmentData = a
-      });
     },
     handleController(row){
       this.$confirm('是否确认执行！', "警告", {
@@ -764,7 +715,6 @@ export default {
       }
     },
     removeItem(it, index){
-      
       if(this.strategyForm.strategyType == 0){
         if(this.strategyForm.manualControl.length == 1){
           return this.$modal.msgSuccess('请至少保留一行');
@@ -777,9 +727,20 @@ export default {
         this.strategyForm.autoControl.splice(index,1)
       }
     },
+    resetData(){
+      if(this.sink == 'edit'){
+        if(this.strategyForm.strategyType == '0'){
+          this.strategyForm.manualControl = [{value:'',state:''}];
+        }else{
+          this.strategyForm.autoControl = [{value:'',state:'',type:''}];
+        }
+      }
+    },
     //查询设备控制状态和设备列表
     eqTypeChange() {
       if(Number(this.strategyForm.strategyType) == 0){
+        console.log(this.sink,'修改');
+
         var stateTypeId = this.strategyForm.equipmentTypeId
         var direction  =  this.strategyForm.direction
         let params = {'stateTypeId':stateTypeId,'direction':direction,'isControl': 1}
@@ -800,14 +761,35 @@ export default {
       }else{ 
         var eqType = this.eqForm.equipment_type;
       }
-      console.log(eqType,'这是车指的类型id');
       listDevices({
         eqType:eqType,
         eqTunnelId:this.strategyForm.tunnelId,
         eqDirection:this.strategyForm.direction
       }).then(res=>{
-        this.equipmentData = res.rows
-        console.log(this.equipmentData,'我查了，这是证据')
+        let data = res.rows
+        console.log(data);
+        if(this.chooseEq && this.strategyForm.autoControl.length > 1){
+          var currentList = this.strategyForm.autoControl;
+          let newData = [];
+          for(let i = 0;i < currentList.length;i++){
+            newData += currentList[i].value + ','
+          }
+          // console.log(newData);
+          newData = newData.split(',');
+          console.log(newData);
+          for(let i = 0;i < data.length;i++){
+            for(let z = 0;z < newData.length;z++){
+              if(data[i].eqId == newData[z]){
+                console.log(data[i].eqId);
+                console.log(newData[z])
+                data[i].disabled = true;
+              }
+            }
+          }
+          this.equipmentData = data;
+          console.log(this.equipmentData);
+          this.$forceUpdate();
+        }
       })
     },
     //public 查询设备可控状态
@@ -946,8 +928,18 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
+      this.queryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        strategyName: null,
+        strategyType: null,
+        strategyInfo: null,
+        schedulerTime: null,
+        jobTime:null,
+      };
       this.handleQuery();
+      this.getList();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1052,18 +1044,15 @@ export default {
         this.strategyForm.jobRelationId = data.jobRelationId;
         listItem({deviceTypeId:this.strategyForm.triggers.deviceTypeId}).then(res=>{
           this.dataItem = res.rows
-          console.log(this.dataItem.deviceTypeId,'asdasdas')
         })
         // 如果是2.则获取触发器数据
         if(this.strategyForm.strategyType == '2'){
           // 获取触发器的数据
           getTriggersByRelateId({relateId:response.data.id}).then(res=>{
-            console.log(res,'kkkkkkkkkkkkkkk')
             this.strategyForm.triggers.comparePattern = res.data.comparePattern
             this.strategyForm.triggers.compareValue = res.data.compareValue
             this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId
             this.strategyForm.triggers.elementId = res.data.elementId
-            console.log(this.strategyForm.triggers.elementId,'赋的值')
             this.strategyForm.triggers.deviceId = res.data.deviceId
           })
         }
@@ -1071,7 +1060,6 @@ export default {
           this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
-          console.log(response.rows,'zzzzzzzzzzzzzzzzz')
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
           if(this.strategyForm.strategyType == '0'){
             this.eqTypeChange();
@@ -1081,10 +1069,8 @@ export default {
           })
           this.strategyForm.manualControl = response.rows;
           for ( var i = 0; i < response.rows.length; i++){
-            // debugger
             var attr = response.rows[i];
             if(this.strategyForm.strategyType =='0'){
-              // this.strategyForm.manualControl.push({value:'',state:'',})
               this.strategyForm.manualControl[i].value = attr.equipments.split(',')
               this.strategyForm.manualControl[i].state = attr.state
               this.strategyForm.equipmentTypeId = Number(attr.eqTypeId)
@@ -1092,7 +1078,6 @@ export default {
               if(this.strategyForm.autoControl[i].value){
                 this.strategyForm.autoControl[i].value = attr.equipments.split(',')
               }else{
-                // this.strategyForm.autoControl.push({value:'',type:'',state:'',eqStateList:''})
                 this.strategyForm.autoControl[i].value = attr.equipments.split(',')
                 this.strategyForm.autoControl[i].eqStateList = attr.eqStateList
                 this.strategyForm.autoControl[i].state = attr.state
@@ -1195,7 +1180,25 @@ export default {
           return;
         }
       }
-      this.addStrategyInfoData();
+      if(this.sink == 'edit'){
+        this.updateStrategyInfoData();
+      }else{
+        this.addStrategyInfoData();
+      }
+    },
+    // 编辑操作
+    async updateStrategyInfoData(){
+      await getGuid().then(res=>{
+        this.strategyForm.jobRelationId = res
+        this.strategyForm.id = this.currentId
+      });
+      let params = this.strategyForm;
+      updateStrategy(params).then(res=>{
+        this.$modal.msgSuccess("修改策略成功");
+        this.dloading=false;
+        this.drawer=false;
+        this.getList();
+      })
     },
     // 提交保存方法
     async addStrategyInfoData(){

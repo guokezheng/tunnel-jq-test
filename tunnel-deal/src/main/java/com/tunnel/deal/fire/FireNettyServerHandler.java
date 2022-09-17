@@ -63,9 +63,7 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 		InetSocketAddress ipSocket = (InetSocketAddress)ctx.channel().remoteAddress();
 		String clientIp = ipSocket.getAddress().getHostAddress();
 		log.info("客户端ip地址：{}",clientIp);
-
 		String fireAlarmData = (String) msg;
-
 		//先进行判空操作
 		if (null == fireAlarmData || fireAlarmData.isEmpty()){
 			log.error("收到的消息为空！");
@@ -184,38 +182,7 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 			sdEvent.setStakeNum(sdDevices.getPile());
 			sdEvent.setStartTime(now.toString());
 			sdEventMapper.insertSdEvent(sdEvent);
-		}
-//		else if (data.equals("活")) {
-//			log.info("当前设备运行正常");
-//			SdDevices sdDevices = new SdDevices();
-//			sdDevices.setIp(clientIp);
-//			List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
-//			for (int i = 0;i < devicesList.size();i++) {
-//				SdDevices devices = devicesList.get(i);
-//				String eqStatus = devices.getEqStatus();
-//				if (!eqStatus.equals("1")) {
-//					devices.setEqStatus("1");
-//					devices.setEqStatusTime(new Date());
-//					sdDevicesMapper.updateSdDevices(devices);
-//				}
-//				String hostEqId = devices.getEqId();
-//				SdDevices componentDevice = new SdDevices();
-//				componentDevice.setFEqId(hostEqId);
-//				List<SdDevices> componentList = sdDevicesMapper.selectSdDevicesList(componentDevice);
-//				for (int j = 0;j < componentList.size();j++) {
-//					SdDevices component = componentList.get(j);
-//					//推送数据到万基
-//					Map<String, Object> map = new HashMap<>();
-//					map.put("deviceId", component.getEqId());
-//					map.put("deviceType", component.getEqType());
-//					JSONObject jsonObject = new JSONObject();
-//					jsonObject.put("runStatus", "在线");
-//					map.put("deviceData", jsonObject);
-//					radarEventService.sendBaseDeviceStatus(map);
-//				}
-//			}
-//		}
-		else {
+		} else {
 			log.error("当前报文格式异常，请检查设备！");
 			return;
 		}

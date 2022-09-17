@@ -2,13 +2,19 @@ package com.tunnel.deal.plc.redisHandle;
 
 import com.alibaba.fastjson.JSON;
 import com.google.auto.service.AutoService;
+import com.serotonin.modbus4j.ModbusMaster;
 import com.tunnel.deal.plc.fins.CmdProcess;
+import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
+import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
 import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
-
-
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.service.dataInfo.ISdDevicesService;
+import com.tunnel.platform.utils.util.SpringContextUtils;
 import com.zc.common.core.redis.RedisMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.Message;
 
 import java.util.ArrayList;
@@ -26,15 +32,10 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
 
     private static Logger logger = LoggerFactory.getLogger(PlcMsgReceivedHandle.class);
 
-    private Integer a = 0;
+    @Autowired
+    ISdDevicesService devicesService;
 
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
-        a++;
-        String body = new String(message.getBody());
-        logger.info("收到的mq消息" + body);
-        addControl(body);
-    }
+    private Integer a = 0;
 
     @Override
     public boolean isChannelExist(String channel) {
@@ -44,6 +45,79 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
         return false;
     }
 
+    @Override
+    public void onMessage(Message message, byte[] pattern) {
+        a++;
+        String ctrBody = new String(message.getBody());
+        logger.info("收到的mq消息" + ctrBody);
+        toControlDev(ctrBody);
+    }
+
+    private void toControlDev(String ctrBody) {
+        Map<String, Object> ctrResult = (Map<String, Object>) JSON.parse(ctrBody);
+        String deviceId = ctrResult.get("deviceId").toString();
+        Integer ctrState = Integer.parseInt(ctrResult.get("ctrState").toString());
+        devicesService = (ISdDevicesService) SpringContextUtils.getBean(ISdDevicesService.class);
+        SdDevices sdDevices = devicesService.selectSdDevicesById(deviceId);
+        Long deviceType = sdDevices.getEqType();
+        String plcId = sdDevices.getFEqId();
+        Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
+        ModbusMaster master = masterMap.get(plcId);
+        if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+            try {
+                boolean[] data = new boolean[4];
+                for (int i = 0; i < data.length; i++) {
+                    data[i] = false;
+                }
+                if (ctrState == 1) {
+                    data[ctrState] = false;
+                } else if (ctrState == 2) {
+                    data[4] = false;
+                } else if (ctrState == 2) {
+                    data[4] = false;
+                } else {
+                    data[ctrState] = true;
+                }
+                Modbus4jWriteUtils.writeCoils(master, 1, Integer.parseInt(sdDevices.getEqFeedbackAddress2()) - 1, data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void getCheZhiState(boolean fHong, boolean fLv, boolean zHong, boolean zLv) {
+
+
+        Integer state = null;
+
+        boolean[] data = new boolean[4];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = false;
+        }
+
+        data[state] = false;
+        data[state] = true;
+        data[state] = true;
+        data[state] = true;
+
+
+        //复位-正向通行-1
+        boolean[] one = {true, false, false, false};
+        //复位-逆向通行-4
+        boolean[] two = {false, false, false, true};
+        //复位-禁行-3
+        boolean[] three = {false, false, true, false};
+        //复位-关闭-2
+        boolean[] four = {false, true, false, false};
+
+
+    }
+
+
+    /*
+     * 此方法需重新对接
+     * */
     private void addControl(String json) {
         Map<String, Object> result = (Map<String, Object>) JSON.parse(json);
         Long plcId = Long.valueOf(result.get("plcId").toString());
@@ -66,6 +140,7 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
             cmdInfo.setCmdList(cmdList2);
         }
     }
+
     //照明设备需要二次复位
     public void resetZM(String cmd, Long plcId) {
         Thread thread = new Thread(new Runnable() {

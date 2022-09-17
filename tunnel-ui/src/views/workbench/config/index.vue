@@ -1639,7 +1639,7 @@
     getTunnels,
     updateTunnels,
     getConfigData,
-    getStorageData,
+    // getStorageData,
     setConfigData,
     pressure,
     sendAnalogCom,
@@ -1708,7 +1708,8 @@
     proportionOfEquipment,
     trafficFlowInformation,
     vehicleMonitoring,
-    special
+    special,
+    getStorageData
   } from "@/api/workbench/config.js"
   import {
     getDeviceBase,
@@ -4019,7 +4020,7 @@
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-                    break;zxczxc
+                    break;
                   }
                 }
               }
@@ -4115,91 +4116,94 @@
         // 真实
         //getConfigData(this.currentTunnel.id)
         // 模拟
+        // getStorageData({
+        //     tunnelId: this.currentTunnel.id
+        //   })
+        //   .then((response) => {
+        //     for (let i = 0; i < response.length; i++) {
+        //       // 实时状态
+        //       let type = response[i].devType;
+        //       if (type != "" && type != undefined) {
+        //         for (let j = 0; j < this.selectedIconList.length; j++) {
+        //           if (response[i].devId == this.selectedIconList[j].eqId) {
+        //             // 需要换光标的
+        //             for (let k = 0; k < this.eqTypeStateList.length; k++) {
+        //               if (
+        //                 this.selectedIconList[j].eqType ==
+        //                 this.eqTypeStateList[k].type &&
+        //                 response[i].state == this.eqTypeStateList[k].state
+        //               ) {
+        //                 let url = this.eqTypeStateList[k].url;
+        //                 this.selectedIconList[j].eqDirection =
+        //                   response[i].direction;
+        //                 if (response[i].direction == "1") {
+        //                   //上行车道
+        //                   if (url.length > 1) {
+        //                     this.selectedIconList[j].url = [url[1], url[0]];
+        //                   } else {
+        //                     this.selectedIconList[j].url = url;
+        //                   }
+        //                 } else {
+        //                   this.selectedIconList[j].url =
+        //                     this.eqTypeStateList[k].url;
+        //                 }
+        //                 this.selectedIconList[j].state = response[i].state;
+        //               }
+        //               // 微波车检
+        //               else if (
+        //                 this.selectedIconList[j].eqType ==
+        //                 this.eqTypeStateList[k].type &&
+        //                 this.selectedIconList[j].eqType == "108" &&
+        //                 type == "108"
+        //               ) {
+        //                 this.selectedIconList[j].wbList = response[i].state;
+        //               }
+        //               // 路面状态
+        //               else if (
+        //                 // this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
+        //                 this.selectedIconList[j].eqType == "120" && type == "120"
+        //               ) {
+        //                 this.selectedIconList[j].lmList = response[i].state;
+        //               }
+        //               // 道路结冰
+        //               else if (
+        //                 this.selectedIconList[j].eqType == "110" &&
+        //                 type == "110"
+        //               ) {
+        //                 this.selectedIconList[j].dljb = response[i].state;
+        //               }
+        //               /* // 水泵
+        //           else if (this.selectedIconList[j].eqType == '18' && type == '18') {
+        //             this.selectedIconList[j].shuibeng = response[i].state
+        //             if (response[i].state) {
+        //               let devState = JSON.parse(response[i].state).devState
+        //               if (this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
+        //                 devState == this.eqTypeStateList[k].state) {
+        //                 this.selectedIconList[j].url = this.eqTypeStateList[k].url
+        //               }
+        //             }
+        //           } */
+        //             }
+        //             // 不需要换光标的
+        //             let paramType = [5, 6, 13, 14, 15, 16, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
+        //             if (paramType.includes(parseInt(type))) {
+        //               if (response[i].state == "null" || !response[i].state) {
+        //                 this.selectedIconList[j].value = "0";
+        //               } else {
+        //                 this.selectedIconList[j].value = response[i].state;
+        //               }
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   })
+        //   .catch((err) => {
+        //     // this.systemState = "较差";
+        //   });
         getStorageData({
-            tunnelId: this.currentTunnel.id
-          })
-          .then((response) => {
-            for (let i = 0; i < response.length; i++) {
-              // 实时状态
-              let type = response[i].devType;
-              if (type != "" && type != undefined) {
-                for (let j = 0; j < this.selectedIconList.length; j++) {
-                  if (response[i].devId == this.selectedIconList[j].eqId) {
-                    // 需要换光标的
-                    for (let k = 0; k < this.eqTypeStateList.length; k++) {
-                      if (
-                        this.selectedIconList[j].eqType ==
-                        this.eqTypeStateList[k].type &&
-                        response[i].state == this.eqTypeStateList[k].state
-                      ) {
-                        let url = this.eqTypeStateList[k].url;
-                        this.selectedIconList[j].eqDirection =
-                          response[i].direction;
-                        if (response[i].direction == "1") {
-                          //上行车道
-                          if (url.length > 1) {
-                            this.selectedIconList[j].url = [url[1], url[0]];
-                          } else {
-                            this.selectedIconList[j].url = url;
-                          }
-                        } else {
-                          this.selectedIconList[j].url =
-                            this.eqTypeStateList[k].url;
-                        }
-                        this.selectedIconList[j].state = response[i].state;
-                      }
-                      // 微波车检
-                      else if (
-                        this.selectedIconList[j].eqType ==
-                        this.eqTypeStateList[k].type &&
-                        this.selectedIconList[j].eqType == "108" &&
-                        type == "108"
-                      ) {
-                        this.selectedIconList[j].wbList = response[i].state;
-                      }
-                      // 路面状态
-                      else if (
-                        // this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
-                        this.selectedIconList[j].eqType == "120" && type == "120"
-                      ) {
-                        this.selectedIconList[j].lmList = response[i].state;
-                      }
-                      // 道路结冰
-                      else if (
-                        this.selectedIconList[j].eqType == "110" &&
-                        type == "110"
-                      ) {
-                        this.selectedIconList[j].dljb = response[i].state;
-                      }
-                      /* // 水泵
-                  else if (this.selectedIconList[j].eqType == '18' && type == '18') {
-                    this.selectedIconList[j].shuibeng = response[i].state
-                    if (response[i].state) {
-                      let devState = JSON.parse(response[i].state).devState
-                      if (this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
-                        devState == this.eqTypeStateList[k].state) {
-                        this.selectedIconList[j].url = this.eqTypeStateList[k].url
-                      }
-                    }
-                  } */
-                    }
-                    // 不需要换光标的
-                    let paramType = [5, 6, 13, 14, 15, 16, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
-                    if (paramType.includes(parseInt(type))) {
-                      if (response[i].state == "null" || !response[i].state) {
-                        this.selectedIconList[j].value = "0";
-                      } else {
-                        this.selectedIconList[j].value = response[i].state;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          })
-          .catch((err) => {
-            // this.systemState = "较差";
-          });
+          tunnelId: this.currentTunnel.id
+        })
       },
       /* 选择隧道*/
       switchTunnel() {

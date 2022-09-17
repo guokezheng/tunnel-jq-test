@@ -110,3 +110,12 @@ export function getTodayLDData(deviceId){
     method: 'get',
   })
 }
+
+//根据隧道id查询当前设备的监测状态、实时数据或状态
+export function getDeviceData(query) {
+  return request({
+    url: '/system/data/getDeviceDataByTunnelId',
+    method: 'get',
+    params: query
+  })
+}

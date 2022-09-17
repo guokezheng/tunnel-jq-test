@@ -464,7 +464,8 @@
   export default {
     name: "dispatch",
     data(){
-      return{
+      return{ 
+        tunnelList:[],//隧道配置信息
         planList1:[
           {
             text:'火灾报警1区'
@@ -600,11 +601,8 @@
       selectedIconList: [], //配置图标
       }
     },
-    mounted() {
-      this.getSubareaBy();
-    },
     created() {
-      // this.getTunnelData();
+      this.getTunnelData();
       this.getmaterialList();//应急物资
       this.getpersonnelList();//调度电话
       if(this.$route.query.id){
@@ -644,7 +642,19 @@
       getSubareaBy(){
         const params = 'JQ-JiNan-WenZuBei-MJY';
         getSubareaByTunnelId(params).then(result=>{
-          console.log(result,'1231231231232')
+          console.log(result.data)
+          let data = result.data;
+          console.log(this.selectedIconList)
+          for(let i = 0;i < data.length;i++){
+            for(let z = 0 ;z < this.selectedIconList.length;z++){
+              let brr = this.selectedIconList[z];
+              if(data[i].eqIdMax == brr.eqId){
+                console.log(brr);
+              }
+              if(data[i].eqIdMin == brr.feqId){
+              }
+            }
+          }
         })
       },
       rightClick(index){
@@ -709,6 +719,9 @@
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
+            console.log(res,'res');
+            this.tunnelList = res.eqList;
+            
             listType({isControl:1}).then((response) => {
               var arr = []
               for(let item1 of response.rows) {
@@ -723,6 +736,7 @@
                
               }
               this.selectedIconList = arr //这是最终需要挂载到页面上的值
+              this.getSubareaBy();
             }).then(() => {
             });
           } else {

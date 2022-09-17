@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.auto.service.AutoService;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.tunnel.deal.plc.fins.CmdProcess;
+import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
-import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
 import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
 import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
@@ -59,29 +59,13 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
         Integer ctrState = Integer.parseInt(ctrResult.get("ctrState").toString());
         devicesService = (ISdDevicesService) SpringContextUtils.getBean(ISdDevicesService.class);
         SdDevices sdDevices = devicesService.selectSdDevicesById(deviceId);
+        String[] point = sdDevices.getEqControlPointAddress().split(",");
         Long deviceType = sdDevices.getEqType();
         String plcId = sdDevices.getFEqId();
         Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
         ModbusMaster master = masterMap.get(plcId);
         if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
-            try {
-                boolean[] data = new boolean[4];
-                for (int i = 0; i < data.length; i++) {
-                    data[i] = false;
-                }
-                if (ctrState == 1) {
-                    data[ctrState] = false;
-                } else if (ctrState == 2) {
-                    data[4] = false;
-                } else if (ctrState == 2) {
-                    data[4] = false;
-                } else {
-                    data[ctrState] = true;
-                }
-                Modbus4jWriteUtils.writeCoils(master, 1, Integer.parseInt(sdDevices.getEqFeedbackAddress2()) - 1, data);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            ModbusTcpHandle.getInstance().toControlCZ(master, 1, Integer.parseInt(point[0]) - 1, ctrState);
         }
     }
 

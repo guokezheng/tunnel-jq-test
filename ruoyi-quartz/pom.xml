@@ -34,11 +34,8 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.tunnel</groupId>
-            <artifactId>tunnel-platform</artifactId>
-            <version>1.0.0</version>
-        </dependency>
+
+
         <dependency>
             <groupId>com.tunnel</groupId>
             <artifactId>tunnel-deal</artifactId>

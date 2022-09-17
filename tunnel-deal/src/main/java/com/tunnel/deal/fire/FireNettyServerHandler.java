@@ -8,10 +8,14 @@ import com.tunnel.platform.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
+import com.tunnel.platform.domain.event.SdEvent;
+import com.tunnel.platform.domain.event.SdEventType;
 import com.tunnel.platform.domain.event.SdWarningInfo;
 import com.tunnel.platform.domain.event.SdWarningType;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.platform.mapper.event.SdEventMapper;
+import com.tunnel.platform.mapper.event.SdEventTypeMapper;
 import com.tunnel.platform.mapper.event.SdWarningInfoMapper;
 import com.tunnel.platform.mapper.event.SdWarningTypeMapper;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
@@ -44,6 +48,8 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 
 	private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 	private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
+	private static SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
+	private static SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
 
 	public static ChannelGroup clients = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
@@ -85,23 +91,32 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 			System.err.println("alarmType:" + alarmType);
 			data = data.substring(data.indexOf(":")+2);
 			String host = data.substring(0, data.indexOf("号"));
+			SdDevices devices = new SdDevices();
+			devices.setIp(clientIp);
+			List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(devices);
+			SdDevices sdDevices = devicesList.get(0);
 			if (data.contains("复位")) {
-				log.info("主机{}进行了复位", host);
+				log.info("主机{}进行了复位", sdDevices.getEqId());
 				//复位清除预警
-				SdWarningInfo info = new SdWarningInfo();
-				info.setWarningTypeId(20L);
-				info.setProcessState("0");
-				List<SdWarningInfo> list = SpringUtils.getBean(SdWarningInfoMapper.class).selectSdWarningInfoList(info);
-				for (int i = 0;i < list.size();i++) {
-					SdWarningInfo info1 = list.get(i);
-					String eqId = info1.getEqId();
-					String result = sdDevicesMapper.selectDeviceByHostAndEqId(host, eqId);
-					if (!result.equals("") || result != null) {
-						info1.setProcessState("2");
-						SpringUtils.getBean(SdWarningInfoMapper.class).updateSdWarningInfo(info1);
-					}
+				SdEvent sdEvent = new SdEvent();
+				sdEvent.setEventTypeId(101L);
+				List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+				for (int i = 0;i < sdEvents.size();i++) {
+					SdEvent event = sdEvents.get(i);
+					event.setEventState("1");
+					event.setEndTime(new Date().toString());
+					sdEventMapper.updateSdEvent(event);
+				}
+				sdEvent.setEventTypeId(102L);
+				sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+				for (int i = 0;i < sdEvents.size();i++) {
+					SdEvent event = sdEvents.get(i);
+					event.setEventState("1");
+					event.setEndTime(new Date().toString());
+					sdEventMapper.updateSdEvent(event);
 				}
 			}
+			String fireComponentHosteqId = devicesList.get(0).getEqId();
 			data = data.substring(data.indexOf("机")+1);
 			String loop = data.substring(0, data.indexOf("回"));
 			data = data.substring(data.indexOf("路")+1);
@@ -117,40 +132,90 @@ public class FireNettyServerHandler extends  ChannelInboundHandlerAdapter {
 			} catch (Exception e) {
 				log.error("火灾报警日期转换出现异常：" + e.getMessage());
 			}
-			String eqId = sdDevicesMapper.selectDeviceByHost(host, loop, address);
-			SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(eqId);
-			SdWarningInfo warningInfo = new SdWarningInfo();
-			warningInfo.setTunnelId(sdDevices.getEqTunnelId());
-			warningInfo.setWarningTypeId(20L);
-			SdWarningType sdWarningType = SpringUtils.getBean(SdWarningTypeMapper.class).selectSdWarningTypeById(20L);
-			warningInfo.setWarningName(sdWarningType.getTypeName());
-			warningInfo.setWarningTime(now);
-			SdTunnels sdTunnels = SpringUtils.getBean(SdTunnelsMapper.class).selectSdTunnelsById(sdDevices.getEqTunnelId());
-			if (alarmType.contains("故障")) {
-				warningInfo.setInforSources(sdTunnels.getTunnelName() + sdDevices.getPile() + sdDevices.getEqName() + "出现" + alarmType);
-			} else {
-				warningInfo.setInforSources(sdTunnels.getTunnelName() + sdDevices.getPile() + sdDevices.getEqName() + "发出" + sdWarningType.getTypeName());
-			}
-			warningInfo.setPosition(sdDevices.getPile());
-			warningInfo.setProcessState("0");
-			warningInfo.setCreateTime(new Date());
-			warningInfo.setEqId(sdDevices.getEqId());
-			SpringUtils.getBean(SdWarningInfoMapper.class).insertSdWarningInfo(warningInfo);
-		} else if (data.equals("活")) {
-			log.info("当前设备运行正常");
-			SdDevices sdDevices = new SdDevices();
-			sdDevices.setIp(clientIp);
-			List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
-			for (int i = 0;i < devicesList.size();i++) {
-				SdDevices devices = devicesList.get(i);
-				String eqStatus = devices.getEqStatus();
-				if (!eqStatus.equals("1")) {
-					devices.setEqStatus("1");
-					devices.setEqStatusTime(new Date());
-					sdDevicesMapper.updateSdDevices(devices);
+			//根据火灾报警主机ID和回路确定是哪一批设备
+			devices.setIp(null);
+			devices.setFEqId(fireComponentHosteqId);
+			devices.setSecureKey(loop);
+			List<SdDevices> devicesLists = sdDevicesMapper.selectSdDevicesList(devices);
+			//遍历确定是哪个部件
+			String alarmComponentEqId = "";
+			for (int i = 0;i < devicesLists.size();i++) {
+				SdDevices component = devicesLists.get(i);
+				String eqFeedbackAddress1 = component.getEqFeedbackAddress1();
+				String[] componentAddress = eqFeedbackAddress1.split(",");
+				for (int j = 0;j < componentAddress.length;j++) {
+					if (componentAddress[j].equals(address)) {
+						log.info("找到部件");
+						alarmComponentEqId = component.getEqId();
+						sdDevices = component;
+						break;
+					}
+				}
+				if (!alarmComponentEqId.equals("")) {
+					break;
 				}
 			}
-		} else {
+			//查询当前属于什么事件类型
+			SdEventType sdEventType = new SdEventType();
+			if (sourceDevice.equals("手报")) {
+				sdEventType.setEventType(sourceDevice);
+			} else if (sourceDevice.equals("火焰报警器")) {
+				sdEventType.setEventType("火灾");
+			}
+			Long eventTypeId = 0L;
+			if (sdEventType.getEventType() != null) {
+				List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+				eventTypeId = sdEventTypes.get(0).getId();
+			}
+			if (eventTypeId == 0) {
+				return;
+			}
+			//存储事件到事件表
+			SdEvent sdEvent = new SdEvent();
+			sdEvent.setTunnelId(sdDevices.getEqTunnelId());
+			sdEvent.setEventTypeId(eventTypeId);
+			if (alarmType.contains("故障")) {
+				sdEvent.setEventTitle(sourceDevice + "故障事件");
+			} else {
+				sdEvent.setEventTitle(sourceDevice + "，声光报警器报警事件");
+			}
+			sdEvent.setEventSource("1");
+			sdEvent.setEventState("0");
+			sdEvent.setStakeNum(sdDevices.getPile());
+			sdEvent.setStartTime(now.toString());
+			sdEventMapper.insertSdEvent(sdEvent);
+		}
+//		else if (data.equals("活")) {
+//			log.info("当前设备运行正常");
+//			SdDevices sdDevices = new SdDevices();
+//			sdDevices.setIp(clientIp);
+//			List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+//			for (int i = 0;i < devicesList.size();i++) {
+//				SdDevices devices = devicesList.get(i);
+//				String eqStatus = devices.getEqStatus();
+//				if (!eqStatus.equals("1")) {
+//					devices.setEqStatus("1");
+//					devices.setEqStatusTime(new Date());
+//					sdDevicesMapper.updateSdDevices(devices);
+//				}
+//				String hostEqId = devices.getEqId();
+//				SdDevices componentDevice = new SdDevices();
+//				componentDevice.setFEqId(hostEqId);
+//				List<SdDevices> componentList = sdDevicesMapper.selectSdDevicesList(componentDevice);
+//				for (int j = 0;j < componentList.size();j++) {
+//					SdDevices component = componentList.get(j);
+//					//推送数据到万基
+//					Map<String, Object> map = new HashMap<>();
+//					map.put("deviceId", component.getEqId());
+//					map.put("deviceType", component.getEqType());
+//					JSONObject jsonObject = new JSONObject();
+//					jsonObject.put("runStatus", "在线");
+//					map.put("deviceData", jsonObject);
+//					radarEventService.sendBaseDeviceStatus(map);
+//				}
+//			}
+//		}
+		else {
 			log.error("当前报文格式异常，请检查设备！");
 			return;
 		}

@@ -633,7 +633,9 @@ export default {
         })
       })
     })
-    this.selectPlanType()
+    this.getDicts("sd_reserve_plan_category").then(response => {
+      this.planCategory = response.data;
+    });
   },
   methods: {
 
@@ -768,7 +770,7 @@ export default {
         console.log(this.previewList)
         var deviceList = [];
         for(let i = 0;i < this.previewList.length;i++){
-          
+
           var item = this.previewList[i].strategyRl;
           for(let z = 0;z < item.length;z++){
             var arr = this.previewList[i].iFileList[z];
@@ -780,7 +782,7 @@ export default {
           }
         }
         console.log(deviceList)
-        this.deviceList =  deviceList; 
+        this.deviceList =  deviceList;
         this.ChangeDeviceState()
       })
       this.workbenchOpen = true

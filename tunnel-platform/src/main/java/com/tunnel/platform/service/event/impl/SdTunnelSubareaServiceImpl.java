@@ -95,5 +95,13 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService
         return sdTunnelSubareaMapper.deleteSdTunnelSubareaBySId(sId);
     }
 
-
+    /**
+     * 根据隧道id查询隧道分区
+     * @param tunnelId
+     * @return
+     */
+    @Override
+    public List<SdTunnelSubarea> selectSdTunnelSubareaByTunnelId(String tunnelId) {
+        return sdTunnelSubareaMapper.selectSdTunnelSubareaByTunnelId(tunnelId);
+    }
 }

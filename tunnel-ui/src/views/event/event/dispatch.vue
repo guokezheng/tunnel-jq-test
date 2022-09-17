@@ -458,7 +458,7 @@
   import {
     listMaterial,
   } from "@/api/system/material";
-  import { listEvent,updateEvent} from "@/api/event/event";
+  import { listEvent,updateEvent,getSubareaByTunnelId} from "@/api/event/event";
   export default {
     name: "dispatch",
     data(){
@@ -596,20 +596,21 @@
       selectedIconList: [], //配置图标
       }
     },
+    mounted() {
+      this.getSubareaBy();
+    },
     created() {
-      this.getTunnelData()
-      this.getmaterialList()//应急物资
-      this.getpersonnelList()//调度电话
+      // this.getTunnelData();
+      this.getmaterialList();//应急物资
+      this.getpersonnelList();//调度电话
       if(this.$route.query.id){
         const param = {
           id:this.$route.query.id
         }
         listEvent(param).then( response => {
-          console.log(response.rows,"传事件id获取事件详情")
             this.eventForm = response.rows[0];
             this.eventForm.eventType = response.rows[0].eventType.eventType;
             this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
-           console.log(this.eventForm,"this.eventForm")
         });
       }
       
@@ -626,19 +627,22 @@
         }
         listSdEmergencyPer(params).then((response) => {
           this.personnelList = response.rows;
-          
-
         });
       },
       getmaterialList(){
         const params = {
           tunnelId: "JQ-JiNan-WenZuBei-MJY"
         }
-        listMaterial(params).then(response => {
+        listMaterial(tunnelId).then(response => {
           this.materialList = response.rows;
         });
       },
-      
+      getSubareaBy(){
+        const params = 'JQ-JiNan-WenZuBei-MJY';
+        getSubareaByTunnelId(params).then(result=>{
+          console.log(result,'1231231231232')
+        })
+      },
       rightClick(index){
          $('.mousemoveBox').eq(index).children(1)[1].style.display = 'block'
          $(".icon-box").removeClass("active")
@@ -664,7 +668,6 @@
           eventState:'1'
         }
         updateEvent(param).then(response => {
-          console.log(response,'修改状态')
           this.$modal.msgSuccess("事件处理成功");
         });
         
@@ -701,9 +704,7 @@
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
-            console.log(res,"res")
             listType({isControl:1}).then((response) => {
-              console.log(response,'response')
               var arr = []
               for(let item1 of response.rows) {
                 for(let item of res.eqList){
@@ -717,7 +718,6 @@
                
               }
               this.selectedIconList = arr //这是最终需要挂载到页面上的值
-              console.log(this.selectedIconList,"this.selectedIconList")
             }).then(() => {
             });
           } else {

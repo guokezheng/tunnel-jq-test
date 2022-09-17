@@ -56,7 +56,6 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
     private void toControlDev(String ctrBody) {
         Map<String, Object> ctrResult = (Map<String, Object>) JSON.parse(ctrBody);
         String deviceId = ctrResult.get("deviceId").toString();
-        Integer ctrState = Integer.parseInt(ctrResult.get("ctrState").toString());
         devicesService = (ISdDevicesService) SpringContextUtils.getBean(ISdDevicesService.class);
         SdDevices sdDevices = devicesService.selectSdDevicesById(deviceId);
         String[] point = sdDevices.getEqControlPointAddress().split(",");
@@ -65,6 +64,7 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
         Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
         ModbusMaster master = masterMap.get(plcId);
         if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+            Integer ctrState = Integer.parseInt(ctrResult.get("ctrState").toString());
             ModbusTcpHandle.getInstance().toControlCZ(master, 1, Integer.parseInt(point[0]) - 1, ctrState);
         }
     }

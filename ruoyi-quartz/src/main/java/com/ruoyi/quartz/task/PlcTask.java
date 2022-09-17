@@ -203,11 +203,13 @@ public class PlcTask {
         sdDeviceData.setDeviceId(devices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));
         SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
-        sdDeviceData.setData(value);
-        sdDeviceData.setUpdateTime(new Date());
         if(deviceData != null) {
-            sdDeviceDataMapper.updateSdDeviceData(sdDeviceData);
+            deviceData.setData(value);
+            deviceData.setUpdateTime(new Date());
+            sdDeviceDataMapper.updateSdDeviceData(deviceData);
         } else {
+            sdDeviceData.setData(value);
+            sdDeviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
         }
         //每5分钟记录一次数据存储，车指不需要存储

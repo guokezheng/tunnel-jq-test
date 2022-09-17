@@ -40,12 +40,12 @@ public class ModbusTcpHandle {
                 //初始信号为正绿反红，不做任何处理
             } else if (ctrState == 2) {
                 //参考点位表做出变更
-                data[3] = true;
+                data[2] = true;
             } else if (ctrState == 3) {
                 //参考点位表做出变更对应 2
-                data[2] = true;
-            } else {
                 data[1] = true;
+            } else {
+                data[0] = true;
             }
             Modbus4jWriteUtils.writeCoils(master, slaveId, startOffset, data);
         } catch (Exception e) {

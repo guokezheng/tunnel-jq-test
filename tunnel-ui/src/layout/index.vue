@@ -37,7 +37,9 @@
               <right-panel>
                 <settings />
               </right-panel>
-              <event-dialog v-show="eventDialog" class="eventClass"></event-dialog>
+              <!-- <event-dialog v-show="eventDialog" class="eventClass"></event-dialog> -->
+              <event-dialogTable v-show="eventDialogTable" class="eventClass"></event-dialogTable>
+
              
             </div>
           </template>
@@ -110,7 +112,8 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      eventDialog:false,
+      // eventDialog:false,
+      eventDialogTable:false,
     }
   },
   mixins: [ResizeMixin],
@@ -206,8 +209,11 @@ export default {
       document.getElementsByTagName('body')[0].className = val;
     },
     WjEvent( event ){
+      console.log(event,"WjEventWjEventWjEventWjEventWjEventevent")
       if(event){
-        this.eventDialog = true
+        // this.eventDialog = true
+        this.eventDialogTable = true
+
       }
      },
   },
@@ -220,7 +226,9 @@ export default {
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)['breadcrumb'];
     bus.$on('closeDialog', (e) => {
      if(e == false){
-       this.eventDialog = false
+      //  this.eventDialog = false
+       this.eventDialogTable = false
+
      }
     })
   },
@@ -286,10 +294,10 @@ export default {
       p{color:#000000;}
     }
   }
- .eventClass{
-   position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 100;
-   // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
-   background-color: rgba($color: #000000, $alpha: 0.1);
-   // border-radius: 10px;
- }
+//  .eventClass{
+//    position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 100;
+//    // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
+//    background-color: rgba($color: #000000, $alpha: 0.1);
+//    // border-radius: 10px;
+//  }
 </style>

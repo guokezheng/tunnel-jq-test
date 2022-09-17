@@ -69,12 +69,16 @@
         </template> -->
         <template slot-scope="scope">
             <div  v-for="(item,index) in scope.row.slist" :key="index" >
+              {{item}}
+              <!-- <template v-if="item != null">
                 <el-button
                   size="mini"
                   type="text"
                   icon="el-icon-view"
                   @click="viewStrategyInfo(scope.row,index)"
                 >{{item}}</el-button>
+                
+              </template> -->
             </div>
         </template>
 
@@ -86,10 +90,11 @@
             v-model="scope.row.strategyState"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            active-value="1"
-            inactive-value="2"
+            active-value="0"
+            inactive-value="1"
             active-text="开启"
-            inactive-text="关闭">
+            inactive-text="关闭"
+            @change="changeStrategyState(scope.row)">
           </el-switch>
         </template>
       </el-table-column>
@@ -168,7 +173,7 @@
             <el-form-item label="设备类型">
               <el-select v-model="strategyForm.equipmentTypeId" placeholder="请选择设备类型" title="手动控制">
                 <el-option  v-for="(item,index) in equipmentTypeData" :key="index" :label="item.typeName" :value="item.typeId" 
-                  @change.native="eqTypeChange" @click.native="resetData"/>
+                  @change.native="eqTypeChange" @click.native="resetData" :disabled="item.disabled"/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -190,7 +195,7 @@
               v-for="(item) in equipmentData"
               :key="item.eqId"
               :label="item.eqName"
-              :value="item.eqId"/>
+              :value="item.eqId" :disabled="item.disabled"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>
           <el-select v-model="items.state" placeholder="请选择设备需要执行的操作"
@@ -296,7 +301,7 @@
     <el-dialog :title="title" :visible.sync="chooseEq"  :close-on-click-modal="false" width="40%" style="height: 100%;" append-to-body>
       <el-form ref="eqForm" :model="strategyForm" :rules="rules" label-width="80px">
         <el-form-item label="设备类型" v-if="equipmentTypeData.length" :style="{height: viewStrategy? '2.75rem':'13.75rem',overflow: 'auto'}" prop="equipment_type">
-          <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange" @click.native="repeatData">
+          <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange">
               <el-radio-button :label="item.typeId" v-for="item in equipmentTypeData" :key="item.typeId"  style="margin: 3px;">
                 {{item.typeName}}
               </el-radio-button>
@@ -333,7 +338,7 @@
 
 
 <script>
-import { listStrategy, getStrategy, delStrategy, addStrategy, updateStrategy, addStrategysInfo, updateStrategysInfo, getGuid, handleStrategy } from "@/api/event/strategy";
+import { listStrategy, getStrategy, delStrategy,updateState, addStrategy, updateStrategy, addStrategysInfo, updateStrategysInfo, getGuid, handleStrategy } from "@/api/event/strategy";
 import { listRl, addRl} from "@/api/event/strategyRl";
 import { listType,listHasType ,autoEqTypeList,getStateTypeId,getTriggersByRelateId} from "@/api/equipment/type/api";
 import { listItem } from "@/api/equipment/eqTypeItem/item";
@@ -543,6 +548,7 @@ export default {
     this.getDicts("sd_strategy_type").then(response => {
       this.strategyTypeOptions = response.data;
       this.insertStrategyTypeOptions = response.data;
+      console.log(this.insertStrategyTypeOptions,'this.insertStrategyTypeOptions');
     });
     this.getDicts("sd_trigger_compare_type").then(response => {
       this.symbol=response.data
@@ -555,15 +561,11 @@ export default {
     // this.getEquipmentType();
   },
   methods: {
-    // 待定
-    repeatData(val){
-      if(this.strategyForm.autoControl.length > 1){
-        let data = this.strategyForm.autoControl;
-        console.log(data);
-        for(let i= 0;i < data.length;i++){
-          // if(val)
-        }
-      }
+    changeStrategyState(row){
+      let data = {invokeTarget:row.jobRelationId,status:row.strategyState};
+      updateState(data).then((result)=>{
+        this.$modal.msgError(res.msg);
+      })
     },
     // dialogChange(){
     //   console.log('选择了');
@@ -697,7 +699,27 @@ export default {
           value:'',
           state:''       
         })
+        var currentList = this.strategyForm.manualControl;
+        console.log(currentList,'123213')
+        let newData = [];
+        for(let i = 0;i < currentList.length;i++){
+          newData += currentList[i].value + ','
+        }
+        newData = newData.split(',');
+        let data = this.equipmentData;
+        console.log(newData)
+        for(let i = 0;i < data.length;i++){
+          for(let z = 0;z < newData.length;z++){
+            if(data[i].eqId == newData[z]){
+              data[i].disabled = true;
+            }
+          }
+        }
+        this.equipmentData = data;
+        console.log(this.equipmentData);
+        this.$forceUpdate();
         break;
+
         case '1' :
         this.strategyForm.autoControl.push({         
           value:'',
@@ -705,6 +727,7 @@ export default {
           type:'',    
         })
         break;
+
         case '2' :
         this.strategyForm.autoControl.push({         
           value:'',
@@ -766,29 +789,29 @@ export default {
         eqTunnelId:this.strategyForm.tunnelId,
         eqDirection:this.strategyForm.direction
       }).then(res=>{
-        let data = res.rows
-        console.log(data);
-        if(this.chooseEq && this.strategyForm.autoControl.length > 1){
-          var currentList = this.strategyForm.autoControl;
-          let newData = [];
-          for(let i = 0;i < currentList.length;i++){
-            newData += currentList[i].value + ','
-          }
-          // console.log(newData);
-          newData = newData.split(',');
-          console.log(newData);
-          for(let i = 0;i < data.length;i++){
-            for(let z = 0;z < newData.length;z++){
-              if(data[i].eqId == newData[z]){
-                console.log(data[i].eqId);
-                console.log(newData[z])
-                data[i].disabled = true;
+        let data = res.rows;
+        if(this.strategyForm.strategyType != '0'){
+          if(this.chooseEq && this.strategyForm.autoControl.length > 1){
+            var currentList = this.strategyForm.autoControl;
+            let newData = [];
+            for(let i = 0;i < currentList.length;i++){
+              newData += currentList[i].value + ','
+            }
+            // console.log(newData);
+            newData = newData.split(',');
+            for(let i = 0;i < data.length;i++){
+              for(let z = 0;z < newData.length;z++){
+                if(data[i].eqId == newData[z]){
+                  console.log(data[i].eqId);
+                  console.log(newData[z])
+                  data[i].disabled = true;
+                }
               }
             }
+            this.equipmentData = data;
+            console.log(this.equipmentData);
+            this.$forceUpdate();
           }
-          this.equipmentData = data;
-          console.log(this.equipmentData);
-          this.$forceUpdate();
         }
       })
     },
@@ -873,6 +896,7 @@ export default {
       this.loading = true;
       listStrategy(this.queryParams).then(response => {
         this.strategyList = response.rows;
+        console.log(this.strategyList,'strategyList')
         this.total = response.total;
         this.loading = false;
       });

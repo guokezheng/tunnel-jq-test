@@ -82,3 +82,12 @@ export function getRl(id) {
     method: 'get'
   })
 }
+
+
+export function updateState(data) {
+  return request({
+    url: '/monitor/job/updateState',
+    method: 'put',
+    data: data
+  })
+}

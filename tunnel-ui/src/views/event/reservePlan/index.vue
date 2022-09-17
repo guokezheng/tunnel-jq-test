@@ -115,11 +115,19 @@
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="相关策略" width="200">
         <template slot-scope="scope">
-            <span v-show="scope.row.strategyNames != null"
-                  style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: default;"
+            <!-- <p v-show="scope.row.strategyNames != null"
+                  style="overflow: hidden;text-overflow: ellipsis;cursor: default;"
                   @click="showStrategyContent(scope.row)">
                  {{ scope.row.strategyNames }}
-            </span>
+            </p> -->
+            <el-tag
+              v-show="scope.row.strategyNames != null"
+              :key="tag"
+              v-for="tag in scope.row.strategyNames"
+              :disable-transitions="false"
+              @close="handleClose(tag)">
+              {{tag}}
+            </el-tag>
           <div v-show="scope.row.strategyNames == null">
             无
           </div>
@@ -212,9 +220,9 @@
           <el-table-column align="center" label="策略信息" prop="slist">
             <template slot-scope="scope">
               <div v-for="(item,index) in scope.row.slist" :key="index">
-                 <span style="color: #005CBF;">
+                 <p style="color: #005CBF;">
                    {{ item }}
-                 </span>
+                 </p>
               </div>
             </template>
           </el-table-column>
@@ -373,8 +381,8 @@
                      multiple
                      style="width: 80%;">
             <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
-            </el-button>
+            <!-- <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
+            </el-button> -->
             <span slot="tip" class="el-upload__tip"
                   style="font-style: italic;color: red;padding-left:5%;">{{ text }}</span>
           </el-upload>
@@ -393,7 +401,7 @@
       :visible.sync="strategyVisible"
       append-to-body
       width="60%">
-      <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm" label-width="120px" size="medium">
+      <el-form ref="form1" :inline="true" :model="reserveProcessDrawForm"  label-width="120px" size="medium">
         <el-row :gutter="20">
           <el-col v-for="(item,index) in planTypeIdList" :key="index" :span="24" class="colflex">
             <el-form-item label="节点名称" prop="processName">
@@ -413,8 +421,8 @@
                 @change="handleChangeStrategy(item.handleStrategyList)"></el-cascader>
             </el-form-item>
             <div class="dialog-footer">
-              <el-button type="text" @click.native="addStrategy">添加</el-button>
-              <el-button type="text" @click.native="deleteStrategy">删除</el-button>
+              <el-button type="text" @click.native="addStrategy(index)">添加</el-button>
+              <el-button type="text" @click.native="deleteStrategy(index)">删除</el-button>
             </div>
           </el-col>
         </el-row>
@@ -502,7 +510,7 @@ export default {
       workbenchOpen: false,
       str_arr: [],
       strategyDialog: false,//相关策略弹窗
-      text: '*注*：上传文件不可超过1m',
+      text: '*注*：上传文件不可超过1M且不可超过五个文件',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -639,20 +647,20 @@ export default {
     });
   },
   methods: {
-
-    deleteStrategy(){
-      var index = this.planTypeIdList.length;
-      if(index == 1){
+    deleteStrategy(index){
+      console.log(index);
+      if(index == 0){
         return this.$modal.msgError('至少保留一行')
       }
-      this.planTypeIdList.splice(index-1,1)
+      this.planTypeIdList.splice(index,1)
     },
-    addStrategy(){
-      this.planTypeIdList.push({
+    addStrategy(index){
+      let obj = {
         processName:'',
         processSort:'',
         handleStrategyList:'',
-      })
+      };
+      this.planTypeIdList.splice(index+1,0,obj);
     },
     //获得预案类别
     selectPlanType() {
@@ -741,7 +749,14 @@ export default {
     closeStrategy() {
       this.strategyVisible = false
     },
+    // 编辑策略保存方法
     submitstrategy() {
+      for(let i = 0;i < this.planTypeIdList.length;i++){
+        console.log(this.planTypeIdList[i].handleStrategyList)
+        if(this.planTypeIdList[i].handleStrategyList == '' || this.planTypeIdList[i].processName == ''){
+          return this.$modal.msgWarning('请填写完整');
+        }
+      }
       let data = {'reserveId':this.reserveId,'sdReserveProcesses':this.planTypeIdList}
       addProcess(data).then(res => {
         if (res.code === 200) {
@@ -824,6 +839,7 @@ export default {
       this.reserveId = row.id;
       await getTypeAndStrategy({isControl: 1}).then(res => {
         this.options = res.data
+        console.log(this.options);
       })
       getListByRId({'reserveId':this.reserveId}).then(res=>{
         this.planTypeIdList = res.data;
@@ -842,10 +858,8 @@ export default {
           })
         }
       })
-      console.log(this.planTypeIdList,'xxxxxxxxxxx')
       this.handleStrategyList = []
       this.reserveProcessDrawForm.reserveId = row.id
-
       this.strategyVisible = true
       // })
     },
@@ -1182,7 +1196,7 @@ export default {
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 5 个文件`);
+      this.$message.warning(`当前限制选择5个文件`);
     },
     //监控上传文件列表
     handleChange(file, fileList) {
@@ -1193,18 +1207,18 @@ export default {
         this.$message.error('当前文件已经存在!');
         fileList.pop();
       }
-      let number = [];
-      fileList.forEach((item, index) => {
-        if (item.name.length > 20) {
-          number.push({
-            zxc: index
-          })
-          fileList.splice(index, 1);
-        }
-      })
-      if (number.length > 0) {
-        this.text = '* 文件名不得超过 20 个字符  !'
-      }
+      // let number = [];
+      // fileList.forEach((item, index) => {
+      //   if (item.name.length > 20) {
+      //     number.push({
+      //       zxc: index
+      //     })
+      //     fileList.splice(index, 1);
+      //   }
+      // })
+      // if (number.length > 0) {
+      //   this.text = '* 文件名不得超过 20 个字符  !'
+      // }
       this.fileList = fileList;
     },
     /** 查询相关策略下拉列表 */
@@ -1241,7 +1255,6 @@ export default {
     getList() {
       this.loading = true;
       listPlan(this.queryParams).then(response => {
-        console.log(response, 'responseresponse')
         this.planList = response.rows;
         this.total = response.total;
         this.loading = false;

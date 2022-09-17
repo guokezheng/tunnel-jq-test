@@ -34,6 +34,10 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("桩号上限")
     private String pileMax;
 
+    private String eqIdMin;
+
+    private String eqIdMax;
+
     @Override
     public String toString() {
         return "SdTunnelSubarea{" +

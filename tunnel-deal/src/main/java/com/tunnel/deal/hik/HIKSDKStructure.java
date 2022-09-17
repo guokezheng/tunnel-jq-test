@@ -1,6 +1,7 @@
 package com.tunnel.deal.hik;
 
 import com.sun.jna.Structure;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class HIKSDKStructure extends Structure {
     @Override
-    protected List<String> getFieldOrder(){
+    protected List<String> getFieldOrder() {
         List<String> fieldOrderList = new ArrayList<String>();
         for (Class<?> cls = getClass();
              !cls.equals(HIKSDKStructure.class);

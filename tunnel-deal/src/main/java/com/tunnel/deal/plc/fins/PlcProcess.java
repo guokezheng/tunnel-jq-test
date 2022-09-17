@@ -1,7 +1,7 @@
 package com.tunnel.deal.plc.fins;
 
-import com.tunnel.platform.datacenter.config.MapCache;
 import com.tunnel.deal.plc.fins.mina.DevicesManager;
+import com.tunnel.platform.datacenter.config.MapCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +17,11 @@ import java.util.concurrent.TimeUnit;
 public class PlcProcess {
 
     private static final Logger logger = LoggerFactory.getLogger(PlcProcess.class);
+
+    public static void shutdown() {
+        Thread thread = Thread.currentThread();
+        thread.interrupt();
+    }
 
     public void insertMlgDB() {
         List<String> plcList = CmdProcess.PlcList;
@@ -59,10 +64,5 @@ public class PlcProcess {
         }
 
 
-    }
-
-    public static void shutdown() {
-        Thread thread = Thread.currentThread();
-        thread.interrupt();
     }
 }

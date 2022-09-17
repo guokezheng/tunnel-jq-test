@@ -155,13 +155,14 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String today = simpleDateFormat.format(new Date());
         List<Map<String, Object>> todayLDData = null;
+        Map<String, Object> map = new HashMap<String,Object>();
         if (sdDevices != null && sdDevices.getEqType().longValue() == ldInsideTypeCode.longValue()) {
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
+            map.put("todayLDInsideData", todayLDData);
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == ldOutsideTypeCode.longValue()) {
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
+            map.put("todayLDOutsideData", todayLDData);
         }
-        Map<String, Object> map = new HashMap<String,Object>();
-        map.put("todayLDData", todayLDData);
         return map;
     }
 }

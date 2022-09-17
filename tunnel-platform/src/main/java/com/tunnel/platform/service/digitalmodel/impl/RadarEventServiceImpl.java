@@ -226,6 +226,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
+        WebSocketService.broadcast("dataList",dataList);
+        log.info("---测试车辆---{}",dataList);
     }
 
     @Override

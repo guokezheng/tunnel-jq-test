@@ -86,8 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		d.eq_status eqStatus,d.eq_direction eqDirection,i.item_code itemCode,i.item_name itemName,
         i.unit,a.data,concat(a.data,ifnull(i.unit,'')) dataUnit
         from sd_devices d
-        inner join sd_device_type_item i on d.eq_type = i.device_type_id
-        inner join sd_device_data a on a.device_id = d.eq_id and a.item_id = i.id
+        left join sd_device_type_item i on d.eq_type = i.device_type_id
+        left join sd_device_data a on a.device_id = d.eq_id and a.item_id = i.id
         where d.eq_tunnel_id = #{tunnelId}
     </select>
 

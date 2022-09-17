@@ -1150,7 +1150,7 @@
     <com-robot class="comClass" v-if="this.eqInfo.clickEqType == 29"
               :brandList="this.brandList" :directionList="this.directionList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-robot>  
-    <com-bright class="comClass" v-if="this.eqInfo.clickEqType == 5"
+    <com-bright class="comClass" v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
               :brandList="this.brandList" :directionList="this.directionList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-bright>
     <!--摄像机对话框-->
@@ -4019,11 +4019,11 @@
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-                    break;
+                    break;zxczxc
                   }
                 }
               }
-              that.selectedIconList = res.eqList //设备
+              that.selectedIconList = res.eqList //设备zxczczxc
               console.log(that.selectedIconList,"所有设备图标")
             }).then(() => {
               that.initEharts()

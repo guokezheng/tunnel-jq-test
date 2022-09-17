@@ -81,12 +81,12 @@
             <el-row>
               <el-col :span="13">
                 <el-form-item label="上行摄像机:">
-                  <!-- {{ '1000米' }} -->
+                  {{ '1000米' }}
                 </el-form-item>
               </el-col>
               <el-col :span="11">
                 <el-form-item label="下行摄像机:">
-                  <!-- {{ '1000米' }} -->
+                  {{ '1000米' }}
                 </el-form-item>
               </el-col>
             </el-row>

@@ -11,7 +11,7 @@
                 :style="{ width: laneUrlList[0].width + 'px' }"
               ></el-image>
               <div  class="maskClass" >
-                  <div v-for="(item,index) in planList1" class="mousemoveBox"
+                  <div v-for="(item,index) in planList1" :key="index" class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   @mouseleave='mouseleave(index)'
                   :style="{width:100/(planList1.length/2)+'%'}"
@@ -122,7 +122,7 @@
               <el-row>
                  <el-col :span="8">
                    <el-form-item label="桩号位置" prop="stakeNum">
-                     <span>K </span>
+                     <!-- <span>K </span> -->
                      <el-input  v-model="eventForm.stakeNum" placeholder="请输入桩号位置" style="width: 250px;"/>
                    </el-form-item>
                  </el-col>
@@ -352,6 +352,15 @@
             <div class="rightBox videoBox">
               <video :src='videoUrl' controls muted autoplay loop class="video1"></video>
                 <!-- <video controls muted autoplay loop :src="require('@/assets/Example/d1.mp4')" class="video1" ></video> -->
+                <!-- <video
+          id="h5sVideo1"
+          class="h5video_ video1"
+          controls
+          muted
+          autoplay
+          loop
+          style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
+        ></video> -->
                 <div class="video">
                   <img v-for="(item,index) in urls" :key="index" :src="item.imgUrl" style="width: 32%;border-radius: 6px;" />
                 </div>
@@ -461,6 +470,8 @@
   } from "@/api/system/material";
   import { listEvent,updateEvent} from "@/api/event/event";
   import { image, video } from "@/api/eventDialog/api.js";
+import { displayH5sVideoAll } from "@/api/icyH5stream";
+
   export default {
     name: "dispatch",
     data(){
@@ -601,6 +612,7 @@
       }
     },
     created() {
+      console.log(this.$route.query.id,"this.$route.query.id");
       this.getTunnelData()
       this.getmaterialList()//应急物资
       this.getpersonnelList()//调度电话
@@ -626,7 +638,7 @@
       /** 查询应急人员信息列表 */
       getpersonnelList() {
         const params = {
-          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+          tunnelId: this.$route.query.id
         }
         listSdEmergencyPer(params).then((response) => {
           this.personnelList = response.rows;
@@ -636,7 +648,7 @@
       },
       getmaterialList(){
         const params = {
-          tunnelId: "JQ-JiNan-WenZuBei-MJY"
+          tunnelId: this.$route.query.id
         }
         listMaterial(params).then(response => {
           this.materialList = response.rows;
@@ -659,6 +671,8 @@
         delete this.eventForm.eventType;//删除age元素
         updateEvent(this.eventForm).then(response => {
             console.log(response,'修改事件详情')
+          this.$modal.msgSuccess("事件更新成功");
+
         });
       },
       // 
@@ -691,14 +705,11 @@
         };
       },
       /* 获取隧道配置信息*/
-      getTunnelData(tunnelId) {
-        var tunnelId = "JQ-JiNan-WenZuBei-MJY"
+      getTunnelData() {
+        var tunnelId = this.$route.query.id
         let that = this;
         that.upList = [];
         that.downList = [];
-        const params = {
-          tunnelId: tunnelId
-        }
         
         getTunnels(tunnelId).then((response) => {
           console.log(response,"应急调度获取设备信息");

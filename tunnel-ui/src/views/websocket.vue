@@ -19,13 +19,19 @@ export default {
    websocket({ password, path, port, interval}) {
       // 建立 websocket 连接
       this.socket.initialize({
-       
-		     url: 'ws://'+location.hostname + ':' + port + path,
+        
+		    //  url: 'ws://'+location.hostname + ':' + port + path,
+		     url: 'ws://10.3.16.40'+ ':' + port + path,
+		    //  url: 'ws://10.168.64.171'+ ':' + port + path,
+		    //  url: 'ws://10.168.65.230'+ ':' + port + path,
+
 		        password: password,
 		        tokenSN: this.token,
 		        heartRate: interval
       });
-
+this.socket.onopen = () =>{
+  console.log(111111111)
+}
       this.socket.onmessage = (message) => {
         message = JSON.parse(message)
         const method = message.method;

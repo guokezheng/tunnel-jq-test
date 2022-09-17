@@ -86,7 +86,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="风向:">
-              {{ fengDirection }}向
+              {{ fengDirection }}
             </el-form-item>
           </el-col>
         </el-row>

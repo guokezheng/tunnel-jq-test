@@ -338,7 +338,7 @@
 
 
 <script>
-import { listStrategy, getStrategy, delStrategy,updateState, addStrategy, updateStrategy, addStrategysInfo, updateStrategysInfo, getGuid, handleStrategy } from "@/api/event/strategy";
+import { listStrategy, getStrategy, delStrategy,updateState, addStrategy, addStrategysInfo, updateStrategysInfo, getGuid, handleStrategy } from "@/api/event/strategy";
 import { listRl, addRl} from "@/api/event/strategyRl";
 import { listType,listHasType ,autoEqTypeList,getStateTypeId,getTriggersByRelateId} from "@/api/equipment/type/api";
 import { listItem } from "@/api/equipment/eqTypeItem/item";
@@ -567,7 +567,7 @@ export default {
     changeStrategyState(row){
       let data = {invokeTarget:row.jobRelationId,status:row.strategyState};
       updateState(data).then((result)=>{
-        this.$modal.msgError(res.msg);
+        this.$modal.msgError(result.msg);
       })
     },
     // 改变策略类型

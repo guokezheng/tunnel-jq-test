@@ -757,6 +757,10 @@ export default {
         }else{
           this.strategyForm.autoControl = [{value:'',state:'',type:''}];
         }
+      }else{
+        if(this.strategyForm.strategyType == '0'){
+          this.eqTypeChange();
+        }
       }
     },
     //查询设备控制状态和设备列表
@@ -813,6 +817,9 @@ export default {
             this.$forceUpdate();
           }
         }
+        this.equipmentData = data;
+        console.log(this.equipmentData,'12312312')
+        this.$forceUpdate();
       })
     },
     //public 查询设备可控状态

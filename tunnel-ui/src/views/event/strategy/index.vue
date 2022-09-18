@@ -768,6 +768,9 @@ export default {
         }else{
           this.strategyForm.autoControl = [{value:'',state:'',type:''}];
         }
+        if(this.strategyForm.strategyType == '0'){
+          this.eqTypeChange();
+        }
       }else{
         if(this.strategyForm.strategyType == '0'){
           this.eqTypeChange();

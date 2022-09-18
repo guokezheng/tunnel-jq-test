@@ -468,7 +468,7 @@
   import {
     listMaterial,
   } from "@/api/system/material";
-  import { listEvent,updateEvent} from "@/api/event/event";
+  import { listEvent,updateEvent,getSubareaByTunnelId} from "@/api/event/event";
   import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 
@@ -611,6 +611,9 @@ import { displayH5sVideoAll } from "@/api/icyH5stream";
       selectedIconList: [], //配置图标
       }
     },
+    mounted() {
+      this.getSubareaByTunnel();
+    },
     created() {
       console.log(this.$route.query.id,"this.$route.query.id");
       this.getTunnelData()
@@ -635,6 +638,12 @@ import { displayH5sVideoAll } from "@/api/icyH5stream";
       });
     },
     methods:{
+      getSubareaByTunnel(){
+        const params = this.$route.query.id;
+        getSubareaByTunnelId(params).then(result=>{
+          console.log(result);
+        })
+      },
       /** 查询应急人员信息列表 */
       getpersonnelList() {
         const params = {

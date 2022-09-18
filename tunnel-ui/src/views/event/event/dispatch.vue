@@ -27,7 +27,7 @@
                         <div class="ButtonBox">
                           <div class="recovery">{{ itm.planName }}</div>
                           <div class="button">
-                            <div @click="getPreview(itm)">预览</div>
+                            <div @click.native="getPreview(itm)">预览</div>
                             <div>执行</div>
                           </div>
                         </div>

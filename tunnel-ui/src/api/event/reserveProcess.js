@@ -1,3 +1,11 @@
+/*
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-09-17 10:28:08
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-09-18 18:40:30
+ * @FilePath: \tunnel-ui\src\api\event\reserveProcess.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import request from '@/utils/request'
 
 // 查询预案流程节点列表
@@ -58,5 +66,12 @@ export function getListByRId(query) {
     url: '/plan/process/getListByRId',
     method: 'get',
     params: query
+  })
+}
+
+export function previewDisplay(reserveId) {
+  return request({
+    url: '/plan/process/previewDisplay?reserveId=' + reserveId,
+    method: 'get',
   })
 }

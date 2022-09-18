@@ -119,3 +119,12 @@ export function getDeviceData(query) {
     params: query
   })
 }
+
+// 诱导灯弹窗数据
+export function controlDevice(data) {
+  return request({
+    url: '/workspace/controlDevice',
+    method: 'post',
+    data: data
+  })
+}

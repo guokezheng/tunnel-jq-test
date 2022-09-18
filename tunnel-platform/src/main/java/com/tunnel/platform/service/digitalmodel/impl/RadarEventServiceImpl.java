@@ -233,7 +233,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 });
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
-        object.put("dataList",dataList);
+        object.put("radarDataList",dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA,RadarEventConstants.MATCHRESULTDATA+":"+tunnelId,object);
 //        WebSocketService.broadcast("dataList",object);
         WebSocketServer.sendMessage(object.toString());

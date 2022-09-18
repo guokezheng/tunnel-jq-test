@@ -149,7 +149,7 @@
                           <!-- <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label> -->
                         </label>
                         <!-- 洞内洞外 -->
-                        <label style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
+                        <label style="font-size:14px;position: absolute;text-decoration:line;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
                           v-if="item.eqType == 5 || item.eqType == 18">
                           {{ item.num }}
                         </label>
@@ -467,10 +467,10 @@
             </div>
           </div>
           <div v-if="trafficList.length == 0" style="width: 100%;text-align: center;font-size: 14px;margin-top: 80px;">暂无交通事件</div>
-          <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="trafficList">
+          <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="trafficList" >
             <el-row v-for="(item, index) in trafficList" :key="index" class="listRow">
               <el-col style="width: 3vw;text-align: center;">{{index+1}}</el-col>
-              <el-col style="width: 18vw;">{{item.startTime}}   {{item.tunnels.tunnelName}}发生{{item.eventType.eventType}}事件</el-col>
+              <el-col style="width: 18vw;"  @click.native="jumpYingJi(item.id)">{{item.startTime}}   {{item.tunnels.tunnelName}}发生{{item.eventType.eventType}}事件</el-col>
             </el-row>
           </vue-seamless-scroll>
         </div>
@@ -2615,13 +2615,20 @@
       
     },
     methods: {
-  getCheXing(num){
-for(var item of this.vehicleTypeList){
-  if(num == Number(item.dictValue)){
-    return item.dictLabel
-  }
-}
-  },
+      jumpYingJi(num){
+        this.$router.push({
+          path: "/emergency/administration/dispatch",
+          query: { id: num ,tunnelId:'WLJD-JiNan-YanJiuYuan-FHS'},
+        });
+
+      },
+    getCheXing(num){
+      for(var item of this.vehicleTypeList){
+        if(num == Number(item.dictValue)){
+          return item.dictLabel
+        }
+      }
+    },
       // 关闭弹窗子组件
       dialogClose(){
         this.eqInfo.clickEqType = 0
@@ -4278,7 +4285,7 @@ for(var item of this.vehicleTypeList){
                   var eqId = this.selectedIconList[j].eqId;
                   var deviceData = response.data[eqId];
                   if(deviceData){
-                    console.log(deviceData,"deviceData")
+                    // console.log(deviceData,"deviceData")
                   let type = deviceData.eqType;
 
                       // 需要换光标的

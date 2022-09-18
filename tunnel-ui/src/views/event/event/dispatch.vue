@@ -745,7 +745,7 @@ export default {
   },
   methods: {
     randomEvent() {
-      var index = Math.floor(Math.random() * 4);
+      var index = Math.floor(Math.random() * 2 +2);
       console.log(index);
       this.planList1[index].style =
         "border:1px solid red;background-color: rgba(255,0,0,0.6);";
@@ -754,7 +754,7 @@ export default {
     },
 
     async getSubareaByTunnel() {
-      const params = this.$route.query.id;
+      const params = this.$route.query.tunnelId;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
         console.log(this.planList1)

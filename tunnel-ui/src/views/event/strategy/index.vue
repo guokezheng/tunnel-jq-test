@@ -1238,7 +1238,7 @@ export default {
         this.strategyForm.id = this.currentId
       });
       let params = this.strategyForm;
-      updateStrategy(params).then(res=>{
+      updateStrategysInfo(params).then(res=>{
         this.$modal.msgSuccess("修改策略成功");
         this.dloading=false;
         this.drawer=false;

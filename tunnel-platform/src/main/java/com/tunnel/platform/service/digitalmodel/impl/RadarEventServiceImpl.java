@@ -41,6 +41,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.text.ParseException;
 import java.util.*;
 
@@ -201,7 +203,7 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertRadarDetect(Map<String, Object> map) throws ParseException{
+    public void insertRadarDetect(Map<String, Object> map) throws Exception{
         //检测时间，yyyy-MM-dd HH:mm:ss:SSS（可读性考虑）
         String timeStamp = (String) map.get("timeStamp");
         //隧道ID
@@ -232,8 +234,13 @@ public class RadarEventServiceImpl implements RadarEventService {
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
         object.put("radarDataList",dataList);
+        redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA,RadarEventConstants.MATCHRESULTDATA+":"+tunnelId,object);
 //        WebSocketService.broadcast("dataList",object);
         WebSocketServer.sendMessage(object.toString());
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt",true));  //这个ture是内容不覆盖继续写
+        bufferedWriter.write(object.toString());
+        bufferedWriter.newLine();
+        bufferedWriter.close();
         log.info("---测试车辆---{}",dataList);
     }
 

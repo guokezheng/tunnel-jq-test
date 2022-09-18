@@ -17,17 +17,17 @@
                   class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   :style="{ width: 100 / (planList1.length / 2) + '%' }"
-                  @mouseleave="mouseleave(index)"
                 >
+                  <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
-                  <div class="rightClickClass">
+                  <div class="rightClickClass" :style="item.style">
                     <div class="row1">{{ item.SubareaName }}</div>
                     <div class="processBox recoveryBox">
                       <div class="endButton" v-for="itm in item.reservePlans">
                         <div class="ButtonBox">
                           <div class="recovery">{{ itm.planName }}</div>
                           <div class="button">
-                            <div>预览</div>
+                            <div @click="getPreview(itm)">预览</div>
                             <div>执行</div>
                           </div>
                         </div>
@@ -589,11 +589,12 @@ import {
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-
+import { previewDisplay } from "@/api/event/reserveProcess";
 export default {
   name: "dispatch",
   data() {
     return {
+      previewList: null,
       partitionData: null,
       planList1: [
         {
@@ -607,18 +608,6 @@ export default {
         },
         {
           text: "火灾报警4区",
-        },
-        {
-          text: "火灾报警5区",
-        },
-        {
-          text: "火灾报警6区",
-        },
-        {
-          text: "火灾报警7区",
-        },
-        {
-          text: "火灾报警8区",
         },
       ],
       lightSwitch: 0,
@@ -729,8 +718,8 @@ export default {
       selectedIconList: [], //配置图标
     };
   },
-  mounted() {
-    this.getSubareaByTunnel();
+  async mounted() {
+    await this.getSubareaByTunnel();
   },
   created() {
     console.log(this.$route.query.id, "this.$route.query.id");
@@ -755,12 +744,78 @@ export default {
     });
   },
   methods: {
-    getSubareaByTunnel() {
+    randomEvent() {
+      var index = Math.floor(Math.random() * 4);
+      console.log(index);
+      this.planList1[index].style =
+        "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+      this.rightClick(index);
+      console.log(this.planList1[index]);
+    },
+
+    async getSubareaByTunnel() {
       const params = "WLJD-JiNan-YanJiuYuan-FHS";
-      getSubareaByTunnelId(params).then((result) => {
-        console.log(result.data);
+      await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
+        this.randomEvent();
       });
+    },
+    // 预览
+    getPreview(row) {
+      console.log(row.id);
+      previewDisplay(row.id).then((res) => {
+        this.previewList = res;
+        console.log(this.previewList);
+        var deviceList = [];
+        for (let i = 0; i < this.previewList.length; i++) {
+          var item = this.previewList[i].strategyRl;
+          for (let z = 0; z < item.length; z++) {
+            var arr = this.previewList[i].iFileList[z];
+            if (item[z].equipments.indexOf(",")) {
+              deviceList.push({
+                list: item[z].equipments.split(","),
+                state: item[z].state,
+                eqId: this.previewList[i].deviceTypeId,
+                file: arr,
+              });
+            } else {
+              deviceList.push({
+                list: item[z].equipments,
+                state: item[z].state,
+                eqId: this.previewList[i].deviceTypeId,
+                file: arr,
+              });
+            }
+          }
+        }
+        console.log(deviceList);
+        this.deviceList = deviceList;
+        this.ChangeDeviceState();
+      });
+      this.workbenchOpen = true;
+    },
+    ChangeDeviceState() {
+      // console.log(this.selectedIconList);
+      for (let i = 0; i < this.selectedIconList.length; i++) {
+        for (let x = 0; x < this.deviceList.length; x++) {
+          var eqType = this.selectedIconList[i].eqType;
+          if ((eqType ?? "") !== "") {
+            if (eqType == this.deviceList[x].eqId) {
+              var brr = this.deviceList[x].list;
+              for (let p = 0; p < brr.length; p++) {
+                if (this.selectedIconList[i].eqId == brr[p]) {
+                  this.selectedIconList[i].url = [];
+                  console.log(this.deviceList[x].file);
+                  let url = this.deviceList[x].file;
+                  url.forEach((item) => {
+                    this.selectedIconList[i].url.push(item.url);
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
     },
     /** 查询应急人员信息列表 */
     getpersonnelList() {
@@ -829,7 +884,7 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData() {
-      var tunnelId = 'WLJD-JiNan-YanJiuYuan-FHS';
+      var tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
       let that = this;
       that.upList = [];
       that.downList = [];

@@ -2412,7 +2412,7 @@
       })
       this.getDicts("sd_wj_vehicle_type").then((data) => {
         console.log(data, "车型列表");
-        this.eqTypeDialogList = data.data
+        this.vehicleTypeList = data.data
       })
       this.getCheXing()
       
@@ -2604,12 +2604,12 @@
       // }
       this.initeChartsEnd();
       this.loadFocusCar();
-      this.srollAuto()
+      // this.srollAuto()
       
     },
     methods: {
   getCheXing(num){
-for(var item of this.eqTypeDialogList){
+for(var item of this.vehicleTypeList){
   if(num == Number(item.dictValue)){
     return item.dictLabel
   }

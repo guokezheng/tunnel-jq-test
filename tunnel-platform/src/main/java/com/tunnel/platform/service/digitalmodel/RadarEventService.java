@@ -24,7 +24,7 @@ public interface RadarEventService {
 
     AjaxResult specialCar(Map<String, Object> map);
 
-    void insertRadarDetect(Map<String, Object> map) throws ParseException;
+    void insertRadarDetect(Map<String, Object> map) throws Exception;
 
     void saveRedis(Map<String, Object> map);
 

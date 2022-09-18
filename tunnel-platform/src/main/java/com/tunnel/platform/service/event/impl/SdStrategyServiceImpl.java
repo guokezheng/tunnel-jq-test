@@ -249,15 +249,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         // 判断策略是否携带设备
         if ("0".equals(model.getStrategyType())) {
             for (Map<String,Object> map : manualControl) {
-                List<String> eq = (List<String>) map.get("value");
-                if (eq.size() == 0) {
+                String state =  (String) map.get("state");
+                if ("".equals(state) || state == null) {
                     throw new RuntimeException("请填写手动控制完整！");
                 }
             }
         } else {
             for (Map<String,Object> map : autoControl) {
-                List<String> eq = (List<String>) map.get("value");
-                if (eq.size() == 0) {
+                String state = (String) map.get("state");
+                if ("".equals(state) || state == null) {
                     throw new RuntimeException("请填写定时任务或自动触发完整！");
                 }
             }
@@ -351,15 +351,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         // 判断策略是否携带设备
         if ("0".equals(model.getStrategyType())) {
             for (Map<String,Object> map : manualControl) {
-                 List<String> eq = (List<String>) map.get("value");
-                if (eq.size() == 0) {
+                String state =  (String) map.get("state");
+                if ("".equals(state) || state == null) {
                     throw new RuntimeException("请填写手动控制完整！");
                 }
             }
         } else {
             for (Map<String,Object> map : autoControl) {
-                List<String> eq = (List<String>) map.get("value");
-                if (eq.size() == 0) {
+                String state = (String) map.get("state");
+                if ("".equals(state) || state == null) {
                     throw new RuntimeException("请填写定时任务或自动触发完整！");
                 }
             }

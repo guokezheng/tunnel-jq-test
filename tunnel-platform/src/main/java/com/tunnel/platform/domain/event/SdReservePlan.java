@@ -88,6 +88,13 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
 
+    public SdTunnels getSdTunnels() {
+        return sdTunnels;
+    }
+
+    public void setSdTunnels(SdTunnels sdTunnels) {
+        this.sdTunnels = sdTunnels;
+    }
 
     public void setId(Long id)
     {

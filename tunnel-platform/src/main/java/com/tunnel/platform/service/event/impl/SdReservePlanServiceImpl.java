@@ -1,20 +1,19 @@
 package com.tunnel.platform.service.event.impl;
 
+import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.domain.dataInfo.SdDeviceTypeItem;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentState;
 import com.tunnel.platform.domain.dataInfo.SdEquipmentType;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
 import com.tunnel.platform.domain.event.*;
-import com.tunnel.platform.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.platform.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.platform.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.platform.mapper.event.*;
 import com.tunnel.platform.service.event.ISdReservePlanService;
-import com.ruoyi.common.config.RuoYiConfig;
-import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.platform.utils.util.UUIDUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -399,5 +399,22 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService
 		sdReservePlan.setCategory("1");
 		List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
 		return sdReservePlans;
+	}
+
+	@Override
+	public List<Map> selectSdReservePlanByTunnelId(String tunnelId) {
+		List<Map> mapList = new ArrayList<>();
+		List<SdTunnelSubarea> sdTunnelSubareas = SpringUtils.getBean(SdTunnelSubareaMapper.class).selectSdTunnelSubareaByTunnelId(tunnelId);
+		for (SdTunnelSubarea sdTunnelSubarea : sdTunnelSubareas) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("id",sdTunnelSubarea.getsId());
+			map.put("SubareaName",sdTunnelSubarea.getsName());
+			SdReservePlan sdReservePlan = new SdReservePlan();
+			sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
+			List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
+			map.put("reservePlans",sdReservePlans);
+			mapList.add(map);
+		}
+		return mapList;
 	}
 }

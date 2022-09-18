@@ -149,7 +149,7 @@
                           <!-- <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label> -->
                         </label>
                         <!-- 洞内洞外 -->
-                        <label style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
+                        <label style="font-size:14px;position: absolute;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;transform:translateY(5px)"
                           v-if="item.eqType == 5 || item.eqType == 18">
                           {{ item.num }}
                         </label>
@@ -216,29 +216,29 @@
           
             <div class="bingZhou">
               <span>济南方向：</span>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked1?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked1" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked2?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked2" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked3?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked3" class="checkbox"></el-checkbox>
               <el-button type="primary" class="control">控制</el-button>
             </div>
             <div class="bingZhou">
               <span>潍坊方向：</span>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked4?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked4" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked5?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked5" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked6?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
               <el-button type="primary" class="control">控制</el-button>
             </div>
           </el-drawer>
           <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
             <div class="ledLighting">
               <span>引道照明时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan1" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -261,7 +261,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照明1时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan2" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -284,7 +284,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan3" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -307,7 +307,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照明2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan4" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -330,7 +330,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>基本照明2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan5" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -355,38 +355,56 @@
           </el-drawer>
           <!-- 触发控制模块 -->
           <el-drawer
-            title="触发控制"
-            :visible.sync="drawerC"
-            :modal="false"
-            :append-to-body="true"
-            class="drawerBottom"
-          >
-            <div class="bingZhou">
-              <!-- 设备类型 -->
-              <el-select v-model="drawerC.typeValue" placeholder="请选择设备类型">
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-              <!-- 设备名称 -->
-              <div style="margin: 0 15px">
-                <el-select v-model="drawerC.nameValue" placeholder="请选择设备名称">
-                  <el-option
-                    v-for="item in nameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
-              <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
-            </div>
-          </el-drawer>
+          title="触发控制"
+          :visible.sync="drawerCVisible"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerBottom"
+        >
+          <div class="bingZhou">
+            <!-- 设备类型 -->
+            <el-select
+              v-model="drawerC.typeValue"
+              placeholder="请选择设备类型"
+              size="mini"
+              style="width: 100px"
+            >
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+            <!-- 设备名称 -->
+            <div style="margin: 0 15px">
+              <el-select
+                v-model="drawerC.nameValue"
+                placeholder="请选择设备名称"
+                size="mini"
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="item in nameOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <el-input
+              size="mini"
+              v-model="drawerC.inputValue"
+              placeholder="请输入"
+              style="width: 100px"
+            ></el-input>
+            <el-button size="mini" style="transform: translateX(10px)"
+              >确定</el-button
+            >
+          </div>
+        </el-drawer>
       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
@@ -467,10 +485,10 @@
             </div>
           </div>
           <div v-if="trafficList.length == 0" style="width: 100%;text-align: center;font-size: 14px;margin-top: 80px;">暂无交通事件</div>
-          <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="trafficList">
+          <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="trafficList" >
             <el-row v-for="(item, index) in trafficList" :key="index" class="listRow">
               <el-col style="width: 3vw;text-align: center;">{{index+1}}</el-col>
-              <el-col style="width: 18vw;">{{item.startTime}}   {{item.tunnels.tunnelName}}发生{{item.eventType.eventType}}事件</el-col>
+              <el-col style="width: 18vw;"  @click.native="jumpYingJi(item.id)">{{item.startTime}}   {{item.tunnels.tunnelName}}发生{{item.eventType.eventType}}事件</el-col>
             </el-row>
           </vue-seamless-scroll>
         </div>
@@ -1827,23 +1845,35 @@
         // 触发控制模块-设备类型
         typeOptions: [
           {
-            value: "选项1",
-            label: "选项1",
+            value: "1",
+            label: "CO",
           },
           {
-            value: "选项2",
-            label: "选项2",
+            value: "2",
+            label: "VI",
           },
         ],
         // 设备名称
         nameOptions: [
           {
-            value: "名称1",
-            label: "选项1",
+            value: "1",
+            label: ">",
           },
           {
-            value: "名称2",
-            label: "选项2",
+            value: "2",
+            label: "<",
+          },
+          {
+            value: "3",
+            label: "=",
+          },
+          {
+            value: "4",
+            label: "<=",
+          },
+          {
+            value: "5",
+            label: ">=",
           },
         ],
         drawerC:{
@@ -1857,9 +1887,21 @@
         //抽屉
         drawerA: false,
         drawerB: false,
-        drawerC: false,
-        kaiGuan: false,
-        checked: false,
+        drawerCVisible: false,
+        kaiGuan1: false,
+        kaiGuan2: false,
+        kaiGuan3: false,
+        kaiGuan4: false,
+        kaiGuan5: false,
+        kaiGuan6: false,
+        checked1: false,
+        checked2: false,
+        checked3: false,
+        checked4: false,
+        checked5: false,
+        checked6: false,
+
+
         value1: new Date(),
         // wheel:'wheel.prevent',
         buttonIndex: 0,
@@ -2615,13 +2657,20 @@
       
     },
     methods: {
-  getCheXing(num){
-for(var item of this.vehicleTypeList){
-  if(num == Number(item.dictValue)){
-    return item.dictLabel
-  }
-}
-  },
+      jumpYingJi(num){
+        this.$router.push({
+          path: "/emergency/administration/dispatch",
+          query: { id: num ,tunnelId:'WLJD-JiNan-YanJiuYuan-FHS'},
+        });
+
+      },
+    getCheXing(num){
+      for(var item of this.vehicleTypeList){
+        if(num == Number(item.dictValue)){
+          return item.dictLabel
+        }
+      }
+    },
       // 关闭弹窗子组件
       dialogClose(){
         this.eqInfo.clickEqType = 0
@@ -2690,7 +2739,7 @@ for(var item of this.vehicleTypeList){
         this.drawerB = true
       },
        isDrawerC() {
-        this.drawerC = true;
+        this.drawerCVisible = true;
       },
       zoomSwitchChange(val) {
         console.log(val, "val")
@@ -2813,7 +2862,7 @@ for(var item of this.vehicleTypeList){
         // })
         
         getWarnEvent(param).then( response => {
-          console.log(response.data,"预警事件")
+          // console.log(response.data,"预警事件")
             this.trafficList = response.data;
            
           });
@@ -4278,7 +4327,7 @@ for(var item of this.vehicleTypeList){
                   var eqId = this.selectedIconList[j].eqId;
                   var deviceData = response.data[eqId];
                   if(deviceData){
-                    console.log(deviceData,"deviceData")
+                    // console.log(deviceData,"deviceData")
                   let type = deviceData.eqType;
 
                       // 需要换光标的

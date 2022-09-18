@@ -452,8 +452,8 @@
         ></el-step>
       </el-steps>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="workbenchOpen = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
+        <el-button @click="workbenchOpenEvent">取 消</el-button>
+        <el-button type="primary" @click="closeDialogVisible"
           >确 定</el-button
         >
       </span>
@@ -871,6 +871,14 @@ export default {
     });
   },
   methods: {
+    workbenchOpenEvent(){
+      this.getTunnelData(this.tunnelId);
+      this.workbenchOpen = false
+    },
+    closeDialogVisible(){
+      this.getTunnelData(this.tunnelId);
+      this.dialogVisible = false
+    },
     deleteStrategy(index) {
       console.log(index);
       if (index == 0) {
@@ -973,6 +981,7 @@ export default {
     },
     //关闭策略弹窗
     closeStrategy() {
+      this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
     },
     // 编辑策略保存方法
@@ -1080,7 +1089,7 @@ export default {
       this.reserveId = row.id;
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
-        console.log(this.options);
+        console.log(this.options,'this.optionsthis.optionsthis.options');
       });
       getListByRId({ reserveId: this.reserveId }).then((res) => {
         this.planTypeIdList = res.data;

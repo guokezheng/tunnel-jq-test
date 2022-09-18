@@ -420,7 +420,7 @@
             <div class="el-icon-location-information" style="width: 10px;"></div>
           </div>
           <div class="detailsText">桩号位置</div>
-          <div style="color: #82B3C2;line-height: 40px;">K600+000</div>
+          <div style="color: #82B3C2;line-height: 40px;">K666+000</div>
         </el-col>
         <el-col :span="12" style="display: flex;height: 40px;">
           <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
@@ -671,6 +671,8 @@ export default {
     handleDetails(row){
       this.details = true
       this.title = '事件详情'
+      this.detailsForm = row
+      console.log(row,"事件详情row")
     },
     handleDispatch(id){
       console.log(id,"eventeventeventeventeventeventeventevent")

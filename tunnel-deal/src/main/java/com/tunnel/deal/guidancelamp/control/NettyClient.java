@@ -1,8 +1,8 @@
-package com.tunnel.platform.utils.util;
+package com.tunnel.deal.guidancelamp.control;
 
-
-import com.tunnel.platform.utils.util.protocol.*;
-import com.tunnel.platform.utils.util.protocol.decoder.DynamicDecoderDec;
+import com.tunnel.deal.guidancelamp.protocol.RpcRequest;
+import com.tunnel.deal.guidancelamp.protocol.StringUtil;
+import com.tunnel.deal.guidancelamp.protocol.decoder.DynamicDecoderDec;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -49,7 +49,7 @@ public class NettyClient {
 
     private  String code;
 
-    private  RpcRequest rpcRequest;
+    private RpcRequest rpcRequest;
 
     private final int type; //推送格式：0 动态协议 1 动态协议10进制 3 字符串 4 JSON 2 三思协议
 
@@ -66,58 +66,6 @@ public class NettyClient {
         //设置socket工厂
         bootstrap.channel(NioSocketChannel.class);
         switch (type){
-//            case  PUSH_TYPE_STR:
-//                //设置管道
-//                bootstrap.handler(new ChannelInitializer<Channel>() {
-//                    @Override
-//                    protected void initChannel(Channel ch) throws Exception {
-//                        ch.pipeline().addLast(new MyDecoder());// 字符串解码器
-//                        ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));// 字符串编码器
-//                        // 业务处理器
-//                        clientHandler = new ClientHandler(group);
-//                        ch.pipeline().addLast(clientHandler);
-//                    }
-//                });
-//                break;
-//            case  PUSH_TYPE_JSON:
-//                //设置管道
-//                bootstrap.handler(new ChannelInitializer<Channel>() {
-//                    @Override
-//                    protected void initChannel(Channel ch) throws Exception {
-//                        ch.pipeline().addLast(new RpcEncoder(RpcRequest.class)); //编码response
-//                        ch.pipeline().addLast(new RpcDecoder(RpcResponse.class)); //解码request
-//                        // 业务处理器
-//                        clientHandler = new ClientHandler(group);
-//                        ch.pipeline().addLast(clientHandler);
-//                    }
-//                });
-//                break;
-//            case  PUSH_TYPE_STRING:
-//                //设置管道
-//                bootstrap.handler(new ChannelInitializer<Channel>() {
-//                    @Override
-//                    protected void initChannel(Channel ch) throws Exception {
-//                        ch.pipeline().addLast(new SansiDecoder());// 字符串解码器
-//                        ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));// 字符串编码器
-//                        // 业务处理器
-//                        clientHandler = new ClientHandler(group);
-//                        ch.pipeline().addLast(clientHandler);
-//                    }
-//                });
-//                break;
-//            case  PUSH_DYNAMIC_STRING_HEX:
-//                //设置管道
-//                bootstrap.handler(new ChannelInitializer<Channel>() {
-//                    @Override
-//                    protected void initChannel(Channel ch) throws Exception {
-//                        ch.pipeline().addLast(new DynamicDecoder());// 字符串解码器
-//                        ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));// 字符串编码器
-//                        // 业务处理器
-//                        clientHandler = new ClientHandler(group);
-//                        ch.pipeline().addLast(clientHandler);
-//                    }
-//                });
-//                break;
             case  PUSH_DYNAMIC_INDUCTION_DEC:
                 //设置管道
                 bootstrap.handler(new ChannelInitializer<Channel>() {
@@ -131,19 +79,6 @@ public class NettyClient {
                     }
                 });
                 break;
-//            case  PUSH_DYNAMIC_TERRITORY_PROTOCOL:
-//                //设置管道
-//                bootstrap.handler(new ChannelInitializer<Channel>() {
-//                    @Override
-//                    protected void initChannel(Channel ch) throws Exception {
-//                        ch.pipeline().addLast(new MyDecoder());// 字符串解码器
-//                        ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));// 字符串编码器
-//                        // 业务处理器
-//                        clientHandler = new ClientHandler(group);
-//                        ch.pipeline().addLast(clientHandler);
-//                    }
-//                });
-//                break;
             default:log.info("无操作,请联系管理员。");
         }
     }

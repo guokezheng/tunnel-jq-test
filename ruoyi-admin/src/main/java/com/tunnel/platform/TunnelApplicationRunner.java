@@ -26,6 +26,7 @@ public class TunnelApplicationRunner implements ApplicationRunner {
     }
     private void redisSub() {
         SpringUtils.getBean(RedisPubSub.class).subscribe("PLC:CONTROL");
+        SpringUtils.getBean(RedisPubSub.class).subscribe("GL:CONTROL");
     }
     CmdProcess.CmdUtil cmdInitCIO() {
         return new CmdProcess.CmdUtil();

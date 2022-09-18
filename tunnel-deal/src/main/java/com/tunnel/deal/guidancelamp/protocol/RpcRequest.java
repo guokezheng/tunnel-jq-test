@@ -1,4 +1,4 @@
-package com.tunnel.platform.utils.util.protocol;
+package com.tunnel.deal.guidancelamp.protocol;
 
 
 import java.util.List;

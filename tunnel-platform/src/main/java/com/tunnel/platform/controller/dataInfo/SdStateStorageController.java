@@ -162,39 +162,7 @@ public class SdStateStorageController extends BaseController {
     @Log(title = "隧道数据存储表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdStateStorage sdStateStorage) {
-//        ModbusMaster master = ModbusTcpMaster.master;
-//        ModbusTcpMaster.getMaster;
-        //改变车指
-        try{
-            SdDevices devices = sdDevicesService.selectSdDevicesById(sdStateStorage.getDeviceId());
-            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
-            if (devices.getEqType().longValue() == yddType.longValue()) {
-                return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
-            }
-//            String eqFeedbackAddress2 = devices.getEqFeedbackAddress2();
-//            String eqFeedbackAddress3 = devices.getEqFeedbackAddress3();
-//            String eqFeedbackAddress4 = devices.getEqFeedbackAddress4();
-//            boolean[] fuWei={false,false,false};
-            //复位
-//            if (sdStateStorage.getState().equals("1")){
-//                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress2) ,fuWei );
-//            }else  if (sdStateStorage.getState().equals("2")){
-//                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress3)-1 ,fuWei );
-//            } if (sdStateStorage.getState().equals("3")){
-//                boolean b = Modbus4jWriteUtils.writeCoils(master, 1,Integer.parseInt(eqFeedbackAddress4)-2 ,fuWei );
-//            }
-            //控制
-//            if (sdStateStorage.getState().equals("1")){
-//                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress2) ,false );
-//            }else  if (sdStateStorage.getState().equals("2")){
-//                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress4) ,true );
-//            } if (sdStateStorage.getState().equals("3")){
-//                boolean b = Modbus4jWriteUtils.writeCoil(master, 1,Integer.parseInt(eqFeedbackAddress3) ,true );
-//            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return toAjax(1);//sdStateStorageService.updateSdStateStorage(sdStateStorage)
+        return toAjax(sdStateStorageService.updateSdStateStorage(sdStateStorage));
     }
 
     /**

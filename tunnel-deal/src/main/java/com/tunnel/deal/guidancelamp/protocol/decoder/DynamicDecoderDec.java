@@ -1,11 +1,10 @@
-package com.tunnel.platform.utils.util.protocol.decoder;
+package com.tunnel.deal.guidancelamp.protocol.decoder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DynamicDecoderDec extends ByteToMessageDecoder {

@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.platform.business.vms.core.DevicesManager;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
@@ -167,18 +168,18 @@ public class workspaceController extends BaseController {
         eci.controlInstruction(Long.parseLong(devType),null,devId,"0",null,state);
     }*///gongfanfei
     @PostMapping("/controlDevice")
-    public void controlDevice(String devId, String hostId,String tunnelId, String devType, String state) {
+    public void controlDevice(String devId, String devType, String brightness, String frequency, String state, String tunnelId) {
         Map<String, Object> instruction = new HashMap<>();
         //设备id
         instruction.put("deviceId", devId);
         instruction.put("ctrState", state);
-        SpringUtils.getBean(RedisPubSub.class).publish("PLC:CONTROL", JSON.toJSONString(instruction));
-    }
-
-    @PostMapping("/controlYddDevice")
-    public void controlYddDevice(String brightness, String devType, String devId, String frequency, String state, String tunnelId) {
-//        GuidanceLampControlInstruction glci = new GuidanceLampControlInstruction();
-//        glci.controlInstructionHandleOne(brightness, Long.parseLong(devType), devId, frequency, state, tunnelId);
+        instruction.put("brightness", brightness);
+        instruction.put("frequency", frequency);
+        if (devType != null && devType.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())) {
+            SpringUtils.getBean(RedisPubSub.class).publish("GL:CONTROL", JSON.toJSONString(instruction));
+        } else {
+            SpringUtils.getBean(RedisPubSub.class).publish("PLC:CONTROL", JSON.toJSONString(instruction));
+        }
     }
 
     /**

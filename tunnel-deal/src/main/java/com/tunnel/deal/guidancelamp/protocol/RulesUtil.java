@@ -1,4 +1,6 @@
-package com.tunnel.platform.utils.util;
+package com.tunnel.deal.guidancelamp.protocol;
+
+import com.tunnel.platform.utils.util.XorCheckUtils;
 
 import java.io.UnsupportedEncodingException;
 

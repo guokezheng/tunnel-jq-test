@@ -1,4 +1,4 @@
-package com.tunnel.platform.utils.util.protocol.decoder;
+package com.tunnel.deal.guidancelamp.protocol.decoder;
 
 
 import com.alibaba.fastjson.JSON;

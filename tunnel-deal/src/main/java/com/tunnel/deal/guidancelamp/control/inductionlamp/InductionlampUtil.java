@@ -1,14 +1,17 @@
-package com.tunnel.platform.utils.util.protocol.inductionlamp;
+package com.tunnel.deal.guidancelamp.control.inductionlamp;
 
+import com.tunnel.deal.guidancelamp.control.ClientHandler;
+import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusParam;
-import com.tunnel.platform.utils.util.ClientHandler;
-import com.tunnel.platform.utils.util.NettyClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class InductionlampUtil {
@@ -126,6 +129,189 @@ public class InductionlampUtil {
                                 return codeMap;
                             }
                             break;
+                    }
+                    client.stop();
+                    return null;
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        client.stop();
+        return null;
+    }
+
+    //诱导灯当前状态查询
+    public static Map getNowOpenState(String ip, Integer port) {
+        //获取当前是否开灯
+        String code = "1GH+SW?\r\n";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    switch (code) {
+                        case "OK":
+                            log.info("操作成功。");
+                            break;
+                        case "ERROR":
+                            log.error("操作失败，请检查操作指令并联系管理员。");
+                            break;
+                        case "INVALID":
+                            log.error("无效操作，请检查操作指令并联系管理员。");
+                            break;
+                        default:
+                            //响应指令:
+                            String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                            Map<String, Object> map = new HashMap<>();
+                            if (codeInfo.equals("1GH+SW=1")) {
+                                map.put("openState", "1");
+                                return map;
+                            } else {
+                                map.put("openState", "0");
+                                return map;
+                            }
+                    }
+                    client.stop();
+                    return null;
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getNowRunMode(String ip, Integer port) {
+        //获取当前运行模式
+        String code = "1GH+RUNMODE?\r\n";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    switch (code) {
+                        case "OK":
+                            log.info("操作成功。");
+                            break;
+                        case "ERROR":
+                            log.error("操作失败，请检查操作指令并联系管理员。");
+                            break;
+                        case "INVALID":
+                            log.error("无效操作，请检查操作指令并联系管理员。");
+                            break;
+                        default:
+                            //响应指令:
+                            String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                            Map<String, Object> map = new HashMap<>();
+                            if (codeInfo.equals("1GH+RUNMODE=B")) {
+                                //有线闪烁模式
+                                map.put("runMode", "1");
+                                return map;
+                            } else if (codeInfo.equals("1GH+RUNMODE=W")) {
+                                //有线流水模式
+                                map.put("runMode", "2");
+                                return map;
+                            }
+                    }
+                    client.stop();
+                    return null;
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getNowModeAndParameter(String code, String ip, Integer port) {
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    switch (code) {
+                        case "OK":
+                            log.info("操作成功。");
+                            break;
+                        case "ERROR":
+                            log.error("操作失败，请检查操作指令并联系管理员。");
+                            break;
+                        case "INVALID":
+                            log.error("无效操作，请检查操作指令并联系管理员。");
+                            break;
+                        default:
+                            //响应指令: 1GH+BMODE=1,1GH+TPWM= 50, 50,
+                            String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                            String[] data = codeInfo.split(",");
+                            Map<String, Object> map = new HashMap<>();
+                            //拿到当前闪灯模式、亮度、频率，并放到map中
+                            String mode = data[0].substring(data[0].indexOf("=") + 1);
+                            String brightness = data[1].substring(data[1].indexOf("=") + 1);
+                            String frequency = data[2];
+                            map.put("mode", mode);
+                            map.put("brightness", brightness);
+                            map.put("frequency", frequency);
+                            return map;
                     }
                     client.stop();
                     return null;

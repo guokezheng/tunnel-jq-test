@@ -1008,6 +1008,7 @@ export default {
     },
     //打开drawer
     openInsertStrategy() {
+      this.sink = 'add';
       this.strategyForm = {
         manualControl:[
           {value:'',state:''}

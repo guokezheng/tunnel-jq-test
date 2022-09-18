@@ -80,7 +80,7 @@ public class RadarEventController {
      * @param item
      */
     @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
-    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
 //        byte[] value = (byte[]) record.value();
 //        String kafkaJsonStr = new String(value);
 //        if (kafkaJsonStr.startsWith("\"") && kafkaJsonStr.endsWith("\"")) {

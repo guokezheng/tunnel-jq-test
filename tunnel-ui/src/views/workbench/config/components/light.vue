@@ -85,6 +85,7 @@
                 :key="index"
                 v-model="stateForm.state"
                 style="display: flex; flex-direction: column"
+                @change="$forceUpdate()"
               >
                 <el-radio
                   v-if="stateForm.eqType == item.type && item.control == 1"
@@ -92,7 +93,9 @@
                   :label="item.state"
                   style="align-items: center"
                   :class="[
-                    stateForm.state == item.state ? 'el-radio-selcted' : '',
+                    String(stateForm.state) == String(item.state)
+                      ? 'el-radio-selcted'
+                      : '',
                   ]"
                 >
                   <el-row class="flex-row" v-if="stateForm.eqDirection == '0'">
@@ -160,13 +163,13 @@ import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽�
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       title: "",
       stateForm: {}, //弹窗表单
       eqTypeStateList: [],
-      visible: true,
+      visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
@@ -176,7 +179,6 @@ export default {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
 
-    this.getEqTypeStateIcon();
     this.getMessage();
     // this.loadFlv();
   },
@@ -195,10 +197,12 @@ export default {
           // 查询设备当前状态 --------------------------------
           getInfo(this.eqInfo.clickEqType).then((response) => {
             console.log(response, "查询设备当前状态");
-            this.stateForm.state = Number(response.data.state);
-            console.log(this.stateForm.state,"this.stateForm.state");
+            this.stateForm.state = response.data.state;
+            console.log(this.stateForm.state, "this.stateForm.state");
+            this.getEqTypeStateIcon();
           });
         });
+        
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -237,9 +241,10 @@ export default {
           control: list[i].isControl,
           url: iconUrl,
         });
+        console.log(Number(list[i].deviceState), "Number(list[i].deviceState)");
       }
-      console.log(that.eqTypeStateList,"that.eqTypeStateList")
-
+      console.log(that.eqTypeStateList, "that.eqTypeStateList");
+      this.visible = true;
     },
 
     getDirection(num) {

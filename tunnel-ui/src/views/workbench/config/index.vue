@@ -151,7 +151,7 @@
                         <!-- 洞内洞外 -->
                         <label style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
                           v-if="item.eqType == 5 || item.eqType == 18">
-                          {{ item.num }}<span v-show="item.num">cd/m2</span>
+                          {{ item.num }}
                         </label>
                       </div>
                     </el-tooltip>
@@ -433,7 +433,14 @@
               </li>
             </ul>
             <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="realTimeList">
-            <el-row v-for="(item, index) in realTimeList" :key="index" class="listRow">
+              <div v-for="(item, index) in realTimeList" :key="index" class="listRow" style="display:flex;">
+                <div style="text-align:center;width:42px;">{{index+1}}</div>
+                <div style="width:95px;text-align:center;">{{item.vehicleLicense}}</div>
+                <div style="width:112px;text-align:center;">{{item.speed}}km/h</div>
+                <div style="width:86px;text-align:center;">{{item.laneNum}}车道</div>
+                <div style="width:94px;text-align:center;">{{getCheXing(item.vehicleType)}}</div>
+              </div>
+            <!-- <el-row v-for="(item, index) in realTimeList" :key="index" class="listRow">
               <el-col :span="3" style="text-align:center;">{{index+1}}</el-col>
               <el-col :span="6">
                 {{item.vehicleLicense}}
@@ -447,7 +454,7 @@
               <el-col :span="5">
                 {{getCheXing(item.vehicleType)}}
               </el-col>
-            </el-row>
+            </el-row> -->
           </vue-seamless-scroll>
           </div>
         </div>
@@ -2428,7 +2435,7 @@
       },
       radarDataList( event ){
       console.log(event,'websockt工作台接收感知事件数据')
-      this.realTimeList = event
+      // this.realTimeList = event
      },
 
       // 设备类型
@@ -4271,7 +4278,7 @@ for(var item of this.vehicleTypeList){
                   var eqId = this.selectedIconList[j].eqId;
                   var deviceData = response.data[eqId];
                   if(deviceData){
-                    // console.log(deviceData,"deviceData")
+                    console.log(deviceData,"deviceData")
                   let type = deviceData.eqType;
 
                       // 需要换光标的
@@ -4288,20 +4295,17 @@ for(var item of this.vehicleTypeList){
                               //取设备监测状态图标
                               this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                               if(deviceData.eqType == 19){
-                                  this.selectedIconList[j].num ="CO:" + parseFloat( deviceData.CO).toFixed(2) + "/PPM, VI:" + parseFloat( deviceData.VI).toFixed(2) +'KM'
+                                  this.selectedIconList[j].num ="CO:" + parseFloat( deviceData.CO).toFixed(2) + "/PPM  VI:" + parseFloat( deviceData.VI).toFixed(2) +'KM'
                               }else if(deviceData.eqType == 17){
                                 this.selectedIconList[j].num = parseFloat( deviceData.FS).toFixed(2) + "m/s "+ deviceData.FX
                               }else if(deviceData.eqType == 5){
                                 if(deviceData.DWLD){
-                                  this.selectedIconList[j].num ="洞外:" + parseFloat( deviceData.DWLD).toFixed(2)
-
+                                  this.selectedIconList[j].num = parseFloat( deviceData.DWLD).toFixed(2) + 'lux'
                                 }
                               }else if(deviceData.eqType == 18){
                                 if(deviceData.DNLD){
-                                  this.selectedIconList[j].num ="洞内:" + parseFloat( deviceData.DNLD).toFixed(2) + "cd/m2"
-
+                                  this.selectedIconList[j].num = parseFloat( deviceData.DNLD).toFixed(2) + 'lux'
                                 }
-
                               }
                             }
                         }else{

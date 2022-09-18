@@ -1105,14 +1105,21 @@ export default {
           this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
+          console.log(response,'asdadas')
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
+          console.log(this.strategyForm.equipmentTypeId,'this.strategyForm.equipmentTypeId');
           if(this.strategyForm.strategyType == '0'){
             this.eqTypeChange();
           }
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
-            this.equipmentData=res.rows
+            this.equipmentData = res.rows
+            console.log(this.equipmentData,'this.equipmentData')
           })
-          this.strategyForm.manualControl = response.rows;
+          if(this.strategyForm.strategyType == '0'){
+            this.strategyForm.manualControl = response.rows;
+          }else{
+            this.strategyForm.autoControl = response.rows;
+          }
           for ( var i = 0; i < response.rows.length; i++){
             var attr = response.rows[i];
             if(this.strategyForm.strategyType =='0'){
@@ -1131,6 +1138,7 @@ export default {
               }
             }
           }
+          console.log(this.strategyForm.autoControl)
         })
       });
     },

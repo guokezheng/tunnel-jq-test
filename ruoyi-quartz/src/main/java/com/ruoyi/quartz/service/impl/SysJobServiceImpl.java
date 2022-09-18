@@ -264,16 +264,16 @@ public class SysJobServiceImpl implements ISysJobService
     @Override
     public int updateState(SysJob job) {
         int result = -1;
-        SysJob sysJob = new SysJob();
-        sysJob.setInvokeTarget(job.getInvokeTarget());
-        List<SysJob> sysJobs = jobMapper.selectJobList(sysJob);
-        for (SysJob job1 : sysJobs) {
-            job1.setStatus(job.getStatus());
-            result = jobMapper.updateJob(job1);
-            if (result > -1) {
-                SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyByJobRelationId(job.getInvokeTarget());
-                sdStrategy.setStrategyState(job.getStatus());
-                result = SpringUtils.getBean(SdStrategyMapper.class).updateSdStrategyById(sdStrategy);
+        SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyByJobRelationId(job.getInvokeTarget());
+        sdStrategy.setStrategyState(job.getStatus());
+        result = SpringUtils.getBean(SdStrategyMapper.class).updateSdStrategyById(sdStrategy);
+        if ("1".equals(sdStrategy.getStrategyType()) && result > -1){
+            SysJob sysJob = new SysJob();
+            sysJob.setInvokeTarget(job.getInvokeTarget());
+            List<SysJob> sysJobs = jobMapper.selectJobList(sysJob);
+            for (SysJob job1 : sysJobs) {
+                job1.setStatus(job.getStatus());
+                result = jobMapper.updateJob(job1);
             }
         }
         return result;

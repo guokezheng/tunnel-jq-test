@@ -80,7 +80,7 @@ public class SdReservePlan extends BaseEntity
     private String strategyId;
 
     @ApiModelProperty("策略名")
-    private String strategyNames;
+    private List<String> strategyNames;
 
     @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
@@ -207,11 +207,11 @@ public class SdReservePlan extends BaseEntity
 		this.pFileList = pFileList;
 	}
 
-	public String getStrategyNames() {
+	public List<String> getStrategyNames() {
 		return strategyNames;
 	}
 
-	public void setStrategyNames(String strategyNames) {
+	public void setStrategyNames(List<String> strategyNames) {
 		this.strategyNames = strategyNames;
 	}
 

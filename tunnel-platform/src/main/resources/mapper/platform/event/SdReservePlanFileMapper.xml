@@ -84,6 +84,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deleteSdReservePlanFileByPlanFileId" parameterType="String">
+        delete from sd_reserve_plan_file where plan_file_id  = #{planFileId}
+    </delete>
     
     <!-- 批量新增预案文件信息 -->
 	  <insert id="brachInsertSdReservePlanFile" parameterType="java.util.List">

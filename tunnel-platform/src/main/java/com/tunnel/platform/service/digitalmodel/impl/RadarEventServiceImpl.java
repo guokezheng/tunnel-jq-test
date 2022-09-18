@@ -123,7 +123,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             wjMapper.insertWjEvent(eventList);
             log.info("---插入数据list---{}",eventList);
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
-            WebSocketService.broadcast("WjEvent",sdEventList);
+            JSONObject object = new JSONObject();
+            object.put("sdEventList",sdEventList);
+            WebSocketService.broadcast("WjEvent",object.toString());
         }
         return AjaxResult.success();
     }
@@ -226,7 +228,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
-        WebSocketService.broadcast("dataList",dataList);
+        JSONObject object = new JSONObject();
+        object.put("dataList",dataList);
+        WebSocketService.broadcast("dataList",object);
         log.info("---测试车辆---{}",dataList);
     }
 

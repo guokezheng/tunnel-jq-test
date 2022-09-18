@@ -53,8 +53,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
-            group_concat(E.strategy_id) strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
-        	B.event_type, C.strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
+            group_concat(DISTINCT E.strategy_id) strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
+        	B.event_type, group_concat(DISTINCT C.strategy_name) strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id

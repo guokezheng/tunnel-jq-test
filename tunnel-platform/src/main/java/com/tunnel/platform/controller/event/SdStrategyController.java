@@ -106,9 +106,9 @@ public class SdStrategyController extends BaseController
 	@DeleteMapping("/{ids}")
     @ApiOperation("删除控制策略")
     @ApiImplicitParam(name = "rlIds", value = "需要删除的控制策略关系ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long[] ids)
+    public Result remove(@PathVariable Long ids)
     {
-        return Result.toResult(sdStrategyService.deleteSdStrategyByStrategyIds(ids));
+        return Result.toResult(sdStrategyService.deleteSdStrategyById(ids));
     }
 
     /**

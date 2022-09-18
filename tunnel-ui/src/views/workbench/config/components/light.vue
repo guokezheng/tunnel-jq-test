@@ -72,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -160,7 +160,7 @@ import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽�
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       title: "",
@@ -195,7 +195,8 @@ export default {
           // 查询设备当前状态 --------------------------------
           getInfo(this.eqInfo.clickEqType).then((response) => {
             console.log(response, "查询设备当前状态");
-            this.stateForm.state = response.data.state;
+            this.stateForm.state = Number(response.data.state);
+            console.log(this.stateForm.state,"this.stateForm.state");
           });
         });
       } else {
@@ -216,7 +217,7 @@ export default {
         isControl: 1,
       };
       await getStateByData(param).then((response) => {
-        console.log(response, "查询设备状态图标");
+        // console.log(response, "查询设备状态图标");
         list = response.rows;
       });
 
@@ -231,12 +232,14 @@ export default {
         }
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
-          state: list[i].deviceState,
+          state: Number(list[i].deviceState),
           name: list[i].stateName,
           control: list[i].isControl,
           url: iconUrl,
         });
       }
+      console.log(that.eqTypeStateList,"that.eqTypeStateList")
+
     },
 
     getDirection(num) {
@@ -254,7 +257,13 @@ export default {
         }
       }
     },
-
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     handleOK() {
       this.$emit("dialogClose");
     },

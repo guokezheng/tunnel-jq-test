@@ -74,7 +74,7 @@
             <el-row>
               <el-col :span="13">
                 <el-form-item label="设备状态:">
-                  {{ "在线" }}
+                  {{ geteqType(stateForm.eqStatus) }}
                 </el-form-item>
               </el-col>
             </el-row>
@@ -268,7 +268,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -353,24 +353,29 @@ export default {
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+    this.getmessage()
     // 根据设备id 获取弹窗内信息
-    if (this.eqInfo.equipmentId) {
-      getDeviceById(this.eqInfo.equipmentId).then((res) => {
+   
+  },
+  methods: {
+    async getmessage(){
+      if (this.eqInfo.equipmentId) {
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
         console.log(res, "查询摄像机弹窗信息");
         this.stateForm = res.data;
         this.title = this.stateForm.eqName;
         displayH5sVideoAll(res.data.secureKey);
 
-        getInfo(this.eqInfo.clickEqType).then((response) => {
-          console.log(response, "查询设备当前状态");
-          this.stateForm.state = response.data.state;
-        });
+       
       });
+      // await getInfo(this.eqInfo.clickEqType).then((response) => {
+      //     console.log(response, "查询设备当前状态");
+      //     this.stateForm.state = response.data.state;
+      //   });
     } else {
       this.$modal.msgWarning("没有设备Id");
     }
-  },
-  methods: {
+    },
     getDirection(num) {
       for (var item of this.directionList) {
         if (item.dictValue == num) {
@@ -382,6 +387,13 @@ export default {
       // 根据字典表查设备厂商--------------------------
       for (var item of this.brandList) {
         if (Number(item.dictValue) == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
           return item.dictLabel;
         }
       }

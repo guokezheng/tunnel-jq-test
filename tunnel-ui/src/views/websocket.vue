@@ -68,7 +68,7 @@ export default {
   },
   mounted() {
     if ('WebSocket' in window) {
-      this.websocket = new WebSocket('ws://localhost:8000/websocket');
+      this.websocket = new WebSocket('ws://10.3.16.40:8000/websocket');
       this.initWebSocket();
     } else {
       alert('当前浏览器不支持WebSocket!!!')
@@ -106,10 +106,16 @@ export default {
           if(data.sdEventList){
             this.$store.commit('sdEvent', data.sdEventList)
           }
+          if(data.radarDataList){
+            this.$store.commit('radarDataList', data.radarDataList)
+          }
+
+          
+
         }
       }
       // 根据服务器推送的消息做自己的业务处理
-      window.console.log(event.data);
+      // window.console.log(event.data);
       // console.log();
 
     },

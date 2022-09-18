@@ -397,7 +397,7 @@
       <img
         alt=""
         class="chedaoImage"
-        src="../../../assets/image/lane/3duan.png"
+        src="../../../assets/image/lane/fenghuangshan.png"
       />
       <!-- 设备图标-->
       <div

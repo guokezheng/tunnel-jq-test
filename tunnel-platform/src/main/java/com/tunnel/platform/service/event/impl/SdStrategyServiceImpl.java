@@ -23,11 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 控制策略Service业务层处理
@@ -244,16 +242,26 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
+        // 手动触发
         List<Map> manualControl = model.getManualControl();
+        // 自动触发 || 定时触发
         List<Map> autoControl = model.getAutoControl();
-        /*if (StringUtils.isNotEmpty(model.getEquipment())) {
-            for (int i = 0; i < equipment.size(); i++){
-                Map<String,Object> map = equipment.get(i);
-                if (StringUtils.isEmpty(map.get("equipmentTypeId")+"")) {
-                    throw new RuntimeException("请选择设备类型！");
+        // 判断策略是否携带设备
+        if ("0".equals(model.getStrategyType())) {
+            for (Map<String,Object> map : manualControl) {
+                List<String> eq = (List<String>) map.get("value");
+                if (eq.size() == 0) {
+                    throw new RuntimeException("请填写手动控制完整！");
                 }
             }
-        }*/
+        } else {
+            for (Map<String,Object> map : autoControl) {
+                List<String> eq = (List<String>) map.get("value");
+                if (eq.size() == 0) {
+                    throw new RuntimeException("请填写定时任务或自动触发完整！");
+                }
+            }
+        }
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         SdTrigger sdTrigger = model.getTriggers();
         //策略基础表
@@ -290,17 +298,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sdStrategyRl.setStrategyId(sty.getId());
                 list.add(sdStrategyRl);
             }
-            /*String[] equipments = model.getEquipments().split("#");
-            String[] equipmentType = model.getEquipmentTypeId().split("#");
-            String[] equipmentState = model.getEquipmentState().split("#");
-            for (int i = 0; i < equipmentState.length; i++) {
-                SdStrategyRl rl = new SdStrategyRl();
-                rl.setEqTypeId(equipmentType[i]);
-                rl.setEquipments(equipments[i]);
-                rl.setState(equipmentState[i]);
-                rl.setStrategyId(sty.getId());
-                list.add(rl);
-            }*/
         }else {
             for (int i = 0; i < manualControl.size(); i++) {
                 Map<String, Object> map = manualControl.get(i);
@@ -347,8 +344,26 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateSdStrategyInfo(SdStrategyModel model) {
+        // 手动触发
         List<Map> manualControl = model.getManualControl();
+        // 自动触发 || 定时触发
         List<Map> autoControl = model.getAutoControl();
+        // 判断策略是否携带设备
+        if ("0".equals(model.getStrategyType())) {
+            for (Map<String,Object> map : manualControl) {
+                 List<String> eq = (List<String>) map.get("value");
+                if (eq.size() == 0) {
+                    throw new RuntimeException("请填写手动控制完整！");
+                }
+            }
+        } else {
+            for (Map<String,Object> map : autoControl) {
+                List<String> eq = (List<String>) map.get("value");
+                if (eq.size() == 0) {
+                    throw new RuntimeException("请填写定时任务或自动触发完整！");
+                }
+            }
+        }
         SdTrigger sdTrigger = model.getTriggers();
         List<SdStrategyRl> list = new ArrayList<SdStrategyRl>();
         //策略基础表
@@ -396,17 +411,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 sdStrategyRl.setStrategyId(model.getId());
                 list.add(sdStrategyRl);
             }
-            /*String[] equipments = model.getEquipments().split("#");
-            String[] equipmentType = model.getEquipmentTypeId().split("#");
-            String[] equipmentState = model.getEquipmentState().split("#");
-            for (int i = 0; i < equipmentState.length; i++) {
-                SdStrategyRl rl = new SdStrategyRl();
-                rl.setEqTypeId(equipmentType[i]);
-                rl.setEquipments(equipments[i]);
-                rl.setState(equipmentState[i]);
-                rl.setStrategyId(sty.getId());
-                list.add(rl);
-            }*/
         }else {
             for (int i = 0; i < manualControl.size(); i++) {
                 Map<String, Object> map = manualControl.get(i);

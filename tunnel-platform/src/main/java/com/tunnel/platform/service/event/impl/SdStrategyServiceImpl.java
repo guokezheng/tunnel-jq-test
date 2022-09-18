@@ -260,13 +260,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         SdStrategy sty = new SdStrategy();
         //策略类型
         sty.setStrategyType(model.getStrategyType());
-        sty.setStrategyState("0");
+        sty.setStrategyState("1");
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
         sty.setJobRelationId(model.getJobRelationId());
-        sty.setSchedulerTime(model.getSchedulerTime());
-        sty.setStrategyInfo(model.getStrategyInfo());
+        if("1".equals(model.getStrategyType())) {
+            sty.setSchedulerTime(model.getSchedulerTime());
+            sty.setStrategyInfo(model.getStrategyInfo());
+        } else {
+            sty.setSchedulerTime(null);
+            sty.setStrategyInfo(null);
+        }
+
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
@@ -354,7 +360,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         sty.setStrategyName(model.getStrategyName());
         sty.setTunnelId(model.getTunnelId());
         sty.setWarningId(model.getWarningId());
-        sty.setSchedulerTime(model.getSchedulerTime());
+        if ( "1".equals(model.getStrategyType())) {
+            sty.setSchedulerTime(model.getSchedulerTime());
+            sty.setStrategyInfo(model.getStrategyInfo());
+        } else {
+            sty.setSchedulerTime(null);
+            sty.setStrategyInfo(null);
+        }
         sty.setStrategyInfo(model.getStrategyInfo());
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());

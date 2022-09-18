@@ -385,7 +385,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService
                     }
                 }else {
                     //只校验IP
-                    devicesList= checkIp(devices,devicesList,list);
+//                    devicesList= checkIp(devices,devicesList,list);
                 }
 
             }else {

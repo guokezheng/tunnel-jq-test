@@ -132,11 +132,13 @@ export default {
   },
   computed: {
     ...mapState({
-      WjEvent: (state) => state.websocket.WjEvent,
+      // WjEvent: (state) => state.websocket.WjEvent,
+      sdEvent: state => state.wsData.sdEvent
+
     }),
   },
   watch: {
-    WjEvent(event) {
+    sdEvent(event) {
       console.log(event, "websockt接收数据");
       for (let i = 0; i < event.length; i++) {
         for (let z = 0; z < this.tabList.length; z++) {

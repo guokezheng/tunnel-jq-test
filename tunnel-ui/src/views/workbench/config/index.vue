@@ -418,7 +418,7 @@
           <div class="footTitle">
             <div class="footTitleCont">
               <img :src="keyVehiclesIcon" style="width: 17px;margin-right: 5px;"/>
-              <p>重点车辆</p>
+              <p>实时车辆</p>
               <p>Key vehicles</p>
             </div>
           </div>
@@ -439,13 +439,13 @@
                 {{item.vehicleLicense}}
               </el-col>
               <el-col :span="5">
-                {{item.speed}}
+                {{item.speed}}km/h
               </el-col>
               <el-col :span="5">
-                {{item.laneNum}}
+                {{item.laneNum}}车道
               </el-col>
               <el-col :span="5">
-                {{item.vehicleType}}
+                {{getCheXing(item.vehicleType)}}
               </el-col>
             </el-row>
           </vue-seamless-scroll>
@@ -2410,6 +2410,11 @@
         console.log(data, "设备类型");
         this.eqTypeDialogList = data.data
       })
+      this.getDicts("sd_wj_vehicle_type").then((data) => {
+        console.log(data, "车型列表");
+        this.eqTypeDialogList = data.data
+      })
+      this.getCheXing()
       
       //调取滚动条
       this.srollAuto()
@@ -2423,7 +2428,7 @@
       },
       radarDataList( event ){
       console.log(event,'websockt工作台接收感知事件数据')
-      
+      this.realTimeList = event
      },
 
       // 设备类型
@@ -2603,7 +2608,13 @@
       
     },
     methods: {
-  
+  getCheXing(num){
+for(var item of this.eqTypeDialogList){
+  if(num == Number(item.dictValue)){
+    return item.dictLabel
+  }
+}
+  },
       // 关闭弹窗子组件
       dialogClose(){
         this.eqInfo.clickEqType = 0

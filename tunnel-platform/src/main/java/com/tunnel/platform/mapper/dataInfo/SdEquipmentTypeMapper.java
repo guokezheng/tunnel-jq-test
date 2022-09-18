@@ -75,9 +75,29 @@ public interface SdEquipmentTypeMapper
      */
     public int deleteSdEquipmentTypeByIds(Long[] typeIds);
 
+    /**
+     * 根据隧道id查询可控设备类型
+     * @param tunnelId
+     * @return
+     */
 	public List<SdEquipmentType> selectSdEquipmentTypeHasList(@Param("tunnelId")String tunnelId);
-	public List<SdEquipmentType> selectSdEquipmentTypeByBigType(@Param("bigType")String bigType);
-	public List<SdEquipmentType> selectSdEquipmentTypeGroupByBigType();
 
+    /**
+     * 根据设备类型查设备类型
+     * @param bigType
+     * @return
+     */
+	public List<SdEquipmentType> selectSdEquipmentTypeByBigType(@Param("bigType")String bigType);
+
+    /**
+     *
+     * @return
+     */
+    public List<SdEquipmentType> selectSdEquipmentTypeGroupByBigType();
+
+    /**
+     * 查询所有
+     * @return
+     */
     List<SdEquipmentType> selectList();
 }

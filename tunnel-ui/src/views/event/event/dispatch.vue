@@ -20,7 +20,7 @@
                 >
                   <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
-                  <div class="rightClickClass" :style="item.style">
+                  <div class="rightClickClass" :style="item.style?item.style:''">
                     <div class="row1">{{ item.SubareaName }}</div>
                     <div class="processBox recoveryBox">
                       <div class="endButton" v-for="itm in item.reservePlans">
@@ -754,10 +754,15 @@ export default {
     },
 
     async getSubareaByTunnel() {
-      const params = "WLJD-JiNan-YanJiuYuan-FHS";
+      const params = this.$route.query.id;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
-        this.randomEvent();
+        console.log(this.planList1)
+        if(this.$route.query.id != undefined){
+          console.log(this.$route.query.id)
+          console.log('1231231111111')
+          this.randomEvent();
+        }
       });
     },
     // 预览

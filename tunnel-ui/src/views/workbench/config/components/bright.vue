@@ -27,7 +27,7 @@
       <el-form
         ref="form"
         :model="stateForm"
-        label-width="90px"
+        label-width="80px"
         label-position="left"
         size="mini"
         style="padding: 15px; padding-top: 0px"
@@ -71,8 +71,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备状态:">
-              <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
           <el-col :span="11" v-if="this.eqInfo.clickEqType == 5">
@@ -130,7 +129,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayLDData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -208,6 +207,13 @@ export default {
       // 根据字典表查设备厂商--------------------------
       for (var item of this.brandList) {
         if (Number(item.dictValue) == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
           return item.dictLabel;
         }
       }

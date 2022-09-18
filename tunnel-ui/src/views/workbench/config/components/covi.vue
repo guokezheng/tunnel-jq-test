@@ -72,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus)}}
             </el-form-item>
           </el-col>
         </el-row>
@@ -125,7 +125,7 @@ import { getTodayCOVIData } from "@/api/workbench/config.js"; //查询弹窗信�
 
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
@@ -350,8 +350,19 @@ export default {
         }
       }
     },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     // 关闭弹窗
     handleClosee() {
+      this.$emit("dialogClose");
+    },
+    // 提交修改
+    handleOK() {
       this.$emit("dialogClose");
     },
   },

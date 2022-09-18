@@ -1,12 +1,16 @@
 
 const wsData = {
   state: {
-    sdEvent:{}
+    sdEvent:{},
+    radarDataList:{}
   },
 
   mutations: {
     sdEvent: (state, data) => {
       state.sdEvent = data
+    },
+    radarDataList: (state, data) => {
+      state.radarDataList = data
     },
   },
 

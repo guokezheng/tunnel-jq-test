@@ -72,7 +72,7 @@
             <el-col :span="13">
               <el-form-item label="设备状态:">
                 <!-- {{ stateForm.eqStatus }} -->
-                {{ "在线" }}
+                {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -129,7 +129,7 @@
   import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
   
   export default {
-    props: ["eqInfo", "brandList", "directionList"],
+    props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
     data() {
       return {
         stateForm: {},
@@ -186,6 +186,13 @@
           }
         }
       },
+      geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
       handleOK(){
         this.$emit("dialogClose");
       },

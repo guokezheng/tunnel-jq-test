@@ -72,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -125,7 +125,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数
 import { getTodayFSFXData } from "@/api/workbench/config.js"; //查询弹窗图表信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -346,6 +346,13 @@ export default {
       // 根据字典表查设备厂商--------------------------
       for (var item of this.brandList) {
         if (Number(item.dictValue) == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
           return item.dictLabel;
         }
       }

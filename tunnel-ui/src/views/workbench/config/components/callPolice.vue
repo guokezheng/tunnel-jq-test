@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ getBrandName(stateForm.brandName) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -72,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -142,7 +142,7 @@
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -168,21 +168,21 @@ export default {
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          obj = res.data;
+          this.stateForm = res.data;
 
-          this.title = obj.eqName;
-          this.stateForm = {
-            brandName: that.getBrandName(obj.brandId), //厂商
-            eqDirection: that.getDirection(obj.eqDirection),
+          this.title = this.stateForm.eqName;
+          // this.stateForm = {
+          //   brandName: that.getBrandName(obj.brandId), //厂商
+          //   eqDirection: that.getDirection(obj.eqDirection),
 
-            pile: obj.pile, //桩号
-            eqTypeName: obj.typeName, //设备类型名称
-            tunnelName: obj.tunnelName, //隧道名称
-            deptName: obj.deptName, //所属机构
-            eqType: obj.eqType, //设备类型号
-            state: obj.state,
-          };
-          console.log(this.stateForm, "stateForm");
+          //   pile: obj.pile, //桩号
+          //   eqTypeName: obj.typeName, //设备类型名称
+          //   tunnelName: obj.tunnelName, //隧道名称
+          //   deptName: obj.deptName, //所属机构
+          //   eqType: obj.eqType, //设备类型号
+          //   state: obj.state,
+          // };
+          // console.log(this.stateForm, "stateForm");
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -199,6 +199,13 @@ export default {
       // 根据字典表查设备厂商--------------------------
       for (var item of this.brandList) {
         if (Number(item.dictValue) == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
           return item.dictLabel;
         }
       }

@@ -25,6 +25,7 @@
                 border-radius: 10px;
               "
             ></video>
+            <el-image :src="require('@/assets/icons/outline.png')" v-show="!videoUrl"/>
           </div>
           <div class="pic">
             <el-carousel
@@ -39,6 +40,8 @@
                 :src="item.imgUrl"
               >
                 <img :src="item.imgUrl" style="width: 100%" />
+                <el-image :src="require('@/assets/icons/outline.png')" v-show="!item.imgUrl || urls.length==0"/>
+
               </el-carousel-item>
             </el-carousel>
           </div>
@@ -46,7 +49,7 @@
         <div class="eventRight">
           <div class="eventRow">
             <div>隧道名称:</div>
-            <div>{{ eventMes.tunnels.tunnelName }}</div>
+            <div>{{ eventMes.tunnels.tunnelName}}</div>
           </div>
           <div class="eventRow">
             <div>事件类型:</div>
@@ -148,7 +151,7 @@ export default {
       });
       video(param4).then((response) => {
         console.log(response.data, "获取视频");
-        this.videoUrl = response.data;
+        this.videoUrl = response.data.videoUrl;
       });
     },
 

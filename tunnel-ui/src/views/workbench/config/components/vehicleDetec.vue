@@ -72,7 +72,7 @@
             <el-col :span="13">
               <el-form-item label="设备状态:">
                 <!-- {{ stateForm.eqStatus }} -->
-                {{ "在线" }}
+                {{geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -120,7 +120,7 @@
   
   
   export default {
-    props: ["eqInfo", "brandList", "directionList"],
+    props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
     watch: {
       tab: {
         handler(newValue, oldValue) {
@@ -363,9 +363,6 @@
         });
       },
       getDirection(num) {
-        // debugger
-        // console.log(num,"num")
-        // console.log(this.directionList,"this.directionList");
         for (var item of this.directionList) {
           if (item.dictValue == num) {
             return item.dictLabel;
@@ -382,6 +379,13 @@
           }
         }
       },
+      geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
       // 关闭弹窗
       handleClosee() {
         this.$emit("dialogClose");

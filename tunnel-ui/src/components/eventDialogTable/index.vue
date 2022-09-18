@@ -143,7 +143,7 @@ export default {
       for (let i = 0; i < event.length; i++) {
         for (let z = 0; z < this.tabList.length; z++) {
           if (event[i].eventSource == this.tabList[z].dictValue) {
-            this.tabList[z].list.push(event[i]);
+            this.tabList[z].list.unshift(event[i]);
           }
         }
       }
@@ -271,6 +271,7 @@ export default {
   .eventTable,
   .el-table {
     color: white;
+    background: #071930;
     // 表头下划边框
     th.el-table__cell.is-leaf,
     .el-table td.el-table__cell {

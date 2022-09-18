@@ -72,8 +72,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备状态:">
-              <!-- {{ stateForm.eqStatus }} -->
-              {{ stateForm.eqStatus }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -216,7 +215,7 @@
             <el-row v-show="stateForm2.switch">
               <el-col :span="10">
                 <el-form-item label="闪烁频率">
-                  <el-select v-model="stateForm2.twinkle">
+                  <el-select v-model="stateForm2.frequency">
                     <el-option
                       v-for="item in openTime"
                       :key="item.value"
@@ -248,7 +247,7 @@
             <div style="margin: 10px 0">亮度调整</div>
             <el-form-item label="亮度调整">
               <el-slider
-                v-model="stateForm2.light"
+                v-model="stateForm2.brightness"
                 :show-tooltip="false"
                 class="sliderClass"
               ></el-slider>
@@ -284,7 +283,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框
 import { controlDevice } from "@/api/workbench/config.js"; //查询单选框弹窗信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -297,9 +296,9 @@ export default {
       stateForm2: {
         openTimeValue: "",
         closeTimeValue: "",
-        twinkle: "",
+        frequency: "",
         lightColor: "",
-        light: 50,
+        brightness: 50,
       },
       openTime: [
         {
@@ -307,7 +306,6 @@ export default {
           label: "10m/s",
         },
       ],
-      openTimeValue: "",
     };
   },
   created() {
@@ -346,14 +344,21 @@ export default {
         }
       }
     },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     // 提交修改
     handleOK() {
       const param = {
         devId: this.stateForm.eqId, //设备id
-        devType: 31,
-        brightness: 50, //诱导灯亮度
-        frequency: 60,
-        state: 1,
+        devType: this.eqInfo.clickEqType,
+        brightness: this.stateForm2.brightness, //诱导灯亮度
+        frequency: this.stateForm2.frequency,//诱导灯频率
+        state: this.stateForm.eqStatus,
         tunnelId: this.stateForm.tunnelId,
       };
 
@@ -441,8 +446,12 @@ export default {
   z-index: 10;
   font-size: 10px;
 }
-::v-deep .el-input {
-  width: 92%;
+::v-deep .el-input__inner{
+  background: white !important;
+  color: #00152B !important;
+}
+::v-deep .el-input{
+  width:86%;
 }
 </style>
   

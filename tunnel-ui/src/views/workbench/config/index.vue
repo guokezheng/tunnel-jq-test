@@ -151,7 +151,7 @@
                         <!-- 洞内洞外 -->
                         <label style="font-size:14px;position: absolute;text-decoration:underline;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
                           v-if="item.eqType == 5 || item.eqType == 18">
-                          {{ item.num }}cd/m2
+                          {{ item.num }}<span v-show="item.num">cd/m2</span>
                         </label>
                       </div>
                     </el-tooltip>
@@ -422,7 +422,34 @@
               <p>Key vehicles</p>
             </div>
           </div>
-          <div id="focusCar"></div>
+          <!-- <div id="focusCar"></div> -->
+          <div class="realTimeTable">
+            <ul>
+              <li >
+                <div>车牌号</div>
+                <div>速度</div>
+                <div>车道</div>
+                <div>车型</div>
+              </li>
+            </ul>
+            <vue-seamless-scroll :class-option="defaultOption" class="listContent" :data="realTimeList">
+            <el-row v-for="(item, index) in realTimeList" :key="index" class="listRow">
+              <el-col :span="3" style="text-align:center;">{{index+1}}</el-col>
+              <el-col :span="6">
+                {{item.vehicleLicense}}
+              </el-col>
+              <el-col :span="5">
+                {{item.speed}}
+              </el-col>
+              <el-col :span="5">
+                {{item.laneNum}}
+              </el-col>
+              <el-col :span="5">
+                {{item.vehicleType}}
+              </el-col>
+            </el-row>
+          </vue-seamless-scroll>
+          </div>
         </div>
         <div class="footerRight footMiniBox" style="cursor: pointer;">
           <div class="footTitle">
@@ -1122,40 +1149,40 @@
     </el-dialog>
    <com-video class="comClass"
               v-if="this.eqInfo.clickEqType == 23 || this.eqInfo.clickEqType == 24 || this.eqInfo.clickEqType == 25" 
-               @dialogClose = "dialogClose" :eqInfo = "this.eqInfo" 
+               @dialogClose = "dialogClose" :eqInfo = "this.eqInfo" :eqTypeDialogList="this.eqTypeDialogList"
                :brandList="this.brandList" :directionList="this.directionList"></com-video>
     <com-light class="comClass" 
               v-if="[1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13 ].includes(this.eqInfo.clickEqType)"  
-               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"
-               :brandList="this.brandList" :directionList="this.directionList"></com-light>
+               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose" :eqTypeDialogList="this.eqTypeDialogList"
+               :brandList="this.brandList" :directionList="this.directionList" ></com-light>
     <com-covi class="comClass" v-if="this.eqInfo.clickEqType == 19" 
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-covi>
     <com-data class="comClass" 
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               v-if="[ 14, 21, 32, 33, 15, 16, 30, 35 ].includes(this.eqInfo.clickEqType)" 
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-data>
     <com-wind class="comClass"  v-if="this.eqInfo.clickEqType == 17" 
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-wind>    
     <com-pressure class="comClass" v-if="this.eqInfo.clickEqType == 28"
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-pressure>  
     <com-vehicleDetec class="comClass" v-if="this.eqInfo.clickEqType == 20"
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-vehicleDetec>    
     <com-callPolice class="comClass" v-if="this.eqInfo.clickEqType == 34"
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-callPolice>   
     <com-robot class="comClass" v-if="this.eqInfo.clickEqType == 29"
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-robot>  
     <com-bright class="comClass" v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
-              :brandList="this.brandList" :directionList="this.directionList"
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
               :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-bright>
     <com-youdao class="comClass" v-if="this.eqInfo.clickEqType == 31 "
-              :brandList="this.brandList" :directionList="this.directionList"
-              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose"></com-youdao>
+              :brandList="this.brandList" :directionList="this.directionList" :eqTypeDialogList="this.eqTypeDialogList"
+              :eqInfo = "this.eqInfo" @dialogClose = "dialogClose" ></com-youdao>
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -1753,6 +1780,39 @@
     },
     data() {
       return {
+        realTimeList:[
+          // {
+          //   vehicleType:'大型车',
+          //   speed:'40km/h',
+          //   vehicleLicense:'鲁A85SE0',
+          //   laneNum:'1车道'
+          // },
+          // {
+          //   vehicleType:'大型车',
+          //   speed:'40km/h',
+          //   vehicleLicense:'鲁A85SE0',
+          //   laneNum:'1车道'
+          // },
+          // {
+          //   vehicleType:'大型车',
+          //   speed:'40km/h',
+          //   vehicleLicense:'鲁A85SE0',
+          //   laneNum:'1车道'
+          // },
+          // {
+          //   vehicleType:'大型车',
+          //   speed:'40km/h',
+          //   vehicleLicense:'鲁A85SE0',
+          //   laneNum:'1车道'
+          // },
+          // {
+          //   vehicleType:'大型车',
+          //   speed:'40km/h',
+          //   vehicleLicense:'鲁A85SE0',
+          //   laneNum:'1车道'
+          // },
+
+        ],
         eqInfo:{},
         brandList:[],
         directionList:[],
@@ -2342,28 +2402,26 @@
         console.log(data, "设备厂商");
         this.brandList = data.data
       })
-        this.getDicts("sd_direction").then((data) => {
+      this.getDicts("sd_direction").then((data) => {
         console.log(data, "方向");
         this.directionList = data.data
-
       })
+      this.getDicts("sd_monitor_state").then((data) => {
+        console.log(data, "设备类型");
+        this.eqTypeDialogList = data.data
+      })
+      
       //调取滚动条
       this.srollAuto()
     },
 
     watch: {
       sdEvent(event){
- for(var item of event){
-        this.trafficList.push(item)
-      }
-},
-    //   WjEvent( event ){
-    //   console.log(event,'websockt工作台接收事件弹窗数据')
-    //   for(var item of event){
-    //     this.trafficList.push(item)
-    //   }
-    //  },
-     dataList( event ){
+        for(var item of event){
+          this.trafficList.unshift(item)
+        }
+      },
+      radarDataList( event ){
       console.log(event,'websockt工作台接收感知事件数据')
       
      },
@@ -2496,8 +2554,8 @@
         return h
       },
       ...mapState({
-       WjEvent: state => state.websocket.WjEvent,
-       dataList: state => state.websocket.dataList,
+      //  WjEvent: state => state.websocket.WjEvent,
+      radarDataList: state => state.wsData.radarDataList,
        sdEvent: state => state.wsData.sdEvent
      }),
     },
@@ -4209,13 +4267,14 @@
                     for (let k = 0; k < this.eqTypeStateList.length; k++) {
                       if (
                         this.selectedIconList[j].eqType ==
-                        this.eqTypeStateList[k].type 
+                        this.eqTypeStateList[k].type
                       ) {
-                        // 只有在线状态和离线状态
+                        //无法控制设备状态的设备类型，比如PLC、摄像机
                         let arr = [5,14,17,18,19,20,21,23,24,25,28,29,32,33,35]
                           if(arr.includes(deviceData.eqType)){
-                          
+
                             if(this.eqTypeStateList[k].stateType == "1" && this.eqTypeStateList[k].state == deviceData.eqStatus){
+                              //取设备监测状态图标
                               this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                               if(deviceData.eqType == 19){
                                   this.selectedIconList[j].num ="CO:" + parseFloat( deviceData.CO).toFixed(2) + "/PPM, VI:" + parseFloat( deviceData.VI).toFixed(2) +'KM'
@@ -4223,7 +4282,7 @@
                                 this.selectedIconList[j].num = parseFloat( deviceData.FS).toFixed(2) + "m/s "+ deviceData.FX
                               }else if(deviceData.eqType == 5){
                                 if(deviceData.DWLD){
-                                  this.selectedIconList[j].num ="洞外:" + parseFloat( deviceData.DWLD).toFixed(2) 
+                                  this.selectedIconList[j].num ="洞外:" + parseFloat( deviceData.DWLD).toFixed(2)
 
                                 }
                               }else if(deviceData.eqType == 18){
@@ -4235,9 +4294,11 @@
                               }
                             }
                         }else{
-                          // 在线
+                           //可以控制设备状态的设备类型，比如车指
                           if(deviceData.eqStatus == "1"){
+                            // 在线
                             if(this.eqTypeStateList[k].stateType == "2" && this.eqTypeStateList[k].state == deviceData.eqStatus){
+                              //取设备运行状态图标
                                let url = this.eqTypeStateList[k].url;
                                  this.selectedIconList[j].eqDirection = deviceData.eqDirection;
                                 if (deviceData.eqDirection == "1") {
@@ -4252,9 +4313,15 @@
                                       this.eqTypeStateList[k].url;
                                   }
                             }
+                          }else{
+                            //如果是离线、故障等状态
+                            if(this.eqTypeStateList[k].stateType == "1" && this.eqTypeStateList[k].state == deviceData.eqStatus) {
+                              //取设备监测状态图标
+                              this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                            }
                           }
                         }
-                        
+
                         // let url = this.eqTypeStateList[k].url;
                         // this.selectedIconList[j].eqDirection =
                         // deviceData.eqDirection;
@@ -6844,7 +6911,13 @@
     }
 
   }
-
+ .realTimeTable{
+  width:100%;height:calc(100% - 50px);
+  li{
+    display:flex;justify-content: space-around;font-size: 12px;
+    transform:translateX(-20px)
+  }
+}
   /* 批量管理中的table*/
   .batch-table {
     //table为空时

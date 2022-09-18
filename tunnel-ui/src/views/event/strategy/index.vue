@@ -365,6 +365,7 @@ export default {
     },
   data() {
     return {
+      index:0,
       manualControlStateList:[],//当前选择设备状态选项
       strategyForm:{
         manualControl:[
@@ -691,6 +692,8 @@ export default {
     },
     // 添加执行操作
     addItem(){
+      this.index = this.index+1;
+      console.log(this.index)
       let addItemBoolean = true;
       let strategyType = this.strategyForm.strategyType;
       switch (strategyType) {
@@ -765,6 +768,9 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
+      if(this.chooseEq){
+        console.log(this.strategyForm.manualControl);
+      }
       if(Number(this.strategyForm.strategyType) == 0){
         console.log(this.sink,'修改');
 
@@ -791,7 +797,7 @@ export default {
       listDevices({
         eqType:eqType,
         eqTunnelId:this.strategyForm.tunnelId,
-        eqDirection:this.strategyForm.direction
+        eqDirection:this.strategyForm.direction,
       }).then(res=>{
         let data = res.rows;
         if(this.strategyForm.strategyType != '0'){
@@ -818,7 +824,6 @@ export default {
           }
         }
         this.equipmentData = data;
-        console.log(this.equipmentData,'12312312')
         this.$forceUpdate();
       })
     },
@@ -877,7 +882,7 @@ export default {
       });
     },
     getEquipmentHasType() {
-      listHasType(this.strategyForm.tunnelId).then(response => {
+      listHasType(this.strategyForm.tunnelId,).then(response => {
         this.equipmentTypeData = response.rows;
         console.log(this.equipmentTypeData,'==============')
       });
@@ -931,8 +936,10 @@ export default {
         })
         console.log(this.strategyForm.autoControl,'当前选择设备');
         this.chooseEq = false;//关闭弹窗
+        this.index = 0;
         listEqTypeStateIsControl({
           stateTypeId:this.eqForm.equipment_type,
+          isControl:1,
         }).then(response => {
           console.log(response,'设备状态');
           this.strategyForm.autoControl[index].eqStateList = response.rows
@@ -942,6 +949,7 @@ export default {
     // 选择设备取消按钮
     cancelChooseEq() {
       this.chooseEq = false;
+      this.index = 0;
       this.resetEqForm();
     },
     resetEqForm() {
@@ -1038,6 +1046,12 @@ export default {
         automaticSymbol:'',//自动触发时符号 >= <= ..
         threshold:'',//自动触发时阈值输入框
         autodataItem:"",//自动触发设备类型数据项
+      },
+      this.eqForm = {
+        equipment_type:null,//设备类型ID
+        direction: '',//方向
+        index:null,//当前设置的
+        equipments:[],//设备名称
       },
       this.getEquipmentType();
       this.drawerTitle = "新增策略";

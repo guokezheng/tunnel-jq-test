@@ -137,7 +137,7 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="数据项编号" prop="itemCode">
-          <el-input v-model="form.itemCode" placeholder="请输入数据项编号(限数字)" />
+          <el-input v-model="form.itemCode" placeholder="请输入数据项编号" />
         </el-form-item>
         <el-form-item label="数据项名称" prop="itemName">
           <el-input v-model="form.itemName" placeholder="请输入数据项名称" />
@@ -221,12 +221,12 @@ export default {
           deviceTypeId: [
             { required: true, message: '请输入设备类型ID', trigger: 'change' }
           ],
-          unit: [
-            { required: true, message: '请输入单位', trigger: 'change' }
-          ],
-          remark: [
-            { required: true, message: '请输入备注', trigger: 'change' }
-          ],
+          // unit: [
+          //   { required: true, message: '请输入单位', trigger: 'change' }
+          // ],
+          // remark: [
+          //   { required: true, message: '请输入备注', trigger: 'change' }
+          // ],
       },
       eqTypeData:[]//设备类型
     };

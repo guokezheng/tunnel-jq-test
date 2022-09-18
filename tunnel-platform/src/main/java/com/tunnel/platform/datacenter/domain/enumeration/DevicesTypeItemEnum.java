@@ -15,7 +15,12 @@ public enum DevicesTypeItemEnum {
     FENG_SU(5, "风速"),
     FENG_XIANG(6, "风向"),
     LIANG_DU_INSIDE(7, "洞内亮度检测器"),
-    LIANG_DU_OUTSIDE(12, "洞外亮度检测器");
+    LIANG_DU_OUTSIDE(12, "洞外亮度检测器"),
+    PU_TONG_CHE_ZHI(14, "车道指示器"),
+    ZHUO_ZHUAN_CHE_ZHI(15, "带左转车道指示器"),
+    GUIDANCE_LAMP_CONTROL_MODE(16, "诱导灯控制模式"),
+    GUIDANCE_LAMP_BRIGHNESS(17, "诱导灯亮度"),
+    GUIDANCE_LAMP_FREQUENCY(18, "诱导灯频率");
 
 
     private int code;

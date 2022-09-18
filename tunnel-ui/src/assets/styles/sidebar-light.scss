@@ -249,9 +249,67 @@
       }
     }
   }
-  .comCovi{
+  .comCovi,.tabRobot{
     .el-radio-button--medium .el-radio-button__inner{
       color: #fff;
+    }
+  }
+  .eventBox{
+    .el-tabs--card > .el-tabs__header {
+      border-bottom: 1px solid rgba($color: #01aafd, $alpha: 0.6);
+    }
+    // tab所有选项下边框为空 其余边框有颜色
+    .el-tabs--card > .el-tabs__header .el-tabs__nav {
+      border: solid 1px rgba($color: #00c8fe, $alpha: 0.6);
+      border-bottom: none;
+    }
+    //tab选中项下边框
+    .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+      border-bottom-color: rgba($color: #00c8fe, $alpha: 1);
+    }
+    // tab间隔线
+    .el-tabs--card > .el-tabs__header .el-tabs__item {
+      border-left: solid 1px rgba($color: #00c8fe, $alpha: 0.6);
+    }
+    // tab选中项样式
+    .el-tabs__item.is-active {
+      color: #fff !important;
+      background-color: #00aaf2;
+    }
+    .el-table__body-wrapper .is-scrolling-none{
+      background: #071930;
+    }
+    // tab未选中项样式
+    .el-tabs__item {
+      color: white !important;
+    }
+    .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+      border: 1px solid #00ADFF;
+    }
+    .el-table__body-wrapper .el-table__cell{
+      border: 1px solid rgba(1,152,255,0.6);
+  
+    }
+    .el-table__body{
+      width: 100% !important;
+  }
+    /*table滚动条背景色 */
+    .el-table__body-wrapper::-webkit-scrollbar {
+      background-color: #c4e8f6;
+      width: 10px;
+      height: 10px;
+    }
+  
+    /* table滚动条的滑块*/
+    .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #00c2ff;
+    }
+    /* 鼠标悬浮*/
+    .el-table--enable-row-hover .el-table__body tr:hover>td {
+      background-color: #022A54 !important;
+      color: white;
+      /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
+    
     }
   }
   .my-back{
@@ -306,7 +364,41 @@
   .videoTabs .el-tabs__item.is-active{
     color: #0198FF !important;
   }
- 
+ .vehicle-dialog{
+  // .el-table tr{
+  //   border: solid 1px #00ADFF;
+  // }
+  .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+    border: 1px solid #00ADFF;
+  }
+  .el-table__body-wrapper .el-table__cell{
+    border: 1px solid rgba(1,152,255,0.6);
+
+  }
+  /*table滚动条背景色 */
+  .el-table__body-wrapper::-webkit-scrollbar {
+    background-color: #c4e8f6;
+    width: 10px;
+    height: 10px;
+  }
+
+  /* table滚动条的滑块*/
+  .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #00c2ff;
+  }
+  /* 鼠标悬浮*/
+  .el-table--enable-row-hover .el-table__body tr:hover>td {
+    background-color: #022A54 !important;
+    color: white;
+    /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
+  
+  }
+ }
+ .checkboxLane{
+  .el-checkbox__input.is-checked + .el-checkbox__label{
+    color: white !important;
+  }
+ }
   .workbench-dialog{
     .lineClass{
       width: 100%;
@@ -314,10 +406,10 @@
       background-image: linear-gradient(
         to right,
         #00c8fe 0%,
-        #00c8fe 80%,
-        transparent 80%
+        #00c8fe 90%,
+        transparent 90%
       );
-      background-size: 15px 1px;
+      background-size: 15px 0.5px;
 
       background-repeat: repeat-x;
     }

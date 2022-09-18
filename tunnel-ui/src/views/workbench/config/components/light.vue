@@ -9,7 +9,6 @@
       :visible="visible"
       :before-close="handleClosee"
     >
-    
       <div
         style="
           width: 100%;
@@ -21,7 +20,7 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          style="height: 30px; transform: translateY(-30px); cursor: pointer"
           @click="handleClosee"
         />
       </div>
@@ -36,7 +35,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备类型:">
-              {{ stateForm.eqTypeName }}
+              {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -53,7 +52,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="所属方向:">
-              {{ stateForm.eqDirection }}
+              {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -65,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ getBrandName(stateForm.brandName) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -73,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -86,6 +85,7 @@
                 :key="index"
                 v-model="stateForm.state"
                 style="display: flex; flex-direction: column"
+                @change="$forceUpdate()"
               >
                 <el-radio
                   v-if="stateForm.eqType == item.type && item.control == 1"
@@ -93,10 +93,12 @@
                   :label="item.state"
                   style="align-items: center"
                   :class="[
-                    stateForm.state == item.state ? 'el-radio-selcted' : '',
+                    String(stateForm.state) == String(item.state)
+                      ? 'el-radio-selcted'
+                      : '',
                   ]"
                 >
-                  <el-row class="flex-row">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0'">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -112,10 +114,43 @@
                       {{ item.name }}
                     </div>
                   </el-row>
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'">
+                    <img
+                      :width="iconWidth"
+                      :height="iconHeight"
+                      :src="item.url[1]"
+                    />
+                    <img
+                      :width="iconWidth"
+                      :height="iconHeight"
+                      :src="item.url[0]"
+                      v-if="item.url.length > 1"
+                    />
+                    <div style="margin: 0 0 0 10px; display: inline-block">
+                      {{ item.name }}
+                    </div>
+                  </el-row>
                 </el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
+          <div slot="footer" style="float: right; margin-bottom: 20px">
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleOK()"
+              style="width: 80px"
+              class="submitButton"
+              >确 定</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="handleClosee()"
+              style="width: 80px"
+              >取 消</el-button
+            >
+          </div>
         </div>
       </el-form>
     </el-dialog>
@@ -123,16 +158,12 @@
 </template>
   
   <script>
-// import flvjs from "flv.js";
-// import { getDevices } from "@/api/equipment/eqlist/api";
-// import { getStateByData } from "@/api/equipment/eqTypeState/api";
-// import { getEqTypeStateByType } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 export default {
-  props: ["equipmentId", "clickEqType", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       title: "",
@@ -145,47 +176,33 @@ export default {
     };
   },
   created() {
-    console.log(this.equipmentId, "equipmentIdequipmentId");
-    console.log(this.clickEqType, "clickEqTypeclickEqTypeclickEqType");
+    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+    console.log(this.eqInfo.clickEqType, "clickEqTypeclickEqTypeclickEqType");
 
-    this.getEqTypeStateIcon();
     this.getMessage();
-    this.loadFlv();
+    // this.loadFlv();
   },
   methods: {
     // 查设备详情
     async getMessage() {
       var that = this;
-      if (this.equipmentId) {
+      if (this.eqInfo.equipmentId) {
         var obj = {};
         var state = "";
         // 查询单选框弹窗信息 -----------------------
-        await getDeviceById(this.equipmentId).then((res) => {
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          obj = res.data;
-
+          this.stateForm = res.data;
+          this.title = this.stateForm.eqName;
           // 查询设备当前状态 --------------------------------
-          getInfo(this.clickEqType).then((response) => {
+          getInfo(this.eqInfo.clickEqType).then((response) => {
             console.log(response, "查询设备当前状态");
-            // debugger
-            obj.state = response.data.state;
-
-            this.title = obj.eqName;
-            this.stateForm = {
-              brandName: that.getBrandName(obj.brandId), //厂商
-              eqDirection: that.getDirection(obj.eqDirection),
-              pile: obj.pile, //桩号
-              eqTypeName: obj.typeName, //设备类型名称
-              tunnelName: obj.tunnelName, //隧道名称
-              deptName: obj.deptName, //所属机构
-              eqType: obj.eqType, //设备类型号
-              state: obj.state,
-            };
-            console.log(this.stateForm, "stateForm");
-
-            this.visible = true;
+            this.stateForm.state = response.data.state;
+            console.log(this.stateForm.state, "this.stateForm.state");
+            this.getEqTypeStateIcon();
           });
         });
+        
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -193,19 +210,18 @@ export default {
     /* 查询设备状态图标*/
     async getEqTypeStateIcon() {
       let that = this;
-      await getType(this.clickEqType).then((res) => {
+      await getType(this.eqInfo.clickEqType).then((res) => {
         console.log(res, "查询设备图标宽高");
         this.iconWidth = res.data.iconWidth;
         this.iconHeight = res.data.iconHeight;
       });
       let list = [];
       const param = {
-        stateTypeId: this.clickEqType,
+        stateTypeId: this.eqInfo.clickEqType,
         isControl: 1,
       };
       await getStateByData(param).then((response) => {
-        console.log(response, "查询设备状态图标");
-        // debugger
+        // console.log(response, "查询设备状态图标");
         list = response.rows;
       });
 
@@ -220,12 +236,15 @@ export default {
         }
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
-          state: list[i].deviceState,
+          state: Number(list[i].deviceState),
           name: list[i].stateName,
           control: list[i].isControl,
           url: iconUrl,
         });
+        console.log(Number(list[i].deviceState), "Number(list[i].deviceState)");
       }
+      console.log(that.eqTypeStateList, "that.eqTypeStateList");
+      this.visible = true;
     },
 
     getDirection(num) {
@@ -243,17 +262,15 @@ export default {
         }
       }
     },
-    loadFlv() {
-      // if (flvjs.isSupported()) {
-      //   var videoElement = document.getElementById("videoBox");
-      //   var flvPlayer = flvjs.createPlayer({
-      //     type: 'flv',
-      //     url: 'http://10.166.139.12:8081/live/22456.flv' //你的url地址
-      //   });
-      //   flvPlayer.attachMediaElement(videoElement);
-      //   flvPlayer.load();
-      //   flvPlayer.play();
-      // }
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    handleOK() {
+      this.$emit("dialogClose");
     },
     // 关闭弹窗
     handleClosee() {

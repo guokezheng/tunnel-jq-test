@@ -1,36 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.platform.mapper.event.SdTunnelSubareaMapper">
 
     <resultMap type="SdTunnelSubarea" id="SdTunnelSubareaResult">
-        <result property="sId"    column="s_id"    />
-        <result property="sName"    column="s_name"    />
-        <result property="tunnelId"    column="tunnel_id"    />
-        <result property="pileMin" column="pile_min" />
-        <result property="pileMax" column="pile_max" />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="sId" column="s_id"/>
+        <result property="sName" column="s_name"/>
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="pileMin" column="pile_min"/>
+        <result property="pileMax" column="pile_max"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tunnelName" column="tunnel_name"/>
+        <result property="eqIdMin" column="eqIdMin"/>
+        <result property="eqIdMax" column="eqIdMax"/>
     </resultMap>
 
     <sql id="selectSdTunnelSubareaVo">
-        select s_id, s_name, tunnel_id, pile_min, pile_max, create_by, create_time, update_by, update_time from sd_tunnel_subarea
+        select s_id,
+               s_name,
+               tunnel_id,
+               pile_min,
+               pile_max,
+               create_by,
+               create_time,
+               update_by,
+               update_time
+        from sd_tunnel_subarea
     </sql>
 
     <select id="selectSdTunnelSubareaList" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
         <include refid="selectSdTunnelSubareaVo"/>
         <where>
-            <if test="sName != null  and sName != ''"> and s_name like concat('%', #{sName}, '%')</if>
-            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="sName != null  and sName != ''">and s_name like concat('%', #{sName}, '%')</if>
+            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
+            <if test="pileMax != null and pileMax != ''">and pile_max = #{pileMax}</if>
+            <if test="pileMin != null and pileMin != ''">and pile_min = #{pileMin}</if>
         </where>
     </select>
 
+
     <select id="selectSdTunnelSubareaLists" parameterType="SdTunnelSubarea" resultMap="SdTunnelSubareaResult">
-        select a.s_id, a.s_name, a.tunnel_id, a.pile_min, a.pile_max, a.create_by, a.create_time, a.update_by, a.update_time ,b.tunnel_name from sd_tunnel_subarea a
+        select a.s_id,
+               a.s_name,
+               a.tunnel_id,
+               a.pile_min,
+               a.pile_max,
+               a.create_by,
+               a.create_time,
+               a.update_by,
+               a.update_time,
+               b.tunnel_name
+        from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
     </select>
 
@@ -40,7 +64,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSdTunnelSubareaByTunnelId" parameterType="String" resultMap="SdTunnelSubareaResult">
-        <include refid="selectSdTunnelSubareaVo"/>
+        select A.s_id,
+               A.s_name,
+               A.tunnel_id,
+               A.pile_min,
+               A.pile_max,
+               A.create_by,
+               A.create_time,
+               A.update_by,
+               A.update_time,
+               B.eq_id as eqIdMin,
+               C.eq_id as eqIdMax
+        from sd_tunnel_subarea A
+        LEFT JOIN sd_devices B
+       on A.pile_min = B.pile AND B.eq_type = "41"
+        LEFT JOIN sd_devices C
+       on A.pile_max = C.pile AND C.eq_type = "41"
         where tunnel_id = #{tunnelId}
     </select>
 
@@ -56,7 +95,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sId != null">#{sId},</if>
             <if test="sName != null">#{sName},</if>
@@ -67,7 +106,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSdTunnelSubarea" parameterType="SdTunnelSubarea">
@@ -86,7 +125,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSdTunnelSubareaBySId" parameterType="Long">
-        delete from sd_tunnel_subarea where s_id = #{sId}
+        delete
+        from sd_tunnel_subarea
+        where s_id = #{sId}
     </delete>
 
     <delete id="deleteSdTunnelSubareaBySIds" parameterType="String">

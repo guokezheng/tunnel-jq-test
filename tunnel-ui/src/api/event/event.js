@@ -1,6 +1,14 @@
+/*
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-09-07 22:06:50
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-09-18 18:04:03
+ * @FilePath: \tunnel-ui\src\api\event\event.js
+ * @Description: è¿™æ˜¯é»˜è®¤è®¾ç½®,è¯·è®¾ç½®`customMade`, æ‰“å¼€koroFileHeaderæŸ¥çœ‹é…ç½® è¿›è¡Œè®¾ç½®: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import request from '@/utils/request'
 
-// ²éÑ¯ÊÂ¼ş¹ÜÀíÁĞ±í
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½
 export function listEvent(query) {
   return request({
     url: '/event/list',
@@ -9,7 +17,7 @@ export function listEvent(query) {
   })
 }
 
-// ²éÑ¯ÊÂ¼ş¹ÜÀíÏêÏ¸
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸
 export function getEvent(id) {
   return request({
     url: '/event/' + id,
@@ -17,7 +25,7 @@ export function getEvent(id) {
   })
 }
 
-// ĞÂÔöÊÂ¼ş¹ÜÀí
+// ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function addEvent(data) {
   return request({
     url: '/event',
@@ -26,7 +34,7 @@ export function addEvent(data) {
   })
 }
 
-// ĞŞ¸ÄÊÂ¼ş¹ÜÀí
+// ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function updateEvent(data) {
   return request({
     url: '/event',
@@ -35,7 +43,7 @@ export function updateEvent(data) {
   })
 }
 
-// É¾³ıÊÂ¼ş¹ÜÀí
+// É¾ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function delEvent(id) {
   return request({
     url: '/event/' + id,
@@ -43,14 +51,14 @@ export function delEvent(id) {
   })
 }
 
-// ¹ÜÀí»ú¹¹
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 export function toll() {
   return request({
     url: '/system/dept/toll',
     method: 'get'
   })
 }
-// ËùÊôËíµÀ
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 export function getTunnelList(query) {
   return request({
     url: '/tunnels/deptId',
@@ -59,10 +67,26 @@ export function getTunnelList(query) {
   })
 }
 
-// ²éÑ¯·½Ïò
+// ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
 export function listDevices(query) {
   return request({
     url: '/devices/list',
+    method: 'get',
+    params: query
+  })
+}
+//æŸ¥è¯¢éš§é“åˆ†åŒº
+export function getSubareaByTunnelId(tunnelId) {
+  return request({
+    url: '/plan/getListBytId?tunnelId=' + tunnelId,
+    method: 'get',
+  })
+}
+
+// ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
+export function getWarnEvent(query) {
+  return request({
+    url: '/event/getEvent',
     method: 'get',
     params: query
   })

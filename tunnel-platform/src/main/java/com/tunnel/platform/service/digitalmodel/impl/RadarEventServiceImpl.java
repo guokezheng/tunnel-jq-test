@@ -10,6 +10,8 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.platform.controller.ws.WebSocketServer;
+import com.tunnel.platform.datacenter.domain.enumeration.EventSourceEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.digitalmodel.*;
 import com.tunnel.platform.domain.event.SdEvent;
@@ -17,6 +19,7 @@ import com.tunnel.platform.domain.event.SdRadarDetectData;
 import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.platform.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.platform.service.digitalmodel.RadarEventService;
+import com.tunnel.platform.service.event.ISdEventService;
 import com.tunnel.platform.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import io.swagger.annotations.ApiModelProperty;
@@ -38,6 +41,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.text.ParseException;
 import java.util.*;
 
@@ -47,6 +52,9 @@ import java.util.*;
  */
 @Service
 public class RadarEventServiceImpl implements RadarEventService {
+
+    @Autowired
+    private ISdEventService sdEventService;
 
     @Autowired
     private RadarEventMapper wjMapper;
@@ -76,6 +84,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSON parse = JSONUtil.parse(map.get("b5eventList"));
         List<WjEvent> list = JSONUtil.toList(parse.toString(), WjEvent.class);
         List<SdEvent> eventList=new ArrayList<>();
+        List<Long> eventIdList = new ArrayList<>();
         list.forEach(f->{
             SdEvent sdEvent=new SdEvent();
             Integer integer=wjMapper.selectID(f.getEventId());
@@ -105,7 +114,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             sdEvent.setEventLatitude(f.getEventLatitude()+"");
             sdEvent.setStartTime(f.getEventTimeStampStart());
             sdEvent.setEndTime(f.getEventTimeStampEnd());
+            sdEvent.setEventSource(EventSourceEnum.radar.getCode());
             eventList.add(sdEvent);
+            eventIdList.add(sdEvent.getId());
             List<WjConfidence> targetList = f.getTargetList();
             targetList.forEach(s->s.setEventIds(f.getEventId()));
             wjMapper.insertEventConfidence(targetList);
@@ -114,7 +125,11 @@ public class RadarEventServiceImpl implements RadarEventService {
         if (CollectionUtils.isNotEmpty(eventList)){
             wjMapper.insertWjEvent(eventList);
             log.info("---插入数据list---{}",eventList);
-            WebSocketService.broadcast("WjEvent",eventList);
+            List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
+            JSONObject object = new JSONObject();
+            object.put("sdEventList",sdEventList);
+//            WebSocketService.broadcast("WjEvent",object.toString());
+            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
     }
@@ -188,7 +203,7 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertRadarDetect(Map<String, Object> map) throws ParseException{
+    public void insertRadarDetect(Map<String, Object> map) throws Exception{
         //检测时间，yyyy-MM-dd HH:mm:ss:SSS（可读性考虑）
         String timeStamp = (String) map.get("timeStamp");
         //隧道ID
@@ -217,6 +232,16 @@ public class RadarEventServiceImpl implements RadarEventService {
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
+        JSONObject object = new JSONObject();
+        object.put("radarDataList",dataList);
+        redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA,RadarEventConstants.MATCHRESULTDATA+":"+tunnelId,object);
+//        WebSocketService.broadcast("dataList",object);
+        WebSocketServer.sendMessage(object.toString());
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt",true));  //这个ture是内容不覆盖继续写
+        bufferedWriter.write(object.toString());
+        bufferedWriter.newLine();
+        bufferedWriter.close();
+        log.info("---测试车辆---{}",dataList);
     }
 
     @Override
@@ -307,7 +332,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String deviceStatus= devicesMapper.selectEqStatus(deviceId);
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
-                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "34".equals(deviceType)) {
+                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "32".equals(deviceType)) {
 //            String runStatus = wjDeviceData.getRunStatus() + "";
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
@@ -315,7 +340,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData",parse);
 //            jsonObject.put("runStatus", runStatus);
-        }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)){
+        }else if ("5".equals(deviceType)||"15".equals(deviceType)||"28".equals(deviceType)||"18".equals(deviceType)){
 //            String runDate = wjDeviceData.getRunDate();
 //            String unit = wjDeviceData.getUnit();
             jsonObject.put("deviceId", deviceId);
@@ -379,7 +404,6 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
-        List<SdDevices> devicesList = devicesMapper.selectStateStorage();
         List<SdRadarDevice> list = new ArrayList<>();
         /*
         //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
@@ -418,7 +442,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdRadarDevice.setTransform(f.getRemark());
                 WjDeviceData deviceData = new WjDeviceData();
                 if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
-                        || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "34".equals(sdRadarDevice.getDeviceType())) {
+                        || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "32".equals(sdRadarDevice.getDeviceType())) {
                     /*redisResult.forEach(
                         v->{
                             if (v!=null){
@@ -430,17 +454,14 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
-                }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())){
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
+                }else if ("5".equals(sdRadarDevice.getDeviceType())||"15".equals(sdRadarDevice.getDeviceType())||"28".equals(sdRadarDevice.getDeviceType())||"18".equals(sdRadarDevice.getDeviceType())){
                     /*redisResult.forEach(
                             v->{
                                 if (v!=null){
@@ -472,16 +493,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                         }
                     );*/
-                    /**
-                     * 从sd_state_storage表中查询deviceType=* 字段独有的runStatus
-                     */
-                    devicesList.forEach(
-                            v->{
-                                if (f.getEqId().equals(v.getEqId())){
-                                    deviceData.setRunStatus(Integer.parseInt(v.getEqStatus()));
-                                }
-                            }
-                    );
+                    SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())){
+                        deviceData.setRunDate(sdDeviceDataItem.getData());
+                    }
+                    if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())){
+                        deviceData.setUnit(sdDeviceDataItem.getUnit());
+                    }
                 }else if ("31".equals(sdRadarDevice.getDeviceType())){
                    /* redisResult.forEach(
                             v->{

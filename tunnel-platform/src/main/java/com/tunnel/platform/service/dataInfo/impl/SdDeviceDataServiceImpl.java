@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
+import com.tunnel.platform.mapper.dataInfo.SdDevicesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
@@ -25,6 +28,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
 {
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -100,6 +105,17 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
         return sdDeviceDataMapper.deleteSdDeviceDataById(id);
     }
 
+    /**
+     * 根据隧道id查询当前设备的监测状态、实时数据或状态
+     *
+     * @param tunnelId 隧道id
+     * @return
+     */
+    @Override
+    public List<Map<String, String>> getDeviceDataByTunnelId(String tunnelId) {
+        return sdDeviceDataMapper.getDeviceDataByTunnelId(tunnelId);
+    }
+
     @Override
     public Map<String, Object> getTodayCOVIData(String deviceId) {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
@@ -111,6 +127,42 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService
         Map<String, Object> map = new HashMap<String,Object>();
         map.put("todayCOData", todayCOData);
         map.put("todayVIData", todayVIData);
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getTodayFSFXData(String deviceId) {
+        Long itemId = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String today = simpleDateFormat.format(new Date());
+        List<Map<String, Object>> todayFSData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        itemId = Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode());
+        sdDeviceData.setItemId(itemId);
+        SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
+        Map<String, Object> map = new HashMap<String,Object>();
+        map.put("todayFSData", todayFSData);
+        map.put("windDirection", deviceData.getData());
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> getTodayLDData(String deviceId) {
+        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
+        Long ldInsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode();
+        Long ldOutsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String today = simpleDateFormat.format(new Date());
+        List<Map<String, Object>> todayLDData = null;
+        Map<String, Object> map = new HashMap<String,Object>();
+        if (sdDevices != null && sdDevices.getEqType().longValue() == ldInsideTypeCode.longValue()) {
+            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
+            map.put("todayLDInsideData", todayLDData);
+        } else if (sdDevices != null && sdDevices.getEqType().longValue() == ldOutsideTypeCode.longValue()) {
+            todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
+            map.put("todayLDOutsideData", todayLDData);
+        }
         return map;
     }
 }

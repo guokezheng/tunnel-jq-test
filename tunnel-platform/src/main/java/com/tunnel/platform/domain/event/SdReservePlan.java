@@ -28,6 +28,10 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("预案ID")
     private Long id;
 
+    /** 隧道Id */
+    @ApiModelProperty("隧道Id")
+    private String tunnelId;
+
     @Excel(name = "分区ID")
     @ApiModelProperty("分区ID")
     private Long subareaId;
@@ -80,7 +84,7 @@ public class SdReservePlan extends BaseEntity
     private String strategyId;
 
     @ApiModelProperty("策略名")
-    private String strategyNames;
+    private List<String> strategyNames;
 
     @ApiModelProperty("隧道分区对象")
     private SdTunnelSubarea sdTunnelSubarea;
@@ -88,6 +92,21 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
 
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public SdTunnels getSdTunnels() {
+        return sdTunnels;
+    }
+
+    public void setSdTunnels(SdTunnels sdTunnels) {
+        this.sdTunnels = sdTunnels;
+    }
 
     public void setId(Long id)
     {
@@ -207,11 +226,11 @@ public class SdReservePlan extends BaseEntity
 		this.pFileList = pFileList;
 	}
 
-	public String getStrategyNames() {
+	public List<String> getStrategyNames() {
 		return strategyNames;
 	}
 
-	public void setStrategyNames(String strategyNames) {
+	public void setStrategyNames(List<String> strategyNames) {
 		this.strategyNames = strategyNames;
 	}
 

@@ -156,11 +156,13 @@ public interface SdDevicesMapper
 
 	public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 
-	List<SdDevices> selectStateStorage();
-
     String selectEqStatus(@Param("deviceId") String deviceId);
 
 	SdDeviceDataItem selectDataUnit(@Param("eqId") String eqId);
 
 	void updateSdDevicesBatch(@Param("eqId") String eqId, @Param("eqStatus") String eqStatus);
+
+	public int updateSdDevicesByFEqId(SdDevices sdDevices);
+
+	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
 }

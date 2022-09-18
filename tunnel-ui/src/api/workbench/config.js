@@ -86,3 +86,45 @@ export function trafficFlowInformation() {
     method: 'post',
   })
 }
+
+// covi弹窗数据
+export function getTodayCOVIData(deviceId){
+  return request({
+    url:'/system/data/getTodayCOVIData/' + deviceId,
+    method: 'get',
+  })
+}
+
+// 风速风向弹窗数据
+export function getTodayFSFXData(deviceId){
+  return request({
+    url:'/system/data/getTodayFSFXData/' + deviceId,
+    method: 'get',
+  })
+}
+
+// 亮度检测器弹窗数据
+export function getTodayLDData(deviceId){
+  return request({
+    url:'/system/data/getTodayLDData/' + deviceId,
+    method: 'get',
+  })
+}
+
+//根据隧道id查询当前设备的监测状态、实时数据或状态
+export function getDeviceData(query) {
+  return request({
+    url: '/system/data/getDeviceDataByTunnelId',
+    method: 'get',
+    params: query
+  })
+}
+
+// 诱导灯弹窗数据
+export function controlDevice(data) {
+  return request({
+    url: '/workspace/controlDevice',
+    method: 'post',
+    data: data
+  })
+}

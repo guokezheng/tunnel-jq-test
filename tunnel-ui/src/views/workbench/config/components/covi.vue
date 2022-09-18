@@ -35,7 +35,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备类型:">
-              {{ stateForm.eqTypeName }}
+              {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="所属方向:">
-              {{ stateForm.eqDirection }}
+              {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ getBrandName(stateForm.brandName) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -72,7 +72,7 @@
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
-              {{ "在线" }}
+              {{ geteqType(stateForm.eqStatus)}}
             </el-form-item>
           </el-col>
         </el-row>
@@ -80,12 +80,12 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="CO值:">
-              <!-- {{ stateForm.deptName }} -->
+              {{ coValue }}<span style="padding-left:5px">PPM</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              <!-- {{ stateForm.brandName }} -->
+              {{ viValue }}<span style="padding-left:5px">KM</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -121,17 +121,20 @@
 <script>
 import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+import { getTodayCOVIData } from "@/api/workbench/config.js"; //查询弹窗信息
+
+
 export default {
-  props: ["equipmentId", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   watch: {
     tab: {
       handler(newValue, oldValue) {
         if (newValue) {
           console.log(newValue, "newValue");
           // this.mychart.dispose()
-          this.$nextTick(() => {
-            this.initChart(newValue);
-          });
+          // this.$nextTick(() => {
+            this.getChartMes(newValue);
+          // });
         }
       },
     },
@@ -144,72 +147,79 @@ export default {
       visible: true,
       tab: "co",
       mychart: null,
+      coValue:'',
+      viValue:''
     };
   },
   created() {
-    console.log(this.equipmentId, "equipmentIdequipmentId");
+    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getMessage();
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.initChart();
-    });
+    this.getChartMes();
+
   },
   methods: {
     // 查设备详情
     async getMessage() {
       var that = this;
-      if (this.equipmentId) {
-        var obj = {};
-        var state = "";
+      if (this.eqInfo.equipmentId) {
         // 查询单选框弹窗信息 -----------------------
-        await getDeviceById(this.equipmentId).then((res) => {
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询单选框弹窗信息");
-          obj = res.data;
-          this.title = obj.eqName;
-          this.stateForm = {
-            brandName: that.getBrandName(obj.brandId), //厂商
-            eqDirection: that.getDirection(obj.eqDirection),
-
-            pile: obj.pile, //桩号
-            eqTypeName: obj.typeName, //设备类型名称
-            tunnelName: obj.tunnelName, //隧道名称
-            deptName: obj.deptName, //所属机构
-            eqType: obj.eqType, //设备类型号
-            state: obj.state,
-          };
-          console.log(this.stateForm, "stateForm");
+          this.stateForm = res.data;
+          this.title = this.stateForm.eqName;
+         
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
     },
+    getChartMes(){
+      getTodayCOVIData(this.eqInfo.equipmentId).then((response) =>{
+            console.log(response,"covi数据");
+            var coXdata = []
+            var coYdata = []
+            var viXdata = []
+            var viYdata = []
+
+            for(var item of response.data.todayCOData){
+              coXdata.push(item.order_hour)
+              coYdata.push(item.count)
+              this.coValue = coYdata[coYdata.length-1]
+              console.log(co,"co");
+            }
+            for(var item of response.data.todayVIData){
+              viXdata.push(item.order_hour)
+              viYdata.push(item.count)
+              this.viValue = viYdata[viYdata.length-1]
+
+            }
+            this.$nextTick(() => {
+              this.initChart(coXdata,coYdata,viXdata,viYdata);
+    });
+            
+
+          })
+    },
     // 获取图表数据信息
-    initChart(val) {
-      console.log(val);
+    initChart(coXdata,coYdata,viXdata,viYdata) {
       var lincolor = [];
       var yName = "";
-      if (val) {
-        if (val == "vi") {
+      var XData = [];
+      var YData = [];
+      
+        if (this.tab == "vi") {
+          XData = viXdata;
+          YData = viYdata
           lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
           yName = "VI/KM";
         } else {
+          XData = coXdata;
+          YData = coYdata;
           lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
           yName = "CO/PPM";
         }
-      } else {
-        lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
-        yName = "CO/PPM";
-      }
+      
 
-      console.log(yName, "yName");
-      var XData = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18];
-      var YData = [1000, 1200, 1250, 1350, 1439, 1446, 1235, 1256, 1363, 1153];
-      console.log(
-        document.getElementById(this.tab),
-        "document.getElementById(this.tab)"
-      );
-      // this.mychart.dispose()
       this.mychart = echarts.init(document.getElementById(this.tab));
       var option = {
         tooltip: {
@@ -340,8 +350,19 @@ export default {
         }
       }
     },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     // 关闭弹窗
     handleClosee() {
+      this.$emit("dialogClose");
+    },
+    // 提交修改
+    handleOK() {
       this.$emit("dialogClose");
     },
   },
@@ -355,9 +376,6 @@ export default {
   border: 1px solid transparent;
   // color: #fff;
 }
-// ::v-deep .el-radio-button--medium .el-radio-button__inner {
-
-// }
 ::v-deep .el-radio-group > .is-active {
   background: #00aaf2 !important;
   border-radius: 20px !important;

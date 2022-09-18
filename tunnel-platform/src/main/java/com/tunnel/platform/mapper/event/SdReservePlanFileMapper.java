@@ -66,6 +66,14 @@ public interface SdReservePlanFileMapper
      * @return 结果
      */
     public int deleteSdReservePlanFileByRlIds(String[] planFileIds);
+
+    /**
+     * 删除预案文件
+     *
+     * @param planFileId 需要删除的文件关联数据ID
+     * @return 结果
+     */
+    public int deleteSdReservePlanFileByPlanFileId(String planFileId);
     
     /**
      * 批量新增预案文件

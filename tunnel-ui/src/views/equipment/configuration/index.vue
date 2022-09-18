@@ -469,6 +469,7 @@ export default {
       const id = row.id || this.ids;
       var that = this;
       getConfiguration(id).then((response) => {
+        console.log(response.data,"row")
         this.form = response.data;
         that.planRoadmapUrl(that.form.iFileList);
         this.open = true;

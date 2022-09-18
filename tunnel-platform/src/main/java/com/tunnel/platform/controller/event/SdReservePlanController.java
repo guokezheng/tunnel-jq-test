@@ -246,4 +246,10 @@ public class SdReservePlanController extends BaseController
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }
 
+    @GetMapping("/getListBytId")
+    @ApiOperation("根据隧道id查询预案")
+    public Result selectPlanByTid(String tunnelId) {
+        return Result.success(sdReservePlanService.selectSdReservePlanByTunnelId(tunnelId));
+    }
+
 }

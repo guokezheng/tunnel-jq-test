@@ -6,8 +6,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.tunnel.platform.business.board.core.DevicesManager;
-import com.tunnel.platform.business.instruction.EquipmentControlInstruction;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.platform.business.vms.core.DevicesManager;
+import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
 import com.tunnel.platform.domain.dataInfo.SdTunnels;
@@ -17,6 +18,7 @@ import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.service.event.ISdEventService;
 import com.tunnel.platform.utils.util.CRC8Util;
 import com.tunnel.platform.utils.util.SpringContextUtils;
+import com.zc.common.core.redis.RedisPubSub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -166,9 +168,18 @@ public class workspaceController extends BaseController {
         eci.controlInstruction(Long.parseLong(devType),null,devId,"0",null,state);
     }*///gongfanfei
     @PostMapping("/controlDevice")
-    public void controlDevice(String devId, String hostId,String tunnelId, String devType, String state) {
-        EquipmentControlInstruction eci = new EquipmentControlInstruction();
-        eci.controlInstructionHandleOne(Long.parseLong(devType),tunnelId, devId, "0", null, state);
+    public void controlDevice(String devId, String devType, String brightness, String frequency, String state, String tunnelId) {
+        Map<String, Object> instruction = new HashMap<>();
+        //设备id
+        instruction.put("deviceId", devId);
+        instruction.put("ctrState", state);
+        instruction.put("brightness", brightness);
+        instruction.put("frequency", frequency);
+        if (devType != null && devType.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())) {
+            SpringUtils.getBean(RedisPubSub.class).publish("GL:CONTROL", JSON.toJSONString(instruction));
+        } else {
+            SpringUtils.getBean(RedisPubSub.class).publish("PLC:CONTROL", JSON.toJSONString(instruction));
+        }
     }
 
     /**

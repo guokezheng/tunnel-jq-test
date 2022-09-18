@@ -82,4 +82,11 @@ public interface ISdReservePlanService
      * @return
      */
     public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
+
+    /**
+     * 根据隧道查询预案
+     * @param tunnelId
+     * @return
+     */
+    public List<Map> selectSdReservePlanByTunnelId(String tunnelId);
 }

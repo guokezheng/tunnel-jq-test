@@ -114,6 +114,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="protocol != null and protocol !=''">
                 and a.protocol = #{protocol}
             </if>
+            <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
+            <if test="secureKey != null  and secureKey != ''">and a.secure_key = #{secureKey}</if>
             <if test="deptId != null ">
                 AND (b.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
@@ -374,6 +376,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </update>
 
+    <update id="updateSdDevicesByFEqId">
+        update sd_devices
+        set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
+        where f_eq_id = #{fEqId}
+    </update>
+
     <!--    <update id="updateSdDevicesBatch">-->
 <!--        <foreach collection="list" item="item" index="index" open="" close="" separator=",">-->
 <!--            update sd_devices-->
@@ -577,10 +585,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
         order by a.create_time desc, a.update_time desc
     </select>
-    <select id="selectStateStorage" resultType="com.tunnel.platform.domain.dataInfo.SdDevices">
-        select device_id eqId,state eqStatus
-        from sd_state_storage
-    </select>
 
     <select id="selectEqStatus" resultType="java.lang.String">
        select eq_status deviceStatus from sd_devices
@@ -598,4 +602,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where device_id=#{eqId}
     </select>
 
+    <select id="selectFireComponentsList" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select * from sd_devices where f_eq_id = #{fEqId}
+    </select>
 </mapper>

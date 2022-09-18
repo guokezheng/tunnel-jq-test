@@ -104,5 +104,16 @@ public class SdTunnelSubareaController extends BaseController
         return toAjax(sdTunnelSubareaService.deleteSdTunnelSubareaBySIds(sIds));
     }
 
+    /**
+     * 根据隧道Id查询隧道分区
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getSubareaByTunnelId")
+    public AjaxResult getSdTunnelSubareaByTunnelId(String tunnelId)
+    {
+        return AjaxResult.success(sdTunnelSubareaService.selectSdTunnelSubareaByTunnelId(tunnelId));
+    }
+
 
 }

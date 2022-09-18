@@ -366,6 +366,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
 		List<SdEquipmentType> list = sdEquipmentTypeMapper.selectSdEquipmentTypeHasList(tunnelId);
 		return list;
 	}
+
 	@Override
 	public List<SdEquipmentType> selectSdEquipmentTypeByBigType(String bigType) {
 		if(StringUtils.isNotBlank(bigType)){

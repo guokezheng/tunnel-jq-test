@@ -61,5 +61,17 @@ public interface ISdDeviceDataService
      */
     public int deleteSdDeviceDataById(Long id);
 
+
+    /**
+     * 根据隧道id查询当前设备的监测状态、实时数据或状态
+     * @param tunnelId 隧道id
+     * @return
+     */
+    List<Map<String,String>> getDeviceDataByTunnelId(String tunnelId);
+
     public Map<String, Object> getTodayCOVIData(String deviceId);
+
+    public Map<String, Object> getTodayFSFXData(String deviceId);
+
+    public Map<String, Object> getTodayLDData(String deviceId);
 }

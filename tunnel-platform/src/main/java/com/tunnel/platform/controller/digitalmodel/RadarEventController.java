@@ -39,7 +39,7 @@ public class RadarEventController {
     public static final Logger log = LoggerFactory.getLogger(RadarEventController.class);
 
     /**
-     * 事件数据
+     * 事件数据雷达的  event_source=0
      * @param map
      * @return
      */
@@ -79,8 +79,8 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-    //@KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
-    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
+    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
 //        byte[] value = (byte[]) record.value();
 //        String kafkaJsonStr = new String(value);
 //        if (kafkaJsonStr.startsWith("\"") && kafkaJsonStr.endsWith("\"")) {
@@ -111,7 +111,7 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
+    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);

@@ -158,4 +158,6 @@ public interface ISdDevicesService
     public List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 
     public List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
+
+    public int updateSdDevicesByFEqId(SdDevices sdDevices);
 }

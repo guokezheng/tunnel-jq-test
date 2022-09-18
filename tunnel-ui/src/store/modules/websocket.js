@@ -20,7 +20,7 @@ const websocket = {
     WJEVENT: (state, data) => {
       state.WjEvent = data
     },
-  },
+},
 
   actions: {
 

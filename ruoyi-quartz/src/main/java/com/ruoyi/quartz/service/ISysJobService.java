@@ -1,6 +1,8 @@
 package com.ruoyi.quartz.service;
 
 import java.util.List;
+
+import com.tunnel.platform.domain.event.SdStrategy;
 import org.quartz.SchedulerException;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.quartz.domain.SysJob;
@@ -99,4 +101,11 @@ public interface ISysJobService
      * @return 结果
      */
     public boolean checkCronExpressionIsValid(String cronExpression);
+
+    /**
+     * 修改定时任务状态
+     * @param job
+     * @return
+     */
+    public int updateState(SysJob job);
 }

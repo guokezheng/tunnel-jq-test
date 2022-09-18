@@ -1,9 +1,11 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.ruoyi.common.core.page.Result;
+import com.tunnel.platform.domain.dataInfo.SdDevices;
 import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,11 +107,68 @@ public class SdDeviceDataController extends BaseController
         return toAjax(sdDeviceDataService.deleteSdDeviceDataByIds(ids));
     }
 
+
+    /**
+     * 根据隧道id查询当前设备的监测状态、实时数据或状态
+     * @param tunnelId 隧道id
+     * @return
+     */
+    @GetMapping("/getDeviceDataByTunnelId")
+    public Result getDeviceDataByTunnelId(String tunnelId) {
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(tunnelId);
+        List<Map<String,String>> deviceList = sdDeviceDataService.getDeviceDataByTunnelId(tunnelId);
+        Map<String,Map<String,String>> map = new HashMap<>();
+
+        for(Map<String,String> deviceMap : deviceList){
+            String eqId = deviceMap.get("eqId");
+            if(map.get(eqId) == null){
+                Map<String,String> itemMap = new HashMap<>();
+                itemMap.put("eqId",eqId);
+                itemMap.put("eqName",deviceMap.get("eqName"));
+                itemMap.put("eqDirection",deviceMap.get("eqDirection"));
+                itemMap.put("eqStatus",deviceMap.get("eqStatus"));
+                itemMap.put("eqType",deviceMap.get("eqType"));
+                itemMap.put("eqTunnelId",deviceMap.get("eqTunnelId"));
+                String itemCode = deviceMap.get("itemCode");
+                String data = deviceMap.get("dataUnit");
+                if(itemCode != null){
+                    itemMap.put(itemCode,data);
+                }
+                map.put(eqId,itemMap);
+            }else{
+                Map<String,String> itemMap = map.get(eqId);
+                String itemCode = deviceMap.get("itemCode");
+                String data = deviceMap.get("dataUnit");
+                if(itemCode != null){
+                    itemMap.put(itemCode,data);
+                }
+            }
+        }
+        return Result.success(map);
+    }
+
     @GetMapping("/getTodayCOVIData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayCOVIData(@PathVariable("deviceId") String deviceId)
     {
         Map<String, Object> todayCOVIData = sdDeviceDataService.getTodayCOVIData(deviceId);
         return Result.success(todayCOVIData);
+    }
+
+    @GetMapping("/getTodayFSFXData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayFSFXData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayFSFXData = sdDeviceDataService.getTodayFSFXData(deviceId);
+        return Result.success(todayFSFXData);
+    }
+
+    @GetMapping("/getTodayLDData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
+    {
+        Map<String, Object> todayLDData = sdDeviceDataService.getTodayLDData(deviceId);
+        return Result.success(todayLDData);
     }
 }

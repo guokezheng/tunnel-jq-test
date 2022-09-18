@@ -9,7 +9,7 @@
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-    <div
+      <div
         style="
           width: 100%;
           height: 30px;
@@ -20,7 +20,7 @@
         <div class="dialogLine"></div>
         <img
           :src="titleIcon"
-          style="height: 30px; transform: translateY(-30px);cursor: pointer;"
+          style="height: 30px; transform: translateY(-30px); cursor: pointer"
           @click="handleClosee"
         />
       </div>
@@ -43,14 +43,14 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding-top: 0px"
+        style="padding:0 15px 15px 15px;"
       >
-        <el-tabs class="robotTabs" v-model="videoActive">
+        <el-tabs class="videoTabs" v-model="videoActive">
           <el-tab-pane label="详细信息" name="information">
             <el-row>
               <el-col :span="13">
                 <el-form-item label="设备类型:">
-                  {{ stateForm.eqTypeName }}
+                  {{ stateForm.typeName }}
                 </el-form-item>
               </el-col>
               <el-col :span="11">
@@ -74,19 +74,19 @@
             <el-row>
               <el-col :span="13">
                 <el-form-item label="设备状态:">
-                  {{ stateForm.eqStatus }}
+                  {{ geteqType(stateForm.eqStatus) }}
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="13">
                 <el-form-item label="上行摄像机:">
-                  <!-- {{ '1000米' }} -->
+                  {{ '1000米' }}
                 </el-form-item>
               </el-col>
               <el-col :span="11">
                 <el-form-item label="下行摄像机:">
-                  <!-- {{ '1000米' }} -->
+                  {{ '1000米' }}
                 </el-form-item>
               </el-col>
             </el-row>
@@ -131,7 +131,7 @@
             <el-row>
               <el-col :span="13">
                 <el-form-item label="厂商:">
-                  {{ stateForm.brandName }}
+                  {{ getBrandName(stateForm.brandName) }}
                 </el-form-item>
               </el-col>
               <el-col :span="11">
@@ -230,19 +230,22 @@
             height: 200px;
             margin-left: 9px;
           "
-          v-for="item in 20"
+          v-for="(item,index) in videoList" :key="index"
         >
           <div style="width: calc(100% - 20px); height: 50%; margin: 5px auto">
-            <el-image :src="pic" style="width: 100%; height: 100%"></el-image>
+            <el-image
+              :src="item.pic"
+              style="width: 100%; height: 100%"
+            ></el-image>
           </div>
           <div style="padding-left: 10px; line-height: 20px">
-            2022-03-11 14:47:13
+            {{ item.time }}
           </div>
           <div style="padding-left: 10px; line-height: 20px">
-            事件: 道路拥堵
+            {{ item.event }}
           </div>
           <div style="padding-left: 10px; line-height: 20px">
-            状态: <span style="color: #ff9900">正在进行</span>
+            状态: <span style="color: #ff9900">{{ item.status }}</span>
           </div>
         </div>
       </div>
@@ -260,20 +263,17 @@
 </template>
 
 <script>
-import flvjs from "flv.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-// import { getDevices } from "@/api/equipment/eqlist/api";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 
-
 export default {
-  props: ["equipmentId", "clickEqType", "brandList", "directionList"],
+  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
 
-      title:'',
+      title: "",
       cameraVisible: true, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
@@ -286,61 +286,95 @@ export default {
       dateRange: [], //选择时间数组
       total: 0, // 总条数
       src: require("@/assets/Example/v1.mp4"),
-      pic: require("@/assets/images/warningPhoto.png"),
+
+      videoList: [
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/warningPhoto.png"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+      ],
     };
   },
   created() {
-    console.log(this.equipmentId, "equipmentIdequipmentId");
+    console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
+    this.getmessage()
     // 根据设备id 获取弹窗内信息
-    if (this.equipmentId) {
-      const eqId = this.equipmentId;
-      var obj = {}
-      var that= this
-      getDeviceById(eqId).then((res) => {
+   
+  },
+  methods: {
+    async getmessage(){
+      if (this.eqInfo.equipmentId) {
+        await getDeviceById(this.eqInfo.equipmentId).then((res) => {
         console.log(res, "查询摄像机弹窗信息");
-        obj = res.data;
-        this.title = obj.eqName ;
-
+        this.stateForm = res.data;
+        this.title = this.stateForm.eqName;
         displayH5sVideoAll(res.data.secureKey);
 
-        getInfo(this.clickEqType).then((response) => {
-          console.log(response, "查询设备当前状态");
-          // debugger
-          obj.state = response.data.state;
-          this.stateForm = {
-            brandName: that.getBrandName(obj.brandId), //厂商
-            eqDirection: that.getDirection(obj.eqDirection),
-            pile: obj.pile, //桩号
-            eqTypeName: obj.typeName, //设备类型名称
-            tunnelName: obj.tunnelName, //隧道名称
-            deptName: obj.deptName, //所属机构
-            eqType: obj.eqType, //设备类型号
-            state: that.eqstatus(obj.eqStatus),
-          //   ip: res.data.ip, //设备ip
-          // brandName: "", //厂商
-          // eqModel: res.data.eqModel, //型号
-          // protocol: res.data.protocol, //协议类型
-          // port: res.data.port, //端口
-          };
-        });
+       
       });
+      // await getInfo(this.eqInfo.clickEqType).then((response) => {
+      //     console.log(response, "查询设备当前状态");
+      //     this.stateForm.state = response.data.state;
+      //   });
     } else {
       this.$modal.msgWarning("没有设备Id");
     }
-    this.loadFlv();
-  },
-  methods: {
-    loadFlv() {
-      // if (flvjs.isSupported()) {
-      //   var videoElement = document.getElementById("videoBox");
-      //   var flvPlayer = flvjs.createPlayer({
-      //     type: 'flv',
-      //     url: 'http://10.166.139.12:8081/live/22456.flv' //你的url地址
-      //   });
-      //   flvPlayer.attachMediaElement(videoElement);
-      //   flvPlayer.load();
-      //   flvPlayer.play();
-      // }
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -353,6 +387,13 @@ export default {
       // 根据字典表查设备厂商--------------------------
       for (var item of this.brandList) {
         if (Number(item.dictValue) == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    geteqType(num) {
+      for (var item of this.eqTypeDialogList) {
+        if (item.dictValue == num) {
           return item.dictLabel;
         }
       }
@@ -372,11 +413,7 @@ export default {
     resetQuery() {
       this.resetForm("queryForm");
     },
-    eqstatus(num){
-      if(num == ''){
-return ""
-      }
-    }
+    
   },
 };
 </script>
@@ -413,5 +450,12 @@ return ""
 .el-pagination.is-background .btn-prev:disabled,
 .el-pagination.is-background .btn-next:disabled {
   color: "#01AAFD !important";
+}
+::v-deep .el-tabs__nav-wrap::after{
+  background-color: #dfe4ed;
+  opacity: 0.4;
+}
+::v-deep .el-tabs__active-bar{
+  background-color: #01AAFD;
 }
 </style>

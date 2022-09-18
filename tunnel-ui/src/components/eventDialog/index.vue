@@ -151,7 +151,6 @@
    methods:{
      
      getUrl(){
-       console.log(this.event.id,'当前事件id')
        const param3 ={
         businessId:111,
         // businessId:this.event.id
@@ -161,11 +160,9 @@
         // id:this.event.id
        }
        image(param3).then(response => {
-         console.log(response.data,'获取图片')
          this.urls = response.data;
        });
        video(param4).then(response => {
-         console.log(response.data,'获取视频')
          this.videoUrl = response.data;
        });
      },
@@ -189,10 +186,9 @@
          eventState:'0'
        }
        updateEvent(param).then(response => {
-         console.log(response,'修改状态')
          this.$modal.msgSuccess("开始处理事件");
        });
-       bus.$emit("closeDialog",false)
+       bus.$emit("closeDialog",false);
        this.$router.push({ path: "/emergency/administration/dispatch", query: { id: event.id } });
      },
      // 上一个事件

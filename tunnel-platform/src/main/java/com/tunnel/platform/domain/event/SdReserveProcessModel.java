@@ -10,7 +10,7 @@ public class SdReserveProcessModel {
 
     private Long reserveId;
 
-    public List<SdReserveProcess> sdReserveProcesses;
+    public List<SdReserveProcess> handleStrategyList;
 
     public Long getReserveId() {
         return reserveId;
@@ -21,18 +21,18 @@ public class SdReserveProcessModel {
     }
 
     public List<SdReserveProcess> getSdReserveProcesses() {
-        return sdReserveProcesses;
+        return handleStrategyList;
     }
 
-    public void setSdReserveProcesses(List<SdReserveProcess> sdReserveProcesses) {
-        this.sdReserveProcesses = sdReserveProcesses;
+    public void setSdReserveProcesses(List<SdReserveProcess> handleStrategyList) {
+        this.handleStrategyList = handleStrategyList;
     }
 
     @Override
     public String toString() {
         return "SdReserveProcessModel{" +
                 "reserveId=" + reserveId +
-                ", sdReserveProcesses=" + sdReserveProcesses +
+                ", handleStrategyList=" + handleStrategyList +
                 '}';
     }
 }

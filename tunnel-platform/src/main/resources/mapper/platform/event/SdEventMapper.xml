@@ -42,6 +42,7 @@
         <result property="direction" column="direction"/>
         <result property="tunnelStationName" column="tunnel_station_name"/>
         <result property="slightInjured" column="slight_injured"/>
+        <result property="eventSource" column="event_source"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -57,34 +58,7 @@
     </resultMap>
 
     <sql id="selectSdEventVo">
-        select id,
-               tunnel_id,
-               event_type_id,
-               event_title,
-               event_time,
-               event_state,
-               event_grade,
-               event_location,
-               event_death,
-               event_injured,
-               event_description,
-               reserve_plan_id,
-               flow_id,
-               warning_id,
-               create_by,
-               create_time,
-               update_by,
-               update_time,
-               remark,
-               police_phone,
-               wrecker_phone,
-               car_owner_phone,
-               tanker_num,
-               passenger_car_num,
-               small_car_num,
-               direction,
-               slight_injured,
-               truck_num
+        select id, tunnel_id, event_type_id, event_title, event_source, event_time, event_state, event_grade, event_location, event_death, event_injured, slight_injured, event_description, reserve_plan_id, flow_id, warning_id, station_id, lane_no, longitude, latitude, stake_num, start_time, end_time, video_url, create_by, create_time, update_by, update_time, direction, small_car_num, truck_num, passenger_car_num, tanker_num, car_owner_phone, wrecker_phone, police_phone, remark
         from sd_event
     </sql>
 
@@ -174,6 +148,7 @@
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="stakeNum != null">stake_num,</if>
+            <if test="eventSource != null">event_source,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -207,6 +182,7 @@
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="eventSource != null">#{eventSource},</if>
         </trim>
     </insert>
 
@@ -240,6 +216,7 @@
             <if test="smallCarNum != null">small_car_num = #{smallCarNum},</if>
             <if test="direction != null">direction = #{direction},</if>
             <if test="slightInjured != null">slight_injured = #{slightInjured},</if>
+            <if test="eventSource != null">event_source = #{eventSource},</if>
         </trim>
         where id = #{id}
     </update>
@@ -284,6 +261,23 @@
             A.start_time &gt;= (NOW() - interval 24 hour)
             and A.start_time &lt;= NOW()
             order by create_time desc
+    </select>
+
+    <!--根据事件id列表查询事件信息-->
+    <select id="getEventList" parameterType="Long" resultMap="SdEventResult">
+                select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
+        A.event_location, A.event_death, A.event_injured, A.slight_injured,A.event_description, A.reserve_plan_id,
+        A.flow_id, A.warning_id,A.station_id, A.lane_no, A.longitude, A.latitude, A.stake_num, A.start_time, A.end_time, A.video_url,
+        A.create_by, A.create_time, A.update_by, A.update_time, A.direction,A.small_car_num,A.truck_num, A.passenger_car_num,A.tanker_num,
+        A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,
+        B.event_type,C.tunnel_name, C.tunnel_station_name
+        from sd_event A
+        left join sd_event_type B on A.event_type_id = B.id
+        left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        where A.id in
+        <foreach collection="list" item="eventId" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
     </select>
 
 </mapper>

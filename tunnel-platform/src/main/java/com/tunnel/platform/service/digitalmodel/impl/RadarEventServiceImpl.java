@@ -10,6 +10,7 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ImageUtil;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.platform.controller.ws.WebSocketServer;
 import com.tunnel.platform.datacenter.domain.enumeration.EventSourceEnum;
 import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.platform.domain.digitalmodel.*;
@@ -125,7 +126,8 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
             object.put("sdEventList",sdEventList);
-            WebSocketService.broadcast("WjEvent",object.toString());
+//            WebSocketService.broadcast("WjEvent",object.toString());
+            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
     }
@@ -230,7 +232,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
         object.put("dataList",dataList);
-        WebSocketService.broadcast("dataList",object);
+//        WebSocketService.broadcast("dataList",object);
+        WebSocketServer.sendMessage(object.toString());
         log.info("---测试车辆---{}",dataList);
     }
 

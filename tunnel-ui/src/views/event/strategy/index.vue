@@ -190,12 +190,12 @@
       <!-- 手动控制下面 -->
       <template v-if="strategyForm.strategyType == 0">
         <el-form-item v-for="(items, index) in strategyForm.manualControl" :key="index">
-          <el-select v-model="items.value" @change='changeSelect' multiple placeholder="请选择设备" style="width: 40%">
+          <el-select v-model="items.value"  :data="index" multiple placeholder="请选择设备" style="width: 40%">
             <el-option
-              v-for="(item) in equipmentData"
-              :key="item.eqId"
+              v-for="(item,idx) in equipmentData"
+              :key="idx"
               :label="item.eqName"
-              :value="item.eqId" :disabled="item.disabled"/>
+              :value="item.eqId" :disabled="item.disabled" @click.native="manualControlChange($event)"/>
             <el-option label='暂无数据' disabled value='' v-show="equipmentData.length < 1" />
           </el-select>
           <el-select v-model="items.state" placeholder="请选择设备需要执行的操作"
@@ -302,9 +302,9 @@
       <el-form ref="eqForm" :model="strategyForm" :rules="rules" label-width="80px">
         <el-form-item label="设备类型" v-if="equipmentTypeData.length" :style="{height: viewStrategy? '2.75rem':'13.75rem',overflow: 'auto'}" prop="equipment_type">
           <el-radio-group v-model="eqForm.equipment_type" @change.native="eqTypeChange">
-              <el-radio-button :label="item.typeId" v-for="item in equipmentTypeData" :key="item.typeId"  style="margin: 3px;">
-                {{item.typeName}}
-              </el-radio-button>
+            <el-radio-button :label="item.typeId" v-for="item in equipmentTypeData" :key="item.typeId"  style="margin: 3px;">
+              {{item.typeName}}
+            </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="设备类型" v-else>
@@ -549,7 +549,6 @@ export default {
     this.getDicts("sd_strategy_type").then(response => {
       this.strategyTypeOptions = response.data;
       this.insertStrategyTypeOptions = response.data;
-      console.log(this.insertStrategyTypeOptions,'this.insertStrategyTypeOptions');
     });
     this.getDicts("sd_trigger_compare_type").then(response => {
       this.symbol=response.data
@@ -559,19 +558,18 @@ export default {
         this.directionOptions.push(item)
       })
     });
-    // this.getEquipmentType();
   },
   methods: {
+    // 手动控制编辑新增设备
+    manualControlChange(val){
+
+    },
     changeStrategyState(row){
       let data = {invokeTarget:row.jobRelationId,status:row.strategyState};
       updateState(data).then((result)=>{
         this.$modal.msgError(res.msg);
       })
     },
-    // dialogChange(){
-    //   console.log('选择了');
-    //   this.strategyForm.autoControl[index].state = this.
-    // },
     // 改变策略类型
     changeStrategyType(){
       this.resetForm()
@@ -654,7 +652,6 @@ export default {
       if(this.strategyForm.strategyType == 2){
         autoEqTypeList().then(res=>{
           this.eqTypeList = res.rows
-          console.log(this.eqTypeList,'获取所有设备列表')
         })
       }
     },
@@ -693,7 +690,6 @@ export default {
     // 添加执行操作
     addItem(){
       this.index = this.index+1;
-      console.log(this.index)
       let addItemBoolean = true;
       let strategyType = this.strategyForm.strategyType;
       switch (strategyType) {
@@ -702,25 +698,7 @@ export default {
           value:'',
           state:''       
         })
-        var currentList = this.strategyForm.manualControl;
-        console.log(currentList,'123213')
-        let newData = [];
-        for(let i = 0;i < currentList.length;i++){
-          newData += currentList[i].value + ','
-        }
-        newData = newData.split(',');
-        let data = this.equipmentData;
-        console.log(newData)
-        for(let i = 0;i < data.length;i++){
-          for(let z = 0;z < newData.length;z++){
-            if(data[i].eqId == newData[z]){
-              data[i].disabled = true;
-            }
-          }
-        }
-        this.equipmentData = data;
-        console.log(this.equipmentData);
-        this.$forceUpdate();
+        this.addCf();
         break;
 
         case '1' :
@@ -739,6 +717,36 @@ export default {
         })
         break;
       }
+    },
+    addCf(){
+      var eqType = this.strategyForm.equipmentTypeId;
+      listDevices({
+        eqType:eqType,
+        eqTunnelId:this.strategyForm.tunnelId,
+        eqDirection:this.strategyForm.direction,
+      }).then(res=>{
+        let data = res.rows;
+        if(this.chooseEq && this.strategyForm.manualControl.length > 1){
+          var currentList = this.strategyForm.manualControl;
+          let newData = [];
+          for(let i = 0;i < currentList.length;i++){
+            newData += currentList[i].value + ','
+          }
+          newData = newData.split(',');
+          for(let i = 0;i < data.length;i++){
+            for(let z = 0;z < newData.length;z++){
+              if(data[i].eqId == newData[z]){
+                data[i].disabled = true;
+              }
+            }
+          }
+          this.equipmentData = data;
+          this.$forceUpdate();
+        }else{
+          this.equipmentData = data;
+        }
+      })
+
     },
     removeItem(it, index){
       if(this.strategyForm.strategyType == 0){
@@ -768,22 +776,16 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if(this.chooseEq){
-        console.log(this.strategyForm.manualControl);
-      }
       if(Number(this.strategyForm.strategyType) == 0){
-        console.log(this.sink,'修改');
-
         var stateTypeId = this.strategyForm.equipmentTypeId
         var direction  =  this.strategyForm.direction
         let params = {'stateTypeId':stateTypeId,'direction':direction,'isControl': 1}
         this.listEqTypeStateIsControl(params)
         this.listDevices();
       }else{
-        if(this.eqForm.equipments.length > 1){//二次弹窗内更改设备类型清空设备列表
+        if(this.eqForm.equipments.length > 1){
           this.eqForm.equipments = ''
         }
-        console.log(this.strategyForm.strategyType,'this.strategyForm.strategyTypethis.strategyForm.strategyType')
         this.listDevices();
       }
     },
@@ -800,28 +802,24 @@ export default {
         eqDirection:this.strategyForm.direction,
       }).then(res=>{
         let data = res.rows;
-        if(this.strategyForm.strategyType != '0'){
-          if(this.chooseEq && this.strategyForm.autoControl.length > 1){
+        if(this.chooseEq && this.strategyForm.autoControl.length > 1){
+          if(this.strategyForm.strategyType != '0'){
             var currentList = this.strategyForm.autoControl;
-            let newData = [];
-            for(let i = 0;i < currentList.length;i++){
-              newData += currentList[i].value + ','
-            }
-            // console.log(newData);
-            newData = newData.split(',');
-            for(let i = 0;i < data.length;i++){
-              for(let z = 0;z < newData.length;z++){
-                if(data[i].eqId == newData[z]){
-                  console.log(data[i].eqId);
-                  console.log(newData[z])
-                  data[i].disabled = true;
-                }
+          }
+          let newData = [];
+          for(let i = 0;i < currentList.length;i++){
+            newData += currentList[i].value + ','
+          }
+          newData = newData.split(',');
+          for(let i = 0;i < data.length;i++){
+            for(let z = 0;z < newData.length;z++){
+              if(data[i].eqId == newData[z]){
+                data[i].disabled = true;
               }
             }
-            this.equipmentData = data;
-            console.log(this.equipmentData);
-            this.$forceUpdate();
           }
+          this.equipmentData = data;
+          this.$forceUpdate();
         }
         this.equipmentData = data;
         this.$forceUpdate();
@@ -884,7 +882,6 @@ export default {
     getEquipmentHasType() {
       listHasType(this.strategyForm.tunnelId,).then(response => {
         this.equipmentTypeData = response.rows;
-        console.log(this.equipmentTypeData,'==============')
       });
     },
     /** 根据设备类型查询设备列表 */
@@ -908,7 +905,6 @@ export default {
       this.loading = true;
       listStrategy(this.queryParams).then(response => {
         this.strategyList = response.rows;
-        console.log(this.strategyList,'strategyList')
         this.total = response.total;
         this.loading = false;
       });
@@ -925,26 +921,23 @@ export default {
     //选择设备提交按钮
     submitChooseEqForm() {
       // 1.赋值 2.比对之前的是否重复   3.根据设备类型查询控制状态  66666
-        console.log(this.eqForm.equipments);
-        let index = this.strategyForm.autoControl.length - 1;//求最后一位
-        this.strategyForm.autoControl[index].value = this.eqForm.equipments;
-        this.strategyForm.autoControl[index].type = this.eqForm.equipment_type;
-        this.equipmentTypeData.forEach(item=>{
-          if(item.typeId == this.eqForm.equipment_type){
-            this.strategyForm.autoControl[index].typeName = item.typeName;
-          }
-        })
-        console.log(this.strategyForm.autoControl,'当前选择设备');
-        this.chooseEq = false;//关闭弹窗
-        this.index = 0;
-        listEqTypeStateIsControl({
-          stateTypeId:this.eqForm.equipment_type,
-          isControl:1,
-        }).then(response => {
-          console.log(response,'设备状态');
-          this.strategyForm.autoControl[index].eqStateList = response.rows
-          this.$forceUpdate();
-        })
+      let index = this.strategyForm.autoControl.length - 1;//求最后一位
+      this.strategyForm.autoControl[index].value = this.eqForm.equipments;
+      this.strategyForm.autoControl[index].type = this.eqForm.equipment_type;
+      this.equipmentTypeData.forEach(item=>{
+        if(item.typeId == this.eqForm.equipment_type){
+          this.strategyForm.autoControl[index].typeName = item.typeName;
+        }
+      })
+      this.chooseEq = false;//关闭弹窗
+      this.index = 0;
+      listEqTypeStateIsControl({
+        stateTypeId:this.eqForm.equipment_type,
+        isControl:1,
+      }).then(response => {
+        this.strategyForm.autoControl[index].eqStateList = response.rows
+        this.$forceUpdate();
+      })
     },
     // 选择设备取消按钮
     cancelChooseEq() {
@@ -1006,6 +999,9 @@ export default {
       this.chooseScheduleTimeVb = false;
     },
     openEqDialog2(event,index){
+      console.log(index,'当前点击索引')
+      this.eqForm.equipments = this.strategyForm.autoControl[index].value;
+      this.eqForm.equipment_type = this.strategyForm.autoControl[index].type;
       this.chooseEq = true;
       this.title = "选择设备";
       this.getEquipmentHasType();
@@ -1053,7 +1049,7 @@ export default {
         index:null,//当前设置的
         equipments:[],//设备名称
       },
-      this.getEquipmentType();
+      this.getEquipmentType();//此时没有隧道id，不用去查设备类别
       this.drawerTitle = "新增策略";
       this.sink = "add";
       //清空 定时弹窗里的设备名称数组
@@ -1077,7 +1073,6 @@ export default {
       const id = row.id || this.ids
       // this.strategyForm.strategyType = "0";
       getStrategy(id).then(response => {
-        console.log(response.data,'修改按钮操作')
         let data = response.data;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
@@ -1105,27 +1100,28 @@ export default {
           this.strategyForm.schedulerTime = data.schedulerTime;
         }
         listRl({strategyId: row.id}).then(response => {
-          console.log(response,'asdadas')
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
-          console.log(this.strategyForm.equipmentTypeId,'this.strategyForm.equipmentTypeId');
           if(this.strategyForm.strategyType == '0'){
             this.eqTypeChange();
           }
           listDevices({eqType:response.rows[0].eqTypeId,eqTunnelId: this.strategyForm.tunnelId}).then(res=>{
             this.equipmentData = res.rows
-            console.log(this.equipmentData,'this.equipmentData')
           })
           if(this.strategyForm.strategyType == '0'){
             this.strategyForm.manualControl = response.rows;
+            // this.strategyForm.manualControl.forEach(item=>{
+            //   item.value = "";
+            // })
           }else{
             this.strategyForm.autoControl = response.rows;
+            this.eqForm
           }
           for ( var i = 0; i < response.rows.length; i++){
             var attr = response.rows[i];
             if(this.strategyForm.strategyType =='0'){
-              this.strategyForm.manualControl[i].value = attr.equipments.split(',')
-              this.strategyForm.manualControl[i].state = attr.state
-              this.strategyForm.equipmentTypeId = Number(attr.eqTypeId)
+              this.strategyForm.manualControl[i].value = attr.equipments.split(',');
+              this.strategyForm.manualControl[i].state = attr.state;
+              this.strategyForm.equipmentTypeId = Number(attr.eqTypeId);
             }else{
               if(this.strategyForm.autoControl[i].value){
                 this.strategyForm.autoControl[i].value = attr.equipments.split(',')
@@ -1138,7 +1134,6 @@ export default {
               }
             }
           }
-          console.log(this.strategyForm.autoControl)
         })
       });
     },
@@ -1177,12 +1172,11 @@ export default {
           type: "warning"
         }).then(function() {
           if(row.jobRelationId !=null){
-            console.log(row,'row.jobRelationIdrow.jobRelationId')
             // delJob(jobRelationId).then(response => {
             // });
           }
         delStrategy(ids).then(res=>{
-          console.log(res,'resres')
+
         });
         }).then(() => {
           this.getList();
@@ -1199,16 +1193,14 @@ export default {
     /** 提交按钮 */
     async submitStrategyForm() {
       console.log(this.strategyForm,'要提交数据');
-      // return
-      var str = ""
       let type = this.strategyForm.strategyType;
       //手动控制
-      // if(type == 0){
-      //   console.log(this.strategyForm.addOperation[0].equipments.length)
-      //   if(this.strategyForm.addOperation[0].equipments.length == 0){
-      //     return this.$modal.msgError("请选择设备并添加执行操作");
-      //   }
-      // }
+      if(type == 0){
+        var manualControl = this.strategyForm.manualControl
+        if(manualControl[0].value.length == 0 || manualControl[0].state == ''){
+          return this.$modal.msgError("请选择设备并添加执行操作");
+        }
+      }
       // 自动触发
       if(type == 2){
         if(!this.strategyForm.triggers.deviceTypeId){

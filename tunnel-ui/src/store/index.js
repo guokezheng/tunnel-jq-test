@@ -6,6 +6,7 @@ import websocket from './modules/websocket'
 import tagsView from './modules/tagsView'
 import permission from './modules/permission'
 import settings from './modules/settings'
+import wsData from './modules/wsData'
 import getters from './getters'
 
 Vue.use(Vuex)
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     websocket,
     tagsView,
     permission,
-    settings
+    settings,
+    wsData
   },
   getters
 })

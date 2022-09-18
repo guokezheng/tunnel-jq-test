@@ -231,7 +231,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 });
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
-        object.put("dataList",dataList);
+        object.put("radarDataList",dataList);
 //        WebSocketService.broadcast("dataList",object);
         WebSocketServer.sendMessage(object.toString());
         log.info("---测试车辆---{}",dataList);

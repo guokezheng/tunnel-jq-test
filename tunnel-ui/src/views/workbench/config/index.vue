@@ -220,12 +220,12 @@
               <el-checkbox v-model="checked1" class="checkbox"></el-checkbox>
               <div class="number" :class="checked2?'drawerActive':'drawerNo'">2</div>
               <el-checkbox v-model="checked2" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked3?'drawerActive':'drawerNo'">3</div>
-              <el-checkbox v-model="checked3" class="checkbox"></el-checkbox>
+              <!-- <div class="number" :class="checked3?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked3" class="checkbox"></el-checkbox> -->
               <el-button type="primary" class="control">控制</el-button>
             </div>
-            <div class="bingZhou">
-              <span>潍坊方向：</span>
+            <!-- <div class="bingZhou">
+              <span>博山方向：</span>
               <div class="number" :class="checked4?'drawerActive':'drawerNo'">1</div>
               <el-checkbox v-model="checked4" class="checkbox"></el-checkbox>
               <div class="number" :class="checked5?'drawerActive':'drawerNo'">2</div>
@@ -233,7 +233,7 @@
               <div class="number" :class="checked6?'drawerActive':'drawerNo'">3</div>
               <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
               <el-button type="primary" class="control">控制</el-button>
-            </div>
+            </div> -->
           </el-drawer>
           <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
             <div class="ledLighting">
@@ -361,8 +361,13 @@
           :append-to-body="true"
           class="drawerBottom"
         >
-          <div class="bingZhou">
-            <!-- 设备类型 -->
+          <div>
+            <div v-for="(item,index) in isDrawerCList" :key="index">
+              <div v-for="(itm,inx) in item.slist" :key="inx">{{item.strategyName}}{{itm}}</div>
+            </div>
+          </div>
+<!--           <div class="bingZhou">
+          
             <el-select
               v-model="drawerC.typeValue"
               placeholder="请选择设备类型"
@@ -377,7 +382,7 @@
               >
               </el-option>
             </el-select>
-            <!-- 设备名称 -->
+         
             <div style="margin: 0 15px">
               <el-select
                 v-model="drawerC.nameValue"
@@ -403,7 +408,7 @@
             <el-button size="mini" style="transform: translateX(10px)"
               >确定</el-button
             >
-          </div>
+          </div> -->
         </el-drawer>
       </div>
 
@@ -1172,8 +1177,7 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-   <com-video class="comClass"
-              v-if="this.eqInfo.clickEqType == 23 || this.eqInfo.clickEqType == 24 || this.eqInfo.clickEqType == 25" 
+   <com-video class="comClass"  v-if="[23, 24, 25 ].includes(this.eqInfo.clickEqType)"  
                @dialogClose = "dialogClose" :eqInfo = "this.eqInfo" :eqTypeDialogList="this.eqTypeDialogList"
                :brandList="this.brandList" :directionList="this.directionList"></com-video>
     <com-light class="comClass" 
@@ -1900,6 +1904,7 @@
         checked4: false,
         checked5: false,
         checked6: false,
+        isDrawerCList:[],
 
 
         value1: new Date(),
@@ -2412,20 +2417,7 @@
       },
     },
     created: function() {
-      bus.$on('process', (e) => {
-        console.log(e, "-----------")
-        if (e == 'theme-light') {
-          this.echartsColor = '#fff'
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        } else if (e == 'theme-dark') {
-          this.echartsColor = '#0a88bd', 
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        }
-      })
+      
       // this.flvPlayer()
       this.trafficFlowLane()
       this.getEqTypeStateIcon();
@@ -2476,8 +2468,8 @@
         }
       },
       radarDataList( event ){
-      console.log(event,'websockt工作台接收感知事件数据')
-      // this.realTimeList = event
+      // console.log(event,'websockt工作台接收感知事件数据')
+      this.realTimeList = event
      },
 
       // 设备类型
@@ -2632,7 +2624,20 @@
         // setTimeout(this.getLiPowerDevice, 0)
       }, 1000 * 5);
 
-
+      bus.$on('process', (e) => {
+        console.log(e, "-----------")
+        if (e == 'theme-light') {
+          this.echartsColor = '#fff'
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        } else if (e == 'theme-dark') {
+          this.echartsColor = '#0a88bd', 
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        }
+      })
       // 模拟实时隧道温度 调完了再删
       // setInterval(()=>{
       //         this.temperatureList[1].temperature += 2
@@ -2651,8 +2656,8 @@
       //     this.tunnelName = item.tunnelName
       //   }
       // }
-      this.initeChartsEnd();
-      this.loadFocusCar();
+      // this.initeChartsEnd();
+      // this.loadFocusCar();
       // this.srollAuto()
       
     },
@@ -2676,21 +2681,22 @@
         this.eqInfo.clickEqType = 0
       },
       // 车辆监测数据
-      vehicleEcharts(tunnelId){
+      vehicleEcharts(){
         // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         vehicleMonitoring(param).then(res =>{
           console.log(res,"车辆监测数据")
-          this.vehicleXData = res.data[0]
-          this.vehicleYData = res.data[1]
+          var vehicleXData = res.data[0]
+          var vehicleYData = res.data[1]
+          this.initeChartsEnd(vehicleXData,vehicleYData)
         })
       },
       // 重点车辆监测数据
-      specialEcharts(tunnelId){
+      specialEcharts(){
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         special(param).then(res =>{
           console.log(res,"重点车辆监测数据")
@@ -2740,6 +2746,13 @@
       },
        isDrawerC() {
         this.drawerCVisible = true;
+        listStrategy({
+        strategyType: 2,
+        tunnelId: this.currentTunnel.id,
+      }).then((response) => {
+      console.log(response,"自动触发抽屉")
+      this.isDrawerCList = response.rows
+      });
       },
       zoomSwitchChange(val) {
         console.log(val, "val")
@@ -3066,8 +3079,8 @@
           console.log(res, '设备类型占比')
           // that.initechartsB(res.data)
         })
-        that.initeChartsEnd()
-        that.loadFocusCar()
+        // that.initeChartsEnd()
+        // that.loadFocusCar()
       },
       // 获取最近七天数组
       dateFormat(dateData) {
@@ -3203,7 +3216,7 @@
           energyConsumption.resize();
         });
       },
-      initeChartsEnd() {
+      initeChartsEnd(vehicleXData,vehicleYData) {
         let newPromise = new Promise((resolve) => {
           resolve()
         })
@@ -3257,7 +3270,7 @@
                   color: this.echartsColor
                 }
               },
-              data: this.vehicleXData
+              data: vehicleXData
             }],
             yAxis: [{
               name: '总车量',
@@ -3321,7 +3334,7 @@
                     )
                   }
                 },
-              data: this.vehicleYData
+              data: vehicleYData
             },
             // {
             //   name: '货车',
@@ -3930,8 +3943,9 @@
           }
           this.tunnelNameEarlyWarn = response.rows[0].tunnelName
           this.tunnelId = response.rows[0].tunnelId
-          this.specialEcharts(this.tunnelId)
-          this.vehicleEcharts(this.tunnelId)
+          
+          // this.specialEcharts(this.tunnelId)
+          this.vehicleEcharts()
           var newDict = this.dict.type.sd_sys_name
           if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
             this.robotShow = false

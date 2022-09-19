@@ -17,10 +17,14 @@
                   class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   :style="{ width: 100 / (planList1.length / 2) + '%' }"
+                  @mouseleave="mouseleave(index)"
                 >
                   <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
-                  <div class="rightClickClass" :style="item.style?item.style:''">
+                  <div
+                    class="rightClickClass"
+                    :style="item.style ? item.style : ''"
+                  >
                     <div class="row1">{{ item.SubareaName }}</div>
                     <div class="processBox recoveryBox">
                       <div class="endButton" v-for="itm in item.reservePlans">
@@ -306,23 +310,23 @@
               </el-form-item>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label="车主电话" prop="eventTitle">
+                  <el-form-item label="车主电话" prop="carOwnerPhone">
                     <el-input v-model="eventForm.carOwnerPhone" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="清障电话" prop="eventTitle">
+                  <el-form-item label="清障电话" prop="wreckerPhone">
                     <el-input v-model="eventForm.wreckerPhone" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="交警电话" prop="eventTitle">
+                  <el-form-item label="交警电话" prop="policePhone">
                     <el-input v-model="eventForm.policePhone" />
                   </el-form-item>
                 </el-col>
               </el-row>
 
-              <el-form-item label="备注" prop="eventTitle">
+              <el-form-item label="备注" prop="remark">
                 <el-input
                   type="textarea"
                   v-model="eventForm.remark"
@@ -582,14 +586,13 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
-import {
-  listEvent,
-  updateEvent,
-  getSubareaByTunnelId,
-} from "@/api/event/event";
+import { listEvent, updateEvent } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { previewDisplay } from "@/api/event/reserveProcess";
+import {
+  previewDisplay,
+  getSubareaByTunnelId,
+} from "@/api/event/reserveProcess";
 export default {
   name: "dispatch",
   data() {
@@ -731,7 +734,6 @@ export default {
         id: this.$route.query.id,
       };
       listEvent(param).then((response) => {
-        console.log(response.rows, "传事件id获取事件详情");
         this.eventForm = response.rows[0];
         this.eventForm.eventType = response.rows[0].eventType.eventType;
         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
@@ -739,13 +741,12 @@ export default {
       });
     }
     this.getDicts("sd_incident_level").then((response) => {
-      console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
   },
   methods: {
     randomEvent() {
-      var index = Math.floor(Math.random() * 2 +2);
+      var index = Math.floor(Math.random() * 2 + 2);
       console.log(index);
       this.planList1[index].style =
         "border:1px solid red;background-color: rgba(255,0,0,0.6);";
@@ -754,15 +755,18 @@ export default {
     },
 
     async getSubareaByTunnel() {
-      const params = this.$route.query.tunnelId;
+      // if (this.$route.query.tunnelId != undefined) {
+      //   const params = this.$route.query.tunnelId;
+      // } else {
+      const params = "JQ-JiNan-WenZuBei-MJY";
+      // }
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
-        console.log(this.planList1)
-        if(this.$route.query.id != undefined){
-          console.log(this.$route.query.id)
-          console.log('1231231111111')
-          this.randomEvent();
-        }
+        console.log(this.planList1, "分区信息");
+        // if (this.$route.query.id != undefined) {
+        //   console.log(this.$route.query.id);
+        //   this.randomEvent();
+        // }
       });
     },
     // 预览
@@ -855,7 +859,6 @@ export default {
     submitEventForm() {
       delete this.eventForm.eventType; //删除age元素
       updateEvent(this.eventForm).then((response) => {
-        console.log(response, "修改事件详情");
         this.$modal.msgSuccess("事件更新成功");
       });
     },
@@ -866,7 +869,6 @@ export default {
         eventState: "1",
       };
       updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
         this.$modal.msgSuccess("事件处理成功");
       });
     },
@@ -889,7 +891,7 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData() {
-      var tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
+      var tunnelId = "JQ-JiNan-WenZuBei-MJY";
       let that = this;
       that.upList = [];
       that.downList = [];
@@ -897,11 +899,12 @@ export default {
       getTunnels(tunnelId).then((response) => {
         console.log(response, "应急调度获取设备信息");
         let res = response.data.storeConfigure;
+        // console.log(response.data, "12312312");
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           console.log(res, "res");
-          listType({ isControl: 1 })
+          listType()
             .then((response) => {
               console.log(response, "response");
               var arr = [];
@@ -916,6 +919,39 @@ export default {
                 }
               }
               this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+              for (let p = 0; p < this.selectedIconList.length; p++) {
+                for (let i = 0; i < this.planList1.length; i++) {
+                  let axx = this.selectedIconList[p];
+                  let bxx = this.planList1[i];
+                  // 根据桩号区分开始和结束为0/100的问题
+                  if (bxx.pileMin == "0") {
+                    var leftMin = 0;
+                  } else if (bxx.pileMax == "100") {
+                    var leftMin = 100;
+                  } else {
+                    // console.log(axx.eqId);
+                    // console.log(bxx.eqIdMax);
+                    if (axx.eqId == bxx.eqIdMax) {
+                      console.log(bxx);
+                      // 定义获取最大值的left
+                      var leftMax = axx.position.left;
+                      console.log(leftMax, "message");
+                    }
+                    if (axx.eqId == bxx.eqIdMin) {
+                      // 定义获取最小值的left
+                      var leftMin = axx.position.left;
+                      console.log(leftMin, "message");
+                    }
+                    // 得到两对象
+                    // console.log(leftMax);
+                    // console.log(leftMin);
+                    var deviceWidth = Number(leftMax) - Number(leftMin);
+                    var deviceHeight = axx.position.top;
+                    // console.log(deviceWidth, "获得宽度");
+                    // console.log(deviceHeight, "获得高度");
+                  }
+                }
+              }
               console.log(this.selectedIconList, "this.selectedIconList");
             })
             .then(() => {});
@@ -932,7 +968,6 @@ export default {
       });
     },
     getUrl() {
-      console.log(this.$route.query.id, "当前事件id");
       const param3 = {
         businessId: this.$route.query.id,
       };
@@ -940,11 +975,9 @@ export default {
         id: this.$route.query.id,
       };
       image(param3).then((response) => {
-        console.log(response.data, "获取图片");
         this.urls = response.data;
       });
       video(param4).then((response) => {
-        console.log(response.data, "获取视频");
         this.videoUrl = response.data;
       });
     },

@@ -111,7 +111,13 @@ export default {
       videoUrl: '',
       row11:null,
       // event: [{}],
-      eventMes:[]
+      eventMes:[
+        {
+          tunnels:{
+            tunnelName:''
+          }
+        }
+      ]
     };
   },
   created() {

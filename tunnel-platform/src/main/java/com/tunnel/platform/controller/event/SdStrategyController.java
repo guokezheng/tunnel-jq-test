@@ -69,6 +69,11 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
 
+    /**
+     * 根据策略id查询控制策略
+     * @param id
+     * @return
+     */
     @GetMapping("/getStrategyById")
     @ApiOperation("通过id查询控制策略")
     public Result getStrategyById(String id) {

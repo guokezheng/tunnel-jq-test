@@ -861,6 +861,7 @@
       /** 所属隧道 */
       getTunnel() {
         listTunnels().then((response) => {
+          console.log(response.rows,"所属隧道列表")
           this.eqTunnelData = response.rows;
         });
       },

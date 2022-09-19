@@ -1,30 +1,23 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.ruoyi.common.core.page.Result;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import io.swagger.annotations.ApiImplicitParam;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.platform.domain.dataInfo.SdDeviceData;
-import com.tunnel.platform.service.dataInfo.ISdDeviceDataService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
+import io.swagger.annotations.ApiImplicitParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 设备实时数据（存储模拟量）Controller

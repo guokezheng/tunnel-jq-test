@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdSensorMapper">
+
+    <resultMap type="SdSensor" id="SdSensorResult">
+        <result property="id"    column="id"    />
+        <result property="sensorTypeId"    column="sensor_type_id"    />
+        <result property="sensorName"    column="sensor_name"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="brightnessInTunnel"    column="brightness_in_tunnel"    />
+        <result property="brightnessOutsideTunnel"    column="brightness_outside_tunnel"    />
+        <result property="coConcentration"    column="co_concentration"    />
+        <result property="visibility"    column="visibility"    />
+        <result property="windSpeed"    column="wind_speed"    />
+        <result property="windDirection"    column="wind_direction"    />
+        <result property="tankLevel"    column="tank_level"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="realTime"    column="real_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <!--因为要查询隧道表的隧道名称，用隧道id作为条件去查询隧道表  -->
+        <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
+        <association property="sensorType" column="id" javaType="SdSensorType" resultMap="SdSensorTypeResult"></association>
+    </resultMap>
+
+    <resultMap type="SdTunnels" id="tunnelResult" >
+		<id  property="tunnelId" column="tunnel_id" />
+		<result property="tunnelName" column="tunnel_name"   />
+	</resultMap>
+	<resultMap type="SdSensorType" id="SdSensorTypeResult" >
+		<id  property="id" column="id" />
+		<result property="sensorType" column="sensor_type"   />
+	</resultMap>
+
+    <sql id="selectSdSensorVo">
+        select id, sensor_type_id, sensor_name, tunnel_id, brightness_in_tunnel, brightness_outside_tunnel, co_concentration, visibility, wind_speed, wind_direction, tank_level, create_by, create_time, real_time, update_by, update_time from sd_sensor
+    </sql>
+
+    <select id="selectSdSensorList" parameterType="SdSensor" resultMap="SdSensorResult">
+        select a.id, a.sensor_type_id,c.sensor_type, a.sensor_name, a.tunnel_id,b.tunnel_name,a.brightness_in_tunnel, a.brightness_outside_tunnel, a.co_concentration, a.visibility, a.wind_speed, a.wind_direction, a.tank_level, a.create_by, a.create_time, a.real_time, a.update_by, a.update_time
+        from sd_sensor a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        left join sd_sensor_type c on a.sensor_type_id = c.id
+        <where>
+            <if test="sensorTypeId != null "> and a.sensor_type_id = #{sensorTypeId}</if>
+            <if test="sensorName != null  and sensorName != ''"> and a.sensor_name like concat('%', #{sensorName}, '%')</if>
+            <if test="tunnelId != null "> and a.tunnel_id = #{tunnelId}</if>
+            <if test="brightnessInTunnel != null  and brightnessInTunnel != ''"> and a.brightness_in_tunnel = #{brightnessInTunnel}</if>
+            <if test="brightnessOutsideTunnel != null  and brightnessOutsideTunnel != ''"> and a.brightness_outside_tunnel = #{brightnessOutsideTunnel}</if>
+            <if test="coConcentration != null  and coConcentration != ''"> and a.co_concentration = #{coConcentration}</if>
+            <if test="visibility != null  and visibility != ''"> and a.visibility = #{visibility}</if>
+            <if test="windSpeed != null "> and a.wind_speed = #{windSpeed}</if>
+            <if test="windDirection != null  and windDirection != ''"> and a.wind_direction = #{windDirection}</if>
+            <if test="tankLevel != null  and tankLevel != ''"> and a.tank_level = #{tankLevel}</if>
+            <if test="realTime != null "> and a.real_time = #{realTime}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdSensorById" parameterType="Long" resultMap="SdSensorResult">
+        <include refid="selectSdSensorVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdSensor" parameterType="SdSensor" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_sensor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sensorTypeId != null">sensor_type_id,</if>
+            <if test="sensorName != null">sensor_name,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="brightnessInTunnel != null">brightness_in_tunnel,</if>
+            <if test="brightnessOutsideTunnel != null">brightness_outside_tunnel,</if>
+            <if test="coConcentration != null">co_concentration,</if>
+            <if test="visibility != null">visibility,</if>
+            <if test="windSpeed != null">wind_speed,</if>
+            <if test="windDirection != null">wind_direction,</if>
+            <if test="tankLevel != null">tank_level,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="realTime != null">real_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sensorTypeId != null">#{sensorTypeId},</if>
+            <if test="sensorName != null">#{sensorName},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="brightnessInTunnel != null">#{brightnessInTunnel},</if>
+            <if test="brightnessOutsideTunnel != null">#{brightnessOutsideTunnel},</if>
+            <if test="coConcentration != null">#{coConcentration},</if>
+            <if test="visibility != null">#{visibility},</if>
+            <if test="windSpeed != null">#{windSpeed},</if>
+            <if test="windDirection != null">#{windDirection},</if>
+            <if test="tankLevel != null">#{tankLevel},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="realTime != null">#{realTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdSensor" parameterType="SdSensor">
+        update sd_sensor
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sensorTypeId != null">sensor_type_id = #{sensorTypeId},</if>
+            <if test="sensorName != null">sensor_name = #{sensorName},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="brightnessInTunnel != null">brightness_in_tunnel = #{brightnessInTunnel},</if>
+            <if test="brightnessOutsideTunnel != null">brightness_outside_tunnel = #{brightnessOutsideTunnel},</if>
+            <if test="coConcentration != null">co_concentration = #{coConcentration},</if>
+            <if test="visibility != null">visibility = #{visibility},</if>
+            <if test="windSpeed != null">wind_speed = #{windSpeed},</if>
+            <if test="windDirection != null">wind_direction = #{windDirection},</if>
+            <if test="tankLevel != null">tank_level = #{tankLevel},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="realTime != null">real_time = #{realTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdSensorById" parameterType="Long">
+        delete from sd_sensor where id = #{id}
+    </delete>
+
+    <delete id="deleteSdSensorByIds" parameterType="String">
+        delete from sd_sensor where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

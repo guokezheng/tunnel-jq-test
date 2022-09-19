@@ -1,7 +1,7 @@
 package com.tunnel.platform.business.vms;
 
-import com.tunnel.platform.domain.informationBoard.IotDeviceProtocol;
-import com.tunnel.platform.service.informationBoard.IIotDeviceProtocolService;
+import com.tunnel.business.domain.informationBoard.IotDeviceProtocol;
+import com.tunnel.business.service.informationBoard.IIotDeviceProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

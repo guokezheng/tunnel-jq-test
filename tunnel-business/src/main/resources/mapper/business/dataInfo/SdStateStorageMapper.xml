@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdStateStorageMapper">
+    
+    <resultMap type="SdStateStorage" id="SdStateStorageResult">
+        <result property="id"    column="id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="state"    column="state"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectSdStateStorageVo">
+        select id, device_id, state, create_time from sd_state_storage
+    </sql>
+
+    <select id="selectSdStateStorageList" parameterType="SdStateStorage" resultMap="SdStateStorageResult">
+        <include refid="selectSdStateStorageVo"/>
+        <where>  
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdStateStorageById" parameterType="Long" resultMap="SdStateStorageResult">
+        <include refid="selectSdStateStorageVo"/>
+        where id = #{id}
+    </select>
+        
+     <select id="selectSdStateStorage" parameterType="String" resultMap="SdStateStorageResult">
+        <include refid="selectSdStateStorageVo"/>
+        where device_id = #{deviceId}
+    </select>
+    
+    <insert id="insertSdStateStorage" parameterType="SdStateStorage">
+        insert into sd_state_storage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="state != null">state,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="state != null">#{state},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdStateStorage" parameterType="SdStateStorage">
+        update sd_state_storage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdStateStorageById" parameterType="Long">
+        delete from sd_state_storage where id = #{id}
+    </delete>
+
+    <delete id="deleteSdStateStorageByIds" parameterType="String">
+        delete from sd_state_storage where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

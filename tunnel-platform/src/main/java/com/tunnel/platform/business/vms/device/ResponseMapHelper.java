@@ -1,7 +1,7 @@
 package com.tunnel.platform.business.vms.device;
 
 
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.CommonUtil;
 
 import java.util.HashMap;
 import java.util.Map;

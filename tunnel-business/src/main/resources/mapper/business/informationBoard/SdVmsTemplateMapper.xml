@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper">
+
+    <resultMap type="SdVmsTemplate" id="SdVmsTemplateResult">
+        <result property="id"    column="id"    />
+        <result property="screenSize"    column="screen_size"    />
+        <result property="inScreenMode"    column="in_screen_mode"    />
+        <result property="rollSpeed"    column="roll_speed"    />
+        <result property="stopTime"    column="stop_time"    />
+        <result property="applyType"    column="apply_type"    />
+        <result property="isCurrency"    column="is_currency"    />
+        <result property="templateType"    column="template_type"    />
+        <result property="vmsType"    column="vms_type"    />
+        <result property="remark"    column="remark"    />
+        <association property="tcontent" column="template_id" javaType="SdVmsTemplateContent" resultMap="contentResult"/>
+    </resultMap>
+
+    <resultMap id="contentResult" type="SdVmsTemplateContent">
+        <id property="templateId"    column="template_id"    />
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="fontColor"    column="font_color"    />
+        <result property="fontSize"    column="font_size"    />
+        <result property="fontType"    column="font_type"    />
+        <result property="fontSpacing"    column="font_spacing"    />
+        <result property="coordinate"    column="coordinate"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="height"    column="height"    />
+        <result property="width"    column="width"    />
+    </resultMap>
+
+    <sql id="selectSdVmsTemplateVo">
+        select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
+               a.template_type, a.vms_type, a.remark, b.id, b.template_id, b.content, b.font_color, b.font_size,
+               b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width
+        from sd_vms_template a
+        left join sd_vms_template_content b on a.id = b.template_id
+    </sql>
+
+    <select id="selectSdVmsTemplateList" parameterType="SdVmsTemplate" resultMap="SdVmsTemplateResult">
+        <include refid="selectSdVmsTemplateVo"/>
+        <where>
+            <if test="screenSize != null  and screenSize != ''"> and a.screen_size = #{screenSize}</if>
+            <if test="applyType != null  and applyType != ''"> and a.apply_type = #{applyType}</if>
+            <if test="isCurrency != null "> and a.is_currency = #{isCurrency}</if>
+            <if test="templateType != null "> and a.template_type = #{templateType}</if>
+            <if test="vmsType != null  and vmsType != ''"> and a.vms_type = #{vmsType}</if>
+        </where>
+    </select>
+
+    <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">
+        <include refid="selectSdVmsTemplateVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertSdVmsTemplate" parameterType="SdVmsTemplate">
+        insert into sd_vms_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="screenSize != null">screen_size,</if>
+            <if test="inScreenMode != null">in_screen_mode,</if>
+            <if test="rollSpeed != null">roll_speed,</if>
+            <if test="stopTime != null">stop_time,</if>
+            <if test="applyType != null">apply_type,</if>
+            <if test="isCurrency != null">is_currency,</if>
+            <if test="templateType != null">template_type,</if>
+            <if test="vmsType != null">vms_type,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="screenSize != null">#{screenSize},</if>
+            <if test="inScreenMode != null">#{inScreenMode},</if>
+            <if test="rollSpeed != null">#{rollSpeed},</if>
+            <if test="stopTime != null">#{stopTime},</if>
+            <if test="applyType != null">#{applyType},</if>
+            <if test="isCurrency != null">#{isCurrency},</if>
+            <if test="templateType != null">#{templateType},</if>
+            <if test="vmsType != null">#{vmsType},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdVmsTemplate" parameterType="SdVmsTemplate">
+        update sd_vms_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="screenSize != null">screen_size = #{screenSize},</if>
+            <if test="inScreenMode != null">in_screen_mode = #{inScreenMode},</if>
+            <if test="rollSpeed != null">roll_speed = #{rollSpeed},</if>
+            <if test="stopTime != null">stop_time = #{stopTime},</if>
+            <if test="applyType != null">apply_type = #{applyType},</if>
+            <if test="isCurrency != null">is_currency = #{isCurrency},</if>
+            <if test="templateType != null">template_type = #{templateType},</if>
+            <if test="vmsType != null">vms_type = #{vmsType},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdVmsTemplateById" parameterType="Long">
+        delete from sd_vms_template where id = #{id}
+    </delete>
+
+    <delete id="deleteSdVmsTemplateByIds" parameterType="Long">
+        delete from sd_vms_template where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSdVmsTemplateId" resultType="Long">
+        SELECT id from sd_vms_template ORDER BY id desc LIMIT 1
+    </select>
+</mapper>

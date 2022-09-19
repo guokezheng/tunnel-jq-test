@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdDataTrafficHourMapper">
+
+    <resultMap type="SdDataTrafficHour" id="SdDataTrafficHourResult">
+        <result property="id"    column="id"    />
+        <result property="statTime"    column="stat_time"    />
+        <result property="segmentNo"    column="segment_no"    />
+        <result property="year"    column="year"    />
+        <result property="month"    column="month"    />
+        <result property="day"    column="day"    />
+        <result property="hour"    column="hour"    />
+        <result property="totalFlow"    column="total_flow"    />
+        <result property="flowSveh"    column="flow_sveh"    />
+        <result property="flowMveh"    column="flow_mveh"    />
+        <result property="flowBveh"    column="flow_bveh"    />
+        <result property="avgSpeed"    column="avg_speed"    />
+        <result property="flowCar"    column="flow_car"    />
+        <result property="flowTruck"    column="flow_truck"    />
+        <result property="flowXveh"    column="flow_xveh"    />
+        <result property="flowDveh"    column="flow_dveh"    />
+        <result property="bus1"    column="bus1"    />
+        <result property="bus2"    column="bus2"    />
+        <result property="bus3"    column="bus3"    />
+        <result property="bus4"    column="bus4"    />
+        <result property="truck1"    column="truck1"    />
+        <result property="truck2"    column="truck2"    />
+        <result property="truck3"    column="truck3"    />
+        <result property="truck4"    column="truck4"    />
+        <result property="truck5"    column="truck5"    />
+        <result property="truck6"    column="truck6"    />
+        <result property="special1"    column="special1"    />
+        <result property="special2"    column="special2"    />
+        <result property="special3"    column="special3"    />
+        <result property="special4"    column="special4"    />
+        <result property="special5"    column="special5"    />
+        <result property="special6"    column="special6"    />
+        <result property="bus1Ratio"    column="bus1_ratio"    />
+        <result property="bus2Ratio"    column="bus2_ratio"    />
+        <result property="bus3Ratio"    column="bus3_ratio"    />
+        <result property="bus4Ratio"    column="bus4_ratio"    />
+        <result property="truck1Ratio"    column="truck1_ratio"    />
+        <result property="truck2Ratio"    column="truck2_ratio"    />
+        <result property="truck3Ratio"    column="truck3_ratio"    />
+        <result property="truck4Ratio"    column="truck4_ratio"    />
+        <result property="truck5Ratio"    column="truck5_ratio"    />
+        <result property="truck6Ratio"    column="truck6_ratio"    />
+        <result property="special1Ratio"    column="special1_ratio"    />
+        <result property="special2Ratio"    column="special2_ratio"    />
+        <result property="special3Ratio"    column="special3_ratio"    />
+        <result property="special4Ratio"    column="special4_ratio"    />
+        <result property="special5Ratio"    column="special5_ratio"    />
+        <result property="special6Ratio"    column="special6_ratio"    />
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="tunnelName" column="tunnel_name"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="eqType" column="eq_type"/>
+        <result property="direction" column="direction"/>
+    </resultMap>
+
+    <sql id="selectSdDataTrafficHourVo">
+        select id, stat_time, segment_no, year, month, day, hour, total_flow, flow_sveh, flow_mveh, flow_bveh,
+            CAST(avg_speed as decimal(10,2)) as avg_speed, flow_car, flow_truck, flow_xveh, flow_dveh, bus1, bus2, bus3, bus4, truck1, truck2,
+               truck3, truck4, truck5, truck6, special1, special2, special3, special4, special5, special6,
+               bus1_ratio, bus2_ratio, bus3_ratio, bus4_ratio, truck1_ratio, truck2_ratio, truck3_ratio,
+               truck4_ratio, truck5_ratio, truck6_ratio, special1_ratio, special2_ratio, special3_ratio,
+               special4_ratio, special5_ratio, special6_ratio, tunnel_id, tunnel_name,device_id,eq_type,direction
+        from sd_data_traffic_hour
+    </sql>
+
+    <select id="selectSdDataTrafficHourList" parameterType="SdDataTrafficHour" resultMap="SdDataTrafficHourResult">
+        <include refid="selectSdDataTrafficHourVo"/>
+        <where>
+            <!--<if test="statTime != null "> and stat_time = #{statTime}</if> -->
+            <!--开始时间-->
+            <if test="params.startTime != null and params.startTime != ''">
+                and date_format(stat_time,'%y%m%d') &gt;= date_format(#{params.startTime},'%y%m%d')
+            </if>
+            <!-- 结束时间 -->
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(stat_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="segmentNo != null  and segmentNo != ''"> and segment_no = #{segmentNo}</if>
+            <if test="year != null "> and year = #{year}</if>
+            <if test="month != null "> and month = #{month}</if>
+            <if test="day != null "> and day = #{day}</if>
+            <if test="hour != null "> and hour = #{hour}</if>
+            <if test="totalFlow != null "> and total_flow = #{totalFlow}</if>
+            <if test="flowSveh != null "> and flow_sveh = #{flowSveh}</if>
+            <if test="flowMveh != null "> and flow_mveh = #{flowMveh}</if>
+            <if test="flowBveh != null "> and flow_bveh = #{flowBveh}</if>
+            <if test="avgSpeed != null "> and avg_speed = #{avgSpeed}</if>
+            <if test="flowCar != null "> and flow_car = #{flowCar}</if>
+            <if test="flowTruck != null "> and flow_truck = #{flowTruck}</if>
+            <if test="flowXveh != null "> and flow_xveh = #{flowXveh}</if>
+            <if test="flowDveh != null "> and flow_dveh = #{flowDveh}</if>
+            <if test="tunnelId != null and tunnelId !=''"> and tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null and tunnelName != ''"> and tunnel_name = #{tunnelName}</if>
+            <if test="deviceId != null and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="eqType != null and eqType != ''"> and eq_type = #{eqType}</if>
+        </where>
+    </select>
+
+    <select id="selectSdDataTrafficHourById" parameterType="Long" resultMap="SdDataTrafficHourResult">
+        <include refid="selectSdDataTrafficHourVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdDataTrafficHour" parameterType="SdDataTrafficHour" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_data_traffic_hour
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="statTime != null">stat_time,</if>
+            <if test="segmentNo != null">segment_no,</if>
+            <if test="year != null">year,</if>
+            <if test="month != null">month,</if>
+            <if test="day != null">day,</if>
+            <if test="hour != null">hour,</if>
+            <if test="totalFlow != null">total_flow,</if>
+            <if test="flowSveh != null">flow_sveh,</if>
+            <if test="flowMveh != null">flow_mveh,</if>
+            <if test="flowBveh != null">flow_bveh,</if>
+            <if test="avgSpeed != null">avg_speed,</if>
+            <if test="flowCar != null">flow_car,</if>
+            <if test="flowTruck != null">flow_truck,</if>
+            <if test="flowXveh != null">flow_xveh,</if>
+            <if test="flowDveh != null">flow_dveh,</if>
+            <if test="bus1 != null">bus1,</if>
+            <if test="bus2 != null">bus2,</if>
+            <if test="bus3 != null">bus3,</if>
+            <if test="bus4 != null">bus4,</if>
+            <if test="truck1 != null">truck1,</if>
+            <if test="truck2 != null">truck2,</if>
+            <if test="truck3 != null">truck3,</if>
+            <if test="truck4 != null">truck4,</if>
+            <if test="truck5 != null">truck5,</if>
+            <if test="truck6 != null">truck6,</if>
+            <if test="special1 != null">special1,</if>
+            <if test="special2 != null">special2,</if>
+            <if test="special3 != null">special3,</if>
+            <if test="special4 != null">special4,</if>
+            <if test="special5 != null">special5,</if>
+            <if test="special6 != null">special6,</if>
+            <if test="bus1Ratio != null">bus1_ratio,</if>
+            <if test="bus2Ratio != null">bus2_ratio,</if>
+            <if test="bus3Ratio != null">bus3_ratio,</if>
+            <if test="bus4Ratio != null">bus4_ratio,</if>
+            <if test="truck1Ratio != null">truck1_ratio,</if>
+            <if test="truck2Ratio != null">truck2_ratio,</if>
+            <if test="truck3Ratio != null">truck3_ratio,</if>
+            <if test="truck4Ratio != null">truck4_ratio,</if>
+            <if test="truck5Ratio != null">truck5_ratio,</if>
+            <if test="truck6Ratio != null">truck6_ratio,</if>
+            <if test="special1Ratio != null">special1_ratio,</if>
+            <if test="special2Ratio != null">special2_ratio,</if>
+            <if test="special3Ratio != null">special3_ratio,</if>
+            <if test="special4Ratio != null">special4_ratio,</if>
+            <if test="special5Ratio != null">special5_ratio,</if>
+            <if test="special6Ratio != null">special6_ratio,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="tunnelName != null">tunnel_name,</if>
+            <if test="deviceId != null">device_id,</if>
+            <if test="eqType != null">eq_type,</if>
+            <if test="direction != null">direction,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="statTime != null">#{statTime},</if>
+            <if test="segmentNo != null">#{segmentNo},</if>
+            <if test="year != null">#{year},</if>
+            <if test="month != null">#{month},</if>
+            <if test="day != null">#{day},</if>
+            <if test="hour != null">#{hour},</if>
+            <if test="totalFlow != null">#{totalFlow},</if>
+            <if test="flowSveh != null">#{flowSveh},</if>
+            <if test="flowMveh != null">#{flowMveh},</if>
+            <if test="flowBveh != null">#{flowBveh},</if>
+            <if test="avgSpeed != null">#{avgSpeed},</if>
+            <if test="flowCar != null">#{flowCar},</if>
+            <if test="flowTruck != null">#{flowTruck},</if>
+            <if test="flowXveh != null">#{flowXveh},</if>
+            <if test="flowDveh != null">#{flowDveh},</if>
+            <if test="bus1 != null">#{bus1},</if>
+            <if test="bus2 != null">#{bus2},</if>
+            <if test="bus3 != null">#{bus3},</if>
+            <if test="bus4 != null">#{bus4},</if>
+            <if test="truck1 != null">#{truck1},</if>
+            <if test="truck2 != null">#{truck2},</if>
+            <if test="truck3 != null">#{truck3},</if>
+            <if test="truck4 != null">#{truck4},</if>
+            <if test="truck5 != null">#{truck5},</if>
+            <if test="truck6 != null">#{truck6},</if>
+            <if test="special1 != null">#{special1},</if>
+            <if test="special2 != null">#{special2},</if>
+            <if test="special3 != null">#{special3},</if>
+            <if test="special4 != null">#{special4},</if>
+            <if test="special5 != null">#{special5},</if>
+            <if test="special6 != null">#{special6},</if>
+            <if test="bus1Ratio != null">#{bus1Ratio},</if>
+            <if test="bus2Ratio != null">#{bus2Ratio},</if>
+            <if test="bus3Ratio != null">#{bus3Ratio},</if>
+            <if test="bus4Ratio != null">#{bus4Ratio},</if>
+            <if test="truck1Ratio != null">#{truck1Ratio},</if>
+            <if test="truck2Ratio != null">#{truck2Ratio},</if>
+            <if test="truck3Ratio != null">#{truck3Ratio},</if>
+            <if test="truck4Ratio != null">#{truck4Ratio},</if>
+            <if test="truck5Ratio != null">#{truck5Ratio},</if>
+            <if test="truck6Ratio != null">#{truck6Ratio},</if>
+            <if test="special1Ratio != null">#{special1Ratio},</if>
+            <if test="special2Ratio != null">#{special2Ratio},</if>
+            <if test="special3Ratio != null">#{special3Ratio},</if>
+            <if test="special4Ratio != null">#{special4Ratio},</if>
+            <if test="special5Ratio != null">#{special5Ratio},</if>
+            <if test="special6Ratio != null">#{special6Ratio},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="tunnelName != null">#{tunnelName},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="eqType != null">#{eqType},</if>
+            <if test="direction != null">#{direction},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDataTrafficHour" parameterType="SdDataTrafficHour">
+        update sd_data_traffic_hour
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="statTime != null">stat_time = #{statTime},</if>
+            <if test="segmentNo != null">segment_no = #{segmentNo},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="month != null">month = #{month},</if>
+            <if test="day != null">day = #{day},</if>
+            <if test="hour != null">hour = #{hour},</if>
+            <if test="totalFlow != null">total_flow = #{totalFlow},</if>
+            <if test="flowSveh != null">flow_sveh = #{flowSveh},</if>
+            <if test="flowMveh != null">flow_mveh = #{flowMveh},</if>
+            <if test="flowBveh != null">flow_bveh = #{flowBveh},</if>
+            <if test="avgSpeed != null">avg_speed = #{avgSpeed},</if>
+            <if test="flowCar != null">flow_car = #{flowCar},</if>
+            <if test="flowTruck != null">flow_truck = #{flowTruck},</if>
+            <if test="flowXveh != null">flow_xveh = #{flowXveh},</if>
+            <if test="flowDveh != null">flow_dveh = #{flowDveh},</if>
+            <if test="bus1 != null">bus1 = #{bus1},</if>
+            <if test="bus2 != null">bus2 = #{bus2},</if>
+            <if test="bus3 != null">bus3 = #{bus3},</if>
+            <if test="bus4 != null">bus4 = #{bus4},</if>
+            <if test="truck1 != null">truck1 = #{truck1},</if>
+            <if test="truck2 != null">truck2 = #{truck2},</if>
+            <if test="truck3 != null">truck3 = #{truck3},</if>
+            <if test="truck4 != null">truck4 = #{truck4},</if>
+            <if test="truck5 != null">truck5 = #{truck5},</if>
+            <if test="truck6 != null">truck6 = #{truck6},</if>
+            <if test="special1 != null">special1 = #{special1},</if>
+            <if test="special2 != null">special2 = #{special2},</if>
+            <if test="special3 != null">special3 = #{special3},</if>
+            <if test="special4 != null">special4 = #{special4},</if>
+            <if test="special5 != null">special5 = #{special5},</if>
+            <if test="special6 != null">special6 = #{special6},</if>
+            <if test="bus1Ratio != null">bus1_ratio = #{bus1Ratio},</if>
+            <if test="bus2Ratio != null">bus2_ratio = #{bus2Ratio},</if>
+            <if test="bus3Ratio != null">bus3_ratio = #{bus3Ratio},</if>
+            <if test="bus4Ratio != null">bus4_ratio = #{bus4Ratio},</if>
+            <if test="truck1Ratio != null">truck1_ratio = #{truck1Ratio},</if>
+            <if test="truck2Ratio != null">truck2_ratio = #{truck2Ratio},</if>
+            <if test="truck3Ratio != null">truck3_ratio = #{truck3Ratio},</if>
+            <if test="truck4Ratio != null">truck4_ratio = #{truck4Ratio},</if>
+            <if test="truck5Ratio != null">truck5_ratio = #{truck5Ratio},</if>
+            <if test="truck6Ratio != null">truck6_ratio = #{truck6Ratio},</if>
+            <if test="special1Ratio != null">special1_ratio = #{special1Ratio},</if>
+            <if test="special2Ratio != null">special2_ratio = #{special2Ratio},</if>
+            <if test="special3Ratio != null">special3_ratio = #{special3Ratio},</if>
+            <if test="special4Ratio != null">special4_ratio = #{special4Ratio},</if>
+            <if test="special5Ratio != null">special5_ratio = #{special5Ratio},</if>
+            <if test="special6Ratio != null">special6_ratio = #{special6Ratio},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="tunnelName != null">tunnel_name = #{tunnelName},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="eqType != null">eq_type = #{eqType},</if>
+            <if test="direction != null">direction = #{direction},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdDataTrafficHourById" parameterType="Long">
+        delete from sd_data_traffic_hour where id = #{id}
+    </delete>
+
+    <delete id="deleteSdDataTrafficHourByIds" parameterType="String">
+        delete from sd_data_traffic_hour where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCarNumberByHour" resultType="hashmap">
+        select a.order_hour as order_hour, IFNULL(b.total_flow,0) total_flow,IFNULL(b.flow_sveh,0) flow_sveh,
+               IFNULL(b.flow_mveh,0) flow_mveh,IFNULL(b.flow_bveh,0) flow_bveh,IFNULL(b.avg_speed,0) avg_speed,
+        IFNULL(ROUND(IFNULL(b.flow_sveh,0) / b.total_flow * 100,1),0) flow_sveh_ratio,
+        IFNULL(ROUND(IFNULL(b.flow_mveh,0) / b.total_flow * 100,1),0) flow_mveh_ratio,
+        IFNULL(ROUND(IFNULL(b.flow_bveh,0) / b.total_flow * 100,1),0) flow_bveh_ratio,
+        #{tunnelName} tunnel_name,b.direction
+        from (
+        SELECT 0 AS order_hour UNION ALL SELECT 1 AS order_hour UNION ALL
+        SELECT 2 AS order_hour UNION ALL SELECT 3 AS order_hour UNION ALL
+        SELECT 4 AS order_hour UNION ALL SELECT 5 AS order_hour UNION ALL
+        SELECT 6 AS order_hour UNION ALL SELECT 7 AS order_hour UNION ALL
+        SELECT 8 AS order_hour UNION ALL SELECT 9 AS order_hour UNION ALL
+        SELECT 10 AS order_hour UNION ALL SELECT 11 AS order_hour UNION ALL
+        SELECT 12 AS order_hour UNION ALL SELECT 13 AS order_hour UNION ALL
+        SELECT 14 AS order_hour UNION ALL SELECT 15 AS order_hour UNION ALL
+        SELECT 16 AS order_hour UNION ALL SELECT 17 AS order_hour UNION ALL
+        SELECT 18 AS order_hour UNION ALL SELECT 19 AS order_hour UNION ALL
+        SELECT 20 AS order_hour UNION ALL SELECT 21 AS order_hour UNION ALL
+        SELECT 22 AS order_hour UNION ALL SELECT 23 AS order_hour
+        ) as a
+        LEFT JOIN
+        (SELECT HOUR(e.stat_time) AS order_hour,CAST((sum(e.flow_sveh)) as decimal(10,0)) as flow_sveh
+                 ,CAST((sum(e.flow_mveh)) as decimal(10,0)) as flow_mveh,
+             CAST((sum(e.flow_bveh)) as decimal(10,0)) as flow_bveh,
+             CAST((sum(e.avg_speed)/count(e.id)) as decimal(10,2)) as avg_speed,
+             CAST((sum(e.total_flow)) as decimal(10,0)) as total_flow,e.direction
+        FROM sd_data_traffic_hour e
+        left join sd_tunnels f on f.tunnel_id = e.tunnel_id
+        WHERE e.stat_time <![CDATA[>=]]> str_to_date(#{params.datea},'%Y-%m-%d %T')
+        AND e.stat_time <![CDATA[<=]]> str_to_date(#{params.dateb},'%Y-%m-%d %T') and e.tunnel_id = #{tunnelId}
+        and e.eq_type = #{params.eqType}
+        GROUP BY order_hour ) b ON a.order_hour=b.order_hour WHERE a.order_hour <![CDATA[ <= ]]> HOUR(now()) ORDER BY order_hour;
+    </select>
+
+    <select id="countYesterdayTrafficFlowData" resultType="hashmap">
+        SELECT stat_time,segment_no,year,month,day,hour,sum(total_flow) total_flow,sum(flow_sveh) flow_sveh,
+          sum(flow_mveh) flow_mveh, sum(flow_bveh) flow_bveh,CAST((sum(avg_speed)/count(id)) as decimal(10,2)) as avg_speed,
+          tunnel_id,tunnel_name,device_id,eq_type,direction
+        from sd_data_traffic_hour
+        WHERE TO_DAYS(now())-TO_DAYS(stat_time)=1 GROUP BY tunnel_id,direction
+    </select>
+</mapper>

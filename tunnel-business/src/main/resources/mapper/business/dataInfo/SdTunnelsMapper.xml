@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdTunnelsMapper">
+
+    <resultMap type="SdTunnels" id="SdTunnelsResult">
+        <result property="tunnelId" column="tunnel_id"/>
+        <result property="tunnelName" column="tunnel_name"/>
+        <result property="tunnelCode" column="tunnel_code"/>
+        <result property="tunnelAddress" column="tunnel_address"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="tunnelStationId" column="tunnel_station_id"/>
+        <result property="tunnelStationName" column="tunnel_station_name"/>
+        <result property="lane" column="lane"/>
+        <result property="coordinates" column="coordinates"/>
+        <result property="remake" column="remake"/>
+        <result property="poll" column="poll"/>
+        <result property="storeConfigure" column="store_configure"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="tunnelLength" column="tunnel_length"/>
+        <result property="deptId" column="dept_id" />
+        <result property="deptName" column="dept_name" />
+        <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
+        <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
+            <result property="sId" column="s_id" />
+            <result property="sName" column="s_name" />
+            <result property="tunnelId" column="tunnel_id" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="indexResult" type="SdSafetyIndex">
+        <id property="tunnelId" column="tunnel_id"/>
+        <result property="securityPercentage" column="security_percentage"/>
+    </resultMap>
+
+    <sql id="selectSdTunnelsVo">
+        select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
+               tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
+               create_time, update_by, update_time, dept_id from sd_tunnels
+    </sql>
+
+    <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
+        t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name, ifnull(i.security_percentage,'0') security_percentage
+        from sd_tunnels t
+        left join sys_dept d on t.dept_id = d.dept_id
+        left join sd_safety_index i on i.tunnel_id = t.tunnel_id
+        <where>
+            <if test="tunnelName != null and tunnelName != ''">and t.tunnel_name like concat('%', #{tunnelName}, '%')
+            </if>
+            <if test="tunnelId != null and tunnelId != ''">and t.tunnel_id = #{tunnelId}
+            </if>
+            <if test="poll != null ">and t.poll = #{poll}</if>
+            <if test="storeConfigure != null  and storeConfigure != ''">and t.store_configure = #{storeConfigure}</if>
+            <if test="deptId != null ">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectSdTunnelsById" parameterType="String" resultMap="SdTunnelsResult">
+        <include refid="selectSdTunnelsVo"/>
+        where tunnel_id = #{tunnelId}
+    </select>
+
+    <insert id="insertSdTunnels" parameterType="SdTunnels" useGeneratedKeys="true" keyProperty="tunnelId">
+        insert into sd_tunnels
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="tunnelName != null">tunnel_name,</if>
+            <!-- <if test="tunnelCode != null">tunnel_code,</if> -->
+            <if test="tunnelAddress != null">tunnel_address,</if>
+            <if test="longitude != null">longitude,</if>
+            <if test="latitude != null">latitude,</if>
+            <if test="tunnelStationId != null">tunnel_station_id,</if>
+            <if test="tunnelStationName != null">tunnel_station_name,</if>
+            <if test="lane != null">lane,</if>
+            <if test="coordinates != null">coordinates,</if>
+            <if test="remake != null">remake,</if>
+            <if test="poll != null">poll,</if>
+            <if test="storeConfigure != null">store_configure,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="tunnelLength != null">tunnel_length,</if>
+            <if test="deptId != null">dept_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="tunnelName != null">#{tunnelName},</if>
+            <!-- <if test="tunnelCode != null">#{tunnelCode},</if> -->
+            <if test="tunnelAddress != null">#{tunnelAddress},</if>
+            <if test="longitude != null">#{longitude},</if>
+            <if test="latitude != null">#{latitude},</if>
+            <if test="tunnelStationId != null">#{tunnelStationId},</if>
+            <if test="tunnelStationName != null">#{tunnelStationName},</if>
+            <if test="lane != null">#{lane},</if>
+            <if test="coordinates != null">#{coordinates},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="poll != null">#{poll},</if>
+            <if test="storeConfigure != null">#{storeConfigure},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="tunnelLength != null">#{tunnelLength},</if>
+            <if test="deptId != null">#{deptId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSdTunnels" parameterType="SdTunnels">
+        update sd_tunnels
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelName != null">tunnel_name = #{tunnelName},</if>
+            <if test="tunnelCode != null">tunnel_code = #{tunnelCode},</if>
+            <if test="tunnelAddress != null">tunnel_address = #{tunnelAddress},</if>
+            <if test="longitude != null">longitude = #{longitude},</if>
+            <if test="latitude != null">latitude = #{latitude},</if>
+            <if test="tunnelStationId != null">tunnel_station_id = #{tunnelStationId},</if>
+            <if test="tunnelStationName != null">tunnel_station_name = #{tunnelStationName},</if>
+            <if test="lane != null">lane = #{lane},</if>
+            <if test="coordinates != null">coordinates = #{coordinates},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="poll != null">poll = #{poll},</if>
+            <if test="storeConfigure != null">store_configure = #{storeConfigure},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="tunnelLength != null">tunnel_length = #{tunnelLength},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where tunnel_id = #{tunnelId}
+    </update>
+
+    <delete id="deleteSdTunnelsById" parameterType="String">
+        delete from sd_tunnels where tunnel_id = #{tunnelId}
+    </delete>
+
+    <delete id="deleteSdTunnelsByIds" parameterType="String">
+        delete from sd_tunnels where tunnel_id in
+        <foreach item="tunnelId" collection="array" open="(" separator="," close=")">
+            #{tunnelId}
+        </foreach>
+    </delete>
+
+    <select id="selectSdTunnelsSubList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        select a.tunnel_id, a.tunnel_name, b.s_id, b.s_name from sd_tunnels a
+        left join sd_tunnel_subarea b on a.tunnel_id = b.tunnel_id
+        <where>
+            <if test="tunnelId != null">a.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null">a.tunnelName = #{tunnelName} </if>
+        </where>
+    </select>
+
+    <select id="getSubareas" parameterType="java.lang.String" resultType="com.tunnel.business.domain.event.SdTunnelSubarea">
+        select a.s_id, a.s_name, a.tunnel_id  from sd_tunnel_subarea a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        where a.tunnel_id = #{tunnel_id}
+    </select>
+
+    <select id="deptId" parameterType="Long" resultMap="SdTunnelsResult">
+        select tunnel_id,
+               tunnel_name,
+               tunnel_code,
+               tunnel_address,
+               longitude,
+               latitude,
+               tunnel_station_id,
+               tunnel_station_name,
+               lane,
+               coordinates,
+               remake,
+               tunnel_length,
+               poll,
+               store_configure,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               dept_id
+        from sd_tunnels
+        where dept_id = #{deptId}
+    </select>
+</mapper>

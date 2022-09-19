@@ -1,6 +1,6 @@
 package com.tunnel.webthings.vo;
 
-import com.tunnel.platform.domain.dataInfo.SdStateStorage;
+import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.webthings.domain.ReceiveTopic;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

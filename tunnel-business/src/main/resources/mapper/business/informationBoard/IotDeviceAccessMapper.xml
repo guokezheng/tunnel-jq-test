@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper">
+    
+    <resultMap type="IotDeviceAccess" id="IotDeviceAccessResult">
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceTypeId" column="device_type_id"/>
+        <result property="deviceIp"    column="device_ip"    />
+        <result property="devicePort"    column="device_port"    />
+        <result property="deviceProtocolId"    column="device_protocol_id"    />
+        <result property="devicePixel"    column="device_pixel"    />
+        <result property="userName"    column="user_name"    />
+        <result property="passWord"    column="pass_word"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectIotDeviceAccessVo">
+        select device_id, device_type_id,device_ip, device_port, device_protocol_id, device_pixel,user_name ,pass_word,create_by, create_time, update_by, update_time, remark from iot_device_access
+    </sql>
+
+    <select id="selectIotDeviceAccessQuery" parameterType="IotDeviceAccess" resultMap="IotDeviceAccessResult">
+        <include refid="selectIotDeviceAccessVo"/>
+        <where>  
+            <if test="deviceIp != null  and deviceIp != ''"> and device_ip = #{deviceIp}</if>
+            <if test="deviceTypeId != null  and deviceTypeId != ''"> and device_type_id = #{deviceTypeId}</if>
+            <if test="devicePort != null  and devicePort != ''"> and device_port = #{devicePort}</if>
+            <if test="deviceProtocolId != null "> and device_protocol_id = #{deviceProtocolId}</if>
+            <if test="devicePixel != null  and devicePixel != ''"> and device_pixel = #{devicePixel}</if>
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="passWord != null  and passWord != ''"> and pass_word = #{passWord}</if>
+        </where>
+    </select>
+
+    <select id="selectIotDeviceAccessList" parameterType="IotDeviceAccess" resultMap="IotDeviceAccessResult">
+        <include refid="selectIotDeviceAccessVo"/>
+        <where>
+            <if test="deviceIp != null  and deviceIp != ''"> and device_ip = #{deviceIp}</if>
+            <if test="deviceTypeId != null  and deviceTypeId != ''"> and device_type_id = #{deviceTypeId}</if>
+            <if test="devicePort != null  and devicePort != ''"> and device_port = #{devicePort}</if>
+            <if test="deviceProtocolId != null "> and device_protocol_id = #{deviceProtocolId}</if>
+            <if test="devicePixel != null  and devicePixel != ''"> and device_pixel = #{devicePixel}</if>
+            <if test="userName != null  and userName != ''"> and user_name = #{userName}</if>
+            <if test="passWord != null  and passWord != ''"> and pass_word = #{passWord}</if>
+        </where>
+    </select>
+
+    <select id="selectIotDeviceAccessById" parameterType="Long" resultMap="IotDeviceAccessResult">
+        <include refid="selectIotDeviceAccessVo"/>
+        where device_id = #{deviceId}
+    </select>
+        
+    <insert id="insertIotDeviceAccess" parameterType="IotDeviceAccess">
+        insert into iot_device_access
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null ">device_id,</if>
+            <if test="deviceTypeId != null ">device_type_id,</if>
+            <if test="deviceIp != null  and deviceIp != ''">device_ip,</if>
+            <if test="devicePort != null  and devicePort != ''">device_port,</if>
+            <if test="deviceProtocolId != null ">device_protocol_id,</if>
+            <if test="devicePixel != null  and devicePixel != ''">device_pixel,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="passWord != null  and passWord != ''">pass_word,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null ">#{deviceId},</if>
+            <if test="deviceTypeId != null ">#{deviceTypeId},</if>
+            <if test="deviceIp != null  and deviceIp != ''">#{deviceIp},</if>
+            <if test="devicePort != null  and devicePort != ''">#{devicePort},</if>
+            <if test="deviceProtocolId != null ">#{deviceProtocolId},</if>
+            <if test="devicePixel != null  and devicePixel != ''">#{devicePixel},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="passWord != null  and passWord != ''">#{passWord},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateIotDeviceAccess" parameterType="IotDeviceAccess">
+        update iot_device_access
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceIp != null  and deviceIp != ''">device_ip = #{deviceIp},</if>
+            <if test="deviceTypeId != null  and deviceTypeId != ''">device_type_id = #{deviceTypeId},</if>
+            <if test="devicePort != null  and devicePort != ''">device_port = #{devicePort},</if>
+            <if test="deviceProtocolId != null ">device_protocol_id = #{deviceProtocolId},</if>
+            <if test="devicePixel != null  and devicePixel != ''">device_pixel = #{devicePixel},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="passWord != null  and passWord != ''">pass_word = #{passWord},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteIotDeviceAccessById" parameterType="Long">
+        delete from iot_device_access where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteIotDeviceAccessByIds" parameterType="String">
+        delete from iot_device_access where device_id in 
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+    
+</mapper>

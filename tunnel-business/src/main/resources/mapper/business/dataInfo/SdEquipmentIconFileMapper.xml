@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper">
+    
+    <resultMap type="SdEquipmentStateIconFile" id="SdEquipmentStateIconFileResult">
+        <result property="id"    column="id"    />
+        <result property="stateIconId"    column="state_icon_id"    />
+        <result property="stateIconName"    column="state_icon_name"    />
+        <result property="url"    column="url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectdEquipmentIconFileVo">
+        select id, state_icon_id, state_icon_name, url, create_by, create_time, update_by, update_time from sd_equipment_state_icon_file
+    </sql>
+
+    <select id="selectStateIconFileList" parameterType="SdEquipmentStateIconFile" resultMap="SdEquipmentStateIconFileResult">
+        <include refid="selectdEquipmentIconFileVo"/>
+        <where>  
+            <if test="stateIconId != null  and stateIconId != ''"> and state_icon_id = #{stateIconId}</if>
+            <if test="stateIconName != null  and stateIconName != ''"> and state_icon_name like concat('%', #{stateIconName}, '%')</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+        </where>
+    </select>
+    
+    <select id="selectStateIconFileById" parameterType="Long" resultMap="SdEquipmentStateIconFileResult">
+        <include refid="selectdEquipmentIconFileVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStateIconFile" parameterType="SdEquipmentStateIconFile" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_equipment_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stateIconId != null">state_icon_id,</if>
+            <if test="stateIconName!= null">state_icon_name,</if>
+            <if test="url != null">url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="stateIconId != null">#{stateIconId},</if>
+            <if test="stateIconName != null">#{stateIconName},</if>
+            <if test="url != null">#{url},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+     <!-- 批量新增设备档案文件信息 -->
+	  <insert id="brachInsertStateIconFile" parameterType="java.util.List">
+	    insert into sd_equipment_state_icon_file
+	    (
+	      state_icon_id,state_icon_name,url,create_by,create_time
+	    )
+	    values
+	    <foreach collection="list" index="index" item="item" separator=",">
+	      (
+	        #{item.stateIconId}, #{item.stateIconName}, #{item.url}, #{item.createBy}, #{item.createTime}
+	      )
+	    </foreach>
+	  </insert>
+
+    <!-- 批量新增设备档案文件信息(返回主键id) -->
+    <insert id="brachInsertStateIconFiles" useGeneratedKeys="true" keyProperty="id" parameterType="java.util.List">
+        insert into sd_equipment_state_icon_file
+        (
+        state_icon_id,state_icon_name,url,create_by,create_time
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.stateIconId}, #{item.stateIconName}, #{item.url}, #{item.createBy}, #{item.createTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateStateIconFile" parameterType="SdEquipmentStateIconFile">
+        update sd_equipment_state_icon_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stateIconId != null">state_icon_id = #{stateIconId},</if>
+            <if test="stateIconName != null">state_icon_name = #{stateIconName},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where state_icon_id = #{stateIconId}
+    </update>
+
+    <update id="updateStateIconFileById" parameterType="SdEquipmentStateIconFile">
+        update sd_equipment_state_icon_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stateIconId != null">state_icon_id = #{stateIconId},</if>
+            <if test="stateIconName != null">state_icon_name = #{stateIconName},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStateIconFileById" parameterType="Long">
+        delete from sd_equipment_state_icon_file where id = #{id}
+    </delete>
+
+    <delete id="deleteStateIconFileByIds" parameterType="String">
+        delete from sd_equipment_state_icon_file where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteStateIconFileByrlIds" parameterType="String">
+        delete from sd_equipment_state_icon_file where state_icon_id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

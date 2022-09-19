@@ -1,9 +1,9 @@
 package com.tunnel.deal.guidancelamp.control.inductionlamp;
 
+import com.tunnel.business.domain.dataInfo.InductionlampControlStatusDetails;
+import com.tunnel.business.domain.dataInfo.InductionlampControlStatusParam;
 import com.tunnel.deal.guidancelamp.control.ClientHandler;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
-import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
-import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

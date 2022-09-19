@@ -1,7 +1,7 @@
 package com.tunnel.platform.business.vms.display;
 
 
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.CommonUtil;
 
 public class DisplayFormat {
 

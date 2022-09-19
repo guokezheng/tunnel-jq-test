@@ -1,13 +1,13 @@
 package com.tunnel.platform.controller.dataInfo;
 
 
-import com.tunnel.platform.domain.dataInfo.SdEmergencyResponse;
-import com.tunnel.platform.service.dataInfo.ISdEmergencyResponseService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.tunnel.business.domain.dataInfo.SdEmergencyResponse;
+import com.tunnel.business.service.dataInfo.ISdEmergencyResponseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

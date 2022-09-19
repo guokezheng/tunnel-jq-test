@@ -1,7 +1,7 @@
 package com.tunnel.platform.business.iotcom;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.platform.service.xfyjNbRecevice.XfyjWaterReceviceService;
+import com.tunnel.business.service.xfyjNbRecevice.XfyjWaterReceviceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

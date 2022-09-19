@@ -2,8 +2,8 @@ package com.tunnel.platform.business.vms.protocol;
 
 
 import com.tunnel.platform.business.vms.core.IProtocol;
-import com.tunnel.platform.utils.util.CommonUtil;
-import com.tunnel.platform.utils.util.RadixUtil;
+import com.tunnel.business.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.RadixUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

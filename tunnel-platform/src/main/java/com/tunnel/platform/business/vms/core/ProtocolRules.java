@@ -1,6 +1,6 @@
 package com.tunnel.platform.business.vms.core;
 
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

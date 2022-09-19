@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.emeResource.SdMaterialMapper">
+
+    <resultMap type="SdMaterial" id="SdMaterialResult">
+        <result property="id"    column="id"    />
+        <result property="materialId"    column="material_id"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="materialType"    column="material_type"    />
+        <result property="inventoryQuantity"    column="Inventory_quantity"    />
+        <result property="company"    column="company"    />
+        <result property="position"    column="position"    />
+        <result property="warningValue"    column="warning_value"    />
+        <result property="code"    column="code"    />
+        <result property="remark"    column="remark"    />
+        <result property="state"    column="state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="station"    column="station"  />
+        <result property="direction"    column="direction"  />
+        <result property="number"    column="number"  />
+        <result property="installDate"    column="install_date"  />
+        <result property="dateOfManufacture"    column="date_of_manufacture"  />
+        <result property="tunnelId"    column="tunnel_id"  />
+        <result property="tunnelName"    column="tunnel_name"  />
+        <result property="qualityGuaranteePeriod" column="quality_guarantee_period" />
+        <result property="deptId" column="dept_id" />
+        <association property="sdMaterialType"  column="id" javaType="SdMaterialType" resultMap="materialTypeResult" />
+    </resultMap>
+	<resultMap id="materialTypeResult" type="SdMaterialType">
+		<id  property="id" column="id" />
+		<result property="name" column="name"   />
+	</resultMap>
+    <sql id="selectSdMaterialVo">
+        select id, material_id, material_name, material_type, Inventory_quantity, company, position, warning_value,
+               code, remark, state, create_time, update_time, station, direction, number, install_date,
+               date_of_manufacture, tunnel_id, quality_guarantee_period
+        from sd_material
+    </sql>
+
+    <select id="selectSdMaterialList" parameterType="SdMaterial" resultMap="SdMaterialResult">
+       select s.id, s.material_id, s.material_name, s.material_type,x.name,s.Inventory_quantity, s.company,
+              s.position, s.warning_value, s.code, s.remark, s.state, s.create_time, s.update_time
+            , t.tunnel_name, s.tunnel_id, s.station, s.direction, s.number, s.install_date, s.date_of_manufacture,
+              s.quality_guarantee_period, t.dept_id
+          from sd_material s
+          left join sd_material_type x on s.material_type = x.id
+          left join sd_tunnels t on t.tunnel_id = s.tunnel_id
+        <where>
+            <if test="materialId != null  and materialId != ''"> and s.material_id = #{materialId}</if>
+            <if test="materialName != null  and materialName != ''"> and s.material_name like concat('%', #{materialName}, '%')</if>
+            <if test="materialType != null  and materialType != ''"> and s.material_type = #{materialType}</if>
+            <if test="inventoryQuantity != null "> and s.Inventory_quantity = #{inventoryQuantity}</if>
+            <if test="company != null  and company != ''"> and s.company = #{company}</if>
+            <if test="position != null  and position != ''"> and s.position = #{position}</if>
+            <if test="warningValue != null "> and s.warning_value = #{warningValue}</if>
+            <if test="code != null  and code != ''"> and s.code = #{code}</if>
+            <if test="remark != null  and remark != ''"> and s.remark = #{remark}</if>
+            <if test="state != null  and state != ''"> and s.state = #{state}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
+            <if test="deptId != null ">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            ${params.dataScope}
+        </where>
+        ORDER BY ID
+    </select>
+
+    <select id="selectSdMaterialById" parameterType="Long" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        where id = #{id} or tunnel_id = #{tunnelId}
+    </select>
+
+    <select id="selectSdMaterialByMId" parameterType="String" resultMap="SdMaterialResult">
+        <include refid="selectSdMaterialVo"/>
+        where material_id = #{materialId}
+    </select>
+
+    <insert id="insertSdMaterial" parameterType="SdMaterial" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_material
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">material_id,</if>
+            <if test="materialName != null">material_name,</if>
+            <if test="materialType != null">material_type,</if>
+            <if test="inventoryQuantity != null">Inventory_quantity,</if>
+            <if test="position != null">position,</if>
+            <if test="code != null">code,</if>
+            <if test="remark != null">remark,</if>
+            <if test="state != null">state,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="station != null">station,</if>
+            <if test="direction != null">direction,</if>
+            <if test="number != null">number,</if>
+            <if test="installDate != null">install_date,</if>
+            <if test="dateOfManufacture != null">date_of_manufacture,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="qualityGuaranteePeriod != null">quality_guarantee_period,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialId != null">#{materialId},</if>
+            <if test="materialName != null">#{materialName},</if>
+            <if test="materialType != null">#{materialType},</if>
+            <if test="inventoryQuantity != null">#{inventoryQuantity},</if>
+            <if test="position != null">#{position},</if>
+            <if test="code != null">#{code},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="state != null">#{state},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="station != null">#{station},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="number != null">#{number},</if>
+            <if test="installDate != null">#{installDate},</if>
+            <if test="dateOfManufacture != null">#{dateOfManufacture},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="qualityGuaranteePeriod != null">#{qualityGuaranteePeriod},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMaterial" parameterType="SdMaterial">
+        update sd_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="inventoryQuantity != null">Inventory_quantity = #{inventoryQuantity},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="warningValue != null">warning_value = #{warningValue},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="station != null">station = #{station},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="installDate != null">install_date = #{installDate},</if>
+            <if test="dateOfManufacture != null">date_of_manufacture = #{dateOfManufacture},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="qualityGuaranteePeriod != null">quality_guarantee_period = #{qualityGuaranteePeriod},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateMaterialMessage" parameterType="SdMaterial">
+        update sd_material
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialId != null">material_id = #{materialId},</if>
+            <if test="materialName != null">material_name = #{materialName},</if>
+            <if test="materialType != null">material_type = #{materialType},</if>
+            <if test="inventoryQuantity != null">Inventory_quantity = #{inventoryQuantity},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="warningValue != null">warning_value = #{warningValue},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="station != null">station = #{station},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="installDate != null">install_date = #{installDate},</if>
+            <if test="dateOfManufacture != null">date_of_manufacture = #{dateOfManufacture},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="qualityGuaranteePeriod != null">quality_guarantee_period = #{qualityGuaranteePeriod},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdMaterialById" parameterType="Long">
+        delete from sd_material where id = #{id}
+    </delete>
+
+    <delete id="deleteSdMaterialByIds" parameterType="String">
+        delete from sd_material where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

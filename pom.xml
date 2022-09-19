@@ -219,11 +219,12 @@
         <module>zc-websocket</module>
         <module>zc-payment</module>
         <module>zc-iot</module>
+        <module>tunnel-deal</module>
+        <module>tunnel-business</module>
         <module>tunnel-platform</module>
         <module>tunnel-video</module>
         <module>tunnel-webthings</module>
         <module>tunnel-datacenter</module>
-        <module>tunnel-deal</module>
     </modules>
     <packaging>pom</packaging>
 

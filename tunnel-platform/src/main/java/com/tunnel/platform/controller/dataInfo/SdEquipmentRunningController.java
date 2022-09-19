@@ -1,9 +1,9 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

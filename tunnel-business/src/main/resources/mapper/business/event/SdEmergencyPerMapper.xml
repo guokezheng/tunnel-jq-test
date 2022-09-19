@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.event.SdEmergencyPerMapper">
+
+    <resultMap type="SdEmergencyPer" id="SdEmergencyPerResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="userName"    column="user_name"    />
+        <result property="groupName"    column="group_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdEmergencyPerVo">
+        select a.id, a.tunnel_id,b.tunnel_name, a.user_name,a.group_name, a.phone, a.create_by, a.update_time, a.create_time, a.update_by
+        from sd_emergency_per a left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+    </sql>
+
+    <select id="selectSdEmergencyPerList" parameterType="SdEmergencyPer" resultMap="SdEmergencyPerResult">
+        <include refid="selectSdEmergencyPerVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdEmergencyPerById" parameterType="Long" resultMap="SdEmergencyPerResult">
+        <include refid="selectSdEmergencyPerVo"/>
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertSdEmergencyPer" parameterType="SdEmergencyPer" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_emergency_per
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="groupName != null">group_name,</if>
+            <if test="phone != null">phone,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="groupName != null">#{groupName},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEmergencyPer" parameterType="SdEmergencyPer">
+        update sd_emergency_per
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="groupName != null">group_name = #{groupName},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEmergencyPerById" parameterType="Long">
+        delete from sd_emergency_per where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEmergencyPerByIds" parameterType="String">
+        delete from sd_emergency_per where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectPersonList" parameterType="SdEmergencyPer" resultMap="SdEmergencyPerResult">
+        <include refid="selectSdEmergencyPerVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+            <if test="userName != null  and userName != ''"> and a.user_name = #{userName}</if>
+            <if test="groupName != null  and groupName != ''"> and a.group_name = #{groupName}</if>
+            <if test="phone != null  and phone != ''"> and a.phone = #{phone}</if>
+        </where>
+    </select>
+</mapper>

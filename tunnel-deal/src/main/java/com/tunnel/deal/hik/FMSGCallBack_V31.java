@@ -2,12 +2,12 @@ package com.tunnel.deal.hik;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.sun.jna.Pointer;
-import com.tunnel.platform.domain.dataInfo.SdDataTrafficHour;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.service.dataInfo.ISdDataTrafficHourService;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.domain.dataInfo.SdDataTrafficHour;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.service.dataInfo.ISdDataTrafficHourService;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;

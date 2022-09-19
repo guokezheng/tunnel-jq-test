@@ -1,7 +1,7 @@
 package com.tunnel.platform.business.vms;
 
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.CommonUtil;
 
 import java.util.Map;
 

@@ -7,8 +7,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.tunnel.platform.business.vms.core.DevicesManager;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.protocol.ProtocolCheckAlgorithm;
-import com.tunnel.platform.utils.util.CommonUtil;
-import com.tunnel.platform.utils.util.RadixUtil;
+import com.tunnel.business.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.RadixUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;

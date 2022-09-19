@@ -2,7 +2,7 @@ package com.tunnel.platform.controller.bigScreenApi;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.service.bigScreenApi.ISdProportionOfEquipmentServcie;
+import com.tunnel.business.service.bigScreenApi.ISdProportionOfEquipmentServcie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

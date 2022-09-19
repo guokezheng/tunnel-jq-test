@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdCallRecordMapper">
+
+    <resultMap type="SdCallRecord" id="SdCallRecordResult">
+        <result property="id"    column="id"    />
+        <result property="callId"    column="callId"    />
+        <result property="callName"    column="call_name"    />
+        <!-- <result property="callNumber"    column="call_number"    /> -->
+        <result property="cpn"    column="CPN"    />
+        <result property="pathId"    column="path_id"    />
+         <result property="type"    column="Type"    />
+        <result property="position"    column="position"    />
+        <result property="timeStart"    column="TimeStart"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="timeEnd"    column="TimeEnd"    />
+        <result property="endDate"    column="end_date"    />
+        <result property="receptionName"    column="reception_name"    />
+        <result property="cdpn"    column="CDPN"    />
+        <!-- <result property="receptionNumber"    column="reception_number"    /> -->
+        <result property="telephoneContent"    column="telephone_content"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdCallRecordVo">
+        select id, callId, call_name, CPN, path_id, Type, position, TimeStart, start_date, TimeEnd, end_date, reception_name, CDPN, telephone_content, create_by, create_time, update_time, update_by from sd_call_record
+    </sql>
+
+    <select id="selectSdCallRecordEcharts" parameterType="SdCallRecord" resultType="map">
+        SELECT count(1)as recordCount,
+		DATE_FORMAT(x.TimeStart,'%Y-%m-%d') AS recordDate
+		from sd_call_record x
+		<where>
+			<if test="beginTime != null  and beginTime != '' and endTime != null and endTime != '' ">
+				x.TimeStart &gt;= #{beginTime} and x.TimeStart &lt;= #{endTime}
+			</if>
+		</where>
+		GROUP BY DATE_FORMAT(x.TimeStart,'%Y%m%d')
+    </select>
+
+    <select id="selectSdCallRecordList" parameterType="SdCallRecord" resultMap="SdCallRecordResult">
+        <include refid="selectSdCallRecordVo"/>
+        <where>
+            <if test="callId != null  and callId != ''"> and callId = #{callId}</if>
+            <if test="callName != null  and callName != ''"> and call_name like concat('%', #{callName}, '%')</if>
+            <if test="cpn != null  and cpn != ''"> and CPN = #{cpn}</if>
+            <if test="pathId != null  and pathId != ''"> and path_id = #{pathId}</if>
+            <if test="type != null  and type != ''"> and Type = #{type}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="beginTime != null  and beginTime != '' and endTime != null and endTime != '' "> and TimeStart between #{beginTime} and #{endTime}</if>
+            <if test="receptionName != null  and receptionName != ''"> and reception_name like concat('%', #{receptionName}, '%')</if>
+            <if test="cdpn != null  and cdpn != ''"> and CDPN = #{cdpn}</if>
+            <if test="telephoneContent != null  and telephoneContent != ''"> and telephone_content = #{telephoneContent}</if>
+            <if test="telephoneContent != null  and telephoneContent != ''"> and telephone_content = #{telephoneContent}</if>
+            <if test="params.beginTime != null  and params.beginTime != '' and params.endTime != null  and params.endTime != ''"> and (start_date BETWEEN #{params.beginTime} AND #{params.endTime} OR end_date BETWEEN #{params.beginTime} AND #{params.endTime}) </if>
+        </where>
+    </select>
+
+    <select id="selectSdCallRecordById" parameterType="Long" resultMap="SdCallRecordResult">
+        <include refid="selectSdCallRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdCallRecordList" parameterType="java.util.List">
+	    insert ignore into sd_call_record
+	    (
+	      callId,CPN,Type,TimeStart,TimeEnd,CDPN,telephone_content
+	    )
+	    values
+	    <foreach collection="list" index="index" item="item" separator=",">
+	      (
+	        #{item.callId}, #{item.cpn}, #{item.type}, #{item.timeStart}, #{item.timeEnd}
+	        , #{item.cdpn}, #{item.telephoneContent}
+	      )
+	    </foreach>
+	  </insert>
+
+    <insert id="insertSdCallRecord" parameterType="SdCallRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_call_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="callId != null">callId,</if>
+            <if test="callName != null">call_name,</if>
+            <if test="cpn != null">CPN,</if>
+            <if test="pathId != null">path_id,</if>
+            <if test="type != null">Type,</if>
+            <if test="position != null">position,</if>
+            <if test="timeStart != null">TimeStart,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="timeEnd != null">TimeEnd,</if>
+            <if test="endDate != null">end_date,</if>
+            <if test="receptionName != null">reception_name,</if>
+            <!-- <if test="receptionNumber != null">reception_number,</if> -->
+            <if test="cdpn != null">CDPN,</if>
+            <if test="telephoneContent != null">telephone_content,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="callId != null">#{callId},</if>
+            <if test="callName != null">#{callName},</if>
+            <if test="cpn != null">#{cpn},</if>
+            <if test="pathId != null">#{pathId},</if>
+            <if test="type != null">#{type},</if>
+            <if test="position != null">#{position},</if>
+            <if test="timeStart != null">#{timeStart},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="timeEnd != null">#{timeEnd},</if>
+            <if test="endDate != null">#{endDate},</if>
+            <if test="receptionName != null">#{receptionName},</if>
+            <!-- <if test="receptionNumber != null">#{receptionNumber},</if> -->
+            <if test="cdpn != null">#{cdpn},</if>
+            <if test="telephoneContent != null">#{telephoneContent},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdCallRecord" parameterType="SdCallRecord">
+        update sd_call_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="callId != null">callId = #{callId},</if>
+            <if test="callName != null">call_name = #{callName},</if>
+            <!-- <if test="callNumber != null">call_number = #{callNumber},</if> -->
+            <if test="cpn != null">CPN = #{cpn},</if>
+            <if test="pathId != null">path_id = #{pathId},</if>
+            <if test="type != null">Type = #{type},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="timeStart != null">TimeStart = #{timeStart},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="timeEnd != null">TimeEnd = #{timeEnd},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="receptionName != null">reception_name = #{receptionName},</if>
+            <!-- <if test="receptionNumber != null">reception_number = #{receptionNumber},</if> -->
+            <if test="cdpn != null">CDPN = #{cdpn},</if>
+            <if test="telephoneContent != null">telephone_content = #{telephoneContent},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdCallRecordById" parameterType="Long">
+        delete from sd_call_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSdCallRecordByIds" parameterType="String">
+        delete from sd_call_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

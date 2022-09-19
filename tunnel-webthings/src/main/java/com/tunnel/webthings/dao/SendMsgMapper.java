@@ -1,7 +1,6 @@
 package com.tunnel.webthings.dao;
 
 
-import com.tunnel.platform.domain.dataInfo.SdDevices;
 import com.tunnel.webthings.domain.Jqdict;
 
 import java.util.List;

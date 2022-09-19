@@ -4,13 +4,13 @@ import com.serotonin.modbus4j.ModbusFactory;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.exception.ModbusInitException;
 import com.serotonin.modbus4j.ip.IpParameters;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesStatusEnum;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
-import com.tunnel.platform.utils.util.SpringContextUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.utils.util.SpringContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -52,7 +52,7 @@ public class ModbusTcpMaster {
     // 在构造方法执行后执行
     public void init() {
         //创建PLC客户端
-        createClient();
+//        createClient();
     }
 
     private void createClient() {

@@ -2,8 +2,8 @@ package com.tunnel.platform.business.vms;
 
 
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.platform.domain.informationBoard.SdIotDevice;
-import com.tunnel.platform.service.informationBoard.ISdIotDeviceService;
+import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

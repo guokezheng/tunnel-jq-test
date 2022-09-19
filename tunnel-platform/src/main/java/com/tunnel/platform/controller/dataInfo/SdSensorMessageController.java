@@ -1,14 +1,14 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdSensorMessage;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.dataInfo.ISdSensorMessageService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdSensorMessage;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdSensorMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

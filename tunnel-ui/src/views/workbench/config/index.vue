@@ -2412,20 +2412,7 @@
       },
     },
     created: function() {
-      bus.$on('process', (e) => {
-        console.log(e, "-----------")
-        if (e == 'theme-light') {
-          this.echartsColor = '#fff'
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        } else if (e == 'theme-dark') {
-          this.echartsColor = '#0a88bd', 
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        }
-      })
+      
       // this.flvPlayer()
       this.trafficFlowLane()
       this.getEqTypeStateIcon();
@@ -2476,8 +2463,8 @@
         }
       },
       radarDataList( event ){
-      console.log(event,'websockt工作台接收感知事件数据')
-      // this.realTimeList = event
+      // console.log(event,'websockt工作台接收感知事件数据')
+      this.realTimeList = event
      },
 
       // 设备类型
@@ -2632,7 +2619,20 @@
         // setTimeout(this.getLiPowerDevice, 0)
       }, 1000 * 5);
 
-
+      bus.$on('process', (e) => {
+        console.log(e, "-----------")
+        if (e == 'theme-light') {
+          this.echartsColor = '#fff'
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        } else if (e == 'theme-dark') {
+          this.echartsColor = '#0a88bd', 
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        }
+      })
       // 模拟实时隧道温度 调完了再删
       // setInterval(()=>{
       //         this.temperatureList[1].temperature += 2
@@ -2651,8 +2651,8 @@
       //     this.tunnelName = item.tunnelName
       //   }
       // }
-      this.initeChartsEnd();
-      this.loadFocusCar();
+      // this.initeChartsEnd();
+      // this.loadFocusCar();
       // this.srollAuto()
       
     },
@@ -2676,21 +2676,22 @@
         this.eqInfo.clickEqType = 0
       },
       // 车辆监测数据
-      vehicleEcharts(tunnelId){
+      vehicleEcharts(){
         // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         vehicleMonitoring(param).then(res =>{
           console.log(res,"车辆监测数据")
-          this.vehicleXData = res.data[0]
-          this.vehicleYData = res.data[1]
+          var vehicleXData = res.data[0]
+          var vehicleYData = res.data[1]
+          this.initeChartsEnd(vehicleXData,vehicleYData)
         })
       },
       // 重点车辆监测数据
-      specialEcharts(tunnelId){
+      specialEcharts(){
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         special(param).then(res =>{
           console.log(res,"重点车辆监测数据")
@@ -3066,8 +3067,8 @@
           console.log(res, '设备类型占比')
           // that.initechartsB(res.data)
         })
-        that.initeChartsEnd()
-        that.loadFocusCar()
+        // that.initeChartsEnd()
+        // that.loadFocusCar()
       },
       // 获取最近七天数组
       dateFormat(dateData) {
@@ -3203,7 +3204,7 @@
           energyConsumption.resize();
         });
       },
-      initeChartsEnd() {
+      initeChartsEnd(vehicleXData,vehicleYData) {
         let newPromise = new Promise((resolve) => {
           resolve()
         })
@@ -3257,7 +3258,7 @@
                   color: this.echartsColor
                 }
               },
-              data: this.vehicleXData
+              data: vehicleXData
             }],
             yAxis: [{
               name: '总车量',
@@ -3321,7 +3322,7 @@
                     )
                   }
                 },
-              data: this.vehicleYData
+              data: vehicleYData
             },
             // {
             //   name: '货车',
@@ -3930,8 +3931,9 @@
           }
           this.tunnelNameEarlyWarn = response.rows[0].tunnelName
           this.tunnelId = response.rows[0].tunnelId
-          this.specialEcharts(this.tunnelId)
-          this.vehicleEcharts(this.tunnelId)
+          
+          // this.specialEcharts(this.tunnelId)
+          this.vehicleEcharts()
           var newDict = this.dict.type.sd_sys_name
           if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
             this.robotShow = false

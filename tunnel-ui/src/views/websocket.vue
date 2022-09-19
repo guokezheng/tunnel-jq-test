@@ -68,7 +68,7 @@ export default {
   },
   mounted() {
     if ('WebSocket' in window) {
-      this.websocket = new WebSocket('ws://10.3.16.40:8000/websocket');
+      this.websocket = new WebSocket('ws://10.168.56.206:8000/websocket');
       this.initWebSocket();
     } else {
       alert('当前浏览器不支持WebSocket!!!')

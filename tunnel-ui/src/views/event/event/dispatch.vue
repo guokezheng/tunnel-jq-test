@@ -310,23 +310,23 @@
               </el-form-item>
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label="车主电话" prop="eventTitle">
+                  <el-form-item label="车主电话" prop="carOwnerPhone">
                     <el-input v-model="eventForm.carOwnerPhone" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="清障电话" prop="eventTitle">
+                  <el-form-item label="清障电话" prop="wreckerPhone">
                     <el-input v-model="eventForm.wreckerPhone" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
-                  <el-form-item label="交警电话" prop="eventTitle">
+                  <el-form-item label="交警电话" prop="policePhone">
                     <el-input v-model="eventForm.policePhone" />
                   </el-form-item>
                 </el-col>
               </el-row>
 
-              <el-form-item label="备注" prop="eventTitle">
+              <el-form-item label="备注" prop="remark">
                 <el-input
                   type="textarea"
                   v-model="eventForm.remark"

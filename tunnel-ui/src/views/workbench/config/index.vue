@@ -361,8 +361,13 @@
           :append-to-body="true"
           class="drawerBottom"
         >
-          <div class="bingZhou">
-            <!-- 设备类型 -->
+          <div>
+            <div v-for="(item,index) in isDrawerCList" :key="index">
+              <div v-for="(itm,inx) in item.slist" :key="inx">{{item.strategyName}}{{itm}}</div>
+            </div>
+          </div>
+<!--           <div class="bingZhou">
+          
             <el-select
               v-model="drawerC.typeValue"
               placeholder="请选择设备类型"
@@ -377,7 +382,7 @@
               >
               </el-option>
             </el-select>
-            <!-- 设备名称 -->
+         
             <div style="margin: 0 15px">
               <el-select
                 v-model="drawerC.nameValue"
@@ -403,7 +408,7 @@
             <el-button size="mini" style="transform: translateX(10px)"
               >确定</el-button
             >
-          </div>
+          </div> -->
         </el-drawer>
       </div>
 
@@ -1172,8 +1177,7 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-   <com-video class="comClass"
-              v-if="this.eqInfo.clickEqType == 23 || this.eqInfo.clickEqType == 24 || this.eqInfo.clickEqType == 25" 
+   <com-video class="comClass"  v-if="[23, 24, 25 ].includes(this.eqInfo.clickEqType)"  
                @dialogClose = "dialogClose" :eqInfo = "this.eqInfo" :eqTypeDialogList="this.eqTypeDialogList"
                :brandList="this.brandList" :directionList="this.directionList"></com-video>
     <com-light class="comClass" 
@@ -1900,6 +1904,7 @@
         checked4: false,
         checked5: false,
         checked6: false,
+        isDrawerCList:[],
 
 
         value1: new Date(),
@@ -2741,6 +2746,13 @@
       },
        isDrawerC() {
         this.drawerCVisible = true;
+        listStrategy({
+        strategyType: 2,
+        tunnelId: this.currentTunnel.id,
+      }).then((response) => {
+      console.log(response,"自动触发抽屉")
+      this.isDrawerCList = response.rows
+      });
       },
       zoomSwitchChange(val) {
         console.log(val, "val")

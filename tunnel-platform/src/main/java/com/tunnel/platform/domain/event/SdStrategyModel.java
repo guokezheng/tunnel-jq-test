@@ -93,11 +93,14 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("触发器")
     private SdTrigger triggers;
 
-    @ApiModelProperty("手动控制设备状态和设备名")
+    @ApiModelProperty("手动控制")
     private List<Map> manualControl;
 
-    @ApiModelProperty("定时控制及自动触发设备状态和设备名")
+    @ApiModelProperty("定时控制")
     private List<Map> autoControl;
+
+    @ApiModelProperty("分时控制")
+    private List<Map> timeSharingControl;
 
     public String getDirection() {
         return direction;
@@ -259,6 +262,14 @@ public class SdStrategyModel extends BaseEntity
 
     public void setAutoControl(List<Map> autoControl) {
         this.autoControl = autoControl;
+    }
+
+    public List<Map> getTimeSharingControl() {
+        return timeSharingControl;
+    }
+
+    public void setTimeSharingControl(List<Map> timeSharingControl) {
+        this.timeSharingControl = timeSharingControl;
     }
 
     @Override

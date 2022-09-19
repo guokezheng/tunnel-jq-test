@@ -62,7 +62,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           icon="el-icon-plus"
@@ -70,7 +70,7 @@
           @click="handleAdd"
           v-hasPermi="['system:event:add']"
         >新增事件</el-button>
-      </el-col>
+      </el-col> -->
 
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
@@ -176,7 +176,7 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="eventFormClose" class="addClass">
+    <!-- <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body :before-close="eventFormClose" class="addClass">
       <el-form ref="form1" :model="eventForm" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
@@ -223,7 +223,7 @@
                   <!--:key="item.directionName"-->
                    <!--:label="item.directionName"-->
                   <!--:value="item.directionId"-->
-                <!--/>-->
+                <!--/>
               </el-select>
             </el-form-item>
           </el-col>
@@ -309,60 +309,12 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- <el-col :span="12">
-            <el-form-item label="发布时间" prop="eventTime">
-              <el-date-picker clearable size="small" style="width: 200px"
-                v-model="eventForm.eventTime"
-                type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择发布时间">
-              </el-date-picker>
-            </el-form-item>
-          </el-col> -->
-        <!-- <el-col :span="12">
-          <el-form-item label="车型" prop="eventTypeId">
-            <el-select v-model="eventForm.eventTypeId" placeholder="请选择车型">
-              <el-option
-                  v-for="item in eventTypeData"
-                  :key="item.id"
-                  :label="item.eventType"
-                  :value="item.id"/>
-            </el-select>
-          </el-form-item>
-        </el-col> -->
-        <!-- <el-col :span="12">
-           <el-form-item label="事件状态" prop="eventTypeId">
-             <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件状态">
-               <el-option
-                   v-for="item in eventTypeData"
-                   :key="item.id"
-                   :label="item.eventType"
-                   :value="item.id"/>
-             </el-select>
-           </el-form-item>
-         </el-col> -->
-        <!-- <el-col :span="12">
-           <el-form-item label="处置时长" prop="eventTitle">
-             <el-input  v-model="eventForm.eventTitle" placeholder="请输入处置时长" />
-           </el-form-item>
-         </el-col> -->
-         <!-- <el-col :span="12">
-            <el-form-item label="影响程度" prop="eventTypeId">
-              <el-select v-model="eventForm.eventTypeId" placeholder="请选择影响程度">
-                <el-option
-                    v-for="item in eventTypeData"
-                    :key="item.id"
-                    :label="item.eventType"
-                    :value="item.id"/>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
         <el-form-item  style="text-align: center;">
           <el-button  size="small"  type="primary" :loading="submitEventFormLoading" @click="submitEventForm">保存</el-button>
           <el-button  size="small"   @click="eventFormClose">取 消</el-button>
         </el-form-item>
       </el-form>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog :title="title" :visible.sync="details" width="800px" append-to-body :before-close="cancel" class="detailsClass">
       <el-form ref="form1" :model="eventForm" :rules="rules" label-width="100px">
         <el-row>
@@ -371,14 +323,14 @@
               <div class="circle" style="background-color: #FF5823;"></div>
             </div>
             <div class="detailsText">事件发生时间</div>
-            <div style="color: #82B3C2;line-height: 40px;">2022-08-04 09:41</div>
+            <div style="color: #82B3C2;line-height: 40px;">{{eventForm.startTime}}</div>
           </el-col>
           <el-col :span="12" style="display: flex;height: 40px;">
             <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
               <div class="circle" style="background-color: #0065F8;"></div>
             </div>
             <div class="detailsText">预计解除时间</div>
-            <div style="color: #82B3C2;line-height: 40px;">2022-08-04 09:41</div>
+            <div style="color: #82B3C2;line-height: 40px;">{{eventForm.endTime}}</div>
           </el-col>
         </el-row>
 
@@ -388,30 +340,14 @@
             <div class="el-icon-discover" style="width: 10px;"></div>
           </div>
           <div class="detailsText">行驶方向</div>
-          <div style="color: #82B3C2;line-height: 40px;">青岛方向</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{getDirection(eventForm.direction)}}</div>
         </el-col>
         <el-col :span="12" style="display: flex;height: 40px;">
           <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
             <div class="el-icon-sunny" style="width: 10px;"></div>
           </div>
-          <div class="detailsText">当前天气</div>
-          <div style="color: #82B3C2;line-height: 40px;">晴</div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12" style="display: flex;height: 40px;">
-          <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
-            <div class="el-icon-truck" style="width: 10px;"></div>
-          </div>
-          <div class="detailsText">压车状态</div>
-          <div style="color: #82B3C2;line-height: 40px;">无压车</div>
-        </el-col>
-        <el-col :span="12" style="display: flex;height: 40px;">
-          <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
-            <div class="el-icon-connection" style="width: 10px;"></div>
-          </div>
-          <div class="detailsText">受影响程度</div>
-          <div style="color: #82B3C2;line-height: 40px;">正常通行</div>
+          <div class="detailsText">所属隧道</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.tunnels.tunnelName}}</div>
         </el-col>
       </el-row>
       <el-row>
@@ -420,23 +356,39 @@
             <div class="el-icon-location-information" style="width: 10px;"></div>
           </div>
           <div class="detailsText">桩号位置</div>
-          <div style="color: #82B3C2;line-height: 40px;">K666+000</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.stakeNum}}</div>
         </el-col>
         <el-col :span="12" style="display: flex;height: 40px;">
           <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
             <div class="el-icon-money" style="width: 10px;"></div>
           </div>
-          <div class="detailsText">抛洒物</div>
-          <div style="color: #82B3C2;line-height: 40px;">无</div>
+          <div class="detailsText">交警电话</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.policePhone}}</div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12" style="display: flex;height: 40px;">
+          <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
+            <div class="el-icon-truck" style="width: 10px;"></div>
+          </div>
+          <div class="detailsText">车主电话</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.carOwnerPhone}}</div>
+        </el-col>
+        <el-col :span="12" style="display: flex;height: 40px;">
+          <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
+            <div class="el-icon-connection" style="width: 10px;"></div>
+          </div>
+          <div class="detailsText">清障电话</div>
+          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.wreckerPhone}}</div>
         </el-col>
       </el-row>
       <hr/>
      <el-row class="rowClass">
         <el-col :span="12">
-          <div class="eventClass">事件分类：<span style="font-style:oblique;">故障</span></div>
+          <div class="eventClass">事件分类：<span style="font-style:oblique;">{{eventForm.eventType.eventType}}</span></div>
         </el-col>
         <el-col :span="12">
-          <div class="eventClass">事件级别：<span style="font-style:oblique;">一般</span></div>
+          <div class="eventClass">事件级别：<span style="font-style:oblique;">{{eventForm.eventGrade}}级</span></div>
         </el-col>
       </el-row>
       <el-row class="rowClass">
@@ -444,13 +396,13 @@
            <div class="eventTitleClass">伤亡情况</div>
          </el-col>
          <el-col :span="6">
-           <div class="eventClass">死亡人数：<span style="font-style:oblique;">0</span></div>
+           <div class="eventClass">死亡人数：<span style="font-style:oblique;">{{eventForm.eventDeath}}</span></div>
          </el-col>
          <el-col :span="6">
-           <div class="eventClass">重伤人数：<span style="font-style:oblique;">0</span></div>
+           <div class="eventClass">重伤人数：<span style="font-style:oblique;">{{eventForm.eventInjured}}</span></div>
          </el-col>
          <el-col :span="6">
-           <div class="eventClass">轻伤人数：<span style="font-style:oblique;">0</span></div>
+           <div class="eventClass">轻伤人数：<span style="font-style:oblique;">{{eventForm.slightInjured}}</span></div>
          </el-col>
        </el-row>
        <el-row class="rowClass">
@@ -458,16 +410,16 @@
             <div class="eventTitleClass">车辆损失</div>
           </el-col>
           <el-col :span="5">
-            <div class="eventClass">小车：<span style="font-style:oblique;">1</span></div>
+            <div class="eventClass">小车：<span style="font-style:oblique;">{{eventForm.smallCarNum}}</span></div>
           </el-col>
           <el-col :span="5">
-            <div class="eventClass">货车：<span style="font-style:oblique;">0</span></div>
+            <div class="eventClass">货车：<span style="font-style:oblique;">{{eventForm.truckNum}}</span></div>
           </el-col>
           <el-col :span="5">
-            <div class="eventClass">客车：<span style="font-style:oblique;">0</span></div>
+            <div class="eventClass">客车：<span style="font-style:oblique;">{{eventForm.passengerCarNum}}</span></div>
           </el-col>
           <el-col :span="5">
-            <div class="eventClass">罐车：<span style="font-style:oblique;">0</span></div>
+            <div class="eventClass">罐车：<span style="font-style:oblique;">{{eventForm.tankerNum}}</span></div>
           </el-col>
         </el-row>
         <hr/>
@@ -477,7 +429,7 @@
               <div class="el-icon-discount" style="width: 10px;"></div>
             </div>
             <div class="detailsText">事件标题</div>
-            <div style="color: #82B3C2;line-height: 40px;width: calc(100% - 140px);">马家峪隧道K6+000济南方向，1辆小型车发生故障，占用应急车道。</div>
+            <div style="color: #82B3C2;line-height: 40px;width: calc(100% - 140px);">{{eventForm.eventTitle}}</div>
           </el-col>
         </el-row>
         <el-row style="margin-bottom: 60px;">
@@ -486,7 +438,7 @@
                 <div class="el-icon-discount" style="width: 10px;"></div>
               </div>
               <div class="detailsText">事件描述</div>
-              <div style="color: #82B3C2;line-height: 40px;width: calc(100% - 140px);">马家峪隧道K6+000济南方向，1辆小型车发生故障，占用应急车道，超车道、行车道正常通行，请过往车辆减速慢行。</div>
+              <div style="color: #82B3C2;line-height: 40px;width: calc(100% - 140px);">{{eventForm.eventDescription}}</div>
             </el-col>
 
         </el-row>
@@ -496,7 +448,7 @@
 </template>
 
 <script>
-import { listEvent, getEvent, delEvent, addEvent, updateEvent, toll, getTunnelList,listDevices } from "@/api/event/event";
+import { listEvent, getEvent, delEvent, addEvent, updateEvent, toll, getTunnelList } from "@/api/event/event";
 import { listEventType } from "@/api/event/eventType";
 import { listPlan} from "@/api/event/reservePlan";
 import {
@@ -525,7 +477,11 @@ export default {
       total: 0,
       // 事件管理表格数据
       eventList: [
-        // {eventTitle:'11'}
+        {
+          tunnels:{
+            tunnelName:''
+          }
+        }
       ],
       // 弹出层标题
       title: "",
@@ -570,7 +526,9 @@ export default {
       submitEventFormLoading: false,
       direction: 'rtl',
       eventForm:{
-        
+        eventType:{
+          eventType:''
+        },
       },
       // 遮罩层
       dloading: false,
@@ -581,7 +539,6 @@ export default {
     this.getList();
     this.getEventType();
     this.getTunnel();
-    this.listDevices()
     this.getDicts("sd_event_state").then(response => {
       this.eventStateOptions = response.data;
     });
@@ -589,6 +546,10 @@ export default {
       console.log(response.data,"response.data事件级别")
       this.eventGradeOptions = response.data;
     });
+    this.getDicts("sd_direction").then((data) => {
+        console.log(data, "方向");
+        this.directionList = data.data
+      })
     // 管理机构
     toll().then(res=>{
       console.log(res)
@@ -596,13 +557,15 @@ export default {
     })
   },
   methods: {
-    // 查询方向
-    listDevices(){
-      listDevices().then(res =>{
-        console.log(res,"查询方向")
-        // this.eventTypeData = 
-      })
+      // 查询方向
+    getDirection(num) {
+      for (var item of this.directionList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
     },
+
     // 根据管理机构筛选所属隧道
     changeMechanism(deptId){
       this.queryParams.tunnelId = null
@@ -671,7 +634,7 @@ export default {
     handleDetails(row){
       this.details = true
       this.title = '事件详情'
-      this.detailsForm = row
+      this.eventForm = row
       console.log(row,"事件详情row")
     },
     handleDispatch(id){
@@ -728,39 +691,7 @@ export default {
      },
     /** 提交按钮 */
     submitEventForm() {
-      //校验信息
-     /* if(!this.eventForm.tunnelId){
-        this.$modal.msgError("请选择隧道名称！");
-        return;
-      } */
-      // if(!this.eventForm.eventTitle){
-      //   this.$modal.msgError("请输入事件标题！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventTypeId){
-      //   this.$modal.msgError("请选择事件类型！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventTime){
-      //   this.$modal.msgError("请确定事件发生时间！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventGrade){
-      //   this.$modal.msgError("请选择事件等级！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventLocation){
-      //   this.$modal.msgError("请输入事件位置！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventDeath){
-      //   this.$modal.msgError("请输入死亡人数！");
-      //   return;
-      // }
-      // if(!this.eventForm.eventInjured){
-      //   this.$modal.msgError("请输入受伤人数！");
-      //   return;
-      // }
+    
       this.dloading=true;
       if(this.submitEventFormLoading) return
       this.submitEventFormLoading = true

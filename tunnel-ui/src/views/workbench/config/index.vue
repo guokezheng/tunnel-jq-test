@@ -149,7 +149,7 @@
                           <!-- <label v-if="item.eqType == 16" style="font-size:14px;">m/s</label> -->
                         </label>
                         <!-- 洞内洞外 -->
-                        <label style="font-size:14px;position: absolute;text-decoration:line;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;"
+                        <label style="font-size:14px;position: absolute;color:#f2a520;padding-left: 5px;width: 100px;text-align: left;transform:translateY(5px)"
                           v-if="item.eqType == 5 || item.eqType == 18">
                           {{ item.num }}
                         </label>
@@ -216,29 +216,29 @@
           
             <div class="bingZhou">
               <span>济南方向：</span>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked1?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked1" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked2?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked2" class="checkbox"></el-checkbox>
+              <!-- <div class="number" :class="checked3?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked3" class="checkbox"></el-checkbox> -->
               <el-button type="primary" class="control">控制</el-button>
             </div>
-            <div class="bingZhou">
-              <span>潍坊方向：</span>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">1</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">2</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
-              <div class="number" :class="checked?'drawerActive':'drawerNo'">3</div>
-              <el-checkbox v-model="checked" class="checkbox"></el-checkbox>
+            <!-- <div class="bingZhou">
+              <span>博山方向：</span>
+              <div class="number" :class="checked4?'drawerActive':'drawerNo'">1</div>
+              <el-checkbox v-model="checked4" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked5?'drawerActive':'drawerNo'">2</div>
+              <el-checkbox v-model="checked5" class="checkbox"></el-checkbox>
+              <div class="number" :class="checked6?'drawerActive':'drawerNo'">3</div>
+              <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
               <el-button type="primary" class="control">控制</el-button>
-            </div>
+            </div> -->
           </el-drawer>
           <el-drawer title="照明亮度自动控制" :visible.sync="drawerB" :modal="false" :append-to-body="true" class="drawerCenter">
             <div class="ledLighting">
               <span>引道照明时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan1" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -261,7 +261,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照明1时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan2" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -284,7 +284,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan3" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -307,7 +307,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>加强照明2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan4" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -330,7 +330,7 @@
               </div>
             </div>
             <div class="ledLighting"> <span>基本照明2时序自动控制 </span>
-              <el-switch v-model="kaiGuan" active-color="#B6DEEE" inactive-color="#B6DEEE">
+              <el-switch v-model="kaiGuan5" active-color="#B6DEEE" inactive-color="#B6DEEE">
               </el-switch>
             </div>
             <div class="Time">
@@ -355,38 +355,56 @@
           </el-drawer>
           <!-- 触发控制模块 -->
           <el-drawer
-            title="触发控制"
-            :visible.sync="drawerC"
-            :modal="false"
-            :append-to-body="true"
-            class="drawerBottom"
-          >
-            <div class="bingZhou">
-              <!-- 设备类型 -->
-              <el-select v-model="drawerC.typeValue" placeholder="请选择设备类型">
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-              <!-- 设备名称 -->
-              <div style="margin: 0 15px">
-                <el-select v-model="drawerC.nameValue" placeholder="请选择设备名称">
-                  <el-option
-                    v-for="item in nameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-              </div>
-              <el-input v-model="drawerC.inputValue" placeholder="请输入"></el-input>
-            </div>
-          </el-drawer>
+          title="触发控制"
+          :visible.sync="drawerCVisible"
+          :modal="false"
+          :append-to-body="true"
+          class="drawerBottom"
+        >
+          <div class="bingZhou">
+            <!-- 设备类型 -->
+            <el-select
+              v-model="drawerC.typeValue"
+              placeholder="请选择设备类型"
+              size="mini"
+              style="width: 100px"
+            >
+              <el-option
+                v-for="item in typeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+            <!-- 设备名称 -->
+            <div style="margin: 0 15px">
+              <el-select
+                v-model="drawerC.nameValue"
+                placeholder="请选择设备名称"
+                size="mini"
+                style="width: 100px"
+              >
+                <el-option
+                  v-for="item in nameOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+            <el-input
+              size="mini"
+              v-model="drawerC.inputValue"
+              placeholder="请输入"
+              style="width: 100px"
+            ></el-input>
+            <el-button size="mini" style="transform: translateX(10px)"
+              >确定</el-button
+            >
+          </div>
+        </el-drawer>
       </div>
 
       <!-- <div class="tunnelBox tunnelBoxBottom" ></div> -->
@@ -1827,23 +1845,35 @@
         // 触发控制模块-设备类型
         typeOptions: [
           {
-            value: "选项1",
-            label: "选项1",
+            value: "1",
+            label: "CO",
           },
           {
-            value: "选项2",
-            label: "选项2",
+            value: "2",
+            label: "VI",
           },
         ],
         // 设备名称
         nameOptions: [
           {
-            value: "名称1",
-            label: "选项1",
+            value: "1",
+            label: ">",
           },
           {
-            value: "名称2",
-            label: "选项2",
+            value: "2",
+            label: "<",
+          },
+          {
+            value: "3",
+            label: "=",
+          },
+          {
+            value: "4",
+            label: "<=",
+          },
+          {
+            value: "5",
+            label: ">=",
           },
         ],
         drawerC:{
@@ -1857,9 +1887,21 @@
         //抽屉
         drawerA: false,
         drawerB: false,
-        drawerC: false,
-        kaiGuan: false,
-        checked: false,
+        drawerCVisible: false,
+        kaiGuan1: false,
+        kaiGuan2: false,
+        kaiGuan3: false,
+        kaiGuan4: false,
+        kaiGuan5: false,
+        kaiGuan6: false,
+        checked1: false,
+        checked2: false,
+        checked3: false,
+        checked4: false,
+        checked5: false,
+        checked6: false,
+
+
         value1: new Date(),
         // wheel:'wheel.prevent',
         buttonIndex: 0,
@@ -2370,20 +2412,7 @@
       },
     },
     created: function() {
-      bus.$on('process', (e) => {
-        console.log(e, "-----------")
-        if (e == 'theme-light') {
-          this.echartsColor = '#fff'
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        } else if (e == 'theme-dark') {
-          this.echartsColor = '#0a88bd', 
-          this.initeChartsEnd()
-          this.initEnergyConsumption()
-          this.loadFocusCar()
-        }
-      })
+      
       // this.flvPlayer()
       this.trafficFlowLane()
       this.getEqTypeStateIcon();
@@ -2434,8 +2463,8 @@
         }
       },
       radarDataList( event ){
-      console.log(event,'websockt工作台接收感知事件数据')
-      // this.realTimeList = event
+      // console.log(event,'websockt工作台接收感知事件数据')
+      this.realTimeList = event
      },
 
       // 设备类型
@@ -2590,7 +2619,20 @@
         // setTimeout(this.getLiPowerDevice, 0)
       }, 1000 * 5);
 
-
+      bus.$on('process', (e) => {
+        console.log(e, "-----------")
+        if (e == 'theme-light') {
+          this.echartsColor = '#fff'
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        } else if (e == 'theme-dark') {
+          this.echartsColor = '#0a88bd', 
+          this.getTunnelList()
+          this.initEnergyConsumption()
+          this.loadFocusCar()
+        }
+      })
       // 模拟实时隧道温度 调完了再删
       // setInterval(()=>{
       //         this.temperatureList[1].temperature += 2
@@ -2609,8 +2651,8 @@
       //     this.tunnelName = item.tunnelName
       //   }
       // }
-      this.initeChartsEnd();
-      this.loadFocusCar();
+      // this.initeChartsEnd();
+      // this.loadFocusCar();
       // this.srollAuto()
       
     },
@@ -2634,21 +2676,22 @@
         this.eqInfo.clickEqType = 0
       },
       // 车辆监测数据
-      vehicleEcharts(tunnelId){
+      vehicleEcharts(){
         // console.log(this.tunnelId,"this.tunnelIdthis.tunnelIdthis.tunnelId")
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         vehicleMonitoring(param).then(res =>{
           console.log(res,"车辆监测数据")
-          this.vehicleXData = res.data[0]
-          this.vehicleYData = res.data[1]
+          var vehicleXData = res.data[0]
+          var vehicleYData = res.data[1]
+          this.initeChartsEnd(vehicleXData,vehicleYData)
         })
       },
       // 重点车辆监测数据
-      specialEcharts(tunnelId){
+      specialEcharts(){
         const param = {
-          tunnelId:tunnelId
+          tunnelId:this.tunnelId
         }
         special(param).then(res =>{
           console.log(res,"重点车辆监测数据")
@@ -2697,7 +2740,7 @@
         this.drawerB = true
       },
        isDrawerC() {
-        this.drawerC = true;
+        this.drawerCVisible = true;
       },
       zoomSwitchChange(val) {
         console.log(val, "val")
@@ -2820,7 +2863,7 @@
         // })
         
         getWarnEvent(param).then( response => {
-          console.log(response.data,"预警事件")
+          // console.log(response.data,"预警事件")
             this.trafficList = response.data;
            
           });
@@ -3024,8 +3067,8 @@
           console.log(res, '设备类型占比')
           // that.initechartsB(res.data)
         })
-        that.initeChartsEnd()
-        that.loadFocusCar()
+        // that.initeChartsEnd()
+        // that.loadFocusCar()
       },
       // 获取最近七天数组
       dateFormat(dateData) {
@@ -3161,7 +3204,7 @@
           energyConsumption.resize();
         });
       },
-      initeChartsEnd() {
+      initeChartsEnd(vehicleXData,vehicleYData) {
         let newPromise = new Promise((resolve) => {
           resolve()
         })
@@ -3215,7 +3258,7 @@
                   color: this.echartsColor
                 }
               },
-              data: this.vehicleXData
+              data: vehicleXData
             }],
             yAxis: [{
               name: '总车量',
@@ -3279,7 +3322,7 @@
                     )
                   }
                 },
-              data: this.vehicleYData
+              data: vehicleYData
             },
             // {
             //   name: '货车',
@@ -3888,8 +3931,9 @@
           }
           this.tunnelNameEarlyWarn = response.rows[0].tunnelName
           this.tunnelId = response.rows[0].tunnelId
-          this.specialEcharts(this.tunnelId)
-          this.vehicleEcharts(this.tunnelId)
+          
+          // this.specialEcharts(this.tunnelId)
+          this.vehicleEcharts()
           var newDict = this.dict.type.sd_sys_name
           if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
             this.robotShow = false

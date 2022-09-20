@@ -32,7 +32,7 @@
               </div>
             </div>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeader?'padding-top:50px;margin-left:0px;':'margin-left:0px;'">
-              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
+              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
               <app-main />
               <right-panel>
                 <settings />

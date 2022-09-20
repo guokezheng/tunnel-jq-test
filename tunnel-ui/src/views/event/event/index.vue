@@ -206,7 +206,7 @@
                     :label="item.label"
                     :value="item.value"/>
               </el-select>
-             <!-- <el-select
+              <el-select
                 v-model="form.controlInfo.direction"
                 placeholder="请选择方向"
                 clearable
@@ -340,14 +340,14 @@
             <div class="el-icon-discover" style="width: 10px;"></div>
           </div>
           <div class="detailsText">行驶方向</div>
-          <div style="color: #82B3C2;line-height: 40px;">{{getDirection(eventForm.direction)}}</div>
+          <div style="color: #82B3C2;line-height: 40px;" v-if="eventForm.direction">{{getDirection(eventForm.direction)}}</div>
         </el-col>
         <el-col :span="12" style="display: flex;height: 40px;">
           <div style="width: 40px;height: 40px;text-align: center;line-height: 40px;">
             <div class="el-icon-sunny" style="width: 10px;"></div>
           </div>
           <div class="detailsText">所属隧道</div>
-          <div style="color: #82B3C2;line-height: 40px;">{{eventForm.tunnels.tunnelName}}</div>
+          <div style="color: #82B3C2;line-height: 40px;" v-if="eventForm.tunnels">{{eventForm.tunnels.tunnelName}}</div>
         </el-col>
       </el-row>
       <el-row>
@@ -388,7 +388,7 @@
           <div class="eventClass">事件分类：<span style="font-style:oblique;">{{eventForm.eventType.eventType}}</span></div>
         </el-col>
         <el-col :span="12">
-          <div class="eventClass">事件级别：<span style="font-style:oblique;">{{eventForm.eventGrade}}级</span></div>
+          <div class="eventClass">事件级别：<span style="font-style:oblique;">{{eventForm.eventGrade}}</span></div>
         </el-col>
       </el-row>
       <el-row class="rowClass">

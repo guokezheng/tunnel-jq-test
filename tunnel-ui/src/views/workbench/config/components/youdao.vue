@@ -280,7 +280,7 @@
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-import { controlDevice } from "@/api/workbench/config.js"; //查询单选框弹窗信息
+import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
   props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
@@ -363,7 +363,7 @@ export default {
       };
 
       controlDevice(param).then((response) => {
-        console.log(response, "查询诱导灯窗信息");
+        console.log(response, "提交控制");
         this.$emit("dialogClose");
       });
     },

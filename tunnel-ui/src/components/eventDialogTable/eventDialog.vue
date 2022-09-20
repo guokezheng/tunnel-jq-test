@@ -49,7 +49,7 @@
         <div class="eventRight">
           <div class="eventRow">
             <div>隧道名称:</div>
-            <div>{{ eventMes.tunnels.tunnelName}}</div>
+            <div v-if="eventMes.tunnels">{{ eventMes.tunnels.tunnelName}}</div>
           </div>
           <div class="eventRow">
             <div>事件类型:</div>
@@ -111,13 +111,7 @@ export default {
       videoUrl: '',
       row11:null,
       // event: [{}],
-      eventMes:[
-        {
-          tunnels:{
-            tunnelName:''
-          }
-        }
-      ]
+      eventMes:[]
     };
   },
   created() {

@@ -7,6 +7,35 @@
       :model="queryParams"
       label-width="68px"
     >
+      <el-form-item label="所属隧道" prop="tunnelId">
+        <el-select
+          v-model="queryParams.tunnelId"
+          placeholder="请选择所属隧道"
+          style="width: 80%"
+          @change="changeSelection"
+        >
+          <el-option
+            v-for="(item, index) in eqTunnelData"
+            :key="index"
+            :label="item.tunnelName"
+            :value="item.tunnelId"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="预案类别" prop="category">
+        <el-select
+          v-model="queryParams.category"
+          placeholder="请选择预案类别"
+          style="width: 80%"
+        >
+          <el-option
+            v-for="(item, index) in planCategory"
+            :key="index"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="事件类型" prop="planTypeId">
         <el-select
           v-model="queryParams.planTypeId"
@@ -120,6 +149,14 @@
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
+      <el-table-column align="center" label="隧道名称" prop="tunnelName" />
+      <el-table-column
+        align="center"
+        label="预案类别"
+        prop="category"
+        :formatter="categoryFormat"
+      />
+
       <el-table-column align="center" label="预案名称" prop="planName" />
       <el-table-column
         align="center"
@@ -453,9 +490,7 @@
       </el-steps>
       <span slot="footer" class="dialog-footer">
         <el-button @click="workbenchOpenEvent">取 消</el-button>
-        <el-button type="primary" @click="closeDialogVisible"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="closeDialogVisible">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -747,6 +782,8 @@ export default {
         planName: null,
         planFileId: null,
         strategyId: null,
+        tunnelId: null,
+        category: null,
       },
       // 表单校验
       rules: {
@@ -871,13 +908,16 @@ export default {
     });
   },
   methods: {
-    workbenchOpenEvent(){
-      this.getTunnelData(this.tunnelId);
-      this.workbenchOpen = false
+    categoryFormat(row, column) {
+      return this.selectDictLabel(this.planCategory, row.category);
     },
-    closeDialogVisible(){
+    workbenchOpenEvent() {
       this.getTunnelData(this.tunnelId);
-      this.dialogVisible = false
+      this.workbenchOpen = false;
+    },
+    closeDialogVisible() {
+      this.getTunnelData(this.tunnelId);
+      this.dialogVisible = false;
     },
     deleteStrategy(index) {
       console.log(index);
@@ -945,37 +985,39 @@ export default {
         tunnelId: tunnelId,
       };
       getTunnels(tunnelId).then((response) => {
-        console.log(response);
-        let res = response.data.storeConfigure;
-        //存在配置内容
-        if (res != null && res != "" && res != undefined) {
-          res = JSON.parse(res);
-          listType({ isControl: 1 })
-            .then((response) => {
-              var arr = [];
-              for (let item1 of response.rows) {
-                for (let item of res.eqList) {
-                  item.focus = false;
-                  if (item1.typeId == item.eqType) {
-                    item.iconWidth = Number(item1.iconWidth);
-                    item.iconHeight = Number(item1.iconHeight);
-                    arr.push(item);
+        let res = "";
+        if (response.data) {
+          res = response.data.storeConfigure;
+          //存在配置内容
+          if (res != null && res != "" && res != undefined) {
+            res = JSON.parse(res);
+            listType({ isControl: 1 })
+              .then((response) => {
+                var arr = [];
+                for (let item1 of response.rows) {
+                  for (let item of res.eqList) {
+                    item.focus = false;
+                    if (item1.typeId == item.eqType) {
+                      item.iconWidth = Number(item1.iconWidth);
+                      item.iconHeight = Number(item1.iconHeight);
+                      arr.push(item);
+                    }
                   }
                 }
-              }
-              this.selectedIconList = arr; //这是最终需要挂载到页面上的值
-              console.log(this.selectedIconList, "this.selectedIconList");
-            })
-            .then(() => {});
-        } else {
-          //不存在
-          that.selectedIconList = [];
-          //工作台默认背景图
-          // that.currentTunnel.lane = this.getLanUrl(response.data.lane);
-          that.upList = [];
-          that.downList = [];
-          that.leftDirection = "";
-          that.rightDirection = "";
+                this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+                console.log(this.selectedIconList, "this.selectedIconList");
+              })
+              .then(() => {});
+          } else {
+            //不存在
+            that.selectedIconList = [];
+            //工作台默认背景图
+            // that.currentTunnel.lane = this.getLanUrl(response.data.lane);
+            that.upList = [];
+            that.downList = [];
+            that.leftDirection = "";
+            that.rightDirection = "";
+          }
         }
       });
     },
@@ -1089,7 +1131,7 @@ export default {
       this.reserveId = row.id;
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
-        console.log(this.options,'this.optionsthis.optionsthis.options');
+        console.log(this.options, "this.optionsthis.optionsthis.options");
       });
       getListByRId({ reserveId: this.reserveId }).then((res) => {
         this.planTypeIdList = res.data;

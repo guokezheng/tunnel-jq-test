@@ -20,7 +20,11 @@ public enum DevicesTypeItemEnum {
     ZHUO_ZHUAN_CHE_ZHI(15, "带左转车道指示器"),
     GUIDANCE_LAMP_CONTROL_MODE(16, "诱导灯控制模式"),
     GUIDANCE_LAMP_BRIGHNESS(17, "诱导灯亮度"),
-    GUIDANCE_LAMP_FREQUENCY(18, "诱导灯频率");
+    GUIDANCE_LAMP_FREQUENCY(18, "诱导灯频率"),
+    EVACUATION_SIGN_CONTROL_MODE(19, "疏散标志控制模式"),
+    EVACUATION_SIGN_BRIGHNESS(20, "疏散标志亮度"),
+    EVACUATION_SIGN_FREQUENCY(21, "疏散标志频率"),
+    EVACUATION_SIGN_FIREMARK(22, "疏散标志事件标号");
 
 
     private int code;

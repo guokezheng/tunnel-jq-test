@@ -52,7 +52,7 @@ public class ModbusTcpMaster {
     // 在构造方法执行后执行
     public void init() {
         //创建PLC客户端
-//        createClient();
+        createClient();
     }
 
     private void createClient() {

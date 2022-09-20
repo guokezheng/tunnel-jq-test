@@ -72,8 +72,8 @@ public class YddTask {
         map.put("deviceId", sdDevices.getEqId());
         map.put("deviceType", sdDevices.getEqType());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("runStatus", runStatus);
-        jsonObject.put("runMode", runMode);
+        jsonObject.put("runStatus", Integer.valueOf(runStatus));
+        jsonObject.put("runMode", Integer.valueOf(runMode));
         map.put("deviceData", jsonObject);
         radarEventService.sendBaseDeviceStatus(map);
     }

@@ -72,6 +72,11 @@ public class YddTask {
         map.put("deviceId", sdDevices.getEqId());
         map.put("deviceType", sdDevices.getEqType());
         JSONObject jsonObject = new JSONObject();
+        if (runStatus.equals("lightOn")) {
+            runStatus = "1";
+        } else if (runStatus.equals("lightOff")) {
+            runStatus = "0";
+        }
         jsonObject.put("runStatus", Integer.valueOf(runStatus));
         jsonObject.put("runMode", Integer.valueOf(runMode));
         map.put("deviceData", jsonObject);
@@ -138,7 +143,7 @@ public class YddTask {
                     handleCodeMap(sdDevices, codeMap);
                 }
             } else if (state != "" && state.equals("0")) {
-                sendDataToWanJi(sdDevices, "lightOf", "");
+                sendDataToWanJi(sdDevices, "lightOff", "");
             }
 //                client.pushCode(codeMap.get("code").toString());
 //                client.stop();

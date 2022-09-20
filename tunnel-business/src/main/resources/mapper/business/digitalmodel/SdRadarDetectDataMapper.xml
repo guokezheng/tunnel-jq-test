@@ -19,6 +19,8 @@
         <result property="licenseColor" column="license_color"/>
         <result property="stakeNum" column="stake_num"/>
         <result property="detectTime" column="detect_time"/>
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
     </resultMap>
 
     <sql id="selectSdRadarDetectDataVo">
@@ -42,6 +44,7 @@
     <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultMap="SdRadarDetectDataResult">
         <include refid="selectSdRadarDetectDataVo"/>
         <where>
+            1=1
             <if test="vehicleId != null  and vehicleId != ''">and vehicle_id = #{vehicleId}</if>
             <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
             <if test="vehicleType != null  and vehicleType != ''">and vehicle_type = #{vehicleType}</if>
@@ -55,6 +58,14 @@
             <if test="licenseColor != null  and licenseColor != ''">and license_color = #{licenseColor}</if>
             <if test="stakeNum != null  and stakeNum != ''">and stake_num = #{stakeNum}</if>
             <if test="detectTime != null ">and detect_time = #{detectTime}</if>
+
+
+            <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+            </if>
+            <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
         </where>
     </select>
 

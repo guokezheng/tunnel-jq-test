@@ -54,4 +54,7 @@ public class SdRadarDetectData {
 
     @ApiModelProperty("监测时间（保留3位毫秒数）")
     private Date detectTime;
+
+    private String endTime;
+    private String startTime;
 }

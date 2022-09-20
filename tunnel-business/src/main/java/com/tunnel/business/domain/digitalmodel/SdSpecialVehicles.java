@@ -46,14 +46,14 @@ public class SdSpecialVehicles extends BaseEntity
     private String licenseColor;
 
     /** 开始时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+  //  @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date startTime;
+    private String startTime;
 
     /** 结束时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+  //  @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date endTime;
+    private String endTime;
 
     public void setId(String id) 
     {
@@ -118,23 +118,21 @@ public class SdSpecialVehicles extends BaseEntity
     {
         return licenseColor;
     }
-    public void setStartTime(Date startTime) 
-    {
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Date getStartTime() 
-    {
-        return startTime;
-    }
-    public void setEndTime(Date endTime) 
-    {
-        this.endTime = endTime;
+    public String getEndTime() {
+        return endTime;
     }
 
-    public Date getEndTime() 
-    {
-        return endTime;
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     @Override

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.business.mapper.digitalmodel.SdRadarDetectDatasMapper">
+<mapper namespace="com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper">
 
-    <resultMap type="SdRadarDetectDatas" id="SdRadarDetectDataResult">
+    <resultMap type="SdRadarDetectData" id="SdRadarDetectDataResult">
         <result property="id" column="id"/>
         <result property="vehicleId" column="vehicle_id"/>
         <result property="tunnelId" column="tunnel_id"/>
@@ -99,7 +99,7 @@
         </trim>
     </insert>
 
-    <update id="updateSdRadarDetectData" parameterType="SdRadarDetectDatas">
+    <update id="updateSdRadarDetectData" parameterType="SdRadarDetectData">
         update sd_radar_detect_data
         <trim prefix="SET" suffixOverrides=",">
             <if test="vehicleId != null">vehicle_id = #{vehicleId},</if>

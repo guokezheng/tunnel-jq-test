@@ -14,6 +14,7 @@ public class SdRadarDetectData {
 
     @ApiModelProperty("数据流水号")
     private  String recordSerialNumber;
+    private  Long id;
 
     @ApiModelProperty("车辆id")
     private  String vehicleId;

@@ -1,7 +1,7 @@
 package com.tunnel.business.mapper.digitalmodel;
 
 
-import com.tunnel.business.domain.digitalmodel.SdRadarDetectDatas;
+import com.tunnel.business.domain.event.SdRadarDetectData;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @author ruoyi
  * @date 2022-09-04
  */
-public interface SdRadarDetectDatasMapper
+public interface SdRadarDetectDataMapper
 {
     /**
      * 查询雷达监测感知数据
@@ -20,7 +20,7 @@ public interface SdRadarDetectDatasMapper
      * @param id 雷达监测感知数据主键
      * @return 雷达监测感知数据
      */
-    public SdRadarDetectDatas selectSdRadarDetectDataById(String id);
+    public SdRadarDetectData selectSdRadarDetectDataById(String id);
 
     /**
      * 查询雷达监测感知数据列表
@@ -28,7 +28,7 @@ public interface SdRadarDetectDatasMapper
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 雷达监测感知数据集合
      */
-    public List<SdRadarDetectDatas> selectSdRadarDetectDataList(SdRadarDetectDatas sdRadarDetectData);
+    public List<SdRadarDetectData> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData);
 
     /**
      * 新增雷达监测感知数据
@@ -36,7 +36,7 @@ public interface SdRadarDetectDatasMapper
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 结果
      */
-    public int insertSdRadarDetectData(SdRadarDetectDatas sdRadarDetectData);
+    public int insertSdRadarDetectData(SdRadarDetectData sdRadarDetectData);
 
     /**
      * 修改雷达监测感知数据
@@ -44,7 +44,7 @@ public interface SdRadarDetectDatasMapper
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 结果
      */
-    public int updateSdRadarDetectData(SdRadarDetectDatas sdRadarDetectData);
+    public int updateSdRadarDetectData(SdRadarDetectData sdRadarDetectData);
 
     /**
      * 删除雷达监测感知数据

@@ -1,7 +1,7 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
-import com.tunnel.business.domain.digitalmodel.SdRadarDetectDatas;
-import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDatasMapper;
+import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
     @Autowired
-    private SdRadarDetectDatasMapper sdRadarDetectDataMapper;
+    private SdRadarDetectDataMapper sdRadarDetectDataMapper;
 
     /**
      * 查询雷达监测感知数据
@@ -28,7 +28,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 雷达监测感知数据
      */
     @Override
-    public SdRadarDetectDatas selectSdRadarDetectDataById(String id) {
+    public SdRadarDetectData selectSdRadarDetectDataById(String id) {
         return sdRadarDetectDataMapper.selectSdRadarDetectDataById(id);
     }
 
@@ -39,7 +39,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 雷达监测感知数据
      */
     @Override
-    public List<SdRadarDetectDatas> selectSdRadarDetectDataList(SdRadarDetectDatas sdRadarDetectData) {
+    public List<SdRadarDetectData> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
         return sdRadarDetectDataMapper.selectSdRadarDetectDataList(sdRadarDetectData);
     }
 
@@ -50,7 +50,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 结果
      */
     @Override
-    public int insertSdRadarDetectData(SdRadarDetectDatas sdRadarDetectData) {
+    public int insertSdRadarDetectData(SdRadarDetectData sdRadarDetectData) {
         return sdRadarDetectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
     }
 
@@ -61,7 +61,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 结果
      */
     @Override
-    public int updateSdRadarDetectData(SdRadarDetectDatas sdRadarDetectData) {
+    public int updateSdRadarDetectData(SdRadarDetectData sdRadarDetectData) {
         return sdRadarDetectDataMapper.updateSdRadarDetectData(sdRadarDetectData);
     }
 

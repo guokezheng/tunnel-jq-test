@@ -6,7 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.tunnel.business.domain.digitalmodel.SdRadarDetectDatas;
+import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,10 +32,10 @@ public class SdRadarDetectDataController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('radar:data:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SdRadarDetectDatas sdRadarDetectData)
+    public TableDataInfo list(SdRadarDetectData sdRadarDetectData)
     {
         startPage();
-        List<SdRadarDetectDatas> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
+        List<SdRadarDetectData> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
         return getDataTable(list);
     }
 
@@ -45,10 +45,10 @@ public class SdRadarDetectDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('radar:data:export')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(SdRadarDetectDatas sdRadarDetectData)
+    public AjaxResult export(SdRadarDetectData sdRadarDetectData)
     {
-        List<SdRadarDetectDatas> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
-        ExcelUtil<SdRadarDetectDatas> util = new ExcelUtil<SdRadarDetectDatas>(SdRadarDetectDatas.class);
+        List<SdRadarDetectData> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
+        ExcelUtil<SdRadarDetectData> util = new ExcelUtil<SdRadarDetectData>(SdRadarDetectData.class);
         return util.exportExcel(list, "雷达监测感知数据数据");
     }
 
@@ -68,7 +68,7 @@ public class SdRadarDetectDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('radar:data:add')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SdRadarDetectDatas sdRadarDetectData)
+    public AjaxResult add(@RequestBody SdRadarDetectData sdRadarDetectData)
     {
         return toAjax(sdRadarDetectDataService.insertSdRadarDetectData(sdRadarDetectData));
     }
@@ -79,7 +79,7 @@ public class SdRadarDetectDataController extends BaseController
     @PreAuthorize("@ss.hasPermi('radar:data:edit')")
     @Log(title = "雷达监测感知数据", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SdRadarDetectDatas sdRadarDetectData)
+    public AjaxResult edit(@RequestBody SdRadarDetectData sdRadarDetectData)
     {
         return toAjax(sdRadarDetectDataService.updateSdRadarDetectData(sdRadarDetectData));
     }

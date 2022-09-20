@@ -1,5 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
@@ -521,7 +523,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (Map<String,Object> map : autoControl) {
                 List<String> value = (List<String>) map.get("value");
                 String equipments = StringUtils.join(value,",");
-                String equipmentTypeId = model.getEquipmentTypeId();
+                String equipmentTypeId = map.get("type") + "";
                 String eqState = (String) map.get("state");
                 SdStrategyRl rl = new SdStrategyRl();
                 rl.setEqTypeId(equipmentTypeId);
@@ -537,11 +539,33 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 String equipments = StringUtils.join(value,",");
                 String equipmentTypeId = model.getEquipmentTypeId();
                 String eqState = (String) map.get("state");
+                String time = (String) map.get("time");
+                /*try {
+                    SysJob job = new SysJob();
+                    // 定时任务名称
+                    job.setJobName(model.getStrategyName());
+                    // 调用目标字符串
+                    job.setInvokeTarget("ryTask.strategyParams('" + model.getJobRelationId() + "')");
+                    // corn表达式
+                    String cronDate = CronUtil.CronDate(time);
+                    job.setCronExpression(cronDate);
+                    // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+                    job.setMisfirePolicy("1");
+                    // 是否并发执行（0允许 1禁止）
+                    job.setConcurrent("0");
+                    // 状态（0正常 1暂停）
+                    job.setStatus("0");
+                    SpringUtils.getBean(SysJobServiceImpl.class).insertJob(job);
+                } catch (Exception e) {
+                    throw new RuntimeException("添加定时任务失败！");
+                }*/
                 SdStrategyRl rl = new SdStrategyRl();
                 rl.setEqTypeId(equipmentTypeId);
                 rl.setEquipments(equipments);
                 rl.setState(eqState);
                 rl.setStrategyId(sty.getId());
+                DateTime controlTime = DateUtil.parse(time, "HH:mm:ss");
+                rl.setControlTime(controlTime);
                 rlList.add(rl);
             }
         }

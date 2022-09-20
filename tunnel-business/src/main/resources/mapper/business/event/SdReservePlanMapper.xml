@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="SdReservePlan" id="SdReservePlanResult">
         <result property="id"    column="id"    />
+        <result property="tunnelId" column="tunnel_id" />
         <result property="subareaId" column="subarea_id" />
         <result property="planTypeId"    column="plan_type_id"    />
         <result property="category" column="category" />
@@ -52,7 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
-        select A.id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id,
+        select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
             group_concat(DISTINCT E.strategy_id) strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
         	B.event_type, group_concat(DISTINCT C.strategy_name) strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
         from sd_reserve_plan A
@@ -60,7 +61,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_reserve_process E on A.id = E.reserve_id
         left join sd_strategy C on E.strategy_id = C.id
         left join sd_tunnel_subarea D on D.tunnel_id = C.tunnel_id
+        left join sd_tunnels F on D.tunnel_id = F.tunnel_id
         <where>
+            <if test="tunnelId != null">and F.tunnel_id = #{tunnelId}</if>
+            <if test="category != null">and A.category = #{category}</if>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>

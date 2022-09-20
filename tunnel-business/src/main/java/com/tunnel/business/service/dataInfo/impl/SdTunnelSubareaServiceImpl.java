@@ -1,13 +1,18 @@
-package com.tunnel.business.service.event.impl;
+package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
+import com.tunnel.business.mapper.event.SdReservePlanMapper;
 import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
-import com.tunnel.business.service.event.ISdTunnelSubareaService;
+import com.tunnel.business.service.dataInfo.ISdTunnelSubareaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -20,6 +25,9 @@ import java.util.List;
 public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
     @Autowired
     private SdTunnelSubareaMapper sdTunnelSubareaMapper;
+
+    @Autowired
+    private SdReservePlanMapper sdReservePlanMapper;
 
     /**
      * 查询隧道分区
@@ -103,7 +111,24 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      * @return
      */
     @Override
-    public List<SdTunnelSubarea> selectSdTunnelSubareaByTunnelId(String tunnelId) {
-        return sdTunnelSubareaMapper.selectSdTunnelSubareaByTunnelId(tunnelId);
+    public List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId) {
+        List<Map> mapList = new ArrayList<>();
+        List<SdTunnelSubarea> sdTunnelSubareas = sdTunnelSubareaMapper.selectSdTunnelSubareaByTunnelId(tunnelId);
+        for (SdTunnelSubarea sdTunnelSubarea : sdTunnelSubareas) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("sId",sdTunnelSubarea.getsId());
+            map.put("sName",sdTunnelSubarea.getsName());
+            map.put("tunnelId",sdTunnelSubarea.getTunnelId());
+            map.put("pileMin",sdTunnelSubarea.getPileMin());
+            map.put("pileMax",sdTunnelSubarea.getPileMax());
+            map.put("eqIdMin",sdTunnelSubarea.getEqIdMin());
+            map.put("eqIdMax",sdTunnelSubarea.getEqIdMax());
+            SdReservePlan sdReservePlan = new SdReservePlan();
+            sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
+            List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
+            map.put("reservePlans", sdReservePlans);
+            mapList.add(map);
+        }
+        return mapList;
     }
 }

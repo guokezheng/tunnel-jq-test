@@ -1,9 +1,10 @@
-package com.tunnel.business.service.event;
+package com.tunnel.business.service.dataInfo;
 
 
 import com.tunnel.business.domain.event.SdTunnelSubarea;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道分区Service接口
@@ -66,6 +67,6 @@ public interface ISdTunnelSubareaService {
      * @param tunnelId
      * @return
      */
-    List<SdTunnelSubarea> selectSdTunnelSubareaByTunnelId(String tunnelId);
+    List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId);
 
 }

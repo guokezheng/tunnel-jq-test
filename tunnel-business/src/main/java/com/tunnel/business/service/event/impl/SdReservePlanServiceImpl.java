@@ -122,6 +122,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             Long subareaId = list.get(i).getSubareaId();
             SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
             list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
+            list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
             if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
                 String[] strategys = list.get(i).getStrategyId().split(",");
                 int index = 0;

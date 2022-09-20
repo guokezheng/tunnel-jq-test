@@ -69,17 +69,13 @@
                A.tunnel_id,
                A.pile_min,
                A.pile_max,
-               A.create_by,
-               A.create_time,
-               A.update_by,
-               A.update_time,
                B.eq_id as eqIdMin,
                C.eq_id as eqIdMax
         from sd_tunnel_subarea A
         LEFT JOIN sd_devices B
-       on A.pile_min = B.pile AND B.eq_type = "41"
+       on A.pile_min = B.pile AND B.eq_type = "12"
         LEFT JOIN sd_devices C
-       on A.pile_max = C.pile AND C.eq_type = "41"
+       on A.pile_max = C.pile AND C.eq_type = "12"
         where tunnel_id = #{tunnelId}
     </select>
 

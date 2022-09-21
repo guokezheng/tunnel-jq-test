@@ -225,14 +225,15 @@ export default {
           },
         ],
         grid: {
-          left: "6%",
-          right: "5%",
+          left: "10%",
+          right: "12%",
           bottom: "10%",
+          top:"24%",
           containLabel: true,
         },
 
         xAxis: {
-          name: "时间",
+          // name: "时间",
           type: "category",
           boundaryGap: true,
           // data: dateTime,

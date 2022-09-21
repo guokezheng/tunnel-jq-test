@@ -1,5 +1,6 @@
 package com.tunnel.business.domain.digitalmodel;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -46,5 +47,7 @@ public class SdRadarDevice {
     /**
      * 设备数据：包括设备实时数据、实时状态，根据deviceType区分
      */
-    private WjDeviceData deviceData;
+//    private WjDeviceData deviceData;
+
+    private JSONObject deviceData;
 }

@@ -26,7 +26,9 @@ public enum DevicesTypeItemEnum {
     EVACUATION_SIGN_FREQUENCY(21, "疏散标志频率"),
     EVACUATION_SIGN_FIREMARK(22, "疏散标志事件标号"),
     GUIDANCE_LAMP_IS_OPEN(23, "诱导灯是否开灯"),
-    EVACUATION_SIGN_IS_OPEN(24, "疏散标志是否开灯");
+    EVACUATION_SIGN_IS_OPEN(24, "疏散标志是否开灯"),
+    FLAME_DETECTOR_ALARM(25, "火焰探测器报警"),
+    SHOU_BAO_ALARM(26, "手报报警");
 
 
     private int code;

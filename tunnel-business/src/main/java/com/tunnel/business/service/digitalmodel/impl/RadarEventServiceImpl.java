@@ -390,6 +390,9 @@ public class RadarEventServiceImpl implements RadarEventService {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
         List<SdRadarDevice> list = new ArrayList<>();
         for (SdDevices f : devices) {
+            if (f.getEqType().longValue() == 34L) {
+                continue;
+            }
             SdRadarDevice sdRadarDevice = new SdRadarDevice();
             sdRadarDevice.setDeviceId(f.getEqId());
             sdRadarDevice.setDeviceType(f.getEqType() + "");

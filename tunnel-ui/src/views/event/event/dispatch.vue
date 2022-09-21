@@ -12,20 +12,23 @@
               ></el-image>
               <div class="maskClass">
                 <div
-                  v-for="(item, index) in planList1"
+                  v-for="(item, index) in planListEnd"
                   :key="index"
                   class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
-                  :style="{ width: 100 / (planList1.length / 2) + '%' }"
+                  :style="{
+                    width: item.width ? item.width + 'px' : '',
+                    height: 'calc(2 / 100%)',
+                    left: item.position ? item.position.left / 1.34 + 'px' : '',
+                  }"
                   @mouseleave="mouseleave(index)"
                 >
-                  <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
                     :style="item.style ? item.style : ''"
                   >
-                    <div class="row1">{{ item.SubareaName }}</div>
+                    <div class="row1">{{ item.sName }}</div>
                     <div class="processBox recoveryBox">
                       <div class="endButton" v-for="itm in item.reservePlans">
                         <div class="ButtonBox">
@@ -597,6 +600,7 @@ export default {
   name: "dispatch",
   data() {
     return {
+      planListEnd: null,
       previewList: null,
       partitionData: null,
       planList1: [
@@ -919,40 +923,44 @@ export default {
                 }
               }
               this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+              // debugger;
               for (let p = 0; p < this.selectedIconList.length; p++) {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
+
                   // 根据桩号区分开始和结束为0/100的问题
                   if (bxx.pileMin == "0") {
-                    var leftMin = 0;
+                    var left_Min = Number(0);
                   } else if (bxx.pileMax == "100") {
-                    var leftMin = 100;
+                    var left_Max = Number(100);
                   } else {
-                    // console.log(axx.eqId);
-                    // console.log(bxx.eqIdMax);
                     if (axx.eqId == bxx.eqIdMax) {
-                      console.log(bxx);
                       // 定义获取最大值的left
-                      var leftMax = axx.position.left;
-                      console.log(leftMax, "message");
+                      var leftMax = Number(axx.position.left);
                     }
                     if (axx.eqId == bxx.eqIdMin) {
                       // 定义获取最小值的left
                       var leftMin = axx.position.left;
-                      console.log(leftMin, "message");
+                      bxx.position = axx.position;
                     }
-                    // 得到两对象
-                    // console.log(leftMax);
-                    // console.log(leftMin);
+                  }
+                  if (axx.eqId == bxx.eqIdMax || axx.eqId == bxx.eqIdMin) {
                     var deviceWidth = Number(leftMax) - Number(leftMin);
                     var deviceHeight = axx.position.top;
-                    // console.log(deviceWidth, "获得宽度");
-                    // console.log(deviceHeight, "获得高度");
+                    bxx.width = deviceWidth;
+                    bxx.height = deviceHeight;
+                  } else if (bxx.pileMin == "0" || bxx.pileMax == "100") {
+                    var deviceWidth = Number(leftMax) - Number(leftMin);
+                    // var deviceHeight = axx.position.top;
+                    bxx.width = deviceWidth;
+                    bxx.height = deviceHeight;
                   }
                 }
               }
+              this.planListEnd = this.planList1;
               console.log(this.selectedIconList, "this.selectedIconList");
+              console.log(this.planListEnd);
             })
             .then(() => {});
         } else {

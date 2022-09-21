@@ -18,7 +18,7 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.CRC8Util;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.platform.business.vms.core.DevicesManager;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

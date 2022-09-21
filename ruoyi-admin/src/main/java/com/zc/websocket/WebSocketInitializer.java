@@ -1,11 +1,15 @@
 package com.zc.websocket;
 
-import com.zc.common.constant.RedisChannelConstants;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.constant.RedisStreamConstants;
 import com.zc.websocket.handler.WebSocketStarter;
+import com.zc.websocket.handler.WebSocketStreamBroadcastListener;
+import com.zc.websocket.handler.WebSocketStreamDirectionalListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * websocket 初始化器
@@ -20,23 +24,42 @@ public class WebSocketInitializer implements CommandLineRunner {
     private WebSocketConfigParam param;
 
     @Autowired
-    private RedisPubSub redisPubSub;
+    private RedisStream redisStream;
+
+    @Resource
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Resource
+    private WebSocketStreamBroadcastListener broadcastListener;
+
+    @Resource
+    private WebSocketStreamDirectionalListener directionalListener;
 
     @Override
     public void run(String... args) {
 
         // 添加 WebSocket 消息订阅
-        redisPubSub.subscribe(RedisChannelConstants.WEBSOCKET_BROADCAST);
-        redisPubSub.subscribe(RedisChannelConstants.WEBSOCKET_DIRECTIONAL);
+        redisStream.subscription(
+                RedisStreamConstants.WebSocketStreamBroadcast.KEY,
+                RedisStreamConstants.WebSocketStreamBroadcast.GROUP,
+                RedisStreamConstants.WebSocketStreamBroadcast.CONSUMER,
+                broadcastListener);
+        redisStream.subscription(
+                RedisStreamConstants.WebSocketDirectional.KEY,
+                RedisStreamConstants.WebSocketDirectional.GROUP,
+                RedisStreamConstants.WebSocketDirectional.CONSUMER,
+                directionalListener);
 
-        WebSocketStarter webSocketStarter = new WebSocketStarter(
-                param.getPort(),
-                param.getPath(),
-                param.getPassword(),
-                param.getInterval(),
-                param.getTimeoutIntervals());
         // WebSocket 启动
-        webSocketStarter.run();
+        threadPoolTaskExecutor.execute(() -> {
+            WebSocketStarter webSocketStarter = new WebSocketStarter(
+                    param.getPort(),
+                    param.getPath(),
+                    param.getPassword(),
+                    param.getInterval(),
+                    param.getTimeoutIntervals());
+            webSocketStarter.run();
+        });
 
     }
 }

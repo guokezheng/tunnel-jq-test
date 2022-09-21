@@ -1,9 +1,8 @@
 package com.ruoyi;
 
-import com.tunnel.deal.fire.FireNettyServer;
 import com.zc.common.core.ThreadPool.ThreadPool;
 import com.zc.common.constant.RedisChannelConstants;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.connect.config.NettyServerConfigAttr;
 import com.zc.connect.config.NettyServerConfig;
 import com.zc.connect.nettyServer.NettyServer;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
 
 /**
  * @auther Athena-YangChao
@@ -26,9 +24,6 @@ public class RuoYiApplicationRunner  implements ApplicationRunner {
 
     @Autowired
     private RedisPubSub redisPubSub;
-
-    @Autowired
-    private FireNettyServer fireNettyServer;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

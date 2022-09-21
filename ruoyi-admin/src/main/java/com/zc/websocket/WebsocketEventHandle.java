@@ -14,8 +14,7 @@ import com.zc.websocket.handler.WebsocketEvent;
 @AutoService(WebsocketEvent.class)
 public class WebsocketEventHandle implements WebsocketEvent
 {
-
-    private TokenService tokenService = SpringUtils.getBean(TokenService.class);
+    private final TokenService tokenService = SpringUtils.getBean(TokenService.class);
 
     @Override
     public String decryptToken(String tokenSN)
@@ -33,11 +32,7 @@ public class WebsocketEventHandle implements WebsocketEvent
     {
         LoginUser user = tokenService.getLoginUser(tokenSN);
 
-        if (user != null)
-        {
-            return true;
-        }
-        return false;
+        return user != null;
     }
 
     /**

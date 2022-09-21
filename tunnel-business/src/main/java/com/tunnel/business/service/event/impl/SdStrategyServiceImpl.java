@@ -19,7 +19,7 @@ import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdStrategyService;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

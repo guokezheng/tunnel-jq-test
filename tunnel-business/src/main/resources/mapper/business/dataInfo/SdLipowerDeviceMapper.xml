@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdLipowerDeviceMapper">
+    
+    <resultMap type="SdLipowerDevice" id="SdLipowerDeviceResult">
+        <result property="eqId"    column="eq_id"    />
+        <result property="eqType"    column="eq_type"    />
+        <result property="eqName"    column="eq_name"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="switchStatus"    column="switch_status"    />
+        
+        <result property="stakeMark"    column="stake_mark"    />
+        <result property="eqDirection"    column="eq_direction"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="lightValue"    column="light_value"    />
+        <result property="lightEnable"    column="light_enable"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        
+        <association property="typeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
+    </resultMap>
+    
+    <resultMap id="eqTypeResult" type="SdEquipmentType">
+        <id property="typeId" column="type_id"/>
+        <result property="typeName" column="type_name"/>
+    </resultMap>
+
+    <sql id="selectSdLipowerDeviceVo">
+        select eq_id, eq_name, tunnel_id,eq_direction, tunnel_name, switch_status, device_type, light_value, light_enable, create_by, create_time, update_by, update_time from sd_lipower_device
+    </sql>
+
+    <select id="selectSdLipowerDeviceList" parameterType="SdLipowerDevice" resultMap="SdLipowerDeviceResult">
+        select 
+        a.eq_id, a.eq_name,a.eq_type,a.tunnel_id,a.eq_direction, a.tunnel_name, a.stake_mark,
+        a.switch_status, a.device_type, a.light_value, a.light_enable, a.create_by,d.type_name,
+        a.create_time, a.update_by, a.update_time 
+        from sd_lipower_device a
+        left join sd_equipment_type d on a.eq_type = d.type_id
+        left join sd_light_rel b on a.tunnel_id = b.zmsd_id
+        <where>  
+            <if test="tunnelId != null "> and b.sd_id = #{tunnelId}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="eqType != null  and eqType != ''"> and eq_type = #{eqType}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
+        </where>
+    </select>
+        
+    <insert id="insertSdLipowerDevice" parameterType="SdLipowerDevice" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_lipower_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="deviceName != null">device_name,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="tunnelName != null">tunnel_name,</if>
+            <if test="switchStatus != null">switch_status,</if>
+            <if test="deviceType != null">device_type,</if>
+            <if test="lightValue != null">light_value,</if>
+            <if test="lightEnable != null">light_enable,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="deviceName != null">#{deviceName},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="tunnelName != null">#{tunnelName},</if>
+            <if test="switchStatus != null">#{switchStatus},</if>
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="lightValue != null">#{lightValue},</if>
+            <if test="lightEnable != null">#{lightEnable},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdTunnelDetailsMapper">
+    
+    <select id="checkTunnelExist" resultType="hashmap">
+        SELECT tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
+        tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
+        create_time, update_by, update_time from sd_tunnels
+        WHERE tunnel_name LIKE CONCAT('%',#{tunnelName},'%')
+    </select>
+
+    <select id="getIncidentDetailsIn24Hours" resultType="hashmap">
+        SELECT swi.id,st.tunnel_name tunnelname,DATE_FORMAT(swi.warning_time,'%Y-%m-%d') date,
+                DATE_FORMAT(swi.warning_time,'%H:%i:%s') time,swi.infor_sources warncontent
+             ,if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+             swi.process_state,swt.type_name type,ifnull(swi.picture,"无照片") src,
+             ifnull(swi.car_number_picture,"无车牌号照片") num
+        from sd_warning_info swi
+                 left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE st.tunnel_name = #{tunnelName}
+          and swi.warning_time >= (NOW() - interval 24 hour)
+          and swt.id in (3,7,8,9,10,14,15,16,18,20,21,23,26,27,28,29)
+    </select>
+
+    <select id="getWarningDetailsIn24Hours" resultType="hashmap">
+        SELECT swi.id,st.tunnel_name tunnelname,DATE_FORMAT(swi.warning_time,'%Y-%m-%d') date,
+                DATE_FORMAT(swi.warning_time,'%H:%i:%s') time,swi.infor_sources warncontent
+             ,if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+             swi.process_state,swt.type_name type,ifnull(swi.picture,"无照片") src
+        from sd_warning_info swi
+            left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+            left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE st.tunnel_name = #{tunnelName}
+          and swi.warning_time >= (NOW() - interval 24 hour)
+          and swt.id in (1,2,4,5,6,17,19,22,24,25,30,31,32,33,34,35,36,37,38,39,40,41,42,43)
+    </select>
+
+    <select id="getIncidentQuantityIn24Hours" resultType="hashmap">
+        SELECT count(swi.id) incidentVal
+        from sd_warning_info swi
+        left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+        left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE st.tunnel_name = #{tunnelName}
+          and swi.warning_time >= (NOW() - interval 24 hour)
+          and swt.id in (3,7,8,9,10,14,15,16,18,20,21,23,26,27,28,29)
+    </select>
+
+    <select id="getWarningQuantityIn24Hours" resultType="hashmap">
+        SELECT count(swi.id) earlyWarningVal
+        from sd_warning_info swi
+                 left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE st.tunnel_name = #{tunnelName}
+          and swi.warning_time >= (NOW() - interval 24 hour)
+          and swt.id in (1,2,4,5,6,17,19,22,24,25,30,31,32,33,34,35,36,37,38,39,40,41,42,43)
+    </select>
+
+    <select id="getTrafficFlowDataIn6Month" resultType="hashmap">
+        select v.month,ifnull(b.count,0)  count from (
+            SELECT DATE_FORMAT(CURDATE(), '%m') AS `month`
+            UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 1 MONTH), '%m') AS `month`
+            UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 2 MONTH), '%m') AS `month`
+            UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 3 MONTH), '%m') AS `month`
+            UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 4 MONTH), '%m') AS `month`
+            UNION SELECT DATE_FORMAT((CURDATE() - INTERVAL 5 MONTH), '%m') AS `month`
+            ) v
+            left join
+            (select
+            left(create_time,7) as 'month',sum(a.dw_light_vehicle + a.dw_mid_vehicle + a.dw_heavy_vehicle) as count
+            from sd_traffic_statistics as a
+            where DATE_FORMAT(a.create_time,'%m')>
+            DATE_FORMAT(date_sub(curdate(), interval 6 month),'%m') and tunnel_id = #{tunnelId}
+            GROUP BY month
+            )b
+        on v.month = b.month group by v.month
+    </select>
+
+</mapper>

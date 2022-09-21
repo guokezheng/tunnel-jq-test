@@ -17,11 +17,17 @@
       :treetBoxTop="treetBoxTop"
       :treetBoxRight="treetBoxRight"
   ></gisMap> -->
-  <gisMap :tunnelInfo="tunnelInfo"></gisMap>
+  <div class="mapBox" style="height:calc(100% + 60px)">
+    <gisMap :tunnelInfo="tunnelInfo" style="height: 100% !important;"></gisMap>
+    <home style="width:100%;height:calc(100% + 60px);position:absolute;top:0;left:0"></home>
+
+  </div>
+
 </template>
   
 <script>
 import { defineComponent } from "@vue/composition-api";
+import home from "./home"; //诱导灯弹窗
 
 export default {
   data() {
@@ -46,9 +52,12 @@ export default {
       ],
     };
   },
+  components:{
+    home
+  }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 .esri-view-surface--inset-outline:focus::after {
   outline: none !important;
 }

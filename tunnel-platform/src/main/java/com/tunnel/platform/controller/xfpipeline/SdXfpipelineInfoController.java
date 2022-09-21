@@ -1,12 +1,16 @@
 package com.tunnel.platform.controller.xfpipeline;
 
-import com.tunnel.platform.domain.xfpipeline.SdXfpipelineInfo;
-import com.tunnel.platform.service.xfpipeline.ISdXfpipelineInfoService;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.tunnel.business.domain.xfpipeline.SdXfpipelineInfo;
+import com.tunnel.business.service.xfpipeline.ISdXfpipelineInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 /**

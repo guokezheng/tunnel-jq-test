@@ -140,6 +140,7 @@
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
+import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
   props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
@@ -215,7 +216,18 @@ export default {
       this.$emit("dialogClose");
     },
     handleOK(){
+      const param = {
+        devId: this.stateForm.eqId, //设备id
+        devType: this.eqInfo.clickEqType,
+        radioManual: this.radioManual,//控制模式
+        checkboxLane: this.checkboxLane,//车道
+        whiteLight: this.whiteLight,//白灯亮度
+        yellowLight: this.yellowLight,//黄灯亮度
+      }
+      controlDevice(param).then((response) => {
+        console.log(response, "提交控制");
         this.$emit("dialogClose");
+      });
       },
   },
 };

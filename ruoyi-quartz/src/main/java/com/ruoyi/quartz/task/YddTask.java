@@ -1,17 +1,15 @@
 package com.ruoyi.quartz.task;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.platform.domain.dataInfo.SdDeviceData;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.mapper.dataInfo.SdDeviceDataMapper;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.digitalmodel.RadarEventService;
-import com.zc.common.core.redis.RedisPubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +72,13 @@ public class YddTask {
         map.put("deviceId", sdDevices.getEqId());
         map.put("deviceType", sdDevices.getEqType());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("runStatus", runStatus);
-        jsonObject.put("runMode", runMode);
+        if (runStatus.equals("lightOn")) {
+            runStatus = "1";
+        } else if (runStatus.equals("lightOff")) {
+            runStatus = "0";
+        }
+        jsonObject.put("runStatus", Integer.valueOf(runStatus));
+        jsonObject.put("runMode", Integer.valueOf(runMode));
         map.put("deviceData", jsonObject);
         radarEventService.sendBaseDeviceStatus(map);
     }
@@ -140,7 +143,7 @@ public class YddTask {
                     handleCodeMap(sdDevices, codeMap);
                 }
             } else if (state != "" && state.equals("0")) {
-                sendDataToWanJi(sdDevices, "lightOf", "");
+                sendDataToWanJi(sdDevices, "lightOff", "");
             }
 //                client.pushCode(codeMap.get("code").toString());
 //                client.stop();

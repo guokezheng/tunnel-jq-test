@@ -45,7 +45,7 @@
     <dependencies>
         <dependency>
             <groupId>com.tunnel</groupId>
-            <artifactId>tunnel-platform</artifactId>
+            <artifactId>tunnel-business</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>

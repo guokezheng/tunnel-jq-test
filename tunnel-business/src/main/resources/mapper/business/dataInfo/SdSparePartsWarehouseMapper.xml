@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdSparePartsWarehouseMapper">
+
+    <resultMap type="SdSparePartsWarehouse" id="SdSparePartsWarehouseResult">
+        <result property="id"    column="id"    />
+        <result property="partName"    column="part_name"    />
+        <result property="brand"    column="brand"    />
+        <result property="model"    column="model"    />
+        <result property="unit"    column="unit"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="lastPurchaseTime"    column="last_purchase_time"    />
+        <result property="lastPurchaseQuantity"    column="last_purchase_quantity"    />
+        <result property="lastPurchaseUnitPrice"    column="last_purchase_unit_price"    />
+        <result property="currentInventory"    column="current_inventory"    />
+        <result property="keeper"    column="keeper"    />
+        <result property="phone"    column="phone"    />
+        <result property="location"    column="location"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+    </resultMap>
+
+    <sql id="selectSdSparePartsWarehouseVo">
+        select id, part_name, brand, model, unit, manufacturer, last_purchase_time, last_purchase_quantity, last_purchase_unit_price, current_inventory, keeper, phone, location, create_time, create_by, update_time, update_by, remake, remake1 from sd_spare_parts_warehouse
+    </sql>
+
+    <select id="selectSdSparePartsWarehouseList" parameterType="SdSparePartsWarehouse" resultMap="SdSparePartsWarehouseResult">
+        <include refid="selectSdSparePartsWarehouseVo"/>
+        <where>
+            <if test="partName != null  and partName != ''"> and part_name like concat('%', #{partName}, '%')</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer = #{manufacturer}</if>
+            <if test="lastPurchaseTime != null "> and last_purchase_time = #{lastPurchaseTime}</if>
+            <if test="lastPurchaseQuantity != null  and lastPurchaseQuantity != ''"> and last_purchase_quantity = #{lastPurchaseQuantity}</if>
+            <if test="lastPurchaseUnitPrice != null  and lastPurchaseUnitPrice != ''"> and last_purchase_unit_price = #{lastPurchaseUnitPrice}</if>
+            <if test="currentInventory != null  and currentInventory != ''"> and current_inventory = #{currentInventory}</if>
+            <if test="keeper != null  and keeper != ''"> and keeper = #{keeper}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="remake != null  and remake != ''"> and remake = #{remake}</if>
+            <if test="remake1 != null  and remake1 != ''"> and remake1 = #{remake1}</if>
+        </where>
+    </select>
+
+    <select id="selectSdSparePartsWarehouseById" parameterType="Long" resultMap="SdSparePartsWarehouseResult">
+        <include refid="selectSdSparePartsWarehouseVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdSparePartsWarehouse" parameterType="SdSparePartsWarehouse" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_spare_parts_warehouse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="partName != null">part_name,</if>
+            <if test="brand != null">brand,</if>
+            <if test="model != null">model,</if>
+            <if test="unit != null">unit,</if>
+            <if test="manufacturer != null">manufacturer,</if>
+            <if test="lastPurchaseTime != null">last_purchase_time,</if>
+            <if test="lastPurchaseQuantity != null">last_purchase_quantity,</if>
+            <if test="lastPurchaseUnitPrice != null">last_purchase_unit_price,</if>
+            <if test="currentInventory != null">current_inventory,</if>
+            <if test="keeper != null">keeper,</if>
+            <if test="phone != null">phone,</if>
+            <if test="location != null">location,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="partName != null">#{partName},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="model != null">#{model},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="manufacturer != null">#{manufacturer},</if>
+            <if test="lastPurchaseTime != null">#{lastPurchaseTime},</if>
+            <if test="lastPurchaseQuantity != null">#{lastPurchaseQuantity},</if>
+            <if test="lastPurchaseUnitPrice != null">#{lastPurchaseUnitPrice},</if>
+            <if test="currentInventory != null">#{currentInventory},</if>
+            <if test="keeper != null">#{keeper},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="location != null">#{location},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdSparePartsWarehouse" parameterType="SdSparePartsWarehouse">
+        update sd_spare_parts_warehouse
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="partName != null">part_name = #{partName},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="manufacturer != null">manufacturer = #{manufacturer},</if>
+            <if test="lastPurchaseTime != null">last_purchase_time = #{lastPurchaseTime},</if>
+            <if test="lastPurchaseQuantity != null">last_purchase_quantity = #{lastPurchaseQuantity},</if>
+            <if test="lastPurchaseUnitPrice != null">last_purchase_unit_price = #{lastPurchaseUnitPrice},</if>
+            <if test="currentInventory != null">current_inventory = #{currentInventory},</if>
+            <if test="keeper != null">keeper = #{keeper},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdSparePartsWarehouseById" parameterType="Long">
+        delete from sd_spare_parts_warehouse where id = #{id}
+    </delete>
+
+    <delete id="deleteSdSparePartsWarehouseByIds" parameterType="String">
+        delete from sd_spare_parts_warehouse where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

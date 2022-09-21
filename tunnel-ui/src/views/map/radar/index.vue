@@ -43,7 +43,7 @@
       </el-form-item>
       <el-form-item label="监测时间" prop="detectTime">
         <el-date-picker clearable size="small"
-            v-model="queryParams.detectTime"
+            v-model="detectTime"
             type="daterange"
             value-format="yyyy-MM-dd"
             range-separator="至"
@@ -280,8 +280,9 @@ export default {
         vehicleLicense: null,
         licenseColor: null,
         stakeNum: null,
-        detectTime: null
+        // detectTime: null
       },
+      detectTime:[],
       // 表单参数
       form: {},
       // 表单校验
@@ -329,14 +330,20 @@ export default {
     },
     //车牌颜色字典翻译
     licenseColorFormat(row, column){
-      console.log(row)
       return this.selectDictLabel(this.licenseColor, row.licenseColor);
     },
     
     /** 查询雷达监测感知数据列表 */
     getList() {
       this.loading = true;
+      console.log(this.detectTime[0],"this.queryParams")
+      // var startTime = this.detectTime[0]
+      // var endTime = this.detectTime[1]
+      this.queryParams.startTime = this.detectTime[0]
+      this.queryParams.endTime = this.detectTime[1]
+
       listData(this.queryParams).then(response => {
+        console.log(response,"点击搜索查表格")
         this.dataList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -375,6 +382,7 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.detectTime = []
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -392,7 +400,6 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      console.log(this.ids[0],"this.ids")
       this.reset();
       const id = row.id || this.ids[0]
 

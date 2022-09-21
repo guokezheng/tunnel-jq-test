@@ -5,8 +5,8 @@ import com.tunnel.platform.business.vms.DriverBean;
 import com.tunnel.platform.business.vms.core.DeviceDisplayFactory;
 import com.tunnel.platform.business.vms.core.DevicesManager;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
-import com.tunnel.platform.utils.exception.BusinessException;
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.exception.BusinessException;
+import com.tunnel.business.utils.util.CommonUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.SdIotDeviceMapper">
+
+    <resultMap type="SdIotDevice" id="IotDeviceResult">
+        <result property="deviceId" column="device_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="brandId" column="brand_id"/>
+        <result property="routeId" column="route_id"/>
+        <result property="routeDirection" column="route_direction"/>
+        <result property="deviceMarkingName" column="device_marking_name"/>
+        <result property="deviceTypeId" column="device_type_id"/>
+        <result property="deviceTypeNumber" column="device_type_number"/>
+        <result property="deviceModelId" column="device_model_id"/>
+        <result property="factoryLibrary" column="factory_library"/>
+        <result property="userUnitId" column="user_unit_id"/>
+        <result property="operatorId" column="operator_id"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="firmId" column="firm_id"/>
+        <result property="purchaseDate" column="purchase_date"/>
+        <result property="warrantyYears" column="warranty_years"/>
+        <result property="unitPrice" column="unit_price"/>
+        <result property="runStatus" column="run_status"/>
+        <result property="deviceStatus" column="device_status"/>
+        <result property="installDate" column="install_date"/>
+        <result property="maintainId" column="maintain_id"/>
+        <result property="collarAgencyId" column="collar_agency_id"/>
+        <result property="pileNumber" column="pile_number"/>
+        <result property="manageAgencyId" column="manage_agency_id"/>
+        <result property="producteDate" column="producte_date"/>
+        <result property="repairDate" column="repair_date"/>
+        <result property="operateDate" column="operate_date"/>
+        <result property="serviceLife" column="service_life"/>
+        <result property="storageDate" column="storage_date"/>
+        <result property="isMonitor" column="is_monitor"/>
+        <result property="isConfig" column="is_config"/>
+        <result property="localInfo" column="local_info"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="routeNumber" column="route_number"/>
+        <result property="routeName" column="route_name"/>
+        <result property="deviceIp" column="device_ip"/>
+        <result property="devicePort" column="device_port"/>
+        <result property="devicePixel" column="device_pixel"/>
+        <result property="protocolName" column="protocol_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="passWord" column="pass_word"/>
+        <association property="iotDeviceType" column="device_type_id" javaType="IotDeviceType" resultMap="deviceTypeResult" />
+        <association property="iotBrandName"  column="brand_id" javaType="IotBrand" resultMap="brandResult" />
+    </resultMap>
+	<resultMap type="IotDeviceType" id="deviceTypeResult"></resultMap>
+	<resultMap id="brandResult" type="IotBrand">
+		<id  property="brandId" column="brand_id" />
+		<result property="brandName" column="brand_name"   />
+	</resultMap>
+    <sql id="selectIotDeviceVo">
+        select ide.device_id, ide.device_name, ide.brand_id, ida.device_ip,ida.device_port,ida.user_name,ida.pass_word,ide.route_id, ide.route_direction, ide.device_marking_name, ide.device_type_id,ide.device_type_number, ide.device_model_id, ide.factory_library, ide.user_unit_id, ide.operator_id, ide.longitude, ide.latitude, ide.firm_id, ide.purchase_date, ide.warranty_years, ide.unit_price,ide.run_status,ide.device_status, ide.install_date, ide.maintain_id, ide.collar_agency_id, ide.pile_number, ide.manage_agency_id, ide.producte_date, ide.repair_date, ide.operate_date, ide.service_life, ide.storage_date, ide.is_monitor,ide.is_config, ide.local_info,device_pixel from iot_device ide
+        left join iot_device_access ida on ida.device_id = ide.device_id
+        left join sys_dept d on d.dept_id=ide.manage_agency_id
+    </sql>
+
+    <select id="selectIotDeviceList" parameterType="SdIotDevice" resultMap="IotDeviceResult">
+        <include refid="selectIotDeviceVo"/>
+        <where>
+            <if test="deviceId != null ">and ide.device_id like concat('%', #{deviceId}, '%')</if>
+            <if test="deviceName != null  and deviceName != ''">and device_name like concat('%', #{deviceName}, '%')
+            </if>
+            <if test="brandId != null ">and brand_id = #{brandId}</if>
+            <if test="routeId != null ">and route_id = #{routeId}</if>
+            <if test="routeDirection != null  and routeDirection != ''">and route_direction = #{routeDirection}</if>
+            <if test="deviceMarkingName != null  and deviceMarkingName != ''">and device_marking_name like concat('%',
+                #{deviceMarkingName}, '%')
+            </if>
+            <if test="deviceTypeId != null">and ide.device_type_id = #{deviceTypeId}</if>
+            <if test="deviceTypeIds != null  and deviceTypeIds != ''">and ide.device_type_id in (${deviceTypeIds})</if>
+            <if test="deviceTypeNumber != null">and device_type_number = #{deviceTypeNumber}</if>
+            <if test="deviceModelId != null ">and device_model_id = #{deviceModelId}</if>
+            <if test="factoryLibrary != null  and factoryLibrary != ''">and factory_library = #{factoryLibrary}</if>
+            <if test="userUnitId != null ">and user_unit_id = #{userUnitId}</if>
+            <if test="operatorId != null ">and operator_id = #{operatorId}</if>
+            <if test="longitude != null  and longitude != ''">and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and latitude = #{latitude}</if>
+            <if test="firmId != null ">and firm_id = #{firmId}</if>
+            <if test="purchaseDate != null ">and purchase_date = #{purchaseDate}</if>
+            <if test="warrantyYears != null ">and warranty_years = #{warrantyYears}</if>
+            <if test="unitPrice != null ">and unit_price = #{unitPrice}</if>
+            <if test="runStatus != null ">and run_status = #{runStatus}</if>
+            <if test="deviceStatus != null and deviceStatus != ''">and device_status in ${deviceStatus}</if>
+            <if test="installDate != null ">and install_date = #{installDate}</if>
+            <if test="maintainId != null ">and maintain_id = #{maintainId}</if>
+            <if test="collarAgencyId != null ">and collar_agency_id = #{collarAgencyId}</if>
+            <if test="pileNumber != null  and pileNumber != ''">and pile_number like concat('%', #{pileNumber}, '%')</if>
+            <if test="manageAgencyId != null ">and manage_agency_id = #{manageAgencyId}</if>
+            <if test="producteDate != null ">and producte_date = #{producteDate}</if>
+            <if test="repairDate != null ">and repair_date = #{repairDate}</if>
+            <if test="operateDate != null ">and operate_date = #{operateDate}</if>
+            <if test="serviceLife != null ">and service_life = #{serviceLife}</if>
+            <if test="storageDate != null ">and storage_date = #{storageDate}</if>
+            <if test="isMonitor != null ">and is_monitor = #{isMonitor}</if>
+            <if test="isConfig != null ">and is_config = #{isConfig}</if>
+            <if test="localInfo != null ">and local_info = #{localInfo}</if>
+        </where>
+    </select>
+    <select id="selectIotDeviceArrayList" parameterType="SdIotDevice" resultMap="IotDeviceResult">
+		select ide.device_id, ide.device_name, ide.brand_id,e.brand_name,ida.device_ip,ida.device_port,ida.user_name,
+		       ida.pass_word,ide.route_id, ide.route_direction, ide.device_marking_name, ide.device_type_id,
+		       ide.device_type_number, ide.device_model_id, ide.factory_library, ide.user_unit_id, ide.operator_id,
+		       ide.longitude, ide.latitude, ide.firm_id, ide.purchase_date, ide.warranty_years, ide.unit_price,
+		       ide.run_status,ide.device_status, ide.install_date, ide.maintain_id, ide.collar_agency_id,
+		       ide.pile_number, ide.manage_agency_id, ide.producte_date, ide.repair_date, ide.operate_date,
+		       ide.service_life, ide.storage_date, ide.is_monitor,ide.is_config, ide.local_info from iot_device ide
+        left join iot_device_access ida on ida.device_id = ide.device_id
+        left join sys_dept d on d.dept_id=ide.manage_agency_id
+        left join iot_brand e on e.brand_id=ide.brand_id
+        <where>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="brandId != null "> and brand_id = #{brandId}</if>
+            <if test="routeId != null "> and route_id = #{routeId}</if>
+            <if test="deviceId != null "> and ide.device_id = #{deviceId}</if>
+            <if test="routeDirection != null  and routeDirection != ''"> and route_direction = #{routeDirection}</if>
+            <if test="deviceMarkingName != null  and deviceMarkingName != ''"> and device_marking_name like concat('%', #{deviceMarkingName}, '%')</if>
+            <if test="deviceTypeNumber != null "> and device_type_number = #{deviceTypeNumber}</if>
+            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
+            <if test="deviceModelId != null "> and device_model_id = #{deviceModelId}</if>
+            <if test="factoryLibrary != null  and factoryLibrary != ''"> and factory_library = #{factoryLibrary}</if>
+            <if test="userUnitId != null "> and user_unit_id = #{userUnitId}</if>
+            <if test="operatorId != null "> and operator_id = #{operatorId}</if>
+            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
+            <if test="firmId != null "> and firm_id = #{firmId}</if>
+            <if test="purchaseDate != null "> and purchase_date = #{purchaseDate}</if>
+            <if test="warrantyYears != null "> and warranty_years = #{warrantyYears}</if>
+            <if test="unitPrice != null "> and unit_price = #{unitPrice}</if>
+            <if test="runStatus != null "> and run_status = #{runStatus}</if>
+            <if test="deviceStatus != null  and deviceStatus != ''"> and device_status = #{deviceStatus}</if>
+            <if test="installDate != null "> and install_date = #{installDate}</if>
+            <if test="maintainId != null "> and maintain_id = #{maintainId}</if>
+            <if test="collarAgencyId != null "> and collar_agency_id = #{collarAgencyId}</if>
+            <if test="pileNumber != null  and pileNumber != ''"> and pile_number = #{pileNumber}</if>
+            <if test="producteDate != null "> and producte_date = #{producteDate}</if>
+            <if test="repairDate != null "> and repair_date = #{repairDate}</if>
+            <if test="operateDate != null "> and operate_date = #{operateDate}</if>
+            <if test="serviceLife != null "> and service_life = #{serviceLife}</if>
+            <if test="storageDate != null "> and storage_date = #{storageDate}</if>
+            <if test="isMonitor != null "> and is_monitor = #{isMonitor}</if>
+            <if test="isConfig != null "> and is_config = #{isConfig}</if>
+            <if test="localInfo != null "> and local_info = #{localInfo}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (ide.dept_id = #{params.deptId} OR ide.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIotDeviceById" parameterType="Long" resultMap="IotDeviceResult">
+        <include refid="selectIotDeviceVo"/>
+        where ide.device_id = #{deviceId}
+    </select>
+
+    <select id="selectDeviceAccessById" parameterType="Long" resultMap="IotDeviceResult">
+     select ide.device_id, ide.device_type_id,ide.device_type_number, ida.device_ip,ida.device_port,idp.protocol_name,ida.device_pixel
+     from iot_device ide
+	 left join iot_device_access ida on ida.device_id = ide.device_id
+	 left join iot_device_protocol idp on ida.device_protocol_id = idp.protocol_id
+	 where ide.device_id = #{deviceId}
+    </select>
+
+    <select id="selectDeviceAccessByDeviceTypeId" parameterType="SdIotDevice" resultMap="IotDeviceResult">
+        select ide.device_id,ida.device_ip,ida.device_port,ida.user_name,ida.pass_word,ide.route_id,ide.route_direction,ide.pile_number,ide.device_type_id
+        from iot_device ide
+        left join iot_device_access ida on ida.device_id = ide.device_id
+        <where>
+            <if test="deviceTypeId != null and deviceTypeId != ''">and ide.device_type_id in (${deviceTypeId})</if>
+            <if test="deviceTypeNumber != null and deviceTypeNumber != ''">and ide.device_type_number in (${deviceTypeNumber})</if>
+            <if test="isMonitor != null ">and is_monitor = #{isMonitor}</if>
+            <if test="deviceId != null ">and ide.device_id = #{deviceId}</if>
+            <if test="manageAgencyId != null ">and manage_agency_id = #{manageAgencyId}</if>
+        </where>
+    </select>
+
+    <insert id="insertIotDevice" parameterType="SdIotDevice">
+        insert into iot_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null ">device_id,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="brandId != null ">brand_id,</if>
+            <if test="routeId != null ">route_id,</if>
+            <if test="routeDirection != null  and routeDirection != ''">route_direction,</if>
+            <if test="deviceMarkingName != null  and deviceMarkingName != ''">device_marking_name,</if>
+            <if test="deviceTypeId != null">device_type_id,</if>
+            <if test="deviceTypeNumber != null">device_type_number,</if>
+            <if test="deviceModelId != null ">device_model_id,</if>
+            <if test="factoryLibrary != null  and factoryLibrary != ''">factory_library,</if>
+            <if test="userUnitId != null ">user_unit_id,</if>
+            <if test="operatorId != null ">operator_id,</if>
+            <if test="longitude != null  and longitude != ''">longitude,</if>
+            <if test="latitude != null  and latitude != ''">latitude,</if>
+            <if test="firmId != null ">firm_id,</if>
+            <if test="purchaseDate != null ">purchase_date,</if>
+            <if test="warrantyYears != null ">warranty_years,</if>
+            <if test="unitPrice != null ">unit_price,</if>
+            <if test="runStatus != null ">run_status,</if>
+            <if test="deviceStatus != null ">device_status,</if>
+            <if test="installDate != null ">install_date,</if>
+            <if test="maintainId != null ">maintain_id,</if>
+            <if test="collarAgencyId != null ">collar_agency_id,</if>
+            <if test="pileNumber != null  and pileNumber != ''">pile_number,</if>
+            <if test="manageAgencyId != null ">manage_agency_id,</if>
+            <if test="producteDate != null ">producte_date,</if>
+            <if test="repairDate != null ">repair_date,</if>
+            <if test="operateDate != null ">operate_date,</if>
+            <if test="serviceLife != null ">service_life,</if>
+            <if test="storageDate != null ">storage_date,</if>
+            <if test="isMonitor != null ">is_monitor,</if>
+            <if test="isConfig != null "> is_config,</if>
+            <if test="localInfo != null ">local_info,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null ">#{deviceId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="brandId != null ">#{brandId},</if>
+            <if test="routeId != null ">#{routeId},</if>
+            <if test="routeDirection != null  and routeDirection != ''">#{routeDirection},</if>
+            <if test="deviceMarkingName != null  and deviceMarkingName != ''">#{deviceMarkingName},</if>
+            <if test="deviceTypeId != null">#{deviceTypeId},</if>
+            <if test="deviceTypeNumber != null">#{deviceTypeNumber},</if>
+            <if test="deviceModelId != null ">#{deviceModelId},</if>
+            <if test="factoryLibrary != null  and factoryLibrary != ''">#{factoryLibrary},</if>
+            <if test="userUnitId != null ">#{userUnitId},</if>
+            <if test="operatorId != null ">#{operatorId},</if>
+            <if test="longitude != null  and longitude != ''">#{longitude},</if>
+            <if test="latitude != null  and latitude != ''">#{latitude},</if>
+            <if test="firmId != null ">#{firmId},</if>
+            <if test="purchaseDate != null ">#{purchaseDate},</if>
+            <if test="warrantyYears != null ">#{warrantyYears},</if>
+            <if test="unitPrice != null ">#{unitPrice},</if>
+            <if test="runStatus != null ">#{runStatus},</if>
+            <if test="deviceStatus != null ">#{deviceStatus},</if>
+            <if test="installDate != null ">#{installDate},</if>
+            <if test="maintainId != null ">#{maintainId},</if>
+            <if test="collarAgencyId != null ">#{collarAgencyId},</if>
+            <if test="pileNumber != null  and pileNumber != ''">#{pileNumber},</if>
+            <if test="manageAgencyId != null ">#{manageAgencyId},</if>
+            <if test="producteDate != null ">#{producteDate},</if>
+            <if test="repairDate != null ">#{repairDate},</if>
+            <if test="operateDate != null ">#{operateDate},</if>
+            <if test="serviceLife != null ">#{serviceLife},</if>
+            <if test="storageDate != null ">#{storageDate},</if>
+            <if test="isMonitor != null ">#{isMonitor},</if>
+            <if test="isConfig != null ">#{isConfig},</if>
+            <if test="localInfo != null ">#{localInfo},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateIotDevice" parameterType="SdIotDevice">
+        update iot_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="brandId != null ">brand_id = #{brandId},</if>
+            <if test="routeId != null ">route_id = #{routeId},</if>
+            <if test="routeDirection != null  and routeDirection != ''">route_direction = #{routeDirection},</if>
+            <if test="deviceMarkingName != null  and deviceMarkingName != ''">device_marking_name =
+                #{deviceMarkingName},
+            </if>
+            <if test="deviceTypeId != null">device_type_id = #{deviceTypeId},</if>
+            <if test="deviceTypeNumber != null">device_type_number = #{deviceTypeNumber},</if>
+            <if test="deviceModelId != null ">device_model_id = #{deviceModelId},</if>
+            <if test="factoryLibrary != null  and factoryLibrary != ''">factory_library = #{factoryLibrary},</if>
+            <if test="userUnitId != null ">user_unit_id = #{userUnitId},</if>
+            <if test="operatorId != null ">operator_id = #{operatorId},</if>
+            <if test="longitude != null  and longitude != ''">longitude = #{longitude},</if>
+            <if test="latitude != null  and latitude != ''">latitude = #{latitude},</if>
+            <if test="firmId != null ">firm_id = #{firmId},</if>
+            <if test="purchaseDate != null ">purchase_date = #{purchaseDate},</if>
+            <if test="warrantyYears != null ">warranty_years = #{warrantyYears},</if>
+            <if test="unitPrice != null ">unit_price = #{unitPrice},</if>
+            <if test="runStatus == null or runStatus != null">run_status = #{runStatus},</if>
+            <if test="deviceStatus != null ">device_status = #{deviceStatus},</if>
+            <if test="installDate != null ">install_date = #{installDate},</if>
+            <if test="maintainId != null ">maintain_id = #{maintainId},</if>
+            <if test="collarAgencyId != null ">collar_agency_id = #{collarAgencyId},</if>
+            <if test="pileNumber != null  and pileNumber != ''">pile_number = #{pileNumber},</if>
+            <if test="manageAgencyId != null ">manage_agency_id = #{manageAgencyId},</if>
+            <if test="producteDate != null ">producte_date = #{producteDate},</if>
+            <if test="repairDate != null ">repair_date = #{repairDate},</if>
+            <if test="operateDate != null ">operate_date = #{operateDate},</if>
+            <if test="serviceLife != null ">service_life = #{serviceLife},</if>
+            <if test="storageDate != null ">storage_date = #{storageDate},</if>
+            <if test="isMonitor != null ">is_monitor = #{isMonitor},</if>
+            <if test="isConfig != null "> is_config = #{isConfig},</if>
+            <if test="localInfo != null ">local_info = #{localInfo},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteIotDeviceById" parameterType="Long">
+        delete from iot_device where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteIotDeviceByIds" parameterType="String">
+        delete from iot_device where device_id in
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+
+    <select id="selectIotDeviceListbyDeviceTypeId" parameterType="SdIotDevice" resultMap="IotDeviceResult">
+        select device_id, device_name, ide.device_type_id,device_type_number,route_direction,pile_number, longitude,
+        latitude,
+        device_status,ir.route_number,ir.route_name
+        from iot_device ide
+        left join iot_route ir on ide.route_id = ir.route_id
+        <where>
+            <if test="deviceTypeId != null">and ide.device_type_id = #{deviceTypeId}</if>
+            <if test="manageAgencyId != null">and manage_agency_id = #{manageAgencyId}</if>
+            <if test="deviceStatus != null and deviceStatus != ''">and device_status in ${deviceStatus}</if>
+        </where>
+    </select>
+    <select id="selectIotDeviceAccessById" resultType="java.util.Map">
+        SELECT device_ip,device_port,device_pixel FROM iot_device_access where device_id = #{deviceId}
+    </select>
+    <select id="getVerifyWord" resultType="java.util.Map">
+        SELECT F_ID,F_ILLEGAL_WORD from iot_verify_word
+    </select>
+    <select id="getInterDevidByDeviceid" resultType="String">
+        select dev_id from  iot_inter_station where device_id=#{deviceId}
+    </select>
+<select id="getStateStatusCount" parameterType="SdIotDevice" resultType="java.util.Map">
+SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN device_status = '1' THEN 1 ELSE 0 END) AS LX FROM iot_device
+<where>
+    <if test="manageAgencyId !=null and manageAgencyId != ''">
+        and manage_agency_id=#{manageAgencyId}
+    </if>
+    <if test="deviceTypeIds !=null and deviceTypeIds !=''">
+    and device_type_id in(${deviceTypeIds})
+    </if>
+    <if test="routeId !=null and routeId != ''">
+    and route_id=#{routeId}
+    </if>
+    <if test="deviceStatus !=null and deviceStatus !=''">
+      and  device_status in ${deviceStatus}
+    </if>
+</where>
+</select>
+    <select id="getDeviceNumber" parameterType="SdIotDevice" resultType="String">
+        select count(1) from iot_device <where>
+        <if test="deviceStatus != null and deviceStatus != ''">and device_status = #{deviceStatus}</if>
+    </where>
+    </select>
+    <select id="selectVehicleList" resultMap="IotDeviceResult">
+        <include refid="selectIotDeviceVo"/>
+        <where>
+            ida.device_type_id="202070000"
+        </where>
+    </select>
+</mapper>

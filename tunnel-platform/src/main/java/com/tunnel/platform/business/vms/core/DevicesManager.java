@@ -5,8 +5,8 @@ import com.tunnel.platform.business.vms.DevicesConfig;
 import com.tunnel.platform.business.vms.DriverBean;
 import com.tunnel.platform.business.vms.DriverConfig;
 import com.tunnel.platform.business.vms.DevicesBean;
-import com.tunnel.platform.utils.exception.BusinessException;
-import com.tunnel.platform.utils.util.CommonUtil;
+import com.tunnel.business.utils.exception.BusinessException;
+import com.tunnel.business.utils.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

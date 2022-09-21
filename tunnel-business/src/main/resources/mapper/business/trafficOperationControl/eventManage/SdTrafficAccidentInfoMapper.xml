@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficAccidentInfoMapper">
+
+    <resultMap type="SdTrafficAccidentInfo" id="SdTrafficAccidentInfoResult">
+        <result property="id"    column="id"    />
+        <result property="incidentId"    column="incident_id"    />
+        <result property="roadCase"    column="road_case"    />
+        <result property="noRoadCase"    column="no_road_case"    />
+        <result property="direction"    column="direction"    />
+        <result property="stakeNumber"    column="stake_number"    />
+        <result property="stakeDistance"    column="stake_distance"    />
+        <result property="specialSiteDesc"    column="special_site_desc"    />
+        <result property="slowDistance"    column="slow_distance"    />
+        <result property="slowTime"    column="slow_time"    />
+        <result property="accidentCondition"    column="accident_condition"    />
+        <result property="vehicleNumUnclear"    column="vehicle_num_unclear"    />
+        <result property="sedanCarNum"    column="sedan_car_num"    />
+        <result property="bigBusNum"    column="big_bus_num"    />
+        <result property="middleBusNum"    column="middle_bus_num"    />
+        <result property="smallBusNum"    column="small_bus_num"    />
+        <result property="trunkNum"    column="trunk_num"    />
+        <result property="smallTrunkNum"    column="small_trunk_num"    />
+        <result property="tankTrunkNum"    column="tank_trunk_num"    />
+        <result property="otherCarNum"    column="other_car_num"    />
+        <result property="hasHazardGoods"    column="has_hazard_goods"    />
+        <result property="hasGoodsScatter"    column="has_goods_scatter"    />
+        <result property="hasCasualty"    column="has_casualty"    />
+        <result property="hasCarFire"    column="has_car_fire"    />
+        <result property="isCarSlowdown"    column="is_car_slowdown"    />
+        <result property="roadCongestion"    column="road_congestion"    />
+        <result property="congestLane"    column="congest_lane"    />
+        <result property="isFinish"    column="is_finish"    />
+        <result property="hasPersonTrap"    column="has_person_trap"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdTrafficAccidentInfoVo">
+        select id, incident_id, road_case, no_road_case, direction, stake_number, stake_distance, special_site_desc, slow_distance, slow_time, accident_condition, vehicle_num_unclear, sedan_car_num, big_bus_num, middle_bus_num, small_bus_num, trunk_num, small_trunk_num, tank_trunk_num, other_car_num, has_hazard_goods, has_goods_scatter, has_casualty, has_car_fire, is_car_slowdown, road_congestion, congest_lane, is_finish, has_person_trap, create_time, create_by, update_time, update_by from sd_traffic_accident_info
+    </sql>
+
+    <select id="selectSdTrafficAccidentInfoList" parameterType="SdTrafficAccidentInfo" resultMap="SdTrafficAccidentInfoResult">
+        <include refid="selectSdTrafficAccidentInfoVo"/>
+        <where>
+            <if test="incidentId != null "> and incident_id = #{incidentId}</if>
+            <if test="roadCase != null  and roadCase != ''"> and road_case = #{roadCase}</if>
+            <if test="noRoadCase != null  and noRoadCase != ''"> and no_road_case = #{noRoadCase}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            <if test="stakeNumber != null  and stakeNumber != ''"> and stake_number = #{stakeNumber}</if>
+            <if test="stakeDistance != null  and stakeDistance != ''"> and stake_distance = #{stakeDistance}</if>
+            <if test="specialSiteDesc != null  and specialSiteDesc != ''"> and special_site_desc = #{specialSiteDesc}</if>
+            <if test="slowDistance != null  and slowDistance != ''"> and slow_distance = #{slowDistance}</if>
+            <if test="slowTime != null  and slowTime != ''"> and slow_time = #{slowTime}</if>
+            <if test="accidentCondition != null  and accidentCondition != ''"> and accident_condition = #{accidentCondition}</if>
+            <if test="vehicleNumUnclear != null  and vehicleNumUnclear != ''"> and vehicle_num_unclear = #{vehicleNumUnclear}</if>
+            <if test="sedanCarNum != null  and sedanCarNum != ''"> and sedan_car_num = #{sedanCarNum}</if>
+            <if test="bigBusNum != null  and bigBusNum != ''"> and big_bus_num = #{bigBusNum}</if>
+            <if test="middleBusNum != null  and middleBusNum != ''"> and middle_bus_num = #{middleBusNum}</if>
+            <if test="smallBusNum != null  and smallBusNum != ''"> and small_bus_num = #{smallBusNum}</if>
+            <if test="trunkNum != null  and trunkNum != ''"> and trunk_num = #{trunkNum}</if>
+            <if test="smallTrunkNum != null  and smallTrunkNum != ''"> and small_trunk_num = #{smallTrunkNum}</if>
+            <if test="tankTrunkNum != null  and tankTrunkNum != ''"> and tank_trunk_num = #{tankTrunkNum}</if>
+            <if test="otherCarNum != null  and otherCarNum != ''"> and other_car_num = #{otherCarNum}</if>
+            <if test="hasHazardGoods != null  and hasHazardGoods != ''"> and has_hazard_goods = #{hasHazardGoods}</if>
+            <if test="hasGoodsScatter != null  and hasGoodsScatter != ''"> and has_goods_scatter = #{hasGoodsScatter}</if>
+            <if test="hasCasualty != null  and hasCasualty != ''"> and has_casualty = #{hasCasualty}</if>
+            <if test="hasCarFire != null  and hasCarFire != ''"> and has_car_fire = #{hasCarFire}</if>
+            <if test="isCarSlowdown != null  and isCarSlowdown != ''"> and is_car_slowdown = #{isCarSlowdown}</if>
+            <if test="roadCongestion != null  and roadCongestion != ''"> and road_congestion = #{roadCongestion}</if>
+            <if test="congestLane != null  and congestLane != ''"> and congest_lane = #{congestLane}</if>
+            <if test="isFinish != null  and isFinish != ''"> and is_finish = #{isFinish}</if>
+            <if test="hasPersonTrap != null  and hasPersonTrap != ''"> and has_person_trap = #{hasPersonTrap}</if>
+        </where>
+    </select>
+
+    <select id="selectSdTrafficAccidentInfoById" parameterType="Long" resultMap="SdTrafficAccidentInfoResult">
+        <include refid="selectSdTrafficAccidentInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdTrafficAccidentInfo" parameterType="SdTrafficAccidentInfo"  useGeneratedKeys="true" keyProperty="id">
+        insert into sd_traffic_accident_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="incidentId != null">incident_id,</if>
+            <if test="roadCase != null">road_case,</if>
+            <if test="noRoadCase != null">no_road_case,</if>
+            <if test="direction != null">direction,</if>
+            <if test="stakeNumber != null">stake_number,</if>
+            <if test="stakeDistance != null">stake_distance,</if>
+            <if test="specialSiteDesc != null">special_site_desc,</if>
+            <if test="slowDistance != null">slow_distance,</if>
+            <if test="slowTime != null">slow_time,</if>
+            <if test="accidentCondition != null">accident_condition,</if>
+            <if test="vehicleNumUnclear != null">vehicle_num_unclear,</if>
+            <if test="sedanCarNum != null">sedan_car_num,</if>
+            <if test="bigBusNum != null">big_bus_num,</if>
+            <if test="middleBusNum != null">middle_bus_num,</if>
+            <if test="smallBusNum != null">small_bus_num,</if>
+            <if test="trunkNum != null">trunk_num,</if>
+            <if test="smallTrunkNum != null">small_trunk_num,</if>
+            <if test="tankTrunkNum != null">tank_trunk_num,</if>
+            <if test="otherCarNum != null">other_car_num,</if>
+            <if test="hasHazardGoods != null">has_hazard_goods,</if>
+            <if test="hasGoodsScatter != null">has_goods_scatter,</if>
+            <if test="hasCasualty != null">has_casualty,</if>
+            <if test="hasCarFire != null">has_car_fire,</if>
+            <if test="isCarSlowdown != null">is_car_slowdown,</if>
+            <if test="roadCongestion != null">road_congestion,</if>
+            <if test="congestLane != null">congest_lane,</if>
+            <if test="isFinish != null">is_finish,</if>
+            <if test="hasPersonTrap != null">has_person_trap,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="incidentId != null">#{incidentId},</if>
+            <if test="roadCase != null">#{roadCase},</if>
+            <if test="noRoadCase != null">#{noRoadCase},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="stakeNumber != null">#{stakeNumber},</if>
+            <if test="stakeDistance != null">#{stakeDistance},</if>
+            <if test="specialSiteDesc != null">#{specialSiteDesc},</if>
+            <if test="slowDistance != null">#{slowDistance},</if>
+            <if test="slowTime != null">#{slowTime},</if>
+            <if test="accidentCondition != null">#{accidentCondition},</if>
+            <if test="vehicleNumUnclear != null">#{vehicleNumUnclear},</if>
+            <if test="sedanCarNum != null">#{sedanCarNum},</if>
+            <if test="bigBusNum != null">#{bigBusNum},</if>
+            <if test="middleBusNum != null">#{middleBusNum},</if>
+            <if test="smallBusNum != null">#{smallBusNum},</if>
+            <if test="trunkNum != null">#{trunkNum},</if>
+            <if test="smallTrunkNum != null">#{smallTrunkNum},</if>
+            <if test="tankTrunkNum != null">#{tankTrunkNum},</if>
+            <if test="otherCarNum != null">#{otherCarNum},</if>
+            <if test="hasHazardGoods != null">#{hasHazardGoods},</if>
+            <if test="hasGoodsScatter != null">#{hasGoodsScatter},</if>
+            <if test="hasCasualty != null">#{hasCasualty},</if>
+            <if test="hasCarFire != null">#{hasCarFire},</if>
+            <if test="isCarSlowdown != null">#{isCarSlowdown},</if>
+            <if test="roadCongestion != null">#{roadCongestion},</if>
+            <if test="congestLane != null">#{congestLane},</if>
+            <if test="isFinish != null">#{isFinish},</if>
+            <if test="hasPersonTrap != null">#{hasPersonTrap},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTrafficAccidentInfo" parameterType="SdTrafficAccidentInfo">
+        update sd_traffic_accident_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="incidentId != null">incident_id = #{incidentId},</if>
+            <if test="roadCase != null">road_case = #{roadCase},</if>
+            <if test="noRoadCase != null">no_road_case = #{noRoadCase},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="stakeNumber != null">stake_number = #{stakeNumber},</if>
+            <if test="stakeDistance != null">stake_distance = #{stakeDistance},</if>
+            <if test="specialSiteDesc != null">special_site_desc = #{specialSiteDesc},</if>
+            <if test="slowDistance != null">slow_distance = #{slowDistance},</if>
+            <if test="slowTime != null">slow_time = #{slowTime},</if>
+            <if test="accidentCondition != null">accident_condition = #{accidentCondition},</if>
+            <if test="vehicleNumUnclear != null">vehicle_num_unclear = #{vehicleNumUnclear},</if>
+            <if test="sedanCarNum != null">sedan_car_num = #{sedanCarNum},</if>
+            <if test="bigBusNum != null">big_bus_num = #{bigBusNum},</if>
+            <if test="middleBusNum != null">middle_bus_num = #{middleBusNum},</if>
+            <if test="smallBusNum != null">small_bus_num = #{smallBusNum},</if>
+            <if test="trunkNum != null">trunk_num = #{trunkNum},</if>
+            <if test="smallTrunkNum != null">small_trunk_num = #{smallTrunkNum},</if>
+            <if test="tankTrunkNum != null">tank_trunk_num = #{tankTrunkNum},</if>
+            <if test="otherCarNum != null">other_car_num = #{otherCarNum},</if>
+            <if test="hasHazardGoods != null">has_hazard_goods = #{hasHazardGoods},</if>
+            <if test="hasGoodsScatter != null">has_goods_scatter = #{hasGoodsScatter},</if>
+            <if test="hasCasualty != null">has_casualty = #{hasCasualty},</if>
+            <if test="hasCarFire != null">has_car_fire = #{hasCarFire},</if>
+            <if test="isCarSlowdown != null">is_car_slowdown = #{isCarSlowdown},</if>
+            <if test="roadCongestion != null">road_congestion = #{roadCongestion},</if>
+            <if test="congestLane != null">congest_lane = #{congestLane},</if>
+            <if test="isFinish != null">is_finish = #{isFinish},</if>
+            <if test="hasPersonTrap != null">has_person_trap = #{hasPersonTrap},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTrafficAccidentInfoById" parameterType="Long">
+        delete from sd_traffic_accident_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTrafficAccidentInfoByIds" parameterType="String">
+        delete from sd_traffic_accident_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--根据incidentId字段查询交通事故、清障事件信息-->
+    <select id="getAccidentInfoByIncidentId" resultMap="SdTrafficAccidentInfoResult">
+        <include refid="selectSdTrafficAccidentInfoVo"/>
+         where incident_id = #{incidentId}
+    </select>
+
+    <!--根据事件信息incidentId删除交通事故、清障事件信息-->
+    <delete id="delAccidentInfoByIncidentId" parameterType="Long">
+         delete from sd_traffic_accident_info where incident_id = #{incidentId}
+    </delete>
+
+
+    <!--查询交通事故、清障事件信息列表-->
+    <select id="selectAccidentInfoList" resultType="java.util.Map">
+        select t.id,t.tunnel_id tunnelId, t.incident_type incidentType,t.incident_grade incidentGrade, t.incident_content incidentContent, t.occur_time occurTime,
+        t.report_time reportTime,
+        a.direction,s.tunnel_name tunnelName,
+        g.id configLevelId,g.control_level controlLevel,g.control_type controlType
+         from sd_traffic_incident_info t
+         inner join sd_traffic_accident_info a on t.id = a.incident_id
+         left join sd_tunnels s on t.tunnel_id = s.tunnel_id
+        left join sd_traffic_incident_measure m on t.id = m.incident_id
+        left join sd_control_level_config g on g.id = m.config_level_id
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and t.tunnel_id = #{tunnelId}</if>
+            <if test="incidentType != null  and incidentType != ''"> and t.incident_type = #{incidentType}</if>
+            <if test="occurTime != null  and occurTime != ''"> and t.occur_time = #{occurTime}</if>
+            <!--<if test="reportTime != null  and reportTime != ''"> and t.report_time = #{reportTime}</if>-->
+            <if test="params.startTime != null and params.startTime != ''">
+                and date_format(t.occur_time,'%y%m%d') &gt;= date_format(#{params.startTime},'%y%m%d')
+            </if>
+            <!-- 结束时间 -->
+            <if test="params.endTime != null and params.endTime != ''">
+                and date_format(t.occur_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (s.dept_id = #{params.deptId} OR s.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+        order by t.create_time desc, t.update_time desc
+    </select>
+
+    <!--根据incidentId字段查询交通事故、清障事件信息-->
+    <select id="getAccident" resultType="java.util.Map">
+         select t.id,t.tunnel_id tunnelId, t.incident_type incidentType,t.incident_grade incidentGrade, t.incident_content incidentContent, t.occur_time occurTime,
+        t.report_time reportTime,
+        a.direction
+         from sd_traffic_incident_info t
+         inner join sd_traffic_accident_info a on t.id = a.incident_id
+         where t.id = #{incidentId}
+    </select>
+
+    <!--根据事件incidentId修改交通事故和清障信息-->
+    <update id="updateAccidentInfo" parameterType="SdTrafficAccidentInfo">
+        update sd_traffic_accident_info
+        <trim prefix="SET" suffixOverrides=",">
+            <!--<if test="incidentId != null">incident_id = #{incidentId},</if>-->
+            <if test="roadCase != null">road_case = #{roadCase},</if>
+            <if test="noRoadCase != null">no_road_case = #{noRoadCase},</if>
+            <if test="direction != null">direction = #{direction},</if>
+            <if test="stakeNumber != null">stake_number = #{stakeNumber},</if>
+            <if test="stakeDistance != null">stake_distance = #{stakeDistance},</if>
+            <if test="specialSiteDesc != null">special_site_desc = #{specialSiteDesc},</if>
+            <if test="slowDistance != null">slow_distance = #{slowDistance},</if>
+            <if test="slowTime != null">slow_time = #{slowTime},</if>
+            <if test="accidentCondition != null">accident_condition = #{accidentCondition},</if>
+            <if test="vehicleNumUnclear != null">vehicle_num_unclear = #{vehicleNumUnclear},</if>
+            <if test="sedanCarNum != null">sedan_car_num = #{sedanCarNum},</if>
+            <if test="bigBusNum != null">big_bus_num = #{bigBusNum},</if>
+            <if test="middleBusNum != null">middle_bus_num = #{middleBusNum},</if>
+            <if test="smallBusNum != null">small_bus_num = #{smallBusNum},</if>
+            <if test="trunkNum != null">trunk_num = #{trunkNum},</if>
+            <if test="smallTrunkNum != null">small_trunk_num = #{smallTrunkNum},</if>
+            <if test="tankTrunkNum != null">tank_trunk_num = #{tankTrunkNum},</if>
+            <if test="otherCarNum != null">other_car_num = #{otherCarNum},</if>
+            <if test="hasHazardGoods != null">has_hazard_goods = #{hasHazardGoods},</if>
+            <if test="hasGoodsScatter != null">has_goods_scatter = #{hasGoodsScatter},</if>
+            <if test="hasCasualty != null">has_casualty = #{hasCasualty},</if>
+            <if test="hasCarFire != null">has_car_fire = #{hasCarFire},</if>
+            <if test="isCarSlowdown != null">is_car_slowdown = #{isCarSlowdown},</if>
+            <if test="roadCongestion != null">road_congestion = #{roadCongestion},</if>
+            <if test="congestLane != null">congest_lane = #{congestLane},</if>
+            <if test="isFinish != null">is_finish = #{isFinish},</if>
+            <if test="hasPersonTrap != null">has_person_trap = #{hasPersonTrap},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where incident_id = #{incidentId}
+    </update>
+</mapper>

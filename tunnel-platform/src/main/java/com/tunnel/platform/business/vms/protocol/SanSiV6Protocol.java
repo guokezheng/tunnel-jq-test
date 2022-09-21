@@ -2,7 +2,7 @@ package com.tunnel.platform.business.vms.protocol;
 
 import com.tunnel.platform.business.vms.core.IProtocol;
 import com.tunnel.platform.business.vms.core.ProtocolAnalysis;
-import com.tunnel.platform.utils.util.RadixUtil;
+import com.tunnel.business.utils.util.RadixUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

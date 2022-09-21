@@ -1,9 +1,9 @@
 package com.tunnel.deal.guidancelamp.control.inductionlamp;
 
+import com.tunnel.business.domain.dataInfo.InductionlampControlStatusDetails;
+import com.tunnel.business.domain.dataInfo.InductionlampControlStatusParam;
 import com.tunnel.deal.guidancelamp.control.ClientHandler;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
-import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusDetails;
-import com.tunnel.platform.domain.dataInfo.InductionlampControlStatusParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +142,7 @@ public class InductionlampUtil {
         return null;
     }
 
-    //诱导灯当前状态查询
+    //当前状态查询
     public static Map getNowOpenState(String ip, Integer port) {
         //获取当前是否开灯
         String code = "1GH+SW?\r\n";
@@ -312,6 +312,65 @@ public class InductionlampUtil {
                             map.put("brightness", brightness);
                             map.put("frequency", frequency);
                             return map;
+                    }
+                    client.stop();
+                    return null;
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getNowevacuationSignStatus(String ip, Integer port) {
+        //获取当前运行模式
+        String code = "1GH+FIRE?\r\n";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    switch (code) {
+                        case "OK":
+                            log.info("操作成功。");
+                            break;
+                        case "ERROR":
+                            log.error("操作失败，请检查操作指令并联系管理员。");
+                            break;
+                        case "INVALID":
+                            log.error("无效操作，请检查操作指令并联系管理员。");
+                            break;
+                        default:
+                            //响应指令:
+                            String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                            Map<String, Object> map = new HashMap<>();
+                            if (codeInfo.equals("1GH+FIRE=255")) {
+                                //直接截取紧急情况对应的疏散标志标号
+                                String fireMark = codeInfo.substring(codeInfo.indexOf("=")+1);
+                                map.put("fireMark", fireMark);
+                                return map;
+                            }
                     }
                     client.stop();
                     return null;

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdMaintenanceManagementMapper">
+
+    <resultMap type="SdMaintenanceManagement" id="SdMaintenanceManagementResult">
+        <result property="id"    column="id"    />
+        <result property="maintenancePerson"    column="maintenance_person"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="maintenanceLocation"    column="maintenance_location"    />
+        <result property="phone"    column="phone"    />
+        <result property="maintenanceInformation"    column="maintenance_information"    />
+        <result property="curingProgress"    column="curing_progress"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="pFileId"    column="p_file_id"    />
+    </resultMap>
+
+    <sql id="selectSdMaintenanceManagementVo">
+        select id, maintenance_person, tunnel_id, maintenance_location, phone, maintenance_information, curing_progress,
+               create_time, create_by, update_time, update_by, remake, remake1,p_file_id  from sd_maintenance_management
+    </sql>
+
+    <select id="selectSdMaintenanceManagementList" parameterType="SdMaintenanceManagement" resultMap="SdMaintenanceManagementResult">
+        select a.id, a.maintenance_person, a.tunnel_id, a.maintenance_location, a.phone, a.maintenance_information, a.curing_progress,
+        a.create_time, a.create_by, a.update_time, a.update_by, a.remake, a.remake1, b.tunnel_name,a.p_file_id
+        from sd_maintenance_management a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        <where>
+            <if test="maintenancePerson != null  and maintenancePerson != ''"> and a.maintenance_person = #{maintenancePerson}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+            <if test="maintenanceLocation != null  and maintenanceLocation != ''"> and a.maintenance_location = #{maintenanceLocation}</if>
+            <if test="phone != null  and phone != ''"> and a.phone = #{phone}</if>
+            <if test="maintenanceInformation != null  and maintenanceInformation != ''"> and a.maintenance_information = #{maintenanceInformation}</if>
+            <if test="curingProgress != null  and curingProgress != ''"> and a.curing_progress = #{curingProgress}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdMaintenanceManagementById" parameterType="Long" resultMap="SdMaintenanceManagementResult">
+        <include refid="selectSdMaintenanceManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdMaintenanceManagement" parameterType="SdMaintenanceManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_maintenance_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="maintenancePerson != null">maintenance_person,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="maintenanceLocation != null">maintenance_location,</if>
+            <if test="phone != null">phone,</if>
+            <if test="maintenanceInformation != null">maintenance_information,</if>
+            <if test="curingProgress != null">curing_progress,</if>
+            <if test="curingProgress == null">curing_progress,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+            <if test="pFileId != null">p_file_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="maintenancePerson != null">#{maintenancePerson},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="maintenanceLocation != null">#{maintenanceLocation},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="maintenanceInformation != null">#{maintenanceInformation},</if>
+            <if test="curingProgress != null">#{curingProgress},</if>
+            <if test="curingProgress == null">"0",</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+            <if test="pFileId != null">#{pFileId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMaintenanceManagement" parameterType="SdMaintenanceManagement">
+        update sd_maintenance_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="maintenancePerson != null">maintenance_person = #{maintenancePerson},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="maintenanceLocation != null">maintenance_location = #{maintenanceLocation},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="maintenanceInformation != null">maintenance_information = #{maintenanceInformation},</if>
+            <if test="curingProgress != null">curing_progress = #{curingProgress},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+            <if test="pFileId != null">p_file_id = #{pFileId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdMaintenanceManagementById" parameterType="Long">
+        delete from sd_maintenance_management where id = #{id}
+    </delete>
+
+    <delete id="deleteSdMaintenanceManagementByIds" parameterType="String">
+        delete from sd_maintenance_management where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

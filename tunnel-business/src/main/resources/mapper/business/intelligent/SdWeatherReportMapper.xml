@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.intelligent.SdWeatherReportMapper">
+
+    <resultMap type="SdWeatherReport" id="SdWeatherReportResult">
+        <result property="reportId"    column="report_id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="windDirection"    column="wind_direction"    />
+        <result property="windSpeed"    column="wind_speed"    />
+        <result property="airTemperature"    column="air_temperature"    />
+        <result property="indoorHumidity"    column="Indoor_humidity"    />
+        <result property="pressure"    column="pressure"    />
+        <result property="rainfall"    column="rainfall"    />
+        <result property="precipitationPattern"    column="precipitation_pattern"    />
+        <result property="radiation"    column="radiation"    />
+        <result property="ultraviolet"    column="ultraviolet"    />
+        <result property="oneMinuteVisibility"    column="one_minute_visibility"    />
+        <result property="tenMinuteVisibility"    column="Ten_minute_visibility"    />
+        <result property="waterFilmThickness"    column="water_film_thickness"    />
+        <result property="iceThickness"    column="Ice_thickness"    />
+        <result property="snowThickness"    column="snow_thickness"    />
+        <result property="wetSliding"    column="wet_sliding"    />
+        <result property="pavementTemperature"    column="pavement_temperature"    />
+        <result property="pavementCondition"    column="pavement_condition"    />
+        <result property="remoteSenseStatus"    column="remote_sense_status"    />
+        <result property="visibilityStatus"    column="visibility_status"    />
+        <result property="isPush"    column="is_push"    />
+        <result property="rawData"    column="raw_data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="tunnel"    column="tunnel"    />
+    </resultMap>
+
+    <sql id="selectSdWeatherReportVo">
+        select rep.report_id, rep.device_id, rep.wind_direction, rep.wind_speed, rep.air_temperature, rep.Indoor_humidity,
+               rep.pressure, rep.tunnel,sdt.tunnel_name as tunnelName,rep.rainfall, rep.precipitation_pattern, rep.radiation, rep.ultraviolet,
+               rep.one_minute_visibility, rep.Ten_minute_visibility, rep.water_film_thickness, rep.Ice_thickness, rep.snow_thickness,
+               rep.wet_sliding, rep.pavement_temperature, rep.pavement_condition, rep.remote_sense_status, rep.visibility_status, rep.is_push,
+               rep.raw_data, rep.create_by, rep.create_time, rep.remark
+        from sd_weather_report rep left join sd_tunnels sdt on rep.tunnel = sdt.tunnel_id
+    </sql>
+
+    <select id="selectSdWeatherReportList" parameterType="SdWeatherReport" resultMap="SdWeatherReportResult">
+        <include refid="selectSdWeatherReportVo"/>
+        <where>
+            <if test="deviceId != null "> and device_id = #{deviceId}</if>
+            <if test="tunnel != null "> and tunnel = #{tunnel}</if>
+            <if test="windDirection != null  and windDirection != ''"> and wind_direction = #{windDirection}</if>
+            <if test="windSpeed != null  and windSpeed != ''"> and wind_speed = #{windSpeed}</if>
+            <if test="airTemperature != null  and airTemperature != ''"> and air_temperature = #{airTemperature}</if>
+            <if test="indoorHumidity != null  and indoorHumidity != ''"> and Indoor_humidity = #{indoorHumidity}</if>
+            <if test="pressure != null  and pressure != ''"> and pressure = #{pressure}</if>
+            <if test="rainfall != null  and rainfall != ''"> and rainfall = #{rainfall}</if>
+            <if test="precipitationPattern != null  and precipitationPattern != ''"> and precipitation_pattern = #{precipitationPattern}</if>
+            <if test="radiation != null  and radiation != ''"> and radiation = #{radiation}</if>
+            <if test="ultraviolet != null  and ultraviolet != ''"> and ultraviolet = #{ultraviolet}</if>
+            <if test="oneMinuteVisibility != null  and oneMinuteVisibility != ''"> and one_minute_visibility = #{oneMinuteVisibility}</if>
+            <if test="tenMinuteVisibility != null  and tenMinuteVisibility != ''"> and Ten_minute_visibility = #{tenMinuteVisibility}</if>
+            <if test="waterFilmThickness != null  and waterFilmThickness != ''"> and water_film_thickness = #{waterFilmThickness}</if>
+            <if test="iceThickness != null  and iceThickness != ''"> and Ice_thickness = #{iceThickness}</if>
+            <if test="snowThickness != null  and snowThickness != ''"> and snow_thickness = #{snowThickness}</if>
+            <if test="wetSliding != null  and wetSliding != ''"> and wet_sliding = #{wetSliding}</if>
+            <if test="pavementTemperature != null  and pavementTemperature != ''"> and pavement_temperature = #{pavementTemperature}</if>
+            <if test="pavementCondition != null  and pavementCondition != ''"> and pavement_condition = #{pavementCondition}</if>
+            <if test="remoteSenseStatus != null  and remoteSenseStatus != ''"> and remote_sense_status = #{remoteSenseStatus}</if>
+            <if test="visibilityStatus != null  and visibilityStatus != ''"> and visibility_status = #{visibilityStatus}</if>
+            <if test="isPush != null  and isPush != ''"> and is_push = #{isPush}</if>
+            <if test="rawData != null  and rawData != ''"> and raw_data = #{rawData}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (sdt.dept_id = #{params.deptId} OR sdt.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdWeatherReportById" parameterType="Long" resultMap="SdWeatherReportResult">
+        <include refid="selectSdWeatherReportVo"/>
+        where report_id = #{reportId}
+    </select>
+
+    <insert id="insertSdWeatherReport" parameterType="SdWeatherReport" useGeneratedKeys="true" keyProperty="reportId">
+        insert into sd_weather_report
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">device_id,</if>
+            <if test="windDirection != null">wind_direction,</if>
+            <if test="windSpeed != null">wind_speed,</if>
+            <if test="airTemperature != null">air_temperature,</if>
+            <if test="indoorHumidity != null">Indoor_humidity,</if>
+            <if test="pressure != null">pressure,</if>
+            <if test="rainfall != null">rainfall,</if>
+            <if test="precipitationPattern != null">precipitation_pattern,</if>
+            <if test="radiation != null">radiation,</if>
+            <if test="ultraviolet != null">ultraviolet,</if>
+            <if test="oneMinuteVisibility != null">one_minute_visibility,</if>
+            <if test="tenMinuteVisibility != null">Ten_minute_visibility,</if>
+            <if test="waterFilmThickness != null">water_film_thickness,</if>
+            <if test="iceThickness != null">Ice_thickness,</if>
+            <if test="snowThickness != null">snow_thickness,</if>
+            <if test="wetSliding != null">wet_sliding,</if>
+            <if test="pavementTemperature != null">pavement_temperature,</if>
+            <if test="pavementCondition != null">pavement_condition,</if>
+            <if test="remoteSenseStatus != null">remote_sense_status,</if>
+            <if test="visibilityStatus != null">visibility_status,</if>
+            <if test="isPush != null">is_push,</if>
+            <if test="rawData != null">raw_data,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="tunnel != null">tunnel,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="windDirection != null">#{windDirection},</if>
+            <if test="windSpeed != null">#{windSpeed},</if>
+            <if test="airTemperature != null">#{airTemperature},</if>
+            <if test="indoorHumidity != null">#{indoorHumidity},</if>
+            <if test="pressure != null">#{pressure},</if>
+            <if test="rainfall != null">#{rainfall},</if>
+            <if test="precipitationPattern != null">#{precipitationPattern},</if>
+            <if test="radiation != null">#{radiation},</if>
+            <if test="ultraviolet != null">#{ultraviolet},</if>
+            <if test="oneMinuteVisibility != null">#{oneMinuteVisibility},</if>
+            <if test="tenMinuteVisibility != null">#{tenMinuteVisibility},</if>
+            <if test="waterFilmThickness != null">#{waterFilmThickness},</if>
+            <if test="iceThickness != null">#{iceThickness},</if>
+            <if test="snowThickness != null">#{snowThickness},</if>
+            <if test="wetSliding != null">#{wetSliding},</if>
+            <if test="pavementTemperature != null">#{pavementTemperature},</if>
+            <if test="pavementCondition != null">#{pavementCondition},</if>
+            <if test="remoteSenseStatus != null">#{remoteSenseStatus},</if>
+            <if test="visibilityStatus != null">#{visibilityStatus},</if>
+            <if test="isPush != null">#{isPush},</if>
+            <if test="rawData != null">#{rawData},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="tunnel != null">#{tunnel},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSdWeatherReport" parameterType="SdWeatherReport">
+        update sd_weather_report
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="windDirection != null">wind_direction = #{windDirection},</if>
+            <if test="windSpeed != null">wind_speed = #{windSpeed},</if>
+            <if test="airTemperature != null">air_temperature = #{airTemperature},</if>
+            <if test="indoorHumidity != null">Indoor_humidity = #{indoorHumidity},</if>
+            <if test="pressure != null">pressure = #{pressure},</if>
+            <if test="rainfall != null">rainfall = #{rainfall},</if>
+            <if test="precipitationPattern != null">precipitation_pattern = #{precipitationPattern},</if>
+            <if test="radiation != null">radiation = #{radiation},</if>
+            <if test="ultraviolet != null">ultraviolet = #{ultraviolet},</if>
+            <if test="oneMinuteVisibility != null">one_minute_visibility = #{oneMinuteVisibility},</if>
+            <if test="tenMinuteVisibility != null">Ten_minute_visibility = #{tenMinuteVisibility},</if>
+            <if test="waterFilmThickness != null">water_film_thickness = #{waterFilmThickness},</if>
+            <if test="iceThickness != null">Ice_thickness = #{iceThickness},</if>
+            <if test="snowThickness != null">snow_thickness = #{snowThickness},</if>
+            <if test="wetSliding != null">wet_sliding = #{wetSliding},</if>
+            <if test="pavementTemperature != null">pavement_temperature = #{pavementTemperature},</if>
+            <if test="pavementCondition != null">pavement_condition = #{pavementCondition},</if>
+            <if test="remoteSenseStatus != null">remote_sense_status = #{remoteSenseStatus},</if>
+            <if test="visibilityStatus != null">visibility_status = #{visibilityStatus},</if>
+            <if test="isPush != null">is_push = #{isPush},</if>
+            <if test="rawData != null">raw_data = #{rawData},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="tunnel != null">tunnel = #{tunnel},</if>
+        </trim>
+        where report_id = #{reportId}
+    </update>
+
+    <delete id="deleteSdWeatherReportById" parameterType="Long">
+        delete from sd_weather_report where report_id = #{reportId}
+    </delete>
+
+    <delete id="deleteSdWeatherReportByIds" parameterType="String">
+        delete from sd_weather_report where report_id in
+        <foreach item="reportId" collection="array" open="(" separator="," close=")">
+            #{reportId}
+        </foreach>
+    </delete>
+
+    <!--查询某隧道最新的能见度记录-->
+    <select id="selectLatestWeatherList" resultMap="SdWeatherReportResult">
+        select rep.report_id, rep.device_id, sdt.tunnel_id,sdt.tunnel_name,
+         rep.one_minute_visibility, rep.Ten_minute_visibility,  rep.visibility_status, rep.create_by, rep.create_time
+        from sd_weather_report rep
+        left join sd_tunnels sdt on rep.tunnel = sdt.tunnel_id
+		where rep.tunnel = #{tunnelId}
+		and rep.create_time = (
+				select max(rep.create_time)
+				from sd_weather_report rep
+				left join sd_tunnels sdt on rep.tunnel = sdt.tunnel_id
+				where rep.tunnel = #{tunnelId}
+			)
+    </select>
+</mapper>

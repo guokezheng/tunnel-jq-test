@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.event.SdSafetyIndexMapper">
+
+    <resultMap type="SdSafetyIndex" id="SdSafetyIndexResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelName"    column="tunnel_name"    />
+        <result property="securityLabel"    column="security_label"    />
+        <result property="securityName"    column="security_name"    />
+        <result property="securityPercentage"    column="security_percentage"    />
+        <result property="security"    column="security"    />
+        <result property="securityDescribe"    column="security_describe"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="remake"    column="remake"    />
+        <result property="remake1"    column="remake1"    />
+        <result property="remake2"    column="remake2"    />
+    </resultMap>
+
+    <sql id="selectSdSafetyIndexVo">
+        select id, tunnel_id, security_label, security_name, security_percentage, security, security_describe, create_time, create_by, update_time, update_by from sd_safety_index
+    </sql>
+
+    <select id="selectSdSafetyIndexList" parameterType="SdSafetyIndex" resultMap="SdSafetyIndexResult">
+        select a.id, a.tunnel_id, a.security_label, a.security_name, a.security_percentage, a.security, a.security_describe,
+               a.create_time, a.create_by, a.update_time, a.update_by, b.tunnel_name
+        from sd_safety_index a
+        left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+            <if test="securityLabel != null  and securityLabel != ''"> and a.security_label = #{securityLabel}</if>
+            <if test="securityName != null  and securityName != ''"> and a.security_name like concat('%', #{securityName}, '%')</if>
+            <if test="securityPercentage != null  and securityPercentage != ''"> and a.security_percentage = #{securityPercentage}</if>
+            <if test="security != null  and security != ''"> and a.security = #{security}</if>
+            <if test="securityDescribe != null  and securityDescribe != ''"> and a.security_describe = #{securityDescribe}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdSafetyIndexById" parameterType="Long" resultMap="SdSafetyIndexResult">
+        <include refid="selectSdSafetyIndexVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdSafetyIndex" parameterType="SdSafetyIndex" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_safety_index
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="securityLabel != null">security_label,</if>
+            <if test="securityName != null">security_name,</if>
+            <if test="securityPercentage != null">security_percentage,</if>
+            <if test="security != null">security,</if>
+            <if test="securityDescribe != null">security_describe,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="remake != null">remake,</if>
+            <if test="remake1 != null">remake1,</if>
+            <if test="remake2 != null">remake2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="securityLabel != null">#{securityLabel},</if>
+            <if test="securityName != null">#{securityName},</if>
+            <if test="securityPercentage != null">#{securityPercentage},</if>
+            <if test="security != null">#{security},</if>
+            <if test="securityDescribe != null">#{securityDescribe},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="remake != null">#{remake},</if>
+            <if test="remake1 != null">#{remake1},</if>
+            <if test="remake2 != null">#{remake2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdSafetyIndex" parameterType="SdSafetyIndex">
+        update sd_safety_index
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="securityLabel != null">security_label = #{securityLabel},</if>
+            <if test="securityName != null">security_name = #{securityName},</if>
+            <if test="securityPercentage != null">security_percentage = #{securityPercentage},</if>
+            <if test="security != null">security = #{security},</if>
+            <if test="securityDescribe != null">security_describe = #{securityDescribe},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="remake != null">remake = #{remake},</if>
+            <if test="remake1 != null">remake1 = #{remake1},</if>
+            <if test="remake2 != null">remake2 = #{remake2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdSafetyIndexById" parameterType="Long">
+        delete from sd_safety_index where id = #{id}
+    </delete>
+
+    <delete id="deleteSdSafetyIndexByIds" parameterType="String">
+        delete from sd_safety_index where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

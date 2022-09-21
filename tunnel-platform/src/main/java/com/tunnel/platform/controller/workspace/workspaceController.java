@@ -1,24 +1,25 @@
 package com.tunnel.platform.controller.workspace;
 
+import cn.hutool.json.JSONObject;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdIcyRoad;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.utils.util.CRC8Util;
+import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.platform.business.vms.core.DevicesManager;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdIcyRoad;
-import com.tunnel.platform.domain.dataInfo.SdTunnels;
-import com.tunnel.platform.service.dataInfo.ISdDeviceCmdService;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.dataInfo.ISdTunnelsService;
-import com.tunnel.platform.service.event.ISdEventService;
-import com.tunnel.platform.utils.util.CRC8Util;
-import com.tunnel.platform.utils.util.SpringContextUtils;
 import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -102,6 +103,9 @@ public class workspaceController extends BaseController {
     //3d测试
     @PostMapping("/test")
     public String test() {
+        JSONObject object = new JSONObject();
+        object.put("dataList",11111);
+        WebSocketService.broadcast("dataList",object);
         return "get 3d info";
     }
     //admin yujieying

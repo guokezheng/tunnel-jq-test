@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdMaintenanceManagementFileMapper">
+
+    <resultMap type="SdMaintenanceManagementFile" id="SdMaintenanceManagementFileResult">
+        <result property="id"    column="id"    />
+        <result property="planfileid"    column="planfileid"    />
+        <result property="url"    column="url"    />
+        <result property="filename"    column="filename"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectSdMaintenanceManagementFileVo">
+        select id, planfileid, url, filename, create_time, create_by, update_time, update_by from sd_maintenance_management_file
+    </sql>
+
+    <select id="selectSdMaintenanceManagementFileList" parameterType="SdMaintenanceManagementFile" resultMap="SdMaintenanceManagementFileResult">
+        <include refid="selectSdMaintenanceManagementFileVo"/>
+        <where>
+            <if test="planfileid != null  and planfileid != ''"> and planfileid = #{planfileid}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="filename != null  and filename != ''"> and filename like concat('%', #{filename}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSdMaintenanceManagementFileById" parameterType="Long" resultMap="SdMaintenanceManagementFileResult">
+        <include refid="selectSdMaintenanceManagementFileVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSdMaintenanceManagementFile" parameterType="SdMaintenanceManagementFile" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_maintenance_management_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="planfileid != null">planfileid,</if>
+            <if test="url != null">url,</if>
+            <if test="filename != null">filename,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="planfileid != null">#{planfileid},</if>
+            <if test="url != null">#{url},</if>
+            <if test="filename != null">#{filename},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMaintenanceManagementFile" parameterType="SdMaintenanceManagementFile">
+        update sd_maintenance_management_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="planfileid != null">planfileid = #{planfileid},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="filename != null">fileName = #{filename},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdMaintenanceManagementFileById" parameterType="Long">
+        delete from sd_maintenance_management_file where id = #{id}
+    </delete>
+
+    <delete id="deleteSdMaintenanceManagementFileByIds" parameterType="String">
+        delete from sd_maintenance_management_file where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="brachInsertSdMaintenanceManagementFile" parameterType="java.util.List">
+        insert into sd_maintenance_management_file
+        (
+        planfileid, url, filename, create_by, create_time
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.planfileid}, #{item.url}, #{item.filename}, #{item.createBy}, #{item.createTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateFileId" parameterType="String">
+        update sd_maintenance_management_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="planfileid != null">planfileid = #{planfileid},</if>
+        </trim>
+        where planfileid = #{oldid}
+    </update>
+
+    <delete id="deleteFileByFileIds" parameterType="String">
+        delete from sd_maintenance_management_file where p_file_id = #{pFileId}
+    </delete>
+</mapper>

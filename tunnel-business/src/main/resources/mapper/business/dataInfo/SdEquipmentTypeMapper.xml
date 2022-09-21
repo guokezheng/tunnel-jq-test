@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper">
+
+    <resultMap type="SdEquipmentType" id="SdEquipmentTypeResult">
+        <result property="typeId"    column="type_id"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeAbbr" column="type_abbr"/>
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="iconFileId"    column="icon_file_id"    />
+        <result property="iconWidth"    column="icon_width"    />
+        <result property="iconHeight"    column="icon_height"    />
+        <result property="bigType"    column="big_type"    />
+        <result property="isControl"    column="is_control"    />
+    </resultMap>
+
+    <sql id="selectSdEquipmentTypeVo">
+        select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height, is_control,
+        update_by, update_time,icon_file_id,big_type from sd_equipment_type
+    </sql>
+
+    <select id="selectSdEquipmentTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
+        <include refid="selectSdEquipmentTypeVo"/>
+        <where>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
+            <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+
+        </where>
+    </select>
+
+    <select id="selectHasItemEqTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
+        select a.type_id, a.type_name, a.type_abbr, a.icon_width, a.icon_height, a.is_control, a.icon_file_id, a.big_type
+        from sd_equipment_type a
+        LEFT JOIN sd_device_type_item b on a.type_id = b.device_type_id
+        <where>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
+            <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
+            <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+        </where>
+        group by a.type_id
+    </select>
+
+    <!--查询是否存在重复的设备类型:设备名称、代号均不可重复-->
+    <!--传入的这个参数类型如果是Integer类型的话,0会识别为''-->
+    <select id="selectExistSameType" parameterType="SdEquipmentType" resultType="java.lang.Integer">
+        select count(*) from sd_equipment_type
+        where (type_name = #{typeName}
+           or type_abbr = #{typeAbbr})
+        <!--修改时排除掉本条记录-->
+        <if test="typeId != null">
+            and type_id != #{typeId}
+        </if>
+    </select>
+
+    <select id="selectSdEquipmentTypeById" parameterType="Long" resultMap="SdEquipmentTypeResult">
+        <include refid="selectSdEquipmentTypeVo"/>
+        where type_id = #{typeId}
+    </select>
+
+    <select id="selectSdEquipmentTypeByBigType" parameterType="String" resultMap="SdEquipmentTypeResult">
+        <include refid="selectSdEquipmentTypeVo"/>
+        where 1=1
+        <if test="bigType != null and bigType !=''">
+            and big_type like concat('%', #{bigType}, '%')
+        </if>
+    </select>
+
+    <select id="selectSdEquipmentTypeGroupByBigType" resultMap="SdEquipmentTypeResult">
+        <include refid="selectSdEquipmentTypeVo"/>
+        WHERE big_type is not null  and big_type not in('')
+        group by big_type
+    </select>
+
+    <select id="selectSdEquipmentTypeHasList" parameterType="String" resultMap="SdEquipmentTypeResult">
+        SELECT
+		b.type_id, b.type_name, b.type_abbr,b.create_by, b.create_time, b.update_by, b.update_time,b.icon_file_id,b.icon_height,b.icon_width,b.is_control
+		from sd_equipment_type b
+		LEFT JOIN sd_devices a on a.eq_type = b.type_id
+		where
+		a.eq_tunnel_id = #{tunnelId}
+		and
+        b.is_control = 1
+		GROUP BY b.type_id
+<!-- UNION
+select type_id, type_name, create_by, create_time, update_by, update_time,icon_file_id,icon_height,icon_width  from sd_equipment_type
+where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
+    </select>
+
+    <select id="selectList" resultType="com.tunnel.business.domain.dataInfo.SdEquipmentType">
+        select * from sd_equipment_type
+    </select>
+
+    <insert id="insertSdEquipmentType" parameterType="SdEquipmentType" useGeneratedKeys="true" keyProperty="typeId">
+        insert into sd_equipment_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">type_name,</if>
+            <if test="typeAbbr != null">type_abbr,</if>
+            <if test="iconWidth != null">icon_width,</if>
+            <if test="iconHeight != null">icon_height,</if>
+            <if test="isControl != null">is_control,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="iconFileId != null">icon_file_id,</if>
+            <if test="bigType != null">big_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeName != null">#{typeName},</if>
+            <if test="typeAbbr != null">#{typeAbbr},</if>
+            <if test="iconWidth != null">#{iconWidth},</if>
+            <if test="iconHeight != null">#{iconHeight},</if>
+            <if test="isControl != null">#{is_control},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="iconFileId != null">#{iconFileId},</if>
+            <if test="bigType != null">#{bigType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEquipmentType" parameterType="SdEquipmentType">
+        update sd_equipment_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeName != null">type_name = #{typeName},</if>
+            <if test="typeAbbr != null">type_abbr = #{typeAbbr},</if>
+            <if test="iconWidth != null">icon_width = #{iconWidth},</if>
+            <if test="iconHeight != null">icon_height = #{iconHeight},</if>
+            <if test="isControl != null">is_control = #{isControl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="iconFileId != null">icon_file_id = #{iconFileId},</if>
+            <if test="bigType != null">big_type = #{bigType},</if>
+        </trim>
+        where type_id = #{typeId}
+    </update>
+
+    <delete id="deleteSdEquipmentTypeById" parameterType="Long">
+        delete from sd_equipment_type where type_id = #{typeId}
+    </delete>
+
+    <delete id="deleteSdEquipmentTypeByIds" parameterType="String">
+        delete from sd_equipment_type where type_id in
+        <foreach item="typeId" collection="array" open="(" separator="," close=")">
+            #{typeId}
+        </foreach>
+    </delete>
+
+</mapper>

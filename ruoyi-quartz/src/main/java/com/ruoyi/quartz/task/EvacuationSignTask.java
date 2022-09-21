@@ -129,6 +129,7 @@ public class EvacuationSignTask {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);
             if (state != "" && state.equals("1")) {
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 codeMap = InductionlampUtil.getNowRunMode(ip, port);
                 state = handleDeviceStatus(sdDevices, codeMap);
                 String code = "";
@@ -154,6 +155,7 @@ public class EvacuationSignTask {
                 //FIRE=255表示所有疏散标志全开灯，表示当前隧道状态为正常状态
                 handleCodeMap(sdDevices, codeMap);
             } else if (state != "" && state.equals("0")) {
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 sendDataToWanJi(sdDevices, "lightOff", "");
             }
         } catch (Exception e) {

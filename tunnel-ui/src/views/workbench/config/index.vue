@@ -412,48 +412,45 @@
           :append-to-body="true"
           class="drawerTop"
         >
-          <!-- <div
+          <div
             style="width: 100%; height: 100%; padding: 20px 10px; display: flex"
           >
-            <div
-              style="
-                width: 25%;
-                height: 100%;
-                border: solid 1px red;
-                align-items: center;
-              "
-            >
+            <div class="drawerBox">
               <div
                 v-for="(item, index) in directionList"
                 :key="index"
-                style="
-                  width: 100%;
-                  height: 50%;
-                  border: solid 1px yellow;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                "
+                class="drawerDirection"
               >
                 {{ item.dictLabel }}
               </div>
             </div>
-            <div style="width: 75%; height: 100%; border: solid 1px green">
-              <div style="width:100%;height:50%;border:solid 1px white;display:flex;align-items: center;">
-                <el-checkbox-group v-model="checkList">
+            <div style="width: 75%; height: 100%">
+              <div class="drawerCheckbox">
+                <el-checkbox-group v-model="checkList1">
                   <el-checkbox
-                    v-for="data in item.childMenu"
-                    :label="data.id"
-                    :key="data.menu">
-                    {{data.menu}}
+                    v-for="(item, index) in tunnelLane"
+                    :key="index"
+                    :label="index + 1"
+                  >
                   </el-checkbox>
                 </el-checkbox-group>
+                <el-button type="primary" class="control" @click="controlCheZhi('0')">控制</el-button>
               </div>
-              
+              <div class="drawerCheckbox" v-if="directionList.length>1">
+                <el-checkbox-group v-model="checkList2">
+                  <el-checkbox
+                    v-for="(item, index) in tunnelLane"
+                    :key="index"
+                    :label="index + 1"
+                  >
+                  </el-checkbox>
+                </el-checkbox-group>
+                <el-button type="primary" class="control" @click="controlCheZhi('1')">控制</el-button>
+              </div>
             </div>
-          </div> -->
+          </div>
 
-          <div class="bingZhou">
+          <!-- <div class="bingZhou">
             <span>济南方向：</span>
             <div class="number" :class="checked1 ? 'drawerActive' : 'drawerNo'">
               1
@@ -484,7 +481,7 @@
             </div>
             <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
             <el-button type="primary" class="control">控制</el-button>
-          </div>
+          </div> -->
         </el-drawer>
         <el-drawer
           title="照明亮度自动控制"
@@ -777,25 +774,10 @@
                 <div style="width: 86px; text-align: center">
                   {{ item.laneNum }}车道
                 </div>
-                <div style="width: 94px; text-align: center" v-if="item.vehicleType">
+                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
                   {{ getCheXing(item.vehicleType) }}
-                </div>
+                </div> -->
               </div>
-              <!-- <el-row v-for="(item, index) in realTimeList" :key="index" class="listRow">
-              <el-col :span="3" style="text-align:center;">{{index+1}}</el-col>
-              <el-col :span="6">
-                {{item.vehicleLicense}}
-              </el-col>
-              <el-col :span="5">
-                {{item.speed}}km/h
-              </el-col>
-              <el-col :span="5">
-                {{item.laneNum}}车道
-              </el-col>
-              <el-col :span="5">
-                {{getCheXing(item.vehicleType)}}
-              </el-col>
-            </el-row> -->
             </vue-seamless-scroll>
           </div>
         </div>
@@ -2628,7 +2610,9 @@ export default {
           label: "",
         },
       ],
-      checkList:["1"],
+      checkList1: [],
+      checkList2: [],
+
       //抽屉
       drawerA: false,
       drawerB: false,
@@ -3230,7 +3214,6 @@ export default {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
     });
-    // this.getCheXing()
 
     //调取滚动条
     this.srollAuto();
@@ -3434,6 +3417,14 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 抽屉 车指控制
+    controlCheZhi(num){
+      console.log(num,"num")
+      console.log(this.checkList1,"checkList1")
+      console.log(this.checkList2,"checkList2")
+      // 上传成功后记得把this.checkList清空
+
+    },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
       this.$router.push({
@@ -6644,10 +6635,27 @@ export default {
   height: 20.4%;
   top: 54%;
 }
-
+.drawerBox {
+  width: 25%;
+  height: 100%;
+  align-items: center;
+  .drawerDirection {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+.drawerCheckbox {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+}
 .control {
   width: 40px !important;
-  height: 28px !important;
+  height: 26px !important;
   text-align: center;
   line-height: 22px;
   padding: 0px 0px !important;
@@ -6664,10 +6672,10 @@ export default {
 //多选框选中样式
 ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
   background-color: white;
-  width: 20px;
-  height: 21px;
-  border: solid 1px #dcad76;
-  box-shadow: 1px 1px 2px #dcad76;
+  width: 26px;
+  height: 26px;
+  border: solid 1px #fff;
+  // box-shadow: 1px 1px 2px #dcad76;
 }
 
 ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner::after {
@@ -6676,10 +6684,28 @@ export default {
   border: 2px solid #dcad76; // 是改这里的颜色
   border-left: 0;
   border-top: 0;
-  top: 3px;
-  left: 5px;
+  top: 6px;
+  left: 7px;
 }
-
+::v-deep .rtl .el-checkbox__input {
+  transform: translateX(28px);
+}
+::v-deep .rtl .el-checkbox__label {
+  transform: translateX(-25px);
+  width: 26px;
+  height: 26px;
+  background: #2d69a5;
+  line-height: 26px;
+  color: white;
+}
+::v-deep .rtl {
+  .checkbox {
+    margin-right: 20px !important;
+  }
+  .el-checkbox__input.is-checked + .el-checkbox__label {
+    background: #ec9d3c;
+  }
+}
 //title
 ::v-deep .el-drawer__header {
   // background-color: #00C9FE;
@@ -6699,9 +6725,9 @@ export default {
     display: flex;
     // width: 56px;
     // height: 28px;
-    height:50%;
-    padding:20px;
-    
+    height: 50%;
+    padding: 20px;
+
     border: solid 1px red;
     font-size: 12px;
     display: flex;
@@ -6801,8 +6827,8 @@ export default {
 
 ::v-deep .el-checkbox__inner {
   width: 26px;
-  height: 28px;
-  border: 1px solid #02c6fa;
+  height: 26px;
+  border: 1px solid #fff;
   border-radius: 0px;
 }
 

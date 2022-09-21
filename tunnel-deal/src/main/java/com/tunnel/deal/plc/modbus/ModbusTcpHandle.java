@@ -1,7 +1,14 @@
 package com.tunnel.deal.plc.modbus;
 
+import com.alibaba.fastjson.JSON;
 import com.serotonin.modbus4j.ModbusMaster;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
+
+import java.util.Map;
 
 /*
  *
@@ -30,6 +37,24 @@ public class ModbusTcpHandle {
         }
         return instance;
     }
+
+    public void toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices) {
+        String[] point = sdDevices.getEqControlPointAddress().split(",");
+        Long deviceType = sdDevices.getEqType();
+        String plcId = sdDevices.getFEqId();
+        Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
+        ModbusMaster master = masterMap.get(plcId);
+        if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+            ModbusTcpHandle.getInstance().toControlCZ(master, 1, Integer.parseInt(point[0]) - 1, ctrState);
+        }
+    }
+
+
+
+
+
+
+
 
     /*
      * 车道指示器控制（根据现场实际点位情况做控制）-网联测试基地凤凰山隧道

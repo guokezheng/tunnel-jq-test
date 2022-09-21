@@ -13,7 +13,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

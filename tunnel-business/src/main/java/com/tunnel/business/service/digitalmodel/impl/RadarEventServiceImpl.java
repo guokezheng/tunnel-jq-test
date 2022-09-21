@@ -19,7 +19,7 @@ import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
-import com.tunnel.business.ws.WebSocketServer;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,8 +112,8 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-//            WebSocketService.broadcast("WjEvent",object.toString());
-            WebSocketServer.sendMessage(object.toString());
+            WebSocketService.broadcast("WjEvent",object.toString());
+//            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
     }
@@ -219,8 +219,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-//        WebSocketService.broadcast("dataList",object);
-        WebSocketServer.sendMessage(object.toString());
+        WebSocketService.broadcast("dataList",object);
+//        WebSocketServer.sendMessage(object.toString());
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt", true));  //这个ture是内容不覆盖继续写
         bufferedWriter.write(object.toString());
         bufferedWriter.newLine();

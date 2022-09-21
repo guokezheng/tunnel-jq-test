@@ -389,7 +389,10 @@ public class RadarEventServiceImpl implements RadarEventService {
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
         List<SdRadarDevice> list = new ArrayList<>();
+        int shouBaoAlarmCode = DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode();
+        int flameDetectorAlarmCode = DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode();
         for (SdDevices f : devices) {
+            //设备类型34对应的是消防主机，没有必要提供给万集
             if (f.getEqType().longValue() == 34L) {
                 continue;
             }
@@ -411,12 +414,32 @@ public class RadarEventServiceImpl implements RadarEventService {
             sdRadarDevice.setTransform(f.getRemark());
             com.alibaba.fastjson.JSONObject deviceData = new com.alibaba.fastjson.JSONObject();
             if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
-                    || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "32".equals(sdRadarDevice.getDeviceType())) {
+                    || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())) {
                 List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
                 for (int i = 0;i < maps.size();i++) {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null) {
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                    } else {
+                        deviceData.put("runStatus", 0);
+                    }
+                }
+            }else if ("32".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 0) {
+                        deviceData.put("runStatus", 0);
+                        deviceData.put("alarmSource", 0);
+                    } else if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 1) {
+                        deviceData.put("runStatus", 1);
+                        if (map.get("itemId") != null
+                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(shouBaoAlarmCode).longValue()) {
+                            deviceData.put("alarmSource", 2);
+                        } else if (map.get("itemId") != null
+                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(flameDetectorAlarmCode).longValue()) {
+                            deviceData.put("alarmSource", 1);
+                        }
                     }
                 }
             } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {
@@ -436,6 +459,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null) {
                         deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                    } else {
+                        deviceData.put("runStatus", 0);
                     }
                 }
             } else if ("31".equals(sdRadarDevice.getDeviceType())) {
@@ -444,11 +469,21 @@ public class RadarEventServiceImpl implements RadarEventService {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null && map.get("itemId") != null
                             && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode()).longValue()) {
-                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                        if (Integer.parseInt(map.get("data").toString()) == 0) {
+                            deviceData.put("runStatus", 2);
+                        } else {
+                            deviceData.put("runStatus", 1);
+                        }
+                    } else {
+                        deviceData.put("runStatus", 2);
                     }
                     if (map.get("data") != null && map.get("itemId") != null
                             && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()).longValue()) {
-                        deviceData.put("runMode", Integer.parseInt(map.get("data").toString()));
+                        if (Integer.parseInt(map.get("data").toString()) == 2) {
+                            deviceData.put("runMode", 1);
+                        } else {
+                            deviceData.put("runMode", 2);
+                        }
                     }
                 }
             } else if ("30".equals(sdRadarDevice.getDeviceType())) {
@@ -457,11 +492,21 @@ public class RadarEventServiceImpl implements RadarEventService {
                     Map<String, Object> map = maps.get(i);
                     if (map.get("data") != null && map.get("itemId") != null
                             && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode()).longValue()) {
-                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                        if (Integer.parseInt(map.get("data").toString()) == 0) {
+                            deviceData.put("runStatus", 2);
+                        } else {
+                            deviceData.put("runStatus", 1);
+                        }
+                    } else {
+                        deviceData.put("runStatus", 2);
                     }
                     if (map.get("data") != null && map.get("itemId") != null
                             && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()).longValue()) {
-                        deviceData.put("runMode", Integer.parseInt(map.get("data").toString()));
+                        if (Integer.parseInt(map.get("data").toString()) == 2) {
+                            deviceData.put("runMode", 1);
+                        } else {
+                            deviceData.put("runMode", 2);
+                        }
                     }
                     if (map.get("data") != null && map.get("itemId") != null
                             && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()).longValue()) {

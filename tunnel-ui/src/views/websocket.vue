@@ -20,7 +20,7 @@ export default {
       // 建立 websocket 连接
       this.socket.initialize({
 
-        url: 'ws://' + location.hostname + ':' + port + path,
+        url: 'ws://10.168.65.230' + ':' + port + path,
         // url: 'ws://10.3.16.40'+ ':' + port + path,
         //  url: 'ws://10.168.64.171'+ ':' + port + path,
         //  url: 'ws://10.168.65.230'+ ':' + port + path,
@@ -34,6 +34,7 @@ export default {
       }
       this.socket.onmessage = (message) => {
         message = JSON.parse(message)
+
         const method = message.method;
 
         if (method !== 'event') {
@@ -43,6 +44,9 @@ export default {
         const params = message.params;
         const subEvent = params.subEvent;
         const content = params.content;
+        var content1 = JSON.parse(content)
+        var content2 = content1.sdEventList
+
         switch (subEvent) {
           case 'payment_webSocket_send':
             this.$store.commit('PAYMENT', content)
@@ -53,9 +57,13 @@ export default {
           case 'realTimeLaneTrajectory':
             this.$store.commit('REALTIMELANETRAJECTORY', content)
             break;
-          case 'WjEvent':
-            this.$store.commit('WJEVENT', content)
+          case 'sdEventList':
+            this.$store.commit('SDEVENTLIST', content2)
             break;
+          case 'radarDataList':
+            this.$store.commit('RADARDATALIST', content2)
+            break;
+            
           default:
         }
       }

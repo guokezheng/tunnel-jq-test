@@ -133,13 +133,13 @@ export default {
   computed: {
     ...mapState({
       // WjEvent: (state) => state.websocket.WjEvent,
-      sdEvent: state => state.wsData.sdEvent
+      sdEventList: (state) => state.websocket.sdEventList,
 
     }),
   },
   watch: {
-    sdEvent(event) {
-      console.log(event, "websockt接收数据");
+    sdEventList(event) {
+      console.log(event, "websockt事件表格弹窗");
       for (let i = 0; i < event.length; i++) {
         for (let z = 0; z < this.tabList.length; z++) {
           if (event[i].eventSource == this.tabList[z].dictValue) {

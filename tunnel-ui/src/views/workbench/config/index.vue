@@ -3220,13 +3220,14 @@ export default {
   },
 
   watch: {
-    sdEvent(event) {
+    sdEventList(event) {
+      console.log(event,'websockt工作台接收事件弹窗')
       for (var item of event) {
         this.trafficList.unshift(item);
       }
     },
     radarDataList(event) {
-      // console.log(event,'websockt工作台接收感知事件数据')
+      console.log(event,'websockt工作台接收感知事件数据')
       this.realTimeList = event;
     },
 
@@ -3359,8 +3360,8 @@ export default {
     },
     ...mapState({
       //  WjEvent: state => state.websocket.WjEvent,
-      radarDataList: (state) => state.wsData.radarDataList,
-      sdEvent: (state) => state.wsData.sdEvent,
+      radarDataList: (state) => state.websocket.radarDataList,
+      sdEventList: (state) => state.websocket.sdEventList,
     }),
   },
   mounted() {

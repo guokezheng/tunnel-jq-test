@@ -78,6 +78,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         if (!deviceDataList.isEmpty()) {
             for (int i = 0;i < deviceDataList.size();i++) {
                 SdDeviceData data = deviceDataList.get(i);
+                //诱导灯
                 if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
                     if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
                         devices.put("state", data.getData());
@@ -86,6 +87,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
                         devices.put("frequency", data.getData());
                     }
+                //疏散标志
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
                     if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
                         devices.put("state", data.getData());
@@ -96,10 +98,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
                         devices.put("fireMark", data.getData());
                     }
+                //车指
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
                     if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
                         devices.put("state", data.getData());
                     }
+                //声光报警器
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
                     if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
                             || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode())) {

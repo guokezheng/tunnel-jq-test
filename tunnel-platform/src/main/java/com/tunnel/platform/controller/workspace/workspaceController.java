@@ -12,6 +12,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
@@ -55,20 +56,38 @@ public class workspaceController extends BaseController {
         return "get 3d info";
     }
 
+    //PLC车指控制接口
     @PostMapping("/controlDevice")
-    public void controlDevice(String devId, String devType, String brightness, String frequency, String state, String tunnelId) {
-        Map<String, Object> instruction = new HashMap<>();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        //设备id
-        instruction.put("deviceId", devId);
-        instruction.put("ctrState", state);
-        if (devType != null && devType.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())) {
-            instruction.put("brightness", brightness);
-            instruction.put("frequency", frequency);
-            SpringUtils.getBean(RedisPubSub.class).publish("GL:CONTROL", JSON.toJSONString(instruction));
-        } else {
-            ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+    public void controlDevice(@RequestBody Map<String, Object> map) {
+        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+            throw new RuntimeException("未指定设备，请联系管理员");
+        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
         }
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+    }
+
+    //诱导灯控制接口
+    @PostMapping("/controlGuidanceLampDevice")
+    public void controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
+        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+            throw new RuntimeException("未指定设备，请联系管理员");
+        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+        } else if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+        } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+        }
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        String brightness = map.get("brightness").toString();
+        String frequency = map.get("frequency").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency);
     }
 
 

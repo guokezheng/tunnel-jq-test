@@ -78,7 +78,7 @@ public class EvacuationSignTask {
         if (runStatus.equals("lightOn")) {
             runStatus = "1";
         } else if (runStatus.equals("lightOff")) {
-            runStatus = "0";
+            runStatus = "2";
         }
         jsonObject.put("runStatus", Integer.valueOf(runStatus));
         jsonObject.put("runMode", runMode);

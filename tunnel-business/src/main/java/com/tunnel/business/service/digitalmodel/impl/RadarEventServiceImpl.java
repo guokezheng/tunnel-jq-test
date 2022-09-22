@@ -316,7 +316,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String deviceStatus = devicesMapper.selectEqStatus(deviceId);
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
-                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "32".equals(deviceType)) {
+                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType)) {
 //            String runStatus = wjDeviceData.getRunStatus() + "";
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
@@ -342,7 +342,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData", parse);
 //            jsonObject.put("runStatus", runStatus);
-        } else if ("31".equals(deviceType)) {
+        } else if ("31".equals(deviceType) || "30".equals(deviceType)) {
 //            Integer runStatus = wjDeviceData.getRunStatus();
 //            Integer runMode = wjDeviceData.getRunMode();
             jsonObject.put("deviceId", deviceId);
@@ -380,6 +380,16 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData", parse);
 //            jsonObject.put("message",message);
+        } else if ("32".equals(deviceType)) {
+//            Double windSpeed = wjDeviceData.getWindSpeed();
+//            String windDirection = wjDeviceData.getWindDirection();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("deviceData", parse);
+//            jsonObject.put("windSpeed",windSpeed);
+//            jsonObject.put("windDirection",windDirection);
         }
         log.info("-----测试测试测试----{}", jsonObject);
         kafkaTemplate.send(RadarEventConstants.BASEDEVICESTATUS, jsonObject.toString());

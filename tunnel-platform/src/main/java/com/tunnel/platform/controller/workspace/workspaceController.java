@@ -58,7 +58,7 @@ public class workspaceController extends BaseController {
 
     //PLC车指控制接口
     @PostMapping("/controlDevice")
-    public void controlDevice(@RequestBody Map<String, Object> map) {
+    public AjaxResult controlDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
@@ -67,12 +67,13 @@ public class workspaceController extends BaseController {
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        return AjaxResult.success(controlState);
     }
 
     //诱导灯控制接口
     @PostMapping("/controlGuidanceLampDevice")
-    public void controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
+    public AjaxResult controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
@@ -87,7 +88,8 @@ public class workspaceController extends BaseController {
         String brightness = map.get("brightness").toString();
         String frequency = map.get("frequency").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency);
+        int controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency);
+        return AjaxResult.success(controlState);
     }
 
 

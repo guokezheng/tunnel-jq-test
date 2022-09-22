@@ -392,6 +392,9 @@ public class RadarEventServiceImpl implements RadarEventService {
 //            jsonObject.put("windDirection",windDirection);
         }
         log.info("-----测试测试测试----{}", jsonObject);
+        if (jsonObject.equals(null) || jsonObject.isEmpty()) {
+            return;
+        }
         kafkaTemplate.send(RadarEventConstants.BASEDEVICESTATUS, jsonObject.toString());
     }
 

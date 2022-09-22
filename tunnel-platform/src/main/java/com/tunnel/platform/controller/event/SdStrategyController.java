@@ -129,7 +129,6 @@ public class SdStrategyController extends BaseController
      *
      * 修改控制策略
      */
-   // @PreAuthorize(hasPermi = "system:strategy:add')")
     @Log(title = "控制策略", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/updateStrategysInfo")
     @ApiOperation("修改控制策略")
@@ -147,7 +146,6 @@ public class SdStrategyController extends BaseController
     {
     	String guid = UUIDUtil.getRandom32BeginTimePK();
     	return guid;
-//        return toAjax();
     }
 
     /**

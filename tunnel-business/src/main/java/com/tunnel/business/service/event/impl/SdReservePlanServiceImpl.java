@@ -145,8 +145,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
                         }
                     }
                 }
+                list.get(i).setStrategyNames(strategyNames);
             }
-            list.get(i).setStrategyNames(strategyNames);
         }
         return list;
     }

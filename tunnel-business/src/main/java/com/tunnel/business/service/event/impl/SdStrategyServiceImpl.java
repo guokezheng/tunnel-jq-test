@@ -537,7 +537,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (Map<String,Object> map : timeSharingControl) {
                 List<String> value = (List<String>) map.get("value");
                 String equipments = StringUtils.join(value,",");
-                String equipmentTypeId = model.getEquipmentTypeId();
+                String equipmentTypeId = map.get("type") + "";
                 String eqState = (String) map.get("state");
                 String time = (String) map.get("time");
                 /*try {

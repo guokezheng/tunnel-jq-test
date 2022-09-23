@@ -119,8 +119,7 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     ...mapState({
-      sdEvent: state => state.wsData.sdEvent,
-
+      sdEventList: (state) => state.websocket.sdEventList,
       theme: state => state.settings.theme,
       sideTheme: state => state.settings.sideTheme,
       sidebar: state => state.app.sidebar,
@@ -209,10 +208,8 @@ export default {
     sideTheme(val) {
       document.getElementsByTagName('body')[0].className = val;
     },
-    sdEvent( event ){
-      console.log(event,"WjEventWjEventWjEventWjEventWjEventevent")
+    sdEventList(event){
       if(event){
-        // this.eventDialog = true
         this.eventDialogTable = true
 
       }

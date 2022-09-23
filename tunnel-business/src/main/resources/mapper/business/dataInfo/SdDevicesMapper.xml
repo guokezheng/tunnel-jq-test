@@ -605,4 +605,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectFireComponentsList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select * from sd_devices where f_eq_id = #{fEqId}
     </select>
+
+    <select id="selectDeviceDataAndUnit" resultType="hashmap">
+        select sdd.data data, sdt.unit unit, sdd.device_id deviceId, sdt.id itemId
+        from sd_device_data sdd
+        left join sd_device_type_item sdt on sdd.item_id=sdt.id
+        where device_id=#{eqId}
+    </select>
 </mapper>

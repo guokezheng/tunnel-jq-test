@@ -52,4 +52,7 @@ public class WjDeviceData {
     @ApiModelProperty("设备状态")
     private Integer deviceStatus;
 
+    @ApiModelProperty("设备状态")
+    private Integer alarmSource;
+
 }

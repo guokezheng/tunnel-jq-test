@@ -1,4 +1,4 @@
-package com.zc.common.core.redis;
+package com.zc.common.core.redis.pubsub;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

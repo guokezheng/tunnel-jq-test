@@ -4,7 +4,8 @@ const websocket = {
     payment: undefined,
     carList:[],
     realTimeLaneTrajectory:{},
-    WjEvent:{}
+    sdEventList:{},
+    radarDataList:{}
   },
 
   mutations: {
@@ -17,8 +18,11 @@ const websocket = {
     REALTIMELANETRAJECTORY: (state, data) => {
       state.realTimeLaneTrajectory = data
     },
-    WJEVENT: (state, data) => {
-      state.WjEvent = data
+    SDEVENTLIST: (state, data) => {
+      state.sdEventList = data
+    },
+    RADARDATALIST: (state, data) => {
+      state.radarDataList = data
     },
 },
 

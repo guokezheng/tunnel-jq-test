@@ -3,10 +3,12 @@ package com.tunnel.business.service.digitalmodel.impl;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventSourceEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
@@ -17,7 +19,7 @@ import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
-import com.tunnel.business.ws.WebSocketServer;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,8 +112,8 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-//            WebSocketService.broadcast("WjEvent",object.toString());
-            WebSocketServer.sendMessage(object.toString());
+            WebSocketService.broadcast("WjEvent",object.toString());
+//            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
     }
@@ -217,8 +219,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-//        WebSocketService.broadcast("dataList",object);
-        WebSocketServer.sendMessage(object.toString());
+        WebSocketService.broadcast("dataList",object);
+//        WebSocketServer.sendMessage(object.toString());
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt", true));  //这个ture是内容不覆盖继续写
         bufferedWriter.write(object.toString());
         bufferedWriter.newLine();
@@ -314,7 +316,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String deviceStatus = devicesMapper.selectEqStatus(deviceId);
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
-                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType) || "32".equals(deviceType)) {
+                || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType)) {
 //            String runStatus = wjDeviceData.getRunStatus() + "";
             jsonObject.put("deviceId", deviceId);
             jsonObject.put("tunnelId", tunnelId);
@@ -340,7 +342,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData", parse);
 //            jsonObject.put("runStatus", runStatus);
-        } else if ("31".equals(deviceType)) {
+        } else if ("31".equals(deviceType) || "30".equals(deviceType)) {
 //            Integer runStatus = wjDeviceData.getRunStatus();
 //            Integer runMode = wjDeviceData.getRunMode();
             jsonObject.put("deviceId", deviceId);
@@ -378,8 +380,21 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
             jsonObject.put("deviceData", parse);
 //            jsonObject.put("message",message);
+        } else if ("32".equals(deviceType)) {
+//            Double windSpeed = wjDeviceData.getWindSpeed();
+//            String windDirection = wjDeviceData.getWindDirection();
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("deviceData", parse);
+//            jsonObject.put("windSpeed",windSpeed);
+//            jsonObject.put("windDirection",windDirection);
         }
         log.info("-----测试测试测试----{}", jsonObject);
+        if (jsonObject.equals(null) || jsonObject.isEmpty()) {
+            return;
+        }
         kafkaTemplate.send(RadarEventConstants.BASEDEVICESTATUS, jsonObject.toString());
     }
 
@@ -387,171 +402,162 @@ public class RadarEventServiceImpl implements RadarEventService {
     public Object selectDevice(String tunnelId) {
         List<SdDevices> devices = devicesMapper.selectDevice(tunnelId);
         List<SdRadarDevice> list = new ArrayList<>();
-        /*
-        //数据结构为hash，使用Pipeline(管道)，组合命令，批量操作redis
-        RedisTemplate redisTemplate = redisCache.redisTemplate;
-        //返回储存的集合-json
-        List<Object> redisResult = redisTemplate.executePipelined(
-            new RedisCallback<String>() {
-                // 自定义序列化
-                RedisSerializer keyS = redisTemplate.getKeySerializer();
-                @Override
-                public String doInRedis(RedisConnection redisConnection) throws DataAccessException {
-                    for (SdDevices e : devices) {
-                        redisConnection.hGet(keyS.serialize(RadarEventConstants.DEVICE_DATA), keyS.serialize(RadarEventConstants.DEVICE_DATA+e.getEqId()));
+        int shouBaoAlarmCode = DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode();
+        int flameDetectorAlarmCode = DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode();
+        for (SdDevices f : devices) {
+            //设备类型34对应的是消防主机，没有必要提供给万集
+            if (f.getEqType().longValue() == 34L) {
+                continue;
+            }
+            SdRadarDevice sdRadarDevice = new SdRadarDevice();
+            sdRadarDevice.setDeviceId(f.getEqId());
+            sdRadarDevice.setDeviceType(f.getEqType() + "");
+            sdRadarDevice.setDeviceName(f.getEqName());
+            if (StringUtils.isNotEmpty(f.getEqStatus())) {
+                sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
+            }
+            if (StringUtils.isNotEmpty(f.getLng())) {
+                sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
+            }
+            if (StringUtils.isNotEmpty(f.getLat())) {
+                sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
+            }
+            sdRadarDevice.setDirection(f.getEqDirection());
+            sdRadarDevice.setStakeNum(f.getPile());
+            sdRadarDevice.setTransform(f.getRemark());
+            com.alibaba.fastjson.JSONObject deviceData = new com.alibaba.fastjson.JSONObject();
+            if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
+                    || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                    } else {
+                        deviceData.put("runStatus", 0);
                     }
-                    return null;
                 }
-            }, redisTemplate.getValueSerializer());
-            */
-        devices.forEach(
-                f -> {
-                    SdRadarDevice sdRadarDevice = new SdRadarDevice();
-                    sdRadarDevice.setDeviceId(f.getEqId());
-                    sdRadarDevice.setDeviceType(f.getEqType() + "");
-                    sdRadarDevice.setDeviceName(f.getEqName());
-                    if (StringUtils.isNotEmpty(f.getEqStatus())) {
-                        sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
+            }else if ("32".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 0) {
+                        deviceData.put("runStatus", 0);
+                        deviceData.put("alarmSource", 0);
+                    } else if (map.get("data") != null && Integer.valueOf(map.get("data").toString()) == 1) {
+                        deviceData.put("runStatus", 1);
+                        if (map.get("itemId") != null
+                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(shouBaoAlarmCode).longValue()) {
+                            deviceData.put("alarmSource", 2);
+                        } else if (map.get("itemId") != null
+                                && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(flameDetectorAlarmCode).longValue()) {
+                            deviceData.put("alarmSource", 1);
+                        }
                     }
-                    if (StringUtils.isNotEmpty(f.getLng())) {
-                        sdRadarDevice.setLongitude(Double.parseDouble(f.getLng()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getLat())) {
-                        sdRadarDevice.setLatitude(Double.parseDouble(f.getLat()));
-                    }
-                    sdRadarDevice.setDirection(f.getEqDirection());
-                    sdRadarDevice.setStakeNum(f.getPile());
-                    sdRadarDevice.setTransform(f.getRemark());
-                    WjDeviceData deviceData = new WjDeviceData();
-                    if ("1".equals(sdRadarDevice.getDeviceType()) || "2".equals(sdRadarDevice.getDeviceType()) || "3".equals(sdRadarDevice.getDeviceType()) || "4".equals(sdRadarDevice.getDeviceType())
-                            || "10".equals(sdRadarDevice.getDeviceType()) || "12".equals(sdRadarDevice.getDeviceType()) || "13".equals(sdRadarDevice.getDeviceType()) || "32".equals(sdRadarDevice.getDeviceType())) {
-                    /*redisResult.forEach(
-                        v->{
-                            if (v!=null){
-                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                    JSON parse = JSONUtil.parse(v);
-                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                    deviceData.setRunStatus(wjDeviceData.getRunStatus());
-                                }
-                            }
-                        }
-                    );*/
-                        SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())) {
-                            deviceData.setRunDate(sdDeviceDataItem.getData());
-                        }
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())) {
-                            deviceData.setUnit(sdDeviceDataItem.getUnit());
-                        }
-                    } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {
-                    /*redisResult.forEach(
-                            v->{
-                                if (v!=null){
-                                    if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                        JSON parse = JSONUtil.parse(v);
-                                        WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                        deviceData.setRunDate(wjDeviceData.getRunDate());
-                                        deviceData.setUnit(wjDeviceData.getUnit());
-                                    }
-                                }
-                            }
-                    );*/
-                        SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())) {
-                            deviceData.setRunDate(sdDeviceDataItem.getData());
-                        }
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())) {
-                            deviceData.setUnit(sdDeviceDataItem.getUnit());
-                        }
-                    } else if ("6".equals(sdRadarDevice.getDeviceType()) || "7".equals(sdRadarDevice.getDeviceType()) || "8".equals(sdRadarDevice.getDeviceType()) || "9".equals(sdRadarDevice.getDeviceType())) {
-                   /* redisResult.forEach(
-                        v->{
-                            if (v!=null){
-                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                    JSON parse = JSONUtil.parse(v);
-                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                    deviceData.setRunStatus(wjDeviceData.getRunStatus());
-                                }
-                            }
-                        }
-                    );*/
-                        SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())) {
-                            deviceData.setRunDate(sdDeviceDataItem.getData());
-                        }
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())) {
-                            deviceData.setUnit(sdDeviceDataItem.getUnit());
-                        }
-                    } else if ("31".equals(sdRadarDevice.getDeviceType())) {
-                   /* redisResult.forEach(
-                            v->{
-                                if (v!=null){
-                                    if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                        JSON parse = JSONUtil.parse(v);
-                                        WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                        deviceData.setRunStatus(wjDeviceData.getRunStatus());
-                                        deviceData.setRunMode(wjDeviceData.getRunMode());
-                                    }
-                                }
-                            }
-                    );*/
-                    } else if ("17".equals(sdRadarDevice.getDeviceType())) {
-                    /*redisResult.forEach(
-                        v->{
-                            if (v!=null){
-                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                    JSON parse = JSONUtil.parse(v);
-                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                    deviceData.setWindSpeed(wjDeviceData.getWindSpeed());
-                                    deviceData.setWindDirection(wjDeviceData.getWindDirection());
-                                }
-                            }
-                        }
-                    );*/
-                        SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())) {
-                            deviceData.setRunDate(sdDeviceDataItem.getData());
-                        }
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())) {
-                            deviceData.setUnit(sdDeviceDataItem.getUnit());
-                        }
-                    } else if ("19".equals(sdRadarDevice.getDeviceType())) {
-                    /*redisResult.forEach(
-                        v->{
-                            if (v!=null){
-                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                    JSON parse = JSONUtil.parse(v);
-                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                    deviceData.setCO(wjDeviceData.getCO());
-                                    deviceData.setVI(wjDeviceData.getCO());
-                                }
-                            }
-                        }
-                    );*/
-                        SdDeviceDataItem sdDeviceDataItem = devicesMapper.selectDataUnit(f.getEqId());
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getData())) {
-                            deviceData.setRunDate(sdDeviceDataItem.getData());
-                        }
-                        if (StringUtils.isNotEmpty(sdDeviceDataItem.getUnit())) {
-                            deviceData.setUnit(sdDeviceDataItem.getUnit());
-                        }
-                    } else if ("16".equals(sdRadarDevice.getDeviceType())) {
-                    /*redisResult.forEach(
-                        v->{
-                            if (v!=null){
-                                if (v.toString().contains(sdRadarDevice.getDeviceId())){
-                                    JSON parse = JSONUtil.parse(v);
-                                    WjDeviceData wjDeviceData = JSONUtil.toBean(parse.toString(), WjDeviceData.class);
-                                    deviceData.setMessage(wjDeviceData.getMessage());
-                                }
-                            }
-                        }
-                    );*/
-                    }
-                    sdRadarDevice.setDeviceData(deviceData);
-                    list.add(sdRadarDevice);
                 }
-        );
+            } else if ("5".equals(sdRadarDevice.getDeviceType()) || "15".equals(sdRadarDevice.getDeviceType()) || "28".equals(sdRadarDevice.getDeviceType()) || "18".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("runDate", Double.parseDouble(map.get("data").toString()));
+                    }
+                    if (map.get("unit") != null) {
+                        deviceData.put("unit", map.get("unit").toString());
+                    }
+                }
+            } else if ("6".equals(sdRadarDevice.getDeviceType()) || "7".equals(sdRadarDevice.getDeviceType()) || "8".equals(sdRadarDevice.getDeviceType()) || "9".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("runStatus", Integer.parseInt(map.get("data").toString()));
+                    } else {
+                        deviceData.put("runStatus", 0);
+                    }
+                }
+            } else if ("31".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode()).longValue()) {
+                        if (Integer.parseInt(map.get("data").toString()) == 0) {
+                            deviceData.put("runStatus", 2);
+                        } else {
+                            deviceData.put("runStatus", 1);
+                        }
+                    } else {
+                        deviceData.put("runStatus", 2);
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()).longValue()) {
+                        if (Integer.parseInt(map.get("data").toString()) == 2) {
+                            deviceData.put("runMode", 1);
+                        } else {
+                            deviceData.put("runMode", 2);
+                        }
+                    }
+                }
+            } else if ("30".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode()).longValue()) {
+                        if (Integer.parseInt(map.get("data").toString()) == 0) {
+                            deviceData.put("runStatus", 2);
+                        } else {
+                            deviceData.put("runStatus", 1);
+                        }
+                    } else {
+                        deviceData.put("runStatus", 2);
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()).longValue()) {
+                        if (Integer.parseInt(map.get("data").toString()) == 2) {
+                            deviceData.put("runMode", 1);
+                        } else {
+                            deviceData.put("runMode", 2);
+                        }
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()).longValue()) {
+                        deviceData.put("fireMark", Integer.parseInt(map.get("data").toString()));
+                    }
+                }
+            } else if ("17".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode()).longValue()) {
+                        deviceData.put("windSpeed", Double.parseDouble(map.get("data").toString()));
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode()).longValue()) {
+                        deviceData.put("windDirection", map.get("data").toString());
+                    }
+                }
+            } else if ("19".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.CO.getCode()).longValue()) {
+                        deviceData.put("CO", Double.parseDouble(map.get("data").toString()));
+                    }
+                    if (map.get("data") != null && map.get("itemId") != null
+                            && Long.valueOf(map.get("itemId").toString()).longValue() == Long.valueOf(DevicesTypeItemEnum.VI.getCode()).longValue()) {
+                        deviceData.put("VI", Double.parseDouble(map.get("data").toString()));
+                    }
+                }
+            } else if ("16".equals(sdRadarDevice.getDeviceType())) {
+
+            }
+            sdRadarDevice.setDeviceData(deviceData);
+            list.add(sdRadarDevice);
+        }
         //在线
         int normal = 0;
         //离线

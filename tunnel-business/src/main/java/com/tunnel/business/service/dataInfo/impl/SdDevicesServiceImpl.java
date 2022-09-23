@@ -6,8 +6,10 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,16 +40,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     private ISdFixedCodeService sdFixedCodeService;
     @Autowired
     private ISdTunnelsService sdTunnelsService;
-
     @Autowired
     private ISdEquipmentTypeService equipmentTypeService;
-
     @Autowired
     private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
     @Autowired
     private IInductionlampControlStatusParamService iInductionlampControlStatusParamService;
     @Autowired
     private InductionlampControlStatusParamMapper inductionlampControlStatusParamMapper;
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
 
 
     /**
@@ -69,7 +71,50 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
-        return sdDevicesMapper.queryDeviceById(eqId);
+        Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(eqId);
+        List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (!deviceDataList.isEmpty()) {
+            for (int i = 0;i < deviceDataList.size();i++) {
+                SdDeviceData data = deviceDataList.get(i);
+                //诱导灯
+                if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
+                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
+                        devices.put("frequency", data.getData());
+                    }
+                //疏散标志
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
+                        devices.put("frequency", data.getData());
+                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
+                        devices.put("fireMark", data.getData());
+                    }
+                //车指
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
+                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
+                        devices.put("state", data.getData());
+                    }
+                //声光报警器
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
+                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
+                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode())) {
+                        if (devices.get("state") != null || devices.get("state").equals("0")) {
+                            devices.put("state", data.getData());
+                        }
+                    }
+                }
+            }
+        }
+        return devices;
     }
 
     /**

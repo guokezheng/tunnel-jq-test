@@ -75,7 +75,7 @@ public class YddTask {
         if (runStatus.equals("lightOn")) {
             runStatus = "1";
         } else if (runStatus.equals("lightOff")) {
-            runStatus = "0";
+            runStatus = "2";
         }
         jsonObject.put("runStatus", Integer.valueOf(runStatus));
         jsonObject.put("runMode", Integer.valueOf(runMode));
@@ -124,6 +124,7 @@ public class YddTask {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);
             if (state != "" && state.equals("1")) {
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
                 codeMap = InductionlampUtil.getNowRunMode(ip, port);
                 state = handleDeviceStatus(sdDevices, codeMap);
                 String code = "";
@@ -143,6 +144,7 @@ public class YddTask {
                     handleCodeMap(sdDevices, codeMap);
                 }
             } else if (state != "" && state.equals("0")) {
+                saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
                 sendDataToWanJi(sdDevices, "lightOff", "");
             }
 //                client.pushCode(codeMap.get("code").toString());

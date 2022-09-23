@@ -8,15 +8,6 @@ public class RedisChannelConstants {
 
 
     /**
-     * 群发（广播）
-     */
-    public static final String WEBSOCKET_BROADCAST = "websocket:broadcast";
-    /**
-     * 定向发送（指定客户端发送）
-     */
-    public static final String WEBSOCKET_DIRECTIONAL = "websocket:directional";
-
-    /**
      * 设置属性
      */
     public static final String IOT_SET_ATTRIBUTE = "iot:setAttribute";

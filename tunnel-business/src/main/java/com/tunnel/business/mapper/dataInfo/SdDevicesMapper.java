@@ -164,4 +164,6 @@ public interface SdDevicesMapper
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 
 	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
+
+	public List<Map<String, Object>> selectDeviceDataAndUnit(@Param("eqId") String eqId);
 }

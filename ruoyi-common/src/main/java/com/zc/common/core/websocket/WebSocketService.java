@@ -1,12 +1,13 @@
 package com.zc.common.core.websocket;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.zc.common.constant.RedisChannelConstants;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.constant.RedisStreamConstants;
+import com.zc.common.core.stream.RedisStream;
 import com.zc.common.core.websocket.pojo.CmdMsg;
 import com.zc.common.core.websocket.pojo.EventParam;
 import com.zc.common.core.websocket.pojo.RedisWebSocketMsg;
@@ -24,7 +25,7 @@ public class WebSocketService
 
     private static final String EVENT = "event";
 
-    private static final RedisPubSub redisPubSub = SpringUtils.getBean(RedisPubSub.class);
+    private static final RedisStream redisStream = SpringUtils.getBean(RedisStream.class);
 
     /**
      * 给指定客户端发送消息
@@ -84,14 +85,14 @@ public class WebSocketService
         redisWebSocketMsg.setCmdMsg(eventCmd);
         redisWebSocketMsg.setSubscriber(subscriber);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
         Type type = new TypeToken<RedisWebSocketMsg>()
         {
         }.getType();
 
         String msg = gson.toJson(redisWebSocketMsg, type);
 
-        redisPubSub.publish(RedisChannelConstants.WEBSOCKET_DIRECTIONAL, msg);
+        redisStream.add(RedisStreamConstants.WebSocketDirectional.KEY, "", msg);
     }
 
     /**
@@ -120,14 +121,14 @@ public class WebSocketService
 
         redisWebSocketMsg.setCmdMsg(eventCmd);
 
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
         Type type = new TypeToken<RedisWebSocketMsg>()
         {
         }.getType();
 
         String msg = gson.toJson(redisWebSocketMsg, type);
 
-        redisPubSub.publish(RedisChannelConstants.WEBSOCKET_BROADCAST, msg);
+        redisStream.add(RedisStreamConstants.WebSocketStreamBroadcast.KEY, "", msg);
 
     }
 

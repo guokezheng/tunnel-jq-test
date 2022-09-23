@@ -73,7 +73,7 @@ public class workspaceController extends BaseController {
 
     //诱导灯控制接口
     @PostMapping("/controlGuidanceLampDevice")
-    public AjaxResult controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
+    public AjaxResult controlGuidanceLampAndEvacuationSignDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
@@ -87,8 +87,16 @@ public class workspaceController extends BaseController {
         String state = map.get("state").toString();
         String brightness = map.get("brightness").toString();
         String frequency = map.get("frequency").toString();
+        String fireMark = "";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        int controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency);
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+            if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
+            } else {
+                fireMark = map.get("fireMark").toString();
+            }
+        }
+        int controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
         return AjaxResult.success(controlState);
     }
 

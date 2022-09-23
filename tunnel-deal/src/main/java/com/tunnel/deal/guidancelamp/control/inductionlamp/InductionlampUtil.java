@@ -431,6 +431,41 @@ public class InductionlampUtil {
         return resultMap;
     }
 
+    public static Map getEvacuationSignLightMode(Integer type,Integer brightnessParam,Integer timeSecond,String fireMark){
+        Map resultMap = new HashMap();
+        //查看当前疏散标志： 1有线  0无线
+        //凤凰山隧道为有线
+        String resultCode = "";
+        switch (type){
+            case PILOT_LIGHT_MODE_0 :
+                resultCode = "1GH+FIRE=0\r\n";
+                resultMap.put("msgInfo","关闭所有灯光。");
+                break;
+//            case PILOT_LIGHT_MODE_1 :
+//                resultCode = "1GH+SW=1,RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,\r\n";
+//                resultMap.put("msgInfo","同步单闪，频率"+timeSecond+"，亮度"+brightnessParam+"。");
+//                break;
+//            case PILOT_LIGHT_MODE_2 :
+//                resultCode = "1GH+SW=1,RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,\r\n";
+//                resultMap.put("msgInfo","流水灯"+timeSecond+"次/min同步闪烁,亮度为"+brightnessParam+"。");
+//                break;
+            case PILOT_LIGHT_MODE_1 :
+                resultCode = "1GH+FIRE="+fireMark+",RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,\r\n";
+                resultMap.put("msgInfo","同步单闪，标号地址"+fireMark+"，频率"+timeSecond+"，亮度"+brightnessParam+"。");
+                break;
+            case PILOT_LIGHT_MODE_2 :
+                resultCode = "1GH+FIRE="+fireMark+",RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,\r\n";
+                resultMap.put("msgInfo","流水灯，标号地址"+fireMark+"，频率"+timeSecond+"次/min，亮度为"+brightnessParam+"。");
+                break;
+            default:
+                resultCode = "1GH+FIRE=0\r\n";
+                resultMap.put("msgInfo","关闭所有灯光");
+                break;
+        }
+        resultMap.put("code",resultCode);
+        return resultMap;
+    }
+
     public static byte orVerification(byte[] bytes){
         int nAll = 0;
         for (int i = 0; i < bytes.length; i++) {

@@ -112,7 +112,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("WjEvent",object.toString());
+            WebSocketService.broadcast("sdEventList",object.toString());
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
@@ -219,7 +219,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-        WebSocketService.broadcast("dataList",object);
+        WebSocketService.broadcast("radarDataList",object);
 //        WebSocketServer.sendMessage(object.toString());
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt", true));  //这个ture是内容不覆盖继续写
         bufferedWriter.write(object.toString());

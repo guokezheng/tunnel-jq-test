@@ -80,28 +80,38 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="开关状态:">
-              <!-- {{ stateForm.deptName }} -->
+              <el-select v-model="stateForm2.openTimeValue">
+                <el-option
+                  v-for="item in openState"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
+          <!-- <el-col :span="11">
             <el-form-item label="诱导灯数量:">
-              <!-- {{ getBrandName(stateForm.brandName) }} -->
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
         <el-row>
-          <el-col :span="13">
+          <el-col :span="15">
             <el-form-item label="闪烁频率:">
-              <!-- {{ stateForm.deptName }} -->
+              <el-slider
+                v-model="stateForm2.frequency"
+                class="sliderClass"
+              ></el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="11">
-            <el-form-item label="灯光亮度:">
-              <!-- {{ getBrandName(stateForm.brandName) }} -->
-            </el-form-item>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ stateForm2.frequency }} m/s</span
+            >
           </el-col>
         </el-row>
-        <el-row>
+        <!-- <el-row>
           <el-col :span="11">
             <el-form-item label="灯光颜色:">
               <div style="display: flex; align-items: center">
@@ -110,17 +120,51 @@
               </div>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+        </el-row> -->
+        <!-- <el-row>
           <el-col :span="13">
             <el-form-item label="更新时间:">
-              <!-- {{ stateForm.eqStatus }} -->
-              <!-- {{ stateForm.eqStatus }} -->
             </el-form-item>
+          </el-col>
+        </el-row> -->
+        <el-row>
+          <el-col :span="15">
+            <el-form-item label="亮度调整">
+              <el-slider
+                v-model="stateForm2.brightness"
+                max="50"
+                class="sliderClass"
+              ></el-slider>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9">
+            <span style="padding-left: 10px; line-height: 30px"
+              >{{ stateForm2.brightness }} lux</span
+            >
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" v-show="show1">
+      <div
+        slot="footer"
+        style="float: right; margin-right: 15px; margin-bottom: 20px"
+      >
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleOK()"
+          style="width: 80px"
+          class="submitButton"
+          >确 定</el-button
+        >
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleClosee()"
+          style="width: 80px"
+          >取 消</el-button
+        >
+      </div>
+      <!-- <div slot="footer" v-show="show1">
         <el-button
           type="primary"
           size="mini"
@@ -128,8 +172,8 @@
           style="width: 80px"
           >设备管控</el-button
         >
-      </div>
-      <div v-show="show2">
+      </div> -->
+      <!-- <div v-show="show2">
         <div>
           <el-form
             :model="stateForm2"
@@ -274,16 +318,16 @@
             >取 消</el-button
           >
         </div>
-      </div>
+      </div> -->
     </el-dialog>
   </div>
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
+import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       stateForm: {},
@@ -296,14 +340,28 @@ export default {
       stateForm2: {
         openTimeValue: "",
         closeTimeValue: "",
-        frequency: "",
-        lightColor: "",
-        brightness: 50,
+        frequency: 30,
+        brightness: 30,
+        openTimeValue: 1,
       },
       openTime: [
         {
           value: 1,
-          label: "10m/s",
+          label: "10",
+        },
+      ],
+      openState: [
+        {
+          value: 1,
+          label: "关灯",
+        },
+        {
+          value: 2,
+          label: "同步单闪",
+        },
+        {
+          value: 3,
+          label: "逆向流水",
         },
       ],
     };
@@ -355,14 +413,14 @@ export default {
     handleOK() {
       const param = {
         devId: this.stateForm.eqId, //设备id
-        devType: this.eqInfo.clickEqType,
+        state: this.stateForm.eqStatus, //设备状态
+        // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
-        frequency: this.stateForm2.frequency,//诱导灯频率
-        state: this.stateForm.eqStatus,
-        tunnelId: this.stateForm.tunnelId,
+        frequency: this.stateForm2.frequency, //诱导灯频率
+        // tunnelId: this.stateForm.tunnelId,
       };
 
-      controlDevice(param).then((response) => {
+      controlGuidanceLampDevice(param).then((response) => {
         console.log(response, "提交控制");
         this.$emit("dialogClose");
       });
@@ -373,9 +431,9 @@ export default {
     },
     //  设备管控
     handleControl() {
-      console.log(this.stateForm2,"this.stateForm211111111111")
-      this.stateForm2 = {}
-      console.log(this.stateForm2,"this.stateForm222222222222")
+      console.log(this.stateForm2, "this.stateForm211111111111");
+      this.stateForm2 = {};
+      console.log(this.stateForm2, "this.stateForm222222222222");
 
       this.show1 = false;
       this.show2 = true;
@@ -392,7 +450,7 @@ export default {
 
 ::v-deep.sliderClass {
   .el-slider__runway {
-    width: 50%;
+    width: 100%;
     background-color: #006784;
     margin: 12px 0;
   }
@@ -446,12 +504,25 @@ export default {
   z-index: 10;
   font-size: 10px;
 }
-::v-deep .el-input__inner{
-  background: white !important;
-  color: #00152B !important;
+::v-deep .el-input__inner {
+  color: white !important;
 }
-::v-deep .el-input{
-  width:86%;
+// ::v-deep .el-input {
+//   width: 86%;
+// }
+// ::v-deep .el-scrollbar{
+//   background: #006784 !important;
+// }
+::v-deep .el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover {
+  background-color: #1d58a9;
+  color: white;
 }
+// ::v-deep .el-select-dropdown__item{
+//   color:white !important;
+// }
+// ::v-deep .el-select-dropdown__item.selected{
+//   color:white;
+// }
 </style>
   

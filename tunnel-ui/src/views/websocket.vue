@@ -20,7 +20,7 @@ export default {
       // 建立 websocket 连接
       this.socket.initialize({
 
-        url: 'ws://10.168.65.230' + ':' + port + path,
+        url: 'ws://10.3.16.40' + ':' + port + path,
         // url: 'ws://10.3.16.40'+ ':' + port + path,
         //  url: 'ws://10.168.64.171'+ ':' + port + path,
         //  url: 'ws://10.168.65.230'+ ':' + port + path,
@@ -61,6 +61,7 @@ export default {
             this.$store.commit('SDEVENTLIST', content2)
             break;
           case 'radarDataList':
+            console.log(content2,"content2content2content2content2content2content2content2content2content2")
             this.$store.commit('RADARDATALIST', content2)
             break;
             

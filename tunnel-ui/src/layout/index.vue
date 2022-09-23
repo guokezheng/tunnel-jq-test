@@ -3,7 +3,7 @@
       <template v-if="sideTheme == 'theme-dark'|| sideTheme == 'theme-light'">
         <!-- 左右结构 -->
         <div :class="classObj" class="app-wrapper">
-          <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
+          <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg mapBox" @click="handleClickOutside"/>
           <template v-if="topNav == false">
             <sidebar class="sidebar-container"/>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeaderClass">
@@ -20,7 +20,7 @@
           <!-- 上下结构 -->
           <template v-else>
             <div :class="{'fixed-header':fixedHeader}" :style="fixedHeader?'width:100%;':''">
-              <div class="topNav_head">
+              <div class="topNav_head mapBox">
                 <sidebar class="sidebar-container index_menu blue_index_menu" style="width: 75% !important;position: relative;box-shadow:unset;float:left;"/>
                 <template v-if="weatherView">
                   <div class="weather">
@@ -32,7 +32,9 @@
               </div>
             </div>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeader?'padding-top:50px;margin-left:0px;':'margin-left:0px;'">
-              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
+              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 
+              'display:none;':$route.path == '/emergency/administration/dispatch' ? 
+              'display:none;':$route.path == '/map/map3d/index'?'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
               <app-main />
               <right-panel>
                 <settings />
@@ -104,6 +106,7 @@ export default {
   },
   data(){
     return{
+      mapStyle:'',
       // 天气
       weather_weather:'',
       // 天气图标
@@ -171,7 +174,9 @@ export default {
       return 'padding-top:'+ h +'px;'
     }
   },
-  
+  mounted(){
+
+  },
   created(){
     console.log(this.$route.path,'路由')
     if(this.$route.path == '/tunnel'){
@@ -213,7 +218,14 @@ export default {
         this.eventDialogTable = true
 
       }
-     },
+    },
+    // $route(val){
+    //   console.log($route.path);
+    //   if($route.path == '/map/map3d/index'){
+    //     var zxc = document.getElementsByClassName('mapBox');
+    //     zxc.style = 'position: fixed;top: 0px;left: 0px;z-index: 960619;width: 100%;';
+    //   }
+    // },
   },
   mounted() {
     if(this.weatherView == undefined) {

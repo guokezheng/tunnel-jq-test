@@ -434,9 +434,14 @@
                   >
                   </el-checkbox>
                 </el-checkbox-group>
-                <el-button type="primary" class="control" @click="controlCheZhi('0')">控制</el-button>
+                <el-button
+                  type="primary"
+                  class="control"
+                  @click="controlCheZhi('0')"
+                  >控制</el-button
+                >
               </div>
-              <div class="drawerCheckbox" v-if="directionList.length>1">
+              <div class="drawerCheckbox" v-if="directionList.length > 1">
                 <el-checkbox-group v-model="checkList2">
                   <el-checkbox
                     v-for="(item, index) in tunnelLane"
@@ -445,7 +450,12 @@
                   >
                   </el-checkbox>
                 </el-checkbox-group>
-                <el-button type="primary" class="control" @click="controlCheZhi('1')">控制</el-button>
+                <el-button
+                  type="primary"
+                  class="control"
+                  @click="controlCheZhi('1')"
+                  >控制</el-button
+                >
               </div>
             </div>
           </div>
@@ -3221,13 +3231,13 @@ export default {
 
   watch: {
     sdEventList(event) {
-      console.log(event,'websockt工作台接收事件弹窗')
+      console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
         this.trafficList.unshift(item);
       }
     },
     radarDataList(event) {
-      console.log(event,'websockt工作台接收感知事件数据')
+      console.log(event, "websockt工作台接收感知事件数据");
       this.realTimeList = event;
     },
 
@@ -3419,12 +3429,11 @@ export default {
   },
   methods: {
     // 抽屉 车指控制
-    controlCheZhi(num){
-      console.log(num,"num")
-      console.log(this.checkList1,"checkList1")
-      console.log(this.checkList2,"checkList2")
+    controlCheZhi(num) {
+      console.log(num, "num");
+      console.log(this.checkList1, "checkList1");
+      console.log(this.checkList2, "checkList2");
       // 上传成功后记得把this.checkList清空
-
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
@@ -5216,8 +5225,8 @@ export default {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            // console.log(deviceData,"deviceData")
-            let type = deviceData.eqType;
+            // console.log(deviceData, "deviceData");
+            // let type = deviceData.eqType;
 
             // 需要换光标的
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
@@ -5230,6 +5239,7 @@ export default {
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
+                    // 摄像机之类的只有在线 离线 故障图标
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
@@ -5262,12 +5272,24 @@ export default {
                 } else {
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
+                    debugger;
                     // 在线
                     if (
-                      this.eqTypeStateList[k].stateType == "2" &&
-                      this.eqTypeStateList[k].state == deviceData.eqStatus
+                      // 车指之类的包括正红反绿之类的图标 == 2
+                      this.eqTypeStateList[k].stateType == "2"
                     ) {
-                      //取设备运行状态图标
+                      if (
+                        deviceData.eqType == 1 &&
+                        this.eqTypeStateList[k].state == deviceData.CZ
+                      ) {
+                        console.log(
+                          this.eqTypeStateList[k].state,
+                          "this.eqTypeStateList[k].statethis."
+                        );
+                        console.log(this.eqTypeStateList[k], "888888888888");
+
+                        console.log(deviceData.CZ, "CZCZCZCZCZCZCZCZCZCZ");
+                        //取设备运行状态图标
                       let url = this.eqTypeStateList[k].url;
                       this.selectedIconList[j].eqDirection =
                         deviceData.eqDirection;
@@ -5282,6 +5304,9 @@ export default {
                         this.selectedIconList[j].url =
                           this.eqTypeStateList[k].url;
                       }
+                      }
+
+                      
                     }
                   } else {
                     //如果是离线、故障等状态

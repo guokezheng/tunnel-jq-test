@@ -127,7 +127,7 @@ import * as echarts from "echarts";
                   borderColor: "white",
                 },
               },
-              smooth: true,
+              // smooth: true,//折线或曲线
               // 渐变色
               areaStyle: {
                 normal: {
@@ -181,8 +181,9 @@ import * as echarts from "echarts";
             //       )
             //     }
             //   },
-            //   data: [90, 70, 50, 30, 80, 90, 30, 60, 70, 80, 90, 20]
-            // }, {
+            //   data: [60, 70, 50, 30, 80, 90, 30, 60, 70]
+            // },
+            //  {
             //   name: '专项车',
             //   type: 'line',
             //   color: '#ffb600',

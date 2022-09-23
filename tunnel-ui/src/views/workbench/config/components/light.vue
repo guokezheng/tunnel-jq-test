@@ -274,7 +274,6 @@ export default {
       console.log(this.stateForm.state,"单选框点击绑定")
       const param = {
         devId: this.stateForm.eqId, //设备id
-        devType: this.eqInfo.clickEqType,
         state :this.stateForm.state
       };
 

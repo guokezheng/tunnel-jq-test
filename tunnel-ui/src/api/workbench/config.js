@@ -120,10 +120,19 @@ export function getDeviceData(query) {
   })
 }
 
-// 诱导灯弹窗数据
+// 车指弹窗数据
 export function controlDevice(data) {
   return request({
     url: '/workspace/controlDevice',
+    method: 'post',
+    data: data
+  })
+}
+
+// 诱导灯弹窗数据
+export function controlGuidanceLampDevice(data) {
+  return request({
+    url: '/workspace/controlGuidanceLampDevice',
     method: 'post',
     data: data
   })

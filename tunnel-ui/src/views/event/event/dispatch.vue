@@ -928,13 +928,7 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-
-                  // 根据桩号区分开始和结束为0/100的问题
-                  if (bxx.pileMin == "0") {
-                    var left_Min = Number(0);
-                  } else if (bxx.pileMax == "100") {
-                    var left_Max = Number(100);
-                  } else {
+                  if (bxx.eqIdMax != null && bxx.eqIdMin != null) {
                     if (axx.eqId == bxx.eqIdMax) {
                       // 定义获取最大值的left
                       var leftMax = Number(axx.position.left);
@@ -944,17 +938,30 @@ export default {
                       var leftMin = axx.position.left;
                       bxx.position = axx.position;
                     }
-                  }
-                  if (axx.eqId == bxx.eqIdMax || axx.eqId == bxx.eqIdMin) {
                     var deviceWidth = Number(leftMax) - Number(leftMin);
                     var deviceHeight = axx.position.top;
                     bxx.width = deviceWidth;
                     bxx.height = deviceHeight;
-                  } else if (bxx.pileMin == "0" || bxx.pileMax == "100") {
-                    var deviceWidth = Number(leftMax) - Number(leftMin);
-                    // var deviceHeight = axx.position.top;
-                    bxx.width = deviceWidth;
-                    bxx.height = deviceHeight;
+                  } else {
+                    if (bxx.pileMin == "0") {
+                      var left_Min = Number(0);
+                      if (bxx.eqIdMax == axx.eqId) {
+                        var left_Max = axx.position.left;
+                      }
+                      var deviceWidth = Number(left_Max) - Number(left_Min);
+                      var deviceHeight = axx.position.top;
+                      bxx.width = deviceWidth;
+                      bxx.height = deviceHeight;
+                    } else if (bxx.pileMax == "100") {
+                      if (bxx.eqIdMin == axx.eqId) {
+                        var left_Min = axx.position.left;
+                      }
+                      var left_Max = Number(1640);
+                      var deviceWidth = Number(left_Max) - Number(left_Min);
+                      var deviceHeight = axx.position.top;
+                      bxx.width = deviceWidth;
+                      bxx.height = deviceHeight;
+                    }
                   }
                 }
               }

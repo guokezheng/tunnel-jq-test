@@ -412,7 +412,13 @@ public class RadarEventServiceImpl implements RadarEventService {
             SdRadarDevice sdRadarDevice = new SdRadarDevice();
             sdRadarDevice.setDeviceId(f.getEqId());
             sdRadarDevice.setDeviceType(f.getEqType() + "");
-            sdRadarDevice.setDeviceName(f.getEqName());
+            if (f.getEqName().contains("K")) {
+                sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("K")));
+            } else if (f.getEqName().contains("k")) {
+                sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("k")));
+            } else {
+                sdRadarDevice.setDeviceName(f.getEqName());
+            }
             if (StringUtils.isNotEmpty(f.getEqStatus())) {
                 sdRadarDevice.setDeviceStatus(Integer.parseInt(f.getEqStatus()));
             }
@@ -553,7 +559,13 @@ public class RadarEventServiceImpl implements RadarEventService {
                     }
                 }
             } else if ("16".equals(sdRadarDevice.getDeviceType())) {
-
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("message", map.get("data").toString());
+                    }
+                }
             }
             sdRadarDevice.setDeviceData(deviceData);
             list.add(sdRadarDevice);

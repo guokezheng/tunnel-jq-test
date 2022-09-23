@@ -562,6 +562,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark
         from sd_devices
         where eq_tunnel_id =#{tunnelId}
+        and eq_type in (1,10,5,18,7,17,19,31,16)
     </select>
 
     <select id="selectDeviceByHost" resultType="String">

@@ -111,15 +111,15 @@ public class SdEventController extends BaseController
         return Result.toResult(sdEventService.deleteSdEventByIds(ids));
     }
 
-    /**
-     * 根据id查询事件 ---视频
-     * @param id
-     * @return
-     */
-    @GetMapping("/evntId")
-    public AjaxResult getById(@RequestParam("id") Long id){
-        return AjaxResult.success(sdEventService.getById(id));
-    }
+//    /**
+//     * 根据id查询事件 ---视频
+//     * @param id
+//     * @return
+//     */
+//    @GetMapping("/evntId")
+//    public AjaxResult getById(@RequestParam("id") Long id){
+//        return AjaxResult.success(sdEventService.getById(id));
+//    }
 
     /**
      * 预警事件查询全部

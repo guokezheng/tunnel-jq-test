@@ -234,6 +234,14 @@ public class SdEvent extends BaseEntity {
         this.eventLatitude = eventLatitude;
     }
 
+    public String getEventSource() {
+        return eventSource;
+    }
+
+    public void setEventSource(String eventSource) {
+        this.eventSource = eventSource;
+    }
+
     public String getStartTime() {
         return startTime;
     }

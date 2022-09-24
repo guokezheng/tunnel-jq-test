@@ -1006,8 +1006,8 @@
         <div class="dialogLine"></div>
         <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
       </div>
-      
-      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini" 
+
+      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini"
                 style="position: relative;padding: 20px;padding-top: 0px;">
         <el-row>
          <el-col :span="12">
@@ -1062,9 +1062,9 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
-        
-        
+
+
+
         <el-form-item label="调光强度:" v-if="stateForm.eqType == 99999999">
           <div style="width: 200px; float: left">
             <slider :min="0" :max="100" v-model="stateForm.lightValue"></slider>
@@ -1141,10 +1141,10 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
-       
-        
-        
+
+
+
+
 
         <template  v-if="stateForm.value &&stateForm.eqType == 20">
           <el-table
@@ -1476,7 +1476,7 @@
             </el-tab-pane>
           </el-tabs>
         </template>
-      
+
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" v-if="stateForm.eqType != 21 && !stateForm.value" @click="submitState"
@@ -1830,7 +1830,7 @@
         <div class="dialogLine"></div>
         <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
       </div>
-      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini" 
+      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini"
               style="padding: 20px;padding-top: 0px;">
         <el-row>
           <el-col :span="8">
@@ -3242,7 +3242,7 @@ export default {
     },
     deviceStatus(event) {
       console.log(event, "websockt工作台接收实时设备状态数据");
-      this.realTimeList = event;
+      this.deviceStatusList = event;
     },
 
     // 设备类型
@@ -3395,7 +3395,7 @@ export default {
       setTimeout(this.getRealTimeData, 0);
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
-  
+
     bus.$on("process", (e) => {
       console.log(e, "-----------");
       if (e == "theme-light") {
@@ -5248,7 +5248,7 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
-                    
+
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     if (deviceData.eqType == 19) {
@@ -5278,7 +5278,7 @@ export default {
                 } else {
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
-              
+
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
@@ -5304,7 +5304,7 @@ export default {
                         }
                       }
 
-                      
+
                     }
                   } else {
                     //如果是离线、故障等状态

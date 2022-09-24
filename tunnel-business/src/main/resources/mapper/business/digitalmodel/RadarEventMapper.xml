@@ -5,19 +5,21 @@
 <mapper namespace="com.tunnel.business.mapper.digitalmodel.RadarEventMapper">
     <insert id="insertEventConfidence">
         insert into sd_event_confidence
-        (event_id,target_id,confidence)
+        (event_id,target_id,confidence,speed,plate)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.eventIds},#{item.targetId},#{item.eventConfidence})
+            (#{item.eventIds},#{item.targetId},#{item.eventConfidence},#{item.speed},#{item.plate})
         </foreach>
     </insert>
 
     <insert id="insertWjEvent">
         insert into sd_event
-        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num,event_source)
+        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num,event_source,create_time)
         values
         <foreach collection="list" item="item" separator=",">
-            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},#{item.startTime},#{item.endTime},#{item.stakeNum},#{item.eventSource})
+            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},
+            #{item.startTime},#{item.endTime},#{item.stakeNum},#{item.eventSource},#{item.createTime}
+            )
         </foreach>
     </insert>
 
@@ -50,7 +52,7 @@
     update sd_event
     set
         id=#{id},event_type_id=#{eventTypeId},tunnel_id=#{tunnelId},lane_no=#{laneNo},longitude=#{eventLongitude},latitude=#{eventLatitude},
-        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum}
+        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum},update_time = #{updateTime}
     where id=#{id}
     </update>
     <update id="updateVideoById">

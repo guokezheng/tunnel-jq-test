@@ -61,13 +61,13 @@ public interface ISdEventService {
     int deleteSdEventById(Long id);
 
 
-    /**
-     * 根据id查询事件 ---视频
-     *
-     * @param id
-     * @return
-     */
-    SdEvent getById(Long id);
+//    /**
+//     * 根据id查询事件 ---视频
+//     *
+//     * @param id
+//     * @return
+//     */
+//    SdEvent getById(Long id);
 
     /**
      * 预警事件查询全部

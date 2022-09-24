@@ -17,6 +17,7 @@ import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
@@ -50,6 +51,10 @@ public class RadarEventServiceImpl implements RadarEventService {
     private RadarEventMapper wjMapper;
     @Autowired
     private SdDevicesMapper devicesMapper;
+
+    @Autowired
+    private ISdEventFlowService eventFlowService;
+
     @Autowired
     private RedisCache redisCache;
     @Autowired
@@ -85,6 +90,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setId(f.getEventId());
+                sdEvent.setUpdateTime(DateUtils.getNowDate());
                 wjMapper.updateEvent(sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
@@ -99,6 +105,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setEventSource(EventSourceEnum.radar.getCode());
+                sdEvent.setCreateTime(DateUtils.getNowDate());
                 eventList.add(sdEvent);
                 eventIdList.add(sdEvent.getId());
                 List<WjConfidence> targetList = f.getTargetList();
@@ -113,6 +120,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
+
+            // 添加事件流程记录
+            eventFlowService.addEventFlowBatch(sdEventList);
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();

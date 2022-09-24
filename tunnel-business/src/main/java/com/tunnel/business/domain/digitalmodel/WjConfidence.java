@@ -18,4 +18,10 @@ public class WjConfidence {
 
     @ApiModelProperty("事件id")
     private Long eventIds;
+
+    @ApiModelProperty("车速")
+    private String speed;
+
+    @ApiModelProperty("车牌号")
+    private String plate;
 }

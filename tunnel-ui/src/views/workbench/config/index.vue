@@ -4942,7 +4942,7 @@ export default {
         stateTypeId: null,
         deviceState: null,
         stateName: null,
-        isControl: 1,
+        // isControl: 1,
       };
       await listEqTypeState(queryParams).then((response) => {
         console.log("查询设备状态图标", response.rows);
@@ -5229,13 +5229,14 @@ export default {
             // let type = deviceData.eqType;
 
             // 需要换光标的
+            console.log()
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
               if (
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31,32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -5243,6 +5244,7 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+                    
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     if (deviceData.eqType == 19) {
@@ -5272,38 +5274,30 @@ export default {
                 } else {
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
-                    debugger;
+              
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
                       if (
-                        deviceData.eqType == 1 &&
-                        this.eqTypeStateList[k].state == deviceData.CZ
+                               this.eqTypeStateList[k].state == deviceData.state
                       ) {
-                        console.log(
-                          this.eqTypeStateList[k].state,
-                          "this.eqTypeStateList[k].statethis."
-                        );
-                        console.log(this.eqTypeStateList[k], "888888888888");
-
-                        console.log(deviceData.CZ, "CZCZCZCZCZCZCZCZCZCZ");
-                        //取设备运行状态图标
-                      let url = this.eqTypeStateList[k].url;
-                      this.selectedIconList[j].eqDirection =
-                        deviceData.eqDirection;
-                      if (deviceData.eqDirection == "1") {
-                        //上行车道
-                        if (url.length > 1) {
-                          this.selectedIconList[j].url = [url[1], url[0]];
+                          //取设备运行状态图标
+                        let url = this.eqTypeStateList[k].url;
+                        this.selectedIconList[j].eqDirection =
+                          deviceData.eqDirection;
+                        if (deviceData.eqDirection == "1") {
+                          //上行车道
+                          if (url.length > 1) {
+                            this.selectedIconList[j].url = [url[1], url[0]];
+                          } else {
+                            this.selectedIconList[j].url = url;
+                          }
                         } else {
-                          this.selectedIconList[j].url = url;
+                          this.selectedIconList[j].url =
+                            this.eqTypeStateList[k].url;
                         }
-                      } else {
-                        this.selectedIconList[j].url =
-                          this.eqTypeStateList[k].url;
-                      }
                       }
 
                       

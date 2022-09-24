@@ -185,6 +185,7 @@ veicleOrgId
     data(){
       return{
         tunnelData:[{tunnelName:1,tunnelId:2}],
+        exportLoading:false,
         // 遮罩层
         loading: false,
         // 选中数组
@@ -232,6 +233,7 @@ veicleOrgId
     created(){
       this.getList();
       veicleOrgId().then(res=>{
+        console.log(res.data,"机构名称")
         this.orgData=res.data
       })
     },

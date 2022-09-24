@@ -271,6 +271,7 @@ public class ResponseVO {
     @ApiModelProperty("维保截止时间")
     private String warrantyEndTime;
 
+
     //维保截止时间
     private Date wEndTime;
 

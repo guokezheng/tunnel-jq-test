@@ -9,7 +9,6 @@ import lombok.Data;
  * @author dear_
  * 主动发光标志类
  */
-@Data
 @ApiModel("主动发光标志实体")
 public class ActiveLuminousSigns {
 
@@ -34,4 +33,72 @@ public class ActiveLuminousSigns {
     @ApiModelProperty("默认电流")
     private String defaultCurrent;
 
+    public String getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
+    }
+
+    public String getBacklitSwitch() {
+        return backlitSwitch;
+    }
+
+    public void setBacklitSwitch(String backlitSwitch) {
+        this.backlitSwitch = backlitSwitch;
+    }
+
+    public String getBacklightBrightness() {
+        return backlightBrightness;
+    }
+
+    public void setBacklightBrightness(String backlightBrightness) {
+        this.backlightBrightness = backlightBrightness;
+    }
+
+    public String getReversibleLanes() {
+        return reversibleLanes;
+    }
+
+    public void setReversibleLanes(String reversibleLanes) {
+        this.reversibleLanes = reversibleLanes;
+    }
+
+    public String getDroopCompensation() {
+        return droopCompensation;
+    }
+
+    public void setDroopCompensation(String droopCompensation) {
+        this.droopCompensation = droopCompensation;
+    }
+
+    public String getMeasuredCurrent() {
+        return measuredCurrent;
+    }
+
+    public void setMeasuredCurrent(String measuredCurrent) {
+        this.measuredCurrent = measuredCurrent;
+    }
+
+    public String getDefaultCurrent() {
+        return defaultCurrent;
+    }
+
+    public void setDefaultCurrent(String defaultCurrent) {
+        this.defaultCurrent = defaultCurrent;
+    }
+
+    @Override
+    public String toString() {
+        return "ActiveLuminousSigns{" +
+                "taskType='" + taskType + '\'' +
+                ", backlitSwitch='" + backlitSwitch + '\'' +
+                ", backlightBrightness='" + backlightBrightness + '\'' +
+                ", reversibleLanes='" + reversibleLanes + '\'' +
+                ", droopCompensation='" + droopCompensation + '\'' +
+                ", measuredCurrent='" + measuredCurrent + '\'' +
+                ", defaultCurrent='" + defaultCurrent + '\'' +
+                '}';
+    }
 }

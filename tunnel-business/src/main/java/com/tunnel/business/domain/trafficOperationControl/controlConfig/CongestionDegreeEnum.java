@@ -3,7 +3,6 @@ package com.tunnel.business.domain.trafficOperationControl.controlConfig;
 /**
  * describe: 交通拥挤度
  * 分为 畅通、基本畅通、轻度拥堵、中度拥堵、严重拥堵 5个级别
- *
  * 注：当速度为0并且断面交通量也为0时，路段为畅通状态
  * @author zs
  * @date 2022/2/26

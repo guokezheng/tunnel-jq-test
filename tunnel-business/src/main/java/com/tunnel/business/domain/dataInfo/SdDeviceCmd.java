@@ -13,7 +13,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author zhangweitian
  * @date 2020-09-04
  */
-@Data
 public class SdDeviceCmd extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -166,20 +165,17 @@ public class SdDeviceCmd extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("codeId", getCodeId())
-            .append("codeDeviceId", getCodeDeviceId())
-            .append("codePlcId", getCodePlcId())
-            .append("command", getCommand())
-            .append("deviceTypeId", getDeviceTypeId())
-            .append("codeDeviceState", getCodeDeviceState())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("typeName", getTypeName())
-            .append("eqName", getEqName())
-            .append("stateName", getStateName())
-            .toString();
+        return "SdDeviceCmd{" +
+                "codeId=" + codeId +
+                ", codeDeviceId='" + codeDeviceId + '\'' +
+                ", eqName=" + eqName +
+                ", plcName=" + plcName +
+                ", codePlcId='" + codePlcId + '\'' +
+                ", command='" + command + '\'' +
+                ", deviceTypeId=" + deviceTypeId +
+                ", typeName=" + typeName +
+                ", codeDeviceState='" + codeDeviceState + '\'' +
+                ", stateName=" + stateName +
+                '}';
     }
 }

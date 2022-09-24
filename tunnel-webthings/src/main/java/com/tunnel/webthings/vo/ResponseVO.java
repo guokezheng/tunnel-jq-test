@@ -10,7 +10,6 @@ import java.util.Date;
  * @author dzy
  * @date 2022/8/23 8:51
  */
-@Data
 public class ResponseVO {
 
     private static final long serialVersionUID =-1242493306307174690L;
@@ -275,4 +274,699 @@ public class ResponseVO {
     //维保截止时间
     private Date wEndTime;
 
+    public String getCameraId() {
+        return cameraId;
+    }
+
+    public void setCameraId(String cameraId) {
+        this.cameraId = cameraId;
+    }
+
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
+    }
+
+    public String getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(String countryId) {
+        this.countryId = countryId;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    public String getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(String dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public Date getDyTime() {
+        return dyTime;
+    }
+
+    public void setDyTime(Date dyTime) {
+        this.dyTime = dyTime;
+    }
+
+    public String getDevCategory() {
+        return devCategory;
+    }
+
+    public void setDevCategory(String devCategory) {
+        this.devCategory = devCategory;
+    }
+
+    public String getDevModel() {
+        return devModel;
+    }
+
+    public void setDevModel(String devModel) {
+        this.devModel = devModel;
+    }
+
+    public String getDevNo() {
+        return devNo;
+    }
+
+    public void setDevNo(String devNo) {
+        this.devNo = devNo;
+    }
+
+    public String getDevPwd() {
+        return devPwd;
+    }
+
+    public void setDevPwd(String devPwd) {
+        this.devPwd = devPwd;
+    }
+
+    public String getDevStatus() {
+        return devStatus;
+    }
+
+    public void setDevStatus(String devStatus) {
+        this.devStatus = devStatus;
+    }
+
+    public String getDevStatusTime() {
+        return devStatusTime;
+    }
+
+    public void setDevStatusTime(String devStatusTime) {
+        this.devStatusTime = devStatusTime;
+    }
+
+    public Date getdStatusTime() {
+        return dStatusTime;
+    }
+
+    public void setdStatusTime(Date dStatusTime) {
+        this.dStatusTime = dStatusTime;
+    }
+
+    public String getDevType() {
+        return devType;
+    }
+
+    public void setDevType(String devType) {
+        this.devType = devType;
+    }
+
+    public Integer getdType() {
+        return dType;
+    }
+
+    public void setdType(Integer dType) {
+        this.dType = dType;
+    }
+
+    public String getDevUsr() {
+        return devUsr;
+    }
+
+    public void setDevUsr(String devUsr) {
+        this.devUsr = devUsr;
+    }
+
+    public String getEdgeNetstatus() {
+        return edgeNetstatus;
+    }
+
+    public void setEdgeNetstatus(String edgeNetstatus) {
+        this.edgeNetstatus = edgeNetstatus;
+    }
+
+    public String getEdgeNetstatusTime() {
+        return edgeNetstatusTime;
+    }
+
+    public void setEdgeNetstatusTime(String edgeNetstatusTime) {
+        this.edgeNetstatusTime = edgeNetstatusTime;
+    }
+
+    public String getEle() {
+        return ele;
+    }
+
+    public void setEle(String ele) {
+        this.ele = ele;
+    }
+
+    public String getEndPile() {
+        return endPile;
+    }
+
+    public void setEndPile(String endPile) {
+        this.endPile = endPile;
+    }
+
+    public String getFacilitiesId() {
+        return facilitiesId;
+    }
+
+    public void setFacilitiesId(String facilitiesId) {
+        this.facilitiesId = facilitiesId;
+    }
+
+    public Integer getFacilitiesNum() {
+        return facilitiesNum;
+    }
+
+    public void setFacilitiesNum(Integer facilitiesNum) {
+        this.facilitiesNum = facilitiesNum;
+    }
+
+    public String getFacilitiesType() {
+        return facilitiesType;
+    }
+
+    public void setFacilitiesType(String facilitiesType) {
+        this.facilitiesType = facilitiesType;
+    }
+
+    public String getFdevNo() {
+        return fdevNo;
+    }
+
+    public void setFdevNo(String fdevNo) {
+        this.fdevNo = fdevNo;
+    }
+
+    public String getGatewayNetstatus() {
+        return gatewayNetstatus;
+    }
+
+    public void setGatewayNetstatus(String gatewayNetstatus) {
+        this.gatewayNetstatus = gatewayNetstatus;
+    }
+
+    public String getGatewayNetstatusTime() {
+        return gatewayNetstatusTime;
+    }
+
+    public void setGatewayNetstatusTime(String gatewayNetstatusTime) {
+        this.gatewayNetstatusTime = gatewayNetstatusTime;
+    }
+
+    public Date getgNetstatusTime() {
+        return gNetstatusTime;
+    }
+
+    public void setgNetstatusTime(Date gNetstatusTime) {
+        this.gNetstatusTime = gNetstatusTime;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    public String getInstallTime() {
+        return installTime;
+    }
+
+    public void setInstallTime(String installTime) {
+        this.installTime = installTime;
+    }
+
+    public Date getInTime() {
+        return inTime;
+    }
+
+    public void setInTime(Date inTime) {
+        this.inTime = inTime;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getIsMonitor() {
+        return isMonitor;
+    }
+
+    public void setIsMonitor(Integer isMonitor) {
+        this.isMonitor = isMonitor;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Integer getMonitorDirection() {
+        return monitorDirection;
+    }
+
+    public void setMonitorDirection(Integer monitorDirection) {
+        this.monitorDirection = monitorDirection;
+    }
+
+    public String getOpmaCliqueId() {
+        return opmaCliqueId;
+    }
+
+    public void setOpmaCliqueId(String opmaCliqueId) {
+        this.opmaCliqueId = opmaCliqueId;
+    }
+
+    public String getOpmaCliqueName() {
+        return opmaCliqueName;
+    }
+
+    public void setOpmaCliqueName(String opmaCliqueName) {
+        this.opmaCliqueName = opmaCliqueName;
+    }
+
+    public String getOpmaManagerCropId() {
+        return opmaManagerCropId;
+    }
+
+    public void setOpmaManagerCropId(String opmaManagerCropId) {
+        this.opmaManagerCropId = opmaManagerCropId;
+    }
+
+    public String getOpmaManagerCropName() {
+        return opmaManagerCropName;
+    }
+
+    public void setOpmaManagerCropName(String opmaManagerCropName) {
+        this.opmaManagerCropName = opmaManagerCropName;
+    }
+
+    public String getOpmaManagerId() {
+        return opmaManagerId;
+    }
+
+    public void setOpmaManagerId(String opmaManagerId) {
+        this.opmaManagerId = opmaManagerId;
+    }
+
+    public String getOpmaManagerName() {
+        return opmaManagerName;
+    }
+
+    public void setOpmaManagerName(String opmaManagerName) {
+        this.opmaManagerName = opmaManagerName;
+    }
+
+    public String getOpmaSectionId() {
+        return opmaSectionId;
+    }
+
+    public void setOpmaSectionId(String opmaSectionId) {
+        this.opmaSectionId = opmaSectionId;
+    }
+
+    public String getOpmaSectionName() {
+        return opmaSectionName;
+    }
+
+    public void setOpmaSectionName(String opmaSectionName) {
+        this.opmaSectionName = opmaSectionName;
+    }
+
+    public String getOpmaSubSectionId() {
+        return opmaSubSectionId;
+    }
+
+    public void setOpmaSubSectionId(String opmaSubSectionId) {
+        this.opmaSubSectionId = opmaSubSectionId;
+    }
+
+    public String getOpmaXxsubcenterId() {
+        return opmaXxsubcenterId;
+    }
+
+    public void setOpmaXxsubcenterId(String opmaXxsubcenterId) {
+        this.opmaXxsubcenterId = opmaXxsubcenterId;
+    }
+
+    public String getOpmaXxsubcenterName() {
+        return opmaXxsubcenterName;
+    }
+
+    public void setOpmaXxsubcenterName(String opmaXxsubcenterName) {
+        this.opmaXxsubcenterName = opmaXxsubcenterName;
+    }
+
+    public Double getOriginalValue() {
+        return originalValue;
+    }
+
+    public void setOriginalValue(Double originalValue) {
+        this.originalValue = originalValue;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public String getPile() {
+        return pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
+    public String getPileNum() {
+        return pileNum;
+    }
+
+    public void setPileNum(String pileNum) {
+        this.pileNum = pileNum;
+    }
+
+    public Integer getpNum() {
+        return pNum;
+    }
+
+    public void setpNum(Integer pNum) {
+        this.pNum = pNum;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getPortStatus() {
+        return portStatus;
+    }
+
+    public void setPortStatus(String portStatus) {
+        this.portStatus = portStatus;
+    }
+
+    public Date getpStatusTime() {
+        return pStatusTime;
+    }
+
+    public void setpStatusTime(Date pStatusTime) {
+        this.pStatusTime = pStatusTime;
+    }
+
+    public String getPortStatusTime() {
+        return portStatusTime;
+    }
+
+    public void setPortStatusTime(String portStatusTime) {
+        this.portStatusTime = portStatusTime;
+    }
+
+    public Integer getPresetPosition() {
+        return presetPosition;
+    }
+
+    public void setPresetPosition(Integer presetPosition) {
+        this.presetPosition = presetPosition;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getProtocolName() {
+        return protocolName;
+    }
+
+    public void setProtocolName(String protocolName) {
+        this.protocolName = protocolName;
+    }
+
+    public String getProtocolVersion() {
+        return protocolVersion;
+    }
+
+    public void setProtocolVersion(String protocolVersion) {
+        this.protocolVersion = protocolVersion;
+    }
+
+    public String getRegionId() {
+        return regionId;
+    }
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public Integer getRoadDirection() {
+        return roadDirection;
+    }
+
+    public void setRoadDirection(Integer roadDirection) {
+        this.roadDirection = roadDirection;
+    }
+
+    public String getrDirection() {
+        return rDirection;
+    }
+
+    public void setrDirection(String rDirection) {
+        this.rDirection = rDirection;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getRoadName() {
+        return roadName;
+    }
+
+    public void setRoadName(String roadName) {
+        this.roadName = roadName;
+    }
+
+    public String getSectionId() {
+        return sectionId;
+    }
+
+    public void setSectionId(String sectionId) {
+        this.sectionId = sectionId;
+    }
+
+    public String getSecureKey() {
+        return secureKey;
+    }
+
+    public void setSecureKey(String secureKey) {
+        this.secureKey = secureKey;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getServeiceAreaId() {
+        return serveiceAreaId;
+    }
+
+    public void setServeiceAreaId(String serveiceAreaId) {
+        this.serveiceAreaId = serveiceAreaId;
+    }
+
+    public String getServeiceAreaName() {
+        return serveiceAreaName;
+    }
+
+    public void setServeiceAreaName(String serveiceAreaName) {
+        this.serveiceAreaName = serveiceAreaName;
+    }
+
+    public String getSoftwareVer() {
+        return softwareVer;
+    }
+
+    public void setSoftwareVer(String softwareVer) {
+        this.softwareVer = softwareVer;
+    }
+
+    public String getStartPile() {
+        return startPile;
+    }
+
+    public void setStartPile(String startPile) {
+        this.startPile = startPile;
+    }
+
+    public String getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(String stationId) {
+        this.stationId = stationId;
+    }
+
+    public String getSupplierId() {
+        return supplierId;
+    }
+
+    public void setSupplierId(String supplierId) {
+        this.supplierId = supplierId;
+    }
+
+    public String getSupplierName() {
+        return supplierName;
+    }
+
+    public void setSupplierName(String supplierName) {
+        this.supplierName = supplierName;
+    }
+
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    public Integer getUseLife() {
+        return useLife;
+    }
+
+    public void setUseLife(Integer useLife) {
+        this.useLife = useLife;
+    }
+
+    public String getuLife() {
+        return uLife;
+    }
+
+    public void setuLife(String uLife) {
+        this.uLife = uLife;
+    }
+
+    public Integer getUseStatus() {
+        return useStatus;
+    }
+
+    public void setUseStatus(Integer useStatus) {
+        this.useStatus = useStatus;
+    }
+
+    public String getuStatus() {
+        return uStatus;
+    }
+
+    public void setuStatus(String uStatus) {
+        this.uStatus = uStatus;
+    }
+
+    public String getWarrantyEndTime() {
+        return warrantyEndTime;
+    }
+
+    public void setWarrantyEndTime(String warrantyEndTime) {
+        this.warrantyEndTime = warrantyEndTime;
+    }
+
+    public Date getwEndTime() {
+        return wEndTime;
+    }
+
+    public void setwEndTime(Date wEndTime) {
+        this.wEndTime = wEndTime;
+    }
 }

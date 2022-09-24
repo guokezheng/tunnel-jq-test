@@ -18,7 +18,6 @@ import java.util.Date;
  * @date 2020-08-24
  */
 @ApiModel("事件管理实体")
-@Data
 public class SdEvent extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -369,6 +368,7 @@ public class SdEvent extends BaseEntity {
                 ", laneNo='" + laneNo + '\'' +
                 ", eventLongitude='" + eventLongitude + '\'' +
                 ", eventLatitude='" + eventLatitude + '\'' +
+                ", eventSource='" + eventSource + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", videoUrl='" + videoUrl + '\'' +
                 ", stationId='" + stationId + '\'' +

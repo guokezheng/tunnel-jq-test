@@ -9,7 +9,6 @@ import lombok.Data;
  * @date 2022/7/20 10:59
  * 合流区预警设备故障告警类
  */
-@Data
 @ApiModel("合流区预警设备故障告警类")
 public class ConfluenceDevFaultWarn {
 

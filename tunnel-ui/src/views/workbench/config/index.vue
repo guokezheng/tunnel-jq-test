@@ -758,7 +758,7 @@
                 <div>车牌号</div>
                 <div>速度</div>
                 <div>车道</div>
-                <div>车型</div>
+<!--                <div>车型</div>-->
               </li>
             </ul>
             <vue-seamless-scroll

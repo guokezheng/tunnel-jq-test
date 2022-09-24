@@ -80,7 +80,7 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "yqc-zc1")
+    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
@@ -111,7 +111,7 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-//    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
+    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);

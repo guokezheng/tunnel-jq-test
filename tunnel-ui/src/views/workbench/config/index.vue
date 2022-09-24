@@ -3231,13 +3231,17 @@ export default {
 
   watch: {
     sdEventList(event) {
-      console.log(event, "websockt工作台接收事件弹窗");
+      // console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
         this.trafficList.unshift(item);
       }
     },
     radarDataList(event) {
-      console.log(event, "websockt工作台接收感知事件数据");
+      // console.log(event, "websockt工作台接收感知事件数据");
+      this.realTimeList = event;
+    },
+    deviceStatus(event) {
+      console.log(event, "websockt工作台接收实时设备状态数据");
       this.realTimeList = event;
     },
 
@@ -3369,7 +3373,7 @@ export default {
       return h;
     },
     ...mapState({
-      //  WjEvent: state => state.websocket.WjEvent,
+      deviceStatus: state => state.websocket.deviceStatus,
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
     }),
@@ -3391,7 +3395,7 @@ export default {
       setTimeout(this.getRealTimeData, 0);
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
-
+  
     bus.$on("process", (e) => {
       console.log(e, "-----------");
       if (e == "theme-light") {
@@ -3671,7 +3675,7 @@ export default {
 
       getWarnEvent(param).then((response) => {
         // console.log(response.data,"预警事件")
-        this.trafficList = response.data;
+        this.trafficList = response.data
       });
     },
     /** 查询部门列表 */

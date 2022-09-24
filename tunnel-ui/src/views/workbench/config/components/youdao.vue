@@ -340,9 +340,9 @@ export default {
       show2: false,
       value2: true,
       stateForm2: {
-        frequency: 30,
-        brightness: 30,
-        state: 1,
+        frequency: '',
+        brightness: '',
+        state: '',
       },
       openTime: [
         {

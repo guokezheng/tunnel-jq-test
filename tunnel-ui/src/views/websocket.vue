@@ -61,8 +61,10 @@ export default {
             this.$store.commit('SDEVENTLIST', content2)
             break;
           case 'radarDataList':
-            console.log(content2,"content2content2content2content2content2content2content2content2content2")
             this.$store.commit('RADARDATALIST', content2)
+            break;
+          case 'deviceStatus':
+            this.$store.commit('DEVICESTATUS', content2)
             break;
             
           default:

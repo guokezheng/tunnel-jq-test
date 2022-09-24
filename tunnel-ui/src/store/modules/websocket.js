@@ -5,7 +5,9 @@ const websocket = {
     carList:[],
     realTimeLaneTrajectory:{},
     sdEventList:{},
-    radarDataList:{}
+    radarDataList:{},
+    deviceStatus:{}
+
   },
 
   mutations: {
@@ -23,6 +25,9 @@ const websocket = {
     },
     RADARDATALIST: (state, data) => {
       state.radarDataList = data
+    },
+    DEVICESTATUS: (state, data) => {
+      state.deviceStatus = data
     },
 },
 

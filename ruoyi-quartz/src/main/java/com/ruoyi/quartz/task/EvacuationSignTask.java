@@ -66,7 +66,9 @@ public class EvacuationSignTask {
             sdDevices.setEqStatusTime(new Date());
             log.info("当前设备在线更新设备管理表中的状态");
         }
+        //更新疏散标志控制器状态，疏散标志子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
+        sdDevicesService.updateSdDevicesByFEqId(sdDevices);
         return state;
     }
 

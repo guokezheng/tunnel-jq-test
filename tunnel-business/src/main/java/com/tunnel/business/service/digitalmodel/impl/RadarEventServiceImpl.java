@@ -219,7 +219,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-        WebSocketService.broadcast("radarDataList",object);
+        WebSocketService.broadcast("radarDataList",object.toString());
 //        WebSocketServer.sendMessage(object.toString());
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt", true));  //这个ture是内容不覆盖继续写
         bufferedWriter.write(object.toString());

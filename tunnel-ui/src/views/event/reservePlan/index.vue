@@ -86,35 +86,6 @@
           >新增
         </el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
-         <el-button
-           type="success"
-           icon="el-icon-edit"
-           size="mini"
-           :disabled="single"
-           @click="handleUpdate"
-           v-hasPermi="['business:plan:edit']"
-         >修改</el-button>
-       </el-col> -->
-      <!-- <el-col :span="1.5">
-         <el-button
-           type="danger"
-           icon="el-icon-delete"
-           size="mini"
-           :disabled="multiple"
-           @click="handleDelete"
-           v-hasPermi="['business:plan:remove']"
-         >删除</el-button>
-       </el-col> -->
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['business:plan:export']"
-        >导出</el-button>
-      </el-col> -->
       <div class="top-right-btn">
         <el-tooltip class="item" content="刷新" effect="dark" placement="top">
           <el-button
@@ -149,14 +120,17 @@
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
-      <el-table-column align="center" label="隧道名称" prop="sdTunnels.tunnelName"/>
+      <el-table-column
+        align="center"
+        label="隧道名称"
+        prop="sdTunnels.tunnelName"
+      />
       <el-table-column
         align="center"
         label="预案类别"
         prop="category"
         :formatter="categoryFormat"
       />
-
       <el-table-column align="center" label="预案名称" prop="planName" />
       <el-table-column
         align="center"
@@ -485,7 +459,7 @@
         <el-step
           v-for="item in previewList"
           :key="item.strategyId"
-          :title="item.typeName"
+          :title="item.strategyName"
         ></el-step>
       </el-steps>
       <span slot="footer" class="dialog-footer">
@@ -807,7 +781,7 @@ export default {
           message: "请输入预案描述",
           trigger: "blur",
         },
-        eventLocation: { required: true, trigger: "blur" },
+        // eventLocation: { required: true, trigger: "blur" },
         category: { required: true, trigger: "change" },
         /* strategyNames: [{ required: true, trigger: 'blur'}],
         eventLocation: [{required: true, trigger: 'blur'}], */
@@ -896,6 +870,7 @@ export default {
     this.ceshiTime();
     tunnelNames().then((res) => {
       this.eqTunnelData = res.rows;
+      console.log(this.eqTunnelData, "111");
       this.eqTunnelData.forEach((item) => {
         item.sdTunnelSubareas.forEach((item, index) => {
           this.eqTunnelDataList.push(item);
@@ -903,13 +878,15 @@ export default {
       });
     });
     this.getDicts("sd_reserve_plan_category").then((response) => {
-      console.log(response.data, "ssssssssssssssssssssssssssssss");
       this.planCategory = response.data;
     });
   },
   methods: {
     categoryFormat(row, column) {
       return this.selectDictLabel(this.planCategory, row.category);
+    },
+    tunnelIdFormat(row, column) {
+      return this.selectDictLabel(this.eqTunnelData, row.tunnelId);
     },
     workbenchOpenEvent() {
       this.getTunnelData(this.tunnelId);
@@ -1060,6 +1037,7 @@ export default {
 
     //查看工作台
     openWorkbench(row) {
+      this.tunnelId = row.tunnelId;
       // console.log(row,'进入预览');
       this.getPreview(row);
     },
@@ -1281,20 +1259,31 @@ export default {
     },
     //form表单置空
     resetReservePlanDrawForm() {
-      this.reservePlanDrawForm.planTypeId = null;
-      this.reservePlanDrawForm.category = null;
-      this.reservePlanDrawForm.planName = null;
-      this.reservePlanDrawForm.strategyId = "";
-      this.reservePlanDrawForm.strategyNames = null;
-      this.reservePlanDrawForm.planDescription = null;
-      this.reservePlanDrawForm.tunnelId = null;
-      this.reservePlanDrawForm.sId = null;
-      this.fileList = [];
+      (this.reservePlanDrawForm = {
+        planTypeId: null, //事件类型
+        planName: null, //预案名称
+        category: null, //预案类别
+        planDescription: null, //预案描述
+        strategyId: null, //多个策略ID
+        strategyNames: null, //多个策略的名称，以：分割
+        planFileId: null,
+        tunnelId: null, //隧道
+        sId: null, //分区隧道
+      }),
+        // this.reservePlanDrawForm.planTypeId = null;
+        // this.reservePlanDrawForm.category = null;
+        // this.reservePlanDrawForm.planName = null;
+        // this.reservePlanDrawForm.strategyId = "";
+        // this.reservePlanDrawForm.strategyNames = null;
+        // this.reservePlanDrawForm.planDescription = null;
+        // this.reservePlanDrawForm.tunnelId = null;
+        // this.reservePlanDrawForm.sId = null;
+        (this.fileList = []);
       this.removeIds = [];
       this.planChangeSink = null;
       this.multipleSelectionIds = [];
       this.eqTunnelDataList = [];
-      this.planCategory = [];
+      // this.planCategory = [];
     },
     // 上传到服务器
     async submitUpload() {
@@ -1311,12 +1300,13 @@ export default {
         this.$modal.msgError("请输入预案描述！");
         return;
       }
-      if (this.fileList.length === 0) {
-        this.$message({
-          message: "请先选择文件",
-          type: "warning",
-        });
-      } else {
+      // if (this.fileList.length === 0) {
+      //   this.$message({
+      //     message: "请先选择文件",
+      //     type: "warning",
+      //   });
+      // }
+      else {
         if (this.loading) return;
         this.dloading = true;
         let currentFileList = [];
@@ -1377,9 +1367,8 @@ export default {
             await updatePlanFile(this.fileData).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
-                // this.drawer = false;//关闭drawer窗体
                 this.dialogFormVisible = false;
-                this.resetReservePlanDrawForm(); //重置表单
+                // this.resetReservePlanDrawForm(); //重置表单
                 //this.open = false;
                 this.getList();
               } else {
@@ -1405,12 +1394,7 @@ export default {
     },
     /** 新增按钮操作 **/
     handleAdd() {
-      console.log(this.$refs["form1"], 'this.$refs["form1"]');
-
-      //  this.$nextTick(() => {
-      //       this.$refs["form1"].clearValidate();
-      //   });
-      // this.resetReservePlanDrawForm();
+      this.resetReservePlanDrawForm();
       this.title = "新增预案";
       this.planChangeSink = "add";
       this.dialogFormVisible = true;
@@ -1451,17 +1435,11 @@ export default {
             this.eqTunnelDataList.push(item);
           });
         });
-        console.log(
-          this.eqTunnelDataList,
-          "this.eqTunnelDataListthis.eqTunnelDataList"
-        );
       });
       this.getDicts("sd_reserve_plan_category").then((response) => {
-        console.log(response.data, "ssssssssssssssssssssssssssssss");
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {
-        console.log(response, "response回显");
         this.fileList = [];
         this.reservePlanDrawForm = response.data;
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
@@ -1588,6 +1566,7 @@ export default {
       this.loading = true;
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
+        console.log(this.planList, "1231");
         this.total = response.total;
         this.loading = false;
       });

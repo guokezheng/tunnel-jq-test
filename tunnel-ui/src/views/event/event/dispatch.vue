@@ -22,7 +22,6 @@
                     left: item.left / 1.34 + 'px',
                     top: item.top / 1.34 + 'px',
                   }"
-                  @mouseleave="mouseleave(index)"
                 >
                   <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
@@ -31,7 +30,7 @@
                     :style="item.style ? item.style : ''"
                   >
                     <div class="row1">{{ item.sName }}</div>
-                    <div class="processBox recoveryBox">
+                    <div class="recoveryBox">
                       <div
                         class="endButton"
                         v-for="itm in item.reservePlans"
@@ -528,9 +527,9 @@
                   :key="index"
                   color="#00A0FF"
                 >
-                  <div>{{ item.time }}</div>
+                  <div>{{ item.flowTime }}</div>
                   <el-card>
-                    <p>{{ item.content }}</p>
+                    <p>{{ item.flowDescription }}</p>
                   </el-card>
                 </el-timeline-item>
               </el-timeline>
@@ -588,6 +587,7 @@ import { listMaterial } from "@/api/system/material";
 import { listEvent, updateEvent } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
+import { listEventFlow } from "@/api/event/eventFlow";
 import {
   previewDisplay,
   getSubareaByTunnelId,
@@ -677,35 +677,8 @@ export default {
         // tunnels:{}
       },
       eventGradeOptions: [],
-      // 时间轴循环数据
-      eventList: [
-        {
-          time: "2022-08-08 14:04:00",
-          title: "泰安监控高静静",
-          content:
-            "根据匿名先生(13396235108)来电，录入事件：S31泰新高速公路K079+000新泰方向，1辆货车发生故障，占用应急道，超车道、行车道正常通行，请过往车辆减速慢行。",
-        },
-        {
-          time: "2022-08-08 14:10:00",
-          title: "泰安监控高静静",
-          content: "已通知路管、交警、路政。",
-        },
-        {
-          time: "2022-08-08 14:20:00",
-          title: "泰安监控高静静",
-          content: "故障车车牌：鲁V637RR",
-        },
-        {
-          time: "2022-08-08 14:22:00",
-          title: "泰安监控高静静",
-          content: "路管人员到达现场已安全布控",
-        },
-        {
-          time: "2022-08-08 14:25:00",
-          title: "泰安监控高静静",
-          content: "策略选择：火灾报警1区",
-        },
-      ],
+      // 时间轴循环事件数据
+      eventList: [],
       moveTop: 0.11,
       py: "", //开始y轴的位置
       px: "", //开始x轴的位置
@@ -737,21 +710,27 @@ export default {
         this.eventForm = response.rows[0];
         this.eventForm.eventType = response.rows[0].eventType.eventType;
         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
-        console.log(this.eventForm, "this.eventForm");
       });
     }
     this.getDicts("sd_incident_level").then((response) => {
       this.eventGradeOptions = response.data;
     });
+    this.accidentInit();
   },
   methods: {
+    accidentInit() {
+      console.log(this.$route.query.id, "-");
+      var eventId = { eventId: this.$route.query.id };
+      listEventFlow(eventId).then((result) => {
+        console.log(result, "12312");
+        this.eventList = result.rows;
+      });
+    },
     randomEvent() {
       var index = Math.floor(Math.random() * 2 + 2);
-      console.log(index);
       this.planList1[index].style =
         "border:1px solid red;background-color: rgba(255,0,0,0.6);";
       this.rightClick(index);
-      console.log(this.planList1[index]);
     },
 
     async getSubareaByTunnel() {
@@ -762,7 +741,7 @@ export default {
       // }
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
-        console.log(this.planList1, "分区信息");
+        console.log(this.planList1, "===============");
         // if (this.$route.query.id != undefined) {
         //   console.log(this.$route.query.id);
         //   this.randomEvent();
@@ -771,10 +750,8 @@ export default {
     },
     // 预览
     getPreview(row) {
-      console.log(row.id);
       previewDisplay(row.id).then((res) => {
         this.previewList = res;
-        console.log(this.previewList);
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl;
@@ -797,14 +774,12 @@ export default {
             }
           }
         }
-        console.log(deviceList);
         this.deviceList = deviceList;
         this.ChangeDeviceState();
       });
       this.workbenchOpen = true;
     },
     ChangeDeviceState() {
-      // console.log(this.selectedIconList);
       for (let i = 0; i < this.selectedIconList.length; i++) {
         for (let x = 0; x < this.deviceList.length; x++) {
           var eqType = this.selectedIconList[i].eqType;
@@ -814,7 +789,6 @@ export default {
               for (let p = 0; p < brr.length; p++) {
                 if (this.selectedIconList[i].eqId == brr[p]) {
                   this.selectedIconList[i].url = [];
-                  console.log(this.deviceList[x].file);
                   let url = this.deviceList[x].file;
                   url.forEach((item) => {
                     this.selectedIconList[i].url.push(item.url);
@@ -897,16 +871,13 @@ export default {
       that.downList = [];
 
       getTunnels(tunnelId).then((response) => {
-        console.log(response, "应急调度获取设备信息");
         let res = response.data.storeConfigure;
         // console.log(response.data, "12312312");
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res, "res");
           listType()
             .then((response) => {
-              console.log(response, "response");
               var arr = [];
               for (let item1 of response.rows) {
                 for (let item of res.eqList) {
@@ -923,7 +894,7 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  bxx.direction = axx.eqDirection;
+                  // bxx.direction = axx.eqDirection;
                   // 如果最大值和最小值都他有值，找到设备后获取宽度并相减，得到left值，top值就是高度；最小值的left在值就是盒子的left；
                   // if (bxx.pileMin != "0" && bxx.pileMax != "100") {
                   //   if (axx.pile == bxx.pileMax) {
@@ -943,7 +914,6 @@ export default {
                   // }
                   if (bxx.pileMin == "0") {
                     if (String(axx.pile).trim() == String(bxx.pileMax).trim()) {
-                      console.log(axx, "小小小小");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
                       var leftMin = 0;
@@ -956,7 +926,6 @@ export default {
                     }
                   } else if (bxx.pileMax == "100") {
                     if (String(axx.pile).trim() == String(bxx.pileMin).trim()) {
-                      console.log(bxx, "大大大大");
                       var leftMax = Number(1640);
                       var leftMin = axx.position.left;
                       var deviceWidth = Number(leftMax) - Number(leftMin);
@@ -986,9 +955,11 @@ export default {
                   item.top = item.deviceHeight;
                   item.left = item.leftMin;
                 }
+                console.log(item.direction, "方向");
                 if (item.direction == "1") {
                   item.top = 0;
                 }
+                // 当前事故点的桩号
                 var positionCurrent = this.getNumber("K105-040");
                 var positionMin = this.getNumber(item.pileMin);
                 var positionMax = this.getNumber(item.pileMax);
@@ -1143,12 +1114,12 @@ export default {
             background-color: rgba($color: #fff, $alpha: 0.3);
           }
           .rightClickClass {
-            width: 70%;
-            height: 70%;
+            width: 100%;
+            height: 100%;
             border: solid 1px white;
-            position: absolute;
-            top: 15%;
-            left: 15%;
+            position: relative;
+            top: -100%;
+            // left: 15%;
             display: none;
             color: white;
             background-color: rgba($color: #005e96, $alpha: 0.5);
@@ -1156,7 +1127,7 @@ export default {
             border-radius: 10px;
             box-shadow: 0 0 5px white;
             .recoveryBox {
-              height: 80%;
+              height: 100%;
               display: flex;
             }
             .row1 {
@@ -1533,7 +1504,7 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     .ButtonBox {
-      width: 75%;
+      width: 55%;
       height: 100%;
       border-radius: 4px;
       .recovery {
@@ -1670,5 +1641,41 @@ export default {
 }
 .rightClickClass .processBox .endButton {
   justify-content: space-around;
+}
+.mousemoveBox {
+  .recoveryBox {
+    height: 80%;
+    display: grid !important;
+    grid-template-columns: repeat(2, 50%);
+    grid-template-rows: repeat(2, 50%);
+    padding: 10px;
+    .endButton {
+      padding: 5px;
+      box-sizing: border-box;
+      border: dashed 1px #07a1fb;
+      .ButtonBox {
+        .recovery {
+          font-size: 15px;
+          text-align: center;
+          border-bottom: 1px dashed white;
+        }
+        .button {
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          div {
+            font-size: 14px;
+            margin-top: 10px;
+            background: linear-gradient(
+              172deg,
+              rgba(0, 172, 237, 0.8),
+              rgba(0, 121, 219, 0.8)
+            );
+            padding: 5px;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

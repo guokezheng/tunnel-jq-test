@@ -22,8 +22,9 @@
                     left: item.left / 1.34 + 'px',
                     top: item.top / 1.34 + 'px',
                   }"
+                  @mouseleave="mouseleave(index)"
                 >
-                  <!-- @mouseleave="mouseleave(index)" -->
+                  <!--  @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
@@ -534,22 +535,17 @@
                 </el-timeline-item>
               </el-timeline>
               <div class="endButton">
-                <div class="ButtonBox">
-                  <div class="recovery">左洞恢复</div>
+                <div
+                  class="ButtonBox"
+                  v-for="(item, index) in hfData"
+                  :key="index"
+                >
+                  <div class="recovery">{{ item.planName }}</div>
                   <div class="button">
                     <div>预览</div>
                     <div>执行</div>
                   </div>
                 </div>
-                <div class="ButtonBox">
-                  <div class="recovery">右洞恢复</div>
-                  <div class="button">
-                    <div>预览</div>
-                    <div>执行</div>
-                  </div>
-                </div>
-                <!-- <el-image :src="require('@/assets/icons/hand.png')"/>
-                  <div>一键结束</div> -->
               </div>
             </div>
             <div class="rightBox implement">
@@ -587,7 +583,7 @@ import { listMaterial } from "@/api/system/material";
 import { listEvent, updateEvent } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { listEventFlow } from "@/api/event/eventFlow";
+import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
 import {
   previewDisplay,
   getSubareaByTunnelId,
@@ -596,6 +592,7 @@ export default {
   name: "dispatch",
   data() {
     return {
+      hfData: null, //恢复预案列表
       planListEnd: null,
       previewList: null,
       partitionData: null,
@@ -718,11 +715,17 @@ export default {
     this.accidentInit();
   },
   methods: {
+    getListBySIdData(id) {
+      var data = { subareaId: id, category: "2" };
+      getListBySId(data).then((result) => {
+        console.log(result, "===================");
+        this.hfData = result.data;
+      });
+    },
     accidentInit() {
       console.log(this.$route.query.id, "-");
       var eventId = { eventId: this.$route.query.id };
       listEventFlow(eventId).then((result) => {
-        console.log(result, "12312");
         this.eventList = result.rows;
       });
     },
@@ -737,7 +740,7 @@ export default {
       // if (this.$route.query.tunnelId != undefined) {
       //   const params = this.$route.query.tunnelId;
       // } else {
-      const params = "JQ-JiNan-WenZuBei-MJY"; //WLJD-JiNan-YanJiuYuan-FHS
+      const params = this.$route.query.tunnelId; //"JQ-JiNan-WenZuBei-MJY"; //WLJD-JiNan-YanJiuYuan-FHS
       // }
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
@@ -811,7 +814,7 @@ export default {
     },
     getmaterialList() {
       const params = {
-        tunnelId: this.$route.query.id,
+        tunnelId: this.$route.query.tunnelId,
       };
       listMaterial(params).then((response) => {
         this.materialList = response.rows;
@@ -819,6 +822,8 @@ export default {
     },
 
     rightClick(index) {
+      console.log(index);
+      console.log($(".mousemoveBox").eq(index).children);
       $(".mousemoveBox").eq(index).children(1)[1].style.display = "block";
       $(".icon-box").removeClass("active");
     },
@@ -865,7 +870,7 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData() {
-      var tunnelId = "JQ-JiNan-WenZuBei-MJY";
+      var tunnelId = this.$route.query.tunnelId; //"JQ-JiNan-WenZuBei-MJY";
       let that = this;
       that.upList = [];
       that.downList = [];
@@ -946,7 +951,7 @@ export default {
                   }
                 }
               }
-              this.planList1.forEach((item) => {
+              this.planList1.forEach((item, index) => {
                 // debugger;
                 if (item.leftMax != undefined && item.leftMin != undefined) {
                   var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
@@ -960,17 +965,26 @@ export default {
                   item.top = 0;
                 }
                 // 当前事故点的桩号
-                var positionCurrent = this.getNumber("K105-040");
+                var positionCurrent = this.getNumber(
+                  this.$route.query.stakeNum
+                );
                 var positionMin = this.getNumber(item.pileMin);
                 var positionMax = this.getNumber(item.pileMax);
                 console.log(positionCurrent, positionMin, positionMax);
                 if (
                   positionCurrent > positionMin &&
-                  positionCurrent < positionMax
+                  positionCurrent < positionMax &&
+                  item.direction == this.$route.query.direction
                 ) {
+                  console.log(item, "zxczxc");
+                  item.style =
+                    "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+                  // this.rightClick(index);
                   item.show = true;
+                  this.getListBySIdData(item.id);
                 }
               });
+
               console.log(this.selectedIconList);
               this.planListEnd = this.planList1;
               console.log(this.planListEnd);
@@ -1497,14 +1511,14 @@ export default {
     padding-left: 20px;
   }
   .endButton {
-    width: 50%;
+    width: 100%;
     height: 65px;
     margin: 10px auto;
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     .ButtonBox {
-      width: 55%;
+      width: 32%;
       height: 100%;
       border-radius: 4px;
       .recovery {
@@ -1644,20 +1658,20 @@ export default {
 }
 .mousemoveBox {
   .recoveryBox {
-    height: 80%;
+    height: 80% !important;
     display: grid !important;
     grid-template-columns: repeat(2, 50%);
     grid-template-rows: repeat(2, 50%);
-    padding: 10px;
+    padding: 5px 10px;
     .endButton {
       padding: 5px;
       box-sizing: border-box;
-      border: dashed 1px #07a1fb;
       .ButtonBox {
+        border: 1px solid #07a1fb;
         .recovery {
           font-size: 15px;
           text-align: center;
-          border-bottom: 1px dashed white;
+          border-bottom: 1px dashed #07a1fb;
         }
         .button {
           display: flex;
@@ -1665,13 +1679,14 @@ export default {
           align-items: center;
           div {
             font-size: 14px;
-            margin-top: 10px;
+            margin: 5px 0px;
             background: linear-gradient(
               172deg,
               rgba(0, 172, 237, 0.8),
               rgba(0, 121, 219, 0.8)
             );
             padding: 5px;
+            border-radius: 4px;
           }
         }
       }

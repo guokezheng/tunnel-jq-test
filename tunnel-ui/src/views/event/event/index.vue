@@ -251,7 +251,7 @@
             type="text"
             icon="el-icon-chat-line-square"
             v-hasPermi="['system:event:remove']"
-            @click="handleDispatch(scope.row.id)"
+            @click="handleDispatch(scope.row)"
             >应急调度
           </el-button>
           <!-- <el-button
@@ -958,10 +958,16 @@ export default {
       this.getUrl(row.id);
       console.log(row, "事件详情row");
     },
-    handleDispatch(id) {
+    handleDispatch(row) {
+      console.log(row);
       this.$router.push({
         path: "/emergency/administration/dispatch",
-        query: { id: id },
+        query: {
+          id: row.id,
+          tunnelId: row.tunnelId,
+          stakeNum: row.stakeNum,
+          direction: row.direction,
+        },
       });
     },
     // 表单重置

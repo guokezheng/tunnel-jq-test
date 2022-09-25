@@ -414,6 +414,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", sdTunnelSubarea.getsId());
             map.put("SubareaName", sdTunnelSubarea.getsName());
+            map.put("direction",sdTunnelSubarea.getDirection());
+
             SdReservePlan sdReservePlan = new SdReservePlan();
             sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
             List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);

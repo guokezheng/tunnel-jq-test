@@ -699,23 +699,21 @@
         <el-row style="height: 300px; border: solid 1px red">
           <el-col :span="18" style="border: solid 1px red; height: 300px">
             <video
-                :src="videoUrl"
-                controls
-                muted
-                autoplay
-                loop
-                class="video"
-              ></video>
+              :src="videoUrl"
+              controls
+              muted
+              autoplay
+              loop
+              class="video"
+            ></video>
           </el-col>
-          <el-col :span="6" style="height: 300px;">
+          <el-col :span="6" style="height: 300px">
             <img
-                  v-for="(item, index) in urls"
-                  :key="index"
-                  :src="item.imgUrl"
-                  class="image3"
-                 
-                />
-
+              v-for="(item, index) in urls"
+              :key="index"
+              :src="item.imgUrl"
+              class="image3"
+            />
           </el-col>
         </el-row>
       </el-form>
@@ -743,14 +741,14 @@ export default {
     return {
       urls: [
         {
-          imgUrl:require("@/assets/Example/pic1.jpg"),
+          imgUrl: require("@/assets/Example/pic1.jpg"),
         },
         {
-          imgUrl:require("@/assets/Example/pic1.jpg"),
+          imgUrl: require("@/assets/Example/pic1.jpg"),
         },
         {
-          imgUrl:require("@/assets/Example/pic1.jpg"),
-        }
+          imgUrl: require("@/assets/Example/pic1.jpg"),
+        },
       ],
 
       videoUrl: "",
@@ -957,11 +955,10 @@ export default {
       this.details = true;
       this.title = "事件详情";
       this.eventForm = row;
-      this.getUrl(row.id)
+      this.getUrl(row.id);
       console.log(row, "事件详情row");
     },
     handleDispatch(id) {
-      console.log(id, "eventeventeventeventeventeventeventevent");
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: { id: id },
@@ -1105,13 +1102,13 @@ hr {
   line-height: 40px;
   text-align: center;
 }
-.video{
-  height:300px;
+.video {
+  height: 300px;
   border-radius: 0;
   padding: 5px;
   margin-top: 0;
 }
-.image3{
+.image3 {
   padding: 5px;
   height: 33%;
   border: solid 1px green;

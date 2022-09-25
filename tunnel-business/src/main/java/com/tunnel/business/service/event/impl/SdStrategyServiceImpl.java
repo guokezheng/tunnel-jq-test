@@ -247,8 +247,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int addStrategysInfo(SdStrategyModel model) {
+        // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
+        // 根据传入的值和策略，返回策略子表(控制设备及信息)
         List<SdStrategyRl> list = getRlList(model, sty);
         // 新增策略子表
         int result = 1;
@@ -258,11 +260,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 result = -1;
             }
         }
-        SdTrigger sdTrigger = model.getTriggers();
         if ("2".equals(model.getStrategyType())) {
-            // 策略触发器表
+            // 得到触发器
+            SdTrigger sdTrigger = model.getTriggers();
+            // 添加策略触发器表
             sdTrigger.setRelateId(sty.getId());
             int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+            // 添加触发器关联设备表
             if (insertSdTrigger > 0) {
                 SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
                 sdTriggerDevice.setTriggerId(sdTrigger.getId());
@@ -282,6 +286,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int updateSdStrategyInfo(SdStrategyModel model) {
+        // 判断输入的值是否符合规范并返回策略信息
         SdStrategy sty = conditionalJudgement(model);
         int result = 1;
         //1.0  更新策略 主表
@@ -312,6 +317,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //添加触发器
             sdTrigger.setRelateId(model.getId());
             int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
+            // 添加触发器关联设备表
             if (insertSdTrigger > 0) {
                 SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
                 sdTriggerDevice.setTriggerId(sdTrigger.getId());

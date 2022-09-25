@@ -1,14 +1,10 @@
 package com.tunnel.business.domain.digitalmodel;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * @author dzy
  * @date 2022/9/12 11:42
  */
-@Getter
-@AllArgsConstructor
 public enum WJEnum {
 
     /**
@@ -39,6 +35,26 @@ public enum WJEnum {
     private int code;
     private String number;
 
+    WJEnum(int code, String number) {
+        this.code = code;
+        this.number = number;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
     /**
      * 传code返回name

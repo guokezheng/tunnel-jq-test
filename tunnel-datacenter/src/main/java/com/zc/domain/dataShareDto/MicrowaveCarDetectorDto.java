@@ -1,7 +1,6 @@
 package com.zc.domain.dataShareDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
 /**
  * 微波车检器周期过车数据查询

@@ -68,7 +68,7 @@ public class YddTask {
 
     private static void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state) {
         List<SdDeviceNowState> dataList = new ArrayList<>();
-        cn.hutool.json.JSONObject jsonObject = new cn.hutool.json.JSONObject();
+        JSONObject jsonObject = new JSONObject();
         SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
         sdDeviceNowState.setEqId(sdDevices.getEqId());
         sdDeviceNowState.setEqType(sdDevices.getEqType());

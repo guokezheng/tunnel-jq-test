@@ -1,6 +1,5 @@
 package com.tunnel.webthings.domain;
 
-import lombok.Data;
 
 import java.util.Date;
 

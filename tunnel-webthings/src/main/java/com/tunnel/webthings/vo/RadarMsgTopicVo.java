@@ -4,7 +4,6 @@ import com.tunnel.webthings.domain.RadarMsgTopic;
 import com.tunnel.webthings.domain.SendMsgSuper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.util.Arrays;
 

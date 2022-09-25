@@ -1,7 +1,6 @@
 package com.zc.domain.dataShareDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
 /**
  * 收费站车流量

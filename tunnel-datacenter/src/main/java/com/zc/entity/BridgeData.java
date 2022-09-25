@@ -1,7 +1,7 @@
 package com.zc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 桥梁明细相应参数

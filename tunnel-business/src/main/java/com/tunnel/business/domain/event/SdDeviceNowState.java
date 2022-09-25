@@ -1,6 +1,5 @@
 package com.tunnel.business.domain.event;
 
-import lombok.Data;
 
 public class SdDeviceNowState {
 

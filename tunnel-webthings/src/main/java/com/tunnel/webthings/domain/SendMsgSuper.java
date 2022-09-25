@@ -1,7 +1,6 @@
 package com.tunnel.webthings.domain;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 

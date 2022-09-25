@@ -2,7 +2,7 @@ package com.zc.domain.dataShareDto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 气象设备环境

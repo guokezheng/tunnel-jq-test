@@ -1,6 +1,6 @@
 package com.zc.domain.informationCenterDto;
 
-import lombok.Data;
+
 
 /**
  * 运营管理单位（拆账）表

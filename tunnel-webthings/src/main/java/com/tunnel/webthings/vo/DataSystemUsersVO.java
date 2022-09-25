@@ -3,7 +3,6 @@ package com.tunnel.webthings.vo;
 import com.tunnel.webthings.domain.DataSystemUsers;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author ZHC

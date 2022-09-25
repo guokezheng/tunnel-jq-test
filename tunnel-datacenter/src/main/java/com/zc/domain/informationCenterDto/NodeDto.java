@@ -1,6 +1,6 @@
 package com.zc.domain.informationCenterDto;
 
-import lombok.Data;
+
 
 /**
  * 节点信息

@@ -1,6 +1,5 @@
 package com.zc.video.domain;
 
-import lombok.Data;
 
 /**
  * @author ：xieyuwei

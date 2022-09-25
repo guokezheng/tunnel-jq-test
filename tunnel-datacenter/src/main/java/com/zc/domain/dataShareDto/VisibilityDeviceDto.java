@@ -1,7 +1,7 @@
 package com.zc.domain.dataShareDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 能见度设备数据查询

@@ -1,7 +1,6 @@
 package com.tunnel.business.domain.event;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.util.Date;
 

@@ -1,13 +1,11 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+
+import jdk.nashorn.internal.objects.annotations.Getter;
 
 /**
  * 设备类型数据项表
  */
-@Getter
-@AllArgsConstructor
 public enum DevicesTypeItemEnum {
 
     CO(1, "CO"),
@@ -33,6 +31,19 @@ public enum DevicesTypeItemEnum {
 
     private int code;
     private String name;
+
+    DevicesTypeItemEnum(int code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * 判断是否包含

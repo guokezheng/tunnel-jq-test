@@ -1,7 +1,6 @@
 package com.tunnel.business.domain.digitalmodel;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy

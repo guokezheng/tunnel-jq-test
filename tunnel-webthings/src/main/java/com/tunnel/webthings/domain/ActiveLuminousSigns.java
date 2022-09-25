@@ -2,7 +2,6 @@ package com.tunnel.webthings.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * 主动发光标志

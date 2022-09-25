@@ -2,7 +2,6 @@ package com.tunnel.business.domain.digitalmodel;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy

@@ -2,7 +2,6 @@ package com.tunnel.webthings.vo;
 
 import com.tunnel.webthings.domain.RadarMsgTopic;
 import com.tunnel.webthings.domain.SendMsgSuper;
-import lombok.Data;
 
 import java.util.Arrays;
 

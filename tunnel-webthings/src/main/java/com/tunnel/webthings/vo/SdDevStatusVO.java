@@ -5,7 +5,6 @@ import cn.hutool.json.JSONUtil;
 import com.tunnel.webthings.domain.DevStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author ZHC

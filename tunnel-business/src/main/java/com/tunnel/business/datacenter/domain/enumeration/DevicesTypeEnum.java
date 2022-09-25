@@ -1,16 +1,11 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * 设备类型
  *
  * @author yangqichao
  * @date 2019/9/18 14:45
  */
-@Getter
-@AllArgsConstructor
 public enum DevicesTypeEnum {
 
     PU_TONG_CHE_ZHI(1L, "普通车道指示器"),
@@ -57,6 +52,19 @@ public enum DevicesTypeEnum {
 
     private Long code;
     private String name;
+
+    DevicesTypeEnum(Long code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public void setCode(Long code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * 判断是否包含

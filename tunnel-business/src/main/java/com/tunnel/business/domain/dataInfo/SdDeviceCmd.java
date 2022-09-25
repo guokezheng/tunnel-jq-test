@@ -3,9 +3,6 @@ package com.tunnel.business.domain.dataInfo;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 设备指令对象 sd_device_cmd

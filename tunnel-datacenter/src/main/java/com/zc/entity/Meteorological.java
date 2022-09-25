@@ -1,7 +1,7 @@
 package com.zc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 气象设备环境数据

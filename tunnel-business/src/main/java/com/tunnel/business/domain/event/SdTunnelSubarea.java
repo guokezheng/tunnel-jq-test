@@ -3,7 +3,6 @@ package com.tunnel.business.domain.event;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * 隧道分区对象 sd_tunnel_subarea

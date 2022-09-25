@@ -51,12 +51,12 @@ public class GuidanceLampHandle {
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue() && !fireMark.equals("")) {
             //发送疏散标志控制指令
             try {
-//                String code = "1GH+FIRE?\r\n";
-//                NettyClient client = new NettyClient(ip, port,code,1);
-//                client.start(null);
-//                Map codeMap = InductionlampUtil.getEvacuationSignLightMode(ctrState,Integer.parseInt(brightness),Integer.parseInt(frequency),fireMark);
-//                client.pushCode(codeMap.get("code").toString());
-//                client.stop();
+                String code = "1GH+FIRE?\r\n";
+                NettyClient client = new NettyClient(ip, port,code,1);
+                client.start(null);
+                Map codeMap = InductionlampUtil.getEvacuationSignLightMode(ctrState,Integer.parseInt(brightness),Integer.parseInt(frequency),fireMark);
+                client.pushCode(codeMap.get("code").toString());
+                client.stop();
             } catch (Exception e) {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;

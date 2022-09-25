@@ -1,11 +1,8 @@
 package com.tunnel.deal.plc.modbus;
 
-import com.alibaba.fastjson.JSON;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
 
 import java.util.Map;

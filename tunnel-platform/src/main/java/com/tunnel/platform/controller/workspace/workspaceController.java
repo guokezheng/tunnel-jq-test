@@ -7,11 +7,17 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +52,10 @@ public class workspaceController extends BaseController {
     private static RedisCache redisCache;
     @Autowired
     private ISdTunnelsService sdTunnelsService;
+    @Autowired
+    private ISdDeviceDataService sdDeviceDataService;
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
 
 
     //3d测试
@@ -67,7 +78,24 @@ public class workspaceController extends BaseController {
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(devId);
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        //控制设备
         int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setBeforeState(data.get(0).getData());
+        sdOperationLog.setOperationState(state);
+        sdOperationLog.setControlType("0");
+        sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
 
@@ -89,14 +117,32 @@ public class workspaceController extends BaseController {
         String frequency = map.get("frequency").toString();
         String fireMark = "";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(devId);
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
         if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
             if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
                 throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
             } else {
+                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
                 fireMark = map.get("fireMark").toString();
             }
         }
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+        //控制设备
         int controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setBeforeState(data.get(0).getData());
+        sdOperationLog.setOperationState(state);
+        sdOperationLog.setControlType("0");
+        sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
 

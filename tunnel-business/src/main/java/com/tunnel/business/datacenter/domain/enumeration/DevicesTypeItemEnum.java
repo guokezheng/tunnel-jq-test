@@ -26,7 +26,10 @@ public enum DevicesTypeItemEnum {
     GUIDANCE_LAMP_IS_OPEN(23, "诱导灯是否开灯"),
     EVACUATION_SIGN_IS_OPEN(24, "疏散标志是否开灯"),
     FLAME_DETECTOR_ALARM(25, "火焰探测器报警"),
-    SHOU_BAO_ALARM(26, "手报报警");
+    SHOU_BAO_ALARM(26, "手报报警"),
+    FENG_JI_STATUS(27, "风机状态"),
+    JIA_QIANG_ZHAO_MING_OPEN_STATUS(28, "加强照明开关状态"),
+    INFORMATION_BOARD_CONTENT(29, "情报板显示内容");
 
 
     private int code;

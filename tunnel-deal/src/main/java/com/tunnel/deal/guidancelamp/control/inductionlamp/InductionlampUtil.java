@@ -441,21 +441,13 @@ public class InductionlampUtil {
                 resultCode = "1GH+FIRE=0\r\n";
                 resultMap.put("msgInfo","关闭所有灯光。");
                 break;
-//            case PILOT_LIGHT_MODE_1 :
-//                resultCode = "1GH+SW=1,RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,\r\n";
-//                resultMap.put("msgInfo","同步单闪，频率"+timeSecond+"，亮度"+brightnessParam+"。");
-//                break;
-//            case PILOT_LIGHT_MODE_2 :
-//                resultCode = "1GH+SW=1,RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,\r\n";
-//                resultMap.put("msgInfo","流水灯"+timeSecond+"次/min同步闪烁,亮度为"+brightnessParam+"。");
-//                break;
             case PILOT_LIGHT_MODE_1 :
-                resultCode = "1GH+FIRE="+fireMark+",RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,\r\n";
+                resultCode = "1GH+SW=1,FIRE="+fireMark+",RUNMODE=B,TPWM="+brightnessParam+",TPWMDEF=5,BFREQ="+timeSecond+",TLEDONT=250,BLEDOFFT=50,BMODE=1,\r\n";
                 resultMap.put("msgInfo","同步单闪，标号地址"+fireMark+"，频率"+timeSecond+"，亮度"+brightnessParam+"。");
                 break;
             case PILOT_LIGHT_MODE_2 :
-                resultCode = "1GH+FIRE="+fireMark+",RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,\r\n";
-                resultMap.put("msgInfo","流水灯，标号地址"+fireMark+"，频率"+timeSecond+"次/min，亮度为"+brightnessParam+"。");
+                resultCode = "1GH+SW=1,FIRE="+fireMark+",RUNMODE=W,TPWM="+brightnessParam+",TPWMDEF=5,WFREQ="+timeSecond+",TLEDONT=250,WLEDDELT=50,WMODE=0,\r\n";
+                resultMap.put("msgInfo","顺向单闪流水灯，标号地址"+fireMark+"，频率"+timeSecond+"次/min，亮度为"+brightnessParam+"。");
                 break;
             default:
                 resultCode = "1GH+FIRE=0\r\n";

@@ -18,6 +18,12 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("分区Id")
     private Long sId;
 
+    /** 分区id */
+    @ApiModelProperty("分区方向")
+    private String direction;
+
+
+
     /** 分区名称 */
     @Excel(name = "分区名称")
     @ApiModelProperty("分区名称")
@@ -50,6 +56,13 @@ public class SdTunnelSubarea extends BaseEntity
 
     public void setEqIdMax(String eqIdMax) {
         this.eqIdMax = eqIdMax;
+    }
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
     }
 
     @Override

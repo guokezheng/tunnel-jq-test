@@ -121,6 +121,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
             map.put("tunnelId",sdTunnelSubarea.getTunnelId());
             map.put("pileMin",sdTunnelSubarea.getPileMin());
             map.put("pileMax",sdTunnelSubarea.getPileMax());
+            map.put("direction",sdTunnelSubarea.getDirection());
             map.put("eqIdMin",sdTunnelSubarea.getEqIdMin());
             map.put("eqIdMax",sdTunnelSubarea.getEqIdMax());
             SdReservePlan sdReservePlan = new SdReservePlan();

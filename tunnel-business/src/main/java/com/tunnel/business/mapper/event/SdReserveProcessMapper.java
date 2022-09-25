@@ -76,7 +76,8 @@ public interface SdReserveProcessMapper
 
     /**
      * 根据预案id获得预案流程节点信息
+     * @param reserveId
      * @return
      */
-    public List<SdReserveProcess> selectSdReserveProcessByRid(SdReserveProcess sdReserveProcess);
+    public List<SdReserveProcess> selectSdReserveProcessByRid(Long reserveId);
 }

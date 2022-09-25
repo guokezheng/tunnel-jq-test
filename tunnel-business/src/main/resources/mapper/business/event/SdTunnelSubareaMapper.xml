@@ -26,6 +26,7 @@
                pile_min,
                pile_max,
                create_by,
+               direction,
                create_time,
                update_by,
                update_time
@@ -37,6 +38,7 @@
         <where>
             <if test="sName != null  and sName != ''">and s_name like concat('%', #{sName}, '%')</if>
             <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''">and direction = #{direction}</if>
             <if test="pileMax != null and pileMax != ''">and pile_max = #{pileMax}</if>
             <if test="pileMin != null and pileMin != ''">and pile_min = #{pileMin}</if>
         </where>
@@ -52,6 +54,7 @@
                a.create_by,
                a.create_time,
                a.update_by,
+               a.direction,
                a.update_time,
                b.tunnel_name
         from sd_tunnel_subarea a
@@ -69,6 +72,7 @@
                A.tunnel_id,
                A.pile_min,
                A.pile_max,
+               A.direction,
                B.eq_id as eqIdMin,
                C.eq_id as eqIdMax
         from sd_tunnel_subarea A
@@ -83,6 +87,7 @@
         insert into sd_tunnel_subarea
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="sId != null">s_id,</if>
+            <if test="direction != null">direction,</if>
             <if test="sName != null">s_name,</if>
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="pileMin != null">pile_min,</if>
@@ -94,6 +99,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sId != null">#{sId},</if>
+            <if test="direction != null">#{direction},</if>
             <if test="sName != null">#{sName},</if>
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="pileMin != null">#{pileMin},</if>
@@ -109,6 +115,7 @@
         update sd_tunnel_subarea
         <trim prefix="SET" suffixOverrides=",">
             <if test="sName != null">s_name = #{sName},</if>
+            <if test="direction != null">direction = #{direction},</if>
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="pileMin != null">pile_min = #{pileMin},</if>
             <if test="pileMax != null">pile_max = #{pileMax},</if>

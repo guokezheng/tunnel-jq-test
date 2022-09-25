@@ -8,10 +8,12 @@ import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.SdReserveProcess;
 import com.tunnel.business.domain.event.SdReserveProcessModel;
+import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.event.SdReserveProcessMapper;
+import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,9 +166,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
      */
     @Override
     public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId) {
-        SdReserveProcess sdReserveProcess = new SdReserveProcess();
-        sdReserveProcess.setReserveId(RId);
-        return sdReserveProcessMapper.selectSdReserveProcessByRid(sdReserveProcess);
+        return sdReserveProcessMapper.selectSdReserveProcessByRid(RId);
     }
 
     /**
@@ -177,11 +177,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
      */
     @Override
     public List<Map> selectPreviewDisplay(Long reserveId) {
-        SdReserveProcess reserveProcess = new SdReserveProcess();
-        reserveProcess.setReserveId(reserveId);
         List<Map> mapList = new ArrayList<>();
         // 预案流程节点
-        List<SdReserveProcess> list = sdReserveProcessMapper.selectSdReserveProcessList(reserveProcess);
+        List<SdReserveProcess> list = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
         for (SdReserveProcess process : list) {
             HashMap<String, Object> map = new HashMap<>();
             // 预案Id
@@ -216,6 +214,31 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             // 图片
             map.put("iFileList", iFileList);
             mapList.add(map);
+        }
+        return mapList;
+    }
+
+    /**
+     * 预案执行
+     * @param reserveId
+     * @return
+     */
+    @Override
+    public List<Map> planImplementa(Long reserveId) {
+        SdReserveProcess reserveProcess = new SdReserveProcess();
+        reserveProcess.setReserveId(reserveId);
+        List<Map> mapList = new ArrayList<>();
+        List<SdReserveProcess> reserveProcesses = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
+        for (SdReserveProcess process : reserveProcesses){
+//            Map<String,Object> map = new HashMap<>();
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            for (SdStrategyRl rl : rlList) {
+                Map<String,String> stringMap = new HashMap<>();
+                stringMap.put("equipments",rl.getEquipments());
+                stringMap.put("state",rl.getState());
+                mapList.add(stringMap);
+            }
         }
         return mapList;
     }

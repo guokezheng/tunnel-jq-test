@@ -186,6 +186,10 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             map.put("reserveId", process.getReserveId());
             // 策略Id
             map.put("strategyId", process.getStrategyId());
+            // 策略名称
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
+            map.put("strategyName",sdStrategy.getStrategyName());
+            map.put("strategy",sdStrategy);
             // 设备类型Id
             map.put("deviceTypeId", process.getDeviceTypeId());
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
@@ -220,26 +224,13 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
 
     /**
      * 预案执行
+     *
      * @param reserveId
      * @return
      */
     @Override
-    public List<Map> planImplementa(Long reserveId) {
-        SdReserveProcess reserveProcess = new SdReserveProcess();
-        reserveProcess.setReserveId(reserveId);
-        List<Map> mapList = new ArrayList<>();
-        List<SdReserveProcess> reserveProcesses = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
-        for (SdReserveProcess process : reserveProcesses){
-//            Map<String,Object> map = new HashMap<>();
-            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
-            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
-            for (SdStrategyRl rl : rlList) {
-                Map<String,String> stringMap = new HashMap<>();
-                stringMap.put("equipments",rl.getEquipments());
-                stringMap.put("state",rl.getState());
-                mapList.add(stringMap);
-            }
-        }
-        return mapList;
+    public Integer planImplementa(Long reserveId) {
+
+        return 0;
     }
 }

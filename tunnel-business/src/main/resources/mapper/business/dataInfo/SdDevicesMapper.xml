@@ -75,7 +75,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectSdDevicesVo">
         select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, eq_model, brand_id,
-        <!-- brand_name, -->
         eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol, protocol_url,
         protocol_version, protocol_name, data_type, data_source, delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,

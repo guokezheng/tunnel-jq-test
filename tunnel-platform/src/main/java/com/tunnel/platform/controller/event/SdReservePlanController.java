@@ -88,7 +88,7 @@ public class SdReservePlanController extends BaseController
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
-    public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
+    public Result addReservePlan(MultipartFile[] file,
                                     @RequestParam("subareaId") Long subareaId,
                                     @RequestParam("category") String category,
     								@RequestParam("planTypeId") String planTypeId,
@@ -240,7 +240,7 @@ public class SdReservePlanController extends BaseController
      */
     @GetMapping("/getListBySId")
     @ApiOperation("根据分区id查询预案")
-    public Result selectPlanBySid(@RequestBody SdReservePlan sdReservePlan) {
+    public Result selectPlanBySid(SdReservePlan sdReservePlan) {
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }
 

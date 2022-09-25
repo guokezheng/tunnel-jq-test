@@ -7,7 +7,6 @@ import lombok.Data;
  * @author dzy
  * @date 2022/9/4 17:39
  */
-@Data
 public class WjDeviceCamera {
 
     @ApiModelProperty("设备类型")
@@ -27,4 +26,64 @@ public class WjDeviceCamera {
 
     @ApiModelProperty("设备id")
     private String eqId;
+
+    public Integer getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(Integer deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getRate() {
+        return rate;
+    }
+
+    public void setRate(Integer rate) {
+        this.rate = rate;
+    }
+
+    public String getErrorContent() {
+        return errorContent;
+    }
+
+    public void setErrorContent(String errorContent) {
+        this.errorContent = errorContent;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getEqId() {
+        return eqId;
+    }
+
+    public void setEqId(String eqId) {
+        this.eqId = eqId;
+    }
+
+    @Override
+    public String toString() {
+        return "WjDeviceCamera{" +
+                "deviceType=" + deviceType +
+                ", ip='" + ip + '\'' +
+                ", rate=" + rate +
+                ", errorContent='" + errorContent + '\'' +
+                ", status=" + status +
+                ", eqId='" + eqId + '\'' +
+                '}';
+    }
 }

@@ -1,9 +1,12 @@
 package com.tunnel.platform.controller.digitalmodel;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,19 +80,18 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-//    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
+    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
-//        byte[] value = (byte[]) record.value();
-//        String kafkaJsonStr = new String(value);
-//        if (kafkaJsonStr.startsWith("\"") && kafkaJsonStr.endsWith("\"")) {
-//            kafkaJsonStr = kafkaJsonStr.substring(1, kafkaJsonStr.length() - 1);
-//            kafkaJsonStr = StringEscapeUtils.unescapeJson(kafkaJsonStr);
-//        }
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         String participantNum = map.get("participantNum")+"";
         if (Integer.parseInt(participantNum)>0){
             service.insertRadarDetect(map);
+        }else {
+            List<SdRadarDetectData> dataList = new ArrayList<>();
+            JSONObject object = new JSONObject();
+            object.put("radarDataList", dataList);
+            WebSocketService.broadcast("radarDataList",object.toString());
         }
         //手动提交
         item.acknowledge();
@@ -107,7 +111,7 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-//    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
+    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);

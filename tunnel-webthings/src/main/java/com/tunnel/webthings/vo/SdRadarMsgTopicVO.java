@@ -10,10 +10,23 @@ import lombok.Data;
  * {@code @date} 2022/7/22 10:49
  * 雷达信息数据业务类
  */
-@Data
 @ApiModel("雷达信息数据业务类")
 public class SdRadarMsgTopicVO extends ReceiveTopic {
 
     private RadarMsgTopic expands;
 
+    public RadarMsgTopic getExpands() {
+        return expands;
+    }
+
+    public void setExpands(RadarMsgTopic expands) {
+        this.expands = expands;
+    }
+
+    @Override
+    public String toString() {
+        return "SdRadarMsgTopicVO{" +
+                "expands=" + expands +
+                '}';
+    }
 }

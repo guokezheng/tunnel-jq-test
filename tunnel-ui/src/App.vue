@@ -14,6 +14,7 @@
 </template>
 
 <script>
+  import $ from "jquery";
 import websocket from '@/views/websocket'
 export default  {
   name:  'App',

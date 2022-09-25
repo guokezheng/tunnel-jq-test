@@ -12,7 +12,6 @@ import java.util.Map;
  * {@code @date} 2022/7/15
  * 设备状态
  */
-@Data
 @ApiModel("设备状态")
 public class DevStatus {
 
@@ -25,4 +24,36 @@ public class DevStatus {
     @ApiModelProperty("时间")
     private Date time;
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Map<String, String> getData() {
+        return data;
+    }
+
+    public void setData(Map<String, String> data) {
+        this.data = data;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "DevStatus{" +
+                "code='" + code + '\'' +
+                ", data=" + data +
+                ", time=" + time +
+                '}';
+    }
 }

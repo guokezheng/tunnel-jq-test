@@ -173,6 +173,8 @@ export default {
        background-image: url(../../../assets/cloudControl/navBg.png) !important;
        background-repeat: no-repeat;
        background-position: 0% 58%;
+       height: 56px;
+        line-height: 56px;
     }
     .theme-light  #app .el-menu--horizontal .is-active > .el-submenu__title,
      .theme-light #app .sidebar-container .el-menu-item.is-active,
@@ -182,6 +184,8 @@ export default {
         background-image: url(../../../assets/cloudControl/navBg2.png) !important;
         background-repeat: no-repeat;
         background-position: 20% 50%;
+        height: 56px;
+        line-height: 56px;
     }
 
     // 工作台按钮样式

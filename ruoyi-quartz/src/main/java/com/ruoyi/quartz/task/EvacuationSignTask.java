@@ -6,19 +6,18 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
+import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //疏散标志定时任务调度
 @Component("evacuationSignTask")
@@ -66,8 +65,29 @@ public class EvacuationSignTask {
             sdDevices.setEqStatusTime(new Date());
             log.info("当前设备在线更新设备管理表中的状态");
         }
+        //更新疏散标志控制器状态，疏散标志子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
+        sdDevicesService.updateSdDevicesByFEqId(sdDevices);
         return state;
+    }
+
+    private static void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state) {
+        List<SdDeviceNowState> dataList = new ArrayList<>();
+        cn.hutool.json.JSONObject jsonObject = new cn.hutool.json.JSONObject();
+        SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
+        sdDeviceNowState.setEqId(sdDevices.getEqId());
+        sdDeviceNowState.setEqType(sdDevices.getEqType());
+        sdDeviceNowState.setEqStatus(sdDevices.getEqStatus());
+        sdDeviceNowState.setEqDirection(sdDevices.getEqDirection());
+        sdDeviceNowState.setEqName(sdDevices.getEqName());
+        sdDeviceNowState.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDeviceNowState.setPile(sdDevices.getPile());
+        sdDeviceNowState.setState(state[0]);
+        sdDeviceNowState.setBrightness(state[1]);
+        sdDeviceNowState.setFrequency(state[2]);
+        dataList.add(sdDeviceNowState);
+        jsonObject.put("deviceStatus", dataList);
+        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
     }
 
     private static void sendDataToWanJi(SdDevices sdDevices, String runStatus, String runMode) {
@@ -87,9 +107,14 @@ public class EvacuationSignTask {
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
-        if (sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()
-                && codeMap.get("fireMark") != null) {
+        if (codeMap.get("fireMark") != null
+                && sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()) {
             saveDataIntoSdDeviceData(sdDevices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+            if (codeMap.get("fireMark").toString().equals("255") || codeMap.get("fireMark").toString().equals("0")) {
+                //如果当前是开灯或关灯状态，所有的疏散标志子设备实时状态应该是一致的总共是两种状态，要不就都是开灯，要不就都是关灯
+            } else {
+                //此处表示标号处于0和255之前，疏散标志子设备包含三种状态，入口方向闪烁、闪烁、出口方向闪烁
+            }
             return;
         }
         String mode = codeMap.get("mode").toString();
@@ -105,6 +130,11 @@ public class EvacuationSignTask {
         String frequency = codeMap.get("frequency").toString();
         saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
         log.info("存储设备实时数据到sd_device_data完成");
+        String[] states = new String[3];
+        states[0] = mode;
+        states[1] = brightness;
+        states[2] = frequency;
+        sendNowDeviceStatusByWebsocket(sdDevices, states);
     }
 
     private static void saveDataIntoSdDeviceData(SdDevices sdDevices, String value, Integer itemId) {

@@ -101,9 +101,9 @@ export function sendAnalogCom(data) {
   })
 }
 // 查询单个设备的实时数据状态
-export function getInfo(eqId) {
+export function getDevice(eqId) {
   return request({
-    url: '/system/storage/' + eqId,
+    url: '/devices/getDevice/' + eqId,
     method: 'get'
   })
 }

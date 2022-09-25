@@ -459,16 +459,6 @@
                 loop
                 class="video1"
               ></video>
-              <!-- <video controls muted autoplay loop :src="require('@/assets/Example/d1.mp4')" class="video1" ></video> -->
-              <!-- <video
-          id="h5sVideo1"
-          class="h5video_ video1"
-          controls
-          muted
-          autoplay
-          loop
-          style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video> -->
               <div class="video">
                 <img
                   v-for="(item, index) in urls"

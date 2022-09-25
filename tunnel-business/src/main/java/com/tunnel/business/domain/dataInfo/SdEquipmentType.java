@@ -17,7 +17,6 @@ import java.util.List;
  * @param <SdEquipmentStateIconFile>
  * @date 2020-08-27
  */
-@Data
 @ApiModel("设备类型实体")
 public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 {
@@ -57,6 +56,7 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 
     @ApiModelProperty("设备大类")
     private String bigType;
+
 
     @Override
     public String toString() {

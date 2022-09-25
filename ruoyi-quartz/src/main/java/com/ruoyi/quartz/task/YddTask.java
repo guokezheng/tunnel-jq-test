@@ -6,19 +6,18 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
+import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //诱导灯定时任务调度
 @Component("yddTask")
@@ -67,6 +66,25 @@ public class YddTask {
         return state;
     }
 
+    private static void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state) {
+        List<SdDeviceNowState> dataList = new ArrayList<>();
+        cn.hutool.json.JSONObject jsonObject = new cn.hutool.json.JSONObject();
+        SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
+        sdDeviceNowState.setEqId(sdDevices.getEqId());
+        sdDeviceNowState.setEqType(sdDevices.getEqType());
+        sdDeviceNowState.setEqStatus(sdDevices.getEqStatus());
+        sdDeviceNowState.setEqDirection(sdDevices.getEqDirection());
+        sdDeviceNowState.setEqName(sdDevices.getEqName());
+        sdDeviceNowState.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDeviceNowState.setPile(sdDevices.getPile());
+        sdDeviceNowState.setState(state[0]);
+        sdDeviceNowState.setBrightness(state[1]);
+        sdDeviceNowState.setFrequency(state[2]);
+        dataList.add(sdDeviceNowState);
+        jsonObject.put("deviceStatus", dataList);
+        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
+    }
+
     private static void sendDataToWanJi(SdDevices sdDevices, String runStatus, String runMode) {
         Map<String, Object> map = new HashMap<>();
         map.put("deviceId", sdDevices.getEqId());
@@ -96,6 +114,11 @@ public class YddTask {
         saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
         String frequency = codeMap.get("frequency").toString();
         saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+        String[] states = new String[3];
+        states[0] = mode;
+        states[1] = brightness;
+        states[2] = frequency;
+        sendNowDeviceStatusByWebsocket(sdDevices, states);
     }
 
     private static void saveDataIntoSdDeviceData(SdDevices sdDevices, String value, Integer itemId) {

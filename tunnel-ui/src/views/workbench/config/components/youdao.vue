@@ -80,7 +80,7 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="开关状态:">
-              <el-select v-model="stateForm2.openTimeValue">
+              <el-select v-model="stateForm2.state">
                 <el-option
                   v-for="item in openState"
                   :key="item.value"
@@ -132,7 +132,7 @@
             <el-form-item label="亮度调整">
               <el-slider
                 v-model="stateForm2.brightness"
-                max="50"
+                :max="100"
                 class="sliderClass"
               ></el-slider>
             </el-form-item>
@@ -325,6 +325,8 @@
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
 import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
+import { getDevice } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
+
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
@@ -338,11 +340,9 @@ export default {
       show2: false,
       value2: true,
       stateForm2: {
-        openTimeValue: "",
-        closeTimeValue: "",
-        frequency: 30,
-        brightness: 30,
-        openTimeValue: 1,
+        frequency: '',
+        brightness: '',
+        state: '',
       },
       openTime: [
         {
@@ -352,15 +352,15 @@ export default {
       ],
       openState: [
         {
-          value: 1,
+          value: '1',
           label: "关灯",
         },
         {
-          value: 2,
+          value: '2',
           label: "同步单闪",
         },
         {
-          value: 3,
+          value: '3',
           label: "逆向流水",
         },
       ],
@@ -382,6 +382,10 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
         });
+        await getDevice(this.eqInfo.equipmentId).then((response) => {
+          console.log(response,"诱导灯频率、亮度等")
+          this.stateForm2 = response.data
+        })
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -409,6 +413,7 @@ export default {
         }
       }
     },
+    
     // 提交修改
     handleOK() {
       const param = {
@@ -422,6 +427,7 @@ export default {
 
       controlGuidanceLampDevice(param).then((response) => {
         console.log(response, "提交控制");
+        this.$modal.msgSuccess("操作成功");
         this.$emit("dialogClose");
       });
     },
@@ -430,14 +436,14 @@ export default {
       this.$emit("dialogClose");
     },
     //  设备管控
-    handleControl() {
-      console.log(this.stateForm2, "this.stateForm211111111111");
-      this.stateForm2 = {};
-      console.log(this.stateForm2, "this.stateForm222222222222");
+    // handleControl() {
+    //   console.log(this.stateForm2, "this.stateForm211111111111");
+    //   this.stateForm2 = {};
+    //   console.log(this.stateForm2, "this.stateForm222222222222");
 
-      this.show1 = false;
-      this.show2 = true;
-    },
+    //   this.show1 = false;
+    //   this.show2 = true;
+    // },
   },
 };
 </script>

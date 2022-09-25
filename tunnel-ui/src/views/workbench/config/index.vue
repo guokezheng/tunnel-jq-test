@@ -758,7 +758,7 @@
                 <div>车牌号</div>
                 <div>速度</div>
                 <div>车道</div>
-                <div>车型</div>
+<!--                <div>车型</div>-->
               </li>
             </ul>
             <vue-seamless-scroll
@@ -1006,8 +1006,8 @@
         <div class="dialogLine"></div>
         <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
       </div>
-      
-      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini" 
+
+      <el-form ref="form" :model="stateForm" label-width="80px" label-position="left" size="mini"
                 style="position: relative;padding: 20px;padding-top: 0px;">
         <el-row>
          <el-col :span="12">
@@ -1062,9 +1062,9 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
-        
-        
+
+
+
         <el-form-item label="调光强度:" v-if="stateForm.eqType == 99999999">
           <div style="width: 200px; float: left">
             <slider :min="0" :max="100" v-model="stateForm.lightValue"></slider>
@@ -1141,10 +1141,10 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
-       
-        
-        
+
+
+
+
 
         <template  v-if="stateForm.value &&stateForm.eqType == 20">
           <el-table
@@ -1476,7 +1476,7 @@
             </el-tab-pane>
           </el-tabs>
         </template>
-      
+
       </el-form>
       <div slot="footer">
         <el-button type="primary" size="mini" v-if="stateForm.eqType != 21 && !stateForm.value" @click="submitState"
@@ -1830,7 +1830,7 @@
         <div class="dialogLine"></div>
         <img src="../../../assets/cloudControl/dialogHeader.png" style="height: 30px;transform: translateY(-30px);"/>
       </div>
-      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini" 
+      <el-form ref="form" :model="stateForm" label-width="60px" label-position="left" size="mini"
               style="padding: 20px;padding-top: 0px;">
         <el-row>
           <el-col :span="8">
@@ -3231,14 +3231,18 @@ export default {
 
   watch: {
     sdEventList(event) {
-      console.log(event, "websockt工作台接收事件弹窗");
+      // console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
         this.trafficList.unshift(item);
       }
     },
     radarDataList(event) {
-      console.log(event, "websockt工作台接收感知事件数据");
+      // console.log(event, "websockt工作台接收感知事件数据");
       this.realTimeList = event;
+    },
+    deviceStatus(event) {
+      console.log(event, "websockt工作台接收实时设备状态数据");
+      this.deviceStatusList = event;
     },
 
     // 设备类型
@@ -3369,7 +3373,7 @@ export default {
       return h;
     },
     ...mapState({
-      //  WjEvent: state => state.websocket.WjEvent,
+      deviceStatus: state => state.websocket.deviceStatus,
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
     }),
@@ -3671,7 +3675,7 @@ export default {
 
       getWarnEvent(param).then((response) => {
         // console.log(response.data,"预警事件")
-        this.trafficList = response.data;
+        this.trafficList = response.data
       });
     },
     /** 查询部门列表 */
@@ -4942,7 +4946,7 @@ export default {
         stateTypeId: null,
         deviceState: null,
         stateName: null,
-        isControl: 1,
+        // isControl: 1,
       };
       await listEqTypeState(queryParams).then((response) => {
         console.log("查询设备状态图标", response.rows);
@@ -5229,13 +5233,14 @@ export default {
             // let type = deviceData.eqType;
 
             // 需要换光标的
+            console.log()
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
               if (
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31,32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -5243,6 +5248,7 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
+
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     if (deviceData.eqType == 19) {
@@ -5272,41 +5278,33 @@ export default {
                 } else {
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
-                    debugger;
+
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
                       if (
-                        deviceData.eqType == 1 &&
-                        this.eqTypeStateList[k].state == deviceData.CZ
+                               this.eqTypeStateList[k].state == deviceData.state
                       ) {
-                        console.log(
-                          this.eqTypeStateList[k].state,
-                          "this.eqTypeStateList[k].statethis."
-                        );
-                        console.log(this.eqTypeStateList[k], "888888888888");
-
-                        console.log(deviceData.CZ, "CZCZCZCZCZCZCZCZCZCZ");
-                        //取设备运行状态图标
-                      let url = this.eqTypeStateList[k].url;
-                      this.selectedIconList[j].eqDirection =
-                        deviceData.eqDirection;
-                      if (deviceData.eqDirection == "1") {
-                        //上行车道
-                        if (url.length > 1) {
-                          this.selectedIconList[j].url = [url[1], url[0]];
+                          //取设备运行状态图标
+                        let url = this.eqTypeStateList[k].url;
+                        this.selectedIconList[j].eqDirection =
+                          deviceData.eqDirection;
+                        if (deviceData.eqDirection == "1") {
+                          //上行车道
+                          if (url.length > 1) {
+                            this.selectedIconList[j].url = [url[1], url[0]];
+                          } else {
+                            this.selectedIconList[j].url = url;
+                          }
                         } else {
-                          this.selectedIconList[j].url = url;
+                          this.selectedIconList[j].url =
+                            this.eqTypeStateList[k].url;
                         }
-                      } else {
-                        this.selectedIconList[j].url =
-                          this.eqTypeStateList[k].url;
-                      }
                       }
 
-                      
+
                     }
                   } else {
                     //如果是离线、故障等状态

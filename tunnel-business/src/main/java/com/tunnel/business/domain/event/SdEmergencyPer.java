@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @date 2021-05-12
  */
 @ApiModel("应急人员信息对象类")
-@Data
 public class SdEmergencyPer extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -43,7 +42,19 @@ public class SdEmergencyPer extends BaseEntity
     @ApiModelProperty("电话")
     private String phone;
 
-    public void setId(Long id) 
+    @Override
+    public String toString() {
+        return "SdEmergencyPer{" +
+                "id=" + id +
+                ", tunnelId='" + tunnelId + '\'' +
+                ", tunnelName='" + tunnelName + '\'' +
+                ", userName='" + userName + '\'' +
+                ", groupName='" + groupName + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -97,13 +108,4 @@ public class SdEmergencyPer extends BaseEntity
         this.tunnelName = tunnelName;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("tunnelId", getTunnelId())
-            .append("userName", getUserName())
-            .append("phone", getPhone())
-            .toString();
-    }
 }

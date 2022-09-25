@@ -30,7 +30,7 @@ export default {
         heartRate: interval
       });
       this.socket.onopen = () => {
-        console.log(111111111)
+
       }
       this.socket.onmessage = (message) => {
         message = JSON.parse(message)
@@ -44,8 +44,7 @@ export default {
         const params = message.params;
         const subEvent = params.subEvent;
         const content = params.content;
-        var content1 = JSON.parse(content)
-        var content2 = content1.sdEventList
+        var contentList = JSON.parse(content);
 
         switch (subEvent) {
           case 'payment_webSocket_send':
@@ -58,13 +57,15 @@ export default {
             this.$store.commit('REALTIMELANETRAJECTORY', content)
             break;
           case 'sdEventList':
-            this.$store.commit('SDEVENTLIST', content2)
+            this.$store.commit('SDEVENTLIST', contentList.sdEventList)
             break;
           case 'radarDataList':
-            console.log(content2,"content2content2content2content2content2content2content2content2content2")
-            this.$store.commit('RADARDATALIST', content2)
+            this.$store.commit('RADARDATALIST', contentList.radarDataList)
             break;
-            
+          case 'deviceStatus':
+            this.$store.commit('DEVICESTATUS', contentList.deviceStatus)
+            break;
+
           default:
         }
       }

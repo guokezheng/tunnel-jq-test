@@ -8,7 +8,6 @@ import lombok.Data;
  * @author dzy
  * @date 2022/8/22 17:10
  */
-@Data
 public class DeviceParameter extends BaseEntity {
 
     private static final long serialVersionUID =-1242493306307174690L;
@@ -36,4 +35,82 @@ public class DeviceParameter extends BaseEntity {
 
     @ApiModelProperty("所属收费站")
     private String stationId;
+
+    public String getDevCategory() {
+        return devCategory;
+    }
+
+    public void setDevCategory(String devCategory) {
+        this.devCategory = devCategory;
+    }
+
+    public String getDevNo() {
+        return devNo;
+    }
+
+    public void setDevNo(String devNo) {
+        this.devNo = devNo;
+    }
+
+    public String getDevType() {
+        return devType;
+    }
+
+    public void setDevType(String devType) {
+        this.devType = devType;
+    }
+
+    public String getOpmaCliqueId() {
+        return opmaCliqueId;
+    }
+
+    public void setOpmaCliqueId(String opmaCliqueId) {
+        this.opmaCliqueId = opmaCliqueId;
+    }
+
+    public String getOpmaManagerCropId() {
+        return opmaManagerCropId;
+    }
+
+    public void setOpmaManagerCropId(String opmaManagerCropId) {
+        this.opmaManagerCropId = opmaManagerCropId;
+    }
+
+    public String getOpmaManagerId() {
+        return opmaManagerId;
+    }
+
+    public void setOpmaManagerId(String opmaManagerId) {
+        this.opmaManagerId = opmaManagerId;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(String stationId) {
+        this.stationId = stationId;
+    }
+
+    @Override
+    public String toString() {
+        return "DeviceParameter{" +
+                "devCategory='" + devCategory + '\'' +
+                ", devNo='" + devNo + '\'' +
+                ", devType='" + devType + '\'' +
+                ", opmaCliqueId='" + opmaCliqueId + '\'' +
+                ", opmaManagerCropId='" + opmaManagerCropId + '\'' +
+                ", opmaManagerId='" + opmaManagerId + '\'' +
+                ", roadId='" + roadId + '\'' +
+                ", stationId='" + stationId + '\'' +
+                '}';
+    }
 }

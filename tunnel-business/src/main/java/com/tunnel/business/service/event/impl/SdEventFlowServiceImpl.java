@@ -104,32 +104,54 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
     }
 
     /**
+     * 添加事件流程记录--批量
+     *
+     * @param list 事件列表信息
+     * @return
+     */
+    @Override
+    public void addEventFlowBatch(List<SdEvent> list) {
+        for(SdEvent sdEvent : list){
+            addEventStartFlow(sdEvent);
+        }
+    }
+
+    /**
      * 添加事件开始-事件流程记录
      *
      * @param sdEvent 事件信息
      * @return
      */
     @Override
-    public int addEventStartFlow(SdEvent sdEvent, String source) {
+    public int addEventStartFlow(SdEvent sdEvent) {
         SdTunnels tunnel = tunnelsService.selectSdTunnelsById(sdEvent.getTunnelId());
+        String direction = sdEvent.getDirection();
         //查询方向字典值
-        String direction = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
+        String directionDict = "";
+        if(!StringUtils.isEmpty(direction)){
+            directionDict = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
+        }
+
         //查询事件类型
         SdEventType sdEventType = eventTypeService.selectSdEventTypeById(sdEvent.getEventTypeId());
         String eventTypeName = sdEventType.getEventType();
         SdEventFlow eventFlow = new SdEventFlow();
-        eventFlow.setEventId(sdEvent.getFlowId());
-        eventFlow.setFlowTime(sdEvent.getEventTime());
+        eventFlow.setEventId(String.valueOf(sdEvent.getId()));
+        eventFlow.setFlowTime(DateUtils.getNowDate());
+
+        String eventSource = sdEvent.getEventSource();
+        String eventSourceDesc = EventDescEnum.getName(eventSource);
+
         //拼接事件流程描述
         StringBuffer desc = new StringBuffer();
-        if (!StringUtils.isEmpty(source)) {
-            desc.append(source);
+        if (!StringUtils.isEmpty(eventSourceDesc)) {
+            desc.append(eventSourceDesc);
         }
-        desc.append(tunnel.getTunnelName()).append(sdEvent.getStakeNum()).append(direction)
-                .append("发生").append(eventTypeName).append("事件.");
+        desc.append(tunnel.getTunnelName()).append(directionDict).append("桩号").append(sdEvent.getStakeNum())
+                .append("发生").append(eventTypeName).append("事件");
         //###隧道桩号##方向发生###事件
         eventFlow.setFlowDescription(desc.toString());
-        eventFlow.setFlowHandler(SecurityUtils.getUsername());
+
         int row = sdEventFlowMapper.insertSdEventFlow(eventFlow);
         return row;
     }

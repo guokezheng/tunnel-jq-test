@@ -149,7 +149,7 @@
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
-      <el-table-column align="center" label="隧道名称" prop="tunnelName" />
+      <el-table-column align="center" label="隧道名称" prop="sdTunnels.tunnelName"/>
       <el-table-column
         align="center"
         label="预案类别"

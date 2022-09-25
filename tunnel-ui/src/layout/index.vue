@@ -20,7 +20,7 @@
           <!-- 上下结构 -->
           <template v-else>
             <div :class="{'fixed-header':fixedHeader}" :style="fixedHeader?'width:100%;':''">
-              <div class="topNav_head mapBox">
+              <div :class="$route.path == '/map/map3d/index'?'topNav_head mapBox':'topNav_head'"  >
                 <sidebar class="sidebar-container index_menu blue_index_menu" style="width: 75% !important;position: relative;box-shadow:unset;float:left;"/>
                 <template v-if="weatherView">
                   <div class="weather">
@@ -174,9 +174,6 @@ export default {
       return 'padding-top:'+ h +'px;'
     }
   },
-  mounted(){
-
-  },
   created(){
     console.log(this.$route.path,'路由')
     if(this.$route.path == '/tunnel'){
@@ -219,13 +216,6 @@ export default {
 
       }
     },
-    // $route(val){
-    //   console.log($route.path);
-    //   if($route.path == '/map/map3d/index'){
-    //     var zxc = document.getElementsByClassName('mapBox');
-    //     zxc.style = 'position: fixed;top: 0px;left: 0px;z-index: 960619;width: 100%;';
-    //   }
-    // },
   },
   mounted() {
     if(this.weatherView == undefined) {
@@ -249,6 +239,9 @@ export default {
   @import "~@/assets/styles/mixin.scss";
   @import "~@/assets/styles/variables.scss";
   // 区分不同主题下导航栏颜色
+  .mapBox{
+    position:fixed;top:0px;left:0px;width:100%;z-index:999;
+  }
   .theme-light-navbar{background-color:white;}
   .app-wrapper {
     @include clearfix;

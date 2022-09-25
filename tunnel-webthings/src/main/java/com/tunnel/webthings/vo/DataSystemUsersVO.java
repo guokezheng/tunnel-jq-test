@@ -10,7 +10,6 @@ import lombok.Data;
  * {@code @date} 2022/8/24 14:29
  * 数据中台系统用户业务对象
  */
-@Data
 @ApiModel("数据中台系统用户业务对象")
 public class DataSystemUsersVO extends DataSystemUsers {
 
@@ -20,4 +19,27 @@ public class DataSystemUsersVO extends DataSystemUsers {
     @ApiModelProperty("页数")
     private Integer page;
 
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    @Override
+    public String toString() {
+        return "DataSystemUsersVO{" +
+                "limit=" + limit +
+                ", page=" + page +
+                '}';
+    }
 }

@@ -64,13 +64,19 @@ public interface ISdEventFlowService {
 
 
     /**
+     * 添加事件流程记录--批量
+     * @param list 事件列表信息
+     * @return
+     */
+    void addEventFlowBatch(List<SdEvent> list);
+
+    /**
      * 事件开始/事件新增-事件流程记录
      *
      * @param sdEvent 事件信息
-     * @param source  事件来源
      * @return
      */
-    int addEventStartFlow(SdEvent sdEvent, String source);
+    int addEventStartFlow(SdEvent sdEvent);
 
     /**
      * 事件结束-事件流程记录

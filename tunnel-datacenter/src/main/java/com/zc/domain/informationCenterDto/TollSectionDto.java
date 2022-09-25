@@ -5,7 +5,6 @@ import lombok.Data;
 /**
  * 收费路段字典
  */
-@Data
 public class TollSectionDto {
 
     //国标路线编码
@@ -19,4 +18,46 @@ public class TollSectionDto {
 
     //收费路段名称
     private String tollSectionName;
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getRoadName() {
+        return roadName;
+    }
+
+    public void setRoadName(String roadName) {
+        this.roadName = roadName;
+    }
+
+    public String getTollSectionId() {
+        return tollSectionId;
+    }
+
+    public void setTollSectionId(String tollSectionId) {
+        this.tollSectionId = tollSectionId;
+    }
+
+    public String getTollSectionName() {
+        return tollSectionName;
+    }
+
+    public void setTollSectionName(String tollSectionName) {
+        this.tollSectionName = tollSectionName;
+    }
+
+    @Override
+    public String toString() {
+        return "TollSectionDto{" +
+                "roadId='" + roadId + '\'' +
+                ", roadName='" + roadName + '\'' +
+                ", tollSectionId='" + tollSectionId + '\'' +
+                ", tollSectionName='" + tollSectionName + '\'' +
+                '}';
+    }
 }

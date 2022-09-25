@@ -11,7 +11,6 @@ import lombok.Data;
  * @author ruoyi
  * @date 2022-08-25
  */
-@Data
 public class SdTunnelSubarea extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -38,6 +37,22 @@ public class SdTunnelSubarea extends BaseEntity
 
     private String eqIdMax;
 
+    public String getEqIdMin() {
+        return eqIdMin;
+    }
+
+    public void setEqIdMin(String eqIdMin) {
+        this.eqIdMin = eqIdMin;
+    }
+
+    public String getEqIdMax() {
+        return eqIdMax;
+    }
+
+    public void setEqIdMax(String eqIdMax) {
+        this.eqIdMax = eqIdMax;
+    }
+
     @Override
     public String toString() {
         return "SdTunnelSubarea{" +
@@ -46,6 +61,8 @@ public class SdTunnelSubarea extends BaseEntity
                 ", tunnelId='" + tunnelId + '\'' +
                 ", pileMin='" + pileMin + '\'' +
                 ", pileMax='" + pileMax + '\'' +
+                ", eqIdMin='" + eqIdMin + '\'' +
+                ", eqIdMax='" + eqIdMax + '\'' +
                 ", tunnelName='" + tunnelName + '\'' +
                 '}';
     }

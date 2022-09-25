@@ -1,9 +1,8 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
 import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
@@ -17,6 +16,7 @@ import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
@@ -50,6 +50,10 @@ public class RadarEventServiceImpl implements RadarEventService {
     private RadarEventMapper wjMapper;
     @Autowired
     private SdDevicesMapper devicesMapper;
+
+    @Autowired
+    private ISdEventFlowService eventFlowService;
+
     @Autowired
     private RedisCache redisCache;
     @Autowired
@@ -85,6 +89,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setId(f.getEventId());
+                sdEvent.setUpdateTime(DateUtils.getNowDate());
                 wjMapper.updateEvent(sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
@@ -99,6 +104,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setEventSource(EventSourceEnum.radar.getCode());
+                sdEvent.setCreateTime(DateUtils.getNowDate());
                 eventList.add(sdEvent);
                 eventIdList.add(sdEvent.getId());
                 List<WjConfidence> targetList = f.getTargetList();
@@ -112,7 +118,10 @@ public class RadarEventServiceImpl implements RadarEventService {
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
             object.put("sdEventList", sdEventList);
-            WebSocketService.broadcast("WjEvent",object.toString());
+            WebSocketService.broadcast("sdEventList",object.toString());
+
+            // 添加事件流程记录
+            eventFlowService.addEventFlowBatch(sdEventList);
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
@@ -213,19 +222,14 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setVehicleLicense(f.getPicLicense());
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
+                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed());
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);
         JSONObject object = new JSONObject();
         object.put("radarDataList", dataList);
         redisCache.setCacheMapValue(RadarEventConstants.MATCHRESULTDATA, RadarEventConstants.MATCHRESULTDATA + ":" + tunnelId, object);
-        WebSocketService.broadcast("dataList",object);
-//        WebSocketServer.sendMessage(object.toString());
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("D:\\test.txt", true));  //这个ture是内容不覆盖继续写
-        bufferedWriter.write(object.toString());
-        bufferedWriter.newLine();
-        bufferedWriter.close();
-        log.info("---测试车辆---{}", dataList);
+        WebSocketService.broadcast("radarDataList",object.toString());
     }
 
     @Override

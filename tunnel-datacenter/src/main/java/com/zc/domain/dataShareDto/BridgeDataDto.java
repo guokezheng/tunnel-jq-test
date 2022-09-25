@@ -6,7 +6,6 @@ import lombok.Data;
 /**
  * 桥梁明细
  */
-@Data
 public class BridgeDataDto {
 
     //系统id
@@ -24,4 +23,46 @@ public class BridgeDataDto {
     //桥梁名称
     @JsonProperty(value = "bridge_name")
     private String bridgeName;
+
+    public String getSysId() {
+        return sysId;
+    }
+
+    public void setSysId(String sysId) {
+        this.sysId = sysId;
+    }
+
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getBridgeName() {
+        return bridgeName;
+    }
+
+    public void setBridgeName(String bridgeName) {
+        this.bridgeName = bridgeName;
+    }
+
+    @Override
+    public String toString() {
+        return "BridgeDataDto{" +
+                "sysId='" + sysId + '\'' +
+                ", serviceCode='" + serviceCode + '\'' +
+                ", roadId='" + roadId + '\'' +
+                ", bridgeName='" + bridgeName + '\'' +
+                '}';
+    }
 }

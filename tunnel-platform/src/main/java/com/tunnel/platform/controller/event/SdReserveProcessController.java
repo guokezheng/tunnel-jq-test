@@ -34,6 +34,9 @@ public class SdReserveProcessController extends BaseController
 {
     @Autowired
     private ISdReserveProcessService sdReserveProcessService;
+
+    @Autowired
+    private SdDeviceControlService sdDeviceControlService;
     
 
     /**
@@ -161,7 +164,7 @@ public class SdReserveProcessController extends BaseController
                     map.put("devId",devId);
                     map.put("state",rl.getState());
                     map.put("controlType","3");
-                    SdDeviceControlService sdDeviceControlService = new SdDeviceControlService();
+//                    SdDeviceControlService sdDeviceControlService = new SdDeviceControlService();
                     result = sdDeviceControlService.controlDevices(map);
                 }
             }

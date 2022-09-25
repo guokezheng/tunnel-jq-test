@@ -126,16 +126,16 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
 
-//    /**
-//     * 根据id查询事件 ---视频
-//     *
-//     * @param id
-//     * @return
-//     */
-//    @Override
-//    public SdEvent getById(Long id) {
-//        return sdEventMapper.selectSdEventById(id);
-//    }
+    /**
+     * 根据id查询事件 ---视频
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public SdEvent getById(Long id) {
+        return sdEventMapper.selectSdEventById(id);
+    }
 
     /**
      * 预警事件查询全部

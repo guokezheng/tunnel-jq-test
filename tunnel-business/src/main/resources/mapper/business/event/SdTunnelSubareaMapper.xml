@@ -55,12 +55,10 @@
                a.create_time,
                a.update_by,
                a.direction,
-               --dict.dict_label,
                a.update_time,
                b.tunnel_name
         from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
-        --left join (select dict.dict_label,dict.dict_value from sys_dict_data dict where dict.dict_type = 'sd_direction') dict on dict.dict_value = a.direction
     </select>
 
     <select id="selectSdTunnelSubareaBySId" parameterType="Long" resultMap="SdTunnelSubareaResult">

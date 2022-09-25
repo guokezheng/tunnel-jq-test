@@ -42,14 +42,14 @@ public class YddTask {
                 continue;
             } else {
                 //进行状态查询
-                sendCommand(devices, devices.getIp(), Integer.parseInt(devices.getPort()));
+                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }
 
     private String handleDeviceStatus(SdDevices sdDevices, Map<String, Object> codeMap) {
         String state = "";
-        if (codeMap.isEmpty()) {
+        if (codeMap == null || codeMap.isEmpty()) {
             //当前诱导灯控制器已经离线，存储状态到devices
             sdDevices.setEqStatus("2");
             sdDevices.setEqStatusTime(new Date());
@@ -139,7 +139,11 @@ public class YddTask {
 
     }
 
-    public void sendCommand(SdDevices sdDevices, String ip, Integer port) {
+    public void sendCommand(SdDevices sdDevices, String ip, String portAddress) {
+        if (ip == null || portAddress == null || "".equals(ip) || "".equals(portAddress)) {
+            return;
+        }
+        Integer port = Integer.valueOf(portAddress);
         try {
 //                String code = "1GH+STATUS?\r\n";
 //                NettyClient client = new NettyClient(ip, port,code,1);
@@ -168,7 +172,8 @@ public class YddTask {
                 }
             } else if (state != "" && state.equals("0")) {
                 saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
-                sendDataToWanJi(sdDevices, "lightOff", "");
+                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                sendDataToWanJi(sdDevices, "lightOff", "0");
             }
 //                client.pushCode(codeMap.get("code").toString());
 //                client.stop();

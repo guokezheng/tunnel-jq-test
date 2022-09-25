@@ -38,18 +38,19 @@ public class EvacuationSignTask {
         List<SdDevices> evacuationSignDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
         for (int i = 0;i < evacuationSignDevicesList.size();i++) {
             SdDevices devices = evacuationSignDevicesList.get(i);
-            if (devices.getIp() == null && devices.getPort() == null && ("").equals(devices.getIp())) {
+            if (devices.getIp() == null && devices.getPort() == null
+                    && ("").equals(devices.getIp()) && ("").equals(devices.getPort())) {
                 continue;
             } else {
                 //进行状态查询
-                sendCommand(devices, devices.getIp(), Integer.parseInt(devices.getPort()));
+                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }
 
     private String handleDeviceStatus(SdDevices sdDevices, Map<String, Object> codeMap) {
         String state = "";
-        if (codeMap.isEmpty()) {
+        if (codeMap == null || codeMap.isEmpty()) {
             log.info("当前疏散标志控制器已经离线，存储状态到设备管理表中");
             sdDevices.setEqStatus("2");
             sdDevices.setEqStatusTime(new Date());
@@ -107,7 +108,7 @@ public class EvacuationSignTask {
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
-        if (codeMap.get("fireMark") != null
+        if ((codeMap != null && !codeMap.isEmpty()) && codeMap.get("fireMark") != null
                 && sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()) {
             saveDataIntoSdDeviceData(sdDevices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
             if (codeMap.get("fireMark").toString().equals("255") || codeMap.get("fireMark").toString().equals("0")) {
@@ -154,7 +155,11 @@ public class EvacuationSignTask {
         }
     }
 
-    public void sendCommand(SdDevices sdDevices, String ip, Integer port) {
+    public void sendCommand(SdDevices sdDevices, String ip, String portAddress) {
+        if (ip == null || portAddress == null || "".equals(ip) || "".equals(portAddress)) {
+            return;
+        }
+        Integer port = Integer.valueOf(portAddress);
         try {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);
@@ -186,7 +191,8 @@ public class EvacuationSignTask {
                 handleCodeMap(sdDevices, codeMap);
             } else if (state != "" && state.equals("0")) {
                 saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
-                sendDataToWanJi(sdDevices, "lightOff", "");
+                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                sendDataToWanJi(sdDevices, "lightOff", "0");
             }
         } catch (Exception e) {
             e.printStackTrace();

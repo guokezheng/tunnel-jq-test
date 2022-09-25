@@ -134,4 +134,14 @@ public class SdReserveProcessController extends BaseController
         List<Map> mapList = sdReserveProcessService.selectPreviewDisplay(reserveId);
         return mapList;
     }
+
+    /**
+     * 预案执行
+     * @param reserveId
+     * @return
+     */
+    @PostMapping("/implement")
+    public AjaxResult implement(Long reserveId) {
+        return AjaxResult.success(sdReserveProcessService.planImplementa(reserveId));
+    }
 }

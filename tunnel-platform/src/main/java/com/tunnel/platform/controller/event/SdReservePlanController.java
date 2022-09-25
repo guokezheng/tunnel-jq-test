@@ -233,7 +233,7 @@ public class SdReservePlanController extends BaseController
     }
 
     /**
-     * 根据分区id查询预案(非恢复预案)
+     * 根据分区id,预案类别 查询预案
      *
      * @param sdReservePlan
      * @return

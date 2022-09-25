@@ -117,15 +117,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from sd_reserve_process where reserve_id = #{id}
     </delete>
 
-    <select id="selectSdReserveProcessByRid" parameterType="SdReserveProcess" resultMap="SdReserveProcessResult">
+    <select id="selectSdReserveProcessByRid" resultMap="SdReserveProcessResult">
         select id, reserve_id, device_type_id, strategy_id, process_name, process_sort
         from sd_reserve_process
-        <where>
-            <if test="reserveId != null "> and reserve_id = #{reserveId}</if>
-            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
-            <if test="strategyId != null "> and strategy_id = #{strategyId}</if>
-            <if test="processName != null  and processName != ''"> and process_name like concat('%', #{processName}, '%')</if>
-            <if test="processSort != null "> and process_sort = #{processSort}</if>
-        </where>
+        where reserve_id = #{reserveId}
     </select>
 </mapper>

@@ -394,14 +394,13 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     }
 
     /**
-     * 根据分区id查询预案
+     * 根据分区id查询预案(事件预案）
      *
      * @param sdReservePlan
      * @return
      */
     @Override
     public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan) {
-        sdReservePlan.setCategory("1");
         List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
         return sdReservePlans;
     }

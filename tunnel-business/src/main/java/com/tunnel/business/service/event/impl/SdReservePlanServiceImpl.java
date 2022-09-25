@@ -1,9 +1,9 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
@@ -15,6 +15,7 @@ import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.service.event.ISdReservePlanService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 预案信息Service业务层处理
@@ -117,36 +115,47 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     @Override
     public List<SdReservePlan> selectSdReservePlanList(SdReservePlan sdReservePlan) {
         List<SdReservePlan> list = sdReservePlanMapper.selectSdReservePlanList(sdReservePlan);
+        StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
             List<String> strategyNames = new ArrayList<>();
             Long subareaId = list.get(i).getSubareaId();
             SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
             list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
             list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
-            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
-                String[] strategys = list.get(i).getStrategyId().split(",");
-                int index = 0;
-                for (String strategy : strategys) {
-                    String things = "";
-                    if (strategy != null && !"".equals(strategy)) {
-                        if (!"-1".equals(strategy)) {
-                            if (strategy == null || strategy.equals("")) {
-                                continue;
-                            }
-                            index++;
-                            SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(strategy));
-                            if (sds == null) {
-                                logger.error("策略未找到！");
-                                continue;
-                            }
-                            //things = things + sds.getStrategyName();
-                            things = things + index + "、" + sds.getStrategyName();
-                            strategyNames.add(things);
-                        }
-                    }
+            String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
+            if(StrUtil.isNotBlank(strategyNamesStr)){
+                strategyNames = Arrays.asList(strategyNamesStr.split(","));
+                for (int j = 0; j < strategyNames.size(); j++) {
+                    int num = j+1;
+                    strategyNames.set(j,buffer.append(num).append("、").append(strategyNames.get(j)).toString());
+                    buffer.setLength(0);
                 }
-                list.get(i).setStrategyNames(strategyNames);
             }
+            list.get(i).setStrategyNames(strategyNames);
+//            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
+//                String[] strategys = list.get(i).getStrategyId().split(",");
+//                int index = 0;
+//                for (String strategy : strategys) {
+//                    String things = "";
+//                    if (strategy != null && !"".equals(strategy)) {
+//                        if (!"-1".equals(strategy)) {
+//                            if (strategy == null || strategy.equals("")) {
+//                                continue;
+//                            }
+//                            index++;
+//                            SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(strategy));
+//                            if (sds == null) {
+//                                logger.error("策略未找到！");
+//                                continue;
+//                            }
+//                            //things = things + sds.getStrategyName();
+//                            things = things + index + "、" + sds.getStrategyName();
+//                            strategyNames.add(things);
+//                        }
+//                    }
+//                }
+//                list.get(i).setStrategyNames(strategyNames);
+//            }
         }
         return list;
     }

@@ -17,9 +17,10 @@
                   class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   :style="{
-                    width: item.width + 'px',
-                    height: item.height + 'px',
+                    width: item.width / 1.34 + 'px',
+                    height: item.height / 1.34 + 'px',
                     left: item.left / 1.34 + 'px',
+                    top: item.top / 1.34 + 'px',
                   }"
                   @mouseleave="mouseleave(index)"
                 >
@@ -767,7 +768,7 @@ export default {
       // if (this.$route.query.tunnelId != undefined) {
       //   const params = this.$route.query.tunnelId;
       // } else {
-      const params = "JQ-JiNan-WenZuBei-MJY";
+      const params = "JQ-JiNan-WenZuBei-MJY"; //WLJD-JiNan-YanJiuYuan-FHS
       // }
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
@@ -932,50 +933,86 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  // 如果最大值和最小值都不是空，找到设备后获取宽度并相减，得到left值，top值就是高度；最小值的left在值就是盒子的left；
-                  if (bxx.eqIdMax != null && bxx.eqIdMin != null) {
-                    if (axx.eqId == bxx.eqIdMax) {
+                  bxx.direction = axx.eqDirection;
+                  // 如果最大值和最小值都他有值，找到设备后获取宽度并相减，得到left值，top值就是高度；最小值的left在值就是盒子的left；
+                  // if (bxx.pileMin != "0" && bxx.pileMax != "100") {
+                  //   if (axx.pile == bxx.pileMax) {
+                  //     // 定义获取最大值的left
+                  //     var leftMax = axx.position.left;
+                  //   }
+                  //   if (axx.pile == bxx.pileMin) {
+                  //     // 定义获取最小值的left
+                  //     var leftMin = axx.position.left;
+                  //   }
+                  //   let deviceWidth = Number(leftMax) - Number(leftMin);
+                  //   let deviceHeight = axx.position.top;
+                  //   bxx.width = deviceWidth;
+                  //   bxx.height = deviceHeight;
+                  //   bxx.top = deviceHeight;
+                  //   bxx.left = leftMin;
+                  // }
+                  if (bxx.pileMin == "0") {
+                    if (String(axx.pile).trim() == String(bxx.pileMax).trim()) {
+                      console.log(axx, "小小小小");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
+                      var leftMin = 0;
+                      var deviceWidth = Number(leftMax) - Number(leftMin);
+                      var deviceHeight = axx.position.top;
+                      bxx.width = deviceWidth;
+                      bxx.height = deviceHeight;
+                      bxx.top = deviceHeight;
+                      bxx.left = leftMin;
                     }
-                    if (axx.eqId == bxx.eqIdMin) {
-                      // 定义获取最小值的left
+                  } else if (bxx.pileMax == "100") {
+                    if (String(axx.pile).trim() == String(bxx.pileMin).trim()) {
+                      console.log(bxx, "大大大大");
+                      var leftMax = Number(1640);
                       var leftMin = axx.position.left;
+                      var deviceWidth = Number(leftMax) - Number(leftMin);
+                      var deviceHeight = axx.position.top;
+                      bxx.width = deviceWidth;
+                      bxx.height = deviceHeight;
+                      bxx.top = deviceHeight;
+                      bxx.left = leftMin;
                     }
-                    var deviceWidth = Number(leftMax) - Number(leftMin);
-                    var deviceHeight = axx.position.top;
-                    bxx.width = deviceWidth;
-                    bxx.height = deviceHeight;
-                    bxx.left = leftMin;
                   } else {
-                    // 如果最小值 = 0，则left = 0;
-                    if (bxx.pileMin == "0") {
-                      var left_Min = Number(0);
-                      if (bxx.eqIdMax == axx.eqId) {
-                        var left_Max = axx.position.left;
-                      }
-                      var deviceWidth = Number(left_Max) - Number(left_Min);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.left = left_Min;
-                    } else if (bxx.pileMax == "100") {
-                      if (bxx.eqIdMin == axx.eqId) {
-                        var left_Min = axx.position.left;
-                        console.log(left_Min, "最大值");
-                      }
-                      var left_Max = Number(1640);
-                      var deviceWidth = Number(left_Max) - Number(left_Min);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.left = left_Min;
+                    if (String(bxx.pileMin).trim() == String(axx.pile).trim()) {
+                      bxx.leftMin = axx.position.left;
+                      bxx.deviceHeight = axx.position.top;
+                    }
+                    if (String(bxx.pileMax).trim() == String(axx.pile).trim()) {
+                      bxx.leftMax = axx.position.left;
                     }
                   }
                 }
               }
+              this.planList1.forEach((item) => {
+                // debugger;
+                if (item.leftMax != undefined && item.leftMin != undefined) {
+                  var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
+                  item.width = deviceWidth;
+                  item.height = item.deviceHeight;
+                  item.top = item.deviceHeight;
+                  item.left = item.leftMin;
+                }
+                if (item.direction == "1") {
+                  item.top = 0;
+                }
+                var positionCurrent = this.getNumber("K105-040");
+                var positionMin = this.getNumber(item.pileMin);
+                var positionMax = this.getNumber(item.pileMax);
+                console.log(positionCurrent, positionMin, positionMax);
+                if (
+                  positionCurrent > positionMin &&
+                  positionCurrent < positionMax
+                ) {
+                  item.show = true;
+                }
+              });
+              console.log(this.selectedIconList);
               this.planListEnd = this.planList1;
-              console.log(this.selectedIconList, "this.selectedIconList");
+              console.log(this.planListEnd);
             })
             .then(() => {});
         } else {
@@ -989,6 +1026,9 @@ export default {
           that.rightDirection = "";
         }
       });
+    },
+    getNumber(number) {
+      return number.replace(/[^0-9]/gi, "");
     },
     getUrl() {
       const param3 = {
@@ -1100,7 +1140,7 @@ export default {
         left: 0;
         .mousemoveBox {
           height: 50%;
-          position: relative;
+          position: absolute;
           display: inline-block;
           z-index: 2;
           .partitionBox {

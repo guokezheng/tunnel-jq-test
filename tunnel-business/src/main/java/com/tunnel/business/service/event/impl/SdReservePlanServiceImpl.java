@@ -394,7 +394,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     }
 
     /**
-     * 根据分区id查询预案(事件预案）
+     * 根据分区id查询预案
      *
      * @param sdReservePlan
      * @return

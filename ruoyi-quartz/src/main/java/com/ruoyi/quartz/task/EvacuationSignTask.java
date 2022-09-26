@@ -118,6 +118,9 @@ public class EvacuationSignTask {
             }
             return;
         }
+        if (codeMap == null || codeMap.isEmpty() || codeMap.get("mode") == null) {
+            return;
+        }
         String mode = codeMap.get("mode").toString();
         if (mode.equals("1")) {
             mode = "2";

@@ -100,5 +100,5 @@ public interface ISdReserveProcessService {
      * @param reserveId
      * @return
      */
-    List<Map> planImplementa(Long reserveId);
+    Integer planImplementa(Long reserveId);
 }

@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件处理流程Service业务层处理
@@ -54,6 +56,42 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
     @Override
     public List<SdEventFlow> selectSdEventFlowList(SdEventFlow sdEventFlow) {
         return sdEventFlowMapper.selectSdEventFlowList(sdEventFlow);
+    }
+
+    /**
+     * 执行预案保存事件处理流程记录
+     * @param eventId
+     * @param data
+     * @return
+     */
+    @Override
+    public int execPlanSaveEventFlow(String eventId, Map data) {
+        List<String> strategyList = (List)data.get("strategy");
+        StringBuffer buffer = new StringBuffer();
+        String strategyNames = strategyList.stream().collect(Collectors.joining("、"));
+        buffer.append("执行了").append(data.get("planName")).append("：").append(strategyNames);
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription(buffer.toString());
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        return sdEventFlowMapper.insertSdEventFlow(flow);
+    }
+    /**
+     * 确认事件
+     * @param eventId
+     * @return
+     */
+    @Override
+    public int saveUserConfirmFlow(String eventId) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("用户").append(SecurityUtils.getUsername()).append("确认了该事件");
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription(buffer.toString());
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        return sdEventFlowMapper.insertSdEventFlow(flow);
     }
 
     /**

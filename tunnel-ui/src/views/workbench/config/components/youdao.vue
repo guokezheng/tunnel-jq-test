@@ -91,10 +91,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="11">
-            <el-form-item label="诱导灯数量:">
-            </el-form-item>
-          </el-col> -->
+       
         </el-row>
         <el-row>
           <el-col :span="15">
@@ -111,22 +108,7 @@
             >
           </el-col>
         </el-row>
-        <!-- <el-row>
-          <el-col :span="11">
-            <el-form-item label="灯光颜色:">
-              <div style="display: flex; align-items: center">
-                <div style="width: 40px; height: 18px; background: red"></div>
-                <span style="padding-left: 5px">{{ "红色" }}</span>
-              </div>
-            </el-form-item>
-          </el-col>
-        </el-row> -->
-        <!-- <el-row>
-          <el-col :span="13">
-            <el-form-item label="更新时间:">
-            </el-form-item>
-          </el-col>
-        </el-row> -->
+
         <el-row>
           <el-col :span="15">
             <el-form-item label="亮度调整">
@@ -164,161 +146,7 @@
           >取 消</el-button
         >
       </div>
-      <!-- <div slot="footer" v-show="show1">
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleControl()"
-          style="width: 80px"
-          >设备管控</el-button
-        >
-      </div> -->
-      <!-- <div v-show="show2">
-        <div>
-          <el-form
-            :model="stateForm2"
-            label-width="68px"
-            label-position="left"
-            size="mini"
-            style="padding: 15px; padding-top: 0px"
-          >
-            <div>设备管控</div>
-            <el-switch
-              style="display: block; margin: 10px 0 20px 0"
-              v-model="stateForm2.switch"
-              active-color="#426086"
-              inactive-color="#426086"
-              active-text="手动开关"
-              inactive-text="自动开关"
-              @change="handeleSwitch()"
-            >
-            </el-switch>
-            <el-row v-show="!stateForm2.switch">
-              <el-col :span="12">
-                <el-form-item label="开启时间">
-                  <el-select v-model="stateForm2.openTimeValue">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="关闭时间">
-                  <el-select v-model="stateForm2.closeTimeValue">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row v-show="!stateForm2.switch">
-              <el-col :span="12">
-                <el-form-item label="闪烁频率">
-                  <el-select v-model="stateForm2.twinkle">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="灯光颜色">
-                  <el-select v-model="stateForm2.lightColor">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row v-show="stateForm2.switch">
-              <el-col :span="4">
-                <el-form-item label="当前状态">
-                  <div class="blueButton" style="width: 80px">开启灯光</div>
-                </el-form-item>
-              </el-col>
-            </el-row>
-            <el-row v-show="stateForm2.switch">
-              <el-col :span="10">
-                <el-form-item label="闪烁频率">
-                  <el-select v-model="stateForm2.frequency">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="10">
-                <el-form-item label="灯光颜色">
-                  <el-select v-model="stateForm2.lightColor">
-                    <el-option
-                      v-for="item in openTime"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <div class="blueButton">关闭灯光</div>
-              </el-col>
-            </el-row>
-            <div class="lineClass"></div>
-            <div style="margin: 10px 0">亮度调整</div>
-            <el-form-item label="亮度调整">
-              <el-slider
-                v-model="stateForm2.brightness"
-                :show-tooltip="false"
-                class="sliderClass"
-              ></el-slider>
-            </el-form-item>
-          </el-form>
-        </div>
-        <div
-          slot="footer"
-          style="float: right; margin-right: 15px; margin-bottom: 20px"
-        >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleOK()"
-            style="width: 80px"
-            class="submitButton"
-            >确 定</el-button
-          >
-          <el-button
-            type="primary"
-            size="mini"
-            @click="handleClosee()"
-            style="width: 80px"
-            >取 消</el-button
-          >
-        </div>
-      </div> -->
+    
     </el-dialog>
   </div>
 </template>
@@ -340,16 +168,11 @@ export default {
       show2: false,
       value2: true,
       stateForm2: {
-        frequency: '',
-        brightness: '',
-        state: '',
+        frequency: null,
+        brightness: null,
+        state: null,
       },
-      openTime: [
-        {
-          value: 1,
-          label: "10",
-        },
-      ],
+    
       openState: [
         {
           value: '1',
@@ -384,13 +207,17 @@ export default {
         });
         await getDevice(this.eqInfo.equipmentId).then((response) => {
           console.log(response,"诱导灯频率、亮度等")
-          this.stateForm2 = response.data
+          // this.stateForm2 = response.data
+          this.stateForm2 = {
+            frequency:Number(response.data.frequency),
+            brightness:Number(response.data.brightness),
+            state:response.data.state
+          }
         })
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    handeleSwitch() {},
     getDirection(num) {
       for (var item of this.directionList) {
         if (item.dictValue == num) {
@@ -418,7 +245,7 @@ export default {
     handleOK() {
       const param = {
         devId: this.stateForm.eqId, //设备id
-        state: this.stateForm.eqStatus, //设备状态
+        state: this.stateForm2.state, //设备状态
         // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
         frequency: this.stateForm2.frequency, //诱导灯频率

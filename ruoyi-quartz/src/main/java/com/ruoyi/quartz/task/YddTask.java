@@ -102,6 +102,9 @@ public class YddTask {
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
+        if (codeMap == null || codeMap.isEmpty() || codeMap.get("mode") == null) {
+            return;
+        }
         String mode = codeMap.get("mode").toString();
         if (mode.equals("1")) {
             mode = "2";

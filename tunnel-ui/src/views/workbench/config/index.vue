@@ -55,7 +55,7 @@
           >
             控制策略
           </el-button> -->
-          <el-button
+          <!-- <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -63,7 +63,7 @@
             @click="batchManage"
           >
             批量操作
-          </el-button>
+          </el-button> -->
           <el-button
             class="flex-row"
             type="primary"
@@ -698,14 +698,18 @@
           :append-to-body="true"
           class="drawerBottom"
         >
-          <div style="height: 150px; overflowy: auto; padding: 5px">
+          <div style="height: 150px; overflowy: auto; padding: 5px;padding-left: 10px;">
+            <div style="border-bottom:1px solid rgba(224, 231, 237, 0.2);color:#00c2ff">
+              <span style="padding-left:5px">策略名称</span>
+              <span style="padding-left:28px;line-height:40px">策略信息</span>
+            </div>
             <div v-for="(item, index) in isDrawerCList" :key="index">
               <div
                 v-for="(itm, inx) in item.slist"
                 :key="inx"
-                style="display: flex; padding: 4px"
+                style="display: flex; padding: 4px;line-height:30px;border-bottom:1px solid rgba(224, 231, 237, 0.2)"
               >
-                <div style="width: 80px; margin-right: 5px; padding-left: 10px">
+                <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.strategyName }}
                 </div>
                 <div>{{ itm }}</div>
@@ -770,9 +774,9 @@
                 v-for="(item, index) in realTimeList"
                 :key="index"
                 class="listRow"
-                style="display: flex"
+                style="display: flex;justify-content: space-around;"
               >
-                <div style="text-align: center; width: 42px">
+                <div style="text-align: center; ">
                   {{ index + 1 }}
                 </div>
                 <div style="width: 95px; text-align: center">
@@ -2143,7 +2147,7 @@
             　
             <img
               :src="scope.row.url"
-              style="vertical-align: middle; max-height: 30px"
+              style="vertical-align: middle; max-height: 30px;padding:2px 0"
             />
           </template>
         </el-table-column>
@@ -3391,10 +3395,13 @@ export default {
     };
 
     // 隧道调取数据两秒一次
-    this.timer = setInterval(() => {
-      setTimeout(this.getRealTimeData, 0);
-      // setTimeout(this.getLiPowerDevice, 0)
-    }, 1000 * 5);
+    // this.timer = setInterval(() => {
+    //   setTimeout(this.getRealTimeData, 0);
+    //   // setTimeout(this.getLiPowerDevice, 0)
+    // }, 1000 * 5);
+    // setTimeout(() =>{
+    //   this.getRealTimeData()
+    // },2000);
 
     bus.$on("process", (e) => {
       console.log(e, "-----------");
@@ -3441,10 +3448,12 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
-      this.$router.push({
-        path: "/emergency/administration/dispatch",
-        query: { id: num, tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" },
-      });
+      bus.$emit("openDialog", num);
+      // this.$router.push({
+      //   path: "/emergency/administration/dispatch",
+      //   query: { id: num, tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" },
+      // });
+
     },
     // 车型通过字典表获取值
     getCheXing(num) {
@@ -4977,7 +4986,7 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
-
+      // this.getRealTimeData()
       for (var item of that.eqTypeStateList) {
         if (item.type == 18) {
           console.log(item, "引道照明");
@@ -5033,6 +5042,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              that.getRealTimeData()
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -5229,7 +5239,7 @@ export default {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            // console.log(deviceData, "deviceData");
+            console.log(deviceData, "deviceData");
             // let type = deviceData.eqType;
 
             // 需要换光标的

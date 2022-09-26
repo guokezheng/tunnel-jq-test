@@ -121,5 +121,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, reserve_id, device_type_id, strategy_id, process_name, process_sort
         from sd_reserve_process
         where reserve_id = #{reserveId}
+        order by process_sort
     </select>
 </mapper>

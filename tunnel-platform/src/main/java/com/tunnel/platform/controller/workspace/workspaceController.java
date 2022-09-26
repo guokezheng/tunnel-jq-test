@@ -16,6 +16,7 @@ import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
@@ -23,10 +24,7 @@ import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -56,6 +54,8 @@ public class workspaceController extends BaseController {
     private ISdDeviceDataService sdDeviceDataService;
     @Autowired
     private ISdOperationLogService sdOperationLogService;
+    @Autowired
+    private ISdRadarDetectDataService sdRadarDetectDataService;
 
 
     //3d测试
@@ -146,6 +146,14 @@ public class workspaceController extends BaseController {
         return AjaxResult.success(controlState);
     }
 
+    @PostMapping("/vehicleMonitoringInRecent24Hours")
+    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody String tunnelId){
+        if (tunnelId.equals("") || tunnelId == null) {
+            throw new RuntimeException("车辆监测查询条件中隧道不能为空");
+        }
+        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(tunnelId);
+        return AjaxResult.success(vehicleMonitoringInRecent24Hours);
+    }
 
     /**
      * 根据隧道id,方向,所属车道筛选车道指示器

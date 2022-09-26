@@ -1,20 +1,24 @@
 package com.tunnel.platform.service;
 
+import cn.hutool.json.JSONObject;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +79,10 @@ public class SdDeviceControlService {
             sdOperationLog.setBeforeState(data.get(0).getData());
             controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
             sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"cz");
             //控制诱导灯
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
@@ -89,6 +97,12 @@ public class SdDeviceControlService {
             sdOperationLog.setBeforeState(data.get(0).getData());
             controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
             sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            states[1] = brightness;
+            states[2] = frequency;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
             //控制疏散标志
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
@@ -106,8 +120,40 @@ public class SdDeviceControlService {
             sdOperationLog.setBeforeState(data.get(0).getData());
             controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
             sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            states[1] = brightness;
+            states[2] = frequency;
+            states[3] = fireMark;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;
+    }
+
+    public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state, String type) {
+        List<SdDeviceNowState> dataList = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
+        sdDeviceNowState.setEqId(sdDevices.getEqId());
+        sdDeviceNowState.setEqType(sdDevices.getEqType());
+        sdDeviceNowState.setEqStatus(sdDevices.getEqStatus());
+        sdDeviceNowState.setEqDirection(sdDevices.getEqDirection());
+        sdDeviceNowState.setEqName(sdDevices.getEqName());
+        sdDeviceNowState.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDeviceNowState.setPile(sdDevices.getPile());
+        sdDeviceNowState.setState(state[0]);
+        if (type.equals("ydd")) {
+            sdDeviceNowState.setBrightness(state[1]);
+            sdDeviceNowState.setFrequency(state[2]);
+        } else if (type.equals("ssbz")) {
+            sdDeviceNowState.setBrightness(state[1]);
+            sdDeviceNowState.setFrequency(state[2]);
+            sdDeviceNowState.setFireMark(state[3]);
+        }
+        dataList.add(sdDeviceNowState);
+        jsonObject.put("deviceStatusChangeLog", dataList);
+        WebSocketService.broadcast("deviceStatusChangeLog", jsonObject.toString());
     }
 }

@@ -31,6 +31,16 @@ public class SdDeviceNowState {
 
     private String frequency;
 
+    private String fireMark;
+
+    public String getFireMark() {
+        return fireMark;
+    }
+
+    public void setFireMark(String fireMark) {
+        this.fireMark = fireMark;
+    }
+
     public String getEqId() {
         return eqId;
     }

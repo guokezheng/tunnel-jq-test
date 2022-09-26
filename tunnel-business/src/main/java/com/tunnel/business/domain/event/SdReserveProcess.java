@@ -42,7 +42,7 @@ public class SdReserveProcess extends BaseEntity
 
     private String strategyIds;
 
-    private Long handleStrategyList;
+    private Long[] handleStrategyList;
 
     public void setId(Long id) 
     {
@@ -71,12 +71,12 @@ public class SdReserveProcess extends BaseEntity
     {
         return deviceTypeId;
     }
-    public void setStrategyId(Long strategyId) 
+    public void setStrategyId(Long strategyId)
     {
         this.strategyId = strategyId;
     }
 
-    public Long getStrategyId() 
+    public Long getStrategyId()
     {
         return strategyId;
     }
@@ -99,11 +99,11 @@ public class SdReserveProcess extends BaseEntity
         return processSort;
     }
 
-    public Long getHandleStrategyList() {
+    public Long[] getHandleStrategyList() {
         return handleStrategyList;
     }
 
-    public void setHandleStrategyList(Long handleStrategyList) {
+    public void setHandleStrategyList(Long[] handleStrategyList) {
         this.handleStrategyList = handleStrategyList;
     }
 

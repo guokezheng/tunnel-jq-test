@@ -69,7 +69,7 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
         List<String> strategyList = (List)data.get("strategy");
         StringBuffer buffer = new StringBuffer();
         String strategyNames = strategyList.stream().collect(Collectors.joining("、"));
-        buffer.append("执行了").append(data.get("planName")).append("预案：").append(strategyNames);
+        buffer.append("执行了").append(data.get("planName")).append("：").append(strategyNames);
         SdEventFlow flow = new SdEventFlow();
         flow.setFlowDescription(buffer.toString());
         flow.setEventId(eventId);

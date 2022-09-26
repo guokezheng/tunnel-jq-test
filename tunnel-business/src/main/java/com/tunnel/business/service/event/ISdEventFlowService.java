@@ -6,6 +6,7 @@ import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.event.SdReservePlan;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件处理流程Service接口
@@ -30,6 +31,11 @@ public interface ISdEventFlowService {
      */
     List<SdEventFlow> selectSdEventFlowList(SdEventFlow sdEventFlow);
 
+    /**
+     * 执行预案保存流程记录
+     * @return
+     */
+    int execPlanSaveEventFlow(String eventId, Map data);
     /**
      * 新增事件处理流程
      *

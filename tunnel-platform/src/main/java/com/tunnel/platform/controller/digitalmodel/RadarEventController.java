@@ -87,6 +87,11 @@ public class RadarEventController {
         String participantNum = map.get("participantNum")+"";
         if (Integer.parseInt(participantNum)>0){
             service.insertRadarDetect(map);
+        }else {
+            List<SdRadarDetectData> dataList = new ArrayList<>();
+            JSONObject object = new JSONObject();
+            object.put("radarDataList", dataList);
+            WebSocketService.broadcast("radarDataList",object.toString());
         }
         //手动提交
         item.acknowledge();

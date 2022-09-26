@@ -489,6 +489,9 @@
   }
   .eventDiglog{
     .el-dialog{
+      .el-form{
+        padding: 15px;
+      }
         //background-image: url(../cloudControl/dialog5.png) !important;
         //background-repeat: no-repeat;
         //background-size: 100% 100%;

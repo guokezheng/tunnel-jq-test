@@ -575,9 +575,15 @@
       }
   }
   .explain-table {
+    .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+      border-bottom: solid 1px  #0a88bd !important;
+    }
     .el-table .el-table__header-wrapper th{
-      background-color: #fff !important;
-      color:#0a88bd !important;
+      background-color: #0a88bd !important;
+      color:#fff !important;
+    }
+    .el-table__body{
+      width: 100% !important;
     }
     .el-table__body-wrapper{
       background-color: #fff !important;
@@ -593,7 +599,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #c4e8f6;
+      background-color: #0e2c53;
     }
   }
   // .workbench-dialog .el-button--mini {padding: 0 !important;}

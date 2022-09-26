@@ -28,7 +28,8 @@
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
-                    :style="item.style ? item.style : ''"
+                    v-show="fqIndex == index"
+                    :style="item.style"
                   >
                     <div class="row1">{{ item.sName }}</div>
                     <div class="recoveryBox">
@@ -41,7 +42,7 @@
                           <div class="recovery">{{ itm.planName }}</div>
                           <div class="button">
                             <div @click="getPreview(itm)">预览</div>
-                            <div>执行</div>
+                            <div @click="eventDo(itm)">执行</div>
                           </div>
                         </div>
                       </div>
@@ -542,8 +543,8 @@
                 >
                   <div class="recovery">{{ item.planName }}</div>
                   <div class="button">
-                    <div>预览</div>
-                    <div>执行</div>
+                    <div @click="getPreview(itm)">预览</div>
+                    <div @click="eventDo(item)">执行</div>
                   </div>
                 </div>
               </div>
@@ -574,13 +575,19 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import $ from "jquery";
 import { icon, laneImage } from "../../../utils/configData.js";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
-import { listEvent, updateEvent } from "@/api/event/event";
+import {
+  listEvent,
+  updateEvent,
+  getEvent,
+  getImplement,
+} from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
@@ -592,6 +599,8 @@ export default {
   name: "dispatch",
   data() {
     return {
+      eventMsg: null,
+      fqIndex: null,
       hfData: null, //恢复预案列表
       planListEnd: null,
       previewList: null,
@@ -691,14 +700,20 @@ export default {
       selectedIconList: [], //配置图标
     };
   },
-  async mounted() {
-    await this.getSubareaByTunnel();
+  computed: {
+    ...mapState({
+      deviceStatusChangeLog: (state) => state.websocket.deviceStatusChangeLog,
+    }),
+  },
+  watch: {
+    deviceStatusChangeLog(event) {
+      // console.log(event, "websockt工作台接收感知事件数据");
+      console.log(event, "已执行");
+      var zxc = event;
+    },
   },
   created() {
-    console.log(this.$route.query.id, "this.$route.query.id");
-    this.getTunnelData();
-    this.getmaterialList(); //应急物资
-    this.getpersonnelList(); //调度电话
+    this.getEventData();
     if (this.$route.query.id) {
       const param = {
         id: this.$route.query.id,
@@ -715,6 +730,25 @@ export default {
     this.accidentInit();
   },
   methods: {
+    eventDo(item) {
+      console.log(item);
+      var data = { eventId: this.eventMsg.id, reserveId: item.id };
+      getImplement(data).then((result) => {
+        if (result.code == 200) {
+          this.$modal.msgSuccess(result.msg);
+        }
+      });
+    },
+    async getEventData() {
+      await getEvent(this.$route.query.id).then((result) => {
+        this.eventMsg = result.data;
+      });
+      this.getSubareaByTunnel();
+      this.getTunnelData();
+      this.getmaterialList(); //应急物资
+      this.getpersonnelList(); //调度电话
+      this.getUrl();
+    },
     getListBySIdData(id) {
       var data = { subareaId: id, category: "2" };
       getListBySId(data).then((result) => {
@@ -723,32 +757,23 @@ export default {
       });
     },
     accidentInit() {
-      console.log(this.$route.query.id, "-");
       var eventId = { eventId: this.$route.query.id };
       listEventFlow(eventId).then((result) => {
         this.eventList = result.rows;
       });
     },
-    randomEvent() {
-      var index = Math.floor(Math.random() * 2 + 2);
-      this.planList1[index].style =
-        "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-      this.rightClick(index);
-    },
+    // randomEvent() {
+    //   var index = Math.floor(Math.random() * 2 + 2);
+    //   this.planList1[index].style =
+    //     "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+    //   this.rightClick(index);
+    // },
 
     async getSubareaByTunnel() {
-      // if (this.$route.query.tunnelId != undefined) {
-      //   const params = this.$route.query.tunnelId;
-      // } else {
-      const params = this.$route.query.tunnelId; //"JQ-JiNan-WenZuBei-MJY"; //WLJD-JiNan-YanJiuYuan-FHS
-      // }
+      console.log(this.eventMsg);
+      const params = this.eventMsg.tunnelId;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
-        console.log(this.planList1, "===============");
-        // if (this.$route.query.id != undefined) {
-        //   console.log(this.$route.query.id);
-        //   this.randomEvent();
-        // }
       });
     },
     // 预览
@@ -806,7 +831,7 @@ export default {
     /** 查询应急人员信息列表 */
     getpersonnelList() {
       const params = {
-        tunnelId: this.$route.query.id,
+        tunnelId: this.eventMsg.tunnelId,
       };
       listSdEmergencyPer(params).then((response) => {
         this.personnelList = response.rows;
@@ -814,7 +839,7 @@ export default {
     },
     getmaterialList() {
       const params = {
-        tunnelId: this.$route.query.tunnelId,
+        tunnelId: this.eventMsg.tunnelId,
       };
       listMaterial(params).then((response) => {
         this.materialList = response.rows;
@@ -822,14 +847,10 @@ export default {
     },
 
     rightClick(index) {
-      console.log(index);
-      console.log($(".mousemoveBox").eq(index).children);
-      $(".mousemoveBox").eq(index).children(1)[1].style.display = "block";
-      $(".icon-box").removeClass("active");
+      this.fqIndex = index;
     },
     mouseleave(index) {
-      $(".mousemoveBox").eq(index).children(1)[1].style.display = "none";
-      $(".icon-box").addClass("active");
+      this.fqIndex = null;
     },
 
     returnDetails() {
@@ -847,9 +868,16 @@ export default {
         id: this.$route.query.id,
         eventState: "1",
       };
-      updateEvent(param).then((response) => {
-        this.$modal.msgSuccess("事件处理成功");
-      });
+      this.$modal
+        .confirm("是否确认结束事件")
+        .then(function () {
+          return updateEvent(param);
+        })
+        .then(() => {
+          this.planListEnd = null;
+          this.$modal.msgSuccess("事件处理成功");
+        })
+        .catch(() => {});
     },
     /* 鼠标点击*/
     dian(event) {
@@ -870,7 +898,7 @@ export default {
     },
     /* 获取隧道配置信息*/
     getTunnelData() {
-      var tunnelId = this.$route.query.tunnelId; //"JQ-JiNan-WenZuBei-MJY";
+      var tunnelId = this.eventMsg.tunnelId; //"JQ-JiNan-WenZuBei-MJY";
       let that = this;
       that.upList = [];
       that.downList = [];
@@ -899,24 +927,6 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  // bxx.direction = axx.eqDirection;
-                  // 如果最大值和最小值都他有值，找到设备后获取宽度并相减，得到left值，top值就是高度；最小值的left在值就是盒子的left；
-                  // if (bxx.pileMin != "0" && bxx.pileMax != "100") {
-                  //   if (axx.pile == bxx.pileMax) {
-                  //     // 定义获取最大值的left
-                  //     var leftMax = axx.position.left;
-                  //   }
-                  //   if (axx.pile == bxx.pileMin) {
-                  //     // 定义获取最小值的left
-                  //     var leftMin = axx.position.left;
-                  //   }
-                  //   let deviceWidth = Number(leftMax) - Number(leftMin);
-                  //   let deviceHeight = axx.position.top;
-                  //   bxx.width = deviceWidth;
-                  //   bxx.height = deviceHeight;
-                  //   bxx.top = deviceHeight;
-                  //   bxx.left = leftMin;
-                  // }
                   if (bxx.pileMin == "0") {
                     if (String(axx.pile).trim() == String(bxx.pileMax).trim()) {
                       // 定义获取最大值的left
@@ -952,6 +962,7 @@ export default {
                 }
               }
               this.planList1.forEach((item, index) => {
+                // item.style = "display:none;";
                 // debugger;
                 if (item.leftMax != undefined && item.leftMin != undefined) {
                   var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
@@ -965,18 +976,23 @@ export default {
                   item.top = 0;
                 }
                 // 当前事故点的桩号
-                var positionCurrent = this.getNumber(
-                  this.$route.query.stakeNum
-                );
+                var positionCurrent = this.getNumber(this.eventMsg.stakeNum);
                 var positionMin = this.getNumber(item.pileMin);
                 var positionMax = this.getNumber(item.pileMax);
-                console.log(positionCurrent, positionMin, positionMax);
+                console.log(
+                  positionCurrent,
+                  positionMin,
+                  positionMax,
+                  "方向=>",
+                  this.eventMsg.direction
+                );
                 if (
                   positionCurrent > positionMin &&
                   positionCurrent < positionMax &&
-                  item.direction == this.$route.query.direction
+                  item.direction == this.eventMsg.direction
                 ) {
                   console.log(item, "zxczxc");
+                  this.fqIndex = index;
                   item.style =
                     "border:1px solid red;background-color: rgba(255,0,0,0.6);";
                   // this.rightClick(index);
@@ -1134,7 +1150,7 @@ export default {
             position: relative;
             top: -100%;
             // left: 15%;
-            display: none;
+            // display: none;
             color: white;
             background-color: rgba($color: #005e96, $alpha: 0.5);
             z-index: 4;
@@ -1692,5 +1708,8 @@ export default {
       }
     }
   }
+}
+.active .rightClickClass {
+  display: block;
 }
 </style>

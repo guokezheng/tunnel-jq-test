@@ -50,7 +50,8 @@ public class PlcTask {
 
     //
     public void createModbusTcpMaster() {
-        ModbusTcpMaster.getInstance().init();
+//        ModbusTcpMaster.getInstance().init();
+        System.out.println("本地环境不开启创建PLC客户端");
     }
 
     public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state, String type) {

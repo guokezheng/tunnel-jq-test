@@ -93,6 +93,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @param tunnelId
      * @return
      */
+    @Override
     public Object[] eventById(String tunnelId) {
         List<Map> maps = sdRadarDetectDataMapper.eventById(tunnelId);
         ArrayList<Object> time = new ArrayList<>();
@@ -107,5 +108,11 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
         resArr[0] = time;
         resArr[1] = num;
         return resArr;
+    }
+
+    @Override
+    public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(String tunnelId) {
+        List<Map<String, Object>> maps = sdRadarDetectDataMapper.vehicleMonitoringInRecent24Hours(tunnelId);
+        return maps;
     }
 }

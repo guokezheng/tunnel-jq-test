@@ -5,6 +5,7 @@ import com.tunnel.business.domain.digitalmodel.SdRadarDetectDatas;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 雷达监测感知数据Service接口
@@ -68,5 +69,7 @@ public interface ISdRadarDetectDataService {
      * @return
      */
     Object[] eventById(String tunnelId);
+
+    List<Map<String, Object>> vehicleMonitoringInRecent24Hours(String tunnelId);
 
 }

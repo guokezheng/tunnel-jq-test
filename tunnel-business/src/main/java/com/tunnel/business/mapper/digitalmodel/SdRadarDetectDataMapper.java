@@ -2,13 +2,14 @@ package com.tunnel.business.mapper.digitalmodel;
 
 
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * 雷达监测感知数据Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2022-09-04
  */
@@ -16,7 +17,7 @@ public interface SdRadarDetectDataMapper
 {
     /**
      * 查询雷达监测感知数据
-     * 
+     *
      * @param id 雷达监测感知数据主键
      * @return 雷达监测感知数据
      */
@@ -24,7 +25,7 @@ public interface SdRadarDetectDataMapper
 
     /**
      * 查询雷达监测感知数据列表
-     * 
+     *
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 雷达监测感知数据集合
      */
@@ -32,7 +33,7 @@ public interface SdRadarDetectDataMapper
 
     /**
      * 新增雷达监测感知数据
-     * 
+     *
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 结果
      */
@@ -40,7 +41,7 @@ public interface SdRadarDetectDataMapper
 
     /**
      * 修改雷达监测感知数据
-     * 
+     *
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 结果
      */
@@ -48,7 +49,7 @@ public interface SdRadarDetectDataMapper
 
     /**
      * 删除雷达监测感知数据
-     * 
+     *
      * @param id 雷达监测感知数据主键
      * @return 结果
      */
@@ -56,7 +57,7 @@ public interface SdRadarDetectDataMapper
 
     /**
      * 批量删除雷达监测感知数据
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
@@ -68,5 +69,5 @@ public interface SdRadarDetectDataMapper
      */
     public List<Map> eventById(String tunnelId);
 
-
+    public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
 }

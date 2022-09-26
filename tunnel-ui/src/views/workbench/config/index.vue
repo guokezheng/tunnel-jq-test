@@ -3241,7 +3241,7 @@ export default {
       this.realTimeList = event;
     },
     deviceStatus(event) {
-      console.log(event, "websockt工作台接收实时设备状态数据");
+      // console.log(event, "websockt工作台接收实时设备状态数据");
       this.deviceStatusList = event;
     },
 

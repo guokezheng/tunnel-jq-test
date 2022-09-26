@@ -74,6 +74,23 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
         flow.setFlowDescription(buffer.toString());
         flow.setEventId(eventId);
         flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        return sdEventFlowMapper.insertSdEventFlow(flow);
+    }
+    /**
+     * 确认事件
+     * @param eventId
+     * @return
+     */
+    @Override
+    public int saveUserConfirmFlow(String eventId) {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("用户").append(SecurityUtils.getUsername()).append("确认了该事件");
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription(buffer.toString());
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
         return sdEventFlowMapper.insertSdEventFlow(flow);
     }
 

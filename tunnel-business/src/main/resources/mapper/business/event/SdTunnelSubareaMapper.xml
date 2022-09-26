@@ -76,10 +76,10 @@
                B.eq_id as eqIdMin,
                C.eq_id as eqIdMax
         from sd_tunnel_subarea A
-        LEFT JOIN sd_devices B
-       on A.pile_min = B.pile AND B.eq_type = "12"
-        LEFT JOIN sd_devices C
-       on A.pile_max = C.pile AND C.eq_type = "12"
+        LEFT JOIN sd_devices B ON A.pile_min = B.pile AND A.direction = B.eq_direction
+            AND B.eq_type = "12"
+        LEFT JOIN sd_devices C ON A.pile_max = C.pile AND A.direction = C.eq_direction
+            AND C.eq_type = "12"
         where tunnel_id = #{tunnelId}
     </select>
 

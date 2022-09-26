@@ -1,6 +1,6 @@
 package com.ruoyi.quartz.task;
 
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -103,7 +103,7 @@ public class PlcTask {
                             //通过websocket推送实时状态
                             String[] states = new String[3];
                             states[0] = state;
-                            sendNowDeviceStatusByWebsocket(sdDevice,states,"cz");
+                            sendNowDeviceStatusByWebsocket(sdDevice, states, "cz");
                             //推送设备状态
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
@@ -243,24 +243,24 @@ public class PlcTask {
         }
     }
 
-    public String getCheZhiState(boolean fHong,boolean fLv,boolean zHong,boolean zLv){
-        String state="";
-        if (zLv && fHong){
-            state="1";
-        }else if (zHong && fLv){
-            state="2";
-        }else if (zHong && fHong){
-            state="3";
-        }else if (zLv && (fHong==false && fLv==false)){
-            state="5";
-        }else if (zHong && (fHong==false && fLv==false) ){
-            state="6";
-        }else if (fLv && (zHong==false && zLv==false) ){
-            state="7";
-        }else if (fHong && (zHong==false && zLv==false) ){
-            state="7";
-        }else {
-            state="4";
+    public String getCheZhiState(boolean fHong, boolean fLv, boolean zHong, boolean zLv) {
+        String state = "";
+        if (zLv && fHong) {
+            state = "1";
+        } else if (zHong && fLv) {
+            state = "2";
+        } else if (zHong && fHong) {
+            state = "3";
+        } else if (zLv && (fHong == false && fLv == false)) {
+            state = "5";
+        } else if (zHong && (fHong == false && fLv == false)) {
+            state = "6";
+        } else if (fLv && (zHong == false && zLv == false)) {
+            state = "7";
+        } else if (fHong && (zHong == false && zLv == false)) {
+            state = "7";
+        } else {
+            state = "4";
         }
         return state;
     }
@@ -271,7 +271,7 @@ public class PlcTask {
         sdDeviceData.setDeviceId(devices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));
         SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
-        if(deviceData != null) {
+        if (deviceData != null) {
             deviceData.setData(value);
             deviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.updateSdDeviceData(deviceData);
@@ -291,10 +291,10 @@ public class PlcTask {
         if (sdDeviceDataRecords.size() > 0) {
             SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecords.get(sdDeviceDataRecords.size() - 1);
             Date createTime = deviceDataRecord.getCreateTime();
-            if(createTime != null) {
+            if (createTime != null) {
                 Date nowdate = new Date();
-                long sec = (nowdate.getTime()-createTime.getTime()) / 1000L / 60L;
-                if(sec < 5L){
+                long sec = (nowdate.getTime() - createTime.getTime()) / 1000L / 60L;
+                if (sec < 5L) {
                     log.info("当前设备类型为{}的数据记录时间小于5分钟，不需要新增数据", itemId);
                     return;
                 }

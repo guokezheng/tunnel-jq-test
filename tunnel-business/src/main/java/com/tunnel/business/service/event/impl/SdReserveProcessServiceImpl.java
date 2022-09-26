@@ -6,15 +6,14 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
-import com.tunnel.business.domain.event.SdReserveProcess;
-import com.tunnel.business.domain.event.SdReserveProcessModel;
-import com.tunnel.business.domain.event.SdStrategy;
-import com.tunnel.business.domain.event.SdStrategyRl;
+import com.tunnel.business.domain.event.*;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
+import com.tunnel.business.mapper.event.SdReservePlanMapper;
 import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +33,9 @@ import java.util.Map;
 public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Autowired
     private SdReserveProcessMapper sdReserveProcessMapper;
+
+    @Autowired
+    private ISdEventFlowService sdEventFlowService;
 
 
     /**
@@ -67,13 +69,13 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Override
     public int insertSdReserveProcess(SdReserveProcess sdReserveProcess) {
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcess.getReserveId());
-        List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(sdReserveProcess.getHandleStrategyList());
+        List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(sdReserveProcess.getHandleStrategyList()[1]);
         SdReserveProcess reserveProcess = new SdReserveProcess();
         reserveProcess.setReserveId(sdReserveProcess.getReserveId());
         reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
         reserveProcess.setProcessName(sdReserveProcess.getProcessName());
         reserveProcess.setProcessSort(sdReserveProcess.getProcessSort());
-        reserveProcess.setStrategyId(sdReserveProcess.getHandleStrategyList());
+        reserveProcess.setStrategyId(sdReserveProcess.getHandleStrategyList()[1]);
         reserveProcess.setCreateTime(DateUtils.getNowDate());
         reserveProcess.setCreateBy(SecurityUtils.getUsername());
         int result = -1;
@@ -92,13 +94,13 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         List<SdReserveProcess> list = new ArrayList<>();
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         for (SdReserveProcess process : sdReserveProcesses.getSdReserveProcesses()) {
-            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getHandleStrategyList());
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getHandleStrategyList()[1]);
             SdReserveProcess reserveProcess = new SdReserveProcess();
             reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
             reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
             reserveProcess.setProcessName(process.getProcessName());
             reserveProcess.setProcessSort(process.getProcessSort());
-            reserveProcess.setStrategyId(process.getHandleStrategyList());
+            reserveProcess.setStrategyId(process.getHandleStrategyList()[1]);
             reserveProcess.setCreateTime(DateUtils.getNowDate());
             reserveProcess.setCreateBy(SecurityUtils.getUsername());
             list.add(reserveProcess);
@@ -166,7 +168,15 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
      */
     @Override
     public List<SdReserveProcess> selectSdReserveProcessByRId(Long RId) {
-        return sdReserveProcessMapper.selectSdReserveProcessByRid(RId);
+        List<SdReserveProcess> sdReserveProcesses = sdReserveProcessMapper.selectSdReserveProcessByRid(RId);
+        for (SdReserveProcess process : sdReserveProcesses) {
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            Long[] list = new Long[2];
+            list[0] = Long.valueOf(rlList.get(0).getEqTypeId());
+            list[1] = process.getStrategyId();
+            process.setHandleStrategyList(list);
+        }
+        return sdReserveProcesses;
     }
 
     /**
@@ -229,8 +239,18 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
      * @return
      */
     @Override
-    public Integer planImplementa(Long reserveId) {
-
-        return 0;
+    public Integer planImplementa(String eventId, Long reserveId) {
+        Map<String,Object> map = new HashMap<>();
+        List<SdReserveProcess> sdReserveProcesses = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
+        SdReservePlan sdReservePlan = SpringUtils.getBean(SdReservePlanMapper.class).selectSdReservePlanById(reserveId);
+        map.put("planName",sdReservePlan.getPlanName());
+        List<String> strategy = new ArrayList<>();
+        for (SdReserveProcess process : sdReserveProcesses) {
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
+            strategy.add(sdStrategy.getStrategyName());
+        }
+        map.put("strategy",strategy);
+        int result = sdEventFlowService.execPlanSaveEventFlow(eventId, map);
+        return result;
     }
 }

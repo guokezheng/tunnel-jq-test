@@ -13,6 +13,7 @@ import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import com.tunnel.platform.service.SdDeviceControlService;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -152,9 +153,13 @@ public class SdReserveProcessController extends BaseController
      * @return
      */
     @PostMapping("/implement")
-    public AjaxResult implement(Long reserveId) {
+    @ApiModelProperty("预案执行")
+    public AjaxResult implement(@RequestBody Map<String, String> stringObjectMap) {
+        String eventId = stringObjectMap.get("eventId");
+        Long reserveId = Long.parseLong(stringObjectMap.get("reserveId"));
         List<SdReserveProcess> reserveProcesses = sdReserveProcessService.selectSdReserveProcessByRId(reserveId);
         Integer result = -1;
+        result = sdReserveProcessService.planImplementa(eventId,reserveId);
         for (SdReserveProcess process : reserveProcesses){
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
             for (SdStrategyRl rl : rlList) {
@@ -164,7 +169,6 @@ public class SdReserveProcessController extends BaseController
                     map.put("devId",devId);
                     map.put("state",rl.getState());
                     map.put("controlType","3");
-//                    SdDeviceControlService sdDeviceControlService = new SdDeviceControlService();
                     result = sdDeviceControlService.controlDevices(map);
                 }
             }

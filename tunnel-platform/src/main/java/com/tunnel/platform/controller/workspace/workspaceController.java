@@ -24,10 +24,7 @@ import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -150,7 +147,7 @@ public class workspaceController extends BaseController {
     }
 
     @PostMapping("/vehicleMonitoringInRecent24Hours")
-    public AjaxResult vehicleMonitoringInRecent24Hours(String tunnelId){
+    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody String tunnelId){
         if (tunnelId.equals("") || tunnelId == null) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }

@@ -348,6 +348,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                                                 sdDeviceData.setCreateTime(new Date());
                                                 sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
                                             }
+                                            //接收到摄像机和雷达的数据，直接回传给万集
+                                            sendDataToWanJi(t, value);
                                         }
                                     }
                                     devicesMapper.updateSdDevicesBatch(t.getEqId(), t.getEqStatus());
@@ -368,6 +370,16 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                     );
                 });
+    }
+
+    private void sendDataToWanJi(SdDevices sdDevices, String runDate) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deviceId", sdDevices.getEqId());
+        map.put("deviceType", sdDevices.getEqType());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("runDate", runDate);
+        map.put("deviceData", jsonObject);
+        sendBaseDeviceStatus(map);
     }
 
     @Override

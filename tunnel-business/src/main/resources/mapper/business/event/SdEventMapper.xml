@@ -268,6 +268,7 @@
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
        where
             TO_DAYS(A.start_time) = TO_DAYS(NOW())
+        <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
             order by A.start_time desc
     </select>
 

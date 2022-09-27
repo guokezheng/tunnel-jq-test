@@ -75,7 +75,7 @@ public interface ISdEventService {
      *
      * @return
      */
-    List<SdEvent> getEvent();
+    List<SdEvent> getEvent(SdEvent sdEvent);
 
     /**
      * 统计今日事件

@@ -146,8 +146,8 @@ public class SdEventServiceImpl implements ISdEventService {
      * @return
      */
     @Override
-    public List<SdEvent> getEvent() {
-        return sdEventMapper.getEvent();
+    public List<SdEvent> getEvent(SdEvent sdEvent) {
+        return sdEventMapper.getEvent(sdEvent);
     }
 
     @Override

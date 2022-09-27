@@ -71,7 +71,7 @@ public interface SdEventMapper
      * 预警事件查询全部
      * @return
      */
-    public List<SdEvent> getEvent();
+    public List<SdEvent> getEvent(SdEvent sdEvent);
 
 
     /**

@@ -612,4 +612,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item sdt on sdd.item_id=sdt.id
         where device_id=#{eqId}
     </select>
+
+    <select id="selectDeviceDataAndState" resultType="hashmap">
+        SELECT
+            A.id,
+            A.device_id deviceId,
+            A.item_id iteamId,
+            A.`data` state,
+            C.eq_type typeId,
+            C.lane lane,
+            C.eq_direction direction
+        FROM
+        sd_device_data A
+        LEFT JOIN sd_device_type_item B ON B.id = A.item_id
+        LEFT JOIN sd_devices C ON A.device_id = C.eq_id AND B.device_type_id = C.eq_type
+        WHERE
+            C.eq_type = 1 and C.eq_tunnel_id = #{tunnelId}
+    </select>
+    
+    <select id="selectLaneSize" resultType="int">
+        select MAX(A.lane) from sd_devices A
+        where A.eq_type = 1 and A.eq_direction = 0
+    </select>
 </mapper>

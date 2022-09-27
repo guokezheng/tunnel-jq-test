@@ -1198,7 +1198,7 @@ export default {
         this.urls = response.data;
       });
       video(param4).then((response) => {
-        this.videoUrl = response.data;
+        this.videoUrl = response.data.videoUrl;
       });
     },
   },

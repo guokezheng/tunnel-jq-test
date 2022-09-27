@@ -265,14 +265,14 @@
             >查看详情
           </el-button>
           <!-- </router-link> -->
-          <el-button
+          <!-- <el-button
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
             v-hasPermi="['system:event:remove']"
             @click="handleDispatch(scope.row)"
             >应急调度
-          </el-button>
+          </el-button> -->
           <!-- <el-button
             size="mini"
             type="text"
@@ -591,7 +591,6 @@
             </div>
           </el-col>
         </el-row>
-        <!-- <hr /> -->
         <el-row class="rowClass">
           <el-col :span="12">
             <div class="eventClass">
@@ -608,7 +607,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-row class="rowClass">
+        <!-- <el-row class="rowClass">
           <el-col :span="6">
             <div class="eventTitleClass">伤亡情况</div>
           </el-col>
@@ -667,7 +666,6 @@
             </div>
           </el-col>
         </el-row>
-        <!-- ------------------ -->
         <el-row class="rowClass">
           <el-col :span="6">
             <div class="eventTitleClass">联系方式</div>
@@ -694,7 +692,7 @@
             </div>
           </el-col>
         </el-row>
-        <hr />
+        <hr /> -->
 
         <el-row style="height: 300px">
           <el-col :span="18" style="height: 300px">
@@ -933,6 +931,7 @@ export default {
     /** 查询事件类型列表 */
     getEventType() {
       listEventType().then((response) => {
+        console.log(response,"responseresponse");
         this.eventTypeData = response.rows;
       });
     },

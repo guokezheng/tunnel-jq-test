@@ -39,8 +39,10 @@
               <right-panel>
                 <settings />
               </right-panel>
-              <!-- <event-dialog v-show="eventDialog" class="eventClass"></event-dialog> -->
-              <event-dialogTable v-show="eventDialogTable" class="eventClass"></event-dialogTable>
+              <event-dialog v-show="eventDialogPic" ref="picDialog"></event-dialog>
+              <event-dialogTable v-show="eventDialogTable" ></event-dialogTable>
+
+             
             </div>
           </template>
         </div>
@@ -104,6 +106,7 @@ export default {
   },
   data(){
     return{
+      
       mapStyle:'',
       // 天气
       weather_weather:'',
@@ -113,7 +116,7 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      // eventDialog:false,
+      eventDialogPic:false,
       eventDialogTable:false,
     }
   },
@@ -185,6 +188,11 @@ export default {
     }
   },
   methods: {
+    // showPicDialog(id){
+    //   var evtId = id || this.eventId
+    //   console.log(evtId,"layout跳转三图一视传递id")
+    //   this.$refs.picDialog.getPicDialogId(evtId)
+    // },
     getWeather(){
       let city = 'city=济南';
       let word = 'tianqi';
@@ -200,9 +208,6 @@ export default {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
-    closeDialog(val){
-      console.log(val,'valvalvalvalvalvalvalvalvalvalvalval')
-    }
   },
   watch: {
     sideTheme(val) {
@@ -211,7 +216,6 @@ export default {
     sdEventList(event){
       if(event){
         this.eventDialogTable = true
-
       }
     },
   },
@@ -222,13 +226,22 @@ export default {
     this.getWeather();
     document.getElementsByTagName('body')[0].className = this.sideTheme;
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)['breadcrumb'];
+    // 关闭列表弹窗
     bus.$on('closeDialog', (e) => {
      if(e == false){
-      //  this.eventDialog = false
+      console.log("layout关闭表格弹窗")
        this.eventDialogTable = false
-
      }
+    });
+    // 打开三图一视弹窗
+    bus.$on('openPicDialog', () => {
+       this.eventDialogPic = true
     })
+    // 关闭三图一视弹窗
+    bus.$on('closePicDialog', () => {
+      console.log("关闭三图一视弹窗");
+        this.eventDialogPic = false
+    });
   },
 }
 </script>
@@ -296,9 +309,13 @@ export default {
     }
   }
 //  .eventClass{
-//    position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 100;
-//    // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
-//    background-color: rgba($color: #000000, $alpha: 0.1);
-//    // border-radius: 10px;
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   z-index: 100;
+//   // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
+//   background-color: rgba($color: #000000, $alpha: 0.1);
 //  }
 </style>

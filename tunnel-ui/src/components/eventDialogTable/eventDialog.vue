@@ -1,11 +1,26 @@
 <template>
   <div>
-    <div class="eventBox">
+    <el-dialog
+      class="evenDialogBox"
+      :visible.sync="eventPicDialog"
+      v-dialogDrag
+    >
       <div class="title">
-        事件详情
+        <div>{{ eventMes.eventTitle }}</div>
         <img
           src="../../assets/cloudControl/dialogHeader.png"
           style="height: 30px"
+        />
+        <img
+          src="../../assets/cloudControl/closeIcon.png"
+          style="
+            height: 14px;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+          "
+          @click="closeDialogTable()"
         />
       </div>
       <div class="blueLine"></div>
@@ -25,7 +40,10 @@
                 border-radius: 10px;
               "
             ></video>
-            <el-image :src="require('@/assets/icons/outline.png')" v-show="!videoUrl"/>
+            <!-- <el-image
+              :src="require('@/assets/icons/outline.png')"
+              v-show="!videoUrl"
+            /> -->
           </div>
           <div class="pic">
             <el-carousel
@@ -40,24 +58,30 @@
                 :src="item.imgUrl"
               >
                 <img :src="item.imgUrl" style="width: 100%" />
-                <el-image :src="require('@/assets/icons/outline.png')" v-show="!item.imgUrl || urls.length==0"/>
-
               </el-carousel-item>
             </el-carousel>
+            <div style="width:100%;height:200px;position: absolute; top: 0;text-align: center;" v-show="urls.length == 0">
+              <el-image
+              :src="require('@/assets/icons/outline.png')"
+              style=" width: 229px"
+            />
+            <div style="font-weight:bold">暂无内容!</div>
+            </div>
+            
           </div>
         </div>
         <div class="eventRight">
           <div class="eventRow">
             <div>隧道名称:</div>
-            <div v-if="eventMes.tunnels">{{ eventMes.tunnels.tunnelName}}</div>
+            <div v-if="eventMes.tunnels">{{ eventMes.tunnels.tunnelName }}</div>
           </div>
           <div class="eventRow">
             <div>事件类型:</div>
-            <div>{{ eventMes.eventTypeId }}</div>
+            <div>{{ getEvtType(eventMes.eventTypeId) }}</div>
           </div>
           <div class="eventRow">
             <div>车道号:</div>
-            <div>{{ eventMes.laneNo }}</div>
+            <div>{{ eventMes.laneNo }}<span v-if="eventMes.laneNo">车道</span></div>
           </div>
           <div class="eventRow">
             <div>事件位置经度:</div>
@@ -80,7 +104,7 @@
             <div>{{ eventMes.endTime }}</div>
           </div>
 
-          <div style="width: 90%; display: flex; margin-top: 20px">
+          <div style="width: 90%; display: flex; margin-top: 80px">
             <div class="handle button" @click="handleDispatch(eventMes)">
               处 理
             </div>
@@ -88,10 +112,9 @@
               忽 略
             </div>
           </div>
-        
         </div>
       </div>
-    </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,51 +122,73 @@
 // import { mapState } from 'vuex';
 import bus from "@/utils/bus";
 import { loadPicture } from "@/api/equipment/type/api.js";
-import { image, video } from "@/api/eventDialog/api.js";
-import { updateEvent } from "@/api/event/event";
+import { image, video, userConfirm } from "@/api/eventDialog/api.js";
+import { listEventType } from "@/api/event/eventType";
+import { updateEvent, listEvent } from "@/api/event/event";
+
 export default {
   name: "eventDialog",
-  // props: ["eventMes"],
+  props: ["eventId"],
   data() {
     return {
       // eventList: [],
+      eventPicDialog: false,
       urls: [],
-      videoUrl: '',
-      row11:null,
+      videoUrl: "",
+      row11: null,
       // event: [{}],
-      eventMes:[]
+      eventMes: {},
+      eventTypeData: [],
     };
   },
   created() {
-    // console.log(this.eventMes, "eventMeseventMeseventMeseventMes");
     this.getDicts("sd_event_source").then((data) => {
-      console.log(data, "事件来源");
       this.tabList = data.data;
     });
-      // console.log(this.row11,"9999999999");
-
-   
+    this.getEventTypeList();
+  },
+  mounted() {
+    bus.$on('getPicId',(e) =>{
+      this.init(e)
+    })
   },
   methods: {
-    init(row){
-      console.log(row,"initrow");
-      this.eventMes = row
-      this.getUrl()
+    /** 查询事件类型列表 */
+    getEventTypeList() {
+      listEventType().then((response) => {
+        this.eventTypeData = response.rows;
+      });
     },
-    getEventSource(num) {
-      for (var item of this.tabList) {
-        if (num == item.eventSource) {
-          return item.dictLabel;
+    getEvtType(num) {
+      for (var item of this.eventTypeData) {
+        if (num == item.id) {
+          return item.eventType;
         }
       }
     },
-    getUrl() {
-      console.log(this.eventMes.id, "当前事件id");
+    init(id) {
+      console.log(id, "init三图一视页面接收事件id");
+      if (id) {
+        const param = {
+          id: id,
+        };
+        listEvent(param).then((response) => {
+          if(response.rows.length>0){
+            this.eventMes = response.rows[0];
+          console.log(this.eventMes, "responseresponseresponse");
+
+          }
+        });
+      }
+      this.getUrl(id);
+      this.eventPicDialog = true;
+    },
+    getUrl(id) {
       const param3 = {
-        businessId: this.eventMes.id,
+        businessId: id,
       };
       const param4 = {
-        id: this.eventMes.id,
+        id: id,
       };
       image(param3).then((response) => {
         console.log(response.data, "获取图片");
@@ -156,43 +201,70 @@ export default {
     },
 
     // 忽略事件
-    handleIgnore() {
-      // console.log(event,"三图一视忽略按钮")
-      // const param = {
-      //   id: event.id,
-      //   eventState: "2",
-      // };
-      // updateEvent(param).then((response) => {
-      //   console.log(response, "修改状态");
-      //   this.$modal.msgSuccess("已成功忽略");
-      // });
-      // bus.$emit("closeDialog", false);
-      // this.$parent("closeDialog")
-      this.$emit('fMethod');
+    handleIgnore(event) {
+      if(event){
+        const param = {
+        id: event.id,
+        eventState: "2",
+      };
+      updateEvent(param).then((response) => {
+        console.log(response, "修改状态");
+        this.$modal.msgSuccess("已成功忽略");
+      });
+      }
+      this.$emit("closePicDialog");
+      this.$emit("closeDialog");
+      bus.$emit("closeTableDialog");
+
+      this.eventPicDialog = false;
     },
     // 处理 跳转应急调度
     handleDispatch(event) {
-      console.log(event,"三图一视处理 跳转应急调度")
       const param = {
         id: event.id,
         eventState: "0",
       };
-      updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
+      updateEvent(param).then(() => {
         this.$modal.msgSuccess("开始处理事件");
       });
-      bus.$emit("closeDialog", false);
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: { id: event.id },
       });
+      userConfirm(event.id).then(() => {});
+      bus.$emit("closePicDialog");
+      bus.$emit("closeDialog");
+      bus.$emit("closeTableDialog")
+      this.eventPicDialog = false;
+    },
+    closeDialogTable() {
+      this.$emit("closePicDialog");
+      this.eventPicDialog = false;
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.eventBox {
+::v-deep .el-dialog {
+  width: 100% !important;
+  height: 100%;
+  position: absolute !important;
+  left: 0 !important;
+  margin: 0;
+  box-shadow: none;
+  background: transparent;
+}
+::v-deep .el-dialog:not(.is-fullscreen) {
+  margin-top: 0vh !important;
+}
+::v-deep .el-dialog__header {
+  display: none;
+}
+::v-deep .el-dialog__body {
+  padding: 0;
+}
+.evenDialogBox {
   width: 52%;
   height: 660px;
   border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
@@ -201,7 +273,7 @@ export default {
   left: 25%;
   background-color: #071930;
   z-index: 100;
-  > .title {
+  .title {
     padding-left: 20px;
     height: 30px;
     line-height: 30px;
@@ -227,7 +299,7 @@ export default {
   }
 }
 .eventLeft {
-  width: 70%;
+  width: 65%;
   height: 590px;
   padding: 0px 20px;
   .video {
@@ -239,6 +311,7 @@ export default {
     width: 100%;
     height: 180px;
     margin-top: 10px;
+    position: relative;
   }
 }
 ::v-deep .el-carousel__mask {
@@ -246,7 +319,7 @@ export default {
 }
 
 .eventRight {
-  width: 30%;
+  width: 35%;
   height: 590px;
   color: white;
   font-size: 16px;
@@ -262,25 +335,26 @@ export default {
     }
   }
   .button {
-    width: 60%;
+    width: 35%;
     height: 40px;
     margin-top: 15px;
-    border-radius: 10px;
-    border: solid 1px #00c8ff;
+    border-radius: 20px;
+    // border: solid 1px #00c8ff;
     text-align: center;
     line-height: 40px;
-    margin-left: 10px;
+    margin-left: 35px;
     cursor: pointer;
+    color: #fff;
   }
   .handle {
-    color: #e1aa43;
+    background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
   }
   .handle:hover {
     background-color: #e1aa43;
     color: white;
   }
   .ignore {
-    color: #19b9ea;
+    background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
   }
   .ignore:hover {
     background-color: #19b9ea;

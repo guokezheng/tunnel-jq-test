@@ -44,6 +44,17 @@ public class WjEvent extends BaseEntity {
     @ApiModelProperty("事件结束时间戳")
     private String eventTimeStampEnd;
 
+    @ApiModelProperty("隧道方向 1北向--上行 2南向--下行")
+    private String direction;
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
     public Long getEventId() {
         return eventId;
     }

@@ -90,6 +90,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
+                sdEvent.setDirection(f.getDirection() + "");
                 wjMapper.updateEvent(sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
@@ -105,6 +106,7 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setEventSource(EventSourceEnum.radar.getCode());
                 sdEvent.setCreateTime(DateUtils.getNowDate());
+                sdEvent.setDirection(f.getDirection() + "");
                 eventList.add(sdEvent);
                 eventIdList.add(sdEvent.getId());
                 List<WjConfidence> targetList = f.getTargetList();

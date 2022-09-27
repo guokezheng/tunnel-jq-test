@@ -130,4 +130,14 @@ public class SdEventController extends BaseController
     {
         return AjaxResult.success(sdEventService.getEvent());
     }
+
+    /**
+     * 统计今日事件
+     * @return
+     */
+    @GetMapping("/getTodayEventCount")
+    @ApiOperation("统计今日事件")
+    public Result getTodayEventCount() {
+        return Result.success(sdEventService.getTodayEventCount());
+    }
 }

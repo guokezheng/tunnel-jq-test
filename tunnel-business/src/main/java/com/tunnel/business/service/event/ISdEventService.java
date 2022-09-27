@@ -4,6 +4,7 @@ package com.tunnel.business.service.event;
 import com.tunnel.business.domain.event.SdEvent;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Service接口
@@ -75,6 +76,12 @@ public interface ISdEventService {
      * @return
      */
     List<SdEvent> getEvent();
+
+    /**
+     * 统计今日事件
+     * @return
+     */
+    Map getTodayEventCount();
 
 
     /**

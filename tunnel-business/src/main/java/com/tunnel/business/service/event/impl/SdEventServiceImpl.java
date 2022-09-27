@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Service业务层处理
@@ -145,6 +146,11 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public List<SdEvent> getEvent() {
         return sdEventMapper.getEvent();
+    }
+
+    @Override
+    public Map getTodayEventCount() {
+        return sdEventMapper.getTodayEventCount();
     }
 
     /**

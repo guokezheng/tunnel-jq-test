@@ -2559,7 +2559,7 @@ import {
   getTrafficIncident,
   proportionOfEquipment,
   trafficFlowInformation,
-  vehicleMonitoring,
+  vehicleMonitoringInRecent24Hours,
   special,
   getDeviceData,
 } from "@/api/workbench/config.js";
@@ -3395,13 +3395,11 @@ export default {
     };
 
     // 隧道调取数据两秒一次
-    // this.timer = setInterval(() => {
-    //   setTimeout(this.getRealTimeData, 0);
-    //   // setTimeout(this.getLiPowerDevice, 0)
-    // }, 1000 * 5);
-    // setTimeout(() =>{
-    //   this.getRealTimeData()
-    // },2000);
+    this.timer = setInterval(() => {
+      setTimeout(this.getRealTimeData, 0);
+      // setTimeout(this.getLiPowerDevice, 0)
+    }, 1000 * 5);
+ 
 
     bus.$on("process", (e) => {
       console.log(e, "-----------");
@@ -3448,7 +3446,7 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
-      bus.$emit("openDialog", num);
+      bus.$emit("openPicDialog", num);
       // this.$router.push({
       //   path: "/emergency/administration/dispatch",
       //   query: { id: num, tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" },
@@ -3473,10 +3471,14 @@ export default {
       const param = {
         tunnelId: this.tunnelId,
       };
-      vehicleMonitoring(param).then((res) => {
+      vehicleMonitoringInRecent24Hours(param).then((res) => {
         console.log(res, "车辆监测数据");
-        var vehicleXData = res.data[0];
-        var vehicleYData = res.data[1];
+        var vehicleXData = []
+        var vehicleYData = []
+        for(var item of res.data){
+          vehicleXData.push(item.hour)
+          vehicleYData.push(item.count)
+        }
         this.initeChartsEnd(vehicleXData, vehicleYData);
       });
     },
@@ -4986,7 +4988,6 @@ export default {
         });
       }
       console.log(that.eqTypeStateList, "设备图标eqTypeStateList");
-      // this.getRealTimeData()
       for (var item of that.eqTypeStateList) {
         if (item.type == 18) {
           console.log(item, "引道照明");
@@ -5042,7 +5043,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              that.getRealTimeData()
+              // that.getRealTimeData()
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -5239,7 +5240,7 @@ export default {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            console.log(deviceData, "deviceData");
+            // console.log(deviceData, "deviceData");
             // let type = deviceData.eqType;
 
             // 需要换光标的
@@ -6728,7 +6729,7 @@ export default {
   transform: translateX(-25px);
   width: 26px;
   height: 26px;
-  background: #2d69a5;
+  background: #2fc83a;
   line-height: 26px;
   color: white;
 }
@@ -6737,7 +6738,7 @@ export default {
     margin-right: 20px !important;
   }
   .el-checkbox__input.is-checked + .el-checkbox__label {
-    background: #ec9d3c;
+    background: #bd0a0a;
   }
 }
 //title
@@ -7734,7 +7735,23 @@ input {
   width: 100%;
   height: 15rem;
 }
-
+.eventDiglog .el-dialog .el-form{
+  padding:15px !important;
+  .el-form-item__content .el-button{
+    width:88px;
+    height:22px;
+    border: none;
+  }
+  
+}
+::v-deep .eventDiglog .el-button--medium {
+    height:22px !important;
+    line-height:22px !important;
+    padding: 0px !important;
+  }
+.eventDiglog .el-table {
+  background-color:transparent !important;
+}
 .el-table .fixed-width .el-button--mini {
   padding-left: 7px;
   padding-right: 10px;

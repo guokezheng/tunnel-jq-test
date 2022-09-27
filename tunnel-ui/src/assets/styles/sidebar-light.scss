@@ -539,9 +539,11 @@
     
     .el-button--primary{
       color: white;
-      width: 80px;
-      height: 20px;
-      line-height: 20px;
+      width: 88px;
+      height: 22px;
+      padding: 0;
+      // height: 20px;
+      // line-height: 20px;
     }
     .el-button:hover {
       background-color: #0a88bd; // #4e5e89
@@ -574,19 +576,23 @@
         font-size: 13px;
       }
   }
-  .explain-table {
+  .explain-table,.eventDiglog {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
       border-bottom: solid 1px  #0a88bd !important;
     }
+    .el-table{
+      padding: 15px;
+      background: transparent;
+    }
     .el-table .el-table__header-wrapper th{
-      background-color: #0a88bd !important;
+      background-color: #00ADFF !important;
       color:#fff !important;
     }
     .el-table__body{
       width: 100% !important;
     }
     .el-table__body-wrapper{
-      background-color: #fff !important;
+      // background-color: #fff !important;
     }
     /*table滚动条背景色 */
     .el-table__body-wrapper::-webkit-scrollbar {

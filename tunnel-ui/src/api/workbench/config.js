@@ -24,11 +24,11 @@ export function proportionOfEquipment(query) {
   })
 }
 // 车辆监测数据
-export function vehicleMonitoring(query) {
+export function vehicleMonitoringInRecent24Hours(data) {
   return request({
-    url: '/radar/data/byId',
-    method: 'get',
-    params: query
+    url: '/workspace/vehicleMonitoringInRecent24Hours',
+    method: 'post',
+    data: data
   })
 }
 // 重点车辆监测数据

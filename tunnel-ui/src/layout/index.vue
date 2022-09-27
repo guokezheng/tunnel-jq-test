@@ -41,8 +41,6 @@
               </right-panel>
               <!-- <event-dialog v-show="eventDialog" class="eventClass"></event-dialog> -->
               <event-dialogTable v-show="eventDialogTable" class="eventClass"></event-dialogTable>
-
-             
             </div>
           </template>
         </div>

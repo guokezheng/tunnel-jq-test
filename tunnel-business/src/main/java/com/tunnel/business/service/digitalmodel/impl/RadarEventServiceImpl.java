@@ -203,6 +203,10 @@ public class RadarEventServiceImpl implements RadarEventService {
         String tunnelId = (String) map.get("tunnelId");
         Date date = DateUtils.parseDate(timeStamp, "yyyy-MM-dd HH:mm:ss:SSS");
         JSON parse = JSONUtil.parse(map.get("participants"));
+        if (parse == null) {
+            log.error("万集推送的感知数据中，交通参与者集合为空");
+            return;
+        }
         List<WjParticipants> list = JSONUtil.toList(parse.toString(), WjParticipants.class);
         List<SdRadarDetectData> dataList = new ArrayList<>();
         list.forEach(

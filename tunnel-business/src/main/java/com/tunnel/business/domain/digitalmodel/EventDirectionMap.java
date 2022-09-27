@@ -19,8 +19,8 @@ public class EventDirectionMap {
     public static final Map<String,String>  DIRECTION_MAP = new HashMap<>();
 
     static{
-        DIRECTION_MAP.put("1","1");
-        DIRECTION_MAP.put("2","0");
+        DIRECTION_MAP.put("1","0");
+        DIRECTION_MAP.put("2","1");
     }
 
 }

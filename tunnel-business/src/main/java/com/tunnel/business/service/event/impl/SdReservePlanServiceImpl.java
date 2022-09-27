@@ -184,7 +184,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlan.setCreateBy(SecurityUtils.getUsername());
             //生成guid
             String guid = UUIDUtil.getRandom32BeginTimePK();
-            if (file.length > 0) {
+            if (file != null && file.length > 0) {
                 //文件关联ID
                 sdReservePlan.setPlanFileId(guid);
                 for (int i = 0; i < file.length; i++) {
@@ -335,9 +335,9 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(id);
         if (sdReservePlan != null) {
             result = sdReservePlanMapper.deleteSdReservePlanById(id);
-            if (result > -1) {
-                result = sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
-                result = sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
+            if (result > 0) {
+                sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
+                sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
             }
         }
         return result;

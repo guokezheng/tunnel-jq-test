@@ -1,15 +1,22 @@
 <template>
   <div class="app-container">
-    <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
-      <div style="line-height: 60px;">事件预警统计:</div>
+    <div
+      style="
+        display: flex;
+        font-size: 16px;
+        width: 100%;
+        justify-content: space-between;
+      "
+    >
+      <div style="line-height: 60px">事件预警统计:</div>
       <el-card class="card-box">
-        今日累计预警事件: {{allmsg}}
+        今日累积预警事件: {{ eventMsg.allnum }}
       </el-card>
       <el-card class="card-box">
-        今日执行预警事件: {{process}}
+        今日执行预警事件: {{ eventMsg.process }}
       </el-card>
       <el-card class="card-box">
-        今日预警事件执行率: {{proportion}}
+        今日预警事件执行率: {{ eventMsg.bl }}
       </el-card>
     </div>
     <el-form
@@ -423,6 +430,8 @@
         </el-form-item>
       </el-form>
     </el-dialog> -->
+
+    <!-- 查看详情弹窗 -->
     <el-dialog
       :title="title"
       :visible.sync="details"
@@ -532,7 +541,10 @@
               {{ eventForm.stakeNum }}
             </div>
           </el-col>
-          <el-col :span="12" style="display: flex; height: 40px">
+        </el-row>
+        <!-- <hr /> -->
+        <el-row>
+          <el-col :span="24" style="display: flex; height: 40px">
             <div
               style="
                 width: 40px;
@@ -541,16 +553,22 @@
                 line-height: 40px;
               "
             >
-              <div class="el-icon-money" style="width: 10px"></div>
+              <div class="el-icon-discount" style="width: 10px"></div>
             </div>
-            <div class="detailsText">交警电话</div>
-            <div style="color: #82b3c2; line-height: 40px">
-              {{ eventForm.policePhone }}
+            <div class="detailsText">事件标题</div>
+            <div
+              style="
+                color: #82b3c2;
+                line-height: 40px;
+                width: calc(100% - 140px);
+              "
+            >
+              {{ eventForm.eventTitle }}
             </div>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12" style="display: flex; height: 40px">
+          <el-col :span="24" style="display: flex; height: 40px">
             <div
               style="
                 width: 40px;
@@ -559,31 +577,21 @@
                 line-height: 40px;
               "
             >
-              <div class="el-icon-truck" style="width: 10px"></div>
+              <div class="el-icon-discount" style="width: 10px"></div>
             </div>
-            <div class="detailsText">车主电话</div>
-            <div style="color: #82b3c2; line-height: 40px">
-              {{ eventForm.carOwnerPhone }}
-            </div>
-          </el-col>
-          <el-col :span="12" style="display: flex; height: 40px">
+            <div class="detailsText">事件描述</div>
             <div
               style="
-                width: 40px;
-                height: 40px;
-                text-align: center;
+                color: #82b3c2;
                 line-height: 40px;
+                width: calc(100% - 140px);
               "
             >
-              <div class="el-icon-connection" style="width: 10px"></div>
-            </div>
-            <div class="detailsText">清障电话</div>
-            <div style="color: #82b3c2; line-height: 40px">
-              {{ eventForm.wreckerPhone }}
+              {{ eventForm.eventDescription }}
             </div>
           </el-col>
         </el-row>
-        <hr />
+        <!-- <hr /> -->
         <el-row class="rowClass">
           <el-col :span="12">
             <div class="eventClass">
@@ -659,57 +667,37 @@
             </div>
           </el-col>
         </el-row>
+        <!-- ------------------ -->
+        <el-row class="rowClass">
+          <el-col :span="6">
+            <div class="eventTitleClass">联系方式</div>
+          </el-col>
+          <el-col :span="6">
+            <div class="eventClass">
+              交警电话<span style="font-style: oblique">{{
+                eventForm.policePhone
+              }}</span>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="eventClass">
+              车主电话：<span style="font-style: oblique">{{
+                eventForm.carOwnerPhone
+              }}</span>
+            </div>
+          </el-col>
+          <el-col :span="6">
+            <div class="eventClass">
+              清障电话：<span style="font-style: oblique">{{
+                eventForm.wreckerPhone
+              }}</span>
+            </div>
+          </el-col>
+        </el-row>
         <hr />
-        <el-row>
-          <el-col :span="24" style="display: flex; height: 40px">
-            <div
-              style="
-                width: 40px;
-                height: 40px;
-                text-align: center;
-                line-height: 40px;
-              "
-            >
-              <div class="el-icon-discount" style="width: 10px"></div>
-            </div>
-            <div class="detailsText">事件标题</div>
-            <div
-              style="
-                color: #82b3c2;
-                line-height: 40px;
-                width: calc(100% - 140px);
-              "
-            >
-              {{ eventForm.eventTitle }}
-            </div>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24" style="display: flex; height: 40px">
-            <div
-              style="
-                width: 40px;
-                height: 40px;
-                text-align: center;
-                line-height: 40px;
-              "
-            >
-              <div class="el-icon-discount" style="width: 10px"></div>
-            </div>
-            <div class="detailsText">事件描述</div>
-            <div
-              style="
-                color: #82b3c2;
-                line-height: 40px;
-                width: calc(100% - 140px);
-              "
-            >
-              {{ eventForm.eventDescription }}
-            </div>
-          </el-col>
-        </el-row>
-        <el-row style="height: 300px; border: solid 1px red">
-          <el-col :span="18" style="border: solid 1px red; height: 300px">
+
+        <el-row style="height: 300px">
+          <el-col :span="18" style="height: 300px">
             <video
               :src="videoUrl"
               controls
@@ -743,14 +731,16 @@ import {
   toll,
   getTunnelList,
 } from "@/api/event/event";
-import { listEventType } from "@/api/event/eventType";
+import { listEventType, getTodayEventCount } from "@/api/event/eventType";
 import { listPlan } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
+import { image, video } from "@/api/eventDialog/api.js";
 export default {
   name: "Event",
   dicts: ["sd_direction"],
   data() {
     return {
+      eventMsg: null,
       urls: [
         {
           imgUrl: require("@/assets/Example/pic1.jpg"),
@@ -812,9 +802,9 @@ export default {
         endTime: null,
         deptId: null,
       },
-      allmsg:'',
-      process:'',
-      proportion:'',
+      allmsg: "",
+      process: "",
+      proportion: "",
       // 表单参数
       form: {},
       eqTunnelData: {},
@@ -872,8 +862,16 @@ export default {
       console.log(res);
       this.mechanism = res.data;
     });
+    this.getEventMsg();
   },
   methods: {
+    getEventMsg() {
+      // 获取事件预警信息
+      getTodayEventCount().then((result) => {
+        console.log(result, "11111111111111");
+        this.eventMsg = result.data;
+      });
+    },
     //获取图片视频
     getUrl(id) {
       const param3 = {
@@ -883,9 +881,11 @@ export default {
         id: id,
       };
       image(param3).then((response) => {
+        console.log(response.data);
         this.urls = response.data;
       });
       video(param4).then((response) => {
+        console.log(response.data, "视频信息");
         this.videoUrl = response.data;
       });
     },
@@ -1135,9 +1135,9 @@ hr {
   border: solid 1px green;
   width: 100%;
 }
-.card-box{
-    width: 30%;
-    text-align: center;
-    font-weight: bold;
-  }
+.card-box {
+  width: 30%;
+  text-align: center;
+  font-weight: bold;
+}
 </style>

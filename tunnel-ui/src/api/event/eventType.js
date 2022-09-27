@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// ²éÑ¯ÊÂ¼şÀàĞÍÁĞ±í
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½
 export function listEventType(query) {
   return request({
     url: '/eventType/list',
@@ -9,7 +9,7 @@ export function listEventType(query) {
   })
 }
 
-// ²éÑ¯ÊÂ¼şÀàĞÍÏêÏ¸
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸
 export function getEventType(id) {
   return request({
     url: '/eventType/' + id,
@@ -17,7 +17,7 @@ export function getEventType(id) {
   })
 }
 
-// ĞÂÔöÊÂ¼şÀàĞÍ
+// ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function addEventType(data) {
   return request({
     url: '/eventType',
@@ -26,7 +26,7 @@ export function addEventType(data) {
   })
 }
 
-// ĞŞ¸ÄÊÂ¼şÀàĞÍ
+// ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function updateEventType(data) {
   return request({
     url: '/eventType',
@@ -35,10 +35,16 @@ export function updateEventType(data) {
   })
 }
 
-// É¾³ıÊÂ¼şÀàĞÍ
+// É¾ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 export function delEventType(id) {
   return request({
     url: '/eventType/' + id,
     method: 'delete'
+  })
+}
+export function getTodayEventCount() {
+  return request({
+    url: '/event/getTodayEventCount',
+    method: 'get'
   })
 }

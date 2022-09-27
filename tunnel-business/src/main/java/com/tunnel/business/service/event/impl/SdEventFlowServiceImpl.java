@@ -14,6 +14,8 @@ import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.event.ISdReservePlanService;
+import com.tunnel.business.utils.json.JSONObject;
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,6 +85,9 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
         flow.setEventId(eventId);
         flow.setFlowTime(DateUtils.getNowDate());
         flow.setFlowHandler(SecurityUtils.getUsername());
+        JSONObject json = new JSONObject();
+        json.put("eventFlow",flow);
+        WebSocketService.broadcast("eventFlow",json);
         return sdEventFlowMapper.insertSdEventFlow(flow);
     }
     /**
@@ -99,6 +104,9 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
         flow.setEventId(eventId);
         flow.setFlowTime(DateUtils.getNowDate());
         flow.setFlowHandler(SecurityUtils.getUsername());
+        JSONObject json = new JSONObject();
+        json.put("eventFlow",flow);
+        WebSocketService.broadcast("eventFlow",json);
         return sdEventFlowMapper.insertSdEventFlow(flow);
     }
 

@@ -582,6 +582,7 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
+import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
 import {
   listEvent,
   updateEvent,
@@ -600,6 +601,7 @@ export default {
   name: "dispatch",
   data() {
     return {
+      timer: null,
       eqTypeStateList: null,
       eventMsg: null,
       fqIndex: null,
@@ -704,10 +706,15 @@ export default {
   },
   computed: {
     ...mapState({
+      deviceStatus: (state) => state.websocket.deviceStatus,
       deviceStatusChangeLog: (state) => state.websocket.deviceStatusChangeLog,
     }),
   },
   watch: {
+    deviceStatus(event) {
+      console.log(event, "websockt工作台接收实时设备状态数据");
+      this.deviceStatusList = event;
+    },
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
@@ -720,8 +727,10 @@ export default {
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
   },
-  created() {
-    this.getEventData();
+  async created() {
+    await this.getEventData();
+    await this.getTunnelData();
+    this.getEqTypeStateIcon();
     if (this.$route.query.id) {
       const param = {
         id: this.$route.query.id,
@@ -738,25 +747,60 @@ export default {
     this.accidentInit();
   },
   methods: {
+    async getEqTypeStateIcon() {
+      let that = this;
+      let queryParams = {
+        stateTypeId: null,
+        deviceState: null,
+        stateName: null,
+        // isControl: 1,
+      };
+      await listEqTypeState(queryParams).then((response) => {
+        let list = response.rows;
+        that.getEqUrl(list);
+      });
+    },
+    getEqUrl(list) {
+      let that = this;
+      // that.eqTypeStateList = [];
+      that.eqTypeStateList = [];
+      for (let i = 0; i < list.length; i++) {
+        let iconUrl = [];
+        if (list[i].iFileList != null) {
+          for (let j = 0; j < list[i].iFileList.length; j++) {
+            // let img = await that.picture(list[i].iFileList[j].url);
+            let img = list[i].iFileList[j].url;
+            iconUrl.push(img);
+          }
+        }
+        that.eqTypeStateList.push({
+          stateType: list[i].stateType,
+          type: list[i].stateTypeId,
+          state: list[i].deviceState,
+          name: list[i].stateName,
+          control: list[i].isControl,
+          url: iconUrl,
+        });
+      }
+      for (var item of that.eqTypeStateList) {
+        if (item.type == 18) {
+          console.log(item, "引道照明");
+        }
+      }
+    },
     getRealTimeData() {
       getDeviceData({
-        tunnelId: this.currentTunnel.id,
+        tunnelId: this.eventMsg.tunnelId,
       }).then((response) => {
-        // console.log(response,"设备实时数据")
-        // for (let i = 0; i < response.data.length; i++) {
-        // debugger;
-        // 实时状态
-        // let type = response.data[i].eqType;
-        // if (type != "" && type != undefined) {
+        console.log(response,'11111111111111111111111111')
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            // console.log(deviceData, "deviceData");
+            console.log(deviceData, "deviceData");
             // let type = deviceData.eqType;
 
             // 需要换光标的
-            console.log();
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
               if (
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
@@ -798,6 +842,7 @@ export default {
                     }
                   }
                 } else {
+                  console.log(deviceData.eqStatus, "当前状态");
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
                     // 在线
@@ -835,39 +880,13 @@ export default {
                     }
                   }
                 }
-
-                // let url = this.eqTypeStateList[k].url;
-                // this.selectedIconList[j].eqDirection =
-                // deviceData.eqDirection;
-                // if (deviceData.eqDirection == "1") {
-                //   //上行车道
-                //   if (url.length > 1) {
-                //     this.selectedIconList[j].url = [url[1], url[0]];
-                //   } else {
-                //     this.selectedIconList[j].url = url;
-                //   }
-                // } else {
-                //   this.selectedIconList[j].url =
-                //     this.eqTypeStateList[k].url;
-                // }
-                // this.selectedIconList[j].state = deviceData.eqStatus;
               }
             }
-            // 不需要换光标的
-            // let paramType = [5,17, 18, 19, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
-            // if (paramType.includes(parseInt(type))) {
-            //   if (deviceData.eqStatus == "null" || !deviceData.eqStatus) {
-            //     this.selectedIconList[j].value = "0";
-            //   } else {
-            //     this.selectedIconList[j].value = deviceData.eqStatus;
-            //   }
-            // }
           }
         }
       });
     },
     eventDo(item) {
-      console.log(item);
       var data = { eventId: this.eventMsg.id, reserveId: item.id };
       getImplement(data).then((result) => {
         if (result.code == 200) {
@@ -880,7 +899,6 @@ export default {
         this.eventMsg = result.data;
       });
       this.getSubareaByTunnel();
-      this.getTunnelData();
       this.getmaterialList(); //应急物资
       this.getpersonnelList(); //调度电话
       this.getUrl();
@@ -888,7 +906,6 @@ export default {
     getListBySIdData(id) {
       var data = { subareaId: id, category: "2" };
       getListBySId(data).then((result) => {
-        console.log(result, "===================");
         this.hfData = result.data;
       });
     },
@@ -906,7 +923,6 @@ export default {
     // },
 
     async getSubareaByTunnel() {
-      console.log(this.eventMsg);
       const params = this.eventMsg.tunnelId;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;

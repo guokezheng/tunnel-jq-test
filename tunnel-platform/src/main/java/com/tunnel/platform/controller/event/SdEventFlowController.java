@@ -69,6 +69,15 @@ public class SdEventFlowController extends BaseController
     }
 
     /**
+     * 用户确认事件保存记录
+     * @param id
+     * @return
+     */
+    @GetMapping("/userConfirm/{id}")
+    public AjaxResult saveUserConfirmFlow(@PathVariable("id") String id){
+        return toAjax(sdEventFlowService.saveUserConfirmFlow(id));
+    }
+    /**
      * 修改事件处理流程
      */
     @Log(title = "事件处理流程", businessType = BusinessType.UPDATE)

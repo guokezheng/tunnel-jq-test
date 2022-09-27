@@ -3465,7 +3465,10 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
-      bus.$emit("openPicDialog", num);
+      bus.$emit("openPicDialog");
+      bus.$emit("getPicId",num);
+
+      console.log(num,"num")
     },
     // 车型通过字典表获取值
     getCheXing(num) {

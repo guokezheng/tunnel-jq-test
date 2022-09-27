@@ -2,8 +2,10 @@ package com.tunnel.business.mapper.event;
 
 
 import com.tunnel.business.domain.event.SdEvent;
+import org.apache.ibatis.annotations.MapKey;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Mapper接口
@@ -78,6 +80,10 @@ public interface SdEventMapper
      * @return
      */
     List<SdEvent> getEventList(List<Long> eventIdList);
+
+
+    Map getTodayEventCount();
+
 
 
 }

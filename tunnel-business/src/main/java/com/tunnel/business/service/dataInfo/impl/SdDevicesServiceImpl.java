@@ -1,5 +1,6 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.druid.sql.dialect.odps.ast.OdpsStatisticClause;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -19,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -776,12 +780,26 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sb.toString();
     }
 
+    /**
+     * 一键车道控制
+     *
+     * @param map
+     * @return
+     */
     @Override
-    public List<SdDevices> updateCarFingerById(List<SdDevices> sdDevices) {
+    public List<SdDevices> updateCarFingerById(Map<String, Object> map) {
         List<SdDevices> sdDevicesList = new ArrayList<>();
-        for (SdDevices devices : sdDevices) {
-            List<SdDevices> sdDevicesLists = sdDevicesMapper.selectCarFingerById(devices);
-            sdDevicesLists.forEach(x -> sdDevicesList.add(x));
+        String tunnelName = (String) map.get("tunnelName");
+        String direction = map.get("direction").toString();
+        List<String> list = (List<String>) map.get("lane");
+        for (String lane : list) {
+            SdDevices devices = new SdDevices();
+            devices.setEqTunnelId(tunnelName);
+            devices.setEqType(1L);
+            devices.setEqDirection(direction);
+            devices.setLane(lane);
+            List<SdDevices> sdDevicesLists = sdDevicesMapper.selectSdDevicesList(devices);
+            sdDevicesList.addAll(sdDevicesLists);
         }
         return sdDevicesList;
     }
@@ -810,4 +828,39 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.updateSdDevicesByFEqId(sdDevices);
     }
 
+    @Override
+    public List<Map<String, Object>> getDeviceAndState(String tunnelId) {
+        List<Map<String, Object>> deviceData = sdDevicesMapper.selectDeviceDataAndState(tunnelId);
+        int laneSize = sdDevicesMapper.selectLaneSize();
+        // 根据方向进行分组
+        Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {
+            @Override
+            public String apply(Map<String, Object> t) {
+                Object object = t.get("direction");
+                String string = object.toString();
+                return string;
+            }
+        };
+        Map<String, List<Map<String, Object>>> collect = deviceData.stream().collect(Collectors.groupingBy(direction));
+        List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
+        for (Map.Entry<String, List<Map<String, Object>>> m : collect.entrySet()) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("name", m.getKey());
+            map.put("list", m.getValue());
+            result.add(map);
+        }
+        List<Map<String, Object>> list = (List<Map<String, Object>>) result.get(0).get("list");
+        // 根据lane去重
+        list = list.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() ->
+                                new TreeSet<>(Comparator.comparing((o)-> o.get("lane") + ";" + o.get("lane")))), ArrayList::new));
+        result.get(0).put("list",list);
+        System.out.println(result);
+        return result;
+    }
+    public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
 }

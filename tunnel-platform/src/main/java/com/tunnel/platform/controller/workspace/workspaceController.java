@@ -142,11 +142,11 @@ public class workspaceController extends BaseController {
     }
 
     @PostMapping("/vehicleMonitoringInRecent24Hours")
-    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody String tunnelId){
-        if (tunnelId.equals("") || tunnelId == null) {
+    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map){
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }
-        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(tunnelId);
+        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
         return AjaxResult.success(vehicleMonitoringInRecent24Hours);
     }
 

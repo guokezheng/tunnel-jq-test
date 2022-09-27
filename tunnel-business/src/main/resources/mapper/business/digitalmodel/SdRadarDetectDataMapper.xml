@@ -152,8 +152,8 @@
         GROUP BY time
     </select>
 
-    <select id="vehicleMonitoringInRecent24Hours" resultType="hashmap">
-        SELECT HOUR(t.time) hour, ifnull(num,0) AS count FROM
+    <select id="vehicleMonitoringInRecent24Hours" parameterType="String" resultType="hashmap">
+        SELECT HOUR(t.time) hour, ifnull(sa.num,0) AS count FROM
             (SELECT   DATE_FORMAT( DATE_SUB( NOW(),INTERVAL ( -(@i:=@i-1) ) HOUR ) ,'%Y-%m-%d %H') AS 'time'
             FROM (
             SELECT a  FROM

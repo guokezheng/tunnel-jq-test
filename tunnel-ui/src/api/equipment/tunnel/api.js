@@ -107,3 +107,12 @@ export function getDevice(eqId) {
     method: 'get'
   })
 }
+
+//  批量控制
+export function updateCarFinger(query) {
+  return request({
+    url: '/workspace/updateCarFinger/',
+    method: 'post',
+    params: query
+  })
+}

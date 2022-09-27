@@ -698,16 +698,35 @@
           :append-to-body="true"
           class="drawerBottom"
         >
-          <div style="height: 150px; overflowy: auto; padding: 5px;padding-left: 10px;">
-            <div style="border-bottom:1px solid rgba(224, 231, 237, 0.2);color:#00c2ff">
-              <span style="padding-left:5px">策略名称</span>
-              <span style="padding-left:28px;line-height:40px">策略信息</span>
+          <div
+            style="
+              height: 150px;
+              overflowy: auto;
+              padding: 5px;
+              padding-left: 10px;
+            "
+          >
+            <div
+              style="
+                border-bottom: 1px solid rgba(224, 231, 237, 0.2);
+                color: #00c2ff;
+              "
+            >
+              <span style="padding-left: 5px">策略名称</span>
+              <span style="padding-left: 28px; line-height: 40px"
+                >策略信息</span
+              >
             </div>
             <div v-for="(item, index) in isDrawerCList" :key="index">
               <div
                 v-for="(itm, inx) in item.slist"
                 :key="inx"
-                style="display: flex; padding: 4px;line-height:30px;border-bottom:1px solid rgba(224, 231, 237, 0.2)"
+                style="
+                  display: flex;
+                  padding: 4px;
+                  line-height: 30px;
+                  border-bottom: 1px solid rgba(224, 231, 237, 0.2);
+                "
               >
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.strategyName }}
@@ -762,7 +781,7 @@
                 <div>车牌号</div>
                 <div>速度</div>
                 <div>车道</div>
-<!--                <div>车型</div>-->
+                <!--                <div>车型</div>-->
               </li>
             </ul>
             <vue-seamless-scroll
@@ -774,9 +793,9 @@
                 v-for="(item, index) in realTimeList"
                 :key="index"
                 class="listRow"
-                style="display: flex;justify-content: space-around;"
+                style="display: flex; justify-content: space-around"
               >
-                <div style="text-align: center; ">
+                <div style="text-align: center">
                   {{ index + 1 }}
                 </div>
                 <div style="width: 95px; text-align: center">
@@ -2147,7 +2166,7 @@
             　
             <img
               :src="scope.row.url"
-              style="vertical-align: middle; max-height: 30px;padding:2px 0"
+              style="vertical-align: middle; max-height: 30px; padding: 2px 0"
             />
           </template>
         </el-table-column>
@@ -2507,6 +2526,7 @@ import {
   sendAnalogCom,
   getHostData,
   setCorLight,
+  updateCarFinger,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -3377,7 +3397,7 @@ export default {
       return h;
     },
     ...mapState({
-      deviceStatus: state => state.websocket.deviceStatus,
+      deviceStatus: (state) => state.websocket.deviceStatus,
       radarDataList: (state) => state.websocket.radarDataList,
       sdEventList: (state) => state.websocket.sdEventList,
     }),
@@ -3399,7 +3419,6 @@ export default {
       setTimeout(this.getRealTimeData, 0);
       // setTimeout(this.getLiPowerDevice, 0)
     }, 1000 * 5);
- 
 
     bus.$on("process", (e) => {
       console.log(e, "-----------");
@@ -3451,7 +3470,6 @@ export default {
       //   path: "/emergency/administration/dispatch",
       //   query: { id: num, tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" },
       // });
-
     },
     // 车型通过字典表获取值
     getCheXing(num) {
@@ -3473,11 +3491,11 @@ export default {
       };
       vehicleMonitoringInRecent24Hours(param).then((res) => {
         console.log(res, "车辆监测数据");
-        var vehicleXData = []
-        var vehicleYData = []
-        for(var item of res.data){
-          vehicleXData.push(item.hour)
-          vehicleYData.push(item.count)
+        var vehicleXData = [];
+        var vehicleYData = [];
+        for (var item of res.data) {
+          vehicleXData.push(item.hour);
+          vehicleYData.push(item.count);
         }
         this.initeChartsEnd(vehicleXData, vehicleYData);
       });
@@ -3686,7 +3704,7 @@ export default {
 
       getWarnEvent(param).then((response) => {
         // console.log(response.data,"预警事件")
-        this.trafficList = response.data
+        this.trafficList = response.data;
       });
     },
     /** 查询部门列表 */
@@ -4831,7 +4849,7 @@ export default {
         this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
         this.tunnelId = response.rows[0].tunnelId;
         this.tunnelLane = response.rows[0].lane;
-
+        console.log(this.tunnelLane, "批量控制");
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
         var newDict = this.dict.type.sd_sys_name;
@@ -5244,14 +5262,14 @@ export default {
             // let type = deviceData.eqType;
 
             // 需要换光标的
-            console.log()
+            console.log();
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
               if (
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31,32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -5259,7 +5277,6 @@ export default {
                     this.eqTypeStateList[k].stateType == "1" &&
                     this.eqTypeStateList[k].state == deviceData.eqStatus
                   ) {
-
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
                     if (deviceData.eqType == 19) {
@@ -5289,16 +5306,13 @@ export default {
                 } else {
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
-
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
                       this.eqTypeStateList[k].stateType == "2"
                     ) {
-                      if (
-                               this.eqTypeStateList[k].state == deviceData.state
-                      ) {
-                          //取设备运行状态图标
+                      if (this.eqTypeStateList[k].state == deviceData.state) {
+                        //取设备运行状态图标
                         let url = this.eqTypeStateList[k].url;
                         this.selectedIconList[j].eqDirection =
                           deviceData.eqDirection;
@@ -5314,8 +5328,6 @@ export default {
                             this.eqTypeStateList[k].url;
                         }
                       }
-
-
                     }
                   } else {
                     //如果是离线、故障等状态
@@ -7735,22 +7747,21 @@ input {
   width: 100%;
   height: 15rem;
 }
-.eventDiglog .el-dialog .el-form{
-  padding:15px !important;
-  .el-form-item__content .el-button{
-    width:88px;
-    height:22px;
+.eventDiglog .el-dialog .el-form {
+  padding: 15px !important;
+  .el-form-item__content .el-button {
+    width: 88px;
+    height: 22px;
     border: none;
   }
-  
 }
 ::v-deep .eventDiglog .el-button--medium {
-    height:22px !important;
-    line-height:22px !important;
-    padding: 0px !important;
-  }
+  height: 22px !important;
+  line-height: 22px !important;
+  padding: 0px !important;
+}
 .eventDiglog .el-table {
-  background-color:transparent !important;
+  background-color: transparent !important;
 }
 .el-table .fixed-width .el-button--mini {
   padding-left: 7px;

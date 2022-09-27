@@ -591,6 +591,7 @@ import {
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
+import { getDeviceData } from "@/api/workbench/config.js";
 import {
   previewDisplay,
   getSubareaByTunnelId,
@@ -599,6 +600,7 @@ export default {
   name: "dispatch",
   data() {
     return {
+      eqTypeStateList: null,
       eventMsg: null,
       fqIndex: null,
       hfData: null, //恢复预案列表
@@ -712,6 +714,12 @@ export default {
       var zxc = event;
     },
   },
+  mounted() {
+    this.timer = setInterval(() => {
+      setTimeout(this.getRealTimeData, 0);
+      // setTimeout(this.getLiPowerDevice, 0)
+    }, 1000 * 5);
+  },
   created() {
     this.getEventData();
     if (this.$route.query.id) {
@@ -730,6 +738,134 @@ export default {
     this.accidentInit();
   },
   methods: {
+    getRealTimeData() {
+      getDeviceData({
+        tunnelId: this.currentTunnel.id,
+      }).then((response) => {
+        // console.log(response,"设备实时数据")
+        // for (let i = 0; i < response.data.length; i++) {
+        // debugger;
+        // 实时状态
+        // let type = response.data[i].eqType;
+        // if (type != "" && type != undefined) {
+        for (let j = 0; j < this.selectedIconList.length; j++) {
+          var eqId = this.selectedIconList[j].eqId;
+          var deviceData = response.data[eqId];
+          if (deviceData) {
+            // console.log(deviceData, "deviceData");
+            // let type = deviceData.eqType;
+
+            // 需要换光标的
+            console.log();
+            for (let k = 0; k < this.eqTypeStateList.length; k++) {
+              if (
+                this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
+              ) {
+                //无法控制设备状态的设备类型，比如PLC、摄像机
+                let arr = [
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                ];
+                if (arr.includes(deviceData.eqType)) {
+                  if (
+                    // 摄像机之类的只有在线 离线 故障图标
+                    this.eqTypeStateList[k].stateType == "1" &&
+                    this.eqTypeStateList[k].state == deviceData.eqStatus
+                  ) {
+                    //取设备监测状态图标
+                    this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    if (deviceData.eqType == 19) {
+                      this.selectedIconList[j].num =
+                        "CO:" +
+                        parseFloat(deviceData.CO).toFixed(2) +
+                        "/PPM  VI:" +
+                        parseFloat(deviceData.VI).toFixed(2) +
+                        "KM";
+                    } else if (deviceData.eqType == 17) {
+                      this.selectedIconList[j].num =
+                        parseFloat(deviceData.FS).toFixed(2) +
+                        "m/s " +
+                        deviceData.FX;
+                    } else if (deviceData.eqType == 5) {
+                      if (deviceData.DWLD) {
+                        this.selectedIconList[j].num =
+                          parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                      }
+                    } else if (deviceData.eqType == 18) {
+                      if (deviceData.DNLD) {
+                        this.selectedIconList[j].num =
+                          parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                      }
+                    }
+                  }
+                } else {
+                  //可以控制设备状态的设备类型，比如车指
+                  if (deviceData.eqStatus == "1") {
+                    // 在线
+                    if (
+                      // 车指之类的包括正红反绿之类的图标 == 2
+                      this.eqTypeStateList[k].stateType == "2"
+                    ) {
+                      if (this.eqTypeStateList[k].state == deviceData.state) {
+                        //取设备运行状态图标
+                        let url = this.eqTypeStateList[k].url;
+                        this.selectedIconList[j].eqDirection =
+                          deviceData.eqDirection;
+                        if (deviceData.eqDirection == "1") {
+                          //上行车道
+                          if (url.length > 1) {
+                            this.selectedIconList[j].url = [url[1], url[0]];
+                          } else {
+                            this.selectedIconList[j].url = url;
+                          }
+                        } else {
+                          this.selectedIconList[j].url =
+                            this.eqTypeStateList[k].url;
+                        }
+                      }
+                    }
+                  } else {
+                    //如果是离线、故障等状态
+                    if (
+                      this.eqTypeStateList[k].stateType == "1" &&
+                      this.eqTypeStateList[k].state == deviceData.eqStatus
+                    ) {
+                      //取设备监测状态图标
+                      this.selectedIconList[j].url =
+                        this.eqTypeStateList[k].url;
+                    }
+                  }
+                }
+
+                // let url = this.eqTypeStateList[k].url;
+                // this.selectedIconList[j].eqDirection =
+                // deviceData.eqDirection;
+                // if (deviceData.eqDirection == "1") {
+                //   //上行车道
+                //   if (url.length > 1) {
+                //     this.selectedIconList[j].url = [url[1], url[0]];
+                //   } else {
+                //     this.selectedIconList[j].url = url;
+                //   }
+                // } else {
+                //   this.selectedIconList[j].url =
+                //     this.eqTypeStateList[k].url;
+                // }
+                // this.selectedIconList[j].state = deviceData.eqStatus;
+              }
+            }
+            // 不需要换光标的
+            // let paramType = [5,17, 18, 19, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
+            // if (paramType.includes(parseInt(type))) {
+            //   if (deviceData.eqStatus == "null" || !deviceData.eqStatus) {
+            //     this.selectedIconList[j].value = "0";
+            //   } else {
+            //     this.selectedIconList[j].value = deviceData.eqStatus;
+            //   }
+            // }
+          }
+        }
+      });
+    },
     eventDo(item) {
       console.log(item);
       var data = { eventId: this.eventMsg.id, reserveId: item.id };
@@ -986,18 +1122,32 @@ export default {
                   "方向=>",
                   this.eventMsg.direction
                 );
-                if (
-                  positionCurrent > positionMin &&
-                  positionCurrent < positionMax &&
-                  item.direction == this.eventMsg.direction
-                ) {
-                  console.log(item, "zxczxc");
-                  this.fqIndex = index;
-                  item.style =
-                    "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                  // this.rightClick(index);
-                  item.show = true;
-                  this.getListBySIdData(item.id);
+                if (this.planList1.length == 4) {
+                  if (
+                    positionCurrent > positionMin &&
+                    item.direction == this.eventMsg.direction
+                  ) {
+                    this.fqIndex = index;
+                    item.style =
+                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+                    // this.rightClick(index);
+                    item.show = true;
+                    this.getListBySIdData(item.id);
+                  }
+                } else {
+                  if (
+                    positionCurrent > positionMin &&
+                    positionCurrent < positionMax &&
+                    item.direction == this.eventMsg.direction
+                  ) {
+                    console.log(item, "zxczxc");
+                    this.fqIndex = index;
+                    item.style =
+                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+                    // this.rightClick(index);
+                    item.show = true;
+                    this.getListBySIdData(item.id);
+                  }
                 }
               });
 

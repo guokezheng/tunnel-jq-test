@@ -100,5 +100,5 @@ public interface ISdReserveProcessService {
      * @param reserveId
      * @return
      */
-    Integer planImplementa(Long reserveId);
+    Integer planImplementa(String eventId, Long reserveId);
 }

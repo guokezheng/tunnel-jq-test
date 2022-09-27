@@ -97,7 +97,7 @@
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
                 and date_format(A.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
             </if>
-            order by create_time desc
+            order by A.start_time desc
 
         </where>
     </select>
@@ -267,9 +267,8 @@
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
        where
-            A.start_time &gt;= (NOW() - interval 24 hour)
-            and A.start_time &lt;= NOW()
-            order by create_time desc
+            TO_DAYS(A.start_time) = TO_DAYS(NOW())
+            order by A.start_time desc
     </select>
 
     <!--根据事件id列表查询事件信息-->

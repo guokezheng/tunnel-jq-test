@@ -1,5 +1,17 @@
 <template>
   <div class="app-container">
+    <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
+      <div style="line-height: 60px;">事件预警统计:</div>
+      <el-card class="card-box">
+        今日累计预警事件: {{allmsg}}
+      </el-card>
+      <el-card class="card-box">
+        今日执行预警事件: {{process}}
+      </el-card>
+      <el-card class="card-box">
+        今日预警事件执行率: {{proportion}}
+      </el-card>
+    </div>
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -101,8 +113,8 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           icon="el-icon-plus"
@@ -110,7 +122,7 @@
           @click="handleAdd"
           v-hasPermi="['system:event:add']"
         >新增事件</el-button>
-      </el-col> -->
+      </el-col>
 
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
@@ -135,7 +147,7 @@
           />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -169,12 +181,12 @@
       />
       <el-table-column label="级别" align="center" prop="eventGrade" />
       <el-table-column label="事件标题" align="center" prop="eventTitle" />
-      <el-table-column
+      <!-- <el-table-column
         label="事件描述"
         align="center"
         prop="eventDescription"
         :show-overflow-tooltip="true"
-      />
+      /> -->
       <!-- <el-table-column label="影响程度" align="center" prop="eventType.eventType" /> -->
       <el-table-column
         label="开始时间"
@@ -800,6 +812,9 @@ export default {
         endTime: null,
         deptId: null,
       },
+      allmsg:'',
+      process:'',
+      proportion:'',
       // 表单参数
       form: {},
       eqTunnelData: {},
@@ -1120,4 +1135,9 @@ hr {
   border: solid 1px green;
   width: 100%;
 }
+.card-box{
+    width: 30%;
+    text-align: center;
+    font-weight: bold;
+  }
 </style>

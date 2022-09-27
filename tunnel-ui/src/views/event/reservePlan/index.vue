@@ -629,8 +629,8 @@
                 :show-all-levels="false"
                 clearable
                 collapse-tags
-                @change="handleChangeStrategy(item.handleStrategyList)"
               ></el-cascader>
+              <!-- @change="handleChangeStrategy(item.handleStrategyList)" -->
             </el-form-item>
             <div class="dialog-footer">
               <el-button type="text" @click.native="addStrategy(index)"
@@ -699,8 +699,8 @@ export default {
         value: "id",
         label: "name",
         children: "children",
-        emitPath: false,
-        // checkStrictly
+        // emitPath: false,
+        checkStrictly: true,
       },
       reserveId: "",
       //新增弹窗
@@ -1026,14 +1026,14 @@ export default {
         }
       });
     },
-    handleChangeStrategy(e) {
-      this.strategyRlData = [];
-      e.forEach((item, index) => {
-        getRl(item).then((res) => {
-          this.strategyRlData.push(res.rows);
-        });
-      });
-    },
+    // handleChangeStrategy(e) {
+    //   this.strategyRlData = [];
+    //   e.forEach((item, index) => {
+    //     getRl(item).then((res) => {
+    //       this.strategyRlData.push(res.rows);
+    //     });
+    //   });
+    // },
 
     //查看工作台
     openWorkbench(row) {
@@ -1124,7 +1124,7 @@ export default {
         } else {
           let data = res.data;
           data.forEach((item, index) => {
-            this.planTypeIdList[index].handleStrategyList = item.strategyId;
+            // this.planTypeIdList[index].handleStrategyList = item.strategyId;
             this.planTypeIdList[index].processSort = item.processSort;
             this.planTypeIdList[index].processName = item.processName;
           });

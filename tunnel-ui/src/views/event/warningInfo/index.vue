@@ -3,13 +3,13 @@
     <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
       <div style="line-height: 60px;">设备预警统计:</div>
       <el-card class="card-box">
-        今日累计预警设备: {{allmsg}}
+        今日故障设备统计: {{allmsg}}
       </el-card>
       <el-card class="card-box">
-        今日执行预警设备: {{process}}
+        今日执行故障设备: {{process}}
       </el-card>
       <el-card class="card-box">
-        今日预警设备执行率: {{proportion}}
+        今日故障设备执行率: {{proportion}}
       </el-card>
     </div>
 

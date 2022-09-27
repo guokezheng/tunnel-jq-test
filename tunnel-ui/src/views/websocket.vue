@@ -1,8 +1,15 @@
-<template>
-</template>
+<!--
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-09-25 08:41:42
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-09-26 18:57:34
+ * @FilePath: \tunnel-ui\src\views\websocket.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<template></template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from "vuex";
 
 export default {
   name: "Websocket",
@@ -11,32 +18,29 @@ export default {
   },
   computed: {
     ...mapState({
-      token: state => state.user.token,
-      websocket: state => state.user.websocket
-    })
+      token: (state) => state.user.token,
+      websocket: (state) => state.user.websocket,
+    }),
   },
   watch: {
-    websocket({password, path, port, interval}) {
+    websocket({ password, path, port, interval }) {
       // 建立 websocket 连接
       this.socket.initialize({
-
-        url: 'ws://10.3.16.40' + ':' + port + path,
+        url: "ws://10.3.16.40" + ":" + port + path,
         //  url: 'ws://10.168.64.171'+ ':' + port + path,
         //  url: 'ws://10.168.65.230'+ ':' + port + path,
 
         password: password,
         tokenSN: this.token,
-        heartRate: interval
+        heartRate: interval,
       });
-      this.socket.onopen = () => {
-
-      }
+      this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
-        message = JSON.parse(message)
+        message = JSON.parse(message);
 
         const method = message.method;
 
-        if (method !== 'event') {
+        if (method !== "event") {
           return;
         }
 
@@ -46,33 +50,37 @@ export default {
         var contentList = JSON.parse(content);
 
         switch (subEvent) {
-          case 'payment_webSocket_send':
-            this.$store.commit('PAYMENT', content)
+          case "payment_webSocket_send":
+            this.$store.commit("PAYMENT", content);
             break;
-          case 'carList':
-            this.$store.commit('CARLIST', content)
+          case "carList":
+            this.$store.commit("CARLIST", content);
             break;
-          case 'realTimeLaneTrajectory':
-            this.$store.commit('REALTIMELANETRAJECTORY', content)
+          case "realTimeLaneTrajectory":
+            this.$store.commit("REALTIMELANETRAJECTORY", content);
             break;
-          case 'sdEventList':
-            this.$store.commit('SDEVENTLIST', contentList.sdEventList)
+          case "sdEventList":
+            this.$store.commit("SDEVENTLIST", contentList.sdEventList);
             break;
-          case 'radarDataList':
-            this.$store.commit('RADARDATALIST', contentList.radarDataList)
+          case "radarDataList":
+            this.$store.commit("RADARDATALIST", contentList.radarDataList);
             break;
-          case 'deviceStatus':
-            this.$store.commit('DEVICESTATUS', contentList.deviceStatus)
+          case "deviceStatus":
+            this.$store.commit("DEVICESTATUS", contentList.deviceStatus);
             break;
-
+          case "deviceStatusChangeLog":
+            this.$store.commit(
+              "DEVICESTATUSCHANGELOG",
+              contentList.deviceStatus
+            );
+            break;
           default:
         }
-      }
-    }
+      };
+    },
   },
-  created() {
-  },
-  methods: {}
+  created() {},
+  methods: {},
 };
 </script>
 

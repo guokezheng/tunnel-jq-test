@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件类型Service业务层处理
@@ -86,5 +88,19 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
     @Override
     public int deleteSdEventTypeById(Long id) {
         return sdEventTypeMapper.deleteSdEventTypeById(id);
+    }
+
+    /**
+     * 获取所有事件类型Map格式
+     *
+     * @return
+     */
+    @Override
+    public Map<Long, String> getEventTypeMap() {
+        List<SdEventType> list = sdEventTypeMapper.selectSdEventTypeList(new SdEventType());
+
+        Map<Long,String> map = list.stream().collect(Collectors.toMap(SdEventType::getId, SdEventType::getEventType));
+
+        return map;
     }
 }

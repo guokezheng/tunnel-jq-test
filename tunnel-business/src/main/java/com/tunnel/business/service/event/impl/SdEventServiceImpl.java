@@ -1,7 +1,10 @@
 package com.tunnel.business.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
@@ -83,7 +86,6 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public int updateSdEvent(SdEvent sdEvent) {
-
         if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
@@ -162,5 +164,39 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public List<SdEvent> getEventList(List<Long> eventIdList) {
         return sdEventMapper.getEventList(eventIdList);
+    }
+
+    /**
+     * 拼接得到默认的事件标题
+     * @param sdEvent 事件信息
+     * @param tunnelMap 隧道名称Map
+     * @param eventTypeMap 事件类型Map
+     * @return
+     */
+    @Override
+    public String getDefaultEventTitle(SdEvent sdEvent,Map<String,String> tunnelMap,Map<Long,String> eventTypeMap) {
+        //拼接事件标题,格式：##隧道##方向桩号##发生##类型事件
+        StringBuffer titleDesc = new StringBuffer();
+
+        //隧道名称
+        String tunnelName = tunnelMap.get(sdEvent.getTunnelId());
+        titleDesc.append(tunnelName);
+
+        //查询方向字典值
+        String directionDict = "";
+        if(!StringUtils.isEmpty(sdEvent.getDirection())){
+            directionDict = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
+        }
+        if(!StringUtils.isEmpty(directionDict)){
+            titleDesc.append(directionDict);
+        }
+        if(!StringUtils.isEmpty(sdEvent.getStakeNum())){
+            titleDesc.append("桩号").append(sdEvent.getStakeNum());
+        }
+        //事件类型名称
+        String eventTypeName = eventTypeMap.get(sdEvent.getEventTypeId());
+        titleDesc.append("发生").append(eventTypeName).append("事件");
+
+        return titleDesc.toString();
     }
 }

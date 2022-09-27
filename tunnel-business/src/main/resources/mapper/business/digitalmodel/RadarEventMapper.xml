@@ -52,7 +52,7 @@
     update sd_event
     set
         id=#{id},event_type_id=#{eventTypeId},tunnel_id=#{tunnelId},lane_no=#{laneNo},longitude=#{eventLongitude},latitude=#{eventLatitude},
-        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum},update_time = #{updateTime}
+        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum},update_time = #{updateTime},direction = #{direction}
     where id=#{id}
     </update>
     <update id="updateVideoById">

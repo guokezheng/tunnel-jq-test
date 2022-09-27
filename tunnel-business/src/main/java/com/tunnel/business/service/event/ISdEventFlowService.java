@@ -36,6 +36,8 @@ public interface ISdEventFlowService {
      * @return
      */
     int execPlanSaveEventFlow(String eventId, Map data);
+
+    int saveUserConfirmFlow(String eventId);
     /**
      * 新增事件处理流程
      *

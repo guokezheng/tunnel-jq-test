@@ -7,12 +7,15 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventSourceEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdRadarDetectData;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
@@ -31,10 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author dzy
@@ -50,6 +50,8 @@ public class RadarEventServiceImpl implements RadarEventService {
     private RadarEventMapper wjMapper;
     @Autowired
     private SdDevicesMapper devicesMapper;
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
 
     @Autowired
     private ISdEventFlowService eventFlowService;
@@ -252,18 +254,27 @@ public class RadarEventServiceImpl implements RadarEventService {
         devicelidar.forEach(
                 wjDevicelidar -> {
                     List<SdDevices> devicesList = new ArrayList<>();
+                    List<Map<String, String>> devicesErrorContentList = new ArrayList<>();
                     //将相机的隧道id设备类型id放入集合
                     wjDeviceCameraList.forEach(
                             f -> {
                                 SdDevices devices = new SdDevices();
                                 devices.setIp(f.getIp());
                                 devicesList.add(devices);
+                                Map<String, String> hashMap = new HashMap<>();
+                                hashMap.put("errorContent", f.getErrorContent());
+                                hashMap.put("ip", f.getIp());
+                                devicesErrorContentList.add(hashMap);
                             }
                     );
                     //将雷达的隧道id设备类型id放入集合
                     SdDevices devices = new SdDevices();
                     devices.setIp(wjDevicelidar.getIp());
                     devicesList.add(devices);
+                    Map<String, String> hashMap = new HashMap<>();
+                    hashMap.put("errorContent", wjDevicelidar.getErrorContent());
+                    hashMap.put("ip", wjDevicelidar.getIp());
+                    devicesErrorContentList.add(hashMap);
                     //雷达设备类型
                     Integer lidarType = wjDevicelidar.getDeviceType();
                     //相机设备类型
@@ -292,6 +303,30 @@ public class RadarEventServiceImpl implements RadarEventService {
                     if (CollectionUtils.isNotEmpty(list)) {
                         list.forEach(
                                 t -> {
+                                    //当前t为单个设备信息，需要把异常事件增加device_data
+                                    for (int z = 0;z < devicesErrorContentList.size();z++) {
+                                        if (devicesErrorContentList.get(z).get("ip").toString().equals(t.getIp())) {
+                                            String value = devicesErrorContentList.get(z).get("errorContent");
+                                            SdDeviceData sdDeviceData = new SdDeviceData();
+                                            sdDeviceData.setDeviceId(t.getEqId());
+                                            if (t.getEqType().longValue() == DevicesTypeEnum.CAMERA_BOX.getCode().longValue()) {
+                                                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.CAMERA_ERROR_CONTETN.getCode()));
+                                            } else if (t.getEqType().longValue() == DevicesTypeEnum.LIDAR.getCode().longValue()) {
+                                                sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.RADAR_ERROR_CONTETN.getCode()));
+                                            }
+                                            List<SdDeviceData> deviceData = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+                                            if (deviceData.size() > 0) {
+                                                SdDeviceData data = deviceData.get(0);
+                                                data.setData(value);
+                                                data.setUpdateTime(new Date());
+                                                sdDeviceDataMapper.updateSdDeviceData(data);
+                                            } else {
+                                                sdDeviceData.setData(value);
+                                                sdDeviceData.setCreateTime(new Date());
+                                                sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+                                            }
+                                        }
+                                    }
                                     devicesMapper.updateSdDevicesBatch(t.getEqId(), t.getEqStatus());
                                 }
                         );
@@ -421,6 +456,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             }
             SdRadarDevice sdRadarDevice = new SdRadarDevice();
             sdRadarDevice.setDeviceId(f.getEqId());
+            sdRadarDevice.setIp(f.getIp());
             sdRadarDevice.setDeviceType(f.getEqType() + "");
             if (f.getEqName().contains("K")) {
                 sdRadarDevice.setDeviceName(f.getEqName().substring(0, f.getEqName().indexOf("K")));
@@ -576,6 +612,14 @@ public class RadarEventServiceImpl implements RadarEventService {
                         deviceData.put("message", map.get("data").toString());
                     }
                 }
+            } else if ("23".equals(sdRadarDevice.getDeviceType()) || "26".equals(sdRadarDevice.getDeviceType())) {
+                List<Map<String, Object>> maps = devicesMapper.selectDeviceDataAndUnit(f.getEqId());
+                for (int i = 0;i < maps.size();i++) {
+                    Map<String, Object> map = maps.get(i);
+                    if (map.get("data") != null) {
+                        deviceData.put("runDate", map.get("data").toString());
+                    }
+                }
             }
             sdRadarDevice.setDeviceData(deviceData);
             list.add(sdRadarDevice);
@@ -590,9 +634,9 @@ public class RadarEventServiceImpl implements RadarEventService {
             if (sdRadarDevice.getDeviceStatus() != null) {
                 if (sdRadarDevice.getDeviceStatus() == 1) {
                     normal += 1;
-                } else if (sdRadarDevice.getDeviceStatus() == 2) {
-                    errorNum += 1;
                 } else if (sdRadarDevice.getDeviceStatus() == 3) {
+                    errorNum += 1;
+                } else if (sdRadarDevice.getDeviceStatus() == 2) {
                     offlineNum += 1;
                 }
             }

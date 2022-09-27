@@ -42,12 +42,23 @@ public class SdRadarDevice {
     @ApiModelProperty("模型位置姿态缩放信息，需要孪生平台预设信息")
     private String transform;
 
+    @ApiModelProperty("设备IP")
+    private String ip;
+
     /**
      * 设备数据：包括设备实时数据、实时状态，根据deviceType区分
      */
 //    private WjDeviceData deviceData;
 
     private JSONObject deviceData;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
     public String getDeviceType() {
         return deviceType;

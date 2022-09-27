@@ -29,7 +29,9 @@ public enum DevicesTypeItemEnum {
     SHOU_BAO_ALARM(26, "手报报警"),
     FENG_JI_STATUS(27, "风机状态"),
     JIA_QIANG_ZHAO_MING_OPEN_STATUS(28, "加强照明开关状态"),
-    INFORMATION_BOARD_CONTENT(29, "情报板显示内容");
+    INFORMATION_BOARD_CONTENT(29, "情报板显示内容"),
+    CAMERA_ERROR_CONTETN(30, "相机异常事件描述"),
+    RADAR_ERROR_CONTETN(31, "雷达异常事件描述");
 
 
     private int code;

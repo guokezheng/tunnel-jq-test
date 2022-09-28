@@ -20,7 +20,7 @@
           <!-- 上下结构 -->
           <template v-else>
             <div :class="{'fixed-header':fixedHeader}" :style="fixedHeader?'width:100%;':''">
-              <div :class="$route.path == '/map/map3d/index'?'topNav_head mapBox':'topNav_head'"  >
+              <div :class="$route.path == '/map/map3d/index'?'topNav_head mapBox':$route.path == '/energy'?'topNav_head mapBox':'topNav_head'"  >
                 <sidebar class="sidebar-container index_menu blue_index_menu" style="width: 75% !important;position: relative;box-shadow:unset;float:left;"/>
                 <template v-if="weatherView">
                   <div class="weather">
@@ -32,9 +32,8 @@
               </div>
             </div>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeader?'padding-top:50px;margin-left:0px;':'margin-left:0px;'">
-              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 
-              'display:none;':$route.path == '/emergency/administration/dispatch' ? 
-              'display:none;':$route.path == '/map/map3d/index'?'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
+              <breadcrumb :style="'display:'+ getRoute($route.path) +';'"
+              ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
               <app-main />
               <right-panel>
                 <settings />
@@ -188,11 +187,17 @@ export default {
     }
   },
   methods: {
-    // showPicDialog(id){
-    //   var evtId = id || this.eventId
-    //   console.log(evtId,"layout跳转三图一视传递id")
-    //   this.$refs.picDialog.getPicDialogId(evtId)
-    // },
+    getRoute(path){
+      var arr = ['/index','/map/map/index','/emergency/administration/dispatch','/map/map3d/index','/energy']
+      if(arr.includes(path)){
+        return 'none'
+      }else{
+        return 'block'
+      }
+    },
+    // style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 
+    //           'display:none;':$route.path == '/emergency/administration/dispatch' ? 
+    //           'display:none;':$route.path == '/map/map3d/index'?'display:none;':''" 
     getWeather(){
       let city = 'city=济南';
       let word = 'tianqi';

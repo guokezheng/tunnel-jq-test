@@ -16,7 +16,7 @@
           :id="topNav ? '' : 'left_nav'"
           :style="
             topNav
-              ? 'color:white;vertical-align: bottom;display:flex;height:65px;line-height:65px;justify-content: left;align-items: center;'
+              ? 'color:white;vertical-align: bottom;display:flex;height:56px;line-height:56px;justify-content: left;align-items: center;'
               : 'display:flex;align-items: center;height:65px;line-height:65px;padding-left: 12px;'
           "
           :index="resolvePath(onlyOneChild.path)"

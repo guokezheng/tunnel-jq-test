@@ -152,8 +152,8 @@ export default {
     }
     .theme-light{
         .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:17px;font-size:16px;cursor: pointer;}
-        .index_menu .el-icon-arrow-left{left:31%;color: #000 !important;;}
-        .index_menu .el-icon-arrow-right{right: 0% !important;;color: #000 !important;;}
+        .index_menu .el-icon-arrow-left{left:42%;color: #fff !important;;}
+        .index_menu .el-icon-arrow-right{right: -4% !important;;color: #fff !important;;}
     }
 
     // .theme-dark #app .sidebar-container .el-menu-item, .theme-dark #app .sidebar-container .el-submenu__title {
@@ -194,7 +194,7 @@ export default {
         a {
             height: 100%;
             font-size: 14px;
-            line-height: 65px;
+            line-height: 56px;
         }
     }
     .workbenchNavbar{

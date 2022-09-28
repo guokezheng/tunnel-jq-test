@@ -105,7 +105,10 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
                 sdEvent.setId(f.getEventId());
                 sdEvent.setUpdateTime(DateUtils.getNowDate());
-                sdEvent.setDirection(f.getDirection() + "");
+                //方向
+                if(!StringUtils.isEmpty(f.getDirection())){
+                    sdEvent.setDirection(f.getDirection() + "");
+                }
                 wjMapper.updateEvent(sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
@@ -125,8 +128,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventSource(EventSourceEnum.radar.getCode());
                 //事件方向--将万集定义的隧道方向映射为平台的隧道方向
                 if(!StringUtils.isEmpty(f.getDirection())){
-                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
-                    sdEvent.setDirection(direction);
+//                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+//                    sdEvent.setDirection(direction);
+                    sdEvent.setDirection(String.valueOf(f.getDirection()));
                 }
                 //拼接获取默认的事件标题
                 String eventTitle = sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);

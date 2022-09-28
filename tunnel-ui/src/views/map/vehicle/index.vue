@@ -132,7 +132,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
-      <el-table-column label="隧道id" align="center" prop="tunnelId" />
+      <el-table-column label="隧道名称" align="center" prop="tunnelName" />
       <el-table-column label="车辆类型" align="center" prop="vehicleType"  :formatter="vehicleTypeFormat" />
       <el-table-column label="车辆颜色" align="center" prop="vehicleColor"  :formatter="vehicleColorFormat" />
       <el-table-column label="车牌号" align="center" prop="vehicleLicense" />
@@ -323,6 +323,7 @@ export default {
     getList() {
       this.loading = true;
       listVehicle(this.queryParams).then(response => {
+        console.log(response,"表格")
         this.vehicleList = response.rows;
         this.total = response.total;
         this.loading = false;

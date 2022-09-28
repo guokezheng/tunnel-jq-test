@@ -211,7 +211,7 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-row>
+              <!-- <el-row> -->
                 <!--  <el-col :span="8">
                   <el-form-item label="影响程度" prop="tunnelId">
                     <el-select v-model="eventForm.tunnelId" placeholder="请选择影响程度" clearable size="small" >
@@ -226,7 +226,7 @@
                     <span> KM</span>
                   </el-form-item>
                 </el-col> -->
-                <el-col :span="8">
+                <!-- <el-col :span="8">
                   <el-form-item label="事件等级 " prop="eventGrade">
                     <el-radio-group v-model="eventForm.eventGrade">
                       <el-radio
@@ -238,7 +238,7 @@
                     </el-radio-group>
                   </el-form-item>
                 </el-col>
-              </el-row>
+              </el-row> -->
               <el-row>
                 <el-col :span="8">
                   <el-form-item label="事件标题" prop="eventTitle">

@@ -557,14 +557,14 @@
                 line-height: 40px;
               "
             >
-              <div class="el-icon-sunny" style="width: 10px"></div>
+              <div class="el-icon-notebook-2" style="width: 10px"></div>
             </div>
             <div class="detailsText">事件分类</div>
             <div
-              style="color: #82b3c2; line-height: 40px"
-              v-if="eventForm.eventTitle"
+              style="color: #82b3c2; line-height: 40px;width:195px"
+              v-if="eventForm.eventType.eventType"
             >
-              {{ eventForm.eventTitle }}
+              {{ eventForm.eventType.eventType }}
             </div>
           </el-col>
         </el-row>
@@ -917,7 +917,7 @@ export default {
       });
       video(param4).then((response) => {
         console.log(response.data, "视频信息");
-        this.videoUrl = response.data;
+        this.videoUrl = response.data.videoUrl;
       });
     },
     // 查询方向

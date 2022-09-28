@@ -470,6 +470,12 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("deviceData", parse);
 //            jsonObject.put("windSpeed",windSpeed);
 //            jsonObject.put("windDirection",windDirection);
+        } else if ("23".equals(deviceType) || "26".equals(deviceType)) {
+            jsonObject.put("deviceId", deviceId);
+            jsonObject.put("tunnelId", tunnelId);
+            jsonObject.put("deviceType", Integer.parseInt(deviceType));
+            jsonObject.put("deviceStatus", Integer.parseInt(deviceStatus));
+            jsonObject.put("deviceData", parse);
         }
         log.info("-----测试测试测试----{}", jsonObject);
         if (jsonObject.equals(null) || jsonObject.isEmpty()) {

@@ -2527,6 +2527,7 @@ import {
   getHostData,
   setCorLight,
   updateCarFinger,
+  getDeviceDataAndState,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2620,6 +2621,7 @@ export default {
   },
   data() {
     return {
+      BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
       tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
@@ -3226,6 +3228,7 @@ export default {
     this.lightSwitchFunc();
     this.getEqType();
     this.getTunnel();
+
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
     });
@@ -3456,6 +3459,12 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    getDeviceDataAndStateData() {
+      getDeviceDataAndState(this.tunnelId).then((result) => {
+        console.log(result, "批量控制");
+        this.BulkData = result.data;
+      });
+    },
     // 抽屉 车指控制
     controlCheZhi(num) {
       console.log(num, "num");
@@ -4841,7 +4850,6 @@ export default {
     /* 查询隧道列表 */
     getTunnelList() {
       listTunnels(this.tunnelQueryParams).then((response) => {
-        console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
           this.tunnelList = [];
           return false;
@@ -4849,9 +4857,9 @@ export default {
         this.tunnelNameEarlyWarn = response.rows[0].tunnelName;
         this.tunnelId = response.rows[0].tunnelId;
         this.tunnelLane = response.rows[0].lane;
-        console.log(this.tunnelLane, "批量控制");
         // this.specialEcharts(this.tunnelId)
         this.vehicleEcharts();
+        this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
         if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
           this.robotShow = false;
@@ -4904,7 +4912,6 @@ export default {
     // 查询方向
     selectDirection(param) {
       listDevices(param).then((response) => {
-        console.log(response, "方向信息");
         this.allDirection = this.changeDirection(response.rows);
         for (let i = 0; i < this.allDirection.length; i++) {
           for (let j = i + 1; j < this.allDirection.length; j++) {
@@ -4978,7 +4985,6 @@ export default {
         // isControl: 1,
       };
       await listEqTypeState(queryParams).then((response) => {
-        console.log("查询设备状态图标", response.rows);
         let list = response.rows;
         that.getEqUrl(list);
       });
@@ -5248,7 +5254,6 @@ export default {
       getDeviceData({
         tunnelId: this.currentTunnel.id,
       }).then((response) => {
-        // console.log(response,"设备实时数据")
         // for (let i = 0; i < response.data.length; i++) {
         // debugger;
         // 实时状态
@@ -5258,11 +5263,9 @@ export default {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            // console.log(deviceData, "deviceData");
             // let type = deviceData.eqType;
 
             // 需要换光标的
-            console.log();
             for (let k = 0; k < this.eqTypeStateList.length; k++) {
               if (
                 this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
@@ -6079,11 +6082,9 @@ export default {
         brr.push(item.eqType);
       });
       if (brr.every(this.everyCheck) == false) {
-        console.log("都是情报板设备");
         //如果是情报板设备，则取消验证
         this.rules.state = true;
         // this.$refs.contentBatchEdit.init();
-        console.log(that.batchForm.eqList, "选中设备列表");
         // 上面已经判断过是否一致，所以此处不再判断，直接传第一个设备的eqid
         // 打开情报板编辑页面
         getDeviceBase(that.batchForm.eqList[0].eqId).then((data) => {
@@ -6096,9 +6097,8 @@ export default {
         batchFormList.forEach((item) => {
           deviceList = deviceList.concat(item.eqId);
         });
-        console.log(deviceList);
+
         this.$refs.vmsContentUpdate.deviceId = deviceList;
-        console.log(deviceList, "圈选设备id对象");
         this.$refs.vmsContentUpdate.isAdd = false;
         this.$refs.vmsContentUpdate.init();
         return false;
@@ -6156,7 +6156,6 @@ export default {
           strategyType: 0,
           tunnelId: this.currentTunnel.id,
         }).then((response) => {
-          console.log(response.rows, " response.rows控制策略");
           this.strategyList = response.rows;
           this.loading = false;
         });

@@ -186,7 +186,7 @@
         align="center"
         prop="eventType.eventType"
       />
-      <el-table-column label="级别" align="center" prop="eventGrade" />
+      <!-- <el-table-column label="级别" align="center" prop="eventGrade" /> -->
       <el-table-column label="事件标题" align="center" prop="eventTitle" />
       <!-- <el-table-column
         label="事件描述"
@@ -222,6 +222,14 @@
           <span v-show="scope.row.eventState == 1" style="color: #00aa00"
             ><i class="el-icon-success" style="color: #00aa00;!important"></i
             >&nbsp;已处理</span
+          >
+          <span v-show="scope.row.eventState == 2" style="color: #00aa00"
+            ><i class="el-icon-success" style="color: #00aa00;!important"></i
+            >&nbsp;已忽略</span
+          >
+          <span v-show="scope.row.eventState == 3" style="color: #ff0000"
+            ><i class="el-icon-info" style="color: #ff0000;!important"></i
+            >&nbsp;未处理</span
           >
         </template>
       </el-table-column>

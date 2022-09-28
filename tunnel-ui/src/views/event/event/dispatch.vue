@@ -792,12 +792,10 @@ export default {
       getDeviceData({
         tunnelId: this.eventMsg.tunnelId,
       }).then((response) => {
-        console.log(response,'11111111111111111111111111')
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
           if (deviceData) {
-            console.log(deviceData, "deviceData");
             // let type = deviceData.eqType;
 
             // 需要换光标的
@@ -842,7 +840,6 @@ export default {
                     }
                   }
                 } else {
-                  console.log(deviceData.eqStatus, "当前状态");
                   //可以控制设备状态的设备类型，比如车指
                   if (deviceData.eqStatus == "1") {
                     // 在线
@@ -926,6 +923,7 @@ export default {
       const params = this.eventMsg.tunnelId;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
+        console.log(this.planList1, "分区信息");
       });
     },
     // 预览
@@ -1198,7 +1196,7 @@ export default {
         this.urls = response.data;
       });
       video(param4).then((response) => {
-        this.videoUrl = response.data;
+        this.videoUrl = response.data.videoUrl;
       });
     },
   },
@@ -1315,11 +1313,11 @@ export default {
             border: solid 1px white;
             position: relative;
             top: -100%;
+            z-index: 9999;
             // left: 15%;
             // display: none;
             color: white;
             background-color: rgba($color: #005e96, $alpha: 0.5);
-            z-index: 4;
             border-radius: 10px;
             box-shadow: 0 0 5px white;
             .recoveryBox {

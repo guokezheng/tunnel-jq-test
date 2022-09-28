@@ -116,3 +116,11 @@ export function updateCarFinger(query) {
     params: query
   })
 }
+
+export function getDeviceDataAndState(tunnelId) {
+  return request({
+    url: '/workspace/getDeviceDataAndState?tunnelId=' + tunnelId,
+    method: 'get'
+  })
+}
+

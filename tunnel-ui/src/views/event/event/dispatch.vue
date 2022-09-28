@@ -526,7 +526,7 @@
                 <el-timeline-item
                   placement="top"
                   v-for="(item, index) in eventList"
-                  :key="index"
+                  :key="index+item.flowTime"
                   color="#00A0FF"
                 >
                   <div>{{ item.flowTime }}</div>
@@ -543,7 +543,7 @@
                 >
                   <div class="recovery">{{ item.planName }}</div>
                   <div class="button">
-                    <div @click="getPreview(itm)">预览</div>
+                    <div @click="getPreview(item)">预览</div>
                     <div @click="eventDo(item)">执行</div>
                   </div>
                 </div>

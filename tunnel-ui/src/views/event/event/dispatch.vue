@@ -24,7 +24,6 @@
                   }"
                   @mouseleave="mouseleave(index)"
                 >
-                  <!--  @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
@@ -105,7 +104,7 @@
                       "
                       :width="item.iconWidth / 1.26"
                       :height="item.iconHeight / 1.26"
-                      :key="item.deptId + indexs"
+                      :key="item.eqId + indexs"
                       :src="url"
                     />
                   </div>
@@ -724,11 +723,11 @@ export default {
       console.log(event, "已执行");
       this.zxList.push(event[0]);
     },
-    eventFlow(event) {
-      // console.log(event, "websockt工作台接收感知事件数据");
-      console.log(event, "已执行11");
-      var zxc = event;
-    },
+    // eventFlow(event) {
+    //   // console.log(event, "websockt工作台接收感知事件数据");
+    //   console.log(event, "已执行11");
+    //   var zxc = event;
+    // },
   },
   mounted() {
     this.timer = setInterval(() => {

@@ -5261,6 +5261,7 @@ export default {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
+          console.log(deviceData,'deviceDatadeviceData')
           if (deviceData) {
             // let type = deviceData.eqType;
 
@@ -5271,7 +5272,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (

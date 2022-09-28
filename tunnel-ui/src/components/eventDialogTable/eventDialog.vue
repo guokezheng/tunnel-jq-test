@@ -231,7 +231,9 @@ export default {
         path: "/emergency/administration/dispatch",
         query: { id: event.id },
       });
-      userConfirm(event.id).then(() => {});
+      if(this.eventMes.eventState == "3"){
+        userConfirm(event.id).then(() => {});
+      }
       bus.$emit("closePicDialog");
       bus.$emit("closeDialog");
       bus.$emit("closeTableDialog")

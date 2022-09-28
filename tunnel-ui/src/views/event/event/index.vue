@@ -174,8 +174,7 @@
       />
       <el-table-column label="方向" align="center" prop="direction">
         <template slot-scope="scope">
-          <span v-show="scope.row.direction == 0">济南方向</span>
-          <span v-show="scope.row.direction == 1">潍坊方向</span>
+          <span>{{getDirection(scope.row.direction)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
@@ -273,14 +272,14 @@
             >查看详情
           </el-button>
           <!-- </router-link> -->
-          <!-- <el-button
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
             v-hasPermi="['system:event:remove']"
             @click="handleDispatch(scope.row)"
             >应急调度
-          </el-button> -->
+          </el-button>
           <!-- <el-button
             size="mini"
             type="text"

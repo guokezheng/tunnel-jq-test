@@ -16,6 +16,7 @@ const websocket = {
     radarDataList: {},
     deviceStatus: {},
     deviceStatusChangeLog: {},
+    eventFlow:{}
   },
 
   mutations: {
@@ -39,6 +40,9 @@ const websocket = {
     },
     DEVICESTATUS: (state, data) => {
       state.deviceStatus = data
+    },
+    EVENTFLOW: (state, data) => {
+      state.eventFlow = data
     },
   },
 

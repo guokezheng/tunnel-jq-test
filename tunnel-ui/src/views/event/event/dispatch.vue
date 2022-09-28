@@ -254,7 +254,7 @@
                   </el-form-item>
                 </el-col>
               </el-row>
-              <el-form-item label="人员伤亡">
+              <!-- <el-form-item label="人员伤亡">
                 <el-row>
                   <el-col :span="5">
                     <div class="formLable">轻伤</div>
@@ -334,7 +334,7 @@
                     <el-input v-model="eventForm.policePhone" />
                   </el-form-item>
                 </el-col>
-              </el-row>
+              </el-row> -->
 
               <el-form-item label="备注" prop="remark">
                 <el-input
@@ -552,17 +552,17 @@
             <div class="rightBox implement">
               <div class="title">已执行</div>
               <div style="height: calc(100% - 26px); overflow: auto">
-                <div class="implementContent" v-for="item in 6">
+                <div class="implementContent" v-for="(item,index) in zxList" :key="index">
                   <el-image
                     class="implementIcon"
                     :src="require('@/assets/icons/implementIcon.png')"
                   ></el-image>
                   <div class="contentBox">
                     <div class="row1">
-                      <div>更新车道指示器</div>
-                      <div>13:25:45</div>
+                      <div>{{item.eqName}}</div>
+                      <div>{{getDirection(item.eqDirection)}}</div>
                     </div>
-                    <div class="row2">zk546+11车道指示器46 - 禁行</div>
+                    <div class="row2">{{getEqType(item.state,item.eqType)}}</div>
                   </div>
                 </div>
               </div>
@@ -582,7 +582,8 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
-import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
+import { listEqTypeState,getStateByData } from "@/api/equipment/eqTypeState/api";
+
 import {
   listEvent,
   updateEvent,
@@ -702,12 +703,15 @@ export default {
       upList: [],
       downList: [],
       selectedIconList: [], //配置图标
+      zxList:[]
     };
   },
   computed: {
     ...mapState({
       deviceStatus: (state) => state.websocket.deviceStatus,
       deviceStatusChangeLog: (state) => state.websocket.deviceStatusChangeLog,
+      eventFlow: (state) => state.websocket.eventFlow,
+
     }),
   },
   watch: {
@@ -718,6 +722,11 @@ export default {
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
+      this.zxList.push(event[0]);
+    },
+    eventFlow(event) {
+      // console.log(event, "websockt工作台接收感知事件数据");
+      console.log(event, "已执行11");
       var zxc = event;
     },
   },
@@ -745,8 +754,33 @@ export default {
       this.eventGradeOptions = response.data;
     });
     this.accidentInit();
+    this.getDicts("sd_direction").then((data) => {
+      console.log(data, "方向");
+      this.directionList = data.data;
+    });
+    const param = {
+        isControl: 1,
+      };
+    getStateByData(param).then((res) =>{
+      console.log(res.rows,"查设备状态 正红泛绿...")
+      this.eqTypeList = res.rows
+    })
   },
   methods: {
+    getEqType(state,eqType){
+      for(var item of this.eqTypeList){
+        if(eqType == item.stateTypeId && Number(item.deviceState) == state){
+          return item.stateName
+        }
+      }
+    },
+    getDirection(num) {
+      for (var item of this.directionList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     async getEqTypeStateIcon() {
       let that = this;
       let queryParams = {
@@ -888,6 +922,7 @@ export default {
       getImplement(data).then((result) => {
         if (result.code == 200) {
           this.$modal.msgSuccess(result.msg);
+          this.accidentInit()
         }
       });
     },
@@ -923,7 +958,6 @@ export default {
       const params = this.eventMsg.tunnelId;
       await getSubareaByTunnelId(params).then((result) => {
         this.planList1 = result.data;
-        console.log(this.planList1, "分区信息");
       });
     },
     // 预览

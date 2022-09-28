@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 重点车辆Controller
@@ -35,7 +36,7 @@ public class SdSpecialVehicleController extends BaseController
     public TableDataInfo list(SdSpecialVehicles sdSpecialVehicle)
     {
         startPage();
-        List<SdSpecialVehicles> list = sdSpecialVehicleService.selectSdSpecialVehicleList(sdSpecialVehicle);
+        List<Map<String,String>> list = sdSpecialVehicleService.selectSdSpecialVehicleList(sdSpecialVehicle);
         return getDataTable(list);
     }
 
@@ -47,9 +48,9 @@ public class SdSpecialVehicleController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdSpecialVehicles sdSpecialVehicle)
     {
-        List<SdSpecialVehicles> list = sdSpecialVehicleService.selectSdSpecialVehicleList(sdSpecialVehicle);
+        List<Map<String,String>> list = sdSpecialVehicleService.selectSdSpecialVehicleList(sdSpecialVehicle);
         ExcelUtil<SdSpecialVehicles> util = new ExcelUtil<SdSpecialVehicles>(SdSpecialVehicles.class);
-        return util.exportExcel(list, "重点车辆数据");
+        return util.exportExcel(null, "重点车辆数据");
     }
 
     /**

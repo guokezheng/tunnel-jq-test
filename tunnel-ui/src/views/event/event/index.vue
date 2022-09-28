@@ -10,7 +10,7 @@
     >
       <div style="line-height: 60px">事件预警统计:</div>
       <el-card class="card-box">
-        今日累积预警事件: {{ eventMsg.allnum }}
+        今日累计预警事件: {{ eventMsg.allnum }}</span>
       </el-card>
       <el-card class="card-box">
         今日执行预警事件: {{ eventMsg.process }}
@@ -174,8 +174,7 @@
       />
       <el-table-column label="方向" align="center" prop="direction">
         <template slot-scope="scope">
-          <span v-show="scope.row.direction == 0">济南方向</span>
-          <span v-show="scope.row.direction == 1">潍坊方向</span>
+          <span>{{getDirection(scope.row.direction)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
@@ -273,14 +272,14 @@
             >查看详情
           </el-button>
           <!-- </router-link> -->
-          <!-- <el-button
+          <el-button
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
             v-hasPermi="['system:event:remove']"
             @click="handleDispatch(scope.row)"
             >应急调度
-          </el-button> -->
+          </el-button>
           <!-- <el-button
             size="mini"
             type="text"
@@ -549,6 +548,25 @@
               {{ eventForm.stakeNum }}
             </div>
           </el-col>
+          <el-col :span="12" style="display: flex; height: 40px">
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+              "
+            >
+              <div class="el-icon-notebook-2" style="width: 10px"></div>
+            </div>
+            <div class="detailsText">事件分类</div>
+            <div
+              style="color: #82b3c2; line-height: 40px;width:195px"
+              v-if="eventForm.eventType.eventType"
+            >
+              {{ eventForm.eventType.eventType }}
+            </div>
+          </el-col>
         </el-row>
         <!-- <hr /> -->
         <el-row>
@@ -599,7 +617,7 @@
             </div>
           </el-col>
         </el-row>
-        <el-row class="rowClass">
+        <!-- <el-row class="rowClass">
           <el-col :span="12">
             <div class="eventClass">
               事件分类：<span style="font-style: oblique">{{
@@ -614,7 +632,7 @@
               }}</span>
             </div>
           </el-col>
-        </el-row>
+        </el-row> -->
         <!-- <el-row class="rowClass">
           <el-col :span="6">
             <div class="eventTitleClass">伤亡情况</div>
@@ -746,7 +764,11 @@ export default {
   dicts: ["sd_direction"],
   data() {
     return {
-      eventMsg: null,
+      eventMsg: {
+        allnum:0,
+        process:0,
+        bl:0
+      },
       urls: [
         {
           imgUrl: require("@/assets/Example/pic1.jpg"),
@@ -848,8 +870,14 @@ export default {
       dloading: false,
     };
   },
-  created() {
-    this.getList();
+  async created() {
+    await this.getDicts("sd_direction").then((data) => {
+      console.log(data, "方向");
+      this.directionList = data.data;
+    });
+    await this.getList();
+    await this.getEventMsg();
+
     this.getEventType();
     this.getTunnel();
     this.getDicts("sd_event_state").then((response) => {
@@ -859,16 +887,12 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-    this.getDicts("sd_direction").then((data) => {
-      console.log(data, "方向");
-      this.directionList = data.data;
-    });
+    
     // 管理机构
     toll().then((res) => {
       console.log(res);
       this.mechanism = res.data;
     });
-    this.getEventMsg();
   },
   methods: {
     getEventMsg() {
@@ -876,6 +900,7 @@ export default {
       getTodayEventCount().then((result) => {
         console.log(result, "11111111111111");
         this.eventMsg = result.data;
+        this.$forceUpdate()
       });
     },
     //获取图片视频
@@ -892,7 +917,7 @@ export default {
       });
       video(param4).then((response) => {
         console.log(response.data, "视频信息");
-        this.videoUrl = response.data;
+        this.videoUrl = response.data.videoUrl;
       });
     },
     // 查询方向

@@ -39,7 +39,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 雷达监测感知数据
      */
     @Override
-    public List<SdRadarDetectData> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
+    public List<Map<String,String>> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
         return sdRadarDetectDataMapper.selectSdRadarDetectDataList(sdRadarDetectData);
     }
 

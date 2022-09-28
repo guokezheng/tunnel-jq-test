@@ -28,7 +28,7 @@ public interface ISdRadarDetectDataService {
      * @param sdRadarDetectData 雷达监测感知数据
      * @return 雷达监测感知数据集合
      */
-    List<SdRadarDetectData> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData);
+    List<Map<String,String>> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData);
 
     /**
      * 新增雷达监测感知数据

@@ -39,7 +39,7 @@ public class SdSpecialVehicleServiceImpl implements ISdSpecialVehicleService {
      * @return 重点车辆
      */
     @Override
-    public List<SdSpecialVehicles> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle) {
+    public List<Map<String,String>> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle) {
         return sdSpecialVehicleMapper.selectSdSpecialVehicleList(sdSpecialVehicle);
     }
 

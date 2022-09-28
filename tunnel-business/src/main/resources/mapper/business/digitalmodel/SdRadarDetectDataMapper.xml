@@ -23,7 +23,7 @@
         <result property="endTime" column="endTime"/>
     </resultMap>
 
-    <sql id="selectSdRadarDetectDataVo">
+    <sql id="selectSdRadarDetectDataVo" >
         select id,
                vehicle_id,
                tunnel_id,
@@ -41,30 +41,46 @@
         from sd_radar_detect_data
     </sql>
 
-    <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultMap="SdRadarDetectDataResult">
-        <include refid="selectSdRadarDetectDataVo"/>
+    <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultType="java.util.Map">
+        select detect.id,
+        detect.vehicle_id as vehicleId,
+        detect.tunnel_id as tunnelId,
+        detect.vehicle_type as vehicleType,
+        detect.vehicle_color as vehicleColor,
+        detect.longitude,
+        detect.latitude,
+        detect.speed,
+        detect.lane_num as laneNum,
+        detect.course_angle as courseAngle,
+        detect.vehicle_license as vehicleLicense,
+        detect.license_color as licenseColor,
+        detect.stake_num as stakeNum,
+        detect.detect_time as detectTime,
+        tunnul.tunnel_name as tunnulName
+        from sd_radar_detect_data detect
+        left join sd_tunnels tunnul on detect.tunnel_id = tunnul.tunnel_id
         <where>
             1=1
-            <if test="vehicleId != null  and vehicleId != ''">and vehicle_id = #{vehicleId}</if>
-            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
-            <if test="vehicleType != null  and vehicleType != ''">and vehicle_type = #{vehicleType}</if>
-            <if test="vehicleColor != null  and vehicleColor != ''">and vehicle_color = #{vehicleColor}</if>
-            <if test="longitude != null  and longitude != ''">and longitude = #{longitude}</if>
-            <if test="latitude != null  and latitude != ''">and latitude = #{latitude}</if>
-            <if test="speed != null  and speed != ''">and speed = #{speed}</if>
-            <if test="laneNum != null  and laneNum != ''">and lane_num = #{laneNum}</if>
-            <if test="courseAngle != null  and courseAngle != ''">and course_angle = #{courseAngle}</if>
-            <if test="vehicleLicense != null  and vehicleLicense != ''">and vehicle_license = #{vehicleLicense}</if>
-            <if test="licenseColor != null  and licenseColor != ''">and license_color = #{licenseColor}</if>
-            <if test="stakeNum != null  and stakeNum != ''">and stake_num = #{stakeNum}</if>
-            <if test="detectTime != null ">and detect_time = #{detectTime}</if>
+            <if test="vehicleId != null  and vehicleId != ''">and detect.vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''">and detect.tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''">and detect.vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''">and detect.vehicle_color = #{vehicleColor}</if>
+            <if test="longitude != null  and longitude != ''">and detect.longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and detect.latitude = #{latitude}</if>
+            <if test="speed != null  and speed != ''">and detect.speed = #{speed}</if>
+            <if test="laneNum != null  and laneNum != ''">and detect.lane_num = #{laneNum}</if>
+            <if test="courseAngle != null  and courseAngle != ''">and detect.course_angle = #{courseAngle}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''">and detect.vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''">and detect.license_color = #{licenseColor}</if>
+            <if test="stakeNum != null  and stakeNum != ''">and detect.stake_num = #{stakeNum}</if>
+            <if test="detectTime != null ">and detect.detect_time = #{detectTime}</if>
 
 
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{detect.startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{detect.endTime},'%y%m%d')
             </if>
         </where>
     </select>

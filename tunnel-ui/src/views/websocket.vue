@@ -37,7 +37,6 @@ export default {
       this.socket.onopen = () => {};
       this.socket.onmessage = (message) => {
         message = JSON.parse(message);
-
         const method = message.method;
 
         if (method !== "event") {
@@ -48,7 +47,7 @@ export default {
         const subEvent = params.subEvent;
         const content = params.content;
         var contentList = JSON.parse(content);
-
+   
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);
@@ -71,8 +70,11 @@ export default {
           case "deviceStatusChangeLog":
             this.$store.commit(
               "DEVICESTATUSCHANGELOG",
-              contentList.deviceStatus
+              contentList.deviceStatusChangeLog
             );
+            break;
+            case "eventFlow":
+            this.$store.commit("EVENTFLOW", contentList.eventFlow);
             break;
           default:
         }

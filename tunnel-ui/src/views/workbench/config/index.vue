@@ -3228,7 +3228,6 @@ export default {
     this.lightSwitchFunc();
     this.getEqType();
     this.getTunnel();
-
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
     });
@@ -3696,7 +3695,7 @@ export default {
     },
     getWarnList() {
       const param = {
-        eventState: "0",
+        eventState: "3",
       };
       // getSystemWarningMsg().then((res) => {
       //   console.log(res, "系统预警")
@@ -4849,6 +4848,7 @@ export default {
     /* 查询隧道列表 */
     getTunnelList() {
       listTunnels(this.tunnelQueryParams).then((response) => {
+        console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
           this.tunnelList = [];
           return false;
@@ -5066,7 +5066,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              // that.getRealTimeData()
+              that.getRealTimeData()
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"

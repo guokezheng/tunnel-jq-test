@@ -29,7 +29,7 @@ public interface SdSpecialVehiclesMapper
      * @param sdSpecialVehicle 重点车辆
      * @return 重点车辆集合
      */
-    public List<SdSpecialVehicles> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle);
+    public List<Map<String,String>> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle);
 
     /**
      * 新增重点车辆

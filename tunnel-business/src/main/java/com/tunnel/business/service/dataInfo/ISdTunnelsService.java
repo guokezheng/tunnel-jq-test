@@ -4,6 +4,7 @@ package com.tunnel.business.service.dataInfo;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道Service接口
@@ -69,6 +70,14 @@ public interface ISdTunnelsService {
     List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels);
 
     List<SdTunnels> deptId(Long deptId);
+
+
+    /**
+     * 获取所有隧道的Map格式
+     * key: 隧道ID tunnelId,value:隧道名称tunnelName
+     * @return
+     */
+    Map<String,String> getTunnelNameMap();
 
 
 }

@@ -789,28 +789,28 @@
               class="listContent"
               :data="realTimeList"
             >
-              <div
-                v-for="(item, index) in realTimeList"
-                :key="index"
-                class="listRow"
-                style="display: flex; justify-content: space-around"
-              >
-                <div style="text-align: center">
-                  {{ index + 1 }}
-                </div>
-                <div style="width: 95px; text-align: center">
-                  {{ item.vehicleLicense }}
-                </div>
-                <div style="width: 112px; text-align: center">
-                  {{ item.speed }}km/h
-                </div>
-                <div style="width: 86px; text-align: center">
-                  {{ item.laneNum }}车道
-                </div>
-                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
-                  {{ getCheXing(item.vehicleType) }}
-                </div> -->
-              </div>
+            <div
+                v-for="(item, index) in realTimeList"
+                :key="index"
+                class="listRow"
+                style="display: flex;"
+              >
+                <div style="text-align: center; width: 15px;margin-left: 25px;">
+                  {{ index + 1 }}
+                </div>
+                <div style="width: 95px; text-align: center;margin-left:10px">
+                  {{ item.vehicleLicense }}
+                </div>
+                <div style="width: 112px; text-align: center;margin-left:30px">
+                  {{ item.speed }}km/h
+                </div>
+                <div style="width: 86px; text-align: center;margin-left:35px">
+                  {{ item.laneNum }}车道
+                </div>
+                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
+                  {{ getCheXing(item.vehicleType) }}
+                </div> -->
+              </div>
             </vue-seamless-scroll>
           </div>
         </div>
@@ -3474,11 +3474,10 @@ export default {
     },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
-      bus.$emit("openPicDialog", num);
-      // this.$router.push({
-      //   path: "/emergency/administration/dispatch",
-      //   query: { id: num, tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" },
-      // });
+      bus.$emit("openPicDialog");
+      bus.$emit("getPicId",num);
+
+      console.log(num,"num")
     },
     // 车型通过字典表获取值
     getCheXing(num) {

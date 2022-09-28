@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 隧道Service业务层处理
@@ -110,5 +112,18 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     @Override
     public List<SdTunnels> deptId(Long deptId) {
         return sdTunnelsMapper.deptId(deptId);
+    }
+
+    /**
+     * 获取所有隧道的Map格式
+     * key: 隧道ID tunnelId,value:隧道名称tunnelName
+     *
+     * @return
+     */
+    @Override
+    public Map<String, String> getTunnelNameMap() {
+        List<Map<String,String>> list = sdTunnelsMapper.getTunnelList();
+        Map<String,String> map = list.stream().collect(Collectors.toMap(s-> s.get("tunnelId"),s -> s.get("tunnelName") ));
+        return map;
     }
 }

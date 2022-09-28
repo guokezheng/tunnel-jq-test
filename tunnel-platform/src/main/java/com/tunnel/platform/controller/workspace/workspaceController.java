@@ -1,17 +1,14 @@
 package com.tunnel.platform.controller.workspace;
 
 import cn.hutool.json.JSONObject;
-import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -21,13 +18,11 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
-import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,11 +142,11 @@ public class workspaceController extends BaseController {
     }
 
     @PostMapping("/vehicleMonitoringInRecent24Hours")
-    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody String tunnelId){
-        if (tunnelId.equals("") || tunnelId == null) {
+    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map){
+        if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }
-        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(tunnelId);
+        List<Map<String, Object>> vehicleMonitoringInRecent24Hours = sdRadarDetectDataService.vehicleMonitoringInRecent24Hours(map.get("tunnelId").toString());
         return AjaxResult.success(vehicleMonitoringInRecent24Hours);
     }
 
@@ -161,8 +156,13 @@ public class workspaceController extends BaseController {
      * @param sdDevices
      * @return
      */
-    @PostMapping("/updateCarFingerById")
-    public AjaxResult updateCarFingerById(@RequestBody List<SdDevices> sdDevices) {
+    @PostMapping("/updateCarFinger")
+    public AjaxResult updateCarFingerById(@RequestBody Map<String,Object> sdDevices) {
         return AjaxResult.success(sdDevicesService.updateCarFingerById(sdDevices));
+    }
+
+    @GetMapping("/getDeviceDataAndState")
+    public AjaxResult selectDeviceDataAndState(String tunnelId) {
+        return AjaxResult.success(sdDevicesService.getDeviceAndState(tunnelId));
     }
 }

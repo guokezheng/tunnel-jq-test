@@ -166,4 +166,12 @@ public interface SdDevicesMapper
 	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
 
 	public List<Map<String, Object>> selectDeviceDataAndUnit(@Param("eqId") String eqId);
+
+	public List<Map<String,Object>> selectDeviceDataAndState(@Param("tunnelId") String tunnelId);
+
+	/**
+	 * 查询车道数
+	 * @return
+	 */
+	public int selectLaneSize();
 }

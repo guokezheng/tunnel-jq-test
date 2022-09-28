@@ -190,4 +190,11 @@
         from sd_tunnels
         where dept_id = #{deptId}
     </select>
+
+
+    <!--查询所有隧道列表-->
+    <select id="getTunnelList" resultType="java.util.Map">
+        select tunnel_id tunnelId,tunnel_name tunnelName
+        from sd_tunnels
+    </select>
 </mapper>

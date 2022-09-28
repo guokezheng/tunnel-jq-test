@@ -11,6 +11,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventSourceEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.datacenter.domain.enumeration.EventStateEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.*;
 import com.tunnel.business.domain.event.SdEvent;
@@ -18,9 +19,11 @@ import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -57,6 +60,12 @@ public class RadarEventServiceImpl implements RadarEventService {
     private ISdEventFlowService eventFlowService;
 
     @Autowired
+    private ISdEventTypeService eventTypeService;
+
+    @Autowired
+    private ISdTunnelsService tunnelsService;
+
+    @Autowired
     private RedisCache redisCache;
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -76,6 +85,10 @@ public class RadarEventServiceImpl implements RadarEventService {
         List<WjEvent> list = JSONUtil.toList(parse.toString(), WjEvent.class);
         List<SdEvent> eventList = new ArrayList<>();
         List<Long> eventIdList = new ArrayList<>();
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = eventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = tunnelsService.getTunnelNameMap();
         list.forEach(f -> {
             SdEvent sdEvent = new SdEvent();
             Integer integer = wjMapper.selectID(f.getEventId());
@@ -106,9 +119,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 sdEvent.setEventLatitude(f.getEventLatitude() + "");
                 sdEvent.setStartTime(f.getEventTimeStampStart());
                 sdEvent.setEndTime(f.getEventTimeStampEnd());
+                //接收到的事件状态设置为未处理
+                sdEvent.setEventState(EventStateEnum.unprocessed.getCode());
+                //事件来源：雷达
                 sdEvent.setEventSource(EventSourceEnum.radar.getCode());
+                //事件方向--将万集定义的隧道方向映射为平台的隧道方向
+                if(!StringUtils.isEmpty(f.getDirection())){
+                    String direction = EventDirectionMap.DIRECTION_MAP.get(String.valueOf(f.getDirection()));
+                    sdEvent.setDirection(direction);
+                }
+                //拼接获取默认的事件标题
+                String eventTitle = sdEventService.getDefaultEventTitle(sdEvent,tunnelMap,eventTypeMap);
+                sdEvent.setEventTitle(eventTitle);
                 sdEvent.setCreateTime(DateUtils.getNowDate());
-                sdEvent.setDirection(f.getDirection() + "");
                 eventList.add(sdEvent);
                 eventIdList.add(sdEvent.getId());
                 List<WjConfidence> targetList = f.getTargetList();
@@ -325,6 +348,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                                                 sdDeviceData.setCreateTime(new Date());
                                                 sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
                                             }
+                                            //接收到摄像机和雷达的数据，直接回传给万集
+                                            sendDataToWanJi(t, value);
                                         }
                                     }
                                     devicesMapper.updateSdDevicesBatch(t.getEqId(), t.getEqStatus());
@@ -345,6 +370,16 @@ public class RadarEventServiceImpl implements RadarEventService {
                             }
                     );
                 });
+    }
+
+    private void sendDataToWanJi(SdDevices sdDevices, String runDate) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deviceId", sdDevices.getEqId());
+        map.put("deviceType", sdDevices.getEqType());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("runDate", runDate);
+        map.put("deviceData", jsonObject);
+        sendBaseDeviceStatus(map);
     }
 
     @Override

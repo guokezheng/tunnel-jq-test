@@ -126,9 +126,9 @@ public class SdEventController extends BaseController
      * @return
      */
     @GetMapping("/getEvent")
-    public AjaxResult getEvent()
+    public AjaxResult getEvent(SdEvent sdEvent)
     {
-        return AjaxResult.success(sdEventService.getEvent());
+        return AjaxResult.success(sdEventService.getEvent(sdEvent));
     }
 
     /**

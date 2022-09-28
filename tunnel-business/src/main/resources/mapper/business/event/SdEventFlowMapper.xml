@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.event.SdEventFlowMapper">
-    
+
     <resultMap type="SdEventFlow" id="SdEventFlowResult">
         <result property="id"    column="id"    />
         <result property="eventId"    column="event_id"    />
@@ -21,19 +21,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select A.id, A.event_id, A.flow_time, A.flow_description, A.flow_handler, B.nick_name
         from sd_event_flow A
         left join sys_user B on A.flow_handler = B.user_name
-        <where>  
+        <where>
             <if test="eventId != null  and eventId != ''"> and A.event_id = #{eventId}</if>
             <if test="flowTime != null "> and A.flow_time = #{flowTime}</if>
             <if test="flowDescription != null  and flowDescription != ''"> and A.flow_description = #{flowDescription}</if>
             <if test="flowHandler != null  and flowHandler != ''"> and A.flow_handler = #{flowHandler}</if>
         </where>
+        order by A.flow_time desc
     </select>
-    
+
     <select id="selectSdEventFlowById" parameterType="Long" resultMap="SdEventFlowResult">
         <include refid="selectSdEventFlowVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSdEventFlow" parameterType="SdEventFlow" useGeneratedKeys="true" keyProperty="id">
         insert into sd_event_flow
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -66,10 +67,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSdEventFlowByIds" parameterType="String">
-        delete from sd_event_flow where id in 
+        delete from sd_event_flow where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
 </mapper>

@@ -253,7 +253,7 @@
                case when result.process>0 then CONCAT(convert((result.process/result.allnum)*100,decimal(10,2)),'%')
                     when result.process=0 then 0 end as bl
         from (select count(case when event_state=1  then 1 end) as process,count(id) as allnum
-              from sd_event where TO_DAYS(create_time) = TO_DAYS(NOW())) result
+              from sd_event where TO_DAYS(start_time) = TO_DAYS(NOW())) result
     </select>
 
     <select id="getEvent" parameterType="SdEvent" resultMap="SdEventResult">

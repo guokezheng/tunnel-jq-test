@@ -107,7 +107,7 @@
 
     <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange" height="600">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="隧道id" align="center" prop="tunnelId" />
+      <el-table-column label="隧道名称" align="center" prop="tunnulName" />
       <el-table-column label="车辆类型" align="center" prop="vehicleType" :formatter="vehicleTypeFormat" />
       <el-table-column label="车辆颜色" align="center" prop="vehicleColor" :formatter="vehicleColorFormat"/>
       <el-table-column label="桩号" align="center" prop="stakeNum" />

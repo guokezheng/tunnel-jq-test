@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.SdPictureUploadMapper">
+
+    <resultMap type="SdPictureUpload" id="SdPictureUploadResult">
+        <result property="id"    column="id"    />
+        <result property="pictureName"    column="picture_name"    />
+        <result property="pictureUrl"    column="picture_url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="imageRemark"    column="image_remark"    />
+        <result property="imageWidth"    column="image_width"    />
+        <result property="imageHeight"    column="image_height"    />
+        <result property="imageType"    column="image_type"    />
+        <result property="vmsSize"    column="vms_size"    />
+        <result property="speed"    column="speed"    />
+        <result property="deleteflag"    column="deleteflag"    />
+        <result property="logically"    column="logically"    />
+    </resultMap>
+
+    <sql id="selectSdPictureUploadVo">
+        select id, picture_name, picture_url, create_by, create_time, update_by, update_time, image_remark,
+               image_width, image_height, image_type, vms_size, speed, deleteflag, logically from sd_picture_upload
+    </sql>
+
+    <select id="selectSdPictureUploadList" parameterType="SdPictureUpload" resultMap="SdPictureUploadResult">
+        <include refid="selectSdPictureUploadVo"/>
+        <where>
+            <if test="pictureName != null  and pictureName != ''"> and picture_name like concat('%', #{pictureName}, '%')</if>
+            <if test="pictureUrl != null  and pictureUrl != ''"> and picture_url = #{pictureUrl}</if>
+            <if test="imageRemark != null  and imageRemark != ''"> and image_remark = #{imageRemark}</if>
+            <if test="imageWidth != null  and imageWidth != ''"> and image_width = #{imageWidth}</if>
+            <if test="imageHeight != null  and imageHeight != ''"> and image_height = #{imageHeight}</if>
+            <if test="imageType != null  and imageType != ''"> and image_type = #{imageType}</if>
+            <if test="vmsSize != null  and vmsSize != ''"> and vms_size = #{vmsSize}</if>
+            <if test="speed != null  and speed != ''"> and speed = #{speed}</if>
+            <if test="deleteflag != null  and deleteflag != ''"> and deleteflag = #{deleteflag}</if>
+            <if test="logically != null  and logically != ''"> and logically = #{logically}</if>
+        </where>
+    </select>
+
+    <select id="selectSdPictureUploadById" parameterType="Long" resultMap="SdPictureUploadResult">
+        <include refid="selectSdPictureUploadVo"/>
+        where deleteflag = "0" and id = #{id}
+    </select>
+
+    <insert id="insertSdPictureUpload" parameterType="SdPictureUpload" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_picture_upload
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pictureName != null">picture_name,</if>
+            <if test="pictureUrl != null">picture_url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="imageRemark != null">image_remark,</if>
+            <if test="imageWidth != null">image_width,</if>
+            <if test="imageHeight != null">image_height,</if>
+            <if test="imageType != null">image_type,</if>
+            <if test="vmsSize != null">vms_size,</if>
+            <if test="speed != null">speed,</if>
+            <if test="deleteflag != null">deleteflag,</if>
+            <if test="logically != null">logically,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pictureName != null">#{pictureName},</if>
+            <if test="pictureUrl != null">#{pictureUrl},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="imageRemark != null">#{imageRemark},</if>
+            <if test="imageWidth != null">#{imageWidth},</if>
+            <if test="imageHeight != null">#{imageHeight},</if>
+            <if test="imageType != null">#{imageType},</if>
+            <if test="vmsSize != null">#{vmsSize},</if>
+            <if test="speed != null">#{speed},</if>
+            <if test="deleteflag != null">#{deleteflag},</if>
+            <if test="logically != null">#{logically},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdPictureUpload" parameterType="SdPictureUpload">
+        update sd_picture_upload
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pictureName != null">picture_name = #{pictureName},</if>
+            <if test="pictureUrl != null">picture_url = #{pictureUrl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="imageRemark != null">image_remark = #{imageRemark},</if>
+            <if test="imageWidth != null">image_width = #{imageWidth},</if>
+            <if test="imageHeight != null">image_height = #{imageHeight},</if>
+            <if test="imageType != null">image_type = #{imageType},</if>
+            <if test="vmsSize != null">vms_size = #{vmsSize},</if>
+            <if test="speed != null">speed = #{speed},</if>
+            <if test="deleteflag != null">deleteflag = #{deleteflag},</if>
+            <if test="logically != null">logically = #{logically},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdPictureUploadByIdOld" parameterType="Long">
+        delete from sd_picture_upload where id = #{id}
+    </delete>
+
+    <update id="deleteSdPictureUploadById" parameterType="Long">
+        update sd_picture_upload set deleteflag = "1" where id = #{id}
+    </update>
+
+    <delete id="deleteSdPictureUploadByIdsOld" parameterType="String">
+        delete from sd_picture_upload where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="deleteSdPictureUploadByIds" parameterType="String">
+        update sd_picture_upload set deleteflag = "1" where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

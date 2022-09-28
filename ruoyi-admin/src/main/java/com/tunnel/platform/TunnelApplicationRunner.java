@@ -2,7 +2,7 @@ package com.tunnel.platform;
 
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.deal.plc.fins.CmdProcess;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;

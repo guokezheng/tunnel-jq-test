@@ -3,7 +3,7 @@
       <template v-if="sideTheme == 'theme-dark'|| sideTheme == 'theme-light'">
         <!-- 左右结构 -->
         <div :class="classObj" class="app-wrapper">
-          <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside"/>
+          <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg mapBox" @click="handleClickOutside"/>
           <template v-if="topNav == false">
             <sidebar class="sidebar-container"/>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeaderClass">
@@ -20,7 +20,7 @@
           <!-- 上下结构 -->
           <template v-else>
             <div :class="{'fixed-header':fixedHeader}" :style="fixedHeader?'width:100%;':''">
-              <div class="topNav_head">
+              <div :class="$route.path == '/map/map3d/index'?'topNav_head mapBox':'topNav_head'"  >
                 <sidebar class="sidebar-container index_menu blue_index_menu" style="width: 75% !important;position: relative;box-shadow:unset;float:left;"/>
                 <template v-if="weatherView">
                   <div class="weather">
@@ -32,13 +32,15 @@
               </div>
             </div>
             <div :class="{hasTagsView:needTagsView}" class="main-container" :style="fixedHeader?'padding-top:50px;margin-left:0px;':'margin-left:0px;'">
-              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map' ? 'display:none;':$route.path == '/emergency/administration/dispatch' ? 'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
+              <breadcrumb :style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ? 
+              'display:none;':$route.path == '/emergency/administration/dispatch' ? 
+              'display:none;':$route.path == '/map/map3d/index'?'display:none;':''" ref="Breadcrumb" id="breadcrumb-container" class="breadcrumb-container" style="margin-left:20px;" />
               <app-main />
               <right-panel>
                 <settings />
               </right-panel>
-              <!-- <event-dialog v-show="eventDialog" class="eventClass"></event-dialog> -->
-              <event-dialogTable v-show="eventDialogTable" class="eventClass"></event-dialogTable>
+              <event-dialog v-show="eventDialogPic" ref="picDialog"></event-dialog>
+              <event-dialogTable v-show="eventDialogTable" ></event-dialogTable>
 
              
             </div>
@@ -104,6 +106,8 @@ export default {
   },
   data(){
     return{
+      
+      mapStyle:'',
       // 天气
       weather_weather:'',
       // 天气图标
@@ -112,15 +116,14 @@ export default {
       is_weather:null,
       is_breadcrumb:null,
       tunnelStyle:null,
-      // eventDialog:false,
+      eventDialogPic:false,
       eventDialogTable:false,
     }
   },
   mixins: [ResizeMixin],
   computed: {
     ...mapState({
-      sdEvent: state => state.wsData.sdEvent,
-
+      sdEventList: (state) => state.websocket.sdEventList,
       theme: state => state.settings.theme,
       sideTheme: state => state.settings.sideTheme,
       sidebar: state => state.app.sidebar,
@@ -172,7 +175,6 @@ export default {
       return 'padding-top:'+ h +'px;'
     }
   },
-  
   created(){
     console.log(this.$route.path,'路由')
     if(this.$route.path == '/tunnel'){
@@ -186,6 +188,11 @@ export default {
     }
   },
   methods: {
+    // showPicDialog(id){
+    //   var evtId = id || this.eventId
+    //   console.log(evtId,"layout跳转三图一视传递id")
+    //   this.$refs.picDialog.getPicDialogId(evtId)
+    // },
     getWeather(){
       let city = 'city=济南';
       let word = 'tianqi';
@@ -201,22 +208,16 @@ export default {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
     },
-    closeDialog(val){
-      console.log(val,'valvalvalvalvalvalvalvalvalvalvalval')
-    }
   },
   watch: {
     sideTheme(val) {
       document.getElementsByTagName('body')[0].className = val;
     },
-    sdEvent( event ){
-      console.log(event,"WjEventWjEventWjEventWjEventWjEventevent")
+    sdEventList(event){
       if(event){
-        // this.eventDialog = true
         this.eventDialogTable = true
-
       }
-     },
+    },
   },
   mounted() {
     if(this.weatherView == undefined) {
@@ -225,13 +226,22 @@ export default {
     this.getWeather();
     document.getElementsByTagName('body')[0].className = this.sideTheme;
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)['breadcrumb'];
+    // 关闭列表弹窗
     bus.$on('closeDialog', (e) => {
      if(e == false){
-      //  this.eventDialog = false
+      console.log("layout关闭表格弹窗")
        this.eventDialogTable = false
-
      }
+    });
+    // 打开三图一视弹窗
+    bus.$on('openPicDialog', () => {
+       this.eventDialogPic = true
     })
+    // 关闭三图一视弹窗
+    bus.$on('closePicDialog', () => {
+      console.log("关闭三图一视弹窗");
+        this.eventDialogPic = false
+    });
   },
 }
 </script>
@@ -240,6 +250,9 @@ export default {
   @import "~@/assets/styles/mixin.scss";
   @import "~@/assets/styles/variables.scss";
   // 区分不同主题下导航栏颜色
+  .mapBox{
+    position:fixed;top:0px;left:0px;width:100%;z-index:999;
+  }
   .theme-light-navbar{background-color:white;}
   .app-wrapper {
     @include clearfix;
@@ -296,9 +309,13 @@ export default {
     }
   }
 //  .eventClass{
-//    position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 100;
-//    // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
-//    background-color: rgba($color: #000000, $alpha: 0.1);
-//    // border-radius: 10px;
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   z-index: 100;
+//   // border: solid 10px rgba($color: #14B7EA, $alpha: 0.3);
+//   background-color: rgba($color: #000000, $alpha: 0.1);
 //  }
 </style>

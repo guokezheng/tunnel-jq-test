@@ -7,8 +7,8 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.platform.domain.event.SdEvent;
-import com.tunnel.platform.service.event.ISdEventService;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.service.event.ISdEventService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -126,8 +126,18 @@ public class SdEventController extends BaseController
      * @return
      */
     @GetMapping("/getEvent")
-    public AjaxResult getEvent()
+    public AjaxResult getEvent(SdEvent sdEvent)
     {
-        return AjaxResult.success(sdEventService.getEvent());
+        return AjaxResult.success(sdEventService.getEvent(sdEvent));
+    }
+
+    /**
+     * 统计今日事件
+     * @return
+     */
+    @GetMapping("/getTodayEventCount")
+    @ApiOperation("统计今日事件")
+    public Result getTodayEventCount() {
+        return Result.success(sdEventService.getTodayEventCount());
     }
 }

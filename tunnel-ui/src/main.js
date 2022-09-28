@@ -39,7 +39,7 @@ import DictData from '@/components/DictData'
 // 无缝滚动组件
 import VueSeamlessScroll from 'vue-seamless-scroll'
 // 事件弹窗组件
-// import eventDialog from '@/components/eventDialog'
+import eventDialog from '@/components/eventDialogTable/eventDialog.vue'
 import eventDialogTable from '@/components/eventDialogTable'
 
 // 字典标签组件
@@ -88,7 +88,7 @@ Vue.component('Editor', Editor)
 Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('VueSeamlessScroll', VueSeamlessScroll)
-// Vue.component('eventDialog', eventDialog)
+Vue.component('eventDialog', eventDialog)
 Vue.component('eventDialogTable', eventDialogTable)
 
 // Vue.component('reproductionImage', reproductionImage)

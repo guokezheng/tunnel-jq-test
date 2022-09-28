@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdCmdRlMapper">
+    
+    <resultMap type="SdCmdRl" id="SdCmdRlResult">
+        <result property="cmdRlId"    column="cmd_rl_id"    />
+        <result property="plcCmdId"    column="plc_cmd_id"    />
+        <result property="cmdPlcId"    column="cmd_plc_id"    />
+        <result property="eqs"    column="eqs"    />
+        <result property="commands"    column="commands"    />
+    </resultMap>
+
+    <sql id="selectSdCmdRlVo">
+        select cmd_rl_id, plc_cmd_id, cmd_plc_id, eqs, commands from sd_cmd_rl
+    </sql>
+
+    <select id="selectSdCmdRlList" parameterType="SdCmdRl" resultMap="SdCmdRlResult">
+        <include refid="selectSdCmdRlVo"/>
+        <where>  
+            <if test="plcCmdId != null  and plcCmdId != ''"> and plc_cmd_id = #{plcCmdId}</if>
+            <if test="cmdPlcId != null "> and cmd_plc_id = #{cmdPlcId}</if>
+            <if test="eqs != null  and eqs != ''"> and eqs = #{eqs}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdCmdRlById" parameterType="Long" resultMap="SdCmdRlResult">
+        <include refid="selectSdCmdRlVo"/>
+        where cmd_rl_id = #{cmdRlId}
+    </select>
+        
+    <insert id="insertSdCmdRl" parameterType="SdCmdRl" useGeneratedKeys="true" keyProperty="cmdRlId">
+        insert into sd_cmd_rl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="plcCmdId != null">plc_cmd_id,</if>
+            <if test="cmdPlcId != null">cmd_plc_id,</if>
+            <if test="eqs != null">eqs,</if>
+            <if test="commands != null">commands,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="plcCmdId != null">#{plcCmdId},</if>
+            <if test="cmdPlcId != null">#{cmdPlcId},</if>
+            <if test="eqs != null">#{eqs},</if>
+            <if test="commands != null">#{commands},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdCmdRl" parameterType="SdCmdRl">
+        update sd_cmd_rl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="plcCmdId != null">plc_cmd_id = #{plcCmdId},</if>
+            <if test="cmdPlcId != null">cmd_plc_id = #{cmdPlcId},</if>
+            <if test="eqs != null">eqs = #{eqs},</if>
+            <if test="eqs != null">commands = #{commands},</if>
+        </trim>
+        where cmd_rl_id = #{cmdRlId}
+    </update>
+
+    <delete id="deleteSdCmdRlById" parameterType="Long">
+        delete from sd_cmd_rl where cmd_rl_id = #{cmdRlId}
+    </delete>
+
+    <delete id="deleteSdCmdRlByIds" parameterType="String">
+        delete from sd_cmd_rl where cmd_rl_id in 
+        <foreach item="cmdRlId" collection="array" open="(" separator="," close=")">
+            #{cmdRlId}
+        </foreach>
+    </delete>
+    
+</mapper>

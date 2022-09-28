@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.SdReleaseRecordMapper">
+    
+    <resultMap type="SdReleaseRecord" id="SdReleaseRecordResult">
+        <result property="id"    column="id"    />
+        <result property="vmsEventId"    column="vms_event_id"    />
+        <result property="releaseDev"    column="release_dev"    />
+        <result property="releaseTime"    column="release_time"    />
+        <result property="releaseStatus"    column="release_status"    />
+        <result property="releaseDeptName"    column="release_dept_name"    />
+        <result property="releaseDeptId"    column="release_dept_id"    />
+        <result property="releaseUserName"    column="release_user_name"    />
+        <result property="releaseUserId"    column="release_user_id"    />
+        <result property="examineDeptName"    column="examine_dept_name"    />
+        <result property="examineDeptId"    column="examine_dept_id"    />
+        <result property="examineUserId"    column="examine_user_id"    />
+        <result property="examineUserName"    column="examine_user_name"    />
+        <result property="examineTime"    column="examine_time"    />
+    </resultMap>
+
+    <sql id="selectSdReleaseRecordVo">
+        select id, vms_event_id, release_dev, release_time, release_status, release_dept_name, release_dept_id, release_user_name, release_user_id, examine_dept_name, examine_dept_id, examine_user_id, examine_user_name, examine_time from sd_release_record
+    </sql>
+
+    <select id="selectSdReleaseRecordList" parameterType="SdReleaseRecord" resultMap="SdReleaseRecordResult">
+        <include refid="selectSdReleaseRecordVo"/>
+        <where>  
+            <if test="releaseDev != null  and releaseDev != ''"> and release_dev = #{releaseDev}</if>
+            <if test="releaseTime != null "> and release_time = #{releaseTime}</if>
+            <if test="releaseStatus != null  and releaseStatus != ''"> and release_status = #{releaseStatus}</if>
+            <if test="releaseDeptName != null  and releaseDeptName != ''"> and release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
+            <if test="releaseUserName != null  and releaseUserName != ''"> and release_user_name like concat('%', #{releaseUserName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSdReleaseRecordById" parameterType="Long" resultMap="SdReleaseRecordResult">
+        <include refid="selectSdReleaseRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdReleaseRecord" parameterType="SdReleaseRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_release_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vmsEventId != null">vms_event_id,</if>
+            <if test="releaseDev != null">release_dev,</if>
+            <if test="releaseTime != null">release_time,</if>
+            <if test="releaseStatus != null">release_status,</if>
+            <if test="releaseDeptName != null">release_dept_name,</if>
+            <if test="releaseDeptId != null">release_dept_id,</if>
+            <if test="releaseUserName != null">release_user_name,</if>
+            <if test="releaseUserId != null">release_user_id,</if>
+            <if test="examineDeptName != null">examine_dept_name,</if>
+            <if test="examineDeptId != null">examine_dept_id,</if>
+            <if test="examineUserId != null">examine_user_id,</if>
+            <if test="examineUserName != null">examine_user_name,</if>
+            <if test="examineTime != null">examine_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vmsEventId != null">#{vmsEventId},</if>
+            <if test="releaseDev != null">#{releaseDev},</if>
+            <if test="releaseTime != null">#{releaseTime},</if>
+            <if test="releaseStatus != null">#{releaseStatus},</if>
+            <if test="releaseDeptName != null">#{releaseDeptName},</if>
+            <if test="releaseDeptId != null">#{releaseDeptId},</if>
+            <if test="releaseUserName != null">#{releaseUserName},</if>
+            <if test="releaseUserId != null">#{releaseUserId},</if>
+            <if test="examineDeptName != null">#{examineDeptName},</if>
+            <if test="examineDeptId != null">#{examineDeptId},</if>
+            <if test="examineUserId != null">#{examineUserId},</if>
+            <if test="examineUserName != null">#{examineUserName},</if>
+            <if test="examineTime != null">#{examineTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdReleaseRecord" parameterType="SdReleaseRecord">
+        update sd_release_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vmsEventId != null">vms_event_id = #{vmsEventId},</if>
+            <if test="releaseDev != null">release_dev = #{releaseDev},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            <if test="releaseStatus != null">release_status = #{releaseStatus},</if>
+            <if test="releaseDeptName != null">release_dept_name = #{releaseDeptName},</if>
+            <if test="releaseDeptId != null">release_dept_id = #{releaseDeptId},</if>
+            <if test="releaseUserName != null">release_user_name = #{releaseUserName},</if>
+            <if test="releaseUserId != null">release_user_id = #{releaseUserId},</if>
+            <if test="examineDeptName != null">examine_dept_name = #{examineDeptName},</if>
+            <if test="examineDeptId != null">examine_dept_id = #{examineDeptId},</if>
+            <if test="examineUserId != null">examine_user_id = #{examineUserId},</if>
+            <if test="examineUserName != null">examine_user_name = #{examineUserName},</if>
+            <if test="examineTime != null">examine_time = #{examineTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdReleaseRecordById" parameterType="Long">
+        delete from sd_release_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSdReleaseRecordByIds" parameterType="String">
+        delete from sd_release_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

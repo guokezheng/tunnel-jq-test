@@ -1,8 +1,8 @@
 .theme-light {
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     background-color: #00588f;
-    height: 56px;
-    line-height: 56px;
+    height: 56px !important;
+    line-height: 56px !important;
     border-radius: 0;
     i{
       color: white;
@@ -539,9 +539,11 @@
     
     .el-button--primary{
       color: white;
-      width: 80px;
-      height: 20px;
-      line-height: 20px;
+      width: 88px;
+      height: 22px;
+      padding: 0;
+      // height: 20px;
+      // line-height: 20px;
     }
     .el-button:hover {
       background-color: #0a88bd; // #4e5e89
@@ -574,13 +576,23 @@
         font-size: 13px;
       }
   }
-  .explain-table {
+  .explain-table,.eventDiglog {
+    .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+      border-bottom: solid 1px  #0a88bd !important;
+    }
+    .el-table{
+      padding: 15px;
+      background: transparent;
+    }
     .el-table .el-table__header-wrapper th{
-      background-color: #fff !important;
-      color:#0a88bd !important;
+      background-color: #00ADFF !important;
+      color:#fff !important;
+    }
+    .el-table__body{
+      width: 100% !important;
     }
     .el-table__body-wrapper{
-      background-color: #fff !important;
+      // background-color: #fff !important;
     }
     /*table滚动条背景色 */
     .el-table__body-wrapper::-webkit-scrollbar {
@@ -593,7 +605,7 @@
     }
     /* 鼠标悬浮*/
     .el-table--enable-row-hover .el-table__body tr:hover > td {
-      background-color: #c4e8f6;
+      background-color: #0e2c53;
     }
   }
   // .workbench-dialog .el-button--mini {padding: 0 !important;}

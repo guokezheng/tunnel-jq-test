@@ -6,10 +6,10 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.platform.domain.dataInfo.SdComponent;
-import com.tunnel.platform.domain.dataInfo.SdEquipmentFile;
-import com.tunnel.platform.service.dataInfo.ISdComponentService;
-import com.tunnel.platform.service.dataInfo.ISdEquipmentFileService;
+import com.tunnel.business.domain.dataInfo.SdComponent;
+import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
+import com.tunnel.business.service.dataInfo.ISdComponentService;
+import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -163,7 +163,6 @@ public class SdComponentController extends BaseController
             @ApiImplicitParam(name = "removeIds", value = "需要删除的ID合集", required = true, dataType = "Long", paramType = "path",dataTypeClass = Long.class),
 
     })
-
     public Result updateComponentPlan(MultipartFile[] file,
     								@RequestParam("id") Long id,
     		    		            @RequestParam("equipmentName") String equipmentName,

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdAlarmNumberMapper">
+    
+    <select id="getTodayWarningmsg" resultType="hashmap">
+        SELECT swi.id,st.tunnel_name tunnelname,swi.warning_time warntime,swi.infor_sources warncontent
+             ,if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+               swi.process_state
+        from sd_warning_info swi
+                 left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE date(swi.warning_time) = curdate()
+          and swt.id in (1,2,4,5,6,17,19,22,24,25,30,31,32,33,34,35,36,37,38,39,40,41,42,43)
+    </select>
+
+    <select id="getTodayWarningmsgStatus" resultType="hashmap">
+        SELECT if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+               swi.process_state ps,count(swi.process_state) number
+        from sd_warning_info swi
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE date(swi.warning_time) = curdate()
+          and swt.id in (1,2,4,5,6,17,19,22,24,25,30,31,32,33,34,35,36,37,38,39,40,41,42,43)
+        GROUP BY swi.process_state
+    </select>
+
+    <select id="getTodayAccidentmsg" resultType="hashmap">
+        SELECT swi.id,st.tunnel_name tunnelname,swi.warning_time warntime,swi.infor_sources warncontent
+             ,if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+               swi.process_state
+        from sd_warning_info swi
+                 left join sd_tunnels st on st.tunnel_id = swi.tunnel_id
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE date(swi.warning_time) = curdate()
+          and swt.id in (3,7,8,9,10,14,15,16,18,20,21,23,26,27,28,29)
+    </select>
+
+    <select id="getTodayAccidentmsgStatus" resultType="hashmap">
+        SELECT if(ifnull(swi.process_state,0)=1,"已处置",if(swi.process_state=0,"未处置","已忽略")) handlestatus,
+               swi.process_state ps,count(swi.process_state) number
+        from sd_warning_info swi
+                 left join sd_warning_type swt on swt.id = swi.warning_type_id
+        WHERE date(swi.warning_time) = curdate()
+          and swt.id in (3,7,8,9,10,14,15,16,18,20,21,23,26,27,28,29)
+        GROUP BY swi.process_state
+    </select>
+    
+</mapper>

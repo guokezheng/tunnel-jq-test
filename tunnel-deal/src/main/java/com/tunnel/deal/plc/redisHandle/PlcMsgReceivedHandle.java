@@ -3,15 +3,15 @@ package com.tunnel.deal.plc.redisHandle;
 import com.alibaba.fastjson.JSON;
 import com.google.auto.service.AutoService;
 import com.serotonin.modbus4j.ModbusMaster;
+import com.tunnel.business.datacenter.domain.dataVo.CmdInfo;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.plc.fins.CmdProcess;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
-import com.tunnel.platform.datacenter.domain.dataVo.CmdInfo;
-import com.tunnel.platform.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.utils.util.SpringContextUtils;
-import com.zc.common.core.redis.RedisMessageDispatcher;
+import com.zc.common.core.redis.pubsub.RedisMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,53 +50,10 @@ public class PlcMsgReceivedHandle implements RedisMessageDispatcher {
         a++;
         String ctrBody = new String(message.getBody());
         logger.info("收到的mq消息" + ctrBody);
-        toControlDev(ctrBody);
-    }
-
-    private void toControlDev(String ctrBody) {
-        Map<String, Object> ctrResult = (Map<String, Object>) JSON.parse(ctrBody);
-        String deviceId = ctrResult.get("deviceId").toString();
-        devicesService = (ISdDevicesService) SpringContextUtils.getBean(ISdDevicesService.class);
-        SdDevices sdDevices = devicesService.selectSdDevicesById(deviceId);
-        String[] point = sdDevices.getEqControlPointAddress().split(",");
-        Long deviceType = sdDevices.getEqType();
-        String plcId = sdDevices.getFEqId();
-        Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
-        ModbusMaster master = masterMap.get(plcId);
-        if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
-            Integer ctrState = Integer.parseInt(ctrResult.get("ctrState").toString());
-            ModbusTcpHandle.getInstance().toControlCZ(master, 1, Integer.parseInt(point[0]) - 1, ctrState);
-        }
+        addControl(ctrBody);
     }
 
 
-    public void getCheZhiState(boolean fHong, boolean fLv, boolean zHong, boolean zLv) {
-
-
-        Integer state = null;
-
-        boolean[] data = new boolean[4];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = false;
-        }
-
-        data[state] = false;
-        data[state] = true;
-        data[state] = true;
-        data[state] = true;
-
-
-        //复位-正向通行-1
-        boolean[] one = {true, false, false, false};
-        //复位-逆向通行-4
-        boolean[] two = {false, false, false, true};
-        //复位-禁行-3
-        boolean[] three = {false, false, true, false};
-        //复位-关闭-2
-        boolean[] four = {false, true, false, false};
-
-
-    }
 
 
     /*

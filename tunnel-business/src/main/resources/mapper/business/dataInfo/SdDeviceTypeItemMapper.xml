@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper">
+    
+    <resultMap type="SdDeviceTypeItem" id="SdDeviceTypeItemResult">
+        <result property="id"    column="id"    />
+        <result property="itemCode"    column="item_code"    />
+        <result property="itemName"    column="item_name"    />
+        <result property="deviceTypeId"    column="device_type_id"    />
+        <result property="unit"    column="unit"    />
+        <result property="remark"    column="remark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="typeName"    column="type_name"    />
+    </resultMap>
+
+    <sql id="selectSdDeviceTypeItemVo">
+        select id, item_code, item_name, device_type_id, unit, remark, create_time, update_by, update_time from sd_device_type_item
+    </sql>
+
+    <select id="selectSdDeviceTypeItemList" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">
+        <include refid="selectSdDeviceTypeItemVo"/>
+        <where>
+            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId} </if>
+            <if test="itemCode != null  and itemCode != ''"> and item_code = #{itemCode}</if>
+            <if test="itemName != null  and itemName != ''"> and item_name like concat('%', #{itemName}, '%')</if>
+            <if test="deviceTypeId != null "> and device_type_id = #{deviceTypeId}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+        </where>
+    </select>
+
+    <select id="selectSdDeviceTypeItemLists" parameterType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult">
+        select a.id, a.item_code, a.item_name, a.device_type_id, a.unit, a.remark, a.create_time, a.update_by, a.update_time ,b.type_name from sd_device_type_item a
+        left join sd_equipment_type b on a.device_type_id = b.type_id
+    </select>
+    
+    <select id="selectSdDeviceTypeItemById" parameterType="Long" resultMap="SdDeviceTypeItemResult">
+        <include refid="selectSdDeviceTypeItemVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdDeviceTypeItem" parameterType="SdDeviceTypeItem" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_device_type_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null">item_code,</if>
+            <if test="itemName != null">item_name,</if>
+            <if test="deviceTypeId != null">device_type_id,</if>
+            <if test="unit != null">unit,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemCode != null">#{itemCode},</if>
+            <if test="itemName != null">#{itemName},</if>
+            <if test="deviceTypeId != null">#{deviceTypeId},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDeviceTypeItem" parameterType="SdDeviceTypeItem">
+        update sd_device_type_item
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemCode != null">item_code = #{itemCode},</if>
+            <if test="itemName != null">item_name = #{itemName},</if>
+            <if test="deviceTypeId != null">device_type_id = #{deviceTypeId},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdDeviceTypeItemById" parameterType="Long">
+        delete from sd_device_type_item where id = #{id}
+    </delete>
+
+    <delete id="deleteSdDeviceTypeItemByIds" parameterType="String">
+        delete from sd_device_type_item where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

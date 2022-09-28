@@ -1,12 +1,11 @@
 package com.zc.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 收费车道信息
  */
-@Data
 public class TollLane {
 
     @JsonProperty(value = "toll_lane_id")
@@ -38,4 +37,100 @@ public class TollLane {
 
     @JsonProperty(value = "road_name")
     private String roadName;
+
+    public String getTollLaneId() {
+        return tollLaneId;
+    }
+
+    public void setTollLaneId(String tollLaneId) {
+        this.tollLaneId = tollLaneId;
+    }
+
+    public String getTollLaneGbType() {
+        return tollLaneGbType;
+    }
+
+    public void setTollLaneGbType(String tollLaneGbType) {
+        this.tollLaneGbType = tollLaneGbType;
+    }
+
+    public String getTollLaneProvinceId() {
+        return tollLaneProvinceId;
+    }
+
+    public void setTollLaneProvinceId(String tollLaneProvinceId) {
+        this.tollLaneProvinceId = tollLaneProvinceId;
+    }
+
+    public String getTollLaneTidalTime() {
+        return tollLaneTidalTime;
+    }
+
+    public void setTollLaneTidalTime(String tollLaneTidalTime) {
+        this.tollLaneTidalTime = tollLaneTidalTime;
+    }
+
+    public String getUseStatus() {
+        return useStatus;
+    }
+
+    public void setUseStatus(String useStatus) {
+        this.useStatus = useStatus;
+    }
+
+    public String getTollLaneHex() {
+        return tollLaneHex;
+    }
+
+    public void setTollLaneHex(String tollLaneHex) {
+        this.tollLaneHex = tollLaneHex;
+    }
+
+    public String getTollStationId() {
+        return tollStationId;
+    }
+
+    public void setTollStationId(String tollStationId) {
+        this.tollStationId = tollStationId;
+    }
+
+    public String getTollStationName() {
+        return tollStationName;
+    }
+
+    public void setTollStationName(String tollStationName) {
+        this.tollStationName = tollStationName;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getRoadName() {
+        return roadName;
+    }
+
+    public void setRoadName(String roadName) {
+        this.roadName = roadName;
+    }
+
+    @Override
+    public String toString() {
+        return "TollLane{" +
+                "tollLaneId='" + tollLaneId + '\'' +
+                ", tollLaneGbType='" + tollLaneGbType + '\'' +
+                ", tollLaneProvinceId='" + tollLaneProvinceId + '\'' +
+                ", tollLaneTidalTime='" + tollLaneTidalTime + '\'' +
+                ", useStatus='" + useStatus + '\'' +
+                ", tollLaneHex='" + tollLaneHex + '\'' +
+                ", tollStationId='" + tollStationId + '\'' +
+                ", tollStationName='" + tollStationName + '\'' +
+                ", roadId='" + roadId + '\'' +
+                ", roadName='" + roadName + '\'' +
+                '}';
+    }
 }

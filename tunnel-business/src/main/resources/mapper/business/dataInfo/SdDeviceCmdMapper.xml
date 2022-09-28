@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdDeviceCmdMapper">
+
+    <resultMap type="SdDeviceCmd" id="SdDeviceCmdResult">
+        <result property="codeId"    column="code_id"    />
+        <result property="codeDeviceId"    column="code_device_id"    />
+        <result property="codePlcId"    column="code_plc_id"    />
+        <result property="command"    column="command"    />
+        <result property="deviceTypeId"    column="device_type_id"    />
+        <result property="codeDeviceState"    column="code_device_state"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <association property="plcName" column="plc_id" javaType="SdDevices" resultMap="plcResult" />
+        <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
+        <association property="eqName"  column="eq_id" javaType="SdDevices" resultMap="sdDevicesResult" />
+        <association property="stateName"  column="id" javaType="SdEquipmentState" resultMap="sdEquipmentStateResult" />
+    </resultMap>
+
+    <resultMap id="plcResult" type="SdDevices">
+		<id  property="eqId" column="plc_id" />
+		<result property="eqName" column="plc_name"   />
+	</resultMap>
+
+	<resultMap id="eqTypeResult" type="SdEquipmentType">
+		<id  property="typeId" column="type_id" />
+		<result property="typeName" column="type_name"   />
+	</resultMap>
+
+	<resultMap id="sdDevicesResult" type="SdDevices">
+		<id  property="eqId" column="eq_id" />
+		<result property="eqName" column="eq_name"   />
+	</resultMap>
+
+	<resultMap id="sdEquipmentStateResult" type="SdEquipmentState">
+		<id  property="id" column="id" />
+		<result property="stateName" column="state_name"   />
+	</resultMap>
+
+    <sql id="selectSdDeviceCmdVo">
+        select code_id, code_device_id, code_plc_id, command, device_type_id, code_device_state, create_by, create_time, update_by, update_time from sd_device_cmd
+    </sql>
+
+    <select id="selectSdDeviceCmdList" parameterType="SdDeviceCmd" resultMap="SdDeviceCmdResult">
+        <include refid="selectSdDeviceCmdVo"/>
+        <where>
+            <if test="codeDeviceId != null and codeDeviceId != ''"> and code_device_id = #{codeDeviceId}</if>
+            <if test="codePlcId != null and codePlcId != ''"> and code_plc_id = #{codePlcId}</if>
+            <if test="deviceTypeId != null and deviceTypeId != ''"> and device_type_id = #{deviceTypeId}</if>
+            <if test="codeDeviceState != null  and codeDeviceState != ''"> and code_device_state = #{codeDeviceState}</if>
+        </where>
+    </select>
+
+    <select id="selectDropSdDeviceCmdList" parameterType="SdDeviceCmd" resultMap="SdDeviceCmdResult">
+        select a.code_device_id,a.code_plc_id,a.code_id,a.device_type_id,a.code_device_state, c.eq_id,c.eq_name,
+        b.eq_id plc_id,b.eq_name plc_name, a.command,d.type_id, d.type_name,
+        e.id,e.state_name, a.create_by, a.create_time, a.update_by, a.update_time
+        from sd_device_cmd a
+        left join sd_devices b on a.code_plc_id = b.eq_id and b.eq_type = '0'
+        left join sd_devices c on a.code_device_id = c.eq_id
+        left join sd_equipment_type d on a.device_type_id = d.type_id
+        left join sd_equipment_state e on a.code_device_state = e.id
+        <where>
+            <if test="codeDeviceId != null and codeDeviceId != ''"> and code_device_id = #{codeDeviceId}</if>
+            <if test="codePlcId != null and codePlcId != ''"> and code_plc_id = #{codePlcId}</if>
+            <if test="deviceTypeId != null and deviceTypeId != ''"> and device_type_id = #{deviceTypeId}</if>
+            <if test="codeDeviceState != null and codeDeviceState != ''"> and code_device_state = #{codeDeviceState}</if>
+        </where>
+        order by a.create_time desc,a.update_time desc
+    </select>
+
+    <select id="selectSdDeviceCmd"  resultMap="SdDeviceCmdResult">
+        <include refid="selectSdDeviceCmdVo"/>
+       <where>
+       		1=1
+     		<if test="devId != null and devId != ''"> and code_device_id = #{devId}</if>
+     		<if test="codeDeviceState != null  and codeDeviceState != ''"> and code_device_state = #{codeDeviceState}</if>
+       </where>
+    </select>
+
+    <select id="selectSdDeviceCmdById" parameterType="Long" resultMap="SdDeviceCmdResult">
+        <include refid="selectSdDeviceCmdVo"/>
+        where code_id = #{codeId}
+    </select>
+
+    <insert id="insertSdDeviceCmd" parameterType="SdDeviceCmd" useGeneratedKeys="true" keyProperty="codeId">
+        insert into sd_device_cmd
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="codeDeviceId != null">code_device_id,</if>
+            <if test="codePlcId != null">code_plc_id,</if>
+            <if test="command != null">command,</if>
+            <if test="deviceTypeId != null">device_type_id,</if>
+            <if test="codeDeviceState != null">code_device_state,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="codeDeviceId != null">#{codeDeviceId},</if>
+            <if test="codePlcId != null">#{codePlcId},</if>
+            <if test="command != null">#{command},</if>
+            <if test="deviceTypeId != null">#{deviceTypeId},</if>
+            <if test="codeDeviceState != null">#{codeDeviceState},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdDeviceCmd" parameterType="SdDeviceCmd">
+        update sd_device_cmd
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="codeDeviceId != null">code_device_id = #{codeDeviceId},</if>
+            <if test="codePlcId != null">code_plc_id = #{codePlcId},</if>
+            <if test="command != null">command = #{command},</if>
+            <if test="deviceTypeId != null">device_type_id = #{deviceTypeId},</if>
+            <if test="codeDeviceState != null">code_device_state = #{codeDeviceState},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where code_id = #{codeId}
+    </update>
+
+    <delete id="deleteSdDeviceCmdById" parameterType="Long">
+        delete from sd_device_cmd where code_id = #{codeId}
+    </delete>
+
+    <delete id="deleteSdDeviceCmdByIds" parameterType="String">
+        delete from sd_device_cmd where code_id in
+        <foreach item="codeId" collection="array" open="(" separator="," close=")">
+            #{codeId}
+        </foreach>
+    </delete>
+
+</mapper>

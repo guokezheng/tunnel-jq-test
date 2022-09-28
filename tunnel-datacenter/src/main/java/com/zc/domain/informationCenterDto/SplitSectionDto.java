@@ -1,11 +1,10 @@
 package com.zc.domain.informationCenterDto;
 
-import lombok.Data;
+
 
 /**
  * 查询管辖路段（拆账）
  */
-@Data
 public class SplitSectionDto {
 
     //管理单位
@@ -19,4 +18,46 @@ public class SplitSectionDto {
 
     //路段名称
     private String splitSectionName;
+
+    public String getSplitManagerId() {
+        return splitManagerId;
+    }
+
+    public void setSplitManagerId(String splitManagerId) {
+        this.splitManagerId = splitManagerId;
+    }
+
+    public String getSplitManagerName() {
+        return splitManagerName;
+    }
+
+    public void setSplitManagerName(String splitManagerName) {
+        this.splitManagerName = splitManagerName;
+    }
+
+    public String getSplitSectionId() {
+        return splitSectionId;
+    }
+
+    public void setSplitSectionId(String splitSectionId) {
+        this.splitSectionId = splitSectionId;
+    }
+
+    public String getSplitSectionName() {
+        return splitSectionName;
+    }
+
+    public void setSplitSectionName(String splitSectionName) {
+        this.splitSectionName = splitSectionName;
+    }
+
+    @Override
+    public String toString() {
+        return "SplitSectionDto{" +
+                "splitManagerId='" + splitManagerId + '\'' +
+                ", splitManagerName='" + splitManagerName + '\'' +
+                ", splitSectionId='" + splitSectionId + '\'' +
+                ", splitSectionName='" + splitSectionName + '\'' +
+                '}';
+    }
 }

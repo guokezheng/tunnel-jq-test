@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.zc.common.constant.RedisChannelConstants;
-import com.zc.common.core.redis.RedisPubSub;
+import com.zc.common.core.redis.pubsub.RedisPubSub;
 import com.zc.relay.dto.DownData;
 import com.zc.relay.dto.DownDataChildDevice;
 import com.zc.relay.dto.DownSetData;

@@ -26,6 +26,14 @@
         </dependency>
 
         <dependency>
+            <groupId>com.tunnel</groupId>
+            <artifactId>tunnel-deal</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.7.9</version>
@@ -71,18 +79,6 @@
             <artifactId>kafka-clients</artifactId>
         </dependency>
         <!--kafka-->
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.swagger</groupId>
-                    <artifactId>swagger-models</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>com.ruoyi</groupId>

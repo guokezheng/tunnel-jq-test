@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
     <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
-      <div style="line-height: 60px;">事件预警统计:</div>
+      <div style="line-height: 60px;">设备预警统计:</div>
       <el-card class="card-box">
-        今日累计事件: {{allmsg}}
+        今日故障设备统计: {{allmsg}}
       </el-card>
       <el-card class="card-box">
-        今日执行事件: {{process}}
+        今日执行故障设备: {{process}}
       </el-card>
       <el-card class="card-box">
-        今日事件执行率: {{proportion}}
+        今日故障设备执行率: {{proportion}}
       </el-card>
     </div>
 

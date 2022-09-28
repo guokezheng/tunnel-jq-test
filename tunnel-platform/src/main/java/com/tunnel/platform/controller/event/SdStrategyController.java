@@ -1,16 +1,14 @@
 package com.tunnel.platform.controller.event;
 
-import com.ruoyi.common.core.domain.entity.SysRole;
-import com.ruoyi.common.core.page.Result;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStrategyModel;
-import com.tunnel.platform.service.event.ISdStrategyService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.platform.utils.util.UUIDUtil;
+import com.tunnel.business.domain.event.SdStrategy;
+import com.tunnel.business.domain.event.SdStrategyModel;
+import com.tunnel.business.service.event.ISdStrategyService;
+import com.tunnel.business.utils.util.UUIDUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -69,6 +67,11 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
 
+    /**
+     * 根据策略id查询控制策略
+     * @param id
+     * @return
+     */
     @GetMapping("/getStrategyById")
     @ApiOperation("通过id查询控制策略")
     public Result getStrategyById(String id) {
@@ -103,12 +106,12 @@ public class SdStrategyController extends BaseController
      * 删除控制策略
      */
     @Log(title = "控制策略", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     @ApiOperation("删除控制策略")
     @ApiImplicitParam(name = "rlIds", value = "需要删除的控制策略关系ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long ids)
+    public Result remove(@PathVariable Long id)
     {
-        return Result.toResult(sdStrategyService.deleteSdStrategyById(ids));
+        return Result.toResult(sdStrategyService.deleteSdStrategyById(id));
     }
 
     /**
@@ -126,7 +129,6 @@ public class SdStrategyController extends BaseController
      *
      * 修改控制策略
      */
-   // @PreAuthorize(hasPermi = "system:strategy:add')")
     @Log(title = "控制策略", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/updateStrategysInfo")
     @ApiOperation("修改控制策略")
@@ -144,7 +146,6 @@ public class SdStrategyController extends BaseController
     {
     	String guid = UUIDUtil.getRandom32BeginTimePK();
     	return guid;
-//        return toAjax();
     }
 
     /**

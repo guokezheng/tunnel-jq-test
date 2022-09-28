@@ -2,6 +2,7 @@ package com.ruoyi.quartz.mapper;
 
 import java.util.List;
 import com.ruoyi.quartz.domain.SysJob;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 调度任务信息 数据层
@@ -64,4 +65,11 @@ public interface SysJobMapper
      * @return 结果
      */
     public int insertJob(SysJob job);
+
+    /**
+     * 批量添加调度任务
+     * @param jobs
+     * @return
+     */
+    public int batchScheduledJob(@Param("jobs") List<SysJob> jobs);
 }

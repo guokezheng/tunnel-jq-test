@@ -1,18 +1,18 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import com.ruoyi.common.core.redis.RedisCache;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.dataInfo.SdSensorMessage;
-import com.tunnel.platform.domain.dataInfo.SdTrafficStatistics;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.dataInfo.ISdSensorMessageService;
-import com.tunnel.platform.service.dataInfo.ISdTrafficStatisticsService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
-import com.tunnel.platform.utils.util.SpringContextUtils;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdSensorMessage;
+import com.tunnel.business.domain.dataInfo.SdTrafficStatistics;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.dataInfo.ISdSensorMessageService;
+import com.tunnel.business.service.dataInfo.ISdTrafficStatisticsService;
+import com.tunnel.business.utils.util.SpringContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ public class SdTrafficStatisticsController extends BaseController
     private ISdTrafficStatisticsService sdTrafficStatisticsService;
     
     @Autowired
-	private ISdDevicesService  sdDevicesService;
+	private ISdDevicesService sdDevicesService;
     
     @Autowired
 	 private RedisCache redisCache;

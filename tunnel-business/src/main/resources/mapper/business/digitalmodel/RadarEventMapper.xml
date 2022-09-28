@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.digitalmodel.RadarEventMapper">
+    <insert id="insertEventConfidence">
+        insert into sd_event_confidence
+        (event_id,target_id,confidence,speed,plate)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.eventIds},#{item.targetId},#{item.eventConfidence},#{item.speed},#{item.plate})
+        </foreach>
+    </insert>
+
+    <insert id="insertWjEvent">
+        insert into sd_event
+        (id,event_type_id,tunnel_id,lane_no,longitude,latitude,start_time,end_time,stake_num,event_source,
+        event_title,direction,event_state,create_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id},#{item.eventTypeId},#{item.tunnelId},#{item.laneNo},#{item.eventLongitude},#{item.eventLatitude},
+            #{item.startTime},#{item.endTime},#{item.stakeNum},#{item.eventSource},
+            #{item.eventTitle},#{item.direction},#{item.eventState},#{item.createTime}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertPic">
+        insert into sd_traffic_image
+            (business_id,img_name,img_url,create_time,create_by)
+        values
+            (#{eventId},#{picName},#{imgUrl},NOW(),'admin')
+    </insert>
+
+    <insert id="insertVhc">
+        insert into sd_special_vehicle
+        (id,vehicle_id,tunnel_id,vehicle_type,vehicle_color,vehicle_license,license_color)
+        values
+        (#{recordSerialNumber},#{id},#{tunelId},#{originalType},#{originalColor},#{picLicense},#{vehicleColor})
+    </insert>
+
+    <insert id="insertRadarDetect">
+        insert into sd_radar_detect_data
+        (record_Serial_Number,vehicle_id,tunnel_id,vehicle_type,vehicle_color,longitude,latitude,speed,lane_num,course_angle,vehicle_license,license_color,stake_num,detect_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.recordSerialNumber},#{item.vehicleId},#{item.tunnelId},#{item.vehicleType},#{item.vehicleColor},
+            #{item.longitude},#{item.latitude},#{item.speed},#{item.laneNum},#{item.courseAngle},
+            #{item.vehicleLicense},#{item.licenseColor},#{item.stakeNum},#{item.detectTime})
+        </foreach>
+    </insert>
+
+    <update id="updateEvent">
+    update sd_event
+    set
+        id=#{id},event_type_id=#{eventTypeId},tunnel_id=#{tunnelId},lane_no=#{laneNo},longitude=#{eventLongitude},latitude=#{eventLatitude},
+        start_time=#{startTime},end_time=#{endTime},stake_num=#{stakeNum},update_time = #{updateTime},direction = #{direction}
+    where id=#{id}
+    </update>
+    <update id="updateVideoById">
+        update sd_event
+        set  video_url=#{eventVideoUrl}
+        where id=#{eventId}
+    </update>
+
+    <select id="selectID" resultType="java.lang.Integer">
+        select COUNT(1) from sd_event where id=#{eventId}
+    </select>
+</mapper>

@@ -10,14 +10,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="隧道id" prop="tunnelId">
-        <el-input
-          v-model="queryParams.tunnelId"
-          placeholder="请输入隧道id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="隧道名称" prop="tunnelId">
+        <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道名称" clearable size="small">
+          <el-option 
+           v-for="(item) in eqTunnelData"
+           :key="item.tunnelId"
+           :label="item.tunnelName"
+           :value="item.tunnelId"
+           />
+        </el-select>
       </el-form-item>
       <el-form-item label="车辆类型" prop="vehicleType">
         <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable size="small">
@@ -81,7 +82,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -112,7 +113,7 @@
           @click="handleDelete"
           v-hasPermi="['special:vehicle:remove']"
         >删除</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -127,7 +128,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" height="600">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
@@ -146,7 +147,7 @@
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <!-- <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -163,7 +164,7 @@
             v-hasPermi="['special:vehicle:remove']"
           >删除</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     
     <pagination
@@ -224,7 +225,9 @@
 
 <script>
 import { listVehicle, getVehicle, delVehicle, addVehicle, updateVehicle, exportVehicle } from "@/api/map/special/vehicle";
-
+import {
+    listTunnels
+  } from "@/api/equipment/tunnel/api";
 export default {
   name: "Vehicle",
   data() {
@@ -269,11 +272,14 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      eqTunnelData:[]
+
     };
   },
   created() {
     this.getList();
+    this.getTunnel();
      //车辆类型
      this.getDicts("sd_wj_vehicle_type").then(response => {
       // console.log(response,'车辆类型')
@@ -291,6 +297,13 @@ export default {
     });
   },
   methods: {
+     /** 所属隧道 */
+     getTunnel() {
+        listTunnels().then((response) => {
+          console.log(response.rows,"所属隧道列表")
+          this.eqTunnelData = response.rows;
+        });
+      },
      //车辆类型字典给翻译
      vehicleTypeFormat(row, column) {
       // console.log(row)
@@ -412,3 +425,11 @@ export default {
   }
 };
 </script>
+<style scoped lang="scss">
+  ::v-deep .el-form-item__content{
+    width:200px !important;
+    .el-date-editor{
+      width: 100%;
+    }
+  }
+</style>

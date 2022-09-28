@@ -4,12 +4,12 @@ import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.sun.jna.Pointer;
-import com.tunnel.platform.domain.dataInfo.SdDevices;
-import com.tunnel.platform.domain.event.SdWarningInfo;
-import com.tunnel.platform.domain.event.SdWarningType;
-import com.tunnel.platform.service.dataInfo.ISdDevicesService;
-import com.tunnel.platform.service.event.ISdWarningInfoService;
-import com.tunnel.platform.service.event.ISdWarningTypeService;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdWarningInfo;
+import com.tunnel.business.domain.event.SdWarningType;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.event.ISdWarningInfoService;
+import com.tunnel.business.service.event.ISdWarningTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

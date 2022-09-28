@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdFixedCodeMapper">
+    
+    <resultMap type="SdFixedCode" id="SdFixedCodeResult">
+        <result property="id"    column="id"    />
+        <result property="modelCode"    column="model_code"    />
+        <result property="fixedCode"    column="fixed_code"    />
+        <result property="localIp"    column="local_ip"    />
+        <result property="queryControl"    column="query_control"    />
+        <result property="modelNum"    column="model_num"    />
+        <result property="controlCode"    column="control_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdFixedCodeVo">
+        select id, model_code, fixed_code, local_ip, query_control, model_num, control_code, create_by, create_time, update_by, update_time from sd_fixed_code
+    </sql>
+
+    <select id="selectSdFixedCodeList" parameterType="SdFixedCode" resultMap="SdFixedCodeResult">
+        <include refid="selectSdFixedCodeVo"/>
+        <where>  
+            <if test="modelCode != null  and modelCode != ''"> and model_code = #{modelCode}</if>
+            <if test="queryControl != null  and queryControl != ''"> and query_control = #{queryControl}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdFixedCodeById" parameterType="Long" resultMap="SdFixedCodeResult">
+        <include refid="selectSdFixedCodeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdFixedCode" parameterType="SdFixedCode" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_fixed_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="modelCode != null">model_code,</if>
+            <if test="fixedCode != null">fixed_code,</if>
+            <if test="localIp != null">local_ip,</if>
+            <if test="queryControl != null">query_control,</if>
+            <if test="modelNum != null">model_num,</if>
+            <if test="controlCode != null">control_code,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="modelCode != null">#{modelCode},</if>
+            <if test="fixedCode != null">#{fixedCode},</if>
+            <if test="localIp != null">#{localIp},</if>
+            <if test="queryControl != null">#{queryControl},</if>
+            <if test="modelNum != null">#{modelNum},</if>
+            <if test="controlCode != null">#{controlCode},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdFixedCode" parameterType="SdFixedCode">
+        update sd_fixed_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="modelCode != null">model_code = #{modelCode},</if>
+            <if test="fixedCode != null">fixed_code = #{fixedCode},</if>
+            <if test="localIp != null">local_ip = #{localIp},</if>
+            <if test="queryControl != null">query_control = #{queryControl},</if>
+            <if test="modelNum != null">model_num = #{modelNum},</if>
+            <if test="controlCode != null">control_code = #{controlCode},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdFixedCodeById" parameterType="Long">
+        delete from sd_fixed_code where id = #{id}
+    </delete>
+
+    <delete id="deleteSdFixedCodeByIds" parameterType="String">
+        delete from sd_fixed_code where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

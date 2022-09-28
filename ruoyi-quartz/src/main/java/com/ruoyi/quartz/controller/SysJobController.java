@@ -1,23 +1,5 @@
 package com.ruoyi.quartz.controller;
 
-import java.util.List;
-
-import com.ruoyi.common.utils.spring.SpringUtils;
-import com.tunnel.platform.domain.event.SdStrategy;
-import com.tunnel.platform.domain.event.SdStrategyModel;
-import com.tunnel.platform.service.event.ISdStrategyService;
-import com.tunnel.platform.service.event.impl.SdStrategyServiceImpl;
-import org.quartz.SchedulerException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -30,6 +12,13 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.service.ISysJobService;
 import com.ruoyi.quartz.util.CronUtils;
+import org.quartz.SchedulerException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 调度任务信息操作处理
@@ -207,5 +196,15 @@ public class SysJobController extends BaseController
     @PutMapping("/updateState")
     public AjaxResult updateState(@RequestBody SysJob job) {
         return AjaxResult.success(jobService.updateState(job));
+    }
+
+    /**
+     * 批量添加定时任务
+     * @param maps
+     * @return
+     */
+    @PostMapping("/batchScheduledJob")
+    public AjaxResult batchAddScheduledJob(@RequestBody List<Map> maps) throws SchedulerException {
+        return AjaxResult.success(jobService.batchScheduledJob(maps));
     }
 }

@@ -1,7 +1,11 @@
 package com.tunnel.deal.plc.modbus;
 
 import com.serotonin.modbus4j.ModbusMaster;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
+
+import java.util.Map;
 
 /*
  *
@@ -31,6 +35,19 @@ public class ModbusTcpHandle {
         return instance;
     }
 
+    public int toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices) {
+        String[] point = sdDevices.getEqControlPointAddress().split(",");
+        Long deviceType = sdDevices.getEqType();
+        String plcId = sdDevices.getFEqId();
+        Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;
+        ModbusMaster master = masterMap.get(plcId);
+        if (deviceType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+            int i = ModbusTcpHandle.getInstance().toControlCZ(master, 1, Integer.parseInt(point[0]) - 1, ctrState);
+            return i;
+        }
+        return 0;
+    }
+
     /*
      * 车道指示器控制（根据现场实际点位情况做控制）-网联测试基地凤凰山隧道
      * 针对每一隧道点位需重写此方法
@@ -40,7 +57,7 @@ public class ModbusTcpHandle {
      *     3:正红反红->正红反红3  {false, true, false}
      *     4:正红反绿->正红反绿2  {false, false, true}
      * */
-    public void toControlCZ(ModbusMaster master, int slaveId, int startOffset, Integer ctrState) {
+    public int toControlCZ(ModbusMaster master, int slaveId, int startOffset, Integer ctrState) {
         try {
             boolean[] data = new boolean[]{false, false, false};
             if (ctrState == 1) {
@@ -57,7 +74,9 @@ public class ModbusTcpHandle {
             Modbus4jWriteUtils.writeCoils(master, slaveId, startOffset, data);
         } catch (Exception e) {
             System.out.println("编号为" + slaveId + "的设备：控制失败");
+            return 0;
         }
+        return 1;
     }
 
 }

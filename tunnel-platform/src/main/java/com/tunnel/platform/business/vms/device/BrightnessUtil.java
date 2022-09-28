@@ -1,8 +1,8 @@
 package com.tunnel.platform.business.vms.device;
 
-import com.tunnel.platform.utils.util.CRC16;
-import com.tunnel.platform.utils.util.CommonUtil;
-import com.tunnel.platform.utils.util.RadixUtil;
+import com.tunnel.business.utils.util.CRC16;
+import com.tunnel.business.utils.util.CommonUtil;
+import com.tunnel.business.utils.util.RadixUtil;
 
 /**
  *

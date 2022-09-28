@@ -2,9 +2,9 @@ package com.tunnel.platform.controller.trafficOperationControl.activeTrafficFlow
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.tunnel.platform.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
-import com.tunnel.platform.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
-import com.tunnel.platform.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficIncidentInfo;
+import com.tunnel.business.service.trafficOperationControl.activeTrafficFlowControl.ActiveTrafficFlowService;
+import com.tunnel.business.service.trafficOperationControl.eventManage.ISdTrafficIncidentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,16 +1,14 @@
 package com.tunnel.platform.controller.event;
 
-import com.ruoyi.common.core.domain.entity.SysRole;
-import com.ruoyi.common.core.page.Result;
-import com.tunnel.platform.domain.event.SdReservePlan;
-import com.tunnel.platform.domain.event.SdReservePlanFile;
-import com.tunnel.platform.service.event.ISdReservePlanFileService;
-import com.tunnel.platform.service.event.ISdReservePlanService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.enums.BusinessType;
+import com.tunnel.business.domain.event.SdReservePlan;
+import com.tunnel.business.domain.event.SdReservePlanFile;
+import com.tunnel.business.service.event.ISdReservePlanFileService;
+import com.tunnel.business.service.event.ISdReservePlanService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -90,7 +88,7 @@ public class SdReservePlanController extends BaseController
     @Log(title = "预案信息")
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
-    public Result addReservePlan(@RequestParam("file") MultipartFile[] file,
+    public Result addReservePlan(MultipartFile[] file,
                                     @RequestParam("subareaId") Long subareaId,
                                     @RequestParam("category") String category,
     								@RequestParam("planTypeId") String planTypeId,
@@ -235,14 +233,14 @@ public class SdReservePlanController extends BaseController
     }
 
     /**
-     * 根据分区id查询预案(非恢复预案)
+     * 根据分区id,预案类别 查询预案
      *
      * @param sdReservePlan
      * @return
      */
     @GetMapping("/getListBySId")
     @ApiOperation("根据分区id查询预案")
-    public Result selectPlanBySid(@RequestBody SdReservePlan sdReservePlan) {
+    public Result selectPlanBySid(SdReservePlan sdReservePlan) {
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }
 

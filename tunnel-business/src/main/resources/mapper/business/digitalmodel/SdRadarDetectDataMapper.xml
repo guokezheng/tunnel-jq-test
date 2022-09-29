@@ -75,14 +75,17 @@
             <if test="stakeNum != null  and stakeNum != ''">and detect.stake_num = #{stakeNum}</if>
             <if test="detectTime != null ">and detect.detect_time = #{detectTime}</if>
 
-
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{detect.startTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{detect.endTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(detect.detect_time) = curdate()
             </if>
         </where>
+        order by detect.detect_time desc
     </select>
 
     <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">

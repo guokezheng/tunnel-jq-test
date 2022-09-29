@@ -51,12 +51,16 @@
             <if test="vehicleLicense != null  and vehicleLicense != ''">and vehicle.vehicle_license = #{vehicleLicense}</if>
             <if test="licenseColor != null  and licenseColor != ''">and vehicle.license_color = #{licenseColor}</if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(vehicle.start_time,'%y%m%d') &gt;= date_format(#{vehicle.startTime},'%y%m%d')
+                and date_format(vehicle.start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(vehicle.end_time,'%y%m%d') &lt;= date_format(#{vehicle.endTime},'%y%m%d')
+                and date_format(vehicle.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(vehicle.start_time) = curdate()
             </if>
         </where>
+        order by vehicle.start_time desc
     </select>
 
     <select id="selectSdSpecialVehicleById" parameterType="String" resultMap="SdSpecialVehicleResult">

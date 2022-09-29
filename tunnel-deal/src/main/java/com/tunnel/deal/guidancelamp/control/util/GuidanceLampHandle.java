@@ -1,14 +1,16 @@
 package com.tunnel.deal.guidancelamp.control.util;
 
-import com.ruoyi.framework.web.domain.server.Sys;
-import com.serotonin.modbus4j.ModbusMaster;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
-import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
-import com.tunnel.deal.plc.modbus.util.Modbus4jWriteUtils;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -22,6 +24,8 @@ public class GuidanceLampHandle {
      */
     private static GuidanceLampHandle instance;
 
+    private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
+
     private GuidanceLampHandle() {
     }
 
@@ -30,6 +34,19 @@ public class GuidanceLampHandle {
             instance = new GuidanceLampHandle();
         }
         return instance;
+    }
+
+    public void updateDeviceData(String deviceId, Long itemId, String value) {
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        sdDeviceData.setItemId(itemId);
+        List<SdDeviceData> deviceData = deviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (deviceData.size() > 0) {
+            SdDeviceData data = deviceData.get(0);
+            data.setData(value);
+            data.setUpdateTime(new Date());
+            deviceDataMapper.updateSdDeviceData(data);
+        }
     }
 
     public int toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices,String brightness, String frequency, String fireMark) {
@@ -48,6 +65,10 @@ public class GuidanceLampHandle {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;
             }
+            //存储变更后状态到数据库
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()), ctrState.toString());
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()), brightness);
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue() && !fireMark.equals("")) {
             //发送疏散标志控制指令
             try {
@@ -61,6 +82,11 @@ public class GuidanceLampHandle {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;
             }
+            //存储变更后状态到数据库
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()), ctrState.toString());
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()), brightness);
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);
+            updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()), fireMark);
         }
         return 1;
     }

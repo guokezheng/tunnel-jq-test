@@ -286,10 +286,10 @@
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       border: 1px solid #00ADFF;
     }
-    .el-table__body-wrapper .el-table__cell{
-      border: 1px solid rgba(1,152,255,0.6);
+    // .el-table__body-wrapper .el-table__cell{
+    //   border: 1px solid rgba(1,152,255,0.6);
   
-    }
+    // }
     .el-table__body{
       width: 100% !important;
   }
@@ -471,7 +471,7 @@
     /*select选择框的背景颜色*/
     .el-input__inner {
       background-color: #00152B;
-      color: #01AAFD;
+      color: #fff;
       border: solid 1px #01AAFD;
     }
     .el-date-editor .el-range-input{
@@ -561,7 +561,9 @@
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       background-color: #00152B;
       color: white;
-      
+    }
+    .el-slider__runway {
+      background-color: #006784;
     }
   }
   .siteClass {

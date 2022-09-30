@@ -13,6 +13,7 @@
           placeholder="请选择所属隧道"
           style="width: 80%"
           @change="changeSelection"
+          clearable
         >
           <el-option
             v-for="(item, index) in eqTunnelData"
@@ -27,6 +28,7 @@
           v-model="queryParams.category"
           placeholder="请选择预案类别"
           style="width: 80%"
+          clearable
         >
           <el-option
             v-for="(item, index) in planCategory"

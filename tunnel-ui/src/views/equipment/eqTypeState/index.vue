@@ -856,9 +856,9 @@
  ::v-deep .el-form-item--medium .el-form-item__label{
   width:96px!important;
  }
- ::v-deep .el-form-item--medium .el-form-item__content{
-  margin-left: 96px!important;
- }
+//  ::v-deep .el-form-item--medium .el-form-item__content{
+//   margin-left: 96px!important;
+//  }
 ::v-deep .el-upload-list--picture-card .el-upload-list__item{
    width: 30px !important;
    height: 30px !important;

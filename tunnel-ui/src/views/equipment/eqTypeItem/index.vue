@@ -29,7 +29,7 @@
         />
       </el-form-item> -->
       <el-form-item label="设备类型" prop="deviceTypeId">
-              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" >
+              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" clearable>
                 <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
                 </el-option>
               </el-select>

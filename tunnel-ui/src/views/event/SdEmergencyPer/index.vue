@@ -36,10 +36,10 @@
           size="small"
         >
           <el-option
-            v-for="item in tunnelData"
-            :key="item.tunnelName"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
+            v-for="item in emergencyPostList"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           />
         </el-select>
       </el-form-item>
@@ -181,8 +181,8 @@
         <el-form-item label="应急人员" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入应急人员" />
         </el-form-item>
-        <el-form-item label="组名" prop="groupName">
-          <el-input v-model="form.groupName" placeholder="请输入组名" />
+        <el-form-item label="机构" prop="groupName">
+          <el-input v-model="form.groupName" placeholder="请输入机构" />
         </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入电话" />
@@ -211,6 +211,7 @@ export default {
   components: {},
   data() {
     return {
+      emergencyPostList:[],
       // 遮罩层
       loading: true,
       // 选中数组
@@ -274,6 +275,9 @@ export default {
   created() {
     this.getList();
     this.getTunnels();
+    this.getDicts("sd_emergency_post").then((response) => {
+      this.emergencyPostList = response.data;
+    });
   },
   methods: {
     getTunnels() {

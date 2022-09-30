@@ -459,39 +459,6 @@
               </div>
             </div>
           </div>
-
-          <!-- <div class="bingZhou">
-            <span>济南方向：</span>
-            <div class="number" :class="checked1 ? 'drawerActive' : 'drawerNo'">
-              1
-            </div>
-            <el-checkbox v-model="checked1" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked2 ? 'drawerActive' : 'drawerNo'">
-              2
-            </div>
-            <el-checkbox v-model="checked2" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked3 ? 'drawerActive' : 'drawerNo'">
-              3
-            </div>
-            <el-checkbox v-model="checked3" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
-          </div>
-          <div class="bingZhou">
-            <span>博山方向：</span>
-            <div class="number" :class="checked4 ? 'drawerActive' : 'drawerNo'">
-              1
-            </div>
-            <el-checkbox v-model="checked4" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked5 ? 'drawerActive' : 'drawerNo'">
-              2
-            </div>
-            <el-checkbox v-model="checked5" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked6 ? 'drawerActive' : 'drawerNo'">
-              3
-            </div>
-            <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
-          </div> -->
         </el-drawer>
         <el-drawer
           title="照明亮度自动控制"

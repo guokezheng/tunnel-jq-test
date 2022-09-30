@@ -1,15 +1,18 @@
 package com.tunnel.deal.guidancelamp.control.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +28,8 @@ public class GuidanceLampHandle {
     private static GuidanceLampHandle instance;
 
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
+
+    private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
 
     private GuidanceLampHandle() {
     }
@@ -88,7 +93,29 @@ public class GuidanceLampHandle {
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode()), fireMark);
         }
+        //推送数据到万集
+        if (ctrState != null && ctrState.toString().equals("1")) {
+            sendDataToWanJi(sdDevices, "lightOff", "0");
+        } else if (ctrState != null) {
+            sendDataToWanJi(sdDevices, "lightOn", ctrState.toString());
+        }
         return 1;
+    }
+
+    private void sendDataToWanJi(SdDevices sdDevices, String runStatus, String runMode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("deviceId", sdDevices.getEqId());
+        map.put("deviceType", sdDevices.getEqType());
+        JSONObject jsonObject = new JSONObject();
+        if (runStatus.equals("lightOn")) {
+            runStatus = "1";
+        } else if (runStatus.equals("lightOff")) {
+            runStatus = "2";
+        }
+        jsonObject.put("runStatus", Integer.valueOf(runStatus));
+        jsonObject.put("runMode", runMode);
+        map.put("deviceData", jsonObject);
+        radarEventService.sendBaseDeviceStatus(map);
     }
 
 }

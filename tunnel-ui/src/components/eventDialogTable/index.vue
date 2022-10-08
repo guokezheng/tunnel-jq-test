@@ -40,7 +40,7 @@
               align="center"
               prop="eventType.eventType"
             />
-            <el-table-column label="车道号" align="center" prop="laneNo" />
+            <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
             <el-table-column
               label="事件经度"
               align="center"
@@ -316,6 +316,9 @@ export default {
     .el-table__body-wrapper .el-table__cell {
       // border: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
       border-bottom: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
+    }
+    .el-table__body-wrapper{
+      overflow-y:auto;
     }
   }
 }

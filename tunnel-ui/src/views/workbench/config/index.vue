@@ -5228,7 +5228,7 @@ export default {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
-          console.log(deviceData,'deviceDatadeviceData')
+          // console.log(deviceData,'deviceDatadeviceData')
           if (deviceData) {
             // let type = deviceData.eqType;
 

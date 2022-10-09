@@ -34,15 +34,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdSparePartsWarehouseVo"/>
         <where>
             <if test="partName != null  and partName != ''"> and part_name like concat('%', #{partName}, '%')</if>
-            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="brand != null  and brand != ''"> and brand like concat('%', #{brand}, '%')</if>
             <if test="model != null  and model != ''"> and model = #{model}</if>
             <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
-            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer = #{manufacturer}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer like concat('%', #{manufacturer}, '%')</if>
             <if test="lastPurchaseTime != null "> and last_purchase_time = #{lastPurchaseTime}</if>
             <if test="lastPurchaseQuantity != null  and lastPurchaseQuantity != ''"> and last_purchase_quantity = #{lastPurchaseQuantity}</if>
             <if test="lastPurchaseUnitPrice != null  and lastPurchaseUnitPrice != ''"> and last_purchase_unit_price = #{lastPurchaseUnitPrice}</if>
             <if test="currentInventory != null  and currentInventory != ''"> and current_inventory = #{currentInventory}</if>
-            <if test="keeper != null  and keeper != ''"> and keeper = #{keeper}</if>
+            <if test="keeper != null  and keeper != ''"> and keeper like concat('%', #{keeper}, '%')</if>
             <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
             <if test="location != null  and location != ''"> and location = #{location}</if>
             <if test="remake != null  and remake != ''"> and remake = #{remake}</if>

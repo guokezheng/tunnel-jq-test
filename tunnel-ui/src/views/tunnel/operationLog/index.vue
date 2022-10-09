@@ -72,7 +72,7 @@
       <el-table-column label="操作状态" align="center" prop="stateName.stateName" />
       <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat" />
       <el-table-column label="操作结果" align="center" prop="state"  :formatter="stateFormat" display:"none"/>
-      <el-table-column label="用户名称" align="center" prop="userName" />
+      <!-- <el-table-column label="用户名称" align="center" prop="userName" /> -->
       <el-table-column label="描述" align="center" prop="description" display:"none" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable>
         <template slot-scope="scope">
@@ -231,6 +231,7 @@ export default {
     this.getEqType();
     /* this.getDevices(); */
     this.getDicts("sd_control_type").then(response => {
+      console.log(response.data,"response.data")
       this.controlTypeOptions = response.data;
     });
     this.getDicts("sd_operation_log_state").then(response => {

@@ -1,4 +1,4 @@
-package com.tunnel.webthings.config;
+package com.tunnel.platform.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,5 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import com.alibaba.druid.sql.dialect.odps.ast.OdpsStatisticClause;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -787,18 +786,21 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      * @return
      */
     @Override
-    public List<SdDevices> updateCarFingerById(Map<String, Object> map) {
+    public List<SdDevices> batchControlCarFinger(Map<String, Object> map) {
         List<SdDevices> sdDevicesList = new ArrayList<>();
-        String tunnelName = (String) map.get("tunnelName");
+        String tunnelName = (String) map.get("tunnelId");
         String direction = map.get("direction").toString();
         List<String> list = (List<String>) map.get("lane");
+        if (map.get("lane") == null || list.size() == 0) {
+            throw new RuntimeException("车指批量控制隧道车道信息为空");
+        }
         for (String lane : list) {
             SdDevices devices = new SdDevices();
             devices.setEqTunnelId(tunnelName);
             devices.setEqType(1L);
             devices.setEqDirection(direction);
             devices.setLane(lane);
-            List<SdDevices> sdDevicesLists = sdDevicesMapper.selectSdDevicesList(devices);
+            List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);
             sdDevicesList.addAll(sdDevicesLists);
         }
         return sdDevicesList;

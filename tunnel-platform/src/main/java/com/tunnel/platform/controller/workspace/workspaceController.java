@@ -18,11 +18,13 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.platform.service.SdDeviceControlService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +53,8 @@ public class workspaceController extends BaseController {
     private ISdOperationLogService sdOperationLogService;
     @Autowired
     private ISdRadarDetectDataService sdRadarDetectDataService;
+    @Autowired
+    private SdDeviceControlService sdDeviceControlService;
 
 
     //3d测试
@@ -153,12 +157,32 @@ public class workspaceController extends BaseController {
     /**
      * 根据隧道id,方向,所属车道筛选车道指示器
      *
-     * @param sdDevices
      * @return
      */
-    @PostMapping("/updateCarFinger")
-    public AjaxResult updateCarFingerById(@RequestBody Map<String,Object> sdDevices) {
-        return AjaxResult.success(sdDevicesService.updateCarFingerById(sdDevices));
+    @PostMapping("/batchControlCarFinger")
+    public AjaxResult batchControlCarFinger(@RequestBody Map<String,Object> carFingerDevices) {
+        //查询所有需要批量控制的车指设备
+        if (carFingerDevices == null || carFingerDevices.isEmpty()) {
+            throw new RuntimeException("车指批量控制设备信息为空");
+        } else if (carFingerDevices.get("tunnelId") == null || carFingerDevices.get("tunnelId").toString().equals("")) {
+            throw new RuntimeException("车指批量控制隧道信息为空");
+        } else if (carFingerDevices.get("direction") == null || carFingerDevices.get("direction").toString().equals("")) {
+            throw new RuntimeException("车指批量控制隧道方向信息为空");
+        } else if (carFingerDevices.get("state") == null || carFingerDevices.get("state").toString().equals("")) {
+            throw new RuntimeException("车指批量控制状态信息为空");
+        }
+        List<SdDevices> list = sdDevicesService.batchControlCarFinger(carFingerDevices);
+        Map<String, Object> map = new HashMap<>();
+        Integer controlDevices = 0;
+        for (int i = 0;i < list.size();i++) {
+            String eqId = list.get(i).getEqId();
+            String state = carFingerDevices.get("state").toString();
+            map.put("devId", eqId);
+            map.put("state", state);
+            map.put("controlType", "0");
+            controlDevices = sdDeviceControlService.controlDevices(map);
+        }
+        return AjaxResult.success(controlDevices);
     }
 
     @GetMapping("/getDeviceDataAndState")

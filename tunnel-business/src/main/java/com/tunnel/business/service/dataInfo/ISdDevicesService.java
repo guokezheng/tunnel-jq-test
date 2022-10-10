@@ -162,11 +162,9 @@ public interface ISdDevicesService {
 
     /**
      * 一键车道控制
-     *
-     * @param sdDevices
      * @return
      */
-    List<SdDevices> updateCarFingerById(Map<String,Object> map);
+    List<SdDevices> batchControlCarFinger(Map<String,Object> map);
 
     List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 

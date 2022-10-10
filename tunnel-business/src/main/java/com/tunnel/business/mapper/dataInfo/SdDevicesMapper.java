@@ -174,4 +174,6 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	public int selectLaneSize();
+
+	public List<SdDevices> batchControlCarFinger(SdDevices sdDevices);
 }

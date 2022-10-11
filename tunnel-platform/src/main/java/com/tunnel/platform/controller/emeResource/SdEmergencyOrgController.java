@@ -89,9 +89,10 @@ public class SdEmergencyOrgController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:org:remove')")
     @Log(title = "应急机构", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{orgIds}")
-    public AjaxResult remove(@PathVariable Long[] orgIds)
+    @DeleteMapping("/batchDelete")
+    public AjaxResult remove(@RequestBody Long[] orgIds)
     {
-        return toAjax(sdEmergencyOrgService.deleteSdEmergencyOrgByOrgIds(orgIds));
+        sdEmergencyOrgService.deleteSdEmergencyOrgByOrgIds(orgIds);
+        return success();
     }
 }

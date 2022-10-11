@@ -90,7 +90,7 @@ public class SdEmergencyVehicleController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:vehicle:remove')")
     @Log(title = "应急车辆", businessType = BusinessType.DELETE)
-	@PostMapping("/batchDelete")
+	@DeleteMapping("/batchDelete")
     public AjaxResult remove(@RequestBody Long[] ids)
     {
         sdEmergencyVehicleService.deleteSdEmergencyVehicleByIds(ids);

@@ -790,16 +790,19 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         List<SdDevices> sdDevicesList = new ArrayList<>();
         String tunnelName = (String) map.get("tunnelId");
         String direction = map.get("direction").toString();
-        List<String> list = (List<String>) map.get("lane");
+        List<Object> list = (List<Object>) map.get("lane");
         if (map.get("lane") == null || list.size() == 0) {
             throw new RuntimeException("车指批量控制隧道车道信息为空");
         }
-        for (String lane : list) {
+        for (Object lane : list) {
+            if (lane == null || lane.toString().equals("")) {
+                throw new RuntimeException("车指批量控制隧道车道信息为空");
+            }
             SdDevices devices = new SdDevices();
             devices.setEqTunnelId(tunnelName);
             devices.setEqType(1L);
             devices.setEqDirection(direction);
-            devices.setLane(lane);
+            devices.setLane(lane.toString());
             List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);
             sdDevicesList.addAll(sdDevicesLists);
         }

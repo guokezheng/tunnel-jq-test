@@ -137,3 +137,12 @@ export function controlGuidanceLampDevice(data) {
     data: data
   })
 }
+
+// 车指批量控制抽屉
+export function batchControlCarFinger(data) {
+  return request({
+    url: '/workspace/batchControlCarFinger',
+    method: 'post',
+    data: data
+  })
+}

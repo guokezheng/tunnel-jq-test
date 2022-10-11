@@ -723,6 +723,13 @@
       }
     }
   }
+  .yuntaiPic,.jiaJian{
+    > div:nth-of-type(1),
+    > div:nth-of-type(3) {
+    border: solid 1px #003a5d;
+    }
+  }
+  
   // 隧道配置页面
   // .configurePage {
   //   background-color: #d6edf9 !important;

@@ -136,9 +136,9 @@
 
       <div class="warningTop">
         <div class="photoBox">
-          <img  src="../../assets/images/warningPhoto.png"></img>
+          <img  src="../../assets/images/warningPhoto.png" />
           <div>
-            <img v-for="(item,index) of 4" src="../../assets/images/warningPhoto.png" :key="index"></img>
+            <img v-for="(item,index) of 4" src="../../assets/images/warningPhoto.png" :key="index" />
           </div>
         </div>
         <div class="processBox">

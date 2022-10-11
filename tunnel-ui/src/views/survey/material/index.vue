@@ -45,6 +45,18 @@
       <el-col :span="1.5">
         <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button type="success" icon="el-icon-edit" size="mini" @click="handleUpdate(1)" :disabled="single"
                    v-hasPermi="['system:material:crk']">物资入库</el-button>

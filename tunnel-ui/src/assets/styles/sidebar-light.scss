@@ -343,7 +343,13 @@
     background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:65px;
     background-color: #010913;
     }
-    
+    .yuntaiPic,.jiaJian{
+      > div:nth-of-type(1),
+    > div:nth-of-type(3) {
+      border: solid 1px white;
+     
+    }
+    }
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background: linear-gradient(177deg, #00ACED, #0079DB);
@@ -399,6 +405,12 @@
     color: white !important;
   }
  }
+ .jianbianLine{
+  width: 30%;height: 1px;border-bottom: solid 1px white;
+  border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)30 30;
+  position: absolute;
+  top: 0;
+ }
   .workbench-dialog{
     .lineClass{
       width: 100%;
@@ -422,8 +434,7 @@
       border-top: solid 1px rgba($color: #0198FF, $alpha: 0.8);
     }
     .dialogLine{
-      width: 20%;height: 1px;border-bottom: solid 1px white;
-      border-image: linear-gradient(to right,#0083FF,#3FD7FE,#0083FF)30 30;
+      
     }
     .el-form-item__label {
       color: #01AAFD;
@@ -734,7 +745,7 @@
   .el-drawer__header{
     background-color: #0182CA !important;
     border-left: none !important;
-    padding: 0 15px;
+    padding: 0 10px;
   }
   .el-drawer__body{
     background-color: #012E51;

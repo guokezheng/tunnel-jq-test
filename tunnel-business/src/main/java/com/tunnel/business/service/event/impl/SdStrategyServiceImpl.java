@@ -469,11 +469,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (Map<String,Object> map : autoControl) {
                 String state = (String) map.get("state");
                 if ("".equals(state) || state == null) {
-                    throw new RuntimeException("请填写完整定时任务或自动触发！");
+                    throw new RuntimeException("请填写完整定时控制及相关执行操作！");
                 }
             }
         } else if ("3".equals(model.getStrategyType())){
-            List<Map> timeSharingControl = model.getTimeSharingControl();
+            List<Map> timeSharingControl = model.getAutoControl();
             for (Map<String,Object> map : timeSharingControl) {
                 String state = (String) map.get("state");
                 if (StringUtils.isEmpty(state)) {
@@ -539,7 +539,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 rlList.add(rl);
             }
         } else if ("3".equals(model.getStrategyType())) {
-            List<Map> timeSharingControl = model.getTimeSharingControl();
+            List<Map> timeSharingControl = model.getAutoControl();
             for (Map<String,Object> map : timeSharingControl) {
                 List<String> value = (List<String>) map.get("value");
                 String equipments = StringUtils.join(value,",");

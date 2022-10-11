@@ -412,10 +412,86 @@
           :append-to-body="true"
           class="drawerTop"
         >
-          <div
-            style="width: 100%; height: 100%; padding: 20px 10px; display: flex"
-          >
-            <div class="drawerBox">
+          <div style="width: 100%; height: 100%;position: relative;">
+            <div class="jianbianLine"></div>
+            <div class="chezhiDrawerDirection">{{directionList[0].dictLabel}}</div>
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm0.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
+              >
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm0.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+              <el-option
+                v-for="item in chezhiStateList"
+                :key="item.Id"
+                :value="item.deviceState"
+                :label="item.stateName"
+              >
+                <div style="display:flex;align-items: center">
+                <el-image :src="item.url[0]" style="width:20px;height:20px"></el-image>
+                <el-image :src="item.url[1]" style="width:20px;height:20px"></el-image>
+                <div style="margin-left:4px">{{item.stateName}}</div>  
+                </div>
+              </el-option>
+              </el-select>
+              <div class="chezhiControlButton" @click="chezhiControl(0)">控制</div>
+            </div>
+
+            <div class="chezhiDrawerDirection">{{directionList[1].dictLabel}}</div>
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm1.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
+              >
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm1.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+              <el-option
+                v-for="item in chezhiStateList"
+                :key="item.Id"
+                :value="item.deviceState"
+                :label="item.stateName"
+              >
+                <div style="display:flex;align-items: center">
+                <el-image :src="item.url[0]" style="width:20px;height:20px"></el-image>
+                <el-image :src="item.url[1]" style="width:20px;height:20px"></el-image>
+                <div style="margin-left:4px">{{item.stateName}}</div>  
+                </div>
+              </el-option>
+              </el-select>
+              <div class="chezhiControlButton" @click="chezhiControl(1)">控制</div>
+            </div>
+            <!-- <div class="drawerBox">
               <div
                 v-for="(item, index) in directionList"
                 :key="index"
@@ -424,7 +500,7 @@
                 {{ item.dictLabel }}
               </div>
             </div>
-            <div style="width: 75%; height: 100%">
+            <div style="width: 75%; height: 25%">
               <div class="drawerCheckbox">
                 <el-checkbox-group v-model="checkList1">
                   <el-checkbox
@@ -457,7 +533,7 @@
                   >控制</el-button
                 >
               </div>
-            </div>
+            </div> -->
           </div>
         </el-drawer>
         <el-drawer
@@ -2550,6 +2626,7 @@ import {
   vehicleMonitoringInRecent24Hours,
   special,
   getDeviceData,
+  batchControlCarFinger
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -3016,6 +3093,49 @@ export default {
           label: "500",
         },
       ],
+      // 一键车道指示器 车道下拉框
+      chezhiLaneList:[],
+      chezhiLaneList1:[
+        {
+          laneId:1,
+          laneName:'一车道'
+        }
+      ],
+      chezhiLaneList2:[
+        {
+          laneId:1,
+          laneName:'一车道'
+        },
+        {
+          laneId:2,
+          laneName:'二车道'
+        },
+      ],
+      chezhiLaneList3:[
+        {
+          laneId:1,
+          laneName:'一车道'
+        },
+        {
+          laneId:2,
+          laneName:'二车道'
+        },
+        {
+          laneId:3,
+          laneName:'三车道'
+        },
+      ],
+      // 一键车指状态下拉框
+      chezhiStateList:[],
+      // 一键车道指示器表单
+      chezhiForm0:{
+        lane:[],
+        state:'',
+      },
+      chezhiForm1:{
+        lane:[],
+        state:'',
+      },
       lightControForm: {
         index: 0,
         lCDirection: "",
@@ -3217,7 +3337,7 @@ export default {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
     });
-
+    this.getTunnelState()
     //调取滚动条
     this.srollAuto();
   },
@@ -3425,6 +3545,55 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 抽屉车指批量控制 车道下拉框
+    getTunnelLane(){
+      this.chezhiLaneList = []
+      if(this.tunnelLane == 1){
+        this.chezhiLaneList = this.chezhiLaneList1
+      }else if(this.tunnelLane == 2){
+        this.chezhiLaneList = this.chezhiLaneList2
+      }else if(this.tunnelLane == 3){
+        this.chezhiLaneList = this.chezhiLaneList3
+      }
+    },
+    // 抽屉车指批量控制 状态下拉框
+    getTunnelState(){
+      const param = {
+        stateTypeId: 1,
+        isControl: 1,
+      };
+      getStateByData(param).then((response) => {
+        console.log(response, "查询设备状态图标");
+        // this.chezhiStateList = response.rows;
+        this.chezhiStateList = [];
+        for (let i = 0; i < response.rows.length; i++) {
+          let iconUrl = [];
+          if (response.rows[i].iFileList != null) {
+            for (let j = 0; j < response.rows[i].iFileList.length; j++) {
+              let img = response.rows[i].iFileList[j].url;
+              iconUrl.push(img);
+            }
+          }
+          this.chezhiStateList.push({
+            deviceState: response.rows[i].deviceState,
+            stateName: response.rows[i].stateName,
+            url: iconUrl,
+          });
+        }
+      });
+    },
+    // 控制按钮
+    chezhiControl(num){
+      const param = {
+        tunnelId:this.tunnelId,
+        direction:num,
+        state:this["chezhiForm"+num].state,
+        lane:this["chezhiForm"+num].lane,
+      }
+      batchControlCarFinger(param).then((res) =>{
+        console.log(res);
+      })
+    },
     getDeviceDataAndStateData() {
       getDeviceDataAndState(this.tunnelId).then((result) => {
         console.log(result, "批量控制");
@@ -4851,6 +5020,7 @@ export default {
           this.selectEquipmentType(this.currentTunnel.id);
           this.getTunnelData(this.currentTunnel.id);
         }
+        this.getTunnelLane()
       });
     },
     /* 查询设备类型*/
@@ -6637,20 +6807,24 @@ export default {
 }
 
 .drawerTop {
-  height: 21%;
-  top: 115px;
+  height: 62%;
+  top: 116px;
 }
 .drawerCenter {
-  height: 21%;
-  top: 33%;
+  height: 62%;
+  top: 116px;
+  // top: 33%;
+
 }
 .drawerBottom {
-  height: 20.4%;
-  top: 54%;
+  height: 62%;
+  top: 116px;
+  // top: 54%;
+
 }
 .drawerBox {
   width: 25%;
-  height: 100%;
+  height: 25%;
   align-items: center;
   .drawerDirection {
     width: 100%;
@@ -7862,7 +8036,31 @@ input {
   top: 0;
   left: 0;
 }
-
+.chezhiDrawerDirection{
+  width:100%;height:30px;background: #31628B;padding-left:10px;line-height:30px
+}
+.chezhiDrawerInfo{
+  width:100%;height:40px;padding:0 10px 0 5px ;display: flex;align-items:center;margin: 10px 0;
+  .chezhiName{
+    width:40px;
+    margin-left: 5px;
+  }
+  .chezhiLaneSelect{
+    width:136px;
+  }
+  .chezhiStateSelect{
+    width:100px;
+  }
+  .chezhiControlButton{
+    width:50px;
+    height:32px;
+    border:solid 1px #A3B7CF;
+    border-radius: 4px;
+    margin-left:8px;
+    text-align: center;
+    line-height: 31px;
+  }
+}
 /*单个设备配置框 */
 .workbench-dialog {
   // .el-dialog{

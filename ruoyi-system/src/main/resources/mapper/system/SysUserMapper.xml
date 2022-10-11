@@ -226,9 +226,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="userName != null and userName != ''">
 			AND u.user_name like concat('%', #{userName}, '%')
 		</if>
-		Limit 1
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
+		Limit 1
 	</select>
 
 </mapper>

@@ -17,7 +17,7 @@
             />
           </el-select>
           </el-form-item>
-    
+
         <el-form-item label="车型" prop="tunnelId">
           <el-select
             v-model="queryParams.vType"
@@ -55,23 +55,24 @@
           <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           <!-- <el-col :span="1.5"> -->
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['monitor:logininfor:export']"
-        >导出</el-button>
       <!-- </el-col> -->
         </el-form-item>
-        
-      </el-form>
 
-      <el-row :gutter="10" class="mb8">
+  </el-form>
+    <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:vehicle:add']">
+            新增
+          </el-button>
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:vehicle:export']"
+          >导出</el-button>
         </el-col>
         <div class="top-right-btn">
           <el-tooltip class="item" effect="dark" content="刷新" placement="top">
@@ -94,8 +95,8 @@
         <el-table-column label="技术状态描述" align="center" prop="statusDesc" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:material:edit']">修改</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:material:remove']">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:vehicle:edit']">修改</el-button>
+            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:vehicle:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -182,6 +183,7 @@ exportData,
 veicleOrgId
 } from "@/api/equipment/yingJiGou/emergencyVehicles";
   export default{
+    name: "Vehicle",
     data(){
       return{
         tunnelData:[{tunnelName:1,tunnelId:2}],
@@ -223,7 +225,7 @@ veicleOrgId
           statusDesc: [
             { required: true, message: '请输入技术状态描述', trigger: 'statusDesc' }
           ]
-          
+
         },
         open:false,
         orgData:'',
@@ -249,15 +251,15 @@ veicleOrgId
         this.exportLoading = false;
       }).catch(() => {});
     },
-      /** 查询应急机构列表 */     
+      /** 查询应急机构列表 */
      getList(queryParams={}) {
       handleQueryList(queryParams).then(res=>{
        if(res.code==200){
         this.mechanismList=res.rows
        }
-       
+
       })
-     this.loading = false;      
+     this.loading = false;
       },
       /** 搜索按钮操作 */
       handleQuery() {
@@ -342,7 +344,7 @@ veicleOrgId
         this.open = false;
         this.reset();
       },
-   
+
       /** 修改按钮操作 */
       handleUpdateMaterial(scope) {
         // this.reset();
@@ -353,7 +355,7 @@ veicleOrgId
         // console.log(scope,'row.idrow.id');
         editForm(scope.id).then(res => {
            if(res.code==200) {
-            this.form=res.data           
+            this.form=res.data
            }
           console.log(res,'sssssssssssssss');
           // this.form = response.data;
@@ -372,13 +374,13 @@ veicleOrgId
         }).then(function() {
           // return delMaterial(ids);
         }).then(() => {
-         
+
           deleteForm(row.id).then(res=>{
               conosole.log(res,'res')
               if(res.code==200){
                 this.getList()
               }
-          })         
+          })
           this.getList();
           this.$modal.msgSuccess("删除成功");
         }).catch(function() {});

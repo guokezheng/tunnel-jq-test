@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * 历史视频信息Controller
- * 
+ *
  * @author xuebi
  * @date 2020-11-20
  */
@@ -121,7 +121,7 @@ public class SdVedioRecordController extends BaseController
      * @return
      * @throws UnknownHostException
      */
-    @PreAuthorize("@ss.hasPermi('business:vediorecord:list')")
+//    @PreAuthorize("@ss.hasPermi('business:vediorecord:list')")
     @GetMapping("/getLocalIP")
     public String getLocalIP() throws UnknownHostException {
         String localIpByNetcard = InetAddress.getLocalHost().getHostAddress();

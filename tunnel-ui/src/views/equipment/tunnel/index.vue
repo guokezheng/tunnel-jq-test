@@ -260,7 +260,7 @@
 <script>
 import {listTunnels, getTunnels, delTunnels, addTunnels, updateTunnels} from "@/api/equipment/tunnel/api.js";
 import {listDept} from "@/api/system/dept";
-import {listUser} from "@/api/system/user";
+import {getUserDeptId} from "@/api/system/user";
 
 export default {
   name: "Tunnels",
@@ -370,7 +370,7 @@ export default {
       });
     },
     getUserDept() {
-      listUser(this.userQueryParams).then((response) => {
+      getUserDeptId(this.userQueryParams).then((response) => {
         this.userDeptId = response.rows[0].deptId;
         this.queryParams.deptId = response.rows[0].deptId;
         this.getList();

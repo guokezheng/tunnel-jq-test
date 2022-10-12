@@ -535,6 +535,9 @@
           this.$modal.msgError("请输入设备名称！");
           return;
         }
+        if (this.form.equipmentName.length >30 || this.form.brand.length>30) {
+          return;
+        }
         if (!this.form.brand) {
           this.$modal.msgError("请输入设备品牌！");
           return;

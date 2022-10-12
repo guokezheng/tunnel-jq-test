@@ -18,23 +18,28 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("分区Id")
     private Long sId;
 
-    /** 分区id */
-    @ApiModelProperty("分区方向")
-    private String direction;
-
-
-
     /** 分区名称 */
     @Excel(name = "分区名称")
     @ApiModelProperty("分区名称")
     private String sName;
 
+    @Excel(name = "隧道名称")
+    @ApiModelProperty("隧道名称")
+    private String tunnelName;
+
+    /** 分区id */
+    @Excel(name = "方向")
+    @ApiModelProperty("分区方向")
+    private String direction;
+
     @ApiModelProperty("隧道Id")
     private String tunnelId;
 
+    @Excel(name = "桩号下限")
     @ApiModelProperty("桩号下限")
     private String pileMin;
 
+    @Excel(name = "桩号上限")
     @ApiModelProperty("桩号上限")
     private String pileMax;
 
@@ -88,7 +93,7 @@ public class SdTunnelSubarea extends BaseEntity
     }
 
     //sd_tunnels   tunnel_name
-    private String tunnelName;
+    //private String tunnelName;
 
 
     public void setsId(Long sId)

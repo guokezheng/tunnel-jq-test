@@ -59,4 +59,6 @@ public interface SdEnvironmentConfigurationMapper
      * @return 结果
      */
     public int deleteSdEnvironmentConfigurationByIds(Long[] ids);
+
+    public List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList_exp(SdEnvironmentConfiguration sdEnvironmentConfiguration);
 }

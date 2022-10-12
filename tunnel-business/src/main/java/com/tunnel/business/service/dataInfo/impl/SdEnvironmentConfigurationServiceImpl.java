@@ -201,4 +201,24 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
     public int deleteSdEnvironmentConfigurationById(Long id) {
         return sdEnvironmentConfigurationMapper.deleteSdEnvironmentConfigurationById(id);
     }
+
+    /**
+     * 查询隧道环境配置列表-导出
+     *
+     * @param sdEnvironmentConfiguration 隧道环境配置
+     * @return 隧道环境配置
+     */
+    @Override
+    public List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList_exp(SdEnvironmentConfiguration sdEnvironmentConfiguration) {
+        List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationMapper.selectSdEnvironmentConfigurationList_exp(sdEnvironmentConfiguration);
+        list.forEach(e -> {
+            String fileId = e.getUrl();
+            if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                sdEquipmentStateIconFile.setStateIconId(e.getUrl());
+                e.setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+            }
+        });
+        return list;
+    }
 }

@@ -58,7 +58,7 @@
             </if>
             <if test="poll != null ">and t.poll = #{poll}</if>
             <if test="storeConfigure != null  and storeConfigure != ''">and t.store_configure = #{storeConfigure}</if>
-            <if test="deptId != null ">
+            <if test="deptId != null and deptId != ''">
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
             ${params.dataScope}

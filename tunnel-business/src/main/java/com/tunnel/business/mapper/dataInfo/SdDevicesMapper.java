@@ -176,4 +176,9 @@ public interface SdDevicesMapper
 	public int selectLaneSize();
 
 	public List<SdDevices> batchControlCarFinger(SdDevices sdDevices);
+
+	/*
+	 * 查询设备列表-导出
+	 */
+	public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 }

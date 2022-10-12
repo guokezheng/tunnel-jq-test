@@ -178,4 +178,11 @@ public interface ISdDevicesService {
      * @param tunnelId@return
      */
     public List<Map<String,Object>> getDeviceAndState(String tunnelId);
+
+    /**
+     * 查询设备管理列表-导出
+     * @param sdDevices
+     * @return
+     */
+    List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 }

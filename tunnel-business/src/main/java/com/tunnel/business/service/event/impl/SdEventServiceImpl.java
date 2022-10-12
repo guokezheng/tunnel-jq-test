@@ -147,6 +147,8 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> getEvent(SdEvent sdEvent) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdEvent.getParams().put("deptId", deptId);
         return sdEventMapper.getEvent(sdEvent);
     }
 

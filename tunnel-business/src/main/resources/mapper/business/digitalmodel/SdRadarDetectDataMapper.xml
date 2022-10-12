@@ -21,6 +21,7 @@
         <result property="detectTime" column="detect_time"/>
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
+        <result property="deptId" column="dept_id" />
     </resultMap>
 
     <sql id="selectSdRadarDetectDataVo" >
@@ -83,6 +84,9 @@
             </if>
             <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
                 and date(detect.detect_time) = curdate()
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (tunnul.dept_id = #{deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
         </where>
         order by detect.detect_time desc

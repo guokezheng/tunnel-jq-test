@@ -146,3 +146,11 @@ export function batchControlCarFinger(data) {
     data: data
   })
 }
+
+// 定时控制抽屉
+export function timingStrategyList(tunnelId,strategyType) {
+  return request({
+    url: '/strategy/list?tunnelId=' + tunnelId + "&strategyType=" + strategyType,
+    method: 'get',
+  })
+}

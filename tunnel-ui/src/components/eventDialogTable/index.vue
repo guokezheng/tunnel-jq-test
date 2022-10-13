@@ -118,7 +118,23 @@ export default {
       // showTable:false,
       eventTableDialog: false,
       activeName: "0",
-      tabList: [],
+      tabList: [
+        // {
+        //   dictLabel:'雷达',
+        //   dictValue:'1',
+        //   list:[
+        //     {
+        //       tunnels:{
+        //         tunnelName:'666'
+        //       },
+        //       eventType:{
+        //         eventType:'222'
+        //       },
+        //       stakeNum:1,
+        //     }
+        //   ]
+        // }
+      ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
     };
@@ -157,6 +173,9 @@ export default {
     bus.$on('closeTableDialog', () => {
        this.eventTableDialog = false
     })
+    bus.$on('openTableDialog', () => {
+       this.eventTableDialog = true
+    })
   },
   methods: {
     handleSee(id) {
@@ -181,6 +200,7 @@ export default {
             }
           })
         });
+        bus.$emit("getEvtList")
       } else {
         this.$modal.msgError("没有接收到事件id");
       }

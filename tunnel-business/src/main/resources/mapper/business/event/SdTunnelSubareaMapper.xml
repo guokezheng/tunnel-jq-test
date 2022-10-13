@@ -59,6 +59,13 @@
                b.tunnel_name
         from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        <where>
+            <if test="sName != null  and sName != ''">and a.s_name like concat('%', #{sName}, '%')</if>
+            <if test="tunnelId != null  and tunnelId != ''">and a.tunnel_id = #{tunnelId}</if>
+            <if test="direction != null  and direction != ''">and a.direction = #{direction}</if>
+            <if test="pileMax != null and pileMax != ''">and a.pile_max = #{pileMax}</if>
+            <if test="pileMin != null and pileMin != ''">and a.pile_min = #{pileMin}</if>
+        </where>
     </select>
 
     <select id="selectSdTunnelSubareaBySId" parameterType="Long" resultMap="SdTunnelSubareaResult">

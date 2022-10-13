@@ -97,9 +97,11 @@
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
                 and date_format(A.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
             </if>
-            order by A.start_time desc
-
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
+        order by A.start_time desc
     </select>
 
     <select id="selectSdEventById" parameterType="Long" resultMap="SdEventResult">

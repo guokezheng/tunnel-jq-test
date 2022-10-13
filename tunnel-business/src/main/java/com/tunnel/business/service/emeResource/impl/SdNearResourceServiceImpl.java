@@ -1,6 +1,7 @@
 package com.tunnel.business.service.emeResource.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.emeResource.SdNearResource;
 import com.tunnel.business.mapper.emeResource.SdNearResourceMapper;
 import com.tunnel.business.service.emeResource.ISdNearResourceService;
@@ -39,6 +40,8 @@ public class SdNearResourceServiceImpl implements ISdNearResourceService {
      */
     @Override
     public List<SdNearResource> selectSdNearResourceList(SdNearResource sdNearResource) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdNearResource.getParams().put("deptId", deptId);
         return sdNearResourceMapper.selectSdNearResourceList(sdNearResource);
     }
 

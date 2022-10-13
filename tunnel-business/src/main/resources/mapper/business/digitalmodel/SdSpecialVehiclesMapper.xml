@@ -59,6 +59,9 @@
             <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
                 and date(vehicle.start_time) = curdate()
             </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (tunnul.dept_id = #{params.deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         order by vehicle.start_time desc
     </select>

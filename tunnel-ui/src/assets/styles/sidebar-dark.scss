@@ -955,7 +955,15 @@
       }
     }
   }
-  
+  .drawerTop{
+    .chezhiDrawerDirection{
+      background: rgba($color: #0A88BD, $alpha: 0.7);
+    }
+    .chezhiControlButton{
+      background: #D8D8D8 linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+      color: white;
+    }
+  }
   
   
 }

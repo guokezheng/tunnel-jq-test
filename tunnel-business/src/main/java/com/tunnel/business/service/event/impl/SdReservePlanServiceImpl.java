@@ -114,6 +114,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public List<SdReservePlan> selectSdReservePlanList(SdReservePlan sdReservePlan) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdReservePlan.getParams().put("deptId", deptId);
         List<SdReservePlan> list = sdReservePlanMapper.selectSdReservePlanList(sdReservePlan);
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {

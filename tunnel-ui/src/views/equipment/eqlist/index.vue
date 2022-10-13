@@ -461,7 +461,7 @@
     </el-dialog>
 
     <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body>
+    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body class="zxc">
       <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
         :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :on-error="handleFileError"
@@ -639,6 +639,10 @@
               message: "请输入数字字母或横线",
             },
           ],
+          pileNum:[{
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          }],
           // fEqId: [{
           //   required: true,
           //   message: "请选择plc主机",
@@ -1129,7 +1133,9 @@
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
         this.$alert(response.msg, "导入结果", {
+          customClass :'el-message-box_style',
           dangerouslyUseHTMLString: true
+
         });
         this.getList();
       },
@@ -1198,7 +1204,7 @@
     },
   };
 </script>
-<style scoped>
+<style scoped lang="scss">
   .el-select-dropdown__item.selected{
     color: #606266;
     font-weight: 400;
@@ -1206,5 +1212,14 @@
   ::v-deep .el-dialog__body{
     max-height: 690px;
     overflow: auto;
+  }
+  
+</style>
+<style lang="scss">
+.el-message-box_style{
+    .el-message-box__content{
+      height: 500px !important;
+      overflow: auto !important;
+    }
   }
 </style>

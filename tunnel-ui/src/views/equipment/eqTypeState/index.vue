@@ -69,7 +69,7 @@
           <el-row>
             <el-col :span="6">
               <el-form-item label="设备类型" prop="stateTypeId">
-                <el-select v-model="form.stateTypeId" placeholder="请选择设备类型">
+                <el-select v-model="form.stateTypeId" placeholder="请选择设备类型" disabled>
                   <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
                 </el-select>
               </el-form-item>
@@ -463,6 +463,7 @@
             this.sid=2
           }else if(selection[0].stateType=='设备运行状态'){
              this.sid=1
+
           }
         }
         this.single = selection.length !== 1
@@ -490,9 +491,9 @@
           id=this.ids
         }
         console.log(row.stateType,'stateTypestateTypev')
-       if(row.stateType === '设备数据状态' && row.stateType) {
+       if((row.stateType === '设备数据状态' && row.stateType) || this.sid == 2) {
           staTyId=2
-       }else if(row.stateType === '设备运行状态' && row.stateType){
+       }else if((row.stateType === '设备运行状态' && row.stateType) || this.sid == 1){
         staTyId=1
        }else if(row.stateType ===undefined ){
         staTyId=0

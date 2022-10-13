@@ -248,7 +248,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -261,7 +261,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -456,7 +456,7 @@ export default {
       this.reset();
       this.open = true;
       // this.fileList = [];
-      // 每次点击新增重置上传图片数组      
+      // 每次点击新增重置上传图片数组
       this.title = "添加隧道环境配置";
     },
     uploadSuccess(){
@@ -509,6 +509,7 @@ export default {
               this.$refs.upload.clearFiles();
               this.getList();
             });
+            this.eqObj.uploadDisabled = false;
           }
         }
       });

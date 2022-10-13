@@ -564,7 +564,7 @@
               let r = that.svg.paper
                 .rect(
                   list[i].position.left - 10,
-                  list[i].position.top + iconHeight + 2,
+                  list[i].position.top + iconHeight+20,
                   80,
                   18,
                   2
@@ -575,8 +575,8 @@
               //桩号
               let t = that.svg.paper
                 .text(
-                  list[i].position.left,
-                  list[i].position.top + iconHeight + 16,
+                  list[i].position.left -10,
+                  list[i].position.top + iconHeight + 35,
                   list[i].pile
                 )
                 .attr({
@@ -602,7 +602,7 @@
             if (list[i].pile != "") {
               let r = that.svg.paper
                 .rect(
-                  list[i].position.left - 10,
+                  list[i].position.left ,
                   list[i].position.top + iconHeight + 2,
                   80,
                   18,
@@ -1457,7 +1457,7 @@
     float: left;
     width: 100%;
     white-space: nowrap;
-    overflow: hidden; //
+    overflow: hidden; 
     display: flex;
     flex-direction: row;
     // flex-wrap: wrap;

@@ -1,5 +1,6 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
@@ -40,6 +41,8 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      */
     @Override
     public List<Map<String,String>> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdRadarDetectData.setDeptId(deptId);
         return sdRadarDetectDataMapper.selectSdRadarDetectDataList(sdRadarDetectData);
     }
 

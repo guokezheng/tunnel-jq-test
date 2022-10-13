@@ -52,13 +52,21 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
      */
     @Override
     public int insertSdTunnels(SdTunnels sdTunnels) {
-        List<SdTunnels> tunnels = sdTunnelsMapper.selectSdTunnelsList(sdTunnels);
-        if (tunnels.size() > 0) {
-            throw new RuntimeException("当前隧道已经存在，请核对后重试！");
-        }
         SdTunnels tunnelsById = sdTunnelsMapper.selectSdTunnelsById(sdTunnels.getTunnelId());
         if (tunnelsById != null) {
             throw new RuntimeException("当前隧道ID已经存在，请核对后重试！");
+        }
+        SdTunnels onlyTunnelName = new SdTunnels();
+        onlyTunnelName.setTunnelName(sdTunnels.getTunnelName());
+        List<SdTunnels> tunnels = sdTunnelsMapper.verifyTunnelOnly(onlyTunnelName);
+        if (tunnels.size() > 0) {
+            throw new RuntimeException("当前隧道名称已经存在，请核对后重试！");
+        }
+        SdTunnels onlyDeptId = new SdTunnels();
+        onlyDeptId.setDeptId(sdTunnels.getDeptId());
+        tunnels = sdTunnelsMapper.verifyTunnelOnly(onlyDeptId);
+        if (tunnels.size() > 0) {
+            throw new RuntimeException("当前部门已添加隧道！");
         }
         sdTunnels.setCreateTime(DateUtils.getNowDate());
         return sdTunnelsMapper.insertSdTunnels(sdTunnels);

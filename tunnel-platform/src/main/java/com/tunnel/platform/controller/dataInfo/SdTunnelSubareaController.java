@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.dataInfo;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -45,9 +46,17 @@ public class SdTunnelSubareaController extends BaseController
     @PreAuthorize("@ss.hasPermi('tunnel:subarea:export')")
     @Log(title = "隧道分区", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(SdTunnelSubarea sdTunnelSubarea)
-    {
+    public AjaxResult export(SdTunnelSubarea sdTunnelSubarea) {
         List<SdTunnelSubarea> list = sdTunnelSubareaService.selectSdTunnelSubareaList(sdTunnelSubarea);
+        for(int i = 0;i<list.size();i++){
+            SdTunnelSubarea subarea = list.get(i);
+            String direction = subarea.getDirection();
+            if(StrUtil.isBlank(direction))
+                direction = "0";
+            direction = direction.equals("1")?"上行":"下行";
+            subarea.setDirection(direction);
+            list.set(i,subarea);
+        }
         ExcelUtil<SdTunnelSubarea> util = new ExcelUtil<SdTunnelSubarea>(SdTunnelSubarea.class);
         return util.exportExcel(list, "隧道分区数据");
     }

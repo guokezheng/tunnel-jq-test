@@ -76,6 +76,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (F.dept_id = #{params.deptId} OR F.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         group by A.id
         ORDER BY A.id DESC

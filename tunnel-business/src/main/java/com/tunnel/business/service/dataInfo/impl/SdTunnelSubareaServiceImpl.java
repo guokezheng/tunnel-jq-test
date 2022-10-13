@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
 import com.tunnel.business.mapper.event.SdReservePlanMapper;
@@ -48,6 +49,8 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      */
     @Override
     public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdTunnelSubarea.getParams().put("deptId", deptId);
         return sdTunnelSubareaMapper.selectSdTunnelSubareaLists(sdTunnelSubarea);
     }
 

@@ -156,7 +156,8 @@
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
 
-                <div
+                <div class="wrapper" id="eq-wrapper" @mousemove="onmousemove">
+                  <!-- <div
                   class="wrapper"
                   id="eq-wrapper"
                   @mousedown="dian"
@@ -164,7 +165,7 @@
                   @mouseup="li"
                   @mouseover="mouseoversImage"
                   @mouseleave="mouseleaveImage"
-                >
+                > -->
                   <!-- 鼠标移动时产生的蓝框 -->
                   <div
                     id="container"
@@ -412,9 +413,11 @@
           :append-to-body="true"
           class="drawerTop"
         >
-          <div style="width: 100%; height: 100%;position: relative;">
+          <div style="width: 100%; height: 100%; position: relative">
             <div class="jianbianLine"></div>
-            <div class="chezhiDrawerDirection">{{directionList[0].dictLabel}}</div>
+            <div class="chezhiDrawerDirection">
+              {{ directionList[0].dictLabel }}
+            </div>
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
               <el-select
@@ -437,23 +440,33 @@
                 size="small"
                 class="chezhiStateSelect"
               >
-              <el-option
-                v-for="item in chezhiStateList"
-                :key="item.Id"
-                :value="item.deviceState"
-                :label="item.stateName"
-              >
-                <div style="display:flex;align-items: center">
-                <el-image :src="item.url[0]" style="width:20px;height:20px"></el-image>
-                <el-image :src="item.url[1]" style="width:20px;height:20px"></el-image>
-                <div style="margin-left:4px">{{item.stateName}}</div>  
-                </div>
-              </el-option>
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
               </el-select>
-              <div class="chezhiControlButton" @click="chezhiControl(0)">控制</div>
+              <div class="chezhiControlButton" @click="chezhiControl(0)">
+                控制
+              </div>
             </div>
 
-            <div class="chezhiDrawerDirection">{{directionList[1].dictLabel}}</div>
+            <div class="chezhiDrawerDirection">
+              {{ directionList[1].dictLabel }}
+            </div>
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
               <el-select
@@ -476,64 +489,29 @@
                 size="small"
                 class="chezhiStateSelect"
               >
-              <el-option
-                v-for="item in chezhiStateList"
-                :key="item.Id"
-                :value="item.deviceState"
-                :label="item.stateName"
-              >
-                <div style="display:flex;align-items: center">
-                <el-image :src="item.url[0]" style="width:20px;height:20px"></el-image>
-                <el-image :src="item.url[1]" style="width:20px;height:20px"></el-image>
-                <div style="margin-left:4px">{{item.stateName}}</div>  
-                </div>
-              </el-option>
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
               </el-select>
-              <div class="chezhiControlButton" @click="chezhiControl(1)">控制</div>
-            </div>
-            <!-- <div class="drawerBox">
-              <div
-                v-for="(item, index) in directionList"
-                :key="index"
-                class="drawerDirection"
-              >
-                {{ item.dictLabel }}
+              <div class="chezhiControlButton" @click="chezhiControl(1)">
+                控制
               </div>
             </div>
-            <div style="width: 75%; height: 25%">
-              <div class="drawerCheckbox">
-                <el-checkbox-group v-model="checkList1">
-                  <el-checkbox
-                    v-for="(item, index) in tunnelLane"
-                    :key="index"
-                    :label="index + 1"
-                  >
-                  </el-checkbox>
-                </el-checkbox-group>
-                <el-button
-                  type="primary"
-                  class="control"
-                  @click="controlCheZhi('0')"
-                  >控制</el-button
-                >
-              </div>
-              <div class="drawerCheckbox" v-if="directionList.length > 1">
-                <el-checkbox-group v-model="checkList2">
-                  <el-checkbox
-                    v-for="(item, index) in tunnelLane"
-                    :key="index"
-                    :label="index + 1"
-                  >
-                  </el-checkbox>
-                </el-checkbox-group>
-                <el-button
-                  type="primary"
-                  class="control"
-                  @click="controlCheZhi('1')"
-                  >控制</el-button
-                >
-              </div>
-            </div> -->
           </div>
         </el-drawer>
         <el-drawer
@@ -543,193 +521,40 @@
           :append-to-body="true"
           class="drawerCenter"
         >
-          <div class="ledLighting">
-            <span>引道照明时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan1"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
+          <div v-for="(item, index) in timStrategyList" :key="index" style="width:100%;">
+            <div class="ledLighting">
+              <span>{{ item.strategyName }} </span>
+              <el-switch
+                v-model="item.strategyState"
+                active-color="#B6DEEE"
+                inactive-color="#B6DEEE"
+                active-value="0"
+                inactive-value="1"
               >
-              </el-time-picker>
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照明1时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan2"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan3"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照明2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan4"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>基本照明2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan5"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker
+                  v-model="item.createTime"
+                  size="mini"
+                  :clearable="false"
+                >
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker
+                  v-model="item.updateTime"
+                  size="mini"
+                  :clearable="false"
+                >
+                </el-time-picker>
+                <el-button type="primary" size="mini" class="handleLightClass" @click="timingStrategy(item)"
+                  >确定
+                </el-button>
+              </div>
             </div>
           </div>
         </el-drawer>
@@ -742,8 +567,7 @@
           class="drawerBottom"
         >
           <div
-            style="
-              height: 150px;
+            style="height: 150px;
               overflowy: auto;
               padding: 5px;
               padding-left: 10px;
@@ -755,9 +579,12 @@
                 color: #00c2ff;
               "
             >
-              <span style="padding-left: 5px">策略名称</span>
+              <span style="padding-left: 5px">预警类型</span>
               <span style="padding-left: 28px; line-height: 40px"
-                >策略信息</span
+                >触发值</span
+              >
+              <span style="padding-left: 28px; line-height: 40px"
+                >相关预案</span
               >
             </div>
             <div v-for="(item, index) in isDrawerCList" :key="index">
@@ -774,7 +601,10 @@
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.strategyName }}
                 </div>
-                <div>{{ itm }}</div>
+                <div style="width: 66px; margin-right: 5px; padding-left: 5px">
+                  {{' >200' }}
+                </div>
+                <div class="reservePlan">{{ itm }}</div>
               </div>
             </div>
           </div>
@@ -832,28 +662,30 @@
               class="listContent"
               :data="realTimeList"
             >
-            <div
-                v-for="(item, index) in realTimeList"
-                :key="index"
-                class="listRow"
-                style="display: flex;"
-              >
-                <div style="text-align: center; width: 15px;margin-left: 25px;">
-                  {{ index + 1 }}
-                </div>
-                <div style="width: 95px; text-align: center;margin-left:10px">
-                  {{ item.vehicleLicense }}
-                </div>
-                <div style="width: 112px; text-align: center;margin-left:30px">
-                  {{ item.speed }}km/h
-                </div>
-                <div style="width: 86px; text-align: center;margin-left:35px">
-                  {{ item.laneNum }}车道
-                </div>
-                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
+              <div
+                v-for="(item, index) in realTimeList"
+                :key="index"
+                class="listRow"
+                style="display: flex"
+              >
+                <div style="text-align: center; width: 15px; margin-left: 25px">
+                  {{ index + 1 }}
+                </div>
+                <div style="width: 95px; text-align: center; margin-left: 10px">
+                  {{ item.vehicleLicense }}
+                </div>
+                <div
+                  style="width: 112px; text-align: center; margin-left: 30px"
+                >
+                  {{ item.speed }}km/h
+                </div>
+                <div style="width: 86px; text-align: center; margin-left: 35px">
+                  {{ item.laneNum }}车道
+                </div>
+                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
                   {{ getCheXing(item.vehicleType) }}
                 </div> -->
-              </div>
+              </div>
             </vue-seamless-scroll>
           </div>
         </div>
@@ -2626,7 +2458,8 @@ import {
   vehicleMonitoringInRecent24Hours,
   special,
   getDeviceData,
-  batchControlCarFinger
+  batchControlCarFinger,
+  timingStrategyList,
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -2665,12 +2498,13 @@ export default {
   },
   data() {
     return {
+      timStrategyList:[],//定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
       tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
       brandList: [],
-      directionList: [], //设备方向字典
+      directionList: [{}, {}], //设备方向字典
       // coviVisible: false,
 
       // radioEqType31: 2,
@@ -2703,12 +2537,12 @@ export default {
       kaiGuan4: false,
       kaiGuan5: false,
       kaiGuan6: false,
-      checked1: false,
-      checked2: false,
-      checked3: false,
-      checked4: false,
-      checked5: false,
-      checked6: false,
+      // checked1: false,
+      // checked2: false,
+      // checked3: false,
+      // checked4: false,
+      // checked5: false,
+      // checked6: false,
       isDrawerCList: [],
 
       value1: new Date(),
@@ -3094,47 +2928,47 @@ export default {
         },
       ],
       // 一键车道指示器 车道下拉框
-      chezhiLaneList:[],
-      chezhiLaneList1:[
+      chezhiLaneList: [],
+      chezhiLaneList1: [
         {
-          laneId:1,
-          laneName:'一车道'
-        }
-      ],
-      chezhiLaneList2:[
-        {
-          laneId:1,
-          laneName:'一车道'
-        },
-        {
-          laneId:2,
-          laneName:'二车道'
+          laneId: 1,
+          laneName: "一车道",
         },
       ],
-      chezhiLaneList3:[
+      chezhiLaneList2: [
         {
-          laneId:1,
-          laneName:'一车道'
+          laneId: 1,
+          laneName: "一车道",
         },
         {
-          laneId:2,
-          laneName:'二车道'
+          laneId: 2,
+          laneName: "二车道",
+        },
+      ],
+      chezhiLaneList3: [
+        {
+          laneId: 1,
+          laneName: "一车道",
         },
         {
-          laneId:3,
-          laneName:'三车道'
+          laneId: 2,
+          laneName: "二车道",
+        },
+        {
+          laneId: 3,
+          laneName: "三车道",
         },
       ],
       // 一键车指状态下拉框
-      chezhiStateList:[],
+      chezhiStateList: [],
       // 一键车道指示器表单
-      chezhiForm0:{
-        lane:[],
-        state:'',
+      chezhiForm0: {
+        lane: [],
+        state: "",
       },
-      chezhiForm1:{
-        lane:[],
-        state:'',
+      chezhiForm1: {
+        lane: [],
+        state: "",
       },
       lightControForm: {
         index: 0,
@@ -3300,6 +3134,10 @@ export default {
     },
   },
   created: function () {
+    this.getDicts("sd_direction").then((data) => {
+      console.log(data, "方向");
+      this.directionList = data.data;
+    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -3325,10 +3163,7 @@ export default {
       console.log(data, "设备厂商");
       this.brandList = data.data;
     });
-    this.getDicts("sd_direction").then((data) => {
-      console.log(data, "方向");
-      this.directionList = data.data;
-    });
+
     this.getDicts("sd_monitor_state").then((data) => {
       console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
@@ -3337,7 +3172,7 @@ export default {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
     });
-    this.getTunnelState()
+    this.getTunnelState();
     //调取滚动条
     this.srollAuto();
   },
@@ -3546,18 +3381,18 @@ export default {
   },
   methods: {
     // 抽屉车指批量控制 车道下拉框
-    getTunnelLane(){
-      this.chezhiLaneList = []
-      if(this.tunnelLane == 1){
-        this.chezhiLaneList = this.chezhiLaneList1
-      }else if(this.tunnelLane == 2){
-        this.chezhiLaneList = this.chezhiLaneList2
-      }else if(this.tunnelLane == 3){
-        this.chezhiLaneList = this.chezhiLaneList3
+    getTunnelLane() {
+      this.chezhiLaneList = [];
+      if (this.tunnelLane == 1) {
+        this.chezhiLaneList = this.chezhiLaneList1;
+      } else if (this.tunnelLane == 2) {
+        this.chezhiLaneList = this.chezhiLaneList2;
+      } else if (this.tunnelLane == 3) {
+        this.chezhiLaneList = this.chezhiLaneList3;
       }
     },
     // 抽屉车指批量控制 状态下拉框
-    getTunnelState(){
+    getTunnelState() {
       const param = {
         stateTypeId: 1,
         isControl: 1,
@@ -3583,16 +3418,16 @@ export default {
       });
     },
     // 控制按钮
-    chezhiControl(num){
+    chezhiControl(num) {
       const param = {
-        tunnelId:this.tunnelId,
-        direction:num,
-        state:this["chezhiForm"+num].state,
-        lane:this["chezhiForm"+num].lane,
-      }
-      batchControlCarFinger(param).then((res) =>{
+        tunnelId: this.tunnelId,
+        direction: num,
+        state: this["chezhiForm" + num].state,
+        lane: this["chezhiForm" + num].lane,
+      };
+      batchControlCarFinger(param).then((res) => {
         console.log(res);
-      })
+      });
     },
     getDeviceDataAndStateData() {
       getDeviceDataAndState(this.tunnelId).then((result) => {
@@ -3600,19 +3435,32 @@ export default {
         this.BulkData = result.data;
       });
     },
-    // 抽屉 车指控制
-    controlCheZhi(num) {
-      console.log(num, "num");
-      console.log(this.checkList1, "checkList1");
-      console.log(this.checkList2, "checkList2");
-      // 上传成功后记得把this.checkList清空
+    // 定时控制
+    timingControl() {
+      const param = {
+        tunnelId: this.tunnelId,
+        strategyType: 3,
+      };
+      timingStrategyList(param).then((res) => {
+        console.log(res);
+      });
     },
+    timingStrategy(item){
+      console.log(item);
+    },
+    // // 抽屉 车指控制
+    // controlCheZhi(num) {
+    //   console.log(num, "num");
+    //   console.log(this.checkList1, "checkList1");
+    //   console.log(this.checkList2, "checkList2");
+    //   // 上传成功后记得把this.checkList清空
+    // },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
       bus.$emit("openPicDialog");
-      bus.$emit("getPicId",num);
+      bus.$emit("getPicId", num);
 
-      console.log(num,"num")
+      console.log(num, "num");
     },
     // 车型通过字典表获取值
     getCheXing(num) {
@@ -3694,19 +3542,23 @@ export default {
     //抽屉
     isDrawerA() {
       this.drawerA = true;
+      this.drawerB = false;
+      this.drawerCVisible = false;
     },
     isDrawerB() {
       this.drawerB = true;
-      listStrategy({
-        strategyType: 1,
-        tunnelId: this.currentTunnel.id,
-      }).then((response) => {
-        console.log(response, "定时任务抽屉");
-        // this.isDrawerCList = response.rows
+      this.drawerA = false;
+      this.drawerCVisible = false;
+      timingStrategyList(this.tunnelId, 3).then((res) => {
+        console.log(res);
+        this.timStrategyList = res.rows;
       });
     },
     isDrawerC() {
       this.drawerCVisible = true;
+      this.drawerA = false;
+      this.drawerB = false;
+
       listStrategy({
         strategyType: 2,
         tunnelId: this.currentTunnel.id,
@@ -4979,6 +4831,10 @@ export default {
         }
       }
     },
+    onmousemove(e) {
+      let et = e || window.event;
+      et.preventDefault(); // 阻止默认事件发生
+    },
     /* -------------------鼠标拖动end------------------*/
 
     /* 查询隧道列表 */
@@ -5020,7 +4876,8 @@ export default {
           this.selectEquipmentType(this.currentTunnel.id);
           this.getTunnelData(this.currentTunnel.id);
         }
-        this.getTunnelLane()
+        this.getTunnelLane();
+        // this.timingControl()
       });
     },
     /* 查询设备类型*/
@@ -5203,7 +5060,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              that.getRealTimeData()
+              that.getRealTimeData();
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -6809,18 +6666,21 @@ export default {
 .drawerTop {
   height: 62%;
   top: 116px;
+  right: 27px;
 }
 .drawerCenter {
   height: 62%;
   top: 116px;
-  // top: 33%;
+  right: 27px;
 
+  // top: 33%;
 }
 .drawerBottom {
   height: 62%;
   top: 116px;
-  // top: 54%;
+  right: 27px;
 
+  // top: 54%;
 }
 .drawerBox {
   width: 25%;
@@ -6933,7 +6793,7 @@ export default {
     }
   }
 
-  > .ledLighting {
+   .ledLighting {
     height: 36px;
     // background-color: #4EAACF;
     line-height: 40px;
@@ -6946,7 +6806,7 @@ export default {
     }
   }
 
-  > .Time {
+   .Time {
     display: flex;
     align-items: flex-start;
     height: 50px;
@@ -7951,6 +7811,19 @@ input {
   height: 40px;
   line-height: 40px;
 }
+.reservePlan{
+  cursor: pointer;
+  width:190px;
+  border-radius: 5px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.reservePlan:hover{
+  background: #00BBF5;
+  width:220px;
+
+}
 </style>
 <style lang="scss">
 .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
@@ -8036,27 +7909,35 @@ input {
   top: 0;
   left: 0;
 }
-.chezhiDrawerDirection{
-  width:100%;height:30px;background: #31628B;padding-left:10px;line-height:30px
+.chezhiDrawerDirection {
+  width: 100%;
+  height: 30px;
+  padding-left: 10px;
+  line-height: 30px;
 }
-.chezhiDrawerInfo{
-  width:100%;height:40px;padding:0 10px 0 5px ;display: flex;align-items:center;margin: 10px 0;
-  .chezhiName{
-    width:40px;
+.chezhiDrawerInfo {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px 0 5px;
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  .chezhiName {
+    width: 40px;
     margin-left: 5px;
   }
-  .chezhiLaneSelect{
-    width:136px;
+  .chezhiLaneSelect {
+    width: 136px;
   }
-  .chezhiStateSelect{
-    width:100px;
+  .chezhiStateSelect {
+    width: 100px;
   }
-  .chezhiControlButton{
-    width:50px;
-    height:32px;
-    border:solid 1px #A3B7CF;
-    border-radius: 4px;
-    margin-left:8px;
+  .chezhiControlButton {
+    width: 50px;
+    height: 32px;
+    // border:solid 1px #A3B7CF;
+    border-radius: 2px;
+    margin-left: 8px;
     text-align: center;
     line-height: 31px;
   }

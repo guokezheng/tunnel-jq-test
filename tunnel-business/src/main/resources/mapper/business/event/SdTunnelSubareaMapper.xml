@@ -59,6 +59,12 @@
                b.tunnel_name
         from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
+        <where>
+            1=1
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
+        </where>
     </select>
 
     <select id="selectSdTunnelSubareaBySId" parameterType="Long" resultMap="SdTunnelSubareaResult">

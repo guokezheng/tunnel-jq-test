@@ -836,6 +836,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<Map<String, Object>> getDeviceAndState(String tunnelId) {
         List<Map<String, Object>> deviceData = sdDevicesMapper.selectDeviceDataAndState(tunnelId);
+        if(deviceData.size()<1){
+            return null;
+        }
         int laneSize = sdDevicesMapper.selectLaneSize();
         // 根据方向进行分组
         Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {

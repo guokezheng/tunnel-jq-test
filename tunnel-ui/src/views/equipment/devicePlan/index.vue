@@ -77,53 +77,69 @@
       </el-table>
     </el-drawer>
 
-    <el-drawer class="zwsj" :title="drawerTitle" :visible.sync="open" :direction="direction" :before-close="handleClose" @close="handleDraClose">
+    <el-dialog :title="drawerTitle" :visible.sync="open" width="740px" append-to-body>
       <el-form ref="form1" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="设备名称" prop="equipmentName" style="width: 80%;">
-          <el-input v-model="form.equipmentName" placeholder="请输入设备名称" />
-        </el-form-item>
-        <el-form-item label="设备品牌" prop="brand" style="width: 80%;">
-          <el-input v-model="form.brand" placeholder="请输入设备品牌" />
-        </el-form-item>
-        <el-form-item label="设备型号" prop="model" style="width: 80%;">
-          <el-input v-model="form.model" placeholder="请输入设备型号" />
-        </el-form-item>
-        <el-form-item label="所属隧道" prop="tunnelId">
-          <el-select
-            v-model="form.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            style="width: 76%;"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="生产厂家" prop="manufacturer" style="width: 80%;">
-          <el-input v-model="form.manufacturer" placeholder="请输入生产厂家" />
-        </el-form-item>
-
-        <el-form-item label="相关文档" prop="equipmentLocation">
-          <el-upload style="width: 80%;" multiple class="upload-demo" ref="upload" :limit="5" action="http://xxx.xxx.xxx/personality/uploadExcel"
-            :on-preview="handlePreview" :on-change="handleChange" :on-remove="handleRemove" :on-exceed="handleExceed"
-            :file-list="fileList" :http-request="uploadFile" :auto-upload="false" >
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <span slot="tip" class="el-upload__tip" style="font-style: italic;color: #acacac;padding-left:5%;">*注*：上传文件不可超过1m</span>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark" style="width: 80%;">
-          <textarea class="el-textarea__inner" v-model="form.remark"  :rows="5" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item style="text-align: center;text-align: center;width: 100%;">
-          <el-button style="width: 30%;"  type="primary" @click="submitUpload" v-prevent-click>保 存</el-button>
-          <el-button style="width: 30%;" @click="drawerClose">取 消</el-button>
-        </el-form-item>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="设备名称" prop="equipmentName" style="width: 80%;">
+              <el-input v-model="form.equipmentName" placeholder="请输入设备名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备品牌" prop="brand" style="width: 80%;">
+              <el-input v-model="form.brand" placeholder="请输入设备品牌" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备型号" prop="model" style="width: 80%;">
+              <el-input v-model="form.model" placeholder="请输入设备型号" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="所属隧道" prop="tunnelId">
+              <el-select
+                v-model="form.tunnelId"
+                placeholder="请选择隧道"
+                clearable
+                style="width: 76%;"
+              >
+                <el-option
+                  v-for="item in tunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="生产厂家" prop="manufacturer" style="width: 80%;">
+              <el-input v-model="form.manufacturer" placeholder="请输入生产厂家" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="相关文档" prop="equipmentLocation">
+              <el-upload style="width: 80%;" multiple class="upload-demo" ref="upload" :limit="5" action="http://xxx.xxx.xxx/personality/uploadExcel"
+                         :on-preview="handlePreview" :on-change="handleChange" :on-remove="handleRemove" :on-exceed="handleExceed"
+                         :file-list="fileList" :http-request="uploadFile" :auto-upload="false" >
+                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                <span slot="tip" class="el-upload__tip" style="font-style: italic;color: #acacac;padding-left:5%;">*注*：上传文件不可超过1m</span>
+              </el-upload>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="备注" prop="remark" style="width: 80%;">
+              <textarea class="el-textarea__inner" v-model="form.remark"  :rows="5" placeholder="请输入备注" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-    </el-drawer>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitUpload" v-prevent-click>保 存</el-button>
+        <el-button @click="drawerClose">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 

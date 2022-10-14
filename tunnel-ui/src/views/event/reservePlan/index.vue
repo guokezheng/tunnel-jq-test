@@ -1290,6 +1290,19 @@ export default {
     // 上传到服务器
     async submitUpload() {
       console.log(this.reservePlanDrawForm.sId, "this.reservePlanDrawForm");
+      if (!this.reservePlanDrawForm.tunnelId) {
+        this.$modal.msgError("请选择所属隧道！");
+        return;
+      }
+      if (!this.reservePlanDrawForm.sId) {
+        this.$modal.msgError("请输入所属分区！");
+        return;
+      }
+      if (!this.reservePlanDrawForm.category) {
+        this.$modal.msgError("请输入预案类别！");
+        return;
+      }
+
       if (!this.reservePlanDrawForm.planTypeId) {
         this.$modal.msgError("请选择事件类型！");
         return;

@@ -25,6 +25,8 @@
         <result property="tunnelLength" column="tunnel_length"/>
         <result property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
+        <result property="startPile" column="start_pile" />
+        <result property="endPile" column="end_pile" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
         <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
             <result property="sId" column="s_id" />
@@ -41,7 +43,7 @@
     <sql id="selectSdTunnelsVo">
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
-               create_time, update_by, update_time, dept_id from sd_tunnels
+               create_time, update_by, update_time, dept_id,start_pile,end_pile from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
@@ -109,6 +111,8 @@
             <if test="updateTime != null">update_time,</if>
             <if test="tunnelLength != null">tunnel_length,</if>
             <if test="deptId != null">dept_id,</if>
+            <if test="startPile != null">start_pile,</if>
+            <if test="endPile != null">end_pile,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -130,6 +134,8 @@
             <if test="updateTime != null">#{updateTime},</if>
             <if test="tunnelLength != null">#{tunnelLength},</if>
             <if test="deptId != null">#{deptId},</if>
+            <if test="startPile != null">#{startPile},</if>
+            <if test="endPile != null">#{endPile},</if>
         </trim>
     </insert>
 
@@ -154,6 +160,8 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="tunnelLength != null">tunnel_length = #{tunnelLength},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="startPile != null">start_pile = #{startPile},</if>
+            <if test="endPile != null">end_pile = #{endPile},</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>

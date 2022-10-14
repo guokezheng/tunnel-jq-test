@@ -389,19 +389,12 @@
           console.log(that.dict.type.environment, '字典数据');
           console.log(that.dict.type.environment.length, '字典数据长度')
           if (that.dict.type.environment.length != response.rows.length) {
-            for (
-              let index = 0; index < that.dict.type.environment.length; index++
-            ) {
-              let obj = response.rows.filter(
-                (e) =>
-                e.environmentType == that.dict.type.environment[index].value
-              );
+            for (let index = 0; index < that.dict.type.environment.length; index++) {
+              let obj = response.rows.filter((e) => e.environmentType == that.dict.type.environment[index].value);
               console.log(obj, '符合条件的obj')
               if (obj == undefined) {
                 console.log(obj, '666666')
-                let one = [{
-                  url: [],
-                }, ];
+                let one = [{url: [],}, ];
                 that.Clist.push(one);
               } else {
                 that.Clist.push(obj);
@@ -419,7 +412,10 @@
             if (list[index][i].iFileList != null) {
               let imgUrl = [];
               for (let j = 0; j < list[index][i].iFileList.length; j++) {
-                let url = await that.picture(list[index][i].iFileList[j].url);
+                // let url = await that.picture(list[index][i].iFileList[j].url);
+
+                let url = list[index][i].iFileList[j].url
+
                 imgUrl.push(url);
               }
               list[index][i].url = imgUrl;
@@ -1457,7 +1453,7 @@
     float: left;
     width: 100%;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     // flex-wrap: wrap;

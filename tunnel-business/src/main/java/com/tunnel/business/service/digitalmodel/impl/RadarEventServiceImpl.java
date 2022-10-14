@@ -687,7 +687,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             }
         }
         JSONObject object = new JSONObject();
-        object.put("normal", normal);
+        object.put("onlineNum", normal);
         object.put("errorNum", errorNum);
         object.put("offlineNum", offlineNum);
         object.put("deviceList", list);

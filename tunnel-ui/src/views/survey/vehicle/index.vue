@@ -145,10 +145,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
+                v-for="item in vehicleTypeList"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
               />
             </el-select>
           </el-form-item>
@@ -255,6 +255,10 @@ import {
         console.log(res.data,"机构名称")
         this.orgData=res.data
       })
+      this.getDicts("sd_wj_vehicle_type").then((data) => {
+      console.log(data, "车型");
+      this.vehicleTypeList = data.data;
+    });
     },
     methods:{
        /** 导出按钮操作 */

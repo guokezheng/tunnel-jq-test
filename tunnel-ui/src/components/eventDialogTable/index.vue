@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog">
+    <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog" :modal-append-to-body='false' >
       <div class="title">
         事件详情
         <img
@@ -155,8 +155,8 @@ export default {
         }
       }
       console.log(this.tabList);
-      this.eventTableDialog = true;
-      this.showTable = true
+      // this.eventTableDialog = true;
+      // this.showTable = true
     },
     deep: true,
   },

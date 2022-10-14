@@ -92,6 +92,7 @@ export default {
   left: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
   box-shadow: 20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  padding-top: 25px;
 }
 .rightCharts {
   width: 20%;
@@ -101,5 +102,7 @@ export default {
   right: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
   box-shadow: -20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  padding-top: 25px;
+
 }
 </style>

@@ -5,9 +5,53 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
+        
+        <el-row
+          class="menu-b"
+          style="display: flex; align-items: center"
+          :style="isManagementStation ? 'padding-left:100px;' : ''"
+        >
+          <el-cascader
+            v-model="tunnelQueryParams.deptId"
+            :options="siteList"
+            :props="siteProps"
+            :show-all-levels="false"
+            @change="changeSite"
+            placeholder="请选择"
+            size="mini"
+            class="siteClass"
+            popper-class="popper-class-site"
+            v-show="!isManagementStation"
+          />
+          <el-button-group
+            class="menu-button-group"
+            style="margin-left: 3px"
+            :style="isManagementStation ? 'display: flex;' : ''"
+          >
+            <el-tooltip
+              class="item"
+              popper-class="wb-tip"
+              v-for="(item, index) in tunnelList"
+              :key="index"
+              effect="dark"
+              :content="item.tunnelLength"
+              placement="top-start"
+            >
+              <el-button
+                type="info"
+                size="mini"
+                @click="setTunnel(item, index)"
+                :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
+                style="display: flex; justify-content: center"
+              >
+                <div>{{ item.tunnelName }}</div>
+              </el-button>
+            </el-tooltip>
+          </el-button-group>
+        </el-row>
         <div
           class="flex-row"
-          style="position: absolute; right: 0px; top: 0.7vh; z-index: 8"
+          style="z-index: 8"
         >
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -79,54 +123,10 @@
             size="mini"
             icon="el-icon-tickets"
             @click="operationLogPage"
-            style="margin-right: 1vw"
           >
             操作日志
           </el-button>
         </div>
-        <el-row
-          class="menu-b"
-          style="display: flex; align-items: center"
-          :style="isManagementStation ? 'padding-left:100px;' : ''"
-        >
-          <el-cascader
-            v-model="tunnelQueryParams.deptId"
-            :options="siteList"
-            :props="siteProps"
-            :show-all-levels="false"
-            @change="changeSite"
-            placeholder="请选择"
-            size="mini"
-            class="siteClass"
-            popper-class="popper-class-site"
-            v-show="!isManagementStation"
-          />
-          <el-button-group
-            class="menu-button-group"
-            style="margin-left: 3px"
-            :style="isManagementStation ? 'display: flex;' : ''"
-          >
-            <el-tooltip
-              class="item"
-              popper-class="wb-tip"
-              v-for="(item, index) in tunnelList"
-              :key="index"
-              effect="dark"
-              :content="item.tunnelLength"
-              placement="top-start"
-            >
-              <el-button
-                type="info"
-                size="mini"
-                @click="setTunnel(item, index)"
-                :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
-                style="display: flex; justify-content: center"
-              >
-                <div>{{ item.tunnelName }}</div>
-              </el-button>
-            </el-tooltip>
-          </el-button-group>
-        </el-row>
       </div>
       <div class="vehicleLane">
         <div
@@ -515,7 +515,7 @@
           </div>
         </el-drawer>
         <el-drawer
-          title="照明亮度自动控制"
+          title="定时控制模块"
           :visible.sync="drawerB"
           :modal="false"
           :append-to-body="true"
@@ -3313,7 +3313,7 @@ export default {
       const topNav = this.$store.state.settings.topNav;
       const needTagsView = this.$store.state.settings.tagsView;
       let h = 0;
-      h += 66;
+      h += 51;
       if (!topNav) {
         if (needTagsView) h += 34;
       }
@@ -3447,6 +3447,8 @@ export default {
     },
     timingStrategy(item){
       console.log(item);
+      this.$modal.msgWarning("控制接口待开发");
+
     },
     // // 抽屉 车指控制
     // controlCheZhi(num) {
@@ -6560,9 +6562,9 @@ export default {
 <style lang="scss" scoped>
 .siblings {
   position: fixed;
-  top: 116px;
+  top: 62px;
   width: 100%;
-  height: 62%;
+  height: 65%;
 
   .eqTypeListClass {
     float: left;
@@ -6664,20 +6666,20 @@ export default {
 }
 
 .drawerTop {
-  height: 62%;
-  top: 116px;
+  height: 61.6%;
+  top: 113px;
   right: 27px;
 }
 .drawerCenter {
-  height: 62%;
-  top: 116px;
+  height: 61.6%;
+  top: 113px;
   right: 27px;
 
   // top: 33%;
 }
 .drawerBottom {
-  height: 62%;
-  top: 116px;
+  height: 61.6%;
+  top: 113px;
   right: 27px;
 
   // top: 54%;
@@ -6880,7 +6882,7 @@ export default {
 }
 
 .vehicleLane {
-  height: 68%;
+  height: 67%;
   align-items: center;
   width: 100%;
   display: flex;
@@ -6898,7 +6900,7 @@ export default {
 
 .el-input-number {
   width: 5.4vw;
-  line-height: 30px;
+  line-height: 28px;
 
   // .el-input-number__decrease, .el-input-number__increase {
   //   color: #e1feff;
@@ -7202,6 +7204,9 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
+  margin-top:10px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .flex-row {
@@ -7280,7 +7285,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
-  height: 30px;
+  height: 28px;
 }
 
 .menu-title {

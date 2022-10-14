@@ -26,7 +26,7 @@ export default {
     websocket({ password, path, port, interval }) {
       // 建立 websocket 连接
       this.socket.initialize({
-        url: "ws://10.168.56.206" + ":" + port + path,
+        url: "ws://10.168.65.230" + ":" + port + path,
         //  url: 'ws://10.168.64.171'+ ':' + port + path,
         //  url: 'ws://10.168.65.230'+ ':' + port + path,
 

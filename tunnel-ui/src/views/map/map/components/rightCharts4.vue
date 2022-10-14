@@ -83,7 +83,7 @@ export default {
   .titleIcon {
     position: absolute;
     top: 0;
-    right: 18px;
+    right: 0;
     height: 30px;
   }
   .blueLine {

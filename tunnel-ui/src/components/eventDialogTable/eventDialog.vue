@@ -167,7 +167,6 @@ export default {
       }
     },
     init(id) {
-      console.log(id, "init三图一视页面接收事件id");
       if (id) {
         const param = {
           id: id,
@@ -175,12 +174,11 @@ export default {
         listEvent(param).then((response) => {
           if(response.rows.length>0){
             this.eventMes = response.rows[0];
-          console.log(this.eventMes, "responseresponseresponse");
 
           }
         });
-      }
       this.getUrl(id);
+      }
       this.eventPicDialog = true;
     },
     getUrl(id) {
@@ -208,7 +206,6 @@ export default {
         eventState: "2",
       };
       updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
         this.$modal.msgSuccess("已成功忽略");
       });
       }

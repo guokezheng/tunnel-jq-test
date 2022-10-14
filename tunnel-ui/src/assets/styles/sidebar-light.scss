@@ -341,7 +341,9 @@
   }
   .topNav_head{
     background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:65px;
-    background-color: #010913;
+    // background-color: #010913;
+    position: relative;
+    z-index: 1;
     }
     .yuntaiPic,.jiaJian{
       > div:nth-of-type(1),
@@ -673,7 +675,7 @@
       }
     }
     .el-input__inner {
-      height: 32px;
+      height: 28px;
       padding: 0;
       color: #e1feff;
       background: linear-gradient(2deg, #00070D, #005AA8);

@@ -68,15 +68,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdWarningInfoList" parameterType="SdWarningInfo" resultMap="SdWarningInfoResult">
         select A.id, A.tunnel_id, A.warning_name, A.warning_time, A.infor_sources, A.process_state,
         		A.handler, A.remark, A.create_by, A.create_time, A.update_by, A.update_time ,A.warning_type_id,
-        		A.position, A.picture, A.vedio, A.starts, A.ignores, A.handles, A.capture_id, A.linked_camera, F.dict_label AS hole_direction,
+        		A.position, A.picture, A.vedio, A.starts, A.ignores, A.handles, A.capture_id, A.linked_camera, A.hole_direction,
         		B.nick_name, C.tunnel_name, D.cam_name, E.type_name, A.eq_id, A.event_end_time
         from sd_warning_info A
         left join sys_user B on A.handler = B.user_name
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
         left join sd_camera_details D on A.linked_camera = D.id
         left join sd_warning_type E on A.warning_type_id = E.id
-        LEFT JOIN sys_dict_data F ON A.hole_direction = F.dict_value
-        AND F.dict_type = 'sd_direction'
         <where>
             <if test="inforSources != null  and inforSources != ''"> and A.infor_sources like concat('%', #{inforSources}, '%')</if>
             <if test="warningName != null  and warningName != ''"> and A.warning_name like concat('%', #{warningName}, '%')</if>

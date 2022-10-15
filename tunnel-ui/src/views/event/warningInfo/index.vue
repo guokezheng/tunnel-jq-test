@@ -173,11 +173,11 @@
           <span>{{ parseTime(scope.row.warningTime, '{y}-{m}-{d}') }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column
-        label="方向"
-        align="center"
-        prop="holeDirection"
-      />
+      <el-table-column label="方向" align="center" prop="holeDirection">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sd_direction" :value="scope.row.holeDirection"/>
+        </template>
+      </el-table-column>
       <el-table-column
         label="预警内容"
         align="center"
@@ -787,6 +787,8 @@ import {
 import { download } from "@/utils/request";
 export default {
   name: "WarningInfo",
+  //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
+  dicts: [ 'sd_direction','brand','sd_lane','sd_use_status','sd_is_monitor','inductionlamp_control_type'],
   watch: {
     drawer(val) {
       if (!val) {
@@ -1212,7 +1214,7 @@ export default {
     eventGradeFormat(row, column) {
       return this.selectDictLabel(this.eventGradeOptions, row.eventGrade);
     },
-    /*holeDirectionFormat(row) {
+    holeDirectionFormat(row) {
       if (row.holeDirection === "Y") {
         return (this.queryParams.holeDirection = "下行");
       } else if (row.holeDirection === "Z") {
@@ -1223,7 +1225,7 @@ export default {
       // } else if (row.holeDirection === "S") {
       //   return (this.queryParams.holeDirection = "南口");
       // }
-    },*/
+    },
     // 取消按钮
     close() {
       this.open = false;

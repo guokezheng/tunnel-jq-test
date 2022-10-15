@@ -153,10 +153,6 @@
               style="width: 100%"
             >
               <el-option
-                v-for="dict in dict.type.sd_use_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
                 v-for="item in vehicleTypeList"
                 :key="item.dictValue"
                 :label="item.dictLabel"

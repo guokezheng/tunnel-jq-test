@@ -26,7 +26,7 @@
             style="width: 100%"
           >
             <el-option
-              v-for="dict in dict.type.sd_use_status"
+              v-for="dict in dict.type.sd_wj_vehicle_type"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
@@ -104,7 +104,7 @@
         <el-table-column label="车牌" align="center" prop="plateNumber" />
         <el-table-column label="车型" align="center" prop="vType">
           <template slot-scope="scope">
-            <dict-tag :options="dict.type.sd_use_status" :value="scope.row.useStatus"/>
+            <dict-tag :options="dict.type.sd_wj_vehicle_type" :value="scope.row.vType"/>
           </template>
         </el-table-column>
         <el-table-column label="存放地点" align="center" prop="vPlace" />
@@ -153,10 +153,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in vehicleTypeList"
-                :key="item.dictValue"
-                :label="item.dictLabel"
-                :value="item.dictValue"
+                v-for="dict in dict.type.sd_wj_vehicle_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
               />
             </el-select>
           </el-form-item>
@@ -209,7 +209,7 @@ import {
 } from "@/api/surveyVehicle/api.js";
 
   export default{
-    dicts: ["sd_use_status"],
+    dicts: ["sd_use_status","sd_wj_vehicle_type"],
     data(){
       return{
         tunnelData:[{tunnelName:1,tunnelId:2}],
@@ -345,7 +345,7 @@ import {
       submitForm() {
       this.$refs["form"].validate(async valid => {
           if (valid) {
-            if ( this.title == '修改应急资源') {
+            if ( this.title == '修改应急车辆') {
               console.log(this.form,'formfffffff');
               await updateForm(this.form).then(response => {
                 if (response.code === 200) {

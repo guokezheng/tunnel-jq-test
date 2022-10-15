@@ -238,7 +238,7 @@
             >删除
           </el-button>
           <el-button
-            v-hasPermi="['business:plan:remove']"
+            v-hasPermi="['business:plan:config']"
             icon="el-icon-guide"
             size="mini"
             type="text"
@@ -647,9 +647,7 @@
       </el-form>
       <el-form-item style="text-align: right; width: 100%"> </el-form-item>
       <div slot="footer" class="dialog-footer">
-        <el-button style="width: 10%" type="primary" @click="submitstrategy"
-          >保存</el-button
-        >
+        <el-button style="width: 10%" type="primary" v-hasPermi="['plan:process:add']" @click="submitstrategy">保存</el-button>
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
       </div>
     </el-dialog>

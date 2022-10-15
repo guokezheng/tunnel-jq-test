@@ -174,10 +174,9 @@
         </template> -->
       </el-table-column>
       <el-table-column
-        label="车洞"
+        label="方向"
         align="center"
         prop="holeDirection"
-        :formatter="holeDirectionFormat"
       />
       <el-table-column
         label="预警内容"
@@ -1213,7 +1212,7 @@ export default {
     eventGradeFormat(row, column) {
       return this.selectDictLabel(this.eventGradeOptions, row.eventGrade);
     },
-    holeDirectionFormat(row) {
+    /*holeDirectionFormat(row) {
       if (row.holeDirection === "Y") {
         return (this.queryParams.holeDirection = "下行");
       } else if (row.holeDirection === "Z") {
@@ -1224,7 +1223,7 @@ export default {
       // } else if (row.holeDirection === "S") {
       //   return (this.queryParams.holeDirection = "南口");
       // }
-    },
+    },*/
     // 取消按钮
     close() {
       this.open = false;

@@ -49,7 +49,7 @@
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
         select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
         t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
-        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name, ifnull(i.security_percentage,'0') security_percentage
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,ifnull(i.security_percentage,'0') security_percentage
         from sd_tunnels t
         left join sys_dept d on t.dept_id = d.dept_id
         left join sd_safety_index i on i.tunnel_id = t.tunnel_id
@@ -161,7 +161,7 @@
             <if test="tunnelLength != null">tunnel_length = #{tunnelLength},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="startPile != null">start_pile = #{startPile},</if>
-            <if test="endPile != null">end_pile = #{endPile},</if>
+            <if test="endPile != null">end_pile = #{endPile}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>

@@ -18,7 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdEmergencyPerVo">
-        select a.id, a.tunnel_id,b.tunnel_name, a.user_name,a.group_name, a.phone, a.create_by, a.update_time, a.create_time, a.update_by
+        select a.id, a.tunnel_id,b.tunnel_name, a.user_name,a.group_name, a.phone, a.create_by,
+        a.update_time, a.create_time, a.update_by
         from sd_emergency_per a left join sd_tunnels b on a.tunnel_id = b.tunnel_id
     </sql>
 
@@ -26,6 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdEmergencyPerVo"/>
         <where>
             <if test="tunnelId != null  and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
+            <if test="userName != null  and userName != ''"> and a.user_name = #{userName}</if>
+            <if test="groupName != null  and groupName != ''"> and a.group_name = #{groupName}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>

@@ -305,7 +305,7 @@ import {
       resetQuery() {
         this.resetForm("queryForm");
         this.$refs.queryForm.resetFields()
-        this.queryForm = {
+        this.queryParams = {
           pageNum: 1,
           pageSize: 10,
          orgName:null,

@@ -447,28 +447,6 @@ export default {
         eqDirection: this.strategyForm.direction,
       }).then((res) => {
         let data = res.rows;
-        if (this.chooseEq && this.strategyForm.autoControl.length > 1) {
-          if (this.strategyForm.strategyType != "0") {
-            var currentList = this.strategyForm.autoControl;
-          }
-          let newData = [];
-          for (let i = 0; i < currentList.length; i++) {
-            newData += currentList[i].value + ",";
-          }
-          newData = newData.split(",");
-          //此处处理为只能选择相同设备
-          for (let i = 0; i < data.length; i++) {
-            data[i].disabled = true;
-            for (let z = 0; z < newData.length; z++) {
-              if (data[i].eqId == newData[z]) {
-                data[i].disabled = false;
-                console.log(data[i].disabled);
-              }
-            }
-          }
-          this.equipmentData = data;
-          this.$forceUpdate();
-        }
         this.equipmentData = data;
         this.$forceUpdate();
       });
@@ -481,28 +459,7 @@ export default {
         eqDirection: this.strategyForm.direction,
       }).then((res) => {
         let data = res.rows;
-        if (this.strategyForm.autoControl.length > 1) {
-          var currentList = this.strategyForm.autoControl;
-          let newData = [];
-          for (let i = 0; i < currentList.length; i++) {
-            newData += currentList[i].value + ",";
-          }
-          newData = newData.split(",");
-          console.log(newData);
-          for (let i = 0; i < data.length; i++) {
-            for (let z = 0; z < newData.length; z++) {
-              if (data[i].eqId == newData[z]) {
-                data[i].disabled = false;
-              } else {
-                data[i].disabled = true;
-              }
-            }
-          }
-          this.equipmentData = data;
-          this.$forceUpdate();
-        } else {
-          this.equipmentData = data;
-        }
+        this.equipmentData = data;
       });
     },
     // 打开选择设备弹窗

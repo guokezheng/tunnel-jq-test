@@ -1721,6 +1721,9 @@ export default {
     margin-right: 8px;
     padding-left: 20px;
   }
+  .endButton .ButtonBox:nth-child(2n) {
+    margin-left: 5%;
+  }
   .endButton {
     width: 100%;
     height: 65px;
@@ -1729,9 +1732,10 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     .ButtonBox {
-      width: 32%;
+      width: 45%;
       height: 100%;
       border-radius: 4px;
+      float: left;
       .recovery {
         width: 100%;
         height: 45%;

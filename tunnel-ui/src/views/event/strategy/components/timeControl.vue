@@ -425,6 +425,9 @@ export default {
     // 添加执行操作
     addItem() {
       this.addCf();
+      if (this.strategyForm.autoControl.length == 2) {
+        return this.$modal.msgError("最多添加2条数据");
+      }
       this.strategyForm.autoControl.push({
         timeControl: new Date(2016, 9, 10, 18, 40),
         value: "",

@@ -1213,7 +1213,7 @@
     max-height: 690px;
     overflow: auto;
   }
-  
+
 </style>
 <style lang="scss">
 .el-message-box_style{

@@ -586,10 +586,12 @@
         </el-row>
       </div>
     </div>
+    <work-bench ref="workBench"></work-bench>
   </div>
 </template>
 
 <script>
+import workBench from "@/views/event/reservePlan/workBench";
 import { mapState } from "vuex";
 import $ from "jquery";
 import { icon, laneImage } from "../../../utils/configData.js";
@@ -618,6 +620,9 @@ import {
 } from "@/api/event/reserveProcess";
 export default {
   name: "dispatch",
+  components: {
+    workBench,
+  },
   data() {
     return {
       active: "2",
@@ -971,57 +976,14 @@ export default {
         this.planList1 = result.data;
       });
     },
-    // 预览
+    // 预览按钮
     getPreview(row) {
-      previewDisplay(row.id).then((res) => {
-        this.previewList = res;
-        var deviceList = [];
-        for (let i = 0; i < this.previewList.length; i++) {
-          var item = this.previewList[i].strategyRl;
-          for (let z = 0; z < item.length; z++) {
-            var arr = this.previewList[i].iFileList[z];
-            if (item[z].equipments.indexOf(",")) {
-              deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            } else {
-              deviceList.push({
-                list: item[z].equipments,
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            }
-          }
-        }
-        this.deviceList = deviceList;
-        this.ChangeDeviceState();
+      this.$nextTick(() => {
+        this.$refs.workBench.id = row.id; //预案ID
+        this.$refs.workBench.tunnelId = this.eventMsg.tunnelId;
+        this.$refs.workBench.init();
       });
-      this.workbenchOpen = true;
-    },
-    ChangeDeviceState() {
-      for (let i = 0; i < this.selectedIconList.length; i++) {
-        for (let x = 0; x < this.deviceList.length; x++) {
-          var eqType = this.selectedIconList[i].eqType;
-          if ((eqType ?? "") !== "") {
-            if (eqType == this.deviceList[x].eqId) {
-              var brr = this.deviceList[x].list;
-              for (let p = 0; p < brr.length; p++) {
-                if (this.selectedIconList[i].eqId == brr[p]) {
-                  this.selectedIconList[i].url = [];
-                  let url = this.deviceList[x].file;
-                  url.forEach((item) => {
-                    this.selectedIconList[i].url.push(item.url);
-                  });
-                }
-              }
-            }
-          }
-        }
-      }
+      // this.workbenchOpen = true;
     },
     /** 查询应急人员信息列表 */
     getpersonnelList() {

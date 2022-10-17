@@ -520,7 +520,7 @@
           <el-col :span="13" style="height: 100%">
             <!-- 事件流程 -->
             <div class="rightBox processBox">
-              <el-steps :active="active">
+              <el-steps :active="eventMsg.eventState">
                 <el-step title="事件预警" icon="el-icon-edit"></el-step>
                 <el-step title="事故确认" icon="el-icon-upload"></el-step>
                 <el-step title="处置中" icon="el-icon-picture"></el-step>
@@ -625,7 +625,6 @@ export default {
   },
   data() {
     return {
-      active: "2",
       timer: null,
       eqTypeStateList: null,
       eventMsg: null,
@@ -761,6 +760,7 @@ export default {
         id: this.$route.query.id,
       };
       listEvent(param).then((response) => {
+        console.log(response, "事件详情");
         this.eventForm = response.rows[0];
         this.eventForm.eventType = response.rows[0].eventType.eventType;
         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;

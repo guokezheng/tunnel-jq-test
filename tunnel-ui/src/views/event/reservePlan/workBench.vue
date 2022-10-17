@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-10-17 16:01:29
+ * @LastEditTime: 2022-10-17 17:30:44
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -92,7 +92,7 @@ export default {
   data() {
     return {
       tunnelId: "", //隧道id
-      id: "", //事件id
+      id: "", //预案id
       workbenchOpen: false,
       selectedIconList: null, //设备图标渲染数据
       previewList: null, //预览数据
@@ -113,23 +113,22 @@ export default {
           //存在配置内容
           if (res != null && res != "" && res != undefined) {
             res = JSON.parse(res);
-            listType({ isControl: 1 })
-              .then((response) => {
-                var arr = [];
-                for (let item1 of response.rows) {
-                  for (let item of res.eqList) {
-                    item.focus = false;
-                    if (item1.typeId == item.eqType) {
-                      item.iconWidth = Number(item1.iconWidth);
-                      item.iconHeight = Number(item1.iconHeight);
-                      arr.push(item);
-                    }
+            listType({ isControl: 1 }).then((response) => {
+              var arr = [];
+              for (let item1 of response.rows) {
+                for (let item of res.eqList) {
+                  item.focus = false;
+                  if (item1.typeId == item.eqType) {
+                    item.iconWidth = Number(item1.iconWidth);
+                    item.iconHeight = Number(item1.iconHeight);
+                    arr.push(item);
                   }
                 }
-                this.selectedIconList = arr; //这是最终需要挂载到页面上的值
-                console.log(this.selectedIconList, "this.selectedIconList");
-              })
-              .then(() => {});
+              }
+              this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+              this.getPreview();
+              console.log(this.selectedIconList, "this.selectedIconList");
+            });
           } else {
             //不存在
             that.selectedIconList = [];
@@ -143,15 +142,14 @@ export default {
           console.log(this.selectedIconList, "当前隧道设备");
         }
       });
-      this.getPreview();
     },
     getPreview() {
       previewDisplay(this.id).then((res) => {
         this.previewList = res;
-        console.log(this.previewList);
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl;
+          console.log(item);
           for (let z = 0; z < item.length; z++) {
             var arr = this.previewList[i].iFileList[z];
             if (item[z].equipments.indexOf(",")) {

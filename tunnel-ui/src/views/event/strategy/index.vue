@@ -191,7 +191,7 @@
       :title="title"
       :visible.sync="dialogVisible"
       :before-close="handleClose"
-      :append-to-body='true'
+      :append-to-body="true"
     >
       <el-form ref="strategyForm" :model="strategyForm" label-width="100px">
         <el-form-item label="策略类型" prop="strategyType">
@@ -465,9 +465,10 @@ export default {
     openInsertStrategy() {
       this.title = "新增策略";
       this.dialogVisible = true;
-      this.$nextTick(() => {
-        this.$refs.manualControl.sink = "add";
-      });
+      this.sink = "add";
+      // this.$nextTick(() => {
+      //
+      // });
     },
     /** 编辑修改按钮操作 */
     handleUpdate(row) {
@@ -484,21 +485,22 @@ export default {
     strategyTypeClose(row) {
       switch (this.strategyForm.strategyType) {
         case "0":
-          console.log(this.strategyForm.strategyType);
+          this.$refs.manualControl.sink = this.sink;
           this.$refs.manualControl.init();
           if (this.sink == "edit") {
             console.log(this.$refs, "ppppppppp");
-            this.$refs.manualControl.sink = "edit";
+            // this.$refs.manualControl.sink = "edit";
             this.$refs.manualControl.id = row.id;
             this.$refs.manualControl.getStrategyData(row);
           }
           break;
 
         case "1":
+          this.$refs.timingControl.sink = this.sink;
           this.$refs.timingControl.init();
           if (this.sink == "edit") {
             this.$nextTick(() => {
-              this.$refs.timingControl.sink = "edit";
+              // this.$refs.timingControl.sink = "edit";
               this.$refs.timingControl.id = row.id;
               this.$refs.timingControl.getStrategyData(row);
             });
@@ -506,15 +508,23 @@ export default {
           break;
 
         case "2":
+          this.$refs.autoControl.sink = this.sink;
           this.$refs.autoControl.init();
           if (this.sink == "edit") {
-            this.$refs.autoControl.sink = "edit";
+            // this.$refs.autoControl.sink = "edit";
             this.$refs.autoControl.id = row.id;
             this.$refs.autoControl.getStrategyData(row);
           }
           break;
 
         case "3":
+          this.$refs.timeControl.sink = this.sink;
+          this.$refs.timeControl.init();
+          if (this.sink == "edit") {
+            // this.$refs.timeControl.sink = "edit";
+            this.$refs.timeControl.id = row.id;
+            this.$refs.timeControl.getStrategyData(row);
+          }
           break;
       }
     },

@@ -51,7 +51,7 @@ public class SdWarningTypeServiceImpl implements ISdWarningTypeService {
                 for (int i = 0; i < planIdArray.length; i++) {
                     SdReservePlan plan = sdReservePlanMapper.selectSdReservePlanById(Long.parseLong(planIdArray[i]));
                     if (plan != null) {
-                        planInfo = planInfo + (i + 1) + "、" + plan.getPlanName();
+                        planInfo = planInfo.concat((i + 1) + "").concat("、").concat(plan.getPlanName() + " ");
                     }
                 }
                 s.setReservePlanInfo(planInfo);

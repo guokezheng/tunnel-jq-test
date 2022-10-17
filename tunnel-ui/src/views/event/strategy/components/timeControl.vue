@@ -58,11 +58,12 @@
           <div>
             <el-form-item style="width: 100%">
               <el-time-picker
+                arrow-control
                 v-model="item.timeControl"
                 :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
+                  selectableRange: '06:30:00 - 18:30:00',
                 }"
-                placeholder="任意时间点"
+                placeholder="请选择时间"
               >
               </el-time-picker>
               <el-input
@@ -217,7 +218,7 @@ export default {
         direction: "", //方向
         autoControl: [
           {
-            timeControl: new Date(2016, 9, 10, 18, 40), //时间范围
+            timeControl: new Date(2022, 9, 10, 18, 40), //时间范围
             value: "", //设备
             state: "", //状态
             type: "", //设备分类

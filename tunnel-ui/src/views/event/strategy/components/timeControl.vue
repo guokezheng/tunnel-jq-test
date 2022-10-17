@@ -58,13 +58,11 @@
           <div>
             <el-form-item style="width: 100%">
               <el-time-picker
-                style="width: 30%"
-                is-range
                 v-model="item.timeControl"
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-                placeholder="选择时间范围"
+                :picker-options="{
+                  selectableRange: '18:30:00 - 20:30:00',
+                }"
+                placeholder="任意时间点"
               >
               </el-time-picker>
               <el-input
@@ -219,7 +217,7 @@ export default {
         direction: "", //方向
         autoControl: [
           {
-            timeControl: "", //时间范围
+            timeControl: new Date(2016, 9, 10, 18, 40), //时间范围
             value: "", //设备
             state: "", //状态
             type: "", //设备分类
@@ -348,7 +346,7 @@ export default {
     },
     //二次弹窗选择设备提交按钮
     submitChooseEqForm() {
-      // 1.赋值 2.比对之前的是否重复   3.根据设备类型查询控制状态  66666
+      // 1.赋值 2.比对之前的是否重复   3.根据设备类型查询控制状态
       let index = this.strategyForm.autoControl.length - 1; //求最后一位
       this.strategyForm.autoControl[index].value = this.eqForm.equipments;
       this.strategyForm.autoControl[index].type = this.eqForm.equipment_type;
@@ -427,7 +425,7 @@ export default {
     addItem() {
       this.addCf();
       this.strategyForm.autoControl.push({
-        timeControl: "",
+        timeControl: new Date(2016, 9, 10, 18, 40),
         value: "",
         state: "",
         type: "",
@@ -457,10 +455,13 @@ export default {
             newData += currentList[i].value + ",";
           }
           newData = newData.split(",");
+          //此处处理为只能选择相同设备
           for (let i = 0; i < data.length; i++) {
+            data[i].disabled = true;
             for (let z = 0; z < newData.length; z++) {
               if (data[i].eqId == newData[z]) {
-                data[i].disabled = true;
+                data[i].disabled = false;
+                console.log(data[i].disabled);
               }
             }
           }
@@ -479,8 +480,8 @@ export default {
         eqDirection: this.strategyForm.direction,
       }).then((res) => {
         let data = res.rows;
-        if (this.strategyForm.manualControl.length > 1) {
-          var currentList = this.strategyForm.manualControl;
+        if (this.strategyForm.autoControl.length > 1) {
+          var currentList = this.strategyForm.autoControl;
           let newData = [];
           for (let i = 0; i < currentList.length; i++) {
             newData += currentList[i].value + ",";
@@ -490,6 +491,8 @@ export default {
           for (let i = 0; i < data.length; i++) {
             for (let z = 0; z < newData.length; z++) {
               if (data[i].eqId == newData[z]) {
+                data[i].disabled = false;
+              } else {
                 data[i].disabled = true;
               }
             }

@@ -505,8 +505,8 @@ export default {
         eqDirection: this.strategyForm.direction,
       }).then((res) => {
         let data = res.rows;
-        if (this.strategyForm.manualControl.length > 1) {
-          var currentList = this.strategyForm.manualControl;
+        if (this.strategyForm.autoControl.length > 1) {
+          var currentList = this.strategyForm.autoControl;
           let newData = [];
           for (let i = 0; i < currentList.length; i++) {
             newData += currentList[i].value + ",";

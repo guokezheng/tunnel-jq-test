@@ -30,7 +30,10 @@ html {
   >div:nth-of-type(1){
     height: 100%;
     .main-container{
-      height: calc(100% - 65px);
+      height: calc(100% - 51px);
+    transform: translateY(-14px);
+    // border: solid 1px red;
+      
       .app-main{
         height:calc(100% - 60px);
       }

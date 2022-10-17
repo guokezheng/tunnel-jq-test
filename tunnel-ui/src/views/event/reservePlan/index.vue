@@ -238,7 +238,7 @@
             >删除
           </el-button>
           <el-button
-            v-hasPermi="['business:plan:remove']"
+            v-hasPermi="['business:plan:config']"
             icon="el-icon-guide"
             size="mini"
             type="text"
@@ -647,9 +647,7 @@
       </el-form>
       <el-form-item style="text-align: right; width: 100%"> </el-form-item>
       <div slot="footer" class="dialog-footer">
-        <el-button style="width: 10%" type="primary" @click="submitstrategy"
-          >保存</el-button
-        >
+        <el-button style="width: 10%" type="primary" v-hasPermi="['plan:process:add']" @click="submitstrategy">保存</el-button>
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
       </div>
     </el-dialog>
@@ -1290,6 +1288,19 @@ export default {
     // 上传到服务器
     async submitUpload() {
       console.log(this.reservePlanDrawForm.sId, "this.reservePlanDrawForm");
+      if (!this.reservePlanDrawForm.tunnelId) {
+        this.$modal.msgError("请选择所属隧道！");
+        return;
+      }
+      if (!this.reservePlanDrawForm.sId) {
+        this.$modal.msgError("请输入所属分区！");
+        return;
+      }
+      if (!this.reservePlanDrawForm.category) {
+        this.$modal.msgError("请输入预案类别！");
+        return;
+      }
+
       if (!this.reservePlanDrawForm.planTypeId) {
         this.$modal.msgError("请选择事件类型！");
         return;

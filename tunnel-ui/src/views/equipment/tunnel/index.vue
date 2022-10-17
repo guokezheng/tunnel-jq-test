@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true"  :rules="rules" v-show="showSearch" label-width="80px">
       <el-form-item label="隧道名称" prop="tunnelId">
         <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
           <el-option v-for="item in tunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>
@@ -87,6 +87,8 @@
       <el-table-column label="隧道所名称" align="center" prop="tunnelStationName" /> -->
       <el-table-column label="车道数量" align="center" prop="lane"/>
       <el-table-column label="隧道长度(米)" align="center" prop="tunnelLength" width="200"/>
+      <el-table-column label="隧道开始桩号" align="center" prop="startPile" width="180"/>
+      <el-table-column label="隧道结束桩号" align="center" prop="endPile" width="180"/>
       <el-table-column label="三维坐标" align="center" prop="coordinates"/>
       <el-table-column label="所属部门" align="center" prop="deptName"/>
       <!--      <el-table-column label="备注" align="center" prop="remake" />-->
@@ -208,6 +210,23 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="开始桩号" prop="startPile">
+              <el-col :span="22">
+                <el-input v-model="form.startPile" placeholder="请输入开始桩号"/>
+              </el-col>
+              <el-col :span="2">
+                <!-- <p>米</p> -->
+              </el-col>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="结束桩号" prop="endPile">
+              <el-input v-model="form.endPile" placeholder="请输入结束桩号"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="所属部门" prop="deptId">
               <el-select v-model="form.deptId" placeholder="请选择所属部门" clearable size="small" style="width: 100%">
                 <el-option v-for="item in deptsData" :key="item.deptId" :label="item.deptName"
@@ -320,6 +339,8 @@ export default {
       // 表单校验
       rules: {
         tunnelName: [{required: true, message: '请填写隧道名称', trigger: 'blur'}],
+        startPile: [{required: true, message: '请填写隧道开始桩号', trigger: 'blur'}],
+        endPile: [{required: true, message: '请填写隧道结束桩号', trigger: 'blur'}],
         tunnelAddress: [{required: true, message: '请填写隧道地址', trigger: 'blur'}],
         lane: [{required: true, message: '请选择车道数目', trigger: 'change'}],
         tunnelId: [{required: true, message: '请填写隧道ID', trigger: 'blur'}],
@@ -427,6 +448,8 @@ export default {
         storeConfigure: null,
         createBy: null,
         createTime: null,
+        endPile: null,
+        startPile: null,
         updateBy: null,
         updateTime: null
       };
@@ -479,6 +502,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if(!new RegExp('^[1-9][0-9]*$').test(this.form.startPile) || !new RegExp('^[1-9][0-9]*$').test(this.form.startPile) ){
+            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            return;
+          }
           if (this.oper == "edit") {
             updateTunnels(this.form).then(response => {
               if (response.code === 200) {

@@ -81,7 +81,7 @@
           <el-col :span="13">
             <el-form-item label="风速:">
               {{ fengValue }}
-              <span style="padding-left:5px">m/s</span>
+              <span style="padding-left:5px" v-if="fengValue">m/s</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">

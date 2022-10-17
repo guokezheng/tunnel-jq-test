@@ -26,7 +26,7 @@
         <el-input style="width:200px;" v-model.number="queryParams.stagPointName" placeholder="请输入机构名称" size="small" />
       </el-form-item>
       <el-form-item label="姓名"  prop="stagPointName">
-          <el-input style="width:200px;" v-model.number="queryParams.stagPointName" placeholder="请输入人员姓名" size="small" />
+          <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
       </el-form-item>
       <el-form-item label="岗位" prop="tunnelId">
         <el-select
@@ -316,6 +316,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      console.log(this.queryParams)
       this.getList();
     },
     /** 重置按钮操作 */

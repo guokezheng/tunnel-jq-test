@@ -769,17 +769,7 @@ export default {
         process:0,
         bl:0
       },
-      urls: [
-        {
-          imgUrl: require("@/assets/Example/pic1.jpg"),
-        },
-        {
-          imgUrl: require("@/assets/Example/pic1.jpg"),
-        },
-        {
-          imgUrl: require("@/assets/Example/pic1.jpg"),
-        },
-      ],
+      urls: [],
 
       videoUrl: "",
       // 管理机构

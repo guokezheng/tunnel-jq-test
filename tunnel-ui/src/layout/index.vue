@@ -282,8 +282,8 @@ export default {
   methods: {
     openEventTitleDialog() {
       if(this.eventDialogTable == false){
-        this.eventDialogTable = true;
         bus.$emit("openTableDialog");
+        this.eventDialogTable = true;
       }
     },
     getRoute(path) {
@@ -332,10 +332,9 @@ export default {
       document.getElementsByTagName("body")[0].className = val;
     },
     sdEventList(event) {
-      var eventList = []
-      eventList = eventList.push(event)
-      this.eventValue += eventList.length
-      if(this.eventValue == 0){
+      this.eventValue += event.length
+      if(this.eventValue > 0){ 
+        this.$forceUpdate()
         this.badgeHidden = false
       }
     },
@@ -353,7 +352,6 @@ export default {
     // 关闭列表弹窗
     bus.$on("closeDialog", (e) => {
       if (e == false) {
-        console.log("layout关闭表格弹窗");
         this.eventDialogTable = false;
       }
     });
@@ -363,7 +361,6 @@ export default {
     });
     // 关闭三图一视弹窗
     bus.$on("closePicDialog", () => {
-      console.log("关闭三图一视弹窗");
       this.eventDialogPic = false;
     });
     // 事件表格忽略后 右上角数字跟着改

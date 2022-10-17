@@ -4,8 +4,9 @@
       :model="queryParams"
       ref="queryForm"
       :inline="true"
+      :rules="rules"
       v-show="showSearch"
-      label-width="68px"
+      label-width="80px"
     >
       <el-form-item label="分区名称" prop="sName">
         <el-input
@@ -251,9 +252,12 @@ export default {
         tunnelId: [
           { required: true, message: "请选择隧道名称", trigger: "change" },
         ],
-        sName: [
-          { required: true, message: "请输入分区名称", trigger: "change" },
+        pileMin: [
+          { required: true, message: "请输入桩号下限", trigger: "blur" },
         ],
+        pileMax: [
+          { required: true, message: "请输入桩号上限", trigger: "blur" },
+        ]
       },
 
       tunnelData: [],
@@ -350,6 +354,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          if(!new RegExp('^[1-9][0-9]*$').test(this.form.pileMax) || !new RegExp('^[1-9][0-9]*$').test(this.form.pileMin) ){
+            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            return;
+          }
           if (this.form.sId != null) {
             updateSubarea(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");

@@ -17,7 +17,7 @@
             />
           </el-select>
           </el-form-item>
-    
+
         <el-form-item label="车型" prop="tunnelId">
           <el-select
             v-model="queryParams.vType"
@@ -26,10 +26,10 @@
             style="width: 100%"
           >
             <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+              v-for="dict in dict.type.sd_wj_vehicle_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
             />
           </el-select>
         </el-form-item>
@@ -44,10 +44,10 @@
             style="width: 100%"
           >
             <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+              v-for="dict in dict.type.sd_use_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
             />
           </el-select>
         </el-form-item>
@@ -55,10 +55,10 @@
           <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
           <!-- <el-col :span="1.5"> -->
-        
+
       <!-- </el-col> -->
         </el-form-item>
-        
+
       </el-form>
 
       <el-row :gutter="10" class="mb8">
@@ -102,9 +102,17 @@
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="机构" align="center" prop="orgName" />
         <el-table-column label="车牌" align="center" prop="plateNumber" />
-        <el-table-column label="车型" align="center" prop="vType" />
+        <el-table-column label="车型" align="center" prop="vType">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.sd_wj_vehicle_type" :value="scope.row.vType"/>
+          </template>
+        </el-table-column>
         <el-table-column label="存放地点" align="center" prop="vPlace" />
-        <el-table-column label="使用状态" align="center" prop="useStatus"  />
+        <el-table-column label="使用状态" align="center" prop="useStatus">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.sd_use_status" :value="scope.row.useStatus"/>
+          </template>
+        </el-table-column>
         <el-table-column label="车载终端安装" align="center" prop="terminalInstall" />
         <el-table-column label="技术状态描述" align="center" prop="statusDesc" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -145,10 +153,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
+                v-for="dict in dict.type.sd_wj_vehicle_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
               />
             </el-select>
           </el-form-item>
@@ -164,10 +172,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
+                v-for="dict in dict.type.sd_use_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
               />
             </el-select>
           </el-form-item>
@@ -201,6 +209,7 @@ import {
 } from "@/api/surveyVehicle/api.js";
 
   export default{
+    dicts: ["sd_use_status","sd_wj_vehicle_type"],
     data(){
       return{
         tunnelData:[{tunnelName:1,tunnelId:2}],
@@ -242,7 +251,7 @@ import {
           statusDesc: [
             { required: true, message: '请输入技术状态描述', trigger: 'statusDesc' }
           ]
-          
+
         },
         open:false,
         orgData:'',
@@ -255,6 +264,10 @@ import {
         console.log(res.data,"机构名称")
         this.orgData=res.data
       })
+      this.getDicts("sd_wj_vehicle_type").then((data) => {
+      console.log(data, "车型");
+      this.vehicleTypeList = data.data;
+    });
     },
     methods:{
        /** 导出按钮操作 */
@@ -268,15 +281,15 @@ import {
         this.exportLoading = false;
       }).catch(() => {});
     },
-      /** 查询应急机构列表 */     
+      /** 查询应急机构列表 */
      getList(queryParams={}) {
       handleQueryList(queryParams).then(res=>{
        if(res.code==200){
         this.mechanismList=res.rows
        }
-       
+
       })
-     this.loading = false;      
+     this.loading = false;
       },
       /** 搜索按钮操作 */
       handleQuery() {
@@ -288,7 +301,7 @@ import {
       resetQuery() {
         this.resetForm("queryForm");
         this.$refs.queryForm.resetFields()
-        this.queryForm = {
+        this.queryParams = {
           pageNum: 1,
           pageSize: 10,
          orgName:null,
@@ -306,7 +319,7 @@ import {
       handleAdd() {
         this.reset();
         this.open = true;
-        this.title = "添加应急资源";
+        this.title = "添加应急车辆";
       },
       // 表单重置
       reset() {
@@ -332,7 +345,7 @@ import {
       submitForm() {
       this.$refs["form"].validate(async valid => {
           if (valid) {
-            if ( this.title == '修改应急资源') {
+            if ( this.title == '修改应急车辆') {
               console.log(this.form,'formfffffff');
               await updateForm(this.form).then(response => {
                 if (response.code === 200) {
@@ -361,18 +374,18 @@ import {
         this.open = false;
         this.reset();
       },
-   
+
       /** 修改按钮操作 */
       handleUpdateMaterial(scope) {
         // this.reset();
         // const id = row.id || this.ids
         console.log(scope,'scope');
         this.open=true
-        this.title='修改应急资源'
+        this.title='修改应急车辆'
         // console.log(scope,'row.idrow.id');
         editForm(scope.id).then(res => {
            if(res.code==200) {
-            this.form=res.data           
+            this.form=res.data
            }
           console.log(res,'sssssssssssssss');
           // this.form = response.data;

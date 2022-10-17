@@ -788,7 +788,7 @@ import { download } from "@/utils/request";
 export default {
   name: "WarningInfo",
   //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
-  dicts: [ 'sd_direction','brand','sd_lane','sd_use_status','sd_is_monitor','inductionlamp_control_type'],
+  dicts: ['sd_direction'],
   watch: {
     drawer(val) {
       if (!val) {

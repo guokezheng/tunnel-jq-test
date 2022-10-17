@@ -65,7 +65,7 @@ export default {
   position: relative;
   width: 35%;
   height: 100%;
-  line-height: 60px;
+  line-height: 76px;
   // background: #2b2f3a;
   text-align: center;
   overflow: hidden;

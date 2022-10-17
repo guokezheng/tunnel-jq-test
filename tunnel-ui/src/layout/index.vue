@@ -81,12 +81,15 @@
                 : 'margin-left:0px;'
             "
           >
+          <!-- <div :class=""> -->
+          <div :class="getRoute2($route.path)?'noSeparate':'separate'" >
+
             <breadcrumb
               :style="'display:' + getRoute($route.path) + ';'"
               ref="Breadcrumb"
               id="breadcrumb-container"
               class="breadcrumb-container"
-              style="margin-left: 20px"
+              
             />
             <app-main />
             <right-panel>
@@ -104,6 +107,7 @@
               ref="picDialog"
             ></event-dialog>
             <event-dialogTable v-show="eventDialogTable"></event-dialogTable>
+          </div>
           </div>
         </template>
       </div>
@@ -206,6 +210,7 @@ export default {
       tunnelStyle: null,
       eventDialogPic: false,
       eventDialogTable: false,
+      routePath:['/index','/map/map/index','/emergency/administration/dispatch','/map/map3d/index','/energy']
     };
   },
   mixins: [ResizeMixin],
@@ -298,6 +303,20 @@ export default {
         return "none";
       } else {
         return "block";
+      }
+    },
+    getRoute2(path){
+      var arr = [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ];
+      if (arr.includes(path)) {
+        return true;
+      } else {
+        return false;
       }
     },
     // style="$route.path == '/index'?'display:none;':$route.path == '/map/map/index' ?

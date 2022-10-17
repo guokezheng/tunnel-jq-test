@@ -116,6 +116,7 @@
             </el-row>
           </template>
           <template v-else>
+            <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
             <el-row v-for="(item,index) in equipmentStates" :key="index">
               <el-col :span="3">
                 <el-form-item label="设备状态" prop="deviceState">
@@ -162,9 +163,9 @@
                 </el-form-item>                 
               </el-col>
               
-              <el-col :span="1">
+              <!-- <el-col :span="1">
                 <div class="dialogButton" @click="addFrom()">添加</div>
-              </el-col>
+              </el-col> -->
               <el-col :span="1">
                 <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
               </el-col>
@@ -869,10 +870,17 @@
   height: 24px;
   border: solid 1px #ccc;
   border-radius: 4px;
-  text-align: center;
-  line-height: 24px;
   font-size: 12px;
   margin-top: 5px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.addFormButton{
+  position: absolute;
+  top: 55px;
+  left: 25%;
+  
 }
 </style>

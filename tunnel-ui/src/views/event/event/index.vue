@@ -1,24 +1,12 @@
 <template>
   <div class="app-container">
-    <div
-      style="
-        display: flex;
-        font-size: 16px;
-        width: 100%;
-        justify-content: space-between;
-      "
-    >
-      <div style="line-height: 60px">事件预警统计:</div>
-      <el-card class="card-box">
-        今日累计预警事件: {{ eventMsg.allnum }}</span>
-      </el-card>
-      <el-card class="card-box">
-        今日执行预警事件: {{ eventMsg.process }}
-      </el-card>
-      <el-card class="card-box">
-        今日预警事件执行率: {{ eventMsg.bl }}
-      </el-card>
+    <div style="display: flex;font-size: 14px;width: 100%;align-items: center;">
+      <div class="warningStatistics">事件预警统计:</div>
+      <div class="EquipStatistics">今日累计预警事件: <span>{{eventMsg.allnum}}</span></div>
+      <div class="EquipStatistics">今日执行预警事件: <span>{{eventMsg.process}}</span></div>
+      <div class="EquipStatistics">今日预警事件执行率: <span>{{eventMsg.bl}}</span></div>
     </div>
+   
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -160,12 +148,14 @@
       v-loading="loading"
       :data="eventList"
       :default-sort="{ prop: 'eventTime', order: 'descending' }"
-      height="600"
+      max-height="600"
+      ref='tableRef' 
     >
       <el-table-column
         label="隧道名称"
         align="center"
         prop="tunnels.tunnelName"
+        
       />
       <el-table-column
         label="所属机构"
@@ -938,6 +928,9 @@ export default {
       listEvent(this.addDateRange(this.queryParams)).then((response) => {
         console.log(response.rows, "查询事件管理列表");
         this.eventList = response.rows;
+        this.$nextTick(() => {
+          this.$refs.tableRef.doLayout()
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -1162,4 +1155,27 @@ hr {
   text-align: center;
   font-weight: bold;
 }
+
+.EquipStatistics{
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+    >span{
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+  }
+  .warningStatistics{
+    line-height: 60px;
+    font-size: 14px;
+    color: #606266;
+    font-weight: 700;
+  }
 </style>

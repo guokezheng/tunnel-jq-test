@@ -42,7 +42,7 @@
                 size="mini"
                 @click="setTunnel(item, index)"
                 :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
-                style="display: flex; justify-content: center"
+                style="display: flex; justify-content: center;height:32px;line-height: 20px;font-size: 15px;"
               >
                 <div>{{ item.tunnelName }}</div>
               </el-button>
@@ -394,7 +394,7 @@
           "
         >
           <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>一键车道控制模块
+            <i class="el-icon-caret-left"></i>车道控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
@@ -3313,7 +3313,7 @@ export default {
       const topNav = this.$store.state.settings.topNav;
       const needTagsView = this.$store.state.settings.tagsView;
       let h = 0;
-      h += 51;
+      h += 72;
       if (!topNav) {
         if (needTagsView) h += 34;
       }
@@ -5063,6 +5063,11 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
+              for(var itt of res.eqList){
+                if(itt.eqType == 5){
+                  console.log(itt,"ittittittitt");
+                }
+              }
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -5278,7 +5283,8 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if (deviceData.eqType == 19) {
+                    if(deviceData.eqStatus == 1){
+                      if (deviceData.eqType == 19) {
                       this.selectedIconList[j].num =
                         "CO:" +
                         parseFloat(deviceData.CO).toFixed(2) +
@@ -5301,6 +5307,8 @@ export default {
                           parseFloat(deviceData.DNLD).toFixed(2) + "lux";
                       }
                     }
+                    }
+                    
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -6562,9 +6570,9 @@ export default {
 <style lang="scss" scoped>
 .siblings {
   position: fixed;
-  top: 62px;
+  top: 130px;
   width: 100%;
-  height: 65%;
+  height: 61.8%;
 
   .eqTypeListClass {
     float: left;
@@ -6577,7 +6585,7 @@ export default {
 
   //车道控制
   .indicatorLight {
-    width: 25px;
+    width: 37px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6586,15 +6594,17 @@ export default {
     );
     color: white;
     writing-mode: vertical-lr;
-    text-align: center;
     letter-spacing: 5px;
-    font-size: 13px;
+    font-size: 18px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   //照明控制
   .brightnessControl {
-    width: 25px;
+    width: 37px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6607,8 +6617,11 @@ export default {
     text-align: center;
     //文字间隔
     letter-spacing: 5px;
-    font-size: 13px;
+    font-size: 18px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .el-icon-close:before {
@@ -6617,7 +6630,7 @@ export default {
 }
 // 触发控制模块
 .triggerControl {
-  width: 25px;
+  width: 37px;
   height: 33%;
   background: linear-gradient(
     90deg,
@@ -6630,8 +6643,11 @@ export default {
   text-align: center;
   //文字间隔
   letter-spacing: 5px;
-  font-size: 13px;
+  font-size: 18px;
   cursor: pointer;
+  display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 //抽屉的高度
@@ -6666,21 +6682,21 @@ export default {
 }
 
 .drawerTop {
-  height: 61.6%;
-  top: 113px;
-  right: 27px;
+  height: 59%;
+  top: 134px;
+  right: 38px;
 }
 .drawerCenter {
-  height: 61.6%;
-  top: 113px;
-  right: 27px;
+  height: 59%;
+  top: 134px;
+  right: 38px;
 
   // top: 33%;
 }
 .drawerBottom {
-  height: 61.6%;
-  top: 113px;
-  right: 27px;
+  height: 59%;
+  top: 134px;
+  right: 38px;
 
   // top: 54%;
 }
@@ -6882,7 +6898,7 @@ export default {
 }
 
 .vehicleLane {
-  height: 67%;
+  height: 68%;
   align-items: center;
   width: 100%;
   display: flex;
@@ -7018,10 +7034,10 @@ export default {
 .leftButtonS {
   position: relative;
   left: 0px;
-  font-size: 16px;
-  width: 110px;
-  height: 4vh;
-  line-height: 4vh;
+  font-size: 18px;
+  width: 125px;
+  height: 46px;
+  line-height: 46px;
   font-weight: 500;
   caret-color: rgba(0, 0, 0, 0);
   text-align: center;
@@ -7204,14 +7220,16 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
-  margin-top:10px;
+  margin-top:6px;
   display: flex;
   justify-content: space-between;
 }
 
 .flex-row {
   display: flex;
-  flex-direction: row;
+  // flex-direction: row;
+  height: 32px;
+  align-items: center;
 }
 
 .my-back {
@@ -7285,7 +7303,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
-  height: 28px;
+  height: 32px;
 }
 
 .menu-title {

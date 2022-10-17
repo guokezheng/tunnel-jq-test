@@ -42,9 +42,8 @@ router.beforeEach((to, from, next) => {
       // 在免登录白名单，直接进入
       next()
     }else {
-      debugger
       let str = window.location.pathname//获取当前路由
-      if(str.indexOf("tunnel")!=-1){//单点登录
+      if(str.indexOf("loginjqtunnel")!=-1){//单点登录
         store.dispatch("Login1").then(() => {
           next({ path: '/' })
         }).catch(() => {

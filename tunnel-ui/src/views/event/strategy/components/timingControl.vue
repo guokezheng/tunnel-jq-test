@@ -112,7 +112,7 @@
                 type=""
                 icon="el-icon-delete"
                 circle
-                @click="removeItem(dain, index)"
+                @click="removeItem(index)"
                 style="margin-left: 2%"
               ></el-button>
             </el-form-item>
@@ -284,7 +284,7 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
-        console.log("123");
+        console.log("定时控制新增重置表单");
       }
       this.getEquipmentType();
       this.getTunnels();
@@ -582,6 +582,7 @@ export default {
     //表单重置方法
     resetForm() {
       this.$refs["timingControl"].resetFields();
+      this.strategyForm.schedulerTime = "";
       this.strategyForm.autoControl = [{ value: "", state: "", type: "" }];
     },
     strategyFormClose() {

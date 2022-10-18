@@ -942,9 +942,16 @@ export default {
         }
       });
     },
+    // 获取当前事件详细信息
     async getEventData() {
       await getEvent(this.$route.query.id).then((result) => {
         this.eventMsg = result.data;
+        // 如果为“未处理”状态，改为“处理中”状态
+        if (this.eventMsg.eventState == 3) {
+          let row = this.eventMsg;
+          row.eventState = 0;
+          updateEvent(row);
+        }
       });
       this.getSubareaByTunnel();
       this.getmaterialList(); //应急物资
@@ -1033,6 +1040,9 @@ export default {
         .then(() => {
           this.planListEnd = null;
           this.$modal.msgSuccess("事件处理成功");
+          this.$router.push({
+            path: "/emergency/administration/event",
+          });
         })
         .catch(() => {});
     },

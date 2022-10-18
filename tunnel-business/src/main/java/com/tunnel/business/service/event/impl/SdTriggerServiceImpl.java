@@ -62,10 +62,6 @@ public class SdTriggerServiceImpl implements ISdTriggerService {
         return new SdTrigger();
     }
 
-    @Override
-    public Map selectWarningInfo(String tunnelId) {
-        return sdTriggerMapper.selectWarningInfo(tunnelId);
-    }
 
     /**
      * 查询触发器列表

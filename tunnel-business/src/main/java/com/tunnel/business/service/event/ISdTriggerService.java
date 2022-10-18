@@ -29,7 +29,6 @@ public interface ISdTriggerService {
      */
     SdTrigger selectSdTriggerByRelateId(Long relateId);
 
-    Map selectWarningInfo(String tunnelId);
 
     /**
      * 查询触发器列表

@@ -30,7 +30,6 @@ public interface SdTriggerMapper
      */
     public SdTrigger selectSdTriggerByRelateId(Long relateId);
 
-    public Map selectWarningInfo(String tunnelId);
 
     /**
      * 查询触发器列表

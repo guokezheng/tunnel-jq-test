@@ -75,7 +75,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            @click="update(scope.row)"
             v-hasPermi="['system:eventType:edit']"
           >修改</el-button>
           <el-button
@@ -194,6 +194,8 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
+      console.log("ids>>>>>",this.ids)
+
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -206,13 +208,23 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids[0]
       getEventType(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改事件类型";
       });
     },
+
+    update(row) {
+      this.reset();
+      getEventType(row.id).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改事件类型";
+      });
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {

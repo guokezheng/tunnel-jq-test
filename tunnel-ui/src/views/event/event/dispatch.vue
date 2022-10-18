@@ -32,19 +32,24 @@
                   >
                     <div class="row1">{{ item.sName }}</div>
                     <div class="recoveryBox">
-                      <div
-                        class="endButton"
-                        v-for="itm in item.reservePlans"
-                        :key="itm.sId"
+                      <el-scrollbar
+                        style="height: 100%; width: 100%"
+                        wrap-style="overflow-x:hidden;"
                       >
-                        <div class="ButtonBox">
-                          <div class="recovery">{{ itm.planName }}</div>
-                          <div class="button">
-                            <div @click="getPreview(itm)">预览</div>
-                            <div @click="eventDo(itm)">执行</div>
+                        <div
+                          class="endButton"
+                          v-for="itm in item.reservePlans"
+                          :key="itm.sId"
+                        >
+                          <div class="ButtonBox">
+                            <div class="recovery">{{ itm.planName }}</div>
+                            <div class="button">
+                              <div @click="getPreview(itm)">预览</div>
+                              <div @click="eventDo(itm)">执行</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </el-scrollbar>
                     </div>
                   </div>
                 </div>
@@ -211,7 +216,7 @@
                 </el-col>
               </el-row>
               <!-- <el-row> -->
-                <!--  <el-col :span="8">
+              <!--  <el-col :span="8">
                   <el-form-item label="影响程度" prop="tunnelId">
                     <el-select v-model="eventForm.tunnelId" placeholder="请选择影响程度" clearable size="small" >
                       <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
@@ -219,13 +224,13 @@
                     </el-select>
                   </el-form-item>
                 </el-col> -->
-                <!-- <el-col :span="8">
+              <!-- <el-col :span="8">
                   <el-form-item label="压车长度:" prop="eventTitle">
                     <el-input  v-model="eventForm.eventTitle"  style="width: 100px" />
                     <span> KM</span>
                   </el-form-item>
                 </el-col> -->
-                <!-- <el-col :span="8">
+              <!-- <el-col :span="8">
                   <el-form-item label="事件等级 " prop="eventGrade">
                     <el-radio-group v-model="eventForm.eventGrade">
                       <el-radio
@@ -515,7 +520,7 @@
           <el-col :span="13" style="height: 100%">
             <!-- 事件流程 -->
             <div class="rightBox processBox">
-              <el-steps :active="1">
+              <el-steps :active="eventMsg.eventState">
                 <el-step title="事件预警" icon="el-icon-edit"></el-step>
                 <el-step title="事故确认" icon="el-icon-upload"></el-step>
                 <el-step title="处置中" icon="el-icon-picture"></el-step>
@@ -525,7 +530,7 @@
                 <el-timeline-item
                   placement="top"
                   v-for="(item, index) in eventList"
-                  :key="index+item.flowTime"
+                  :key="index + item.flowTime"
                   color="#00A0FF"
                 >
                   <div>{{ item.flowTime }}</div>
@@ -535,33 +540,44 @@
                 </el-timeline-item>
               </el-timeline>
               <div class="endButton">
-                <div
-                  class="ButtonBox"
-                  v-for="(item, index) in hfData"
-                  :key="index"
+                <el-scrollbar
+                  style="height: 100%; width: 100%"
+                  wrap-style="overflow-x:hidden;"
                 >
-                  <div class="recovery">{{ item.planName }}</div>
-                  <div class="button">
-                    <div @click="getPreview(item)">预览</div>
-                    <div @click="eventDo(item)">执行</div>
+                  <div
+                    class="ButtonBox"
+                    v-for="(item, index) in hfData"
+                    :key="index"
+                  >
+                    <div class="recovery">{{ item.planName }}</div>
+                    <div class="button">
+                      <div @click="getPreview(item)">预览</div>
+                      <div @click="eventDo(item)">执行</div>
+                    </div>
                   </div>
-                </div>
+                </el-scrollbar>
               </div>
             </div>
             <div class="rightBox implement">
               <div class="title">已执行</div>
               <div style="height: calc(100% - 26px); overflow: auto">
-                <div class="implementContent" v-for="(item,index) in zxList" :key="index">
+                <div
+                  class="implementContent"
+                  v-for="(item, index) in zxList"
+                  :key="index"
+                >
                   <el-image
                     class="implementIcon"
                     :src="require('@/assets/icons/implementIcon.png')"
                   ></el-image>
                   <div class="contentBox">
                     <div class="row1">
-                      <div>{{item.eqName}}</div>
-                      <div>{{getDirection(item.eqDirection)}}</div>
+                      <div>{{ item.eqName }}</div>
+                      <div>{{ getDirection(item.eqDirection) }}</div>
                     </div>
-                    <div class="row2">{{getEqType(item.state,item.eqType)}}</div>
+                    <div class="row2">
+                      {{ getEqType(item.state, item.eqType) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -570,10 +586,12 @@
         </el-row>
       </div>
     </div>
+    <work-bench ref="workBench"></work-bench>
   </div>
 </template>
 
 <script>
+import workBench from "@/views/event/reservePlan/workBench";
 import { mapState } from "vuex";
 import $ from "jquery";
 import { icon, laneImage } from "../../../utils/configData.js";
@@ -581,7 +599,10 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
-import { listEqTypeState,getStateByData } from "@/api/equipment/eqTypeState/api";
+import {
+  listEqTypeState,
+  getStateByData,
+} from "@/api/equipment/eqTypeState/api";
 
 import {
   listEvent,
@@ -599,6 +620,9 @@ import {
 } from "@/api/event/reserveProcess";
 export default {
   name: "dispatch",
+  components: {
+    workBench,
+  },
   data() {
     return {
       timer: null,
@@ -673,13 +697,6 @@ export default {
       personnelList: [],
       //应急物资
       materialList: [],
-      coviList: [
-        {
-          name: "CO",
-          phone: "XXX",
-          phone2: "0.00",
-        },
-      ],
       //车道列表
       laneUrlList: laneImage,
       eventForm: {
@@ -702,7 +719,7 @@ export default {
       upList: [],
       downList: [],
       selectedIconList: [], //配置图标
-      zxList:[]
+      zxList: [],
     };
   },
   computed: {
@@ -710,7 +727,6 @@ export default {
       deviceStatus: (state) => state.websocket.deviceStatus,
       deviceStatusChangeLog: (state) => state.websocket.deviceStatusChangeLog,
       eventFlow: (state) => state.websocket.eventFlow,
-
     }),
   },
   watch: {
@@ -744,6 +760,7 @@ export default {
         id: this.$route.query.id,
       };
       listEvent(param).then((response) => {
+        console.log(response, "事件详情");
         this.eventForm = response.rows[0];
         this.eventForm.eventType = response.rows[0].eventType.eventType;
         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
@@ -758,18 +775,18 @@ export default {
       this.directionList = data.data;
     });
     const param = {
-        isControl: 1,
-      };
-    getStateByData(param).then((res) =>{
-      console.log(res.rows,"查设备状态 正红泛绿...")
-      this.eqTypeList = res.rows
-    })
+      isControl: 1,
+    };
+    getStateByData(param).then((res) => {
+      console.log(res.rows, "查设备状态 正红泛绿...");
+      this.eqTypeList = res.rows;
+    });
   },
   methods: {
-    getEqType(state,eqType){
-      for(var item of this.eqTypeList){
-        if(eqType == item.stateTypeId && Number(item.deviceState) == state){
-          return item.stateName
+    getEqType(state, eqType) {
+      for (var item of this.eqTypeList) {
+        if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
+          return item.stateName;
         }
       }
     },
@@ -921,7 +938,7 @@ export default {
       getImplement(data).then((result) => {
         if (result.code == 200) {
           this.$modal.msgSuccess(result.msg);
-          this.accidentInit()
+          this.accidentInit();
         }
       });
     },
@@ -959,57 +976,14 @@ export default {
         this.planList1 = result.data;
       });
     },
-    // 预览
+    // 预览按钮
     getPreview(row) {
-      previewDisplay(row.id).then((res) => {
-        this.previewList = res;
-        var deviceList = [];
-        for (let i = 0; i < this.previewList.length; i++) {
-          var item = this.previewList[i].strategyRl;
-          for (let z = 0; z < item.length; z++) {
-            var arr = this.previewList[i].iFileList[z];
-            if (item[z].equipments.indexOf(",")) {
-              deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            } else {
-              deviceList.push({
-                list: item[z].equipments,
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            }
-          }
-        }
-        this.deviceList = deviceList;
-        this.ChangeDeviceState();
+      this.$nextTick(() => {
+        this.$refs.workBench.id = row.id; //预案ID
+        this.$refs.workBench.tunnelId = this.eventMsg.tunnelId;
+        this.$refs.workBench.init();
       });
-      this.workbenchOpen = true;
-    },
-    ChangeDeviceState() {
-      for (let i = 0; i < this.selectedIconList.length; i++) {
-        for (let x = 0; x < this.deviceList.length; x++) {
-          var eqType = this.selectedIconList[i].eqType;
-          if ((eqType ?? "") !== "") {
-            if (eqType == this.deviceList[x].eqId) {
-              var brr = this.deviceList[x].list;
-              for (let p = 0; p < brr.length; p++) {
-                if (this.selectedIconList[i].eqId == brr[p]) {
-                  this.selectedIconList[i].url = [];
-                  let url = this.deviceList[x].file;
-                  url.forEach((item) => {
-                    this.selectedIconList[i].url.push(item.url);
-                  });
-                }
-              }
-            }
-          }
-        }
-      }
+      // this.workbenchOpen = true;
     },
     /** 查询应急人员信息列表 */
     getpersonnelList() {
@@ -1598,20 +1572,6 @@ export default {
     line-height: 20px;
     margin: 0px auto 0px auto;
   }
-  // .planMiniBox{
-  //   width: 43%;height: 68px;border-radius: 10px;border: solid 1px #00A0FF;display: inline-block;margin: 8px;
-  //   >.miniTitle{
-  //     width: 100%;text-align: center;font-size: 12px;line-height: 24px;font-weight: bold;border-bottom: dashed 1px #00A0FF;
-  //     height: 30px;line-height: 30px;
-  //   }
-  //   >.planButtonS{
-  //     height: 26px;width: 100%;display: flex;justify-content: space-around;padding-top: 4px;color: white;font-size: 12px;
-  //     text-align: center;line-height: 23px;
-  //     >div{
-  //       width: 45%;height: 100%;background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 2px;cursor: pointer;
-  //     }
-  //   }
-  // }
 }
 .phoneBox {
   margin-top: 10px;
@@ -1723,6 +1683,9 @@ export default {
     margin-right: 8px;
     padding-left: 20px;
   }
+  .endButton .ButtonBox:nth-child(2n) {
+    margin-left: 5%;
+  }
   .endButton {
     width: 100%;
     height: 65px;
@@ -1731,9 +1694,10 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     .ButtonBox {
-      width: 32%;
+      width: 45%;
       height: 100%;
       border-radius: 4px;
+      float: left;
       .recovery {
         width: 100%;
         height: 45%;
@@ -1870,15 +1834,21 @@ export default {
   justify-content: space-around;
 }
 .mousemoveBox {
+  .recoveryBox .endButton:nth-child(2n) {
+    margin-right: 0px;
+  }
   .recoveryBox {
     height: 80% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, 50%);
-    grid-template-rows: repeat(2, 50%);
+    // display: grid !important;
+    // grid-template-columns: repeat(2, 50%);
+    // grid-template-rows: repeat(2, 50%);
     padding: 5px 10px;
     .endButton {
       padding: 5px;
       box-sizing: border-box;
+      width: 48%;
+      float: left;
+      margin-right: 4%;
       .ButtonBox {
         border: 1px solid #07a1fb;
         .recovery {
@@ -1908,5 +1878,8 @@ export default {
 }
 .active .rightClickClass {
   display: block;
+}
+.hover {
+  cursor: pointer !important;
 }
 </style>

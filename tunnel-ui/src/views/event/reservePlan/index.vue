@@ -247,7 +247,7 @@
             >删除
           </el-button>
           <el-button
-            v-hasPermi="['business:plan:remove']"
+            v-hasPermi="['business:plan:config']"
             icon="el-icon-guide"
             size="mini"
             type="text"
@@ -409,7 +409,8 @@
     </el-dialog>
 
     <!--  预览-->
-    <el-dialog
+    <work-bench ref="workBench"></work-bench>
+    <!-- <el-dialog
       :before-close="handleClose"
       :visible.sync="workbenchOpen"
       append-to-body
@@ -421,7 +422,6 @@
         class="chedaoImage"
         src="../../../assets/image/lane/fenghuangshan.png"
       />
-      <!-- 设备图标-->
       <div
         v-for="(item, index) in selectedIconList"
         :key="index"
@@ -477,7 +477,7 @@
         <el-button @click="workbenchOpenEvent">取 消</el-button>
         <el-button type="primary" @click="closeDialogVisible">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
 
     <!-- 新增弹窗 -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
@@ -656,7 +656,11 @@
       </el-form>
       <el-form-item style="text-align: right; width: 100%"> </el-form-item>
       <div slot="footer" class="dialog-footer">
-        <el-button style="width: 10%" type="primary" @click="submitstrategy"
+        <el-button
+          style="width: 10%"
+          type="primary"
+          v-hasPermi="['plan:process:add']"
+          @click="submitstrategy"
           >保存</el-button
         >
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
@@ -666,6 +670,7 @@
 </template>
 
 <script>
+import workBench from "./workBench";
 import {
   listPlan,
   getPlan,
@@ -701,6 +706,9 @@ import {
 
 export default {
   name: "Plan",
+  components: {
+    workBench,
+  },
   data() {
     return {
       deviceList: [], //需要操作的设备以及状态数据
@@ -1037,77 +1045,14 @@ export default {
         }
       });
     },
-    // handleChangeStrategy(e) {
-    //   this.strategyRlData = [];
-    //   e.forEach((item, index) => {
-    //     getRl(item).then((res) => {
-    //       this.strategyRlData.push(res.rows);
-    //     });
-    //   });
-    // },
-
-    //查看工作台
+    //预览按钮
     openWorkbench(row) {
       this.tunnelId = row.tunnelId;
-      // console.log(row,'进入预览');
-      this.getPreview(row);
-    },
-    getPreview(row) {
-      previewDisplay(row.id).then((res) => {
-        this.previewList = res;
-        console.log(this.previewList);
-        var deviceList = [];
-        for (let i = 0; i < this.previewList.length; i++) {
-          var item = this.previewList[i].strategyRl;
-          for (let z = 0; z < item.length; z++) {
-            var arr = this.previewList[i].iFileList[z];
-            if (item[z].equipments.indexOf(",")) {
-              deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            } else {
-              deviceList.push({
-                list: item[z].equipments,
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            }
-          }
-        }
-        console.log(deviceList);
-        this.deviceList = deviceList;
-        this.ChangeDeviceState();
+      this.$nextTick(() => {
+        this.$refs.workBench.id = row.id;
+        this.$refs.workBench.tunnelId = this.tunnelId;
+        this.$refs.workBench.init();
       });
-      this.workbenchOpen = true;
-    },
-    // [{ url:[]}]
-    // 操作设备，改变设备状态
-    ChangeDeviceState() {
-      // console.log(this.selectedIconList);
-      for (let i = 0; i < this.selectedIconList.length; i++) {
-        for (let x = 0; x < this.deviceList.length; x++) {
-          var eqType = this.selectedIconList[i].eqType;
-          if ((eqType ?? "") !== "") {
-            if (eqType == this.deviceList[x].eqId) {
-              var brr = this.deviceList[x].list;
-              for (let p = 0; p < brr.length; p++) {
-                if (this.selectedIconList[i].eqId == brr[p]) {
-                  this.selectedIconList[i].url = [];
-                  console.log(this.deviceList[x].file);
-                  let url = this.deviceList[x].file;
-                  url.forEach((item) => {
-                    this.selectedIconList[i].url.push(item.url);
-                  });
-                }
-              }
-            }
-          }
-        }
-      }
     },
     //=========================执行相关预案开始=====================
     //执行策略

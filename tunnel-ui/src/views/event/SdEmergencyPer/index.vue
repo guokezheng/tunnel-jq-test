@@ -51,7 +51,7 @@
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
       </el-form-item>

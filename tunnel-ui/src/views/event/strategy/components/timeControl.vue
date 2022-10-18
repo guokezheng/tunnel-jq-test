@@ -57,15 +57,23 @@
         >
           <div>
             <el-form-item style="width: 100%">
-              <el-time-picker
-                arrow-control
-                v-model="item.timeControl"
+              <el-time-select
+                value-format="HH:mm:ss"
+                v-model="item.controlTime"
                 :picker-options="{
-                  selectableRange: '06:30:00 - 18:30:00',
+                  start: '08:30',
+                  step: '00:15',
+                  end: '18:30',
                 }"
+                placeholder="选择时间"
+              >
+              </el-time-select>
+              <!-- <el-time-picker
+                value-format="HH:mm:ss"
+                v-model="item.controlTime"
                 placeholder="请选择时间"
               >
-              </el-time-picker>
+              </el-time-picker> -->
               <el-input
                 @click.native="openEqDialog2($event, index)"
                 style="width: 25%; margin-left: 3%"
@@ -179,6 +187,7 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listType, autoEqTypeList } from "@/api/equipment/type/api";
 import { listItem } from "@/api/equipment/eqTypeItem/item";
+import { listRl, addRl } from "@/api/event/strategyRl";
 import {
   listStrategy,
   getStrategy,
@@ -218,7 +227,7 @@ export default {
         direction: "", //方向
         autoControl: [
           {
-            timeControl: new Date(2022, 9, 10, 18, 40), //时间范围
+            controlTime: "", //时间
             value: "", //设备
             state: "", //状态
             type: "", //设备分类
@@ -258,7 +267,7 @@ export default {
       this.getDirection();
     },
     /** 修改按钮操作 */
-    async handleUpdate(row) {
+    async getStrategyData(row) {
       //获取设备
       autoEqTypeList().then((res) => {
         this.eqTypeList = res.rows;
@@ -272,17 +281,13 @@ export default {
       const id = row.id || this.ids;
       getStrategy(id).then((response) => {
         let data = response.data;
+        this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
-        listItem({
-          deviceTypeId: this.strategyForm.triggers.deviceTypeId,
-        }).then((res) => {
-          this.dataItem = res.rows;
-        });
         listRl({ strategyId: row.id }).then((response) => {
           this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
           listDevices({
@@ -292,13 +297,19 @@ export default {
             this.equipmentData = res.rows;
           });
           this.strategyForm.autoControl = response.rows;
-          for (var i = 0; i < response.rows.length; i++) {
-            var attr = response.rows[i];
+          for (let i = 0; i < response.rows.length; i++) {
+            let attr = response.rows[i];
             this.strategyForm.autoControl[i].value = attr.equipments.split(",");
             this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
             this.strategyForm.autoControl[i].state = attr.state;
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
             this.strategyForm.autoControl[i].typeName = attr.eqType.typeName;
+            this.$set(
+              this.strategyForm.autoControl[i],
+              "controlTime",
+              attr.controlTime
+            );
+            // this.strategyForm.autoControl[i].timeControl = attr.controlTime;
           }
         });
       });
@@ -323,10 +334,16 @@ export default {
     },
     // 编辑操作
     async updateStrategyInfoData() {
-      await getGuid().then((res) => {
-        this.strategyForm.jobRelationId = res;
-        this.strategyForm.id = this.id;
-      });
+      if (this.sink == "add") {
+        await getGuid().then((res) => {
+          this.strategyForm.jobRelationId = res;
+          this.strategyForm.id = this.id;
+        });
+      }
+      for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
+        let arr = this.strategyForm.autoControl[i];
+        arr.controlTime = arr.controlTime + ":00";
+      }
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -339,6 +356,10 @@ export default {
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
+      for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
+        let arr = this.strategyForm.autoControl[i];
+        arr.controlTime = arr.controlTime + ":00";
+      }
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
@@ -430,7 +451,7 @@ export default {
         return this.$modal.msgError("最多添加2条数据");
       }
       this.strategyForm.autoControl.push({
-        timeControl: new Date(2016, 9, 10, 18, 40),
+        controlTime: "",
         value: "",
         state: "",
         type: "",
@@ -535,7 +556,7 @@ export default {
     resetForm() {
       this.$refs["timeControl"].resetFields();
       this.strategyForm.autoControl = [
-        { value: "", state: "", type: "", timeControl: "" },
+        { value: "", state: "", type: "", controlTime: "" },
       ];
     },
     // 取消按钮

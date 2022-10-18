@@ -119,6 +119,7 @@
       :data="planList"
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick"
+      max-height="600"
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
@@ -126,6 +127,8 @@
         align="center"
         label="隧道名称"
         prop="sdTunnels.tunnelName"
+        width="130"
+
       />
       <el-table-column
         align="center"
@@ -138,6 +141,8 @@
         align="center"
         label="分区"
         prop="sdTunnelSubarea.sName"
+        width="130"
+
       />
       <el-table-column
         align="center"
@@ -145,10 +150,11 @@
         prop="eventType.eventType"
       />
       <el-table-column
-        align="left"
+        align="center"
         label="预案描述"
         prop="planDescription"
         width="200"
+        
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
@@ -177,6 +183,8 @@
         align="center"
         class-name="small-padding fixed-width"
         label="相关文档"
+        width="130"
+
       >
         <template slot-scope="scope">
           <el-button
@@ -209,6 +217,7 @@
             v-for="tag in scope.row.strategyNames"
             :disable-transitions="false"
             @close="handleClose(tag)"
+            style="display:block"
           >
             {{ tag }}
           </el-tag>

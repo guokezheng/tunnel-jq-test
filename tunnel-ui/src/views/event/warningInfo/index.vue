@@ -1,16 +1,10 @@
 <template>
   <div class="app-container">
-    <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
-      <div style="line-height: 60px;">设备预警统计:</div>
-      <el-card class="card-box">
-        今日故障设备统计: {{allmsg}}
-      </el-card>
-      <el-card class="card-box">
-        今日执行故障设备: {{process}}
-      </el-card>
-      <el-card class="card-box">
-        今日故障设备执行率: {{proportion}}
-      </el-card>
+    <div style="display: flex;font-size: 14px;width: 100%;align-items: center;">
+      <div class="warningStatistics">设备预警统计:</div>
+      <div class="EquipStatistics">今日故障设备统计: <span>{{allmsg}}</span></div>
+      <div class="EquipStatistics">今日执行故障设备: <span>{{process}}</span></div>
+      <div class="EquipStatistics">今日故障设备执行率: <span>{{proportion}}</span></div>
     </div>
 
     <el-form
@@ -60,13 +54,13 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          type="cyan"
+          type="primary"
           icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
       </el-form-item>
@@ -198,7 +192,7 @@
             <img
               slot="reference"
               :src="scope.row.picture"
-              style="width: 100px; height: 100px; cursor: pointer"
+              style="width: 65px; height: 35px; cursor: pointer"
             />
           </el-popover>
         </template>
@@ -1439,10 +1433,37 @@ export default {
   font-size: 1.125rem;
 }
 </style>
-<style scoped>
-  .card-box{
-    width: 30%;
+<style scoped lang="scss">
+  .EquipStatistics{
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
     text-align: center;
-    font-weight: bold;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+    >span{
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+  }
+ ::v-deep .el-table__header tr,
+  .el-table__header th {
+    padding: 0;
+    height: 40px;
+}
+::v-deep .el-table__body tr,
+  .el-table__body td {
+    padding: 0;
+    height: 40px;
+}
+.warningStatistics{
+    line-height: 60px;
+    font-size: 14px;
+    color: #606266;
+    font-weight: 700;
   }
 </style>

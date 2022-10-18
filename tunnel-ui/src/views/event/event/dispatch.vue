@@ -1476,7 +1476,7 @@ export default {
 .app-container {
   // background-color: #D6EDFB;
   padding: 0px 16px;
-  height: calc(100% + 60px);
+  height: 100%;
   padding: 20px;
 }
 .formTitle {

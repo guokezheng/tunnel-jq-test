@@ -128,7 +128,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" height="600">
+    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" height="600" >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
@@ -428,7 +428,7 @@ export default {
 </script>
 <style scoped lang="scss">
   ::v-deep .el-form-item__content{
-    width:200px !important;
+    width:190px !important;
     .el-date-editor{
       width: 100%;
     }

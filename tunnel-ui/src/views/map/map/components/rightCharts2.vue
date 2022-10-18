@@ -122,10 +122,14 @@ export default {
     tr{
       background-color: #010F23;
     }
+    // .el-table__header-wrapper .el-table__cell
     .el-table__header-wrapper {
       line-height: 20px;
       .cell {
         line-height: 14px;
+      }
+      .el-table__cell{
+        border: none !important;
       }
       th {
         background: rgba(1, 121, 255, 0.18) !important;
@@ -141,6 +145,10 @@ export default {
     .el-table__body-wrapper {
       .cell {
         line-height: 14px;
+      }
+      .el-table__cell{
+        border: none !important;
+
       }
     }
     .el-table--enable-row-hover .el-table__body tr:hover > td {
@@ -162,6 +170,11 @@ export default {
     }
    
   }
+  .el-table{
+    border: none !important;
+    background: transparent !important;
+  }
+
   // ::v-deep .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
   //     border-bottom:none !important;
   //   }

@@ -481,38 +481,44 @@ export default {
       if (this.fileList.length < 1) {
         return this.$modal.msgWarning("请上传图片");
       }
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit();
-      this.fileData.append("sdName", this.form.sdName);
-      this.fileData.append("environmentType", this.form.environmentType);
-      this.fileData.append("width", this.form.width);
-      this.fileData.append("height", this.form.height);
-      this.fileData.append("direction", this.form.direction);
-      this.fileData.append("remark", this.form.remark);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            this.fileData.append("id", this.form.id);
-            this.fileData.append("url", this.form.url);
-            this.fileData.append("removeIds", this.removeIds);
-            console.log(this.fileData,'this.fileData');
-            updateConfiguration(this.fileData).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.$refs.upload.clearFiles();
-              this.getList();
-            });
-          } else {
-            addConfiguration(this.fileData).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.$refs.upload.clearFiles();
-              this.getList();
-            });
-            this.eqObj.uploadDisabled = false;
+      const isLt100M = this.fileList.every(file => file.size / 1024 / 1024 < 1);
+      if (!isLt100M) {
+        this.$message.error('请检查，上传文件大小不能超过1MB!');
+      } else {
+        this.fileData = new FormData(); // new formData对象
+        this.$refs.upload.submit();
+        this.fileData.append("sdName", this.form.sdName);
+        this.fileData.append("environmentType", this.form.environmentType);
+        this.fileData.append("width", this.form.width);
+        this.fileData.append("height", this.form.height);
+        this.fileData.append("direction", this.form.direction);
+        this.fileData.append("remark", this.form.remark);
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            if (this.form.id != null) {
+              this.fileData.append("id", this.form.id);
+              this.fileData.append("url", this.form.url);
+              this.fileData.append("removeIds", this.removeIds);
+              console.log(this.fileData,'this.fileData');
+              updateConfiguration(this.fileData).then((response) => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.$refs.upload.clearFiles();
+                this.getList();
+              });
+            } else {
+              addConfiguration(this.fileData).then((response) => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.$refs.upload.clearFiles();
+                this.getList();
+              });
+              this.eqObj.uploadDisabled = false;
+            }
           }
-        }
-      });
+        });
+      }
+      
     },
     /** 删除按钮操作 */
     handleDelete(row) {

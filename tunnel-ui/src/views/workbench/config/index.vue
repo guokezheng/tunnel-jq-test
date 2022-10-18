@@ -3427,6 +3427,10 @@ export default {
       };
       batchControlCarFinger(param).then((res) => {
         console.log(res);
+        if(res.data == 0){
+      this.$modal.msgWarning("控制失败");
+
+        }
       });
     },
     getDeviceDataAndStateData() {
@@ -7963,6 +7967,7 @@ input {
     margin-left: 8px;
     text-align: center;
     line-height: 31px;
+    cursor: pointer;
   }
 }
 /*单个设备配置框 */

@@ -292,6 +292,7 @@ export default {
           },
         ],
         triggers: {
+          id:"",
           deviceTypeId: "", //设备类型
           deviceId: "",
           elementId: "", //设备数据项
@@ -374,6 +375,7 @@ export default {
 
         // 获取触发器的数据
         getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
+          this.strategyForm.triggers.id = res.data.id;
           this.strategyForm.triggers.comparePattern = res.data.comparePattern;
           this.strategyForm.triggers.compareValue = res.data.compareValue;
           this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId;

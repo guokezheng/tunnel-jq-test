@@ -262,7 +262,8 @@
             >查看详情
           </el-button>
           <!-- </router-link> -->
-          <el-button
+          <template v-if="scope.row.eventState == 1 || scope.row.eventState == 2 ">
+            <el-button
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
@@ -270,6 +271,8 @@
             @click="handleDispatch(scope.row)"
             >应急调度
           </el-button>
+          </template>
+
           <!-- <el-button
             size="mini"
             type="text"
@@ -755,9 +758,9 @@ export default {
   data() {
     return {
       eventMsg: {
-        allnum:0,
-        process:0,
-        bl:0
+        allnum: 0,
+        process: 0,
+        bl: 0,
       },
       urls: [],
 
@@ -867,7 +870,7 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-    
+
     // 管理机构
     toll().then((res) => {
       console.log(res);
@@ -880,7 +883,7 @@ export default {
       getTodayEventCount().then((result) => {
         console.log(result, "11111111111111");
         this.eventMsg = result.data;
-        this.$forceUpdate()
+        this.$forceUpdate();
       });
     },
     //获取图片视频
@@ -947,7 +950,7 @@ export default {
     /** 查询事件类型列表 */
     getEventType() {
       listEventType().then((response) => {
-        console.log(response,"responseresponse");
+        console.log(response, "responseresponse");
         this.eventTypeData = response.rows;
       });
     },

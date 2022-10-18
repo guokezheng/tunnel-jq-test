@@ -92,7 +92,7 @@ public class SdReserveProcessController extends BaseController
      * @param sdReserveProcess
      * @return
      */
-    @PreAuthorize("@ss.hasPermi('plan:process:add')")
+    //@PreAuthorize("@ss.hasPermi('plan:process:add')")
     @PostMapping
     @ApiOperation("批量添加预案流程节点")
     public AjaxResult add(@RequestBody SdReserveProcessModel sdReserveProcess)

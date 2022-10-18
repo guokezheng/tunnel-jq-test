@@ -7,8 +7,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdTunnelSubarea;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdEventFlowMapper sdEventFlowMapper;
+
+    @Autowired
+    private SdTunnelSubareaMapper sdTunnelSubareaMapper;
 
 
     /**
@@ -204,5 +209,33 @@ public class SdEventServiceImpl implements ISdEventService {
         titleDesc.append("发生").append(eventTypeName).append("事件");
 
         return titleDesc.toString();
+    }
+
+    @Override
+    public Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction) {
+        //1.根据隧道、方向获取所有同一方向上的分区数据
+        Long subareaId =0L;
+        SdTunnelSubarea subarea = new SdTunnelSubarea();
+        subarea.setTunnelId(tunnelId);
+        subarea.setDirection(direction);
+        List<SdTunnelSubarea> subareaData = sdTunnelSubareaMapper.selectSdTunnelSubareaList(subarea);
+        if(subareaData.size() < 1){
+            return subareaId;
+        }
+        //2.根据桩号遍历匹配
+        try{
+            Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            for(SdTunnelSubarea data:subareaData){
+                Integer upLimit = Integer.parseInt(data.getPileMax());
+                Integer downLimit = Integer.parseInt(data.getPileMin());
+                if(upLimit >= compareValue && compareValue >= downLimit){
+                    subareaId = data.getsId();
+                    break;
+                }
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return subareaId;
     }
 }

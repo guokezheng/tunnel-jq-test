@@ -84,7 +84,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.deviceId" label-width="0">
+              <el-form-item prop="triggers.elementId" label-width="0">
                 <el-select
                   v-model="strategyForm.triggers.elementId"
                   placeholder="请选择数据项"
@@ -98,7 +98,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.deviceId" label-width="0">
+              <el-form-item prop="triggers.comparePattern" label-width="0">
                 <el-select v-model="strategyForm.triggers.comparePattern">
                   <el-option
                     v-for="item in symbol"
@@ -109,7 +109,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.deviceId" label-width="0">
+              <el-form-item prop="triggers.compareValue" label-width="0">
                 <el-input
                   v-model="strategyForm.triggers.compareValue"
                   placeholder="请输入阈值"
@@ -149,7 +149,7 @@
                 type=""
                 icon="el-icon-delete"
                 circle
-                @click="removeItem(dain, index)"
+                @click="removeItem(index)"
                 style="margin-left: 2%"
               ></el-button>
             </el-form-item>
@@ -232,7 +232,7 @@
     </el-dialog>
   </div>
 </template>
-    
+
     <script>
 import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
 import {
@@ -272,7 +272,7 @@ export default {
       // 二次表单校验
       rules: {
         equipment_type: [
-          { required: true, message: "请选择设备类型22", trigger: "blur" },
+          { required: true, message: "请选择设备类型", trigger: "blur" },
         ],
         equipments: [
           { required: true, message: "请选择设备", trigger: "blur" },
@@ -280,7 +280,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
-        strategyType: "1", //策略类型
+        strategyType: "2", //策略类型
         tunnelId: null, //隧道id
         strategyName: null, //策略名称
         direction: "", //方向
@@ -463,6 +463,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
+        this.$emit("dialogVisibleClose");
         this.getList();
       });
     },
@@ -716,7 +717,7 @@ export default {
   },
 };
 </script>
-    
+
     <style>
 .triggers .box .el-form-item__content {
   display: flex;

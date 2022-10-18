@@ -65,3 +65,12 @@ export function getCaptchaOnOff() {
     method: 'get'
   })
 }
+
+
+export function callBack() {
+  return request({
+    url: '/thirdPart/login?username=admin',
+    method: 'get'
+  })
+}
+

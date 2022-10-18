@@ -30,12 +30,23 @@ html {
   >div:nth-of-type(1){
     height: 100%;
     .main-container{
-      height: calc(100% - 51px);
-    transform: translateY(-14px);
+      height: calc(100% - 72px);
+      .separate{
+        height: 100%;
+        padding: 10px;
+        background: #E2EEFE;
+      }
+      .noSeparate{
+        height: 100%;
+      }
+    // transform: translateY(-14px);
     // border: solid 1px red;
       
       .app-main{
-        height:calc(100% - 60px);
+        height:calc(100% - 38px);
+      }
+      .appMainIndex{
+        height:100%;
       }
     }
   }
@@ -144,7 +155,7 @@ p {
   box-sizing: border-box;
   overflow: hidden;
   height: 100%;
-
+  background: white;
 }
 // 内页标题全部样式
 .inner_title {

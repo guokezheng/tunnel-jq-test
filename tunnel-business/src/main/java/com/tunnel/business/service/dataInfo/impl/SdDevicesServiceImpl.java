@@ -133,6 +133,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     /**
+     * 查询设备列表-导出
+     *
+     * @param sdDevices 设备
+     * @return 设备
+     */
+    @Override
+    public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
+        return devicesList;
+    }
+
+    /**
      * 新增设备
      *
      * @param sdDevices 设备

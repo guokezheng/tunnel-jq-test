@@ -112,7 +112,7 @@
                 type=""
                 icon="el-icon-delete"
                 circle
-                @click="removeItem(dain, index)"
+                @click="removeItem(index)"
                 style="margin-left: 2%"
               ></el-button>
             </el-form-item>
@@ -284,7 +284,7 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
-        console.log("123");
+        console.log("定时控制新增重置表单");
       }
       this.getEquipmentType();
       this.getTunnels();
@@ -387,6 +387,7 @@ export default {
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
+        this.$emit("dialogVisibleClose");
         this.getList();
       });
     },
@@ -505,8 +506,8 @@ export default {
         eqDirection: this.strategyForm.direction,
       }).then((res) => {
         let data = res.rows;
-        if (this.strategyForm.manualControl.length > 1) {
-          var currentList = this.strategyForm.manualControl;
+        if (this.strategyForm.autoControl.length > 1) {
+          var currentList = this.strategyForm.autoControl;
           let newData = [];
           for (let i = 0; i < currentList.length; i++) {
             newData += currentList[i].value + ",";
@@ -582,6 +583,7 @@ export default {
     //表单重置方法
     resetForm() {
       this.$refs["timingControl"].resetFields();
+      this.strategyForm.schedulerTime = "";
       this.strategyForm.autoControl = [{ value: "", state: "", type: "" }];
     },
     strategyFormClose() {

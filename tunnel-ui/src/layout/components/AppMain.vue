@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <section :class="path == '/index' ? '' : 'app-main'">
+  <section :class="getRoute2($route.path)?'appMainIndex':'app-main'" >
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
@@ -42,6 +42,22 @@ export default {
       },
     },
   },
+  methods:{
+    getRoute2(path){
+      var arr = [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ];
+      if (arr.includes(path)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  }
 };
 </script>
 

@@ -69,8 +69,8 @@ public class SdDevices extends BaseEntity {
     /**
      * 设备类型
      */
-    @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")
+   /* @ApiModelProperty("设备类型")
+    @Excel(name = "设备类型")*/
     private Long eqType;
 
 
@@ -78,7 +78,7 @@ public class SdDevices extends BaseEntity {
      * eqType对象
      */
     @Excels({
-            @Excel(name = "设备类型名称", targetAttr = "eqTypeName", type = Excel.Type.EXPORT),
+            @Excel(name = "设备类型名称", targetAttr = "typeName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("eqType对象")
     private SdEquipmentType eqTypeName;
@@ -94,6 +94,7 @@ public class SdDevices extends BaseEntity {
      * 设备品牌编号
      */
     @Excel(name = "设备品牌编号")
+
     @ApiModelProperty("设备品牌编号")
     private Long brandId;
 
@@ -101,6 +102,7 @@ public class SdDevices extends BaseEntity {
      * 所属道路方向(上行、下行)
      */
     @Excel(name = "所属道路方向(上行、下行)")
+    //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;
 

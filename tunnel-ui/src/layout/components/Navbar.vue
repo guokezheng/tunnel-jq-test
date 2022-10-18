@@ -393,7 +393,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '';
+          /*location.href = '';*/
+          location.href = '/tunnel/#/loginjqtunnel';
         })
       }).catch(() => {});
     },
@@ -641,7 +642,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 72px;
     &:focus {
       outline: none;
     }
@@ -671,7 +672,7 @@ export default {
         justify-content: center;
         align-items: center;
         span{
-          font-size:14px;
+          font-size:18px;
           margin-left:10px;
         }
         .user-avatar {

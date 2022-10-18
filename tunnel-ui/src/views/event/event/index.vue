@@ -1,24 +1,20 @@
 <template>
   <div class="app-container">
     <div
-      style="
-        display: flex;
-        font-size: 16px;
-        width: 100%;
-        justify-content: space-between;
-      "
+      style="display: flex; font-size: 14px; width: 100%; align-items: center"
     >
-      <div style="line-height: 60px">事件预警统计:</div>
-      <el-card class="card-box">
-        今日累计预警事件: {{ eventMsg.allnum }}</span>
-      </el-card>
-      <el-card class="card-box">
-        今日执行预警事件: {{ eventMsg.process }}
-      </el-card>
-      <el-card class="card-box">
-        今日预警事件执行率: {{ eventMsg.bl }}
-      </el-card>
+      <div class="warningStatistics">事件预警统计:</div>
+      <div class="EquipStatistics">
+        今日累计预警事件: <span>{{ eventMsg.allnum }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日执行预警事件: <span>{{ eventMsg.process }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日预警事件执行率: <span>{{ eventMsg.bl }}</span>
+      </div>
     </div>
+
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -160,7 +156,8 @@
       v-loading="loading"
       :data="eventList"
       :default-sort="{ prop: 'eventTime', order: 'descending' }"
-      height="600"
+      max-height="600"
+      ref="tableRef"
     >
       <el-table-column
         label="隧道名称"
@@ -174,7 +171,7 @@
       />
       <el-table-column label="方向" align="center" prop="direction">
         <template slot-scope="scope">
-          <span>{{getDirection(scope.row.direction)}}</span>
+          <span>{{ getDirection(scope.row.direction) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
@@ -254,6 +251,15 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-show="scope.row.eventState == 3"
+            size="mini"
+            type="text"
+            icon="el-icon-finished"
+            @click="changeState(scope.row, 2)"
+            v-hasPermi="['system:event:edit']"
+            >忽略</el-button
+          >
+          <el-button
             v-show="scope.row.eventState == 0"
             size="mini"
             type="text"
@@ -273,6 +279,7 @@
           </el-button>
           <!-- </router-link> -->
           <el-button
+            v-show="scope.row.eventState == 0 || scope.row.eventState == 3"
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
@@ -280,6 +287,7 @@
             @click="handleDispatch(scope.row)"
             >应急调度
           </el-button>
+
           <!-- <el-button
             size="mini"
             type="text"
@@ -561,7 +569,7 @@
             </div>
             <div class="detailsText">事件分类</div>
             <div
-              style="color: #82b3c2; line-height: 40px;width:195px"
+              style="color: #82b3c2; line-height: 40px; width: 195px"
               v-if="eventForm.eventType.eventType"
             >
               {{ eventForm.eventType.eventType }}
@@ -765,9 +773,9 @@ export default {
   data() {
     return {
       eventMsg: {
-        allnum:0,
-        process:0,
-        bl:0
+        allnum: 0,
+        process: 0,
+        bl: 0,
       },
       urls: [],
 
@@ -877,7 +885,7 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-    
+
     // 管理机构
     toll().then((res) => {
       console.log(res);
@@ -885,12 +893,22 @@ export default {
     });
   },
   methods: {
+    changeState(row, state) {
+      this.$confirm("是否确认忽略此事件！", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        row.eventState = state;
+        return updateEvent(row);
+      });
+    },
     getEventMsg() {
       // 获取事件预警信息
       getTodayEventCount().then((result) => {
         console.log(result, "11111111111111");
         this.eventMsg = result.data;
-        this.$forceUpdate()
+        this.$forceUpdate();
       });
     },
     //获取图片视频
@@ -938,6 +956,9 @@ export default {
       listEvent(this.addDateRange(this.queryParams)).then((response) => {
         console.log(response.rows, "查询事件管理列表");
         this.eventList = response.rows;
+        this.$nextTick(() => {
+          this.$refs.tableRef.doLayout();
+        });
         this.total = response.total;
         this.loading = false;
       });
@@ -954,7 +975,7 @@ export default {
     /** 查询事件类型列表 */
     getEventType() {
       listEventType().then((response) => {
-        console.log(response,"responseresponse");
+        console.log(response, "responseresponse");
         this.eventTypeData = response.rows;
       });
     },
@@ -1161,5 +1182,28 @@ hr {
   width: 30%;
   text-align: center;
   font-weight: bold;
+}
+
+.EquipStatistics {
+  width: 200px;
+  height: 40px;
+  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+  color: white;
+  text-align: center;
+  line-height: 40px;
+  font-weight: 400;
+  font-size: 16px;
+  margin-left: 14px;
+  > span {
+    font-size: 24px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+}
+.warningStatistics {
+  line-height: 60px;
+  font-size: 14px;
+  color: #606266;
+  font-weight: 700;
 }
 </style>

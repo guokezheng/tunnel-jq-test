@@ -77,13 +77,13 @@
           <el-col :span="11" v-if="this.eqInfo.clickEqType == 5">
             <el-form-item label="洞外亮度:">
               {{ brightValue }}
-              <span style="padding-left: 10px">cd/m2</span>
+              <span style="padding-left: 10px">lux</span>
             </el-form-item>
           </el-col>
           <el-col :span="11" v-if="this.eqInfo.clickEqType == 18">
             <el-form-item label="洞内亮度:">
               {{ brightValue }}
-              <span style="padding-left: 10px">cd/m2</span>
+              <span style="padding-left: 10px">lux</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -274,11 +274,11 @@ export default {
         },
         yAxis: {
           type: "value",
-          name: "cd/m2",
+          name: "lux",
           nameTextStyle: {
             color: "#FFB500",
             fontSize: 10,
-            // padding: [0, 20, 0, 0],
+            padding: [0, 30, 0, 0],
           },
           // minInterval: 1, //y轴的刻度只显示整数
           axisLabel: {

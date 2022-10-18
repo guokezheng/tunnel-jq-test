@@ -59,4 +59,13 @@ public interface ISdEnvironmentConfigurationService {
      * @return 结果
      */
     int deleteSdEnvironmentConfigurationById(Long id);
+
+    /**
+     * 导出查询
+     * @param sdEnvironmentConfiguration
+     * @return
+     */
+    List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList_exp(SdEnvironmentConfiguration sdEnvironmentConfiguration);
+
+
 }

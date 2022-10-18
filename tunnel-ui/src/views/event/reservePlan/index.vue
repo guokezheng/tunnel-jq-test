@@ -273,14 +273,15 @@
       :total="total"
       @pagination="getList"
     />
-
-    <el-drawer
+    <el-dialog :title="drawerFileTitle" :visible.sync="drawerFile" width="500px" append-to-body 
+             :before-close="handleFileClose"  >
+    <!-- <el-drawer
       :before-close="handleFileClose"
       :direction="direction"
       :title="drawerFileTitle"
       :visible.sync="drawerFile"
       class="zwsj"
-    >
+    > -->
       <el-table v-loading="loading" :data="planFileList">
         <el-table-column align="center" label="序号" width="100px">
           <template slot-scope="scope">
@@ -305,8 +306,8 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-drawer>
-
+    <!-- </el-drawer> -->
+</el-dialog>
     <!-- 配置策略选择窗口-->
     <el-dialog
       :title="title"

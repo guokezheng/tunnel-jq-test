@@ -45,7 +45,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -96,7 +96,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange" height="600">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />

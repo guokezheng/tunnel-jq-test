@@ -1,12 +1,20 @@
 <template>
   <div class="app-container">
-    <div style="display: flex;font-size: 14px;width: 100%;align-items: center;">
+    <div
+      style="display: flex; font-size: 14px; width: 100%; align-items: center"
+    >
       <div class="warningStatistics">事件预警统计:</div>
-      <div class="EquipStatistics">今日累计预警事件: <span>{{eventMsg.allnum}}</span></div>
-      <div class="EquipStatistics">今日执行预警事件: <span>{{eventMsg.process}}</span></div>
-      <div class="EquipStatistics">今日预警事件执行率: <span>{{eventMsg.bl}}</span></div>
+      <div class="EquipStatistics">
+        今日累计预警事件: <span>{{ eventMsg.allnum }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日执行预警事件: <span>{{ eventMsg.process }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日预警事件执行率: <span>{{ eventMsg.bl }}</span>
+      </div>
     </div>
-   
+
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -149,13 +157,12 @@
       :data="eventList"
       :default-sort="{ prop: 'eventTime', order: 'descending' }"
       max-height="600"
-      ref='tableRef' 
+      ref="tableRef"
     >
       <el-table-column
         label="隧道名称"
         align="center"
         prop="tunnels.tunnelName"
-        
       />
       <el-table-column
         label="所属机构"
@@ -164,7 +171,7 @@
       />
       <el-table-column label="方向" align="center" prop="direction">
         <template slot-scope="scope">
-          <span>{{getDirection(scope.row.direction)}}</span>
+          <span>{{ getDirection(scope.row.direction) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
@@ -244,6 +251,15 @@
       >
         <template slot-scope="scope">
           <el-button
+            v-show="scope.row.eventState == 3"
+            size="mini"
+            type="text"
+            icon="el-icon-finished"
+            @click="changeState(scope.row, 2)"
+            v-hasPermi="['system:event:edit']"
+            >忽略</el-button
+          >
+          <el-button
             v-show="scope.row.eventState == 0"
             size="mini"
             type="text"
@@ -262,8 +278,8 @@
             >查看详情
           </el-button>
           <!-- </router-link> -->
-          <template v-if="scope.row.eventState == 1 || scope.row.eventState == 2 ">
-            <el-button
+          <el-button
+            v-show="scope.row.eventState == 0 || scope.row.eventState == 3"
             size="mini"
             type="text"
             icon="el-icon-chat-line-square"
@@ -271,7 +287,6 @@
             @click="handleDispatch(scope.row)"
             >应急调度
           </el-button>
-          </template>
 
           <!-- <el-button
             size="mini"
@@ -554,7 +569,7 @@
             </div>
             <div class="detailsText">事件分类</div>
             <div
-              style="color: #82b3c2; line-height: 40px;width:195px"
+              style="color: #82b3c2; line-height: 40px; width: 195px"
               v-if="eventForm.eventType.eventType"
             >
               {{ eventForm.eventType.eventType }}
@@ -878,6 +893,16 @@ export default {
     });
   },
   methods: {
+    changeState(row, state) {
+      this.$confirm("是否确认忽略此事件！", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        row.eventState = state;
+        return updateEvent(row);
+      });
+    },
     getEventMsg() {
       // 获取事件预警信息
       getTodayEventCount().then((result) => {
@@ -932,8 +957,8 @@ export default {
         console.log(response.rows, "查询事件管理列表");
         this.eventList = response.rows;
         this.$nextTick(() => {
-          this.$refs.tableRef.doLayout()
-        })
+          this.$refs.tableRef.doLayout();
+        });
         this.total = response.total;
         this.loading = false;
       });
@@ -1159,26 +1184,26 @@ hr {
   font-weight: bold;
 }
 
-.EquipStatistics{
-    width: 200px;
-    height: 40px;
-    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
-    color: white;
-    text-align: center;
-    line-height: 40px;
-    font-weight: 400;
-    font-size: 16px;
-    margin-left: 14px;
-    >span{
-      font-size: 24px;
-      font-weight: 600;
-      vertical-align: middle;
-    }
+.EquipStatistics {
+  width: 200px;
+  height: 40px;
+  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+  color: white;
+  text-align: center;
+  line-height: 40px;
+  font-weight: 400;
+  font-size: 16px;
+  margin-left: 14px;
+  > span {
+    font-size: 24px;
+    font-weight: 600;
+    vertical-align: middle;
   }
-  .warningStatistics{
-    line-height: 60px;
-    font-size: 14px;
-    color: #606266;
-    font-weight: 700;
-  }
+}
+.warningStatistics {
+  line-height: 60px;
+  font-size: 14px;
+  color: #606266;
+  font-weight: 700;
+}
 </style>

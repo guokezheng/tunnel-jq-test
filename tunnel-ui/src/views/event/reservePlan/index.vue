@@ -67,11 +67,11 @@
         <el-button
           icon="el-icon-search"
           size="mini"
-          type="cyan"
+          type="primary"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
       </el-form-item>
@@ -154,7 +154,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-
+        
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
@@ -247,7 +247,7 @@
             >删除
           </el-button>
           <el-button
-            v-hasPermi="['business:plan:config']"
+            v-hasPermi="['business:plan:add']"
             icon="el-icon-guide"
             size="mini"
             type="text"
@@ -656,7 +656,13 @@
       </el-form>
       <el-form-item style="text-align: right; width: 100%"> </el-form-item>
       <div slot="footer" class="dialog-footer">
-        <el-button style="width: 10%" type="primary" @click="submitstrategy">保存</el-button>
+        <el-button
+          style="width: 10%"
+          type="primary"
+          v-hasPermi="['plan:process:add']"
+          @click="submitstrategy"
+          >保存</el-button
+        >
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
       </div>
     </el-dialog>

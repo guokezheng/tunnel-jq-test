@@ -419,7 +419,8 @@
             if (list[index][i].iFileList != null) {
               let imgUrl = [];
               for (let j = 0; j < list[index][i].iFileList.length; j++) {
-                let url = await that.picture(list[index][i].iFileList[j].url);
+                // let url = await that.picture(list[index][i].iFileList[j].url);
+                let url = list[index][i].iFileList[j].url;
                 imgUrl.push(url);
               }
               list[index][i].url = imgUrl;

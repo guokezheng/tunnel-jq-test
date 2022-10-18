@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/loginjqtunnel','/auth-redirect', '/bind', '/register']
+const whiteList = ['/login','/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
@@ -42,7 +42,8 @@ router.beforeEach((to, from, next) => {
       // 在免登录白名单，直接进入
       next()
     }else {
-      let str = window.location.pathname//获取当前路由
+      //let str = window.location.pathname//获取当前路由
+      let str = to.path
       if(str.indexOf("loginjqtunnel")!=-1){//单点登录
         store.dispatch("Login1").then(() => {
           next({ path: '/' })

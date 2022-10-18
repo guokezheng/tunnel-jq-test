@@ -76,7 +76,9 @@ public class SdDeviceControlService {
         String fireMark = "";
         //控制车指
         if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
-            sdOperationLog.setBeforeState(data.get(0).getData());
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
             controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
             sdOperationLog.setState(String.valueOf(controlState));
             //通过websocket推送到前端
@@ -94,7 +96,9 @@ public class SdDeviceControlService {
             String frequency = map.get("frequency").toString();
             sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
             data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-            sdOperationLog.setBeforeState(data.get(0).getData());
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
             controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
             sdOperationLog.setState(String.valueOf(controlState));
             //通过websocket推送到前端
@@ -117,7 +121,9 @@ public class SdDeviceControlService {
             String frequency = map.get("frequency").toString();
             sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
             data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-            sdOperationLog.setBeforeState(data.get(0).getData());
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
             controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
             sdOperationLog.setState(String.valueOf(controlState));
             //通过websocket推送到前端

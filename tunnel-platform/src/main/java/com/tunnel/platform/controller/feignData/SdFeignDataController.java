@@ -6,7 +6,7 @@ import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.service.dataInfo.ISdEquipmentStateService;
 import com.tunnel.business.service.event.ISdStrategyRlService;
-import com.tunnel.business.service.event.ISdStrategyService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
-import com.tunnel.business.service.event.ISdStrategyService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -66,6 +66,14 @@ public class SdStrategyController extends BaseController
     {
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
+
+//    @GetMapping(value = "/getTimeSharing/{id}")
+//    @ApiOperation("分时控制数据回填接口")
+//    @ApiImplicitParam(name = "id", value = "控制策略ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
+//    public Result<Map> getTimeSharingInfo(@PathVariable("id") Long id)
+//    {
+//        return Result.success(sdStrategyService.selectSdStrategyById(id));
+//    }
 
     /**
      * 根据策略id查询控制策略

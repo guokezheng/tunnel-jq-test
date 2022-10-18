@@ -34,7 +34,7 @@ public class SdStrategyRl extends BaseEntity
     private String eqTypeId;
 
     /** 控制时间 */
-    private Date controlTime;
+    private String controlTime;
 
     private List<SdEquipmentState> eqStateList;
     
@@ -110,7 +110,15 @@ public class SdStrategyRl extends BaseEntity
 		return eqType;
 	}
 
-	public void setEqType(SdEquipmentType eqType) {
+    public String getControlTime() {
+        return controlTime;
+    }
+
+    public void setControlTime(String controlTime) {
+        this.controlTime = controlTime;
+    }
+
+    public void setEqType(SdEquipmentType eqType) {
 		this.eqType = eqType;
 	}
 
@@ -126,13 +134,6 @@ public class SdStrategyRl extends BaseEntity
 		this.eqStateList = equipmentState;
 	}
 
-    public Date getControlTime() {
-        return controlTime;
-    }
-
-    public void setControlTime(Date controlTime) {
-        this.controlTime = controlTime;
-    }
 
     @Override
     public String toString() {

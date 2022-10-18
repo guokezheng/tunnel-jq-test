@@ -100,6 +100,12 @@ export default {
 .pagination-container {
   background: #fff;
   padding: 32px 16px;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  left: 50%;
+  right: 50%;
+  bottom: 50px;
 }
 .pagination-container.hidden {
   display: none;

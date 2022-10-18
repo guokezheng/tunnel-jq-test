@@ -5,8 +5,8 @@
         <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -90,7 +90,7 @@
         </el-table-column>
       </el-table>
     </el-drawer> -->
-    <el-dialog :title="drawerTitle" :visible.sync="open" width="740px" append-to-body :before-close="handleDraClose">
+    <el-dialog :title="drawerTitle" :visible.sync="open" width="740px" append-to-body :before-close="drawerClose">
       <el-form ref="form1" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="设备名称" prop="equipmentName" style="width: 80%;">
           <el-input v-model="form.equipmentName" placeholder="请输入设备名称" />

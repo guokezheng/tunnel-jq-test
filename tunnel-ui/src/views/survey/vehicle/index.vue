@@ -52,8 +52,8 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
           <!-- <el-col :span="1.5"> -->
 
       <!-- </el-col> -->
@@ -122,7 +122,8 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
       <!-- 添加/修改应急资源对话框 -->
       <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :before-close="cancel">
         <el-form ref="form" :model="form" :rules="rules" label-width="106px">
@@ -218,6 +219,7 @@ import {
         loading: false,
         // 选中数组
         ids: [],
+        total:0,
         // 非单个禁用
         single: true,
         // 非多个禁用
@@ -225,6 +227,8 @@ import {
         // 弹出层标题
         title: "",
         queryParams:{
+          pageNum: 1,
+          pageSize: 10,
         },
         form:{},
         mechanismList:[],
@@ -286,6 +290,8 @@ import {
       handleQueryList(queryParams).then(res=>{
        if(res.code==200){
         this.mechanismList=res.rows
+        this.total = res.total;
+
        }
 
       })

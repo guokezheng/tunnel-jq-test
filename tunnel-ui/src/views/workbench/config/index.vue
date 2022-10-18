@@ -398,7 +398,7 @@
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i class="el-icon-caret-left"></i>定时控制模块
+            <i class="el-icon-caret-left"></i>分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
             <i class="el-icon-caret-left"></i>触发控制模块
@@ -515,7 +515,7 @@
           </div>
         </el-drawer>
         <el-drawer
-          title="定时控制模块"
+          title="分时控制模块"
           :visible.sync="drawerB"
           :modal="false"
           :append-to-body="true"
@@ -6682,20 +6682,20 @@ export default {
 }
 
 .drawerTop {
-  height: 59%;
-  top: 134px;
+  height: 62%;
+  top: 130px;
   right: 38px;
 }
 .drawerCenter {
-  height: 59%;
-  top: 134px;
+  height: 62%;
+  top: 130px;
   right: 38px;
 
   // top: 33%;
 }
 .drawerBottom {
-  height: 59%;
-  top: 134px;
+  height: 62%;
+  top: 130px;
   right: 38px;
 
   // top: 54%;

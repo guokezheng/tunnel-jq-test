@@ -58,13 +58,9 @@
           <div>
             <el-form-item style="width: 100%">
               <el-time-select
+                format="HH:mm:ss"
                 value-format="HH:mm:ss"
                 v-model="item.controlTime"
-                :picker-options="{
-                  start: '08:30',
-                  step: '00:15',
-                  end: '18:30',
-                }"
                 placeholder="选择时间"
               >
               </el-time-select>
@@ -342,7 +338,10 @@ export default {
       }
       for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
         let arr = this.strategyForm.autoControl[i];
-        arr.controlTime = arr.controlTime + ":00";
+        var n = arr.controlTime.split(":").length - 1;
+        if (n == 2) {
+          arr.controlTime = arr.controlTime + ":00";
+        }
       }
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
@@ -358,7 +357,10 @@ export default {
       });
       for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
         let arr = this.strategyForm.autoControl[i];
-        arr.controlTime = arr.controlTime + ":00";
+        var n = arr.controlTime.split(":").length - 1;
+        if (n == 2) {
+          arr.controlTime = arr.controlTime + ":00";
+        }
       }
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {

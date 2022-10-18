@@ -232,7 +232,7 @@
     </el-dialog>
   </div>
 </template>
-    
+
     <script>
 import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
 import {
@@ -272,7 +272,7 @@ export default {
       // 二次表单校验
       rules: {
         equipment_type: [
-          { required: true, message: "请选择设备类型22", trigger: "blur" },
+          { required: true, message: "请选择设备类型", trigger: "blur" },
         ],
         equipments: [
           { required: true, message: "请选择设备", trigger: "blur" },
@@ -280,7 +280,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
-        strategyType: "1", //策略类型
+        strategyType: "2", //策略类型
         tunnelId: null, //隧道id
         strategyName: null, //策略名称
         direction: "", //方向
@@ -717,7 +717,7 @@ export default {
   },
 };
 </script>
-    
+
     <style>
 .triggers .box .el-form-item__content {
   display: flex;

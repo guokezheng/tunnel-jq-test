@@ -100,4 +100,11 @@ public interface ISdEventService {
      * @return
      */
     String getDefaultEventTitle(SdEvent sdEvent,Map<String,String> tunnelMap,Map<Long,String> eventTypeMap);
+
+    /**
+     * 根据事件桩号 获取分区Id
+     * @param stakeNum
+     * @return
+     */
+    Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction);
 }

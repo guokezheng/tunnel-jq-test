@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">#{strategyId},</if>
-            <if test="controlTime != null">#{controlTime}</if>
+            <if test="controlTime != null">#{controlTime},</if>
             <if test="eqTypeId != null">#{eqTypeId},</if>
             <if test="equipments != null">#{equipments},</if>
             <if test="state != null">#{state},</if>

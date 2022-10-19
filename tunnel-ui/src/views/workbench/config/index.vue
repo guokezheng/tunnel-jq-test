@@ -156,7 +156,7 @@
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
 
-                <div class="wrapper" id="eq-wrapper" @mousemove="onmousemove">
+                <div class="wrapper" id="eq-wrapper" @mousemove="mouseoversImage"  @mouseleave="mouseleaveImage">
                   <!-- <div
                   class="wrapper"
                   id="eq-wrapper"
@@ -821,6 +821,7 @@
         v-loading="loading"
         :data="logList"
         min-height="200"
+        max-height="400"
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
@@ -867,10 +868,11 @@
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
+        class="paginationWorkbench"
       />
-      <div slot="footer">
+      <!-- <div slot="footer">
         <el-button type="primary" @click="cancel">关 闭</el-button>
-      </div>
+      </div> -->
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -4837,10 +4839,10 @@ export default {
         }
       }
     },
-    onmousemove(e) {
-      let et = e || window.event;
-      et.preventDefault(); // 阻止默认事件发生
-    },
+    // onmousemove(e) {
+    //   let et = e || window.event;
+    //   et.preventDefault(); // 阻止默认事件发生
+    // },
     /* -------------------鼠标拖动end------------------*/
 
     /* 查询隧道列表 */
@@ -6194,6 +6196,8 @@ export default {
       // });
       this.title = "操作日志";
       this.operationLogDialog = true;
+      this.getList();
+
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -7788,7 +7792,10 @@ input {
   padding: 0px !important;
 }
 .eventDiglog .el-table {
+  padding:15px;
+  padding-top: 0;
   background-color: transparent !important;
+  margin-bottom: 65px;
 }
 .el-table .fixed-width .el-button--mini {
   padding-left: 7px;
@@ -7850,6 +7857,11 @@ input {
   background: #00BBF5;
   width:220px;
 
+}
+.paginationWorkbench{
+  position: fixed;
+  bottom: 250px !important;
+  height: 60px;
 }
 </style>
 <style lang="scss">

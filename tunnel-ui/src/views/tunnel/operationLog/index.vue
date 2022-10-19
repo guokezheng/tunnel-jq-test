@@ -59,7 +59,7 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="logList" height="670" :default-sort = "{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logList" max-height="600" :default-sort = "{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="序号" align="center" prop="id" display:"none"/>
 

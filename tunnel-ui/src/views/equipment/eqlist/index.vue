@@ -65,7 +65,7 @@
         </el-tooltip>
       </div>
     </el-row>
-    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" height="600">
+    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="600">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备ID" align="center" prop="eqId" show-overflow-tooltip />
       <el-table-column label="所属隧道" align="center" prop="tunnelName.tunnelName" min-width="100" show-overflow-tooltip />

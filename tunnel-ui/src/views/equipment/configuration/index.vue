@@ -240,9 +240,9 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <!-- <el-dialog :visible.sync="dialogVisible">
+          <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="form.url" alt="" />
-          </el-dialog> -->
+          </el-dialog>
         </el-form-item>
         <el-form-item label="图片宽度" prop="width">
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
@@ -433,6 +433,7 @@ export default {
         createTime: null,
         updateTime: null,
       };
+      this.fileList = []
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -563,8 +564,8 @@ export default {
       // this.fileData.append("file", file.file);
     },
     handlePictureCardPreview(file) {
-      // this.dialogImageUrl = file.url;
-      // this.dialogVisible = true;
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {

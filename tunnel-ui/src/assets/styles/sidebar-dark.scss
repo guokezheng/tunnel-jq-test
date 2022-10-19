@@ -24,6 +24,87 @@
     }
   }
   #app {
+    .separate{
+      background: #E2EEFE;
+    }
+    .app-container{
+      background: white;
+    }
+    
+    .el-table tr{
+      background-color: #FFFFFF;
+    }
+    // 输入框背景色
+    .el-input--small .el-input__inner{
+      background-color: #F2F8FF;
+    }
+    // 下拉框背景色
+    .el-input--medium .el-input__inner{
+      background-color: #F2F8FF;
+    }
+    // 时间框背景色
+    .el-range-editor.el-input__inner{
+      background-color: #F2F8FF;
+    }
+    .el-range-editor--small .el-range-input{
+      background-color: #F2F8FF;
+    }
+    // 所有表格高度调小
+    .el-table--medium .el-table__cell{
+      padding: 0;
+    }
+    // 设备预警、事件预警表单
+    .warningStatistics{
+      color: #606266;
+    }
+    // 表单label
+    .el-form-item__label{
+      color: #606266;
+    }
+    // 翻页组件
+    .pagination-container {
+      background-color: transparent;
+      .el-pagination__total {
+        color: $theme-blue-text-color;
+      }
+      .el-pagination__jump {
+        color: #606266;
+      }
+      .el-pagination.is-background .btn-prev,
+      .el-pagination.is-background .btn-next,
+      .el-pagination.is-background .el-pager li {
+        background-color: white;
+        color: #606266;
+        border: 1px solid #DCDFE6;
+      }
+    }
+    // 应急预案 表格内相关策略
+    .el-tag{
+      background-color: #ebf7ff;
+    }
+    // 面包屑
+    .app-breadcrumb.el-breadcrumb {
+      background: white;
+      .no-redirect {
+        color: #97a8be;
+      }
+    }
+    .mapCharts{
+      .el-table--medium .el-table__cell{
+        padding: 10px 0;
+      }
+    }
+    .el-table__body-wrapper .el-table__cell{
+      border-left: solid 1px #E1E4E6;
+    }
+    .el-table__body-wrapper tbody{
+      border-right: solid 1px #E1E4E6;
+
+    }
+    .el-table__header-wrapper .el-table__cell{
+      border-left: solid 1px #E1E4E6;
+      border-top: solid 1px #E1E4E6;
+    }
     .el-scrollbar__wrap::-webkit-scrollbar-track {
       background-color: #1d58a9;
     }
@@ -621,6 +702,10 @@
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #c4e8f6;
       cursor: pointer;
+    }
+    .el-table__body tr .hover-row > td .el-table__cell{
+      background-color: #c4e8f6;
+
     }
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {

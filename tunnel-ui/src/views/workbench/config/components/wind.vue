@@ -80,8 +80,8 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="风速:">
-              {{ fengValue }}
-              <span style="padding-left:5px" v-if="fengValue">m/s</span>
+              {{ nowData }}
+              <span style="padding-left:5px" v-if="nowData">m/s</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -134,7 +134,8 @@ export default {
       visible: true,
       tab: "co",
       fengValue:'',
-      fengDirection:''
+      fengDirection:'',
+      nowData:''
     };
   },
   created() {
@@ -159,6 +160,8 @@ export default {
         });
         await getTodayFSFXData(this.eqInfo.equipmentId).then((response) => {
           console.log(response, "风速风向数据");
+        this.nowData = parseFloat(response.data.nowData).toFixed(2)
+          
           var xData = [];
           var yData = [];
           for (var item of response.data.todayFSData) {

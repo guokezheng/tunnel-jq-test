@@ -1195,7 +1195,7 @@ hr {
   .warningStatistics{
     line-height: 60px;
     font-size: 14px;
-    color: #606266;
+    // color: #606266;
     font-weight: 700;
   }
 </style>

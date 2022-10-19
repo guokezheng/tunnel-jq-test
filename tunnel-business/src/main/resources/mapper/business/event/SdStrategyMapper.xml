@@ -199,5 +199,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY
             s.id;
     </select>
-    
+    <select id="getStrategyRefJobIds" parameterType="String" resultType="long">
+        select GROUP_CONCAT(strategy.job_relation_id) as jobIds from sd_strategy strategy
+        where strategy.id in (#{ids})
+        GROUP BY strategy.strategy_type
+    </select>
+
+    <select id="getTimeSharingInfo"  parameterType="String" resultType="Map" >
+        SELECT strategy.strategy_name,rl.strategy_id,strategy.strategy_state,GROUP_CONCAT(rl.control_time SEPARATOR '-') as time
+        FROM sd_strategy_rl rl
+            inner join sd_strategy strategy on rl.strategy_id = strategy.id
+        where strategy.tunnel_id = #{tunnelId} and strategy.strategy_type = '3'
+        GROUP BY rl.strategy_id
+    </select>
+
 </mapper>

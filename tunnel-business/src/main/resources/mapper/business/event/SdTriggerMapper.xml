@@ -55,7 +55,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item c on a.element_id = c.id
         where relate_id = #{relateId}
     </select>
-        
     <insert id="insertSdTrigger" parameterType="SdTrigger" useGeneratedKeys="true" keyProperty="id">
         insert into sd_trigger
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -2,7 +2,9 @@ package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdDeviceChange;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDeviceChangeMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceChangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.util.List;
 public class SdDeviceChangeServiceImpl implements ISdDeviceChangeService {
     @Autowired
     private SdDeviceChangeMapper sdDeviceChangeMapper;
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     /**
      * 查询设备变更
@@ -59,6 +63,10 @@ public class SdDeviceChangeServiceImpl implements ISdDeviceChangeService {
      */
     @Override
     public int insertSdDeviceChange(SdDeviceChange sdDeviceChange) {
+        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(sdDeviceChange.getDeviceId());
+        if (sdDevices == null) {
+            throw new RuntimeException("设备ID不存在，请核对后再添加！");
+        }
         return sdDeviceChangeMapper.insertSdDeviceChange(sdDeviceChange);
     }
 

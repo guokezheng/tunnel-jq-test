@@ -168,7 +168,7 @@ export default {
             xData.push(item.order_hour);
             yData.push(item.count);
           }
-          this.fengValue = yData[yData.length-1]
+          // this.fengValue = yData[yData.length-1]
           this.fengDirection = response.data.windDirection
           this.$nextTick(() => {
             this.initChart(xData, yData);
@@ -219,14 +219,14 @@ export default {
             return res;
           },
         },
-        dataZoom: [
-          {
-            type: "inside", //鼠标滑动缩放
-            realtime: false,
-            start: 30,
-            end: 70,
-          },
-        ],
+        // dataZoom: [
+        //   {
+        //     type: "inside", //鼠标滑动缩放
+        //     realtime: false,
+        //     start: 30,
+        //     end: 70,
+        //   },
+        // ],
         grid: {
           left: "10%",
           right: "12%",

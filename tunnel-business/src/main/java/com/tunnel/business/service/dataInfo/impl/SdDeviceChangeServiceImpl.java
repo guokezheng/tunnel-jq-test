@@ -66,6 +66,16 @@ public class SdDeviceChangeServiceImpl implements ISdDeviceChangeService {
         SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(sdDeviceChange.getDeviceId());
         if (sdDevices == null) {
             throw new RuntimeException("设备ID不存在，请核对后再添加！");
+        } else if (sdDeviceChange.getDeviceId() == null || sdDeviceChange.getDeviceId().equals("")) {
+            throw new RuntimeException("设备ID不能为空，请添加后重试！");
+        } else if (sdDeviceChange.getDeviceName() == null || sdDeviceChange.getDeviceName().equals("")) {
+            throw new RuntimeException("设备名称不能为空，请添加后重试！");
+        } else if (sdDeviceChange.getChangeTime() == null) {
+            throw new RuntimeException("设备变更时间不能为空，请添加后重试！");
+        } else if (sdDeviceChange.getEqDirection() == null || sdDeviceChange.getEqDirection().equals("")) {
+            throw new RuntimeException("设备方向不能为空，请添加后重试！");
+        } else if (sdDeviceChange.getStakeMark() == null || sdDeviceChange.getStakeMark().equals("")) {
+            throw new RuntimeException("设备所在桩号不能为空，请添加后重试！");
         }
         return sdDeviceChangeMapper.insertSdDeviceChange(sdDeviceChange);
     }

@@ -43,11 +43,11 @@
     </el-form>
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -75,7 +75,9 @@
       </div>
     </el-row>
 
-    <el-table v-loading="loading" :data="materialList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="materialList" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
@@ -771,6 +773,14 @@ export default {
     materialFormClose() {
       this.resetMaterial();
       this.drawer = false;
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
     // // 查询参数-桩号-获取焦点
     // queryStationFocus(value, index) {

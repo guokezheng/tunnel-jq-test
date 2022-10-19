@@ -34,6 +34,10 @@
     .el-table tr{
       background-color: #FFFFFF;
     }
+    .el-table .el-table__cell{
+      height: 40px;
+      line-height: 40px;
+    }
     // 输入框背景色
     .el-input--small .el-input__inner{
       background-color: #F2F8FF;
@@ -192,7 +196,7 @@
         white-space: nowrap !important;
         height: 72px;
         line-height: 72px;
-        font-size: 18px;
+        font-size: 16px;
       }
 
       // menu hover
@@ -398,7 +402,7 @@
   .my-back{
     background-color: #cdedfa;
   }
-   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 126%;height:72px;}
+   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 123%;height:72px;}
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background-color: white !important;
@@ -924,6 +928,17 @@
     }
     .handleLightClass {
       background: #07C2FF !important;
+    }
+    // 工作台分时控制 开关
+    .el-switch__core{
+      background: linear-gradient(177deg, #00070D, #005AA8);
+      border: 1px solid #005E96;
+    }
+    .ledLighting .is-checked .el-switch__core:after{
+      background: #00C8FF;
+    }
+    .ledLighting .el-switch__core:after{
+      background: #3F88B5;
     }
   }
   .drawerActive{

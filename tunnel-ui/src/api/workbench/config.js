@@ -147,10 +147,26 @@ export function batchControlCarFinger(data) {
   })
 }
 
-// 定时控制抽屉
-export function timingStrategyList(tunnelId,strategyType) {
+// 定时控制抽屉 获取数据
+export function timeSharing(tunnelId) {
   return request({
-    url: '/strategy/list?tunnelId=' + tunnelId + "&strategyType=" + strategyType,
+    url: '/strategy/timeSharing/' + tunnelId,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 修改控制状态
+export function updateControlTime(strategyId,controlTime) {
+  return request({
+    url: '/strategy/timeSharing/updateControlTime?strategyId=' + strategyId + '&controlTime=' + controlTime,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 控制开关
+export function timeStrategySwitch(strategyId,change) {
+  return request({
+    url: '/strategy/switch?strategyId='+strategyId + '&change=' + change,
     method: 'get',
   })
 }

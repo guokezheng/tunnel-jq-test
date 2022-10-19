@@ -13,6 +13,7 @@
       :inline="true"
       v-show="showSearch"
       label-width="68px"
+      style="margin-top:10px"
     >
       <el-form-item label="事件类型" prop="eventTypeId">
         <el-select
@@ -150,6 +151,8 @@
       :default-sort="{ prop: 'eventTime', order: 'descending' }"
       max-height="600"
       ref='tableRef' 
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column
         label="隧道名称"
@@ -204,8 +207,8 @@
       <!-- <el-table-column label="状态" align="center" prop="eventState" :formatter="eventStateFormat" /> -->
       <el-table-column label="事件状态" align="center" prop="eventState">
         <template slot-scope="scope">
-          <span v-show="scope.row.eventState == 0" style="color: #ff0000"
-            ><i class="el-icon-info" style="color: #ff0000;!important"></i
+          <span v-show="scope.row.eventState == 0" style="color: #85E37B"
+            ><i class="el-icon-info" style="color: #85E37B;!important"></i
             >&nbsp;处理中</span
           >
           <span v-show="scope.row.eventState == 1" style="color: #00aa00"
@@ -1106,6 +1109,14 @@ export default {
       this.open = false;
       this.details = false;
       this.reset();
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

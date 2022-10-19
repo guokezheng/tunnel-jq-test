@@ -67,11 +67,20 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
           >重置</el-button
         >
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:record:export']"
+          >导出</el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -105,7 +114,7 @@
           v-hasPermi="['system:record:remove']"
           >删除</el-button
         >
-      </el-col>-->
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -121,13 +130,15 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="recordList"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'releaseTime', order: 'descending'}"
+    :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="发布用户" align="center" prop="id" />
@@ -456,6 +467,14 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
         });
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

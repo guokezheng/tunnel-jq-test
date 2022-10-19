@@ -19,13 +19,41 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:tunnels:add']"
+        >新增
+        </el-button>
+        <el-button
+          type="primary" plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:tunnels:edit']"
+        >修改
+        </el-button>
+        <el-button
+          type="primary" plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:tunnels:remove']"
+        >删除
+        </el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
@@ -35,7 +63,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary" plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
@@ -46,7 +74,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary" plain
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
@@ -55,15 +83,15 @@
         >删除
         </el-button>
       </el-col>
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button-->
-      <!--          type="warning"-->
-      <!--          icon="el-icon-download"-->
-      <!--          size="mini"-->
-      <!--          @click="handleExport"-->
-      <!--          v-hasPermi="['system:tunnels:export']"-->
-      <!--        >导出</el-button>-->
-      <!--      </el-col>-->
+           <el-col :span="1.5">
+             <el-button
+               type="warning"
+               icon="el-icon-download"
+               size="mini"
+               @click="handleExport"
+               v-hasPermi="['system:tunnels:export']"
+             >导出</el-button>
+           </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery"/>
@@ -72,10 +100,11 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch"/>
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="tunnelsList" @selection-change="handleSelectionChange"
-              max-height="610">
+        :row-class-name="tableRowClassName"
+              max-height="610" >
       <el-table-column type="selection" width="55" align="center"/>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column label="隧道ID" align="center" prop="tunnelId"/>
@@ -548,7 +577,15 @@ export default {
       this.download('system/tunnels/export', {
         ...this.queryParams
       }, `system_tunnels.xlsx`)
-    }
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

@@ -23,7 +23,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="机构" prop="tunnelId">
-        <el-input style="width:200px;" v-model.number="queryParams.stagPointName" placeholder="请输入机构名称" size="small" />
+        <el-input style="width:200px;" v-model.number="queryParams.groupName" placeholder="请输入机构名称" size="small" />
       </el-form-item>
       <el-form-item label="姓名"  prop="stagPointName">
           <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
@@ -51,9 +51,7 @@
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -322,6 +320,14 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams = {
+        tunnelId: null,
+        groupName: null,
+        userName: null,
+        tunnelId: null,
+      }
+
+
       this.handleQuery();
     },
     // 多选框选中数据

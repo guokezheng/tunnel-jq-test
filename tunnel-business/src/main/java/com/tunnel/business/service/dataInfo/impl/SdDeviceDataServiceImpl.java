@@ -114,8 +114,24 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String today = simpleDateFormat.format(new Date());
+        SdDeviceData data = new SdDeviceData();
+        data.setDeviceId(deviceId);
+        data.setItemId(Long.valueOf(itemId));
+        SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
+        if (devData.getUpdateTime() != null) {
+            today = simpleDateFormat.format(devData.getUpdateTime());
+        } else {
+            today = simpleDateFormat.format(devData.getCreateTime());
+        }
         List<Map<String, Object>> todayCOData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
         itemId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
+        data.setItemId(Long.valueOf(itemId));
+        devData = sdDeviceDataMapper.selectLastRecord(data);
+        if (devData.getUpdateTime() != null) {
+            today = simpleDateFormat.format(devData.getUpdateTime());
+        } else {
+            today = simpleDateFormat.format(devData.getCreateTime());
+        }
         List<Map<String, Object>> todayVIData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("todayCOData", todayCOData);
@@ -128,6 +144,15 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String today = simpleDateFormat.format(new Date());
+        SdDeviceData data = new SdDeviceData();
+        data.setDeviceId(deviceId);
+        data.setItemId(Long.valueOf(itemId));
+        SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
+        if (devData.getUpdateTime() != null) {
+            today = simpleDateFormat.format(devData.getUpdateTime());
+        } else {
+            today = simpleDateFormat.format(devData.getCreateTime());
+        }
         List<Map<String, Object>> todayFSData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(deviceId);
@@ -146,13 +171,30 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         Long ldInsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode();
         Long ldOutsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String today = simpleDateFormat.format(new Date());
         List<Map<String, Object>> todayLDData = null;
         Map<String, Object> map = new HashMap<String, Object>();
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
         if (sdDevices != null && sdDevices.getEqType().longValue() == ldInsideTypeCode.longValue()) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()));
+            SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
+            String today = "";
+            if (deviceData.getUpdateTime() != null) {
+                today = simpleDateFormat.format(deviceData.getUpdateTime());
+            } else {
+                today = simpleDateFormat.format(deviceData.getCreateTime());
+            }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
             map.put("todayLDInsideData", todayLDData);
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == ldOutsideTypeCode.longValue()) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()));
+            SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
+            String today = "";
+            if (deviceData.getUpdateTime() != null) {
+                today = simpleDateFormat.format(deviceData.getUpdateTime());
+            } else {
+                today = simpleDateFormat.format(deviceData.getCreateTime());
+            }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
             map.put("todayLDOutsideData", todayLDData);
         }

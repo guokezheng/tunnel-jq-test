@@ -112,7 +112,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public Map<String, Object> getTodayCOVIData(String deviceId) {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String today = simpleDateFormat.format(new Date());
         SdDeviceData data = new SdDeviceData();
         data.setDeviceId(deviceId);
@@ -152,7 +152,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     @Override
     public Map<String, Object> getTodayFSFXData(String deviceId) {
         Long itemId = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String today = simpleDateFormat.format(new Date());
         SdDeviceData data = new SdDeviceData();
         data.setDeviceId(deviceId);
@@ -189,7 +189,7 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
         Long ldInsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode();
         Long ldOutsideTypeCode = DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         List<Map<String, Object>> todayLDData = null;
         Map<String, Object> map = new HashMap<String, Object>();
         SdDeviceData sdDeviceData = new SdDeviceData();

@@ -101,37 +101,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="getTodayCOVIData" resultType="hashmap">
-        SELECT
-        a.order_hour as order_hour, IFNULL(b.count,0) as count
-        FROM(
-        SELECT 0 AS order_hour UNION ALL SELECT 1 AS order_hour UNION ALL
-        SELECT 2 AS order_hour UNION ALL SELECT 3 AS order_hour UNION ALL
-        SELECT 4 AS order_hour UNION ALL SELECT 5 AS order_hour UNION ALL
-        SELECT 6 AS order_hour UNION ALL SELECT 7 AS order_hour UNION ALL
-        SELECT 8 AS order_hour UNION ALL SELECT 9 AS order_hour UNION ALL
-        SELECT 10 AS order_hour UNION ALL SELECT 11 AS order_hour UNION ALL
-        SELECT 12 AS order_hour UNION ALL SELECT 13 AS order_hour UNION ALL
-        SELECT 14 AS order_hour UNION ALL SELECT 15 AS order_hour UNION ALL
-        SELECT 16 AS order_hour UNION ALL SELECT 17 AS order_hour UNION ALL
-        SELECT 18 AS order_hour UNION ALL SELECT 19 AS order_hour UNION ALL
-        SELECT 20 AS order_hour UNION ALL SELECT 21 AS order_hour UNION ALL
-        SELECT 22 AS order_hour UNION ALL SELECT 23 AS order_hour) as a
-        LEFT JOIN
-        (SELECT HOUR(create_time) AS order_hour, cast(sum(data)/count(id) as DECIMAL(9, 3)) count
-        FROM
-            sd_device_data_record
-        WHERE
-        item_id = #{itemId} and device_id = #{deviceId}
-            and
-        DATE_FORMAT(create_time, '%Y-%m-%d')
-        BETWEEN
-        str_to_date(concat(#{today}," 00:00:00"),'%Y-%m-%d %T')
-        AND
-        str_to_date(concat(#{today}," 23:59:59"),'%Y-%m-%d %T')
-        GROUP BY
-        order_hour) as b
-        ON a.order_hour = b.order_hour
-        WHERE a.order_hour <![CDATA[ <= ]]> HOUR(now()) ORDER BY order_hour
+        SELECT HOUR(t.time) order_hour, ifnull(sa.num,0) AS count FROM
+            (SELECT   DATE_FORMAT( DATE_SUB( #{today},INTERVAL ( -(@i:=@i-1) ) HOUR ) ,'%Y-%m-%d %H') AS 'time'
+            FROM (
+            SELECT a  FROM
+            (SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4'   ) AS a
+            JOIN ( SELECT  '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b
+            ON 1
+            ) AS b  ,(SELECT @i:=+1)  AS i) AS t
+            LEFT JOIN
+            (SELECT DATE_FORMAT(DATE_SUB( b.create_time,INTERVAL MINUTE(#{today})-60 MINUTE ) ,'%Y-%m-%d %H') AS date,
+            cast(sum(data)/count(id) as DECIMAL(9, 3)) AS num
+            FROM (SELECT a.id,a.data,a.create_time	from sd_device_data_record a WHERE a.create_time <![CDATA[ >= ]]> (#{today} - interval 25 hour)
+            and a.device_id = #{deviceId} and item_id = #{itemId} ) b GROUP BY date )
+            AS sa
+        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H') GROUP BY t.time ORDER BY sa.date
     </select>
 
 

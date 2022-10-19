@@ -39,9 +39,16 @@ public class SdDeviceChangeServiceImpl implements ISdDeviceChangeService {
      */
     @Override
     public List<SdDeviceChange> selectSdDeviceChangeList(SdDeviceChange sdDeviceChange) {
-        Long deptId = SecurityUtils.getDeptId();
-        sdDeviceChange.getParams().put("deptId", deptId);
-        return sdDeviceChangeMapper.selectSdDeviceChangeList(sdDeviceChange);
+        Long userId = SecurityUtils.getUserId();
+        if (userId != 0L) {
+            boolean admin = SecurityUtils.isAdmin(userId);
+            if (admin) {
+                return sdDeviceChangeMapper.selectSdDeviceChangeList(sdDeviceChange);
+            }
+            Long deptId = SecurityUtils.getDeptId();
+            sdDeviceChange.getParams().put("deptId", deptId);
+        }
+        return null;
     }
 
     /**

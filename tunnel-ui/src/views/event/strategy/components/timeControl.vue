@@ -339,7 +339,7 @@ export default {
       for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
         let arr = this.strategyForm.autoControl[i];
         var n = arr.controlTime.split(":").length - 1;
-        if (n == 2) {
+        if (n == 1) {
           arr.controlTime = arr.controlTime + ":00";
         }
       }
@@ -358,7 +358,8 @@ export default {
       for (let i = 0; i < this.strategyForm.autoControl.length; i++) {
         let arr = this.strategyForm.autoControl[i];
         var n = arr.controlTime.split(":").length - 1;
-        if (n == 2) {
+        console.log(n);
+        if (n == 1) {
           arr.controlTime = arr.controlTime + ":00";
         }
       }

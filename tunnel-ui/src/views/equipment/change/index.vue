@@ -259,7 +259,13 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        deviceName: [{required: true, message: '请填写设备名称', trigger: 'blur'}],
+        deviceId: [{required: true, message: '请填写设备ID', trigger: 'blur'}],
+        changeTime: [{required: true, message: '请填写更换时间', trigger: 'blur'}],
+        eqDirection: [{required: true, message: '请选择方向', trigger: 'blur'}],
+        stakeMark: [{required: true, message: '请填写桩号信息', trigger: 'blur'}],
+      },
     };
   },
   created() {

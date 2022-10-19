@@ -523,13 +523,13 @@
         >
           <div v-for="(item, index) in timStrategyList" :key="index" style="width:100%;">
             <div class="ledLighting">
-              <span>{{ item.strategyName }} </span>
+              <span>{{ item.strategy_name }} </span>
               <el-switch
                 v-model="item.strategyState"
-                active-color="#B6DEEE"
-                inactive-color="#B6DEEE"
+                
                 active-value="0"
                 inactive-value="1"
+                @change = "timStrategySwitch(item)"
               >
               </el-switch>
             </div>
@@ -537,18 +537,21 @@
               <div class="timeStart">
                 <span class="setTime">开启时间：</span>
                 <el-time-picker
-                  v-model="item.createTime"
+                  v-model="item.arr[0]"
                   size="mini"
                   :clearable="false"
+                  value-format="HH:mm:ss"
                 >
                 </el-time-picker>
               </div>
               <div class="timeEnd">
                 <span class="setTime">关闭时间：</span>
                 <el-time-picker
-                  v-model="item.updateTime"
+                  v-model="item.arr[1]"
                   size="mini"
                   :clearable="false"
+                  value-format="HH:mm:ss"
+
                 >
                 </el-time-picker>
                 <el-button type="primary" size="mini" class="handleLightClass" @click="timingStrategy(item)"
@@ -2461,7 +2464,9 @@ import {
   special,
   getDeviceData,
   batchControlCarFinger,
-  timingStrategyList,
+  timeSharing,
+  updateControlTime,
+  timeStrategySwitch
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -3452,9 +3457,16 @@ export default {
       });
     },
     timingStrategy(item){
-      console.log(item);
-      this.$modal.msgWarning("控制接口待开发");
+      var time = item.arr.join('-')
+      updateControlTime(item.strategy_id,time).then((res) =>{
+        this.$modal.msgSuccess("修改时间成功");
+      })
+    },
+    timStrategySwitch(item){
 
+      timeStrategySwitch(item.strategy_id,item.strategyState).then((res)=>{
+        this.$modal.msgSuccess("控制成功");
+      })
     },
     // // 抽屉 车指控制
     // controlCheZhi(num) {
@@ -3557,9 +3569,15 @@ export default {
       this.drawerB = true;
       this.drawerA = false;
       this.drawerCVisible = false;
-      timingStrategyList(this.tunnelId, 3).then((res) => {
-        console.log(res);
-        this.timStrategyList = res.rows;
+      timeSharing(this.tunnelId).then((res) => {
+        // console.log(res);
+        // var arr = []
+        for(var item of res.data){
+          item.arr = item.time.split('-')
+          console.log(item,"item");
+        }
+        this.timStrategyList = res.data;
+        console.log(this.timStrategyList,"this.timStrategyList");
       });
     },
     isDrawerC() {
@@ -5069,11 +5087,6 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
-              for(var itt of res.eqList){
-                if(itt.eqType == 5){
-                  console.log(itt,"ittittittitt");
-                }
-              }
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -6182,11 +6195,11 @@ export default {
     },
     // 查看策略，表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      // if (rowIndex%2 == 0) {
-      // return 'even-row';
-      // } else {
-      return "odd-row";
-      // }
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
     //========================================控制策略结束================================================
     /* 跳至操作日志页面*/
@@ -6827,9 +6840,9 @@ export default {
     font-size: 14px;
     // color: #fff;
 
-    .el-switch__core:after {
-      background-color: #0f8ab9;
-    }
+    // .el-switch__core:after {
+    //   background-color: #0f8ab9;
+    // }
   }
 
    .Time {

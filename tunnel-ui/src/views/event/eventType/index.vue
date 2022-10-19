@@ -19,7 +19,8 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="primary" 
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
@@ -28,7 +29,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary" 
+          plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
@@ -38,7 +40,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary" 
+          plain
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
@@ -65,7 +68,9 @@
       </div>
     </el-row>
 
-    <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
@@ -268,7 +273,15 @@ export default {
       this.download('business/eventType/export', {
         ...this.queryParams
       }, `system_eventType.xlsx`)
-    }
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

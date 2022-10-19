@@ -51,7 +51,9 @@
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -69,7 +71,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -81,7 +83,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -114,6 +116,8 @@
       :data="SdEmergencyPerList"
       @selection-change="handleSelectionChange"
       @row-click="peopleTableRowClick"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
@@ -326,9 +330,6 @@ export default {
         userName: null,
         tunnelId: null,
       }
-
-
-      this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -415,6 +416,14 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
         });
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

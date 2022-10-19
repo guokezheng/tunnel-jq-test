@@ -57,18 +57,28 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
         <el-button
           type="primary"
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="openInsertStrategy"
           v-hasPermi="['system:strategy:add']"
-          >新建策略</el-button
+          >新增策略</el-button
+        >
+      </el-form-item>
+    </el-form>
+
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="openInsertStrategy"
+          v-hasPermi="['system:strategy:add']"
+          >新增策略</el-button
         >
       </el-col>
       <div class="top-right-btn">
@@ -94,7 +104,7 @@
           />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -102,6 +112,8 @@
       @selection-change="handleSelectionChange"
       :header-cell-style="{ 'text-align': 'center' }"
       max-height="610"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column
         label="隧道名称"
@@ -133,12 +145,11 @@
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.strategyState"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
+            active-color="#39ADFF"
+            inactive-color="#ccc"
             active-value="0"
             inactive-value="1"
-            active-text="开启"
-            inactive-text="关闭"
+           
             @change="changeStrategyState(scope.row)"
           >
           </el-switch>
@@ -872,6 +883,14 @@ export default {
     },
     changeValue(value) {
       this.changeVal = value;
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

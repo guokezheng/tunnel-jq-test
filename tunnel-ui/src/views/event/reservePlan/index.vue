@@ -11,7 +11,7 @@
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
-          style="width: 80%"
+          
           @change="changeSelection"
           clearable
         >
@@ -27,7 +27,7 @@
         <el-select
           v-model="queryParams.category"
           placeholder="请选择预案类别"
-          style="width: 80%"
+          
           clearable
         >
           <el-option
@@ -84,6 +84,7 @@
           icon="el-icon-plus"
           size="mini"
           type="primary"
+          plain
           @click="handleAdd()"
           >新增
         </el-button>
@@ -120,6 +121,8 @@
       @selection-change="handleSelectionChange"
       @row-click="handleRowClick"
       max-height="600"
+      :row-class-name="tableRowClassName"
+
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
@@ -184,6 +187,7 @@
         class-name="small-padding fixed-width"
         label="相关文档"
         width="130"
+      :row-class-name="tableRowClassName"
 
       >
         <template slot-scope="scope">
@@ -191,7 +195,7 @@
             v-show="scope.row.planFileId != null"
             icon="el-icon-link"
             size="mini"
-            style="cursor: pointer"
+            style="cursor: pointer;color:#39ADFF"
             type="text"
             @click="openFileDrawer(scope.row)"
             >点击查看
@@ -1569,6 +1573,14 @@ export default {
     // 点击某一行，将其选中(相关策略弹窗)
     addMultipleTableRowClick(row) {
       this.$refs.addMultipleTable.toggleRowSelection(row);
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
     /** 提交按钮 */
     /* submitForm() {

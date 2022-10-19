@@ -69,7 +69,8 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="primary" 
+          plain
           size="mini"
           @click="seeWarningType()"
           v-hasPermi="['system:warningInfo:add']"
@@ -136,6 +137,8 @@
       @selection-change="handleSelectionChange"
       max-height="570"
       :default-sort = "{prop: 'warningTime', order: 'descending'}"
+      :row-class-name="tableRowClassName"
+
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column
@@ -1421,6 +1424,14 @@ export default {
     eventFormClose() {
       this.resetEvent();
       this.drawer = false;
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

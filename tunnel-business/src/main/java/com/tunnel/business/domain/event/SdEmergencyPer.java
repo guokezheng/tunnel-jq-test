@@ -30,8 +30,8 @@ public class SdEmergencyPer extends BaseEntity
     @ApiModelProperty("应急人员")
     private String userName;
 
-    @Excel(name = "小组")
-    @ApiModelProperty("小组")
+    @Excel(name = "岗位")
+    @ApiModelProperty("岗位")
     private String groupName;
 
     /** 电话 */
@@ -56,25 +56,25 @@ public class SdEmergencyPer extends BaseEntity
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setTunnelId(String tunnelId) 
+    public void setTunnelId(String tunnelId)
     {
         this.tunnelId = tunnelId;
     }
 
-    public String getTunnelId() 
+    public String getTunnelId()
     {
         return tunnelId;
     }
-    public void setUserName(String userName) 
+    public void setUserName(String userName)
     {
         this.userName = userName;
     }
 
-    public String getUserName() 
+    public String getUserName()
     {
         return userName;
     }
@@ -92,7 +92,7 @@ public class SdEmergencyPer extends BaseEntity
         this.phone = phone;
     }
 
-    public String getPhone() 
+    public String getPhone()
     {
         return phone;
     }

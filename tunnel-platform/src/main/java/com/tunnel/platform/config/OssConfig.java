@@ -1,6 +1,6 @@
-package com.ruoyi.web.core.config;
+package com.tunnel.platform.config;
 
-import com.ruoyi.common.oss.controller.OssUtil;
+import com.ruoyi.common.utils.oss.OssUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

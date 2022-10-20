@@ -1,4 +1,4 @@
-package com.ruoyi.common.oss.controller;
+package com.ruoyi.common.utils.oss;
 
 import com.aliyun.oss.ClientBuilderConfiguration;
 import com.aliyun.oss.OSS;

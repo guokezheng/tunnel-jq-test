@@ -28,7 +28,7 @@ ruoyi:
 
     bucketName: bucket-wisdom-oss
 #    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
-    endPoint:  http://oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud/
+    endPoint: http://oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud/
     accessKeyId: IDh1HEeliVnMImdxRH
     accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
     upFolder: upload

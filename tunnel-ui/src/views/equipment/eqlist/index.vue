@@ -21,6 +21,20 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['system:devices:add']">新增
+        </el-button>
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+          v-hasPermi="['system:devices:edit']">修改
+        </el-button>
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+          v-hasPermi="['system:devices:remove']">删除
+        </el-button>
+        <el-button type="primary" plain icon="el-icon-download" size="mini" @click="handleExport"
+          v-hasPermi="['system:devices:export']">导出
+        </el-button>
+        <el-button type="primary" plain icon="el-icon-upload" size="mini" @click="handleImport"
+          v-hasPermi="['system:devices:import']">导入</el-button>
         <!-- <el-button
           type="info"
           icon="el-icon-s-help"
@@ -31,29 +45,29 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd"
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['system:devices:add']">新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
           v-hasPermi="['system:devices:edit']">修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['system:devices:remove']">删除
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport"
+        <el-button type="primary" plain icon="el-icon-download" size="mini" @click="handleExport"
           v-hasPermi="['system:devices:export']">导出
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="el-icon-upload" size="mini" @click="handleImport"
+        <el-button type="primary" plain plain icon="el-icon-upload" size="mini" @click="handleImport"
           v-hasPermi="['system:devices:import']">导入</el-button>
       </el-col>
       <div class="top-right-btn">
@@ -64,8 +78,10 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch = !showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
-    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" height="600">
+    </el-row> -->
+    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="600"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备ID" align="center" prop="eqId" show-overflow-tooltip />
       <el-table-column label="所属隧道" align="center" prop="tunnelName.tunnelName" min-width="100" show-overflow-tooltip />
@@ -1201,7 +1217,14 @@
       submitFileForm() {
         this.$refs.upload.submit();
       },
-
+      // 表格行样式
+      tableRowClassName({ row, rowIndex }) {
+        if (rowIndex%2 == 0) {
+        return 'tableEvenRow';
+        } else {
+        return "tableOddRow";
+        }
+      },
     },
   };
 </script>

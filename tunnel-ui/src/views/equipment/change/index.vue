@@ -126,8 +126,8 @@
           <span>{{ parseTime(scope.row.changeTime, "{y}-{m}-{d}") }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column label="桩号" align="center" prop="eqDirection" />
-      <el-table-column label="方向" align="center" prop="stakeMark" />
+      <el-table-column label="桩号" align="center" prop="stakeMark" />
+      <el-table-column label="方向" align="center" prop="eqDirection" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"
@@ -192,10 +192,10 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="桩号" prop="eqDirection">
-          <el-input v-model="form.eqDirection" placeholder="请输入桩号" />
+          <el-input v-model="form.stakeMark" placeholder="请输入桩号" />
         </el-form-item>
         <el-form-item label="方向" prop="stakeMark">
-          <el-select v-model="form.stakeMark" placeholder="请选择方向">
+          <el-select v-model="form.eqDirection" placeholder="请选择方向">
             <el-option label="上行" value="0" />
             <el-option label="下行" value="1" />
           </el-select>
@@ -259,7 +259,13 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        deviceName: [{required: true, message: '请填写设备名称', trigger: 'blur'}],
+        deviceId: [{required: true, message: '请填写设备ID', trigger: 'blur'}],
+        changeTime: [{required: true, message: '请填写更换时间', trigger: 'blur'}],
+        eqDirection: [{required: true, message: '请选择方向', trigger: 'blur'}],
+        stakeMark: [{required: true, message: '请填写桩号信息', trigger: 'blur'}],
+      },
     };
   },
   created() {
@@ -280,10 +286,10 @@ export default {
         this.total = response.total;
         this.loading = false;
         this.changeList.forEach((e) => {
-          if (e.stakeMark == 0) {
-            e.stakeMark = "上行";
-          } else if (e.stakeMark == 1) {
-            e.stakeMark = "下行";
+          if (e.eqDirection == 0) {
+            e.eqDirection = "上行";
+          } else if (e.eqDirection == 1) {
+            e.eqDirection = "下行";
           }
         });
       });

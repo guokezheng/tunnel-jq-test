@@ -2,10 +2,12 @@ package com.tunnel.platform.service.event.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
+import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.SdDeviceCmd;
@@ -22,6 +24,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -67,6 +70,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SdTriggerDeviceMapper sdTriggerDeviceMapper;
 
+    @Autowired
+    private SysJobMapper sysJobMapper;
+
+
+
 
     /**
      * 查询控制策略
@@ -79,15 +87,85 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         return sdStrategyMapper.selectSdStrategyById(id);
     }
 
+    /**
+     * 获取分时控制数据
+     * @return
+     */
     @Override
-    public Map getTimeSharingInfo(Long id) {
-//        Map map = new HashMap();
-//        SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(id);
-//        List<SdStrategyRl> rl = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(id);
-//        map.put("strategy",strategy);
-//        map.put()
-        return null;
+    public List<Map> getTimeSharingInfo(String tunnelId) {
+        return sdStrategyMapper.getTimeSharingInfo(tunnelId);
     }
+
+    /**
+     * 分时控制修改控制时间
+     * @param strategyId
+     * @param controlTime
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int updateControlTime(Long strategyId, String controlTime) {
+        String[] timeParam = controlTime.split("-");
+        SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(strategyId);
+        String[] relationId = strategy.getJobRelationId().split(",");
+        List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
+        if(rlList.size() < 2){
+            return 0;
+        }
+        //排序保证修改顺序
+        rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
+        try {
+            int updateRows = 0;
+            for (int i=0;i<timeParam.length;i++) {
+                SdStrategyRl rl = rlList.get(i);
+                rl.setControlTime(timeParam[i]);
+                updateRows += sdStrategyRlMapper.updateSdStrategyRl(rl);
+                Long jobId = Long.valueOf(relationId[i]);
+                SysJob job = sysJobMapper.selectJobById(jobId);
+                job.setCronExpression(CronUtil.CronDate(timeParam[i]));
+                updateRows += sysJobMapper.updateJob(job);
+                if(updateRows < 2){
+                    return 0;
+                }
+                updateRows = 0;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("数据处理异常");
+        }
+        return 1;
+    }
+
+    /**
+     * 控制策略开关
+     * @param strategyId
+     * @param change
+     * @return
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int strategySwitch(Long strategyId, String change) {
+        SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(strategyId);
+        sdStrategy.setStrategyState(change);
+        int updateRows = sdStrategyMapper.updateSdStrategyById(sdStrategy);
+        if(updateRows < 1){
+            return 0;
+        }
+        if ("1".equals(sdStrategy.getStrategyType()) || "3".equals(sdStrategy.getStrategyType())) {
+            String[] jobIds = sdStrategy.getJobRelationId().split(",");
+            SysJob job = new SysJob();
+            updateRows = 0;
+            for (int i = 0; i < jobIds.length; i++) {
+                job = sysJobMapper.selectJobById(Long.valueOf(jobIds[i]));
+                job.setStatus(change);
+                updateRows += sysJobMapper.updateJob(job);
+            }
+            if(updateRows < jobIds.length){
+                throw new RuntimeException("数据处理异常");
+            }
+        }
+        return 1;
+    }
+
 
     /**
      * 查询控制策略
@@ -196,6 +274,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         } else {
             throw new RuntimeException("控制策略数据存在异常，请联系管理员。");
         }
+        //删除定时任务
+        if("3".equals(sdStrategy.getStrategyType()) || "1".equals(sdStrategy.getStrategyType())){
+            deleteRefJob(sdStrategy.getJobRelationId());
+        }
         int result = sdStrategyMapper.deleteSdStrategyById(id);
         if (result >0) {
             sdStrategyRlMapper.deleteSdStrategyRlByStrategyId(id);
@@ -206,6 +288,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     result = sdTriggerDeviceMapper.deleteSdTriggerDeviceByTriggerId(sdTrigger.getId());
                 }
             }
+
         }
         return result;
     }
@@ -236,6 +319,13 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         int result = sdStrategyMapper.deleteSdStrategyByIds(ids);
         if (result >0) {
+            //查询策略下的所有定时任务ID
+            try {
+                Long[] jobIds = sdStrategyMapper.getStrategyRefJobIds(ids);
+                sysJobMapper.deleteJobByIds(jobIds);
+            } catch (Exception e) {
+                throw new RuntimeException("定时任务处理异常");
+            }
             sdStrategyRlMapper.deleteSdStrategyRlByStrategyIds(ids);
             for (Long id : ids) {
                 SdTrigger sdTrigger = sdTriggerMapper.selectSdTriggerByRelateId(id);
@@ -264,16 +354,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         // 判断是否符合规范并返回策略
         SdStrategy sty = conditionalJudgement(model);
         int insetStrResult = sdStrategyMapper.insertSdStrategy(sty);
-        // 根据传入的值和策略，返回策略子表(控制设备及信息)
-        //List<SdStrategyRl> list =
+        if(insetStrResult < 1){
+            throw new RuntimeException("数据保存异常");
+        }
         int result = saveRelation(model, sty);
-        // 新增策略子表
-//        if (list.size() != 0) {
-//            int insertBranchResult = sdStrategyRlMapper.batchInsertStrategyRl(list);
-//            if (insertBranchResult < 0 || insetStrResult < 0) {
-//                result = -1;
-//            }
-//        }
         return result;
     }
 
@@ -289,20 +373,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (int i = 0; i < jobIds.length; i++) {
                 param[i] = Long.valueOf(jobIds[i]);
             }
-            SpringUtils.getBean(SysJobServiceImpl.class).deleteJobByIds(param);
+            sysJobMapper.deleteJobByIds(param);
         } catch (Exception e) {
             throw new RuntimeException("定时任务处理异常");
         }
     }
-
-//    /**
-//     * 修改策略维护触发器关联表
-//     * @param model
-//     * @return
-//     */
-//    private void handleTrigger(SdStrategyModel model){
-//
-//    }
     /**
      * 修改控制策略信息
      */
@@ -337,22 +412,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int relation = saveRelation(model, sty);
         return relation;
     }
-//            //添加触发器
-//            SdTrigger sdTrigger = model.getTriggers();
-//            sdTrigger.setRelateId(model.getId());
-//            int insertSdTrigger = sdTriggerMapper.insertSdTrigger(sdTrigger);
-//            // 添加触发器关联设备表
-//            if (insertSdTrigger > 0) {
-//                SdTriggerDevice sdTriggerDevice = new SdTriggerDevice();
-//                sdTriggerDevice.setTriggerId(sdTrigger.getId());
-//                sdTriggerDevice.setDeviceId(sdTrigger.getDeviceId());
-//                int insertSdTriggerDevice = sdTriggerDeviceMapper.insertSdTriggerDevice(sdTriggerDevice);
-//                if(insertSdTriggerDevice > 0){
-//                    return;
-//                }
-//            }
-//            throw new RuntimeException("触发器关联设备异常");
-//            handleTrigger(model);
     /**
      * @param id 策略id
      *           手动控制策略
@@ -515,12 +574,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if("1".equals(model.getStrategyType())) {
             sty.setSchedulerTime(model.getSchedulerTime());
             sty.setStrategyInfo(model.getStrategyInfo());
-        } else if("3".equals(model.getStrategyType())) {
-//            String[] timeControl = (String[]) model.getAutoControl().get(0).get("timeControl");
-//
-//            sty.setSchedulerTime(model.getSchedulerTime());
-//            sty.setStrategyInfo(model.getStrategyInfo());
-        }else{
+        } else{
             sty.setSchedulerTime(null);
             sty.setStrategyInfo(null);
         }
@@ -591,7 +645,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 job.setConcurrent("0");
                 // 状态（0正常 1暂停）
                 job.setStatus("0");
-                SpringUtils.getBean(SysJobServiceImpl.class).insertJob(job);
+                sysJobMapper.insertJob(job);
                 jobIdList.add(job.getJobId().toString());
             } catch (Exception e) {
                 throw new RuntimeException("添加定时任务失败！");
@@ -645,7 +699,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     job.setConcurrent("0");
                     // 状态（0正常 1暂停）
                     job.setStatus("0");
-                    SpringUtils.getBean(SysJobServiceImpl.class).insertJob(job);
+                    sysJobMapper.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
                     throw new RuntimeException("添加定时任务失败！");
@@ -715,43 +769,4 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             default : return 0;
         }
     }
-//        List<SdStrategyRl> rlList = new ArrayList<>();
-//        if ("0".equals(model.getStrategyType())) {
-//
-//        } else if ("1".equals(model.getStrategyType())) {
-//
-//        } else if("2".equals(model.getStrategyType())){
-//
-//        }else if ("3".equals(model.getStrategyType())) {
-//
-//        }
-//        return rlList;
-
-
-    public int addSysJob(List<SysJob> data,String strategyId){
-        //删除之前的定时任务
-
-        //新增
-//        try {
-//            SysJob job = new SysJob();
-//            // 定时任务名称
-//            job.setJobName(model.getStrategyName());
-//            // 调用目标字符串
-//            job.setInvokeTarget("ryTask.strategyParams('" + model.getJobRelationId() + "')");
-//            // corn表达式
-//            String cronDate = CronUtil.CronDate(timeStr);
-//            job.setCronExpression(cronDate);
-//            // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-//            job.setMisfirePolicy("1");
-//            // 是否并发执行（0允许 1禁止）
-//            job.setConcurrent("0");
-//            // 状态（0正常 1暂停）
-//            job.setStatus("0");
-//            SpringUtils.getBean(SysJobServiceImpl.class).insertJob(job);
-//        } catch (Exception e) {
-//            throw new RuntimeException("添加定时任务失败！");
-//        }
-        return 1;
-    }
-
 }

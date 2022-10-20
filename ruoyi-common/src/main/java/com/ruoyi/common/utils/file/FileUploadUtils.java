@@ -1,9 +1,5 @@
 package com.ruoyi.common.utils.file;
 
-import java.io.File;
-import java.io.IOException;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.file.FileNameLengthLimitExceededException;
@@ -12,6 +8,11 @@ import com.ruoyi.common.exception.file.InvalidExtensionException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * 文件上传工具类
@@ -108,7 +109,8 @@ public class FileUploadUtils
 
         assertAllowed(file, allowedExtension);
 
-        String fileName = extractFilename(file);
+        //String fileName = extractFilename(file);
+        String fileName = avoidSameName(file);
 
         File desc = getAbsoluteFile(baseDir, fileName);
         file.transferTo(desc);
@@ -126,6 +128,17 @@ public class FileUploadUtils
         fileName = DateUtils.datePath() + "/" + IdUtils.fastUUID() + "." + extension;
         return fileName;
     }
+
+    /**
+     * 避免重名
+     */
+    public static final String avoidSameName(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        //避免重名
+        return originalFilename.substring(0, originalFilename.lastIndexOf(".")) + "_" + System.currentTimeMillis() + originalFilename.substring(originalFilename.indexOf("."));
+    }
+
+
 
     public static final File getAbsoluteFile(String uploadDir, String fileName) throws IOException
     {

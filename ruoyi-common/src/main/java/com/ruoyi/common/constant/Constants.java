@@ -161,5 +161,31 @@ public class Constants
      * webSocket推送数据使用
      */
     public static final String PAYMENT_WEBSOCKET = "payment:websocket:";
-			
+
+
+    /**
+     * 文件上传类型 [local: 本地]   {阿里云: alioss}
+     * 注意：这里和application.yml中配置的要一样
+     */
+
+    public static final String UPLOAD_TYPE_LOCAL = "local";
+    public static final String UPLOAD_TYPE_OSS = "alioss";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

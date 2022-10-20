@@ -393,8 +393,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          /*location.href = '';*/
-          location.href = '/tunnel/#/loginjqtunnel';
+          location.href = '';
+          /*location.href = '/#/login';*/
         })
       }).catch(() => {});
     },

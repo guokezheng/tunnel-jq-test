@@ -21,7 +21,27 @@ public interface ISdStrategyService {
      */
     SdStrategy selectSdStrategyById(Long id);
 
-    Map getTimeSharingInfo(Long id);
+    /**
+     * 工作台分时控制抽屉
+     * @return
+     */
+    List<Map> getTimeSharingInfo(String tunnelId);
+
+    /**
+     * 工作台分时控制抽屉修改控制时间
+     * @param strategyId
+     * @param controlTime
+     * @return
+     */
+    int updateControlTime(Long strategyId,String controlTime);
+
+    /**
+     * 控制策略状态开关
+     * @param strategyId
+     * @param change
+     * @return
+     */
+    int strategySwitch(Long strategyId,String change);
 
     /**
      * 查询控制策略

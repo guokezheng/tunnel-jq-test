@@ -80,8 +80,8 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="风速:">
-              {{ fengValue }}
-              <span style="padding-left:5px" v-if="fengValue">m/s</span>
+              {{ nowData }}
+              <span style="padding-left:5px" v-if="nowData">m/s</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -134,7 +134,8 @@ export default {
       visible: true,
       tab: "co",
       fengValue:'',
-      fengDirection:''
+      fengDirection:'',
+      nowData:''
     };
   },
   created() {
@@ -159,13 +160,15 @@ export default {
         });
         await getTodayFSFXData(this.eqInfo.equipmentId).then((response) => {
           console.log(response, "风速风向数据");
+        this.nowData = parseFloat(response.data.nowData).toFixed(2)
+          
           var xData = [];
           var yData = [];
           for (var item of response.data.todayFSData) {
             xData.push(item.order_hour);
             yData.push(item.count);
           }
-          this.fengValue = yData[yData.length-1]
+          // this.fengValue = yData[yData.length-1]
           this.fengDirection = response.data.windDirection
           this.$nextTick(() => {
             this.initChart(xData, yData);
@@ -216,14 +219,14 @@ export default {
             return res;
           },
         },
-        dataZoom: [
-          {
-            type: "inside", //鼠标滑动缩放
-            realtime: false,
-            start: 30,
-            end: 70,
-          },
-        ],
+        // dataZoom: [
+        //   {
+        //     type: "inside", //鼠标滑动缩放
+        //     realtime: false,
+        //     start: 30,
+        //     end: 70,
+        //   },
+        // ],
         grid: {
           left: "10%",
           right: "12%",

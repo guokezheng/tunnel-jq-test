@@ -5,7 +5,7 @@
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
-      label-width="68px"
+      label-width="40px"
     >
       <el-form-item label="文本" prop="word">
         <el-input
@@ -27,10 +27,48 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
           >重置</el-button
         >
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:vocabulary:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:vocabulary:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:vocabulary:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:vocabulary:export']"
+          >导出</el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -81,14 +119,16 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      height="630"
+      max-height="630"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'creatTime', order: 'descending'}"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="序号"
@@ -529,6 +569,14 @@ export default {
     openImg(url) {
       this.img = url;
       this.yn = !this.yn;
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

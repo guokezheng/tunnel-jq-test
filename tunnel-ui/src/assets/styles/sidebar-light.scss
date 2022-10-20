@@ -22,6 +22,21 @@
     background-color: #00598f;
   }
   #app {
+    // 外边框
+    .separate{
+      background: #1B4670;
+    }
+    .el-table {
+      color: white;
+      background-color: #326CA9;//没有数据时暂无数据显示背景色
+    }
+    .el-table .el-table__cell{
+      height: 40px;
+      line-height: 40px;
+    }
+    // .el-table tr{
+    //   background-color: #2B5F96;
+    // }
     .main-container {
       min-height: calc(100% - 104px);
       transition: margin-left 0.28s;
@@ -37,16 +52,102 @@
         padding: 10px 0;
       }
     }
-    .el-table__body-wrapper .el-table__cell{
-      border-left: solid 1px #E1E4E6;
-    }
-    .el-table__body-wrapper tbody{
-      border-right: solid 1px #E1E4E6;
+    // .el-table__body-wrapper .el-table__cell{
+    //   border-left: solid 1px #E1E4E6;
+    // }
+    // .el-table__body-wrapper tbody{
+    //   border-right: solid 1px #E1E4E6;
 
+    // }
+    // .el-table__header-wrapper .el-table__cell{
+    //   border-left: solid 1px #E1E4E6;
+    //   border-top: solid 1px #E1E4E6;
+    // }
+    // 输入框背景色
+    .el-input--small .el-input__inner{
+      background-color: #F2F8FF;
     }
-    .el-table__header-wrapper .el-table__cell{
-      border-left: solid 1px #E1E4E6;
-      border-top: solid 1px #E1E4E6;
+    // 下拉框背景色
+    .el-input--medium .el-input__inner{
+      background-color: #F2F8FF;
+    }
+    // 时间框背景色
+    .el-range-editor.el-input__inner{
+      background-color: #F2F8FF;
+    }
+    .el-range-editor--small .el-range-input{
+      background-color: #F2F8FF;
+    }
+    .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+      background-color: #4FA4E6;
+      color: white;
+    }
+    // 表格鼠标移入行选中
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: #326CA9;
+   }
+   .el-table__body tr .hover-row > td .el-table__cell{
+    background-color: #326CA9;
+
+  }
+  //  表格下边框
+  .el-table td.el-table__cell{
+    border-bottom: 1px solid #05AFE3;
+  }
+  .el-table .el-button--text{
+    color: white;
+  }
+    // 表单label
+    .el-form-item__label{
+      color: #fff;
+    }
+    // 设备预警、事件预警表单
+    .warningStatistics{
+      color: #fff;
+    }
+    // 应急预案 表格内相关策略
+    .el-tag{
+      background-color: #326CA9;
+      color: white;
+    }
+    // 翻页组件
+    .pagination-container {
+      background-color: transparent;
+      .el-input__inner{
+        background-color: #326CA9;
+        color: white;
+        border: 1px solid #05AFE3;
+      }
+      .el-pagination__total {
+        color: white;
+      }
+      .el-pagination__jump {
+        color: #fff;
+      }
+      .el-pagination.is-background .btn-prev,
+      .el-pagination.is-background .btn-next,
+      .el-pagination.is-background .el-pager li {
+        background-color: #326CA9;
+        color: white;
+        border: 1px solid #05AFE3;
+      }
+    }
+    // 面包屑
+    .app-breadcrumb.el-breadcrumb {
+      background: #1B4670;
+      .no-redirect {
+        color: white;
+      }
+      .el-breadcrumb__inner a{
+        color: white;
+      }
+    }
+    // 表格隔行变色
+    .tableEvenRow{
+      background: #2B5F96;
+    }
+    .tableOddRow{
+      background: #326CA9;
     }
     // .el-table__header-wrapper{
     //   border-right: solid 1px #E1E4E6;
@@ -55,9 +156,9 @@
     //   border-right: solid 1px #E1E4E6;
 
     // }
-    .el-table{
-      border-right: solid 1px #E1E4E6;;
-    }
+    // .el-table{
+    //   border-right: solid 1px #E1E4E6;;
+    // }
     // .el-table th.gutter{
     //   display: table-cell !important;
     // }
@@ -129,7 +230,7 @@
         white-space: nowrap !important;
         height: 72px;
         line-height: 72px;
-        font-size: 18px;
+        font-size: 16px;
       }
 
       // menu hover
@@ -379,7 +480,7 @@
   }
   .topNav_head{
     background-image:url(../images/head_bg2.png);
-    background-size: 100% 126%;
+    background-size: 100% 123%;
     height:72px;
     // background-color: #010913;
     position: relative;
@@ -804,9 +905,20 @@
     .el-input__inner{
       background-color: #2D69A5;
       color: white;
+      border: 1px solid #0081DE;
     }
     .handleLightClass {
       background: linear-gradient(177deg, #00ACED, #0079DB);
+    }
+    .el-switch__core{
+      background: linear-gradient(177deg, #00070D, #005AA8);
+      border: 1px solid #005E96;
+    }
+    .ledLighting .is-checked .el-switch__core:after{
+      background: #00C8FF;
+    }
+    .ledLighting .el-switch__core:after{
+      background: #3F88B5;
     }
   }
   .drawerActive{

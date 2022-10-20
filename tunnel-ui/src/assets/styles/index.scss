@@ -34,7 +34,7 @@ html {
       .separate{
         height: 100%;
         padding: 10px;
-        background: #E2EEFE;
+        // background: #E2EEFE;
       }
       .noSeparate{
         height: 100%;
@@ -155,7 +155,7 @@ p {
   box-sizing: border-box;
   overflow: hidden;
   height: 100%;
-  background: white;
+  // background: white;
 }
 // 内页标题全部样式
 .inner_title {
@@ -169,21 +169,21 @@ p {
 .pagination-container {
   margin-top: 30px;
 }
-// 输入框背景色
-.el-input--small .el-input__inner{
-  background-color: #F2F8FF;
-}
-// 下拉框背景色
-.el-input--medium .el-input__inner{
-  background-color: #F2F8FF;
-}
-// 时间框背景色
-.el-range-editor.el-input__inner{
-  background-color: #F2F8FF;
-}
-.el-range-editor--small .el-range-input{
-  background-color: #F2F8FF;
-}
+// // 输入框背景色
+// .el-input--small .el-input__inner{
+//   background-color: #F2F8FF;
+// }
+// // 下拉框背景色
+// .el-input--medium .el-input__inner{
+//   background-color: #F2F8FF;
+// }
+// // 时间框背景色
+// .el-range-editor.el-input__inner{
+//   background-color: #F2F8FF;
+// }
+// .el-range-editor--small .el-range-input{
+//   background-color: #F2F8FF;
+// }
 
 .text-center {
   text-align: center;

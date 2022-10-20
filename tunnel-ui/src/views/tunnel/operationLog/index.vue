@@ -59,7 +59,11 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="logList" height="670" :default-sort = "{prop: 'createTime', order: 'descending'}" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="logList" max-height="640" 
+              :default-sort = "{prop: 'createTime', order: 'descending'}" 
+              @selection-change="handleSelectionChange"
+              :row-class-name="tableRowClassName"
+              >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="序号" align="center" prop="id" display:"none"/>
 
@@ -378,7 +382,15 @@ export default {
       this.download('system/log/export', {
         ...this.queryParams
       }, `system_log.xlsx`)
-    }
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

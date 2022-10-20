@@ -588,7 +588,7 @@ export default {
   background-color: #638ca6;
 }
 ::v-deep .el-pagination__total {
-  color: "#01AAFD !important";
+  color: #01AAFD !important;
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next,

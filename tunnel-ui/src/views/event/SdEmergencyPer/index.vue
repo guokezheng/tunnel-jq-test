@@ -23,7 +23,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="机构" prop="tunnelId">
-        <el-input style="width:200px;" v-model.number="queryParams.stagPointName" placeholder="请输入机构名称" size="small" />
+        <el-input style="width:200px;" v-model.number="queryParams.groupName" placeholder="请输入机构名称" size="small" />
       </el-form-item>
       <el-form-item label="姓名"  prop="stagPointName">
           <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
@@ -71,7 +71,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -83,7 +83,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -116,6 +116,8 @@
       :data="SdEmergencyPerList"
       @selection-change="handleSelectionChange"
       @row-click="peopleTableRowClick"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
@@ -322,7 +324,12 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.handleQuery();
+      this.queryParams = {
+        tunnelId: null,
+        groupName: null,
+        userName: null,
+        tunnelId: null,
+      }
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -409,6 +416,14 @@ export default {
         .then((response) => {
           this.$download.name(response.msg);
         });
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

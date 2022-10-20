@@ -14,23 +14,26 @@
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
+          v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-form-item>
     </el-form>
-
+<!-- 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:eqTypeState:add']">新增</el-button>
-      </el-col> -->
       <el-col :span="1.5">
-        <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:eqTypeState:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
           v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:eqTypeState:export']">导出</el-button>-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:eqTypeState:export']">导出</el-button>
+     </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -39,10 +42,12 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="eqTypeStateList"
-    max-height="610" @selection-change="handleSelectionChange">
+    max-height="610" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!-- <el-table-column label="设备类型" align="center" prop="typeId" /> -->
@@ -833,6 +838,14 @@
       },  
      
       //=======================================文件上传end===============================
+      // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
     }
   };
 </script>

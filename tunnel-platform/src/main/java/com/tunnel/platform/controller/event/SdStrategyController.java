@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 控制策略Controller
@@ -67,13 +68,23 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
 
-//    @GetMapping(value = "/getTimeSharing/{id}")
-//    @ApiOperation("分时控制数据回填接口")
-//    @ApiImplicitParam(name = "id", value = "控制策略ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-//    public Result<Map> getTimeSharingInfo(@PathVariable("id") Long id)
-//    {
-//        return Result.success(sdStrategyService.selectSdStrategyById(id));
-//    }
+    @GetMapping(value = "/timeSharing/{tunnelId}")
+    @ApiOperation("工作台分时控制抽屉")
+    public Result<List<Map>> getTimeSharingInfo(@PathVariable("tunnelId") String tunnelId) {
+        return Result.success(sdStrategyService.getTimeSharingInfo(tunnelId));
+    }
+
+    @GetMapping(value = "/timeSharing/updateControlTime")
+    @ApiOperation("工作台分时控制抽屉修改控制时间")
+    public Result updateControlTime(@RequestParam("strategyId") Long strategyId,@RequestParam("controlTime") String controlTime) {
+        return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
+    }
+
+    @GetMapping(value = "/switch")
+    @ApiOperation("控制策略开关")
+    public Result strategySwitch(@RequestParam("strategyId") Long strategyId,@RequestParam("change") String change) {
+        return Result.toResult(sdStrategyService.strategySwitch(strategyId,change));
+    }
 
     /**
      * 根据策略id查询控制策略

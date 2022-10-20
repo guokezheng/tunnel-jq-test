@@ -1,7 +1,6 @@
 package com.ruoyi.common.utils.file;
 
 import com.ruoyi.common.config.RuoYiConfig;
-import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.exception.file.FileNameLengthLimitExceededException;
 import com.ruoyi.common.exception.file.FileSizeLimitExceededException;
 import com.ruoyi.common.exception.file.InvalidExtensionException;
@@ -158,7 +157,8 @@ public class FileUploadUtils
     {
         int dirLastIndex = RuoYiConfig.getProfile().length() + 1;
         String currentDir = StringUtils.substring(uploadDir, dirLastIndex);
-        String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+        //String pathFileName = Constants.RESOURCE_PREFIX + "/" + currentDir + "/" + fileName;
+        String pathFileName = "/" + currentDir + "/" + fileName;
         return pathFileName;
     }
 

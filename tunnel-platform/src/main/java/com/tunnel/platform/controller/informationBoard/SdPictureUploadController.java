@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.SdPictureUpload;
 import com.tunnel.business.service.informationBoard.ISdPictureUploadService;
@@ -49,7 +50,10 @@ public class SdPictureUploadController extends BaseController
             }
             try {
                 if (pictureUpload.getPictureUrl() != null) {
-                    pictureUrl = ioToBase64(pictureUpload.getPictureUrl());
+                    String picPath = FileUploadUtils.getDefaultBaseDir() + pictureUpload.getPictureUrl();
+
+                    //pictureUrl = ioToBase64(pictureUpload.getPictureUrl());
+                    pictureUrl = ioToBase64(picPath);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

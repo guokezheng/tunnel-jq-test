@@ -671,6 +671,10 @@ export default {
       //   });
       // } else {
       this.saveLoading = true;
+      console.log(
+        this.selectedIconList,
+        "this.selectedIconListthis.selectedIconListthis.selectedIconList"
+      );
       let eqList = [];
       //遍历设备，获取位置
       for (let i = 0; i < this.selectedIconList.length; i++) {

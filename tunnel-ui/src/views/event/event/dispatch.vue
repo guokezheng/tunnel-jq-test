@@ -609,6 +609,7 @@ import {
   updateEvent,
   getEvent,
   getImplement,
+  getSubareaByStakeNum,
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -785,8 +786,33 @@ export default {
       console.log(res.rows, "查设备状态 正红泛绿...");
       this.eqTypeList = res.rows;
     });
+    this.getSubareaByStakeNumData();
   },
   methods: {
+    getSubareaByStakeNumData() {
+      console.log(this.eventMsg);
+      let data = {
+        tunnelId: this.eventMsg.tunnelId,
+        stakeNum: this.eventMsg.stakeNum,
+        direction: this.eventMsg.direction,
+      };
+      //获取事故点对应分区id
+      getSubareaByStakeNum(data).then((res) => {
+        let subareaByStakeNum = res.data;
+        console.log(subareaByStakeNum);
+        console.log(this.planListEnd);
+        this.planListEnd.forEach((item, index) => {
+          console.log(item.sId);
+          if (item.sId == subareaByStakeNum) {
+            this.fqIndex = index;
+            item.style =
+              "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+            item.show = true;
+            this.getListBySIdData(item.id);
+          }
+        });
+      });
+    },
     getEqType(state, eqType) {
       for (var item of this.eqTypeList) {
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
@@ -1158,33 +1184,33 @@ export default {
                   "方向=>",
                   this.eventMsg.direction
                 );
-                if (this.planList1.length == 4) {
-                  if (
-                    positionCurrent > positionMin &&
-                    item.direction == this.eventMsg.direction
-                  ) {
-                    this.fqIndex = index;
-                    item.style =
-                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                    // this.rightClick(index);
-                    item.show = true;
-                    this.getListBySIdData(item.id);
-                  }
-                } else {
-                  if (
-                    positionCurrent > positionMin &&
-                    positionCurrent < positionMax &&
-                    item.direction == this.eventMsg.direction
-                  ) {
-                    console.log(item, "zxczxc");
-                    this.fqIndex = index;
-                    item.style =
-                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                    // this.rightClick(index);
-                    item.show = true;
-                    this.getListBySIdData(item.id);
-                  }
-                }
+                // if (this.planList1.length == 4) {
+                //   if (
+                //     positionCurrent > positionMin &&
+                //     item.direction == this.eventMsg.direction
+                //   ) {
+                //     this.fqIndex = index;
+                //     item.style =
+                //       "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+                //     // this.rightClick(index);
+                //     item.show = true;
+                //     this.getListBySIdData(item.id);
+                //   }
+                // } else {
+                //   if (
+                //     positionCurrent > positionMin &&
+                //     positionCurrent < positionMax &&
+                //     item.direction == this.eventMsg.direction
+                //   ) {
+                //     console.log(item, "zxczxc");
+                //     this.fqIndex = index;
+                //     item.style =
+                //       "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+                //     // this.rightClick(index);
+                //     item.show = true;
+                //     this.getListBySIdData(item.id);
+                //   }
+                // }
               });
               this.planListEnd = this.planList1;
               console.log(this.planListEnd, "最终分区数据");

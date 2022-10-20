@@ -453,6 +453,14 @@ export default {
     },
     // 添加执行操作
     addItem() {
+      let list = this.strategyForm.autoControl;
+      var flag = list.every(function (item) {
+        return item.value != "" || item.state != "" || item.type != "";
+      });
+      console.log(flag);
+      if (flag == false) {
+        return this.$modal.msgError("请选择设备并添加执行操作");
+      }
       this.addCf();
       this.strategyForm.autoControl.push({
         value: "",

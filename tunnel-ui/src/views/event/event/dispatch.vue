@@ -799,8 +799,6 @@ export default {
       //获取事故点对应分区id
       getSubareaByStakeNum(data).then((res) => {
         let subareaByStakeNum = res.data;
-        console.log(subareaByStakeNum);
-        console.log(this.planListEnd);
         this.planListEnd.forEach((item, index) => {
           console.log(item.sId);
           if (item.sId == subareaByStakeNum) {
@@ -1904,7 +1902,7 @@ export default {
       .ButtonBox {
         border: 1px solid #07a1fb;
         .recovery {
-          font-size: 15px;
+          font-size: 14px;
           text-align: center;
           border-bottom: 1px dashed #07a1fb;
         }

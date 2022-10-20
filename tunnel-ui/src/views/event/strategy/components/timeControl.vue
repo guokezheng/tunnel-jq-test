@@ -449,6 +449,14 @@ export default {
     },
     // 添加执行操作
     addItem() {
+      let list = this.strategyForm.autoControl;
+      var flag = list.every(function (item) {
+        return item.value != "" || item.state != "" || item.type != "";
+      });
+      console.log(flag);
+      if (flag == false) {
+        return this.$modal.msgError("请选择设备并添加执行操作");
+      }
       this.addCf();
       if (this.strategyForm.autoControl.length == 2) {
         return this.$modal.msgError("最多添加2条数据");

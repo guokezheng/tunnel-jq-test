@@ -54,7 +54,12 @@
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
+        <el-button
+          icon="el-icon-refresh"
+          size="mini"
+          @click="resetQuery"
+          type="primary"
+          plain
           >重置</el-button
         >
       </el-form-item>
@@ -811,9 +816,6 @@ export default {
         type: "warning",
       })
         .then(() => {
-          if (row.jobRelationId != null) {
-            delJob(jobRelationId).then((response) => {});
-          }
           delStrategy(ids).then((res) => {
             if (res.code == 200) {
               this.$modal.msgSuccess(res.msg);

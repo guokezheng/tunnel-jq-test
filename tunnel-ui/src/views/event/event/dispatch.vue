@@ -625,6 +625,10 @@ export default {
   },
   data() {
     return {
+      // 隧道开始桩号
+      startPile: "",
+      // 隧道结束桩号
+      endPile: "",
       timer: null,
       eqTypeStateList: null,
       eventMsg: null,
@@ -1064,15 +1068,15 @@ export default {
       };
     },
     /* 获取隧道配置信息*/
-    getTunnelData() {
+    async getTunnelData() {
       var tunnelId = this.eventMsg.tunnelId; //"JQ-JiNan-WenZuBei-MJY";
       let that = this;
       that.upList = [];
       that.downList = [];
-
-      getTunnels(tunnelId).then((response) => {
+      await getTunnels(tunnelId).then((response) => {
+        this.startPile = response.data.startPile;
+        this.endPile = response.data.endPile;
         let res = response.data.storeConfigure;
-        // console.log(response.data, "12312312");
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
@@ -1094,8 +1098,10 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  if (bxx.pileMin == "0") {
-                    if (String(axx.pile).trim() == String(bxx.pileMax).trim()) {
+                  //如果分区的最小值 == 隧道的最小值
+                  if (bxx.pileMin == this.startPile) {
+                    if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                      console.log(axx, axx.eqName, "axx");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
                       var leftMin = 0;
@@ -1106,8 +1112,9 @@ export default {
                       bxx.top = deviceHeight;
                       bxx.left = leftMin;
                     }
-                  } else if (bxx.pileMax == "100") {
-                    if (String(axx.pile).trim() == String(bxx.pileMin).trim()) {
+                    //如果分区的最大值 == 隧道的最大值
+                  } else if (bxx.pileMax == this.endPile) {
+                    if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
                       var leftMax = Number(1640);
                       var leftMin = axx.position.left;
                       var deviceWidth = Number(leftMax) - Number(leftMin);
@@ -1118,19 +1125,18 @@ export default {
                       bxx.left = leftMin;
                     }
                   } else {
-                    if (String(bxx.pileMin).trim() == String(axx.pile).trim()) {
+                    if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
                       bxx.leftMin = axx.position.left;
                       bxx.deviceHeight = axx.position.top;
                     }
-                    if (String(bxx.pileMax).trim() == String(axx.pile).trim()) {
+                    if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
                       bxx.leftMax = axx.position.left;
                     }
                   }
                 }
               }
+              console.log(this.planList1);
               this.planList1.forEach((item, index) => {
-                // item.style = "display:none;";
-                // debugger;
                 if (item.leftMax != undefined && item.leftMin != undefined) {
                   var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
                   item.width = deviceWidth;
@@ -1138,7 +1144,6 @@ export default {
                   item.top = item.deviceHeight;
                   item.left = item.leftMin;
                 }
-                console.log(item.direction, "方向");
                 if (item.direction == "1") {
                   item.top = 0;
                 }
@@ -1181,10 +1186,8 @@ export default {
                   }
                 }
               });
-
-              console.log(this.selectedIconList);
               this.planListEnd = this.planList1;
-              console.log(this.planListEnd);
+              console.log(this.planListEnd, "最终分区数据");
             })
             .then(() => {});
         } else {
@@ -1198,6 +1201,19 @@ export default {
           that.rightDirection = "";
         }
       });
+    },
+    TextFilter() {
+      String.prototype.TextFilter = function () {
+        //[]内输入你要过滤的字符，这里是我的
+        let pattern = new RegExp(
+          "[`~%!@#^=''?~《》！@#￥……&——‘”“'？*()（），,。.、<>]"
+        );
+        let rs = "";
+        for (let i = 0; i < this.length; i++) {
+          rs += this.substr(i, 1).replace(pattern, "");
+        }
+        return rs;
+      };
     },
     getNumber(number) {
       return number.replace(/[^0-9]/gi, "");

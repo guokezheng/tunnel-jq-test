@@ -138,7 +138,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-        
+
         <template slot-scope="scope">
 　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
 　　    </template>
@@ -199,7 +199,7 @@
         <el-form-item label="图片路径" prop="pictureUrl">
           <!-- <el-input v-model="form.url" placeholder="请输入图片路径" /> -->
           <el-upload
-            id="file"
+            id="promise"
             :class="{disabled:eqObj.uploadDisabled}"
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -223,7 +223,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -236,7 +236,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -245,7 +245,7 @@
           />
           px
         </el-form-item>
-        
+
         <!-- <el-form-item label="图片类型" prop="imageType">
           <el-input v-model="form.imageType" placeholder="请输入图片类型" />
         </el-form-item> -->
@@ -424,10 +424,17 @@ export default {
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
+      var that = this;
+      that.fileList = [];
       getTemplateImageInfo(id).then((response) => {
         this.form = response.data;
+        console.log('这是  ' + this.form)
         this.open = true;
-        this.planRoadmapUrl(that.form.iFileList);
+        //this.planRoadmapUrl(that.form.iFileList);
+        that.fileList.push({
+          name: this.form.pictureName,
+          url: this.form.pictureUrl,
+        });
         this.title = "修改情报板图片";
       });
     },
@@ -460,7 +467,7 @@ export default {
       this.fileData.append("vmsSize", this.form.vmsSize);
       this.fileData.append("imageRemark", this.form.imageRemark);
       this.fileData.append("speed", this.form.speed);
-      this.fileData.append("deleteflag", this.form.deleteflag);
+      this.fileData.append("deleteflag", this.form.deleteflag == false ? '1' : '0');
       console.log(this.fileData)
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -498,7 +505,7 @@ export default {
         }
       )
         .then(function () {
-          return delVocabulary(ids);
+          return deleteTemplateImage(ids);
         })
         .then(() => {
           this.getList();

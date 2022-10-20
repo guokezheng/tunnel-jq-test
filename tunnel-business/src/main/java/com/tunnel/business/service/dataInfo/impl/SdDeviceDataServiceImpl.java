@@ -119,9 +119,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         data.setItemId(Long.valueOf(itemId));
         Map<String, Object> map = new HashMap<String, Object>();
         SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
-        if (devData.getUpdateTime() != null) {
+        if (devData != null && devData.getUpdateTime() != null) {
             today = simpleDateFormat.format(devData.getUpdateTime());
-        } else {
+        } else if (devData != null && devData.getCreateTime() != null) {
             today = simpleDateFormat.format(devData.getCreateTime());
         }
         if (devData != null) {
@@ -133,9 +133,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         itemId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
         data.setItemId(Long.valueOf(itemId));
         devData = sdDeviceDataMapper.selectLastRecord(data);
-        if (devData.getUpdateTime() != null) {
+        if (devData != null && devData.getUpdateTime() != null) {
             today = simpleDateFormat.format(devData.getUpdateTime());
-        } else {
+        } else if (devData != null && devData.getCreateTime() != null) {
             today = simpleDateFormat.format(devData.getCreateTime());
         }
         if (devData != null) {
@@ -158,9 +158,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         data.setDeviceId(deviceId);
         data.setItemId(Long.valueOf(itemId));
         SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
-        if (devData.getUpdateTime() != null) {
+        if (devData != null && devData.getUpdateTime() != null) {
             today = simpleDateFormat.format(devData.getUpdateTime());
-        } else {
+        } else if (devData != null && devData.getCreateTime() != null) {
             today = simpleDateFormat.format(devData.getCreateTime());
         }
         Map<String, Object> map = new HashMap<String, Object>();
@@ -198,9 +198,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()));
             SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
             String today = "";
-            if (deviceData.getUpdateTime() != null) {
+            if (deviceData != null && deviceData.getUpdateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
-            } else {
+            } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
@@ -214,9 +214,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()));
             SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
             String today = "";
-            if (deviceData.getUpdateTime() != null) {
+            if (deviceData != null && deviceData.getUpdateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
-            } else {
+            } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);

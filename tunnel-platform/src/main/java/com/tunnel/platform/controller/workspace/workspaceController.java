@@ -90,7 +90,9 @@ public class workspaceController extends BaseController {
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setBeforeState(data.get(0).getData());
+        if (data.size() > 0 && data.get(0) != null) {
+            sdOperationLog.setBeforeState(data.get(0).getData());
+        }
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
@@ -137,7 +139,9 @@ public class workspaceController extends BaseController {
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setBeforeState(data.get(0).getData());
+        if (data.size() > 0 && data.get(0) != null) {
+            sdOperationLog.setBeforeState(data.get(0).getData());
+        }
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));

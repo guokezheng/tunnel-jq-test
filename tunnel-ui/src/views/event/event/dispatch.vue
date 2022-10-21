@@ -786,11 +786,11 @@ export default {
       console.log(res.rows, "查设备状态 正红泛绿...");
       this.eqTypeList = res.rows;
     });
-    this.getSubareaByStakeNumData();
+    // this.getSubareaByStakeNumData();
   },
   methods: {
     getSubareaByStakeNumData() {
-      console.log(this.eventMsg);
+      console.log(this.eventMsg, "---------------");
       let data = {
         tunnelId: this.eventMsg.tunnelId,
         stakeNum: this.eventMsg.stakeNum,
@@ -800,7 +800,7 @@ export default {
       getSubareaByStakeNum(data).then((res) => {
         let subareaByStakeNum = res.data;
         this.planListEnd.forEach((item, index) => {
-          console.log(item.sId);
+          console.log("事故点分区id：", subareaByStakeNum);
           if (item.sId == subareaByStakeNum) {
             this.fqIndex = index;
             item.style =
@@ -1172,16 +1172,16 @@ export default {
                   item.top = 0;
                 }
                 // 当前事故点的桩号
-                var positionCurrent = this.getNumber(this.eventMsg.stakeNum);
-                var positionMin = this.getNumber(item.pileMin);
-                var positionMax = this.getNumber(item.pileMax);
-                console.log(
-                  positionCurrent,
-                  positionMin,
-                  positionMax,
-                  "方向=>",
-                  this.eventMsg.direction
-                );
+                // var positionCurrent = this.getNumber(this.eventMsg.stakeNum);
+                // var positionMin = this.getNumber(item.pileMin);
+                // var positionMax = this.getNumber(item.pileMax);
+                // console.log(
+                //   positionCurrent,
+                //   positionMin,
+                //   positionMax,
+                //   "方向=>",
+                //   this.eventMsg.direction
+                // );
                 // if (this.planList1.length == 4) {
                 //   if (
                 //     positionCurrent > positionMin &&
@@ -1212,6 +1212,7 @@ export default {
               });
               this.planListEnd = this.planList1;
               console.log(this.planListEnd, "最终分区数据");
+              this.getSubareaByStakeNumData();
             })
             .then(() => {});
         } else {
@@ -1225,22 +1226,6 @@ export default {
           that.rightDirection = "";
         }
       });
-    },
-    TextFilter() {
-      String.prototype.TextFilter = function () {
-        //[]内输入你要过滤的字符，这里是我的
-        let pattern = new RegExp(
-          "[`~%!@#^=''?~《》！@#￥……&——‘”“'？*()（），,。.、<>]"
-        );
-        let rs = "";
-        for (let i = 0; i < this.length; i++) {
-          rs += this.substr(i, 1).replace(pattern, "");
-        }
-        return rs;
-      };
-    },
-    getNumber(number) {
-      return number.replace(/[^0-9]/gi, "");
     },
     getUrl() {
       const param3 = {

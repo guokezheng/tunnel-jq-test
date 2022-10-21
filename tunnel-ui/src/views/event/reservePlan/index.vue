@@ -1199,7 +1199,9 @@ export default {
     //下载文件
     async loadFile(row) {
       this.loadFileLoading = true;
-      await loadPlanFile(row.id, row.fileName);
+      this.$download.name(row.fileName);
+      // console.log(row.id, row.fileName);
+      // await loadPlanFile(row.id, row.fileName);
       this.loadFileLoading = false;
     },
     downfiles(datas, filename) {

@@ -42,6 +42,9 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
     @Override
     public List<Map<String,String>> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdRadarDetectData.setDeptId(deptId);
         return sdRadarDetectDataMapper.selectSdRadarDetectDataList(sdRadarDetectData);
     }

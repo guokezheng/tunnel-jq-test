@@ -41,6 +41,9 @@ public class SdRepairServiceImpl implements ISdRepairService {
     @Override
     public List<SdRepair> selectSdRepairList(SdRepair sdRepair) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdRepair.getParams().put("deptId", deptId);
         return sdRepairMapper.selectSdRepairList(sdRepair);
     }

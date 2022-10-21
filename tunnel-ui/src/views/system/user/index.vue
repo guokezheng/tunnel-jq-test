@@ -77,8 +77,8 @@
             ></el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+            <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
           </el-form-item>
         </el-form>
 
@@ -87,7 +87,6 @@
             <el-button
               type="primary"
               plain
-              icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
               v-hasPermi="['system:user:add']"
@@ -95,9 +94,8 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              type="success"
+              type="primary"
               plain
-              icon="el-icon-edit"
               size="mini"
               :disabled="single"
               @click="handleUpdate"
@@ -106,9 +104,8 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              type="danger"
+              type="primary"
               plain
-              icon="el-icon-delete"
               size="mini"
               :disabled="multiple"
               @click="handleDelete"
@@ -117,9 +114,8 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              type="info"
+              type="primary"
               plain
-              icon="el-icon-upload2"
               size="mini"
               @click="handleImport"
               v-hasPermi="['system:user:import']"
@@ -127,9 +123,8 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              type="warning"
+              type="primary"
               plain
-              icon="el-icon-download"
               size="mini"
               :loading="exportLoading"
               @click="handleExport"
@@ -139,7 +134,7 @@
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table stripe v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange"  :row-class-name="tableRowClassName">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
@@ -170,22 +165,25 @@
             <template slot-scope="scope" v-if="scope.row.userId !== 1">
               <el-button
                 size="mini"
-                type="text"
-                icon="el-icon-edit"
+                class="tableBlueButtton"
                 @click="handleUpdate(scope.row)"
                 v-hasPermi="['system:user:edit']"
               >修改</el-button>
               <el-button
                 size="mini"
-                type="text"
-                icon="el-icon-delete"
+                class="tableDelButtton" 
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['system:user:remove']"
               >删除</el-button>
               <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
-                <span class="el-dropdown-link">
+                <!-- <span class="el-dropdown-link">
                   <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-                </span>
+                </span> -->
+                <el-button
+                size="mini"
+                class="tableBlueButtton"
+                style="margin-left:10px"
+              >更多</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
                     v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
@@ -679,7 +677,15 @@ export default {
     // 提交上传文件
     submitFileForm() {
       this.$refs.upload.submit();
-    }
+    },
+    // 表格样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

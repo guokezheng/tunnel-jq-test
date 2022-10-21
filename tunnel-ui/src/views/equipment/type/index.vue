@@ -28,18 +28,16 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button 
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:type:add']"
@@ -48,7 +46,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -58,7 +55,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -142,7 +138,7 @@
     <el-table
       v-loading="loading"
       :data="typeList"
-      max-height="610"
+      max-height="640"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
       
@@ -175,24 +171,21 @@
           <el-button
             v-show="scope.row.typeId==31"
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="configData(scope.row)"
             v-hasPermi="['system:type:edit']"
             >配置参数</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:type:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:type:remove']"
             >删除</el-button

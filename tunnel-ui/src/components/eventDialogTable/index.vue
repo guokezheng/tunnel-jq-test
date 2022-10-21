@@ -27,7 +27,7 @@
           v-for="(item, index) in tabList"
           :key="index"
         >
-          <el-table :data="item.list" class="eventTable" height="492" >
+          <el-table :data="item.list" class="eventTable" height="492" :row-class-name="tableRowClassName">
             <el-table-column
               label="隧道名称"
               align="center"
@@ -230,6 +230,14 @@ export default {
    
     handleClick(tab, event) {
       console.log(tab, event);
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

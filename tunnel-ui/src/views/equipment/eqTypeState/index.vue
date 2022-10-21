@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
       <el-form-item label="设备类型" prop="stateTypeId">
         <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
           <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
@@ -12,10 +12,10 @@
         </el-select>
       </el-form-item> -->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
-        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDeleteAll"
           v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-form-item>
     </el-form>
@@ -45,7 +45,7 @@
     </el-row> -->
 
     <el-table v-loading="loading" :data="eqTypeStateList"
-    max-height="610" @selection-change="handleSelectionChange"
+    max-height="640" @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -55,12 +55,12 @@
       <el-table-column label="状态类型" align="center" prop="stateType" />
      <!-- <el-table-column label="设备状态code" align="center" prop="deviceState" />
       <el-table-column label="状态名称" align="center" prop="stateName" /> -->
-      <el-table-column label="状态名称" align="center" prop="stateNames" />
+      <el-table-column label="状态名称" align="center" prop="stateNames" width="700"/>
      <!-- <el-table-column label="是否可控" align="center" prop="isControl" :formatter="eqControlFormat" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
+          <el-button size="mini" class="tableBlueButtton" @click="handleUpdate(scope.row)" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+          <el-button size="mini"  class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -868,9 +868,9 @@
  ::v-deep .el-col-4 {
       width: 15.666667%
  }
- ::v-deep .el-form-item--medium .el-form-item__label{
-  width:96px!important;
- }
+//  ::v-deep .el-form-item--medium .el-form-item__label{
+//   width:96px!important;
+//  }
 //  ::v-deep .el-form-item--medium .el-form-item__content{
 //   margin-left: 96px!important;
 //  }

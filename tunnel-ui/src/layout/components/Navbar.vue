@@ -393,8 +393,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '';
-          /*location.href = '/#/login';*/
+          // location.href = '';
+          location.href = '/#/login';
         })
       }).catch(() => {});
     },
@@ -672,7 +672,7 @@ export default {
         justify-content: center;
         align-items: center;
         span{
-          font-size:18px;
+          font-size:16px;
           margin-left:10px;
         }
         .user-avatar {

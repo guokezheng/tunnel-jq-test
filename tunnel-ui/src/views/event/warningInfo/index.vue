@@ -55,18 +55,26 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
+          
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          @click="seeWarningType()"
+          v-hasPermi="['system:warningInfo:add']"
+          >查看预警类型</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary" 
@@ -77,7 +85,7 @@
           >查看预警类型</el-button
         >
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           icon="el-icon-plus"
@@ -105,7 +113,7 @@
           @click="handleDelete"
           v-hasPermi="['system:warningInfo:remove']"
         >删除</el-button>
-      </el-col> -->
+      </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button
@@ -129,7 +137,7 @@
           />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -212,7 +220,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="handleIgnore(scope.row)"
             v-hasPermi="['system:warningInfo:edit']"
             >忽略</el-button
@@ -220,7 +228,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="handleOk(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >已解决</el-button
@@ -228,7 +236,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToEventOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >转为事件</el-button
@@ -236,7 +244,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToStrategyOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >执行相关策略</el-button
@@ -244,7 +252,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToPlanOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >查看相关预案</el-button
@@ -420,8 +428,8 @@
       append-to-body
     >
       <el-button
-        type="success"
-        icon="el-icon-plus"
+        type="primary" 
+        plain
         size="mini"
         @click="handleWarningTypeAdd"
         v-hasPermi="['system:warningInfo:add']"

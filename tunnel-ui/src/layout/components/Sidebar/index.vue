@@ -193,7 +193,7 @@ export default {
         // padding-left: 20px;
         a {
             height: 100%;
-            font-size: 18px;
+            font-size: 16px;
             line-height: 72px;
         }
     }

@@ -38,12 +38,11 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:warehouse:add']"
@@ -51,7 +50,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -60,7 +58,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -69,7 +66,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
@@ -126,7 +122,7 @@
     </el-row> -->
 
     <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange" 
-    :row-class-name="tableRowClassName"
+    :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="id" align="center" prop="id" />-->
@@ -152,15 +148,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:warehouse:edit']"
           >修改</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:warehouse:remove']"
           >删除</el-button>

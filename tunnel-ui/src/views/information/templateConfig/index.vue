@@ -26,27 +26,24 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="addOrUpdateHandle"
           v-hasPermi="['system:templateConfig:add']"
           >新增</el-button
         >
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -54,9 +51,8 @@
           >修改</el-button
         >
         <el-button
-          type="danger"
+          type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -64,9 +60,8 @@
           >删除</el-button
         >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:templateConfig:export']"
@@ -132,7 +127,7 @@
       :data="dataList"
       @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName"
-
+    max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" type="index" />
@@ -149,16 +144,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="addOrUpdateHandle(scope.row.id)"
             v-hasPermi="['system:templateConfig:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:templateConfig:remove']"
             >删除</el-button
@@ -373,7 +366,7 @@ export default {
         this.loading = false;
         this.$modal.msgError(err);
       });
-
+      
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -452,7 +445,7 @@ export default {
           this.$refs.addOrUpdate.dataForm.id = false;
         }
         console.log(this.$refs.addOrUpdate.dataForm.id)
-        // this.$refs.addOrUpdate.isAdd =
+        // this.$refs.addOrUpdate.isAdd = 
         this.$refs.addOrUpdate.init()
       })
     },

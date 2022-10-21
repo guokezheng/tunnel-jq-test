@@ -622,13 +622,7 @@ export default {
             trigger: "blur",
           },
         ],
-        remark:[
-          {
-            required: true,
-            message: '请选择入屏方式',
-            trigger: "blur",
-          },
-        ]
+        
       };
     },
     divStyle: function () {

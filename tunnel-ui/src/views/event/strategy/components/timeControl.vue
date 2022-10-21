@@ -397,7 +397,7 @@ export default {
       let params = {
         eqType: this.strategyForm.equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
-        eqDirection: this.strategyForm.eqDirection, //方向
+        eqDirection: this.strategyForm.direction, //方向
       };
       listDevices(params).then((res) => {
         this.equipmentData = res.rows;

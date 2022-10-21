@@ -73,6 +73,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
             and date_format(a.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
         </if>
+        <if test="params.deptId != null and params.deptId != ''">
+            AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+        </if>
         order by a.create_time desc
     </select>
 

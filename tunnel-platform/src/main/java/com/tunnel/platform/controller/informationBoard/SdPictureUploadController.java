@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.SdPictureUpload;
 import com.tunnel.business.service.informationBoard.ISdPictureUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +37,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 查询情报板使用图片列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:list')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdPictureUpload sdPictureUpload)
     {
@@ -91,7 +92,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 导出情报板使用图片列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:export')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:export')")
     @Log(title = "情报板使用图片", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdPictureUpload sdPictureUpload)
@@ -104,7 +105,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 获取情报板使用图片详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:query')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -127,7 +128,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 新增情报板使用图片
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:add')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:add')")
     @Log(title = "情报板使用图片", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestParam("file") MultipartFile[] file, SdPictureUpload sdPictureUpload) throws IOException {
@@ -137,7 +138,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 修改情报板使用图片
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:edit')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:edit')")
     @Log(title = "情报板使用图片", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(MultipartFile[] file,
@@ -166,7 +167,7 @@ public class SdPictureUploadController extends BaseController
     /**
      * 删除情报板使用图片
      */
-//    @PreAuthorize("@ss.hasPermi('system:upload:remove')")
+    @PreAuthorize("@ss.hasPermi('system:templateImage:remove')")
     @Log(title = "情报板使用图片", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

@@ -33,7 +33,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:vocabulary:add']"
+          v-hasPermi="['system:templateImage:add']"
           >新增</el-button
         >
         <el-button
@@ -43,7 +43,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:vocabulary:edit']"
+          v-hasPermi="['system:templateImage:edit']"
           >修改</el-button
         >
         <el-button
@@ -53,7 +53,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:vocabulary:remove']"
+          v-hasPermi="['system:templateImage:remove']"
           >删除</el-button
         >
         <el-button
@@ -62,7 +62,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:vocabulary:export']"
+          v-hasPermi="['system:templateImage:export']"
           >导出</el-button
         >
       </el-form-item>
@@ -161,7 +161,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:vocabulary:edit']"
+            v-hasPermi="['system:templateImage:edit']"
             >修改</el-button
           >
           <el-button
@@ -169,7 +169,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vocabulary:remove']"
+            v-hasPermi="['system:templateImage:remove']"
             >删除</el-button
           >
         </template>

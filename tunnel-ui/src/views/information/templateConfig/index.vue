@@ -40,7 +40,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="addOrUpdateHandle"
-          v-hasPermi="['system:template:add']"
+          v-hasPermi="['system:templateConfig:add']"
           >新增</el-button
         >
         <el-button
@@ -50,7 +50,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:template:edit']"
+          v-hasPermi="['system:templateConfig:edit']"
           >修改</el-button
         >
         <el-button
@@ -60,7 +60,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['system:template:remove']"
+          v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button
         >
         <el-button
@@ -69,7 +69,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:template:export']"
+          v-hasPermi="['system:templateConfig:export']"
           >导出</el-button
         >
       </el-form-item>
@@ -152,7 +152,7 @@
             type="text"
             icon="el-icon-edit"
             @click="addOrUpdateHandle(scope.row.id)"
-            v-hasPermi="['system:template:edit']"
+            v-hasPermi="['system:templateConfig:edit']"
             >修改</el-button
           >
           <el-button
@@ -160,7 +160,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:template:remove']"
+            v-hasPermi="['system:templateConfig:remove']"
             >删除</el-button
           >
         </template>
@@ -373,7 +373,7 @@ export default {
         this.loading = false;
         this.$modal.msgError(err);
       });
-      
+
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -452,7 +452,7 @@ export default {
           this.$refs.addOrUpdate.dataForm.id = false;
         }
         console.log(this.$refs.addOrUpdate.dataForm.id)
-        // this.$refs.addOrUpdate.isAdd = 
+        // this.$refs.addOrUpdate.isAdd =
         this.$refs.addOrUpdate.init()
       })
     },

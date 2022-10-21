@@ -43,3 +43,18 @@ alter table sd_strategy_rl modify column control_time varchar(20) comment '控�
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (383, 4, '分时控制', '3', 'sd_strategy_type', NULL, 'default', 'N', '0', 'admin', '2022-09-12 09:58:31', '', NULL, NULL);
 
 
+
+-- 先删除字典：sd_control_type管控类别 的所有数据，再新增该类型下所有的字典数据
+
+delete from sys_dict_data where dict_type = 'sd_control_type';
+
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (104, 0, '能见度', 'visibility', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-02-12 14:18:35', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (105, 1, '路面情况', 'road_condition', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-02-12 14:19:33', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (106, 2, '拥挤度', 'predicted_crowding', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-02-12 14:21:46', 'admin', '2022-02-26 16:52:20', NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (198, 3, '突发事件', 'emergency_incident', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-03-14 11:11:34', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (400, 8, '光强控制', '8', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-10-09 16:59:34', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (410, 4, '手动控制', '0', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2021-12-17 14:52:12', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (411, 5, '定时控制', '1', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2021-12-17 14:52:29', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (412, 6, '自动触发', '2', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-09-02 11:36:39', 'admin', '2022-09-02 11:37:07', NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (413, 7, '分时控制', '3', 'sd_control_type', NULL, 'default', 'N', '0', 'admin', '2022-09-12 09:58:31', '', NULL, NULL);
+

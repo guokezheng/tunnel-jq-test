@@ -16,8 +16,11 @@ import com.tunnel.business.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件管理Service业务层处理
@@ -230,11 +233,37 @@ public class SdEventServiceImpl implements ISdEventService {
                 Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(upLimit >= compareValue && compareValue >= downLimit){
                     subareaId = data.getsId();
-                    break;
+                    return subareaId;
                 }
             }
+            //如果没有取到 取最近的分区ID
+            //所有分区桩号
+            String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
+            String[] pileStr = s.split(",");
+            int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
+            int index = Math.abs(compareValue-allPile[0]);
+            int result = allPile[0];
+            int mark = 0;
+            for (int i=0;i<allPile.length;i++) {
+                int abs = Math.abs(compareValue-allPile[i]);
+                if(abs <= index){
+                    index = abs;
+                    result = allPile[i];
+                    mark = i+1;
+                }
+            }
+            String pile = String.valueOf(result);
+            List<SdTunnelSubarea> only = new ArrayList<>();
+            if(mark %2 !=0){
+                //最接近的值为桩号下限
+                only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
+                subareaId = only.get(0).getsId();
+            }else{
+                only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
+                subareaId = only.get(0).getsId();
+            }
         }catch (Exception ex){
-            ex.printStackTrace();
+            throw new RuntimeException("数据处理异常");
         }
         return subareaId;
     }

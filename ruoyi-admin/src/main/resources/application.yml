@@ -10,7 +10,7 @@ ruoyi:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
 #  profile: /Users/yqc/OpenSources/ruoyi
-  profile: /opt/suidao/file/uploadPath
+  profile: E:/opt/suidao/file/uploadPath
 #  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
@@ -21,13 +21,7 @@ ruoyi:
   uploadType: local
   # 阿里云oss存储配置
   oss:
-#    bucketName: bucket-wisdom-oss
-#    endPoint: oss-cn-beijing.aliyuncs.com
-#    accessKeyId: LTAI4G6gMw56HDvtJ7CFYfsE
-#    accessKeySecret: UKsM7Mj6pjKadJ4kD0rjUJFtPL5P1b
-
     bucketName: bucket-wisdom-oss
-#    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
     endPoint: http://oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud/
     accessKeyId: IDh1HEeliVnMImdxRH
     accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8

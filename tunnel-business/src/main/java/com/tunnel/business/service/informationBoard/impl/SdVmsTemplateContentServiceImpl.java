@@ -79,7 +79,7 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
     /**
      * 修改发布模板内容
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param jsonObject 发布模板内容
      * @return 结果
      */
     @Override

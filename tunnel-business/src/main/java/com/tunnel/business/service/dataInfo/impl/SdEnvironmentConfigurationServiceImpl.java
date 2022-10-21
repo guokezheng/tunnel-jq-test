@@ -78,6 +78,11 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
      */
     @Override
     public int insertSdEnvironmentConfiguration(MultipartFile[] file, SdEnvironmentConfiguration sdEnvironmentConfiguration) {
+        if (sdEnvironmentConfiguration.getWidth().equals("0")) {
+            throw new RuntimeException("图标宽度不能为0");
+        } else if (sdEnvironmentConfiguration.getHeight().equals("0")) {
+            throw new RuntimeException("图标高度不能为0");
+        }
         sdEnvironmentConfiguration.setCreateTime(DateUtils.getNowDate());
         sdEnvironmentConfiguration.setDirection(sdEnvironmentConfiguration.getDirection().equals("null") ? null : sdEnvironmentConfiguration.getDirection());
         sdEnvironmentConfiguration.setEnvironmentType(sdEnvironmentConfiguration.getEnvironmentType().equals("null") ? null : sdEnvironmentConfiguration.getEnvironmentType());

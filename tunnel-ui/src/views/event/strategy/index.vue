@@ -118,7 +118,6 @@
       :header-cell-style="{ 'text-align': 'center' }"
       max-height="610"
       :row-class-name="tableRowClassName"
-
     >
       <el-table-column
         label="隧道名称"
@@ -154,7 +153,6 @@
             inactive-color="#ccc"
             active-value="0"
             inactive-value="1"
-           
             @change="changeStrategyState(scope.row)"
           >
           </el-switch>
@@ -461,7 +459,7 @@ export default {
       this.getList();
     },
     changeStrategyState(row) {
-      let data = { invokeTarget: row.jobRelationId, status: row.strategyState };
+      let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
         this.$modal.msgSuccess(result.msg);
       });
@@ -888,10 +886,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
   },

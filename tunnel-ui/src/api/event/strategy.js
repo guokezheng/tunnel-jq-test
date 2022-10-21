@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 09:18:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-10-17 09:40:39
+ * @LastEditTime: 2022-10-21 09:32:21
  * @FilePath: \tunnel-ui\src\api\event\strategy.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -92,10 +92,10 @@ export function getRl(id) {
 }
 
 
-export function updateState(data) {
+export function updateState(query) {
   return request({
-    url: '/monitor/job/updateState',
-    method: 'put',
-    data: data
+    url: '/strategy/switch',
+    method: 'get',
+    params: query
   })
 }

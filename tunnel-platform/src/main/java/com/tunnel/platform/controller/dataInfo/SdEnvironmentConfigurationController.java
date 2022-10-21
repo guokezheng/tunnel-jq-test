@@ -104,6 +104,11 @@ public class SdEnvironmentConfigurationController extends BaseController {
         sdEnvironmentConfiguration.setSdName(sdName.equals("null")?null:sdName);
         sdEnvironmentConfiguration.setWidth(width.equals("null")?null:width);
         sdEnvironmentConfiguration.setRemark(remark.equals("null")?null:remark);
+        if (width.equals("0")) {
+            throw new RuntimeException("图标宽度不能为0");
+        } else if (height.equals("0")) {
+            throw new RuntimeException("图标高度不能为0");
+        }
         return Result.toResult(sdEnvironmentConfigurationService.updateSdEnvironmentConfiguration(file, sdEnvironmentConfiguration,removeIds));
     }
 

@@ -22,15 +22,15 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="机构" prop="tunnelId">
+      <!-- <el-form-item label="机构" prop="tunnelId">
         <el-input style="width:200px;" v-model.number="queryParams.groupName" placeholder="请输入机构名称" size="small" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="姓名"  prop="stagPointName">
           <el-input style="width:200px;" v-model.number="queryParams.userName" placeholder="请输入人员姓名" size="small" />
       </el-form-item>
-      <el-form-item label="岗位" prop="tunnelId">
+      <el-form-item label="岗位" prop="groupName">
         <el-select
-          v-model="queryParams.tunnelId"
+          v-model="queryParams.groupName"
           placeholder="请选择岗位"
           clearable
           size="small"
@@ -46,17 +46,43 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button>
+        <el-button  size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['business:SdEmergencyPer:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['business:SdEmergencyPer:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -92,22 +118,22 @@
           >删除</el-button
         >
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['business:SdEmergencyPer:export']"-->
-<!--          >导出</el-button-->
-<!--        >-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button
+         type="warning"
+         plain
+         icon="el-icon-download"
+         size="mini"
+         @click="handleExport"
+         v-hasPermi="['business:SdEmergencyPer:export']/"
+         >导出</el-button
+       >
+     </el-col>
       <right-toolbar
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -116,14 +142,13 @@
       @selection-change="handleSelectionChange"
       @row-click="peopleTableRowClick"
       :row-class-name="tableRowClassName"
-
+      max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!--      <el-table-column label="隧道ID" align="center" prop="tunnelId" />  -->
       <el-table-column label="隧道" align="center" prop="tunnelName" />
       <el-table-column label="姓名" align="center" prop="userName" />
-      <el-table-column label="机构" align="center" prop="groupName" />
       <el-table-column label="岗位" align="center" prop="groupName" />
       <el-table-column label="电话" align="center" prop="phone" />
       <el-table-column
@@ -134,16 +159,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['business:SdEmergencyPer:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton" 
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:SdEmergencyPer:remove']"
             >删除</el-button
@@ -182,8 +205,20 @@
         <el-form-item label="应急人员" prop="userName">
           <el-input v-model="form.userName" placeholder="请输入应急人员" />
         </el-form-item>
-        <el-form-item label="机构" prop="groupName">
-          <el-input v-model="form.groupName" placeholder="请输入机构" />
+        <el-form-item label="岗位" prop="groupName">
+          <el-select
+          v-model="form.groupName"
+          placeholder="请选择岗位"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="item in emergencyPostList"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          />
+        </el-select>
         </el-form-item>
         <el-form-item label="电话" prop="phone">
           <el-input v-model="form.phone" placeholder="请输入电话" />
@@ -262,10 +297,9 @@ export default {
           required: true, message: '请输入应急人员', trigger: 'blur'
         },
         { min: 1, max: 30, message: '长度在 1 ~ 30 个字符之间', trigger: 'blur' }],
-        groupName: [{
-          required: true, message: '请输入组名', trigger: 'blur'
+        groupName: {
+          required: true, message: '请选择岗位', trigger: 'change'
         },
-        { min: 1, max: 30, message: '长度在 1 ~ 30 个字符之间', trigger: 'blur' }],
         phone: [
           { required: true, message: '请输入电话', trigger: 'blur' },
           { pattern: /^1[3456789]\d{9}$/, message: '电话号码格式不正确!', trigger: 'blur' },
@@ -290,6 +324,7 @@ export default {
     getList() {
       this.loading = true;
       listSdEmergencyPer(this.queryParams).then((response) => {
+        console.log(response,"应急人员表格")
         this.SdEmergencyPerList = response.rows;
         this.total = response.total;
         this.loading = false;

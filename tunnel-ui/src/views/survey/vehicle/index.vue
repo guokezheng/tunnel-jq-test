@@ -52,8 +52,35 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+          <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+          <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+          <el-button type="primary" plain size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
+          <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleUpdateMaterial"
+          v-hasPermi="['system:vehicle:edit']"
+          >修改</el-button
+        >
+          <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:vehicle:export']"
+        >导出</el-button>
           <!-- <el-col :span="1.5"> -->
 
       <!-- </el-col> -->
@@ -61,7 +88,7 @@
 
       </el-form>
 
-      <el-row :gutter="10" class="mb8">
+      <!-- <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
         </el-col>
@@ -96,10 +123,10 @@
             <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
           </el-tooltip>
         </div>
-      </el-row>
+      </el-row> -->
 
       <el-table v-loading="loading" :data="mechanismList" @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName"
+      :row-class-name="tableRowClassName" max-height="640"
       >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="机构" align="center" prop="orgName" />
@@ -119,8 +146,8 @@
         <el-table-column label="技术状态描述" align="center" prop="statusDesc" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:vehicle:edit']">修改</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:vehicle:remove']">删除</el-button>
+            <el-button size="mini" class="tableBlueButtton" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:vehicle:edit']">修改</el-button>
+            <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:vehicle:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -384,18 +411,16 @@ import {
       },
 
       /** 修改按钮操作 */
-      handleUpdateMaterial(scope) {
+      handleUpdateMaterial(row) {
         // this.reset();
-        // const id = row.id || this.ids
-        console.log(scope,'scope');
+        const id = row.orgId?[row.orgId]:this.ids;
         this.open=true
         this.title='修改应急车辆'
         // console.log(scope,'row.idrow.id');
-        editForm(scope.id).then(res => {
+        editForm(id).then(res => {
            if(res.code==200) {
             this.form=res.data
            }
-          console.log(res,'sssssssssssssss');
           // this.form = response.data;
           // this.open = true;
           // this.title = "修改应急资源";

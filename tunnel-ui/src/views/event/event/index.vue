@@ -1,27 +1,19 @@
 <template>
   <div class="app-container">
-    <div
-      style="display: flex; font-size: 14px; width: 100%; align-items: center"
-    >
+    <div style="display: flex;font-size: 14px;width: 100%;align-items: center;">
       <div class="warningStatistics">事件预警统计:</div>
-      <div class="EquipStatistics">
-        今日累计预警事件: <span>{{ eventMsg.allnum }}</span>
-      </div>
-      <div class="EquipStatistics">
-        今日执行预警事件: <span>{{ eventMsg.process }}</span>
-      </div>
-      <div class="EquipStatistics">
-        今日预警事件执行率: <span>{{ eventMsg.bl }}</span>
-      </div>
+      <div class="EquipStatistics">今日累计预警事件: <span>{{eventMsg.allnum}}</span></div>
+      <div class="EquipStatistics">今日执行预警事件: <span>{{eventMsg.process}}</span></div>
+      <div class="EquipStatistics">今日预警事件执行率: <span>{{eventMsg.bl}}</span></div>
     </div>
-
+   
     <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
       label-width="68px"
-      style="margin-top: 10px"
+      style="margin-top:10px"
     >
       <el-form-item label="事件类型" prop="eventTypeId">
         <el-select
@@ -106,17 +98,12 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
+          
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button
-          icon="el-icon-refresh"
-          size="mini"
-          @click="resetQuery"
-          type="primary"
-          plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
       </el-form-item>
@@ -163,26 +150,28 @@
       :data="eventList"
       :default-sort="{ prop: 'eventTime', order: 'descending' }"
       max-height="600"
-      ref="tableRef"
+      ref='tableRef' 
       :row-class-name="tableRowClassName"
+
     >
       <el-table-column
         label="隧道名称"
         align="center"
         prop="tunnels.tunnelName"
+        
       />
       <el-table-column
         label="所属机构"
         align="center"
         prop="tunnelStationName"
       />
-      <el-table-column label="方向" align="center" prop="direction">
+      <el-table-column label="方向" align="center" prop="direction" width="120">
         <template slot-scope="scope">
-          <span>{{ getDirection(scope.row.direction) }}</span>
+          <span>{{getDirection(scope.row.direction)}}</span>
         </template>
       </el-table-column>
       <el-table-column label="桩号" align="center" prop="stakeNum" />
-      <el-table-column label="车道号" align="center" prop="laneNo" />
+      <el-table-column label="车道号" align="center" prop="laneNo" width="100"/>
       <!-- <el-table-column label="车型" align="center" prop="tunnels.tunnelName" /> -->
       <el-table-column
         label="事件类型"
@@ -218,8 +207,8 @@
       <!-- <el-table-column label="状态" align="center" prop="eventState" :formatter="eventStateFormat" /> -->
       <el-table-column label="事件状态" align="center" prop="eventState">
         <template slot-scope="scope">
-          <span v-show="scope.row.eventState == 0" style="color: #85e37b"
-            ><i class="el-icon-info" style="color: #85E37B;!important"></i
+          <span v-show="scope.row.eventState == 0" style="color: #00aa00"
+            ><i class="el-icon-info" style="color: #00aa00;!important"></i
             >&nbsp;处理中</span
           >
           <span v-show="scope.row.eventState == 1" style="color: #00aa00"
@@ -255,13 +244,14 @@
         label="操作"
         align="center"
         class-name="small-padding fixed-width"
+        width="240"
       >
         <template slot-scope="scope">
           <el-button
             v-show="scope.row.eventState == 3"
             size="mini"
-            type="text"
-            icon="el-icon-finished"
+            class="tableBlueButtton"
+
             @click="changeState(scope.row, 2)"
             v-hasPermi="['system:event:edit']"
             >忽略</el-button
@@ -269,8 +259,7 @@
           <el-button
             v-show="scope.row.eventState == 0"
             size="mini"
-            type="text"
-            icon="el-icon-finished"
+            class="tableBlueButtton"
             @click="handleOk(scope.row)"
             v-hasPermi="['system:event:edit']"
             >已解决</el-button
@@ -278,8 +267,7 @@
           <!-- <router-link :to="'/business/event/' + scope.row.id" class="link-type"> -->
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-chat-line-square"
+            class="tableBlueButtton"
             v-hasPermi="['system:event:remove']"
             @click="handleDetails(scope.row)"
             >查看详情
@@ -288,8 +276,7 @@
           <el-button
             v-show="scope.row.eventState == 0 || scope.row.eventState == 3"
             size="mini"
-            type="text"
-            icon="el-icon-chat-line-square"
+            class="tableBlueButtton"
             v-hasPermi="['system:event:remove']"
             @click="handleDispatch(scope.row)"
             >应急调度
@@ -575,7 +562,7 @@
             </div>
             <div class="detailsText">事件分类</div>
             <div
-              style="color: #82b3c2; line-height: 40px; width: 195px"
+              style="color: #82b3c2; line-height: 40px;width:195px"
               v-if="eventForm.eventType.eventType"
             >
               {{ eventForm.eventType.eventType }}
@@ -779,9 +766,9 @@ export default {
   data() {
     return {
       eventMsg: {
-        allnum: 0,
-        process: 0,
-        bl: 0,
+        allnum:0,
+        process:0,
+        bl:0
       },
       urls: [],
 
@@ -891,7 +878,7 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-
+    
     // 管理机构
     toll().then((res) => {
       console.log(res);
@@ -914,7 +901,7 @@ export default {
       getTodayEventCount().then((result) => {
         console.log(result, "11111111111111");
         this.eventMsg = result.data;
-        this.$forceUpdate();
+        this.$forceUpdate()
       });
     },
     //获取图片视频
@@ -963,8 +950,8 @@ export default {
         console.log(response.rows, "查询事件管理列表");
         this.eventList = response.rows;
         this.$nextTick(() => {
-          this.$refs.tableRef.doLayout();
-        });
+          this.$refs.tableRef.doLayout()
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -981,7 +968,7 @@ export default {
     /** 查询事件类型列表 */
     getEventType() {
       listEventType().then((response) => {
-        console.log(response, "responseresponse");
+        console.log(response,"responseresponse");
         this.eventTypeData = response.rows;
       });
     },
@@ -1123,10 +1110,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
       } else {
-        return "tableOddRow";
+      return "tableOddRow";
       }
     },
   },
@@ -1198,26 +1185,26 @@ hr {
   font-weight: bold;
 }
 
-.EquipStatistics {
-  width: 200px;
-  height: 40px;
-  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
-  color: white;
-  text-align: center;
-  line-height: 40px;
-  font-weight: 400;
-  font-size: 16px;
-  margin-left: 14px;
-  > span {
-    font-size: 24px;
-    font-weight: 600;
-    vertical-align: middle;
+.EquipStatistics{
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+    >span{
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
   }
-}
-.warningStatistics {
-  line-height: 60px;
-  font-size: 14px;
-  color: #606266;
-  font-weight: 700;
-}
+  .warningStatistics{
+    line-height: 60px;
+    font-size: 14px;
+    // color: #606266;
+    font-weight: 700;
+  }
 </style>

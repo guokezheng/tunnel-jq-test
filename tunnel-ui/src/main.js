@@ -76,6 +76,7 @@ Vue.prototype.selectDictLabels = selectDictLabels
 Vue.prototype.handleTree = handleTree
 Vue.prototype.socket = Socket
 
+
 // gis 
 Vue.prototype.$GlobalConfig = config.GlobalConfig
 Vue.use(preventClick)

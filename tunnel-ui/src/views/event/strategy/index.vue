@@ -49,27 +49,20 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button
-          icon="el-icon-refresh"
-          size="mini"
-          @click="resetQuery"
-          type="primary"
-          plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="openInsertStrategy"
           v-hasPermi="['system:strategy:add']"
-          >新增策略</el-button
+          >新增</el-button
         >
       </el-form-item>
     </el-form>
@@ -116,8 +109,9 @@
       :data="strategyList"
       @selection-change="handleSelectionChange"
       :header-cell-style="{ 'text-align': 'center' }"
-      max-height="610"
+      max-height="640"
       :row-class-name="tableRowClassName"
+
     >
       <el-table-column
         label="隧道名称"
@@ -153,6 +147,7 @@
             inactive-color="#ccc"
             active-value="0"
             inactive-value="1"
+           
             @change="changeStrategyState(scope.row)"
           >
           </el-switch>
@@ -167,24 +162,21 @@
           <el-button
             v-show="scope.row.strategyType == 0"
             size="mini"
-            type="text"
-            icon="el-icon-thumb"
+            class="tableBlueButtton"
             @click="handleController(scope.row)"
             v-hasPermi="['system:strategy:edit']"
             >手动控制</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:strategy:edit']"
             >编辑</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:strategy:remove']"
             >删除</el-button
@@ -825,6 +817,9 @@ export default {
         type: "warning",
       })
         .then(() => {
+          // if (row.jobRelationId != null) {
+          //   delJob(jobRelationId).then((response) => {});
+          // }
           delStrategy(ids).then((res) => {
             if (res.code == 200) {
               this.$modal.msgSuccess(res.msg);
@@ -886,10 +881,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
       } else {
-        return "tableOddRow";
+      return "tableOddRow";
       }
     },
   },

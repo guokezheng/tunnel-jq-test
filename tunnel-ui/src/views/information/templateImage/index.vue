@@ -19,27 +19,24 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:templateImage:add']"
           >新增</el-button
         >
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -47,9 +44,8 @@
           >修改</el-button
         >
         <el-button
-          type="danger"
+          type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -57,9 +53,8 @@
           >删除</el-button
         >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:templateImage:export']"
@@ -124,7 +119,7 @@
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      max-height="630"
+      max-height="640"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'creatTime', order: 'descending'}"
       :row-class-name="tableRowClassName"
@@ -135,10 +130,10 @@
       type="index"
       width="50">
     </el-table-column>
-      <el-table-column type="selection" width="55" align="center" />
+      
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-
+        
         <template slot-scope="scope">
 　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
 　　    </template>
@@ -158,16 +153,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:templateImage:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:templateImage:remove']"
             >删除</el-button
@@ -223,7 +216,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right"
+            controls-position="right" 
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -236,7 +229,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right"
+            controls-position="right" 
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -245,7 +238,7 @@
           />
           px
         </el-form-item>
-
+        
         <!-- <el-form-item label="图片类型" prop="imageType">
           <el-input v-model="form.imageType" placeholder="请输入图片类型" />
         </el-form-item> -->
@@ -417,8 +410,9 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
       this.title = "添加情报板模板图片";
+
+      this.open = true;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -427,15 +421,16 @@ export default {
       var that = this;
       that.fileList = [];
       getTemplateImageInfo(id).then((response) => {
+        console.log(response,"修改情报板图片")
         this.form = response.data;
-        console.log('这是  ' + this.form)
+        this.title = "修改情报板图片";
+
         this.open = true;
-        //this.planRoadmapUrl(that.form.iFileList);
+        // this.planRoadmapUrl(that.form.iFileList);
         that.fileList.push({
           name: this.form.pictureName,
           url: this.form.pictureUrl,
         });
-        this.title = "修改情报板图片";
       });
     },
     async planRoadmapUrl(iFileList) {

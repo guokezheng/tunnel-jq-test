@@ -47,6 +47,40 @@
     .el-table--medium .el-table__cell{
       padding: 0;
     }
+    // 列表页 表单加号
+    .formAddClass{
+      color: white;
+    }
+    // 表格内按钮 红色
+    .tableDelButtton{
+      // width: 50px;
+      padding: 0 5px;
+      font-size: 14px;
+      color: #FA6F8E;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #FA6F8E;
+    }
+    .tableDelButtton:hover{
+      color: white;
+      background: #FA6F8E !important;
+    }
+    .tableBlueButtton{
+      padding: 0 5px;
+      font-size: 14px;
+      color: #39ADFF;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #39ADFF;
+    }
+    .tableBlueButtton:hover{
+      color: white;
+      background: #39ADFF;
+    }
+    // 表格loading背景色
+    .el-loading-mask{
+      background: transparent;
+    }
     .mapCharts{
       .el-table--medium .el-table__cell{
         padding: 10px 0;
@@ -101,6 +135,10 @@
     .el-form-item__label{
       color: #fff;
     }
+    // 弹窗表单label
+    .el-dialog .el-form-item__label{
+      color: #00162C;
+    }
     // 设备预警、事件预警表单
     .warningStatistics{
       color: #fff;
@@ -148,6 +186,26 @@
     }
     .tableOddRow{
       background: #326CA9;
+    }
+    // 系统监控-服务监控页面 不规则表格
+    .othertableRowClass{
+      .el-table th.el-table__cell{
+        background: #2B5F96 !important;
+        color: white;
+      }
+      .el-table tr{
+        background: #2B5F96 !important;
+      }
+      .el-table{
+        background: #2B5F96 !important;
+      }
+      .el-card{
+        background: #2B5F96 !important;
+      }
+    }
+    // 深色版部分小细节需要白色字
+    .textColorClass{
+      color:white
     }
     // .el-table__header-wrapper{
     //   border-right: solid 1px #E1E4E6;

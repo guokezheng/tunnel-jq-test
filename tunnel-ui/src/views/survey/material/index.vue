@@ -15,7 +15,7 @@
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px;">+</span>
+        <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="deviation">
           <el-input style="width:100px" class="dateClass" v-model.number="queryParams.deviation" placeholder="桩号偏差" clearable size="small" />
         </el-form-item>
@@ -26,7 +26,7 @@
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px;">+</span>
+        <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="endDeviation">
           <el-input style="width:100px;" class="dateClass" v-model.number="queryParams.endDeviation" placeholder="桩号偏差" clearable size="small" />
         </el-form-item>
@@ -37,11 +37,30 @@
 <!--        </el-select>-->
 <!--      </el-form-item>-->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleUpdateMaterial"
+          v-hasPermi="['system:material:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
       </el-form-item>
     </el-form>
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
       </el-col>
@@ -57,14 +76,14 @@
           >删除</el-button
         >
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button type="success" icon="el-icon-edit" size="mini" @click="handleUpdate(1)" :disabled="single"
                    v-hasPermi="['system:material:crk']">物资入库</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" icon="el-icon-edit" size="mini" @click="handleUpdate(2)" :disabled="single"
                    v-hasPermi="['system:material:crk']">物资出库</el-button>
-      </el-col> -->
+      </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -73,10 +92,10 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="materialList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName"
+    :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
@@ -90,9 +109,9 @@
       <el-table-column label="生产日期" align="center" prop="dateOfManufacture" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:material:edit']">修改</el-button>
+          <el-button size="mini" class="tableBlueButtton" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:material:edit']">修改</el-button>
           <!-- <el-button size="mini" type="text" icon="el-icon-edit" @click="openCrkDrawer(scope.row)" v-hasPermi="['system:material:crkRecord']">出入库详情</el-button> -->
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:material:remove']">删除</el-button>
+          <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:material:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

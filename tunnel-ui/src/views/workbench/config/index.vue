@@ -852,7 +852,7 @@
           prop="controlType"
           :formatter="controlTypeFormat"
         />
-        <el-table-column label="用户名称" align="center" prop="userName" />
+        <!-- <el-table-column label="用户名称" align="center" prop="userName" /> -->
         <el-table-column
           label="创建时间"
           align="center"
@@ -3663,6 +3663,7 @@ export default {
       this.loading = true;
       listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
+          console.log(response,"操作日志列表")
           this.logList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -6606,7 +6607,7 @@ export default {
 
   //车道控制
   .indicatorLight {
-    width: 37px;
+    width: 30px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6616,7 +6617,7 @@ export default {
     color: white;
     writing-mode: vertical-lr;
     letter-spacing: 5px;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -6625,7 +6626,7 @@ export default {
 
   //照明控制
   .brightnessControl {
-    width: 37px;
+    width: 30px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6638,7 +6639,7 @@ export default {
     text-align: center;
     //文字间隔
     letter-spacing: 5px;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -6651,7 +6652,7 @@ export default {
 }
 // 触发控制模块
 .triggerControl {
-  width: 37px;
+  width: 30px;
   height: 33%;
   background: linear-gradient(
     90deg,
@@ -6664,7 +6665,7 @@ export default {
   text-align: center;
   //文字间隔
   letter-spacing: 5px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
     align-items: center;
@@ -7055,7 +7056,7 @@ export default {
 .leftButtonS {
   position: relative;
   left: 0px;
-  font-size: 18px;
+  font-size: 16px;
   width: 125px;
   height: 46px;
   line-height: 46px;

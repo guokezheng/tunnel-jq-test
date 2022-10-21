@@ -1,11 +1,11 @@
 <template>
-  <div class="app-container">
+  <div class="app-container othertableRowClass" style="overflow:auto !important;">
     <el-row>
       <el-col :span="12" class="card-box">
         <el-card>
-          <div slot="header"><span>CPU</span></div>
+          <div slot="header" class="textColorClass"><span>CPU</span></div>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
+            <table cellspacing="0" style="width: 100%;" :row-class-name="tableRowClassName">
               <thead>
                 <tr>
                   <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
@@ -37,9 +37,9 @@
 
       <el-col :span="12" class="card-box">
         <el-card>
-          <div slot="header"><span>内存</span></div>
+          <div slot="header" class="textColorClass"><span>内存</span></div>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
+            <table cellspacing="0" style="width: 100%;" :row-class-name="tableRowClassName">
               <thead>
                 <tr>
                   <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
@@ -76,11 +76,11 @@
 
       <el-col :span="24" class="card-box">
         <el-card>
-          <div slot="header">
+          <div slot="header" class="textColorClass">
             <span>服务器信息</span>
           </div>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
+            <table cellspacing="0" style="width: 100%;"  :row-class-name="tableRowClassName">
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">服务器名称</div></td>
@@ -102,11 +102,11 @@
 
       <el-col :span="24" class="card-box">
         <el-card>
-          <div slot="header">
+          <div slot="header" class="textColorClass">
             <span>Java虚拟机信息</span>
           </div>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
+            <table cellspacing="0" style="width: 100%;" :row-class-name="tableRowClassName">
               <tbody>
                 <tr>
                   <td class="el-table__cell is-leaf"><div class="cell">Java名称</div></td>
@@ -136,11 +136,11 @@
 
       <el-col :span="24" class="card-box">
         <el-card>
-          <div slot="header">
+          <div slot="header" class="textColorClass">
             <span>磁盘状态</span>
           </div>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <table cellspacing="0" style="width: 100%;">
+            <table cellspacing="0" style="width: 100%;" :row-class-name="tableRowClassName">
               <thead>
                 <tr>
                   <th class="el-table__cell el-table__cell is-leaf"><div class="cell">盘符路径</div></th>
@@ -197,7 +197,15 @@ export default {
     // 打开加载层
     openLoading() {
       this.$modal.loading("正在加载服务监控数据，请稍候！");
-    }
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

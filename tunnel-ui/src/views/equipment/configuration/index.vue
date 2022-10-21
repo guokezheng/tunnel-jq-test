@@ -56,18 +56,16 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:configuration:add']"
@@ -76,7 +74,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -86,7 +83,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -96,7 +92,6 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
@@ -165,7 +160,7 @@
       :data="configurationList"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
-
+      max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
@@ -211,16 +206,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:configuration:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:configuration:remove']"
             >删除</el-button
@@ -281,8 +274,8 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="form.url" alt="" />
+          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;">
+            <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
         <el-form-item label="图片宽度" prop="width">

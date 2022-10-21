@@ -502,17 +502,17 @@
                   width="60"
                 />
                 <el-table-column label="联系方式" align="center" prop="phone" />
-                <el-table-column
+                <!-- <el-table-column
                   label="操作"
                   align="center"
                   class-name="small-padding"
                   width="60"
-                >
-                  <template slot-scope="scope">
+                > -->
+                  <!-- <template slot-scope="scope">
                     <div class="phoneButton">
                       <el-image :src="require('@/assets/icons/phone.png')" />
                     </div>
-                  </template>
+                  </template> -->
                 </el-table-column>
               </el-table>
             </div>

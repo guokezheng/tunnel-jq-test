@@ -143,6 +143,12 @@ public class SysUserController extends BaseController
         {
             return Result.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
+        if (user.getDeptId() == null) {
+            return Result.error("用户所属部门不能为空");
+        }
+        if (user.getRoleIds() == null || user.getRoleIds().length == 0) {
+            return Result.error("用户角色不能为空");
+        }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         return Result.toResult(userService.insertUser(user));
@@ -167,6 +173,12 @@ public class SysUserController extends BaseController
                 && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
         {
             return Result.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        if (user.getDeptId() == null) {
+            return Result.error("用户所属部门不能为空");
+        }
+        if (user.getRoleIds() == null || user.getRoleIds().length == 0) {
+            return Result.error("用户角色不能为空");
         }
         user.setUpdateBy(getUsername());
         return Result.toResult(userService.updateUser(user));

@@ -171,7 +171,7 @@
               >修改</el-button>
               <el-button
                 size="mini"
-                class="tableDelButtton" 
+                class="tableDelButtton"
                 @click="handleDelete(scope.row)"
                 v-hasPermi="['system:user:remove']"
               >删除</el-button>
@@ -454,6 +454,12 @@ export default {
             message: "请输入正确的手机号码",
             trigger: "blur"
           }
+        ],
+        deptId: [
+          { required: true, message: "部门不能为空", trigger: "blur" }
+        ],
+        roleIds: [
+          { required: true, message: "用户角色不能为空", trigger: "blur" }
         ]
       }
     };

@@ -130,10 +130,10 @@
       type="index"
       width="50">
     </el-table-column>
-      
+
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-        
+
         <template slot-scope="scope">
 　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
 　　    </template>
@@ -216,7 +216,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -229,7 +229,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -238,7 +238,7 @@
           />
           px
         </el-form-item>
-        
+
         <!-- <el-form-item label="图片类型" prop="imageType">
           <el-input v-model="form.imageType" placeholder="请输入图片类型" />
         </el-form-item> -->
@@ -462,7 +462,7 @@ export default {
       this.fileData.append("vmsSize", this.form.vmsSize);
       this.fileData.append("imageRemark", this.form.imageRemark);
       this.fileData.append("speed", this.form.speed);
-      this.fileData.append("deleteflag", this.form.deleteflag == false ? '1' : '0');
+      this.fileData.append("deleteflag", this.form.deleteflag == false ? '0' : '1');
       console.log(this.fileData)
       this.$refs["form"].validate((valid) => {
         if (valid) {

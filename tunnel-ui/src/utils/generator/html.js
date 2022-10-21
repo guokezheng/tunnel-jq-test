@@ -357,3 +357,4 @@ export function makeUpHtml(conf, type) {
   confGlobal = null
   return temp
 }
+

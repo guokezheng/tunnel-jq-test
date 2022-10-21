@@ -19,21 +19,21 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" @click="handleAdd"
           v-hasPermi="['system:devices:add']">新增
         </el-button>
-        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate"
           v-hasPermi="['system:devices:edit']">修改
         </el-button>
-        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="primary" plain  size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['system:devices:remove']">删除
         </el-button>
-        <el-button type="primary" plain icon="el-icon-download" size="mini" @click="handleExport"
+        <el-button type="primary" plain size="mini" @click="handleExport"
           v-hasPermi="['system:devices:export']">导出
         </el-button>
-        <el-button type="primary" plain icon="el-icon-upload" size="mini" @click="handleImport"
+        <el-button type="primary" plain size="mini" @click="handleImport"
           v-hasPermi="['system:devices:import']">导入</el-button>
         <!-- <el-button
           type="info"
@@ -79,7 +79,7 @@
         </el-tooltip>
       </div>
     </el-row> -->
-    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="600"
+    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="640"
     :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -102,12 +102,12 @@
       <el-table-column label="设备端口号" align="center" prop="port" />
       <el-table-column label="桩号" align="center" prop="pile" min-width="150" show-overflow-tooltip />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180" fixed="right">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180" >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="updateCmd(scope.row)"
+          <el-button size="mini" class="tableBlueButtton" @click="updateCmd(scope.row)"
             v-hasPermi="['system:devices:edit']">控制修改
           </el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+          <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)"
             v-hasPermi="['system:devices:remove']">删除
           </el-button>
         </template>

@@ -237,7 +237,7 @@
           >重 置</el-button
         >
       </el-form>
-      <div style="width: 100%; height: 400px; overflow-y: auto">
+      <div style="width: 100%; height: 400px; overflow-y: auto; margin-bottom: 50px;">
         <div
           style="
             width: 19%;
@@ -273,6 +273,7 @@
         :limit.sync="queryParams.pageSize"
         @pagination="handleQuery"
         style="height: 40px; margin-right: 30px"
+        class="paginationWorkbench"
       />
     </el-dialog>
     <el-dialog
@@ -722,5 +723,10 @@ export default {
 }
 ::v-deep .el-switch.is-checked .el-switch__core::after{
   margin-left: -12px;
+}
+.paginationWorkbench{
+  position: fixed;
+  bottom: 350px !important;
+  height: 60px;
 }
 </style>

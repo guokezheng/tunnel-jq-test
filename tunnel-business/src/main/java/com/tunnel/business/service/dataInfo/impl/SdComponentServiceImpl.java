@@ -55,6 +55,9 @@ public class SdComponentServiceImpl implements ISdComponentService {
     @Override
     public List<SdComponent> selectSdComponentList(SdComponent sdComponent) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdComponent.getParams().put("deptId", deptId);
         return sdComponentMapper.selectSdComponentList(sdComponent);
     }

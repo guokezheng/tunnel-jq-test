@@ -41,6 +41,9 @@ public class SdVedioRecordServiceImpl implements ISdVedioRecordService {
     @Override
     public List<SdVedioRecord> selectSdVedioRecordList(SdVedioRecord sdVedioRecord) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdVedioRecord.getParams().put("deptId", deptId);
         return sdVedioRecordMapper.selectSdVedioRecordList(sdVedioRecord);
     }

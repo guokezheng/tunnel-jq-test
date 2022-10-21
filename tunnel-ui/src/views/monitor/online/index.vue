@@ -20,15 +20,17 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
 
     </el-form>
     <el-table
       v-loading="loading"
       :data="list.slice((pageNum-1)*pageSize,pageNum*pageSize)"
+      :row-class-name="tableRowClassName"
       style="width: 100%;"
+      max-height="640"
     >
       <el-table-column label="序号" type="index" align="center">
         <template slot-scope="scope">
@@ -51,8 +53,8 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton" 
+            
             @click="handleForceLogout(scope.row)"
             v-hasPermi="['monitor:online:forceLogout']"
           >强退</el-button>
@@ -117,7 +119,15 @@ export default {
         this.getList();
         this.$modal.msgSuccess("强退成功");
       }).catch(() => {});
-    }
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true"  :rules="rules" v-show="showSearch" label-width="80px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true"  v-show="showSearch" label-width="80px">
       <el-form-item label="隧道名称" prop="tunnelId">
         <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
           <el-option v-for="item in tunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>
@@ -17,12 +17,11 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:tunnels:add']"
@@ -30,7 +29,6 @@
         </el-button>
         <el-button
           type="primary" plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -39,7 +37,6 @@
         </el-button>
         <el-button
           type="primary" plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
@@ -104,7 +101,7 @@
 
     <el-table v-loading="loading" :data="tunnelsList" @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
-              max-height="610" >
+              max-height="640" >
       <el-table-column type="selection" width="55" align="center"/>
       <!-- <el-table-column label="隧道ID" align="center" prop="tunnelId" /> -->
       <el-table-column label="隧道ID" align="center" prop="tunnelId"/>
@@ -114,14 +111,14 @@
       <el-table-column label="纬度" align="center" prop="latitude"/>
       <!-- <el-table-column label="隧道所ID" align="center" prop="tunnelStationId" />
       <el-table-column label="隧道所名称" align="center" prop="tunnelStationName" /> -->
-      <el-table-column label="车道数量" align="center" prop="lane"/>
+      <el-table-column label="车道数量" align="center" prop="lane" width="80"/>
       <el-table-column label="隧道长度(米)" align="center" prop="tunnelLength" width="200"/>
       <el-table-column label="隧道开始桩号" align="center" prop="startPile" width="180"/>
       <el-table-column label="隧道结束桩号" align="center" prop="endPile" width="180"/>
       <el-table-column label="三维坐标" align="center" prop="coordinates"/>
-      <el-table-column label="所属部门" align="center" prop="deptName"/>
+      <el-table-column label="所属部门" align="center" prop="deptName" width="140"/>
       <!--      <el-table-column label="备注" align="center" prop="remake" />-->
-      <el-table-column label="是否启用" align="center" prop="poll" :formatter="pollFormat"/>
+      <el-table-column label="是否启用" align="center" prop="poll" :formatter="pollFormat" width="100"/>
       <!-- <el-table-column label="存储配置图的html" align="center" prop="storeConfigure" /> -->
       <!-- <el-table-column label="创建者" align="center" prop="createBy" />
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
@@ -135,28 +132,25 @@
           <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="tunnelConfig(scope.row)"
             v-hasPermi="['system:tunnels:edit']"
           >配置
           </el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:tunnels:edit']"
           >修改
           </el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:tunnels:remove']"
           >删除
@@ -374,14 +368,14 @@ export default {
         lane: [{required: true, message: '请选择车道数目', trigger: 'change'}],
         tunnelId: [{required: true, message: '请填写隧道ID', trigger: 'blur'}],
         deptId: [{required: true, message: '请选择所属部门', trigger: 'change'}],
-        longitude: [
-          {validator: validateLongitude, trigger: 'blur'},
-          {validator: validateLongitude, trigger: 'change'}
-        ],
-        latitude: [
-          {validator: validateLatitude, trigger: 'blur'},
-          {validator: validateLatitude, trigger: 'change'}
-        ],
+        // longitude: [
+        //   {validator: validateLongitude, trigger: 'blur',required: false},
+        //   {validator: validateLongitude, trigger: 'change',required: false}
+        // ],
+        // latitude: [
+        //   {validator: validateLatitude, trigger: 'blur'},
+        //   {validator: validateLatitude, trigger: 'change'}
+        // ],
         poll: [{required: true, message: '请选择是否可用', trigger: 'change'}],
       },
       // selectedTunnel:{},

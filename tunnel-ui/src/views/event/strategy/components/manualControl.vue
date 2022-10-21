@@ -56,7 +56,7 @@
               clearable
               v-model="strategyForm.direction"
               placeholder="请选择设备方向"
-              @change="changeEvent()"
+              @change="changeEvent"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -329,11 +329,12 @@ export default {
     },
     // 改变设备类型或者方向
     changeEvent(value) {
+      console.log(value);
       //给设备名称重新赋值
       let params = {
         eqType: this.strategyForm.equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
-        eqDirection: this.strategyForm.eqDirection, //方向
+        eqDirection: this.strategyForm.direction, //方向
       };
       listDevices(params).then((res) => {
         this.equipmentData = res.rows;

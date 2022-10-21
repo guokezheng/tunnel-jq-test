@@ -59,7 +59,7 @@ public class SdEnvironmentConfigurationController extends BaseController {
     /**
      * 获取隧道环境配置详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:configuration:query')")
+//    @PreAuthorize("@ss.hasPermi('system:configuration:query')")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取隧道环境配置详细信息")
     @ApiImplicitParam(name = "id", value = "隧道环境配置主键", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
@@ -104,6 +104,11 @@ public class SdEnvironmentConfigurationController extends BaseController {
         sdEnvironmentConfiguration.setSdName(sdName.equals("null")?null:sdName);
         sdEnvironmentConfiguration.setWidth(width.equals("null")?null:width);
         sdEnvironmentConfiguration.setRemark(remark.equals("null")?null:remark);
+        if (width.equals("0")) {
+            throw new RuntimeException("图标宽度不能为0");
+        } else if (height.equals("0")) {
+            throw new RuntimeException("图标高度不能为0");
+        }
         return Result.toResult(sdEnvironmentConfigurationService.updateSdEnvironmentConfiguration(file, sdEnvironmentConfiguration,removeIds));
     }
 

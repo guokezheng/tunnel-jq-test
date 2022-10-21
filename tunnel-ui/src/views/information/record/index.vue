@@ -59,18 +59,16 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery"  type="primary" plain
           >重置</el-button
         >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           @click="handleExport"
           v-hasPermi="['system:record:export']"
@@ -138,7 +136,7 @@
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'releaseTime', order: 'descending'}"
     :row-class-name="tableRowClassName"
-
+    max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="发布用户" align="center" prop="id" />
@@ -178,16 +176,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:record:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:record:remove']"
             >删除</el-button

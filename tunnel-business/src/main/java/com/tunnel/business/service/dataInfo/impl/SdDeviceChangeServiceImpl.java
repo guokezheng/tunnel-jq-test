@@ -50,7 +50,11 @@ public class SdDeviceChangeServiceImpl implements ISdDeviceChangeService {
                 return sdDeviceChangeMapper.selectSdDeviceChangeList(sdDeviceChange);
             }
             Long deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
             sdDeviceChange.getParams().put("deptId", deptId);
+            return sdDeviceChangeMapper.selectSdDeviceChangeList(sdDeviceChange);
         }
         return null;
     }

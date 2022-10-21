@@ -11,12 +11,36 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:eventType:add']"
+        >新增</el-button>
+        <!-- <el-button
+          type="primary" 
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:eventType:edit']"
+        >修改</el-button> -->
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:eventType:remove']"
+        >删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary" 
@@ -49,15 +73,15 @@
           v-hasPermi="['system:eventType:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:eventType:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button
+         type="warning"
+         icon="el-icon-download"
+         size="mini"
+         @click="handleExport"
+         v-hasPermi="['system:eventType:export']"
+       >导出</el-button>
+     </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -66,27 +90,26 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName"
+    :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="update(scope.row)"
             v-hasPermi="['system:eventType:edit']"
-          >修改</el-button>
+          >修改</el-button> -->
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
+            
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:eventType:remove']"
           >删除</el-button>

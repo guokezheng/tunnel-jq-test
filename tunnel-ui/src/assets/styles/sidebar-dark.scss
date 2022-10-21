@@ -69,10 +69,13 @@
     .pagination-container {
       background-color: transparent;
       .el-pagination__total {
-        color: $theme-blue-text-color;
+        color: #606266;
       }
       .el-pagination__jump {
         color: #606266;
+        .el-input__inner{
+          background: white;
+        }
       }
       .el-pagination.is-background .btn-prev,
       .el-pagination.is-background .btn-next,
@@ -80,6 +83,14 @@
         background-color: white;
         color: #606266;
         border: 1px solid #DCDFE6;
+      }
+     
+      .el-pagination.is-background .el-pager li .active{
+        background-color: #00afe0 !important;
+
+      }
+      .el-pagination .el-pager .active{
+        background-color: #00afe0;
       }
     }
     // 应急预案 表格内相关策略
@@ -92,6 +103,36 @@
       .no-redirect {
         color: #97a8be;
       }
+    }
+    // 表格内按钮 红色
+    .tableDelButtton{
+      // width: 50px;
+      padding: 0 5px;
+      font-size: 14px;
+      color: #FA6F8E;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #FA6F8E;
+    }
+    .tableDelButtton:hover{
+      color: white;
+      background: #FA6F8E !important;
+    }
+    .tableBlueButtton{
+      padding: 0 5px;
+      font-size: 14px;
+      color: #39ADFF;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #39ADFF;
+    }
+    .tableBlueButtton:hover{
+      color: white;
+      background: #39ADFF;
+    }
+    // 浅色版部分小细节需要黑色字
+    .textColorClass{
+      color:#303133
     }
     .mapCharts{
       .el-table--medium .el-table__cell{
@@ -1071,5 +1112,7 @@
       color: white;
     }
   }
+  
+  
 }
     

@@ -5,11 +5,11 @@
         <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:component:add']">新增</el-button>
-        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:component:edit']">修改</el-button>
-        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" @click="handleAdd" v-hasPermi="['system:component:add']">新增</el-button>
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:component:edit']">修改</el-button>
+        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['system:component:remove']">删除</el-button>
       </el-form-item>
     </el-form>
@@ -39,7 +39,7 @@
 
     <el-table ref="table" v-loading="loading" :data="componentList"
      @selection-change="handleSelectionChange" @row-click="handlePlanRowClick"
-    :row-class-name="tableRowClassName"
+    :row-class-name="tableRowClassName" max-height="640"
      >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备名称" align="center" prop="equipmentName" />
@@ -59,8 +59,8 @@
      <el-table-column label="备注" align="center" prop="remark"  />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:component:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:component:remove']">删除</el-button>
+          <el-button size="mini" class="tableBlueButtton" @click="handleUpdate(scope.row)" v-hasPermi="['system:component:edit']">修改</el-button>
+          <el-button size="mini"  class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:component:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -41,6 +41,9 @@ public class SdNearResourceServiceImpl implements ISdNearResourceService {
     @Override
     public List<SdNearResource> selectSdNearResourceList(SdNearResource sdNearResource) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdNearResource.getParams().put("deptId", deptId);
         return sdNearResourceMapper.selectSdNearResourceList(sdNearResource);
     }

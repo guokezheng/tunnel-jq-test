@@ -49,27 +49,20 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button
-          icon="el-icon-refresh"
-          size="mini"
-          @click="resetQuery"
-          type="primary"
-          plain
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="openInsertStrategy"
           v-hasPermi="['system:strategy:add']"
-          >新增策略</el-button
+          >新增</el-button
         >
       </el-form-item>
     </el-form>
@@ -116,7 +109,7 @@
       :data="strategyList"
       @selection-change="handleSelectionChange"
       :header-cell-style="{ 'text-align': 'center' }"
-      max-height="610"
+      max-height="640"
       :row-class-name="tableRowClassName"
 
     >
@@ -169,24 +162,21 @@
           <el-button
             v-show="scope.row.strategyType == 0"
             size="mini"
-            type="text"
-            icon="el-icon-thumb"
+            class="tableBlueButtton"
             @click="handleController(scope.row)"
             v-hasPermi="['system:strategy:edit']"
             >手动控制</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:strategy:edit']"
             >编辑</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:strategy:remove']"
             >删除</el-button
@@ -461,7 +451,7 @@ export default {
       this.getList();
     },
     changeStrategyState(row) {
-      let data = { invokeTarget: row.jobRelationId, status: row.strategyState };
+      let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
         this.$modal.msgSuccess(result.msg);
       });
@@ -827,6 +817,9 @@ export default {
         type: "warning",
       })
         .then(() => {
+          // if (row.jobRelationId != null) {
+          //   delJob(jobRelationId).then((response) => {});
+          // }
           delStrategy(ids).then((res) => {
             if (res.code == 200) {
               this.$modal.msgSuccess(res.msg);

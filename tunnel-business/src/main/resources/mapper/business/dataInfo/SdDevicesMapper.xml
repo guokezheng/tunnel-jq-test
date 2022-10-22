@@ -687,4 +687,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
         </where>
     </select>
+
+    <select id="getReserveProcessDevices" parameterType="String" resultType="Map">
+        select a.eq_id,a.eq_name,a.pile,a.pile_num,a.eq_status from sd_devices a where a.eq_id in
+        <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

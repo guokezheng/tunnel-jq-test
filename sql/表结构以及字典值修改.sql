@@ -38,6 +38,18 @@ INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_typ
 alter table sd_strategy_rl modify column control_time varchar(20) comment '控制时间';
 
 
+-- sys_dept 【部门表】字段类型、长度修改
+alter table sys_dept modify column ancestors varchar(200) comment '祖级列表';
+alter table sys_dept modify column dept_name varchar(200) comment '部门名称';
+alter table sys_dept modify column order_num bigint(20) comment '显示顺序';
+alter table sys_dept modify column create_by varchar(200) comment '创建人';
+alter table sys_dept modify column update_by varchar(200) comment '修改人';
+
+-- sys_user 【用户表】加入字段、长度修改
+alter table sys_user add column jt_user_id varchar(50) comment '集团用户表的ID' after user_id;
+alter table sys_user modify column user_name varchar(100) comment '用户账号';
+alter table sys_user modify column nick_name varchar(50) comment '用户昵称';
+alter table sys_user modify column avatar bigint(200) comment '头像地址';
 -- 字典值：策略类型 sd_strategy_type 添加数据：分时控制
 
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (383, 4, '分时控制', '3', 'sd_strategy_type', NULL, 'default', 'N', '0', 'admin', '2022-09-12 09:58:31', '', NULL, NULL);

@@ -547,16 +547,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             long num = manualControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
             if(num > 0)
                 throw new RuntimeException("请填写完整手动控制！");
-        } else if ("1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType())) {
-            List<Map> autoControl = model.getAutoControl();
-            long num = autoControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
-            if(num > 0)
-                throw new RuntimeException("请填写完整定时控制！");
-        } else if ("3".equals(model.getStrategyType())){
+        } else {
             List<Map> timeSharingControl = model.getAutoControl();
             long num = timeSharingControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
             if(num > 0)
-                throw new RuntimeException("请填写完整分时控制！");
+                throw new RuntimeException("请填写完整策略信息！");
         }
         SdStrategy sty = new SdStrategy();
         //策略类型
@@ -570,9 +565,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if("1".equals(model.getStrategyType())) {
             sty.setSchedulerTime(model.getSchedulerTime());
             sty.setStrategyInfo(model.getStrategyInfo());
-        } else{
-            sty.setSchedulerTime(null);
-            sty.setStrategyInfo(null);
         }
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());

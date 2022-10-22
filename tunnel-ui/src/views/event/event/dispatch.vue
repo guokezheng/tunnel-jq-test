@@ -22,8 +22,8 @@
                     left: item.left / 1.34 + 'px',
                     top: item.top / 1.34 + 'px',
                   }"
-                  @mouseleave="mouseleave(index)"
                 >
+                <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
@@ -50,6 +50,13 @@
                           </div>
                         </div>
                       </el-scrollbar>
+                        <div class="closeButton">
+                          <el-button
+                          size="mini"
+                          type="primary"
+                          @click="closeDialog(item,index)"
+                          >关闭</el-button>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -636,22 +643,8 @@ export default {
       fqIndex: null,
       hfData: null, //恢复预案列表
       planListEnd: null,
-      previewList: null,
       partitionData: null,
-      planList1: [
-        {
-          text: "火灾报警1区",
-        },
-        {
-          text: "火灾报警2区",
-        },
-        {
-          text: "火灾报警3区",
-        },
-        {
-          text: "火灾报警4区",
-        },
-      ],
+      planList1: [],
       lightSwitch: 0,
       changeVideo: 0,
       eqTunnelData: [],
@@ -789,6 +782,10 @@ export default {
     // this.getSubareaByStakeNumData();
   },
   methods: {
+    // 关闭事件弹窗
+    closeDialog(item, index) {
+      this.fqIndex = null;
+    },
     getSubareaByStakeNumData() {
       console.log(this.eventMsg, "---------------");
       let data = {
@@ -800,7 +797,7 @@ export default {
       getSubareaByStakeNum(data).then((res) => {
         let subareaByStakeNum = res.data;
         this.planListEnd.forEach((item, index) => {
-          console.log("事故点分区id：", subareaByStakeNum);
+          console.log("事故点分区id:", subareaByStakeNum);
           if (item.sId == subareaByStakeNum) {
             this.fqIndex = index;
             item.style =
@@ -974,6 +971,7 @@ export default {
     async getEventData() {
       await getEvent(this.$route.query.id).then((result) => {
         this.eventMsg = result.data;
+        console.log(this.eventMsg, "时间详情");
         // 如果为“未处理”状态，改为“处理中”状态
         if (this.eventMsg.eventState == 3) {
           let row = this.eventMsg;
@@ -1006,8 +1004,9 @@ export default {
     // },
 
     async getSubareaByTunnel() {
-      const params = this.eventMsg.tunnelId;
-      await getSubareaByTunnelId(params).then((result) => {
+      var tunnelId = this.eventMsg.tunnelId;
+      var eventTypeId = this.eventMsg.eventTypeId;
+      await getSubareaByTunnelId(tunnelId, eventTypeId).then((result) => {
         this.planList1 = result.data;
       });
     },
@@ -1100,6 +1099,7 @@ export default {
       await getTunnels(tunnelId).then((response) => {
         this.startPile = response.data.startPile;
         this.endPile = response.data.endPile;
+        console.log(this.startPile, this.endPile, "000000000000");
         let res = response.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
@@ -1125,7 +1125,7 @@ export default {
                   //如果分区的最小值 == 隧道的最小值
                   if (bxx.pileMin == this.startPile) {
                     if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
-                      console.log(axx, axx.eqName, "axx");
+                      // console.log(axx, axx.eqName, "axx");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
                       var leftMin = 0;
@@ -1159,7 +1159,6 @@ export default {
                   }
                 }
               }
-              console.log(this.planList1);
               this.planList1.forEach((item, index) => {
                 if (item.leftMax != undefined && item.leftMin != undefined) {
                   var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
@@ -1171,44 +1170,6 @@ export default {
                 if (item.direction == "1") {
                   item.top = 0;
                 }
-                // 当前事故点的桩号
-                // var positionCurrent = this.getNumber(this.eventMsg.stakeNum);
-                // var positionMin = this.getNumber(item.pileMin);
-                // var positionMax = this.getNumber(item.pileMax);
-                // console.log(
-                //   positionCurrent,
-                //   positionMin,
-                //   positionMax,
-                //   "方向=>",
-                //   this.eventMsg.direction
-                // );
-                // if (this.planList1.length == 4) {
-                //   if (
-                //     positionCurrent > positionMin &&
-                //     item.direction == this.eventMsg.direction
-                //   ) {
-                //     this.fqIndex = index;
-                //     item.style =
-                //       "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                //     // this.rightClick(index);
-                //     item.show = true;
-                //     this.getListBySIdData(item.id);
-                //   }
-                // } else {
-                //   if (
-                //     positionCurrent > positionMin &&
-                //     positionCurrent < positionMax &&
-                //     item.direction == this.eventMsg.direction
-                //   ) {
-                //     console.log(item, "zxczxc");
-                //     this.fqIndex = index;
-                //     item.style =
-                //       "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                //     // this.rightClick(index);
-                //     item.show = true;
-                //     this.getListBySIdData(item.id);
-                //   }
-                // }
               });
               this.planListEnd = this.planList1;
               console.log(this.planListEnd, "最终分区数据");
@@ -1364,7 +1325,7 @@ export default {
             box-shadow: 0 0 5px white;
             .recoveryBox {
               height: 100%;
-              display: flex;
+              // display: flex;
             }
             .row1 {
               width: 100%;
@@ -1873,7 +1834,7 @@ export default {
     margin-right: 0px;
   }
   .recoveryBox {
-    height: 80% !important;
+    height: 65% !important;
     // display: grid !important;
     // grid-template-columns: repeat(2, 50%);
     // grid-template-rows: repeat(2, 50%);
@@ -1916,5 +1877,10 @@ export default {
 }
 .hover {
   cursor: pointer !important;
+}
+.closeButton {
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
 }
 </style>

@@ -7,6 +7,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.event.SdReservePlanMapper;
@@ -15,6 +16,7 @@ import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 预案流程节点Service业务层处理
@@ -33,6 +36,9 @@ import java.util.Map;
 public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Autowired
     private SdReserveProcessMapper sdReserveProcessMapper;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     @Autowired
     private ISdEventFlowService sdEventFlowService;
@@ -203,9 +209,11 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             // 设备类型Id
             map.put("deviceTypeId", process.getDeviceTypeId());
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+
             map.put("strategyRl", rlList);
             List<String> strings = new ArrayList<>();
             List<List> iFileList = new ArrayList<>();
+            List<Map> equipmentData = new ArrayList<>();
             for (SdStrategyRl rl : rlList) {
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
@@ -217,12 +225,20 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 List<SdEquipmentState> sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
                 // 设备状态名称
                 String stateName = sdEquipmentStates.get(0).getStateName();
+                //所有设备ID
+                //String[] allEquipment = rlList.stream().map(p->p.getEquipments()).collect(Collectors.joining(",")).split(",");
+                String[] allEquipment = rl.getEquipments().split(",");
+                //设备信息
+                List<Map> result = sdDevicesMapper.getReserveProcessDevices(allEquipment);
+                result = result.stream().peek(s->s.put("eq_status",stateName)).collect(Collectors.toList());
+                equipmentData.addAll(result);
                 strings.add(typeName + " 控制执行: " + stateName + ";");
                 SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
                 sdEquipmentStateIconFile.setStateIconId(sdEquipmentStates.get(0).getIconFileId());
                 List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
                 iFileList.add(sdEquipmentStateIconFiles);
             }
+            map.put("equipmentData",equipmentData);
             // 策略信息
             map.put("policyInformation", strings);
             // 图片

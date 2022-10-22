@@ -67,6 +67,6 @@ public interface ISdTunnelSubareaService {
      * @param tunnelId
      * @return
      */
-    List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId,String eventTypeId);
+    List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId,Long eventTypeId);
 
 }

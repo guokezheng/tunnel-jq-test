@@ -114,7 +114,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      * @return
      */
     @Override
-    public List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId,String eventTypeId) {
+    public List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId,Long eventTypeId) {
         List<Map> mapList = new ArrayList<>();
         List<SdTunnelSubarea> sdTunnelSubareas = sdTunnelSubareaMapper.selectSdTunnelSubareaByTunnelId(tunnelId);
         for (SdTunnelSubarea sdTunnelSubarea : sdTunnelSubareas) {
@@ -129,7 +129,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
             map.put("eqIdMax",sdTunnelSubarea.getEqIdMax());
             SdReservePlan sdReservePlan = new SdReservePlan();
             sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
-            sdReservePlan.setPlanTypeId(Long.valueOf(eventTypeId));
+            sdReservePlan.setPlanTypeId(eventTypeId);
             List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
             map.put("reservePlans", sdReservePlans);
             mapList.add(map);

@@ -309,17 +309,26 @@ export default {
   data() {
     const validateLongitude = (rule, value, callback) => {
       var longreg = /^(\-|\+)?(((\d|[1-9]\d|1[0-7]\d|0{1,3})\.\d{0,15})|(\d|[1-9]\d|1[0-7]\d|0{1,3})|180\.0{0,15}|180)$/
-      if (!longreg.test(value)) {
+      if(!value){
+        callback()
+      }else{
+        if (!longreg.test(value)) {
         callback(new Error('经度整数部分为0-180,小数部分为0到15位!'))
       }
-      callback()
+        callback()
+      }
+      
     }
     const validateLatitude = (rule, value, callback) => {
       var latreg = /^(\-|\+)?([0-8]?\d{1}\.\d{0,15}|90\.0{0,15}|[0-8]?\d{1}|90)$/
-      if (!latreg.test(value)) {
-        callback(new Error('纬度整数部分为0-90,小数部分为0到15位!'))
+      if(!value){
+        callback()
+      }else{
+        if (!latreg.test(value)) {
+          callback(new Error('纬度整数部分为0-90,小数部分为0到15位!'))
+        }
+        callback()
       }
-      callback()
     }
     return {
       oper: "add",//add 添加  edit修改
@@ -368,14 +377,14 @@ export default {
         lane: [{required: true, message: '请选择车道数目', trigger: 'change'}],
         tunnelId: [{required: true, message: '请填写隧道ID', trigger: 'blur'}],
         deptId: [{required: true, message: '请选择所属部门', trigger: 'change'}],
-        // longitude: [
-        //   {validator: validateLongitude, trigger: 'blur',required: false},
-        //   {validator: validateLongitude, trigger: 'change',required: false}
-        // ],
-        // latitude: [
-        //   {validator: validateLatitude, trigger: 'blur'},
-        //   {validator: validateLatitude, trigger: 'change'}
-        // ],
+        longitude: [
+          {validator: validateLongitude, trigger: 'blur',required: false},
+          {validator: validateLongitude, trigger: 'change',required: false}
+        ],
+        latitude: [
+          {validator: validateLatitude, trigger: 'blur'},
+          {validator: validateLatitude, trigger: 'change'}
+        ],
         poll: [{required: true, message: '请选择是否可用', trigger: 'change'}],
       },
       // selectedTunnel:{},

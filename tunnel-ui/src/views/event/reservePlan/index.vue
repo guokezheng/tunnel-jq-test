@@ -11,7 +11,7 @@
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
-          
+
           @change="changeSelection"
           clearable
         >
@@ -163,7 +163,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        
+
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
@@ -278,7 +278,7 @@
       :total="total"
       @pagination="getList"
     />
-    <el-dialog :title="drawerFileTitle" :visible.sync="drawerFile" width="500px" append-to-body 
+    <el-dialog :title="drawerFileTitle" :visible.sync="drawerFile" width="500px" append-to-body
              :before-close="handleFileClose"  >
     <!-- <el-drawer
       :before-close="handleFileClose"
@@ -806,10 +806,10 @@ export default {
           message: "请输入预案描述",
           trigger: "blur",
         },
-        category: { 
-          required: true, 
-          trigger: "change", 
-          message: "请选择预案类别", 
+        category: {
+          required: true,
+          trigger: "change",
+          message: "请选择预案类别",
         },
       },
       //draw开关
@@ -1197,9 +1197,7 @@ export default {
     //下载文件
     async loadFile(row) {
       this.loadFileLoading = true;
-      this.$download.name(row.fileName);
-      // console.log(row.id, row.fileName);
-      // await loadPlanFile(row.id, row.fileName);
+      await loadPlanFile(row.id, row.fileName);
       this.loadFileLoading = false;
     },
     downfiles(datas, filename) {

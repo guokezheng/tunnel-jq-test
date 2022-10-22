@@ -1,6 +1,7 @@
 package com.tunnel.platform.controller.event;
 
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.Result;
@@ -31,8 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/plan")
 @Api(tags = "预案信息")
-public class SdReservePlanController extends BaseController
-{
+public class SdReservePlanController extends BaseController {
     @Autowired
     private ISdReservePlanService sdReservePlanService;
     @Autowired
@@ -43,8 +43,7 @@ public class SdReservePlanController extends BaseController
      */
     @GetMapping("/list")
     @ApiOperation("查询预案信息列表")
-    public TableDataInfo<List<SysRole>> list(SdReservePlan sdReservePlan)
-    {
+    public TableDataInfo<List<SysRole>> list(SdReservePlan sdReservePlan) {
         startPage();
         List<SdReservePlan> list = sdReservePlanService.selectSdReservePlanList(sdReservePlan);
         return getDataTable(list);
@@ -69,8 +68,7 @@ public class SdReservePlanController extends BaseController
     @GetMapping(value = "/{id}")
     @ApiOperation("获取预案信息详细信息")
     @ApiImplicitParam(name = "id", value = "预案信息ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result<SdReservePlan> getInfo(@PathVariable("id") Long id)
-    {
+    public Result<SdReservePlan> getInfo(@PathVariable("id") Long id) {
         return Result.success(sdReservePlanService.selectSdReservePlanById(id));
     }
 
@@ -89,32 +87,36 @@ public class SdReservePlanController extends BaseController
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(MultipartFile[] file,
-                                    @RequestParam("subareaId") Long subareaId,
-                                    @RequestParam("category") String category,
-    								@RequestParam("planTypeId") String planTypeId,
-    								@RequestParam("planDescription") String planDescription,
-    								@RequestParam("planName") String planName,
-    								HttpServletRequest request ) {
-    	SdReservePlan sdReservePlan = new SdReservePlan();
+                                 @RequestParam("subareaId") Long subareaId,
+                                 @RequestParam("category") String category,
+                                 @RequestParam("planTypeId") String planTypeId,
+                                 @RequestParam("planDescription") String planDescription,
+                                 @RequestParam("planName") String planName,
+                                 HttpServletRequest request) {
+        SdReservePlan sdReservePlan = new SdReservePlan();
         sdReservePlan.setSubareaId(subareaId);
         sdReservePlan.setCategory(category);
-    	sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
-    	sdReservePlan.setPlanName(planName);
-    	sdReservePlan.setPlanDescription(planDescription);
-    	return Result.toResult(sdReservePlanService.insertSdReservePlan(file,sdReservePlan));
+        sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
+        sdReservePlan.setPlanName(planName);
+        sdReservePlan.setPlanDescription(planDescription);
+        return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
     }
 
     /**
      * 下载预案信息文件
+     *
      * @param response
      * @param id
      */
     @Log(title = "预案信息")
     @PostMapping(value = "/{id}")
-    public void downloadFile(HttpServletResponse response,@PathVariable("id") Long id) {
-    	try {
-    		SdReservePlanFile planFile = sdReservePlanFileService.selectSdReservePlanFileById(id);
-    		String path = planFile.getUrl();
+    public void downloadFile(HttpServletResponse response, @PathVariable("id") Long id) {
+        try {
+            // TODO: 2022/10/22 如果文件上传到 阿里OSS,则需要从阿里OSS下载，现在接口现在还没有，后期需要补充，这里代码也得改动
+            SdReservePlanFile planFile = sdReservePlanFileService.selectSdReservePlanFileById(id);
+            String path = planFile.getUrl();
+            path = RuoYiConfig.getProfile() + path;
+
             File file = new File(path);
             InputStream fis;
             fis = new BufferedInputStream(new FileInputStream(path));
@@ -122,7 +124,7 @@ public class SdReservePlanController extends BaseController
             fis.read(buffer);
             fis.close();
             response.reset();
-            String fileName = URLEncoder.encode(planFile.getFileName(),"UTF-8");
+            String fileName = URLEncoder.encode(planFile.getFileName(), "UTF-8");
             response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
             response.addHeader("Content-Length", "" + file.length());
             response.addHeader("Access-Control-Allow-Origin", "*");
@@ -131,14 +133,16 @@ public class SdReservePlanController extends BaseController
             toClient.write(buffer);
             toClient.flush();
             toClient.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		};
-	}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ;
+    }
 
 
     /**
      * 修改预案信息
+     *
      * @param file
      * @param id
      * @param planTypeId
@@ -159,38 +163,35 @@ public class SdReservePlanController extends BaseController
     @Log(title = "预案信息")
     @PostMapping(value = "/updateReservePlan")
     @ApiOperation("修改预案信息")
-    public Result updateReservePlan( MultipartFile[] file,
-    								@RequestParam("id") Long id,
-    								@RequestParam("planTypeId") Long planTypeId,
+    public Result updateReservePlan(MultipartFile[] file,
+                                    @RequestParam("id") Long id,
+                                    @RequestParam("planTypeId") Long planTypeId,
                                     @RequestParam("category") String category,
-    								@RequestParam("planDescription") String planDescription,
-    								@RequestParam("planName") String planName,
-    								@RequestParam("planFileId") String planFileId,
-    								@RequestParam("removeIds") Long[] removeIds,
-    								HttpServletRequest request
-    								)
-    {
-    	SdReservePlan sdReservePlan = new SdReservePlan();
-    	sdReservePlan.setId(id);
-    	sdReservePlan.setPlanTypeId(planTypeId);
+                                    @RequestParam("planDescription") String planDescription,
+                                    @RequestParam("planName") String planName,
+                                    @RequestParam("planFileId") String planFileId,
+                                    @RequestParam("removeIds") Long[] removeIds,
+                                    HttpServletRequest request
+    ) {
+        SdReservePlan sdReservePlan = new SdReservePlan();
+        sdReservePlan.setId(id);
+        sdReservePlan.setPlanTypeId(planTypeId);
         sdReservePlan.setCategory(category);
-    	sdReservePlan.setPlanName(planName);
-    	sdReservePlan.setPlanDescription(planDescription);
-    	sdReservePlan.setPlanFileId(planFileId);
-    	return Result.toResult(sdReservePlanService.updateSdReservePlan(file,sdReservePlan,removeIds));
+        sdReservePlan.setPlanName(planName);
+        sdReservePlan.setPlanDescription(planDescription);
+        sdReservePlan.setPlanFileId(planFileId);
+        return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, removeIds));
     }
-
 
 
     /**
      * 删除预案信息
      */
     @Log(title = "预案信息")
-	@DeleteMapping("/{id}")
+    @DeleteMapping("/{id}")
     @ApiOperation("删除预案信息")
     @ApiImplicitParam(name = "id", value = "预案信息ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long id)
-    {
+    public Result remove(@PathVariable Long id) {
         return Result.toResult(sdReservePlanService.deleteSdReservePlanById(id));
     }
 
@@ -211,19 +212,20 @@ public class SdReservePlanController extends BaseController
 //    {
 //      return toAjax(sdReservePlanService.deleteSdReservePlanByIds(rlIds));
 //    }
+
     /**
      * 根据预案id，查询策略信息列表
      */
     @GetMapping(value = "/s/{id}")
     @ApiOperation("根据预案id，查询策略信息列表")
     @ApiImplicitParam(name = "id", value = "预案ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result selectStrategyListByPlanId(@PathVariable("id") Long id)
-    {
+    public Result selectStrategyListByPlanId(@PathVariable("id") Long id) {
         return Result.success(sdReservePlanService.selectStrategyListByPlanId(id));
     }
 
     /**
      * 查询预案类型
+     *
      * @return
      */
     @GetMapping("/getPlanCateGory")

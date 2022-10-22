@@ -110,7 +110,7 @@ public class SdTunnelSubareaController extends BaseController
      * @return
      */
     @GetMapping("/getSubareaByTunnelId")
-    public AjaxResult getSdTunnelSubareaByTunnelId(@RequestParam("tunnelId") String tunnelId,@RequestParam("eventTypeId") String eventTypeId)
+    public AjaxResult getSdTunnelSubareaByTunnelId(@RequestParam("tunnelId") String tunnelId,@RequestParam("eventTypeId") Long eventTypeId)
     {
         return AjaxResult.success(sdTunnelSubareaService.selectSdTunnelSubareaByTunnelId(tunnelId,eventTypeId));
     }

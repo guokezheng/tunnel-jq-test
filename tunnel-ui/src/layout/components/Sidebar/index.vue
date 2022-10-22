@@ -165,7 +165,7 @@ export default {
         text-shadow: 1px 1px white;
         background-image: url(../../../assets/cloudControl/navBg.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 58%;
+        background-position: 0% 58%;
     }
     .theme-dark #app .workbenchNavbar .router-link-active{
        color: #f19f39 !important;
@@ -183,7 +183,7 @@ export default {
         color: #ffdb82 !important;
         background-image: url(../../../assets/cloudControl/navBg2.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 50%;
+        background-position: 0% 50%;
         height: 72px;
         line-height: 72px;
     }

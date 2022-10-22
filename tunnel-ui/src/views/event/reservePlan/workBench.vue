@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-10-17 17:30:44
+ * @LastEditTime: 2022-10-22 10:41:51
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -65,12 +65,14 @@
           />
         </div>
       </div>
-      <el-steps :active="active" finish-status="success">
+      <el-steps :active="1" simple>
         <el-step
           v-for="item in previewList"
           :key="item.strategyId"
           :title="item.strategyName"
-        ></el-step>
+          status="success"
+        >
+        </el-step>
       </el-steps>
       <span slot="footer" class="dialog-footer">
         <el-button @click="workbenchOpenEvent">取 消</el-button>
@@ -127,7 +129,6 @@ export default {
               }
               this.selectedIconList = arr; //这是最终需要挂载到页面上的值
               this.getPreview();
-              console.log(this.selectedIconList, "this.selectedIconList");
             });
           } else {
             //不存在
@@ -146,10 +147,10 @@ export default {
     getPreview() {
       previewDisplay(this.id).then((res) => {
         this.previewList = res;
+        console.log(this.previewList, "this.previewListthis.previewList");
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl;
-          console.log(item);
           for (let z = 0; z < item.length; z++) {
             var arr = this.previewList[i].iFileList[z];
             if (item[z].equipments.indexOf(",")) {
@@ -169,8 +170,8 @@ export default {
             }
           }
         }
-        console.log(deviceList);
         this.deviceList = deviceList;
+        console.log(this.deviceList, "12312312321");
         this.ChangeDeviceState();
       });
       this.workbenchOpen = true;
@@ -187,7 +188,6 @@ export default {
               for (let p = 0; p < brr.length; p++) {
                 if (this.selectedIconList[i].eqId == brr[p]) {
                   this.selectedIconList[i].url = [];
-                  console.log(this.deviceList[x].file);
                   let url = this.deviceList[x].file;
                   url.forEach((item) => {
                     this.selectedIconList[i].url.push(item.url);

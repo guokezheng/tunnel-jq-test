@@ -11,7 +11,6 @@
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
-          
           @change="changeSelection"
           clearable
         >
@@ -63,10 +62,7 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button
-          size="mini"
-          type="primary"
-          @click="handleQuery"
+        <el-button size="mini" type="primary" @click="handleQuery"
           >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
@@ -128,7 +124,6 @@
       @row-click="handleRowClick"
       max-height="640"
       :row-class-name="tableRowClassName"
-
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="预案ID" align="center" prop="id" /> -->
@@ -137,7 +132,6 @@
         label="隧道名称"
         prop="sdTunnels.tunnelName"
         width="130"
-
       />
       <el-table-column
         align="center"
@@ -151,7 +145,6 @@
         label="分区"
         prop="sdTunnelSubarea.sName"
         width="130"
-
       />
       <el-table-column
         align="center"
@@ -163,7 +156,6 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <template slot-scope="scope">
@@ -193,14 +185,13 @@
         class-name="small-padding fixed-width"
         label="相关文档"
         width="130"
-
       >
         <template slot-scope="scope">
           <el-button
             v-show="scope.row.planFileId != null"
             icon="el-icon-link"
             size="mini"
-            style="cursor: pointer;color:#39ADFF"
+            style="cursor: pointer; color: #39adff"
             type="text"
             @click="openFileDrawer(scope.row)"
             >点击查看
@@ -226,7 +217,7 @@
             v-for="tag in scope.row.strategyNames"
             :disable-transitions="false"
             @close="handleClose(tag)"
-            style="display:block"
+            style="display: block"
           >
             {{ tag }}
           </el-tag>
@@ -278,9 +269,14 @@
       :total="total"
       @pagination="getList"
     />
-    <el-dialog :title="drawerFileTitle" :visible.sync="drawerFile" width="500px" append-to-body 
-             :before-close="handleFileClose"  >
-    <!-- <el-drawer
+    <el-dialog
+      :title="drawerFileTitle"
+      :visible.sync="drawerFile"
+      width="500px"
+      append-to-body
+      :before-close="handleFileClose"
+    >
+      <!-- <el-drawer
       :before-close="handleFileClose"
       :direction="direction"
       :title="drawerFileTitle"
@@ -311,8 +307,8 @@
           </template>
         </el-table-column>
       </el-table>
-    <!-- </el-drawer> -->
-</el-dialog>
+      <!-- </el-drawer> -->
+    </el-dialog>
     <!-- 配置策略选择窗口-->
     <el-dialog
       :title="title"
@@ -638,7 +634,7 @@
                 label="描述文字"
               ></el-input-number>
             </el-form-item>
-            <el-form-item label="相关策略" >
+            <el-form-item label="相关策略">
               <el-cascader
                 v-model="item.handleStrategyList"
                 :options="options"
@@ -806,10 +802,10 @@ export default {
           message: "请输入预案描述",
           trigger: "blur",
         },
-        category: { 
-          required: true, 
-          trigger: "change", 
-          message: "请选择预案类别", 
+        category: {
+          required: true,
+          trigger: "change",
+          message: "请选择预案类别",
         },
       },
       //draw开关
@@ -1199,7 +1195,7 @@ export default {
       this.loadFileLoading = true;
       this.$download.name(row.fileName);
       // console.log(row.id, row.fileName);
-      // await loadPlanFile(row.id, row.fileName);
+      await loadPlanFile(row.id, row.fileName);
       this.loadFileLoading = false;
     },
     downfiles(datas, filename) {
@@ -1287,80 +1283,83 @@ export default {
       // else {
       this.$refs["addform1"].validate((valid) => {
         if (valid) {
-            if (this.loading) return;
-            this.dloading = true;
-            let currentFileList = [];
-            for (var i = 0; i < this.fileList.length; i++) {
-              if (!this.fileList[i].hasOwnProperty("fId")) {
-                if (!this.fileList[i].size) this.fileList[i].size = 0; // 如果没有size，则给个0
-                currentFileList.push(this.fileList[i]);
-              }
+          if (this.loading) return;
+          this.dloading = true;
+          let currentFileList = [];
+          for (var i = 0; i < this.fileList.length; i++) {
+            if (!this.fileList[i].hasOwnProperty("fId")) {
+              if (!this.fileList[i].size) this.fileList[i].size = 0; // 如果没有size，则给个0
+              currentFileList.push(this.fileList[i]);
             }
-            const isLt100M = currentFileList.every(
-              (file) => file.size / 1024 / 1024 < 1
-            );
-            if (!isLt100M) {
-              this.$message.error("请检查，上传文件大小不能超过1MB!");
-            } else {
-              this.fileData = new FormData(); // new formData对象
-              this.$refs.upload.submit(); // 提交调用uploadFile函数
-              this.fileData.append("planName", this.reservePlanDrawForm.planName); // 预案名称
-              this.fileData.append(
-                "planTypeId",
-                this.reservePlanDrawForm.planTypeId
-              ); // 事件类型
-              this.fileData.append("category", this.reservePlanDrawForm.category); // 预案类型
-              this.fileData.append(
-                "planDescription",
-                this.reservePlanDrawForm.planDescription == null
-                  ? "#^#"
-                  : this.reservePlanDrawForm.planDescription
-              ); // 预案描述
-              // this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
-              this.fileData.append("tunnelId", this.reservePlanDrawForm.tunnelId);
-              this.fileData.append(
-                "subareaId",
-                Number(this.reservePlanDrawForm.sId)
-              );
-              console.log(this.fileData, "this.fileDatathis.fileDatathis.fileData");
-              if (this.planChangeSink == "add") {
-                addPlanFile(this.fileData).then((response) => {
-                  if (response.code === 200) {
-                    this.$modal.msgSuccess("保存成功");
-                    // this.drawer = false;//关闭drawer窗体
-                    this.dialogFormVisible = false;
-                    this.resetReservePlanDrawForm(); //重置表单
-                    //this.open = false;
-                    this.getList();
-                  } else {
-                    this.$modal.msgError("保存失败");
-                  }
-                });
-              } else if (this.planChangeSink == "edit") {
-                this.fileData.append("id", this.reservePlanDrawForm.id);
-                this.fileData.append("removeIds", this.removeIds);
-                this.fileData.append(
-                  "planFileId",
-                  this.reservePlanDrawForm.planFileId
-                );
-
-                updatePlanFile(this.fileData).then((response) => {
-                  if (response.code === 200) {
-                    this.$modal.msgSuccess("修改成功");
-                    this.dialogFormVisible = false;
-                    // this.resetReservePlanDrawForm(); //重置表单
-                    //this.open = false;
-                    this.getList();
-                  } else {
-                    this.$modal.msgError("修改失败");
-                  }
-                });
-              }
-              this.multipleSelectionIds = [];
-            }
-            this.dloading = false;
           }
-       });
+          const isLt100M = currentFileList.every(
+            (file) => file.size / 1024 / 1024 < 1
+          );
+          if (!isLt100M) {
+            this.$message.error("请检查，上传文件大小不能超过1MB!");
+          } else {
+            this.fileData = new FormData(); // new formData对象
+            this.$refs.upload.submit(); // 提交调用uploadFile函数
+            this.fileData.append("planName", this.reservePlanDrawForm.planName); // 预案名称
+            this.fileData.append(
+              "planTypeId",
+              this.reservePlanDrawForm.planTypeId
+            ); // 事件类型
+            this.fileData.append("category", this.reservePlanDrawForm.category); // 预案类型
+            this.fileData.append(
+              "planDescription",
+              this.reservePlanDrawForm.planDescription == null
+                ? "#^#"
+                : this.reservePlanDrawForm.planDescription
+            ); // 预案描述
+            // this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
+            this.fileData.append("tunnelId", this.reservePlanDrawForm.tunnelId);
+            this.fileData.append(
+              "subareaId",
+              Number(this.reservePlanDrawForm.sId)
+            );
+            console.log(
+              this.fileData,
+              "this.fileDatathis.fileDatathis.fileData"
+            );
+            if (this.planChangeSink == "add") {
+              addPlanFile(this.fileData).then((response) => {
+                if (response.code === 200) {
+                  this.$modal.msgSuccess("保存成功");
+                  // this.drawer = false;//关闭drawer窗体
+                  this.dialogFormVisible = false;
+                  this.resetReservePlanDrawForm(); //重置表单
+                  //this.open = false;
+                  this.getList();
+                } else {
+                  this.$modal.msgError("保存失败");
+                }
+              });
+            } else if (this.planChangeSink == "edit") {
+              this.fileData.append("id", this.reservePlanDrawForm.id);
+              this.fileData.append("removeIds", this.removeIds);
+              this.fileData.append(
+                "planFileId",
+                this.reservePlanDrawForm.planFileId
+              );
+
+              updatePlanFile(this.fileData).then((response) => {
+                if (response.code === 200) {
+                  this.$modal.msgSuccess("修改成功");
+                  this.dialogFormVisible = false;
+                  // this.resetReservePlanDrawForm(); //重置表单
+                  //this.open = false;
+                  this.getList();
+                } else {
+                  this.$modal.msgError("修改失败");
+                }
+              });
+            }
+            this.multipleSelectionIds = [];
+          }
+          this.dloading = false;
+        }
+      });
     },
     /** drawer-form表单，取消操作 **/
     drawerClose() {
@@ -1583,10 +1582,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
     /** 提交按钮 */

@@ -114,7 +114,7 @@ public class SdPictureUploadController extends BaseController
         if (sdPictureUpload.getPictureUrl() != null) {
             try {
                 if (sdPictureUpload.getPictureUrl() != null) {
-                    pictureUrl = ioToBase64(sdPictureUpload.getPictureUrl());
+                    pictureUrl = ioToBase64(FileUploadUtils.getDefaultBaseDir() + sdPictureUpload.getPictureUrl());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

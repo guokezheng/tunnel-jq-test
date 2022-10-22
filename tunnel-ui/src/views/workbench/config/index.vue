@@ -4880,11 +4880,11 @@ export default {
         this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
         if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
-          this.robotShow = false;
+          // this.robotShow = false;
           this.dictList = newDict.slice(0, 8);
         } else if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
-          this.robotShow = true;
+          // this.robotShow = true;
         }
         this.tunnelList = [];
         this.checkboxTunnel = [];
@@ -5092,6 +5092,18 @@ export default {
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
               );
+              for(var item of that.selectedIconList){
+                if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
+                  console.log(item,"000000000000000000000")
+                  // this.dictList = this.dict.type.sd_sys_name;
+                  this.robotShow = true;
+                }else {
+                  this.robotShow = false;
+
+                }
+              }
+              
+              
             })
             .then(() => {
               that.initEharts();
@@ -5428,15 +5440,25 @@ export default {
     onDropped(key) {},
     /*点击设备类型*/
     displayControl(value, lable) {
-      if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-        if (lable == "巡检机器人" || lable == "全部设备") {
+      for(var item of this.selectedIconList){
+        if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
+          // console.log()
+          // this.dictList = this.dict.type.sd_sys_name;
           this.robotShow = true;
-        } else {
+        }else {
           this.robotShow = false;
+
         }
-      } else {
-        this.robotShow = false;
       }
+      // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+      //   if (lable == "巡检机器人" || lable == "全部设备") {
+      //     this.robotShow = true;
+      //   } else {
+      //     this.robotShow = false;
+      //   }
+      // } else {
+      //   this.robotShow = false;
+      // }
 
       $(".leftButtonS")
         .eq(value)
@@ -5512,6 +5534,11 @@ export default {
     },
     clickRobot() {
       this.eqInfo.clickEqType = 29;
+      for(var item of this.selectedIconList){
+        if(item.eqType == 29){
+          console.log(item,"机器人")
+        }
+      }
     },
     //================================================单个配置开始==================================
     /* 打开配置界面*/

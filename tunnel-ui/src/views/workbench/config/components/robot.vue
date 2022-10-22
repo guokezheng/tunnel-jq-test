@@ -174,7 +174,7 @@ export default {
     // 查设备详情
     async getMessage() {
       var that = this;
-      if (this.eqInfo.equipmentId) {
+      // if (this.eqInfo.equipmentId) {
         var obj = {};
         var state = "";
         // 查询单选框弹窗信息 -----------------------
@@ -196,9 +196,9 @@ export default {
           };
           console.log(this.stateForm, "stateForm");
         });
-      } else {
-        this.$modal.msgWarning("没有设备Id");
-      }
+      // } else {
+      //   this.$modal.msgWarning("没有设备Id");
+      // }
     },
     getDirection(num) {
       for (var item of this.directionList) {

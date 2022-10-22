@@ -678,15 +678,17 @@ export default {
       //遍历设备，获取位置
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
-          this.selectedIconList[i].position = {
-            left:
-              img[i].attr("transform").localMatrix.e +
-              this.selectedIconList[i].position.left,
-            top:
-              img[i].attr("transform").localMatrix.f +
-              this.selectedIconList[i].position.top,
-          };
-          eqList.push(this.selectedIconList[i]);
+          if (img[i]) {
+            this.selectedIconList[i].position = {
+              left:
+                img[i].attr("transform").localMatrix.e +
+                this.selectedIconList[i].position.left,
+              top:
+                img[i].attr("transform").localMatrix.f +
+                this.selectedIconList[i].position.top,
+            };
+            eqList.push(this.selectedIconList[i]);
+          }
         }
       }
 

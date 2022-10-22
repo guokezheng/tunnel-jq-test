@@ -384,7 +384,7 @@ export default {
     });
     // 事件表格忽略后 右上角数字跟着改
     bus.$on("getEvtList", () => {
-      this.eventValue -= this.eventValue
+      this.eventValue = this.eventValue-1
       if(this.eventValue == 0){
         this.badgeHidden = false
       }

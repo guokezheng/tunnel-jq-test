@@ -171,6 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="subareaId != null"> and subarea_id = #{subareaId}</if>
             <if test="category != null"> and category = #{category}</if>
+            <if test="planTypeId != null"> and plan_type_id = #{planTypeId}</if>
         </where>
     </select>
 

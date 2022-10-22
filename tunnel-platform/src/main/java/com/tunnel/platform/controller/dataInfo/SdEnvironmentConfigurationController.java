@@ -59,7 +59,7 @@ public class SdEnvironmentConfigurationController extends BaseController {
     /**
      * 获取隧道环境配置详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:configuration:query')")
+//    @PreAuthorize("@ss.hasPermi('system:configuration:query')")
     @GetMapping(value = "/{id}")
     @ApiOperation("获取隧道环境配置详细信息")
     @ApiImplicitParam(name = "id", value = "隧道环境配置主键", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)

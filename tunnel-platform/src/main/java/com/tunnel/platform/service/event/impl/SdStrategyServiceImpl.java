@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.event.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.job.TaskException;
@@ -151,7 +152,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             return 0;
         }
         if ("1".equals(sdStrategy.getStrategyType()) || "3".equals(sdStrategy.getStrategyType())) {
-            String[] jobIds = sdStrategy.getJobRelationId().split(",");
+            String relationId = sdStrategy.getJobRelationId();
+            if(StrUtil.isBlank(relationId)) {
+                return 1;
+            }
+            String[] jobIds = relationId.split(",");
             SysJob job = new SysJob();
             updateRows = 0;
             for (int i = 0; i < jobIds.length; i++) {
@@ -539,28 +544,19 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     private SdStrategy conditionalJudgement(SdStrategyModel model) {
         if ("0".equals(model.getStrategyType())) {
             List<Map> manualControl = model.getManualControl();
-            for (Map<String,Object> map : manualControl) {
-                String state =  (String) map.get("state");
-                if ("".equals(state) || state == null) {
-                    throw new RuntimeException("请填写完整手动控制！");
-                }
-            }
+            long num = manualControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
+            if(num > 0)
+                throw new RuntimeException("请填写完整手动控制！");
         } else if ("1".equals(model.getStrategyType()) || "2".equals(model.getStrategyType())) {
             List<Map> autoControl = model.getAutoControl();
-            for (Map<String,Object> map : autoControl) {
-                String state = (String) map.get("state");
-                if ("".equals(state) || state == null) {
-                    throw new RuntimeException("请填写完整定时控制！");
-                }
-            }
+            long num = autoControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
+            if(num > 0)
+                throw new RuntimeException("请填写完整定时控制！");
         } else if ("3".equals(model.getStrategyType())){
             List<Map> timeSharingControl = model.getAutoControl();
-            for (Map<String,Object> map : timeSharingControl) {
-                String state = (String) map.get("state");
-                if (StringUtils.isEmpty(state)) {
-                    throw new RuntimeException("请填写完整分时控制！");
-                }
-            }
+            long num = timeSharingControl.stream().filter(s -> StrUtil.isBlank((String)s.get("state"))).count();
+            if(num > 0)
+                throw new RuntimeException("请填写完整分时控制！");
         }
         SdStrategy sty = new SdStrategy();
         //策略类型
@@ -578,7 +574,6 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             sty.setSchedulerTime(null);
             sty.setStrategyInfo(null);
         }
-
         sty.setDirection(model.getDirection());
         sty.setCreateBy(SecurityUtils.getUsername());
         return sty;
@@ -605,7 +600,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
         }
         if(addRows < 1){
-            throw new RuntimeException("插入数据异常");
+            throw new RuntimeException("数据处理异常");
         }
         return 1;
     }

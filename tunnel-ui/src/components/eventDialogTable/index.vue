@@ -315,7 +315,7 @@ export default {
   .eventTable,
   .el-table {
     color: white;
-    background: #071930;
+    background: #071930 !important;
     // 表头下划边框
     th.el-table__cell.is-leaf,
     .el-table td.el-table__cell {
@@ -329,7 +329,7 @@ export default {
     }
     // 表格内容背景色
     tr {
-      background-color: #071930;
+      background-color: #071930 !important;
     }
     tr:hover > td {
       background-color: #0e2c53 !important;

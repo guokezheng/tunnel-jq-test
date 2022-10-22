@@ -75,7 +75,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
         Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
-        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("")) {
+        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("") || devices.get("eqStatus").equals("0")) {
             devices.put("eqStatus","2");
         }
         SdDeviceData sdDeviceData = new SdDeviceData();

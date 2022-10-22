@@ -249,6 +249,7 @@ export default {
       },
       showCronBox: false,
       strategyForm: {
+        schedulerTime: "", //cron数据
         strategyType: "1", //策略类型
         tunnelId: null, //隧道id
         strategyName: null, //策略名称

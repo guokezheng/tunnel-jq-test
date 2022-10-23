@@ -6,9 +6,6 @@ import com.tunnel.business.domain.event.SdSafetyIndex;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
@@ -19,7 +16,6 @@ import java.util.List;
  * @date 2020-08-27
  */
 @ApiModel("隧道实体")
-@Data
 public class SdTunnels extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -83,6 +79,30 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道长度")
     private String tunnelLength;
 
+    @ApiModelProperty("隧道开始桩号")
+    private String startPile;
+
+    @ApiModelProperty("隧道结束桩号")
+    private String endPile;
+
+    public String getStartPile() {
+        return startPile;
+    }
+
+    public void setStartPile(String startPile) {
+        this.startPile = startPile;
+    }
+
+    public String getEndPile() {
+        return endPile;
+    }
+
+    public void setEndPile(String endPile) {
+        this.endPile = endPile;
+    }
+
+
+
     @ApiModelProperty("隧道分区")
     public List<SdTunnelSubarea> sdTunnelSubareas;
 
@@ -143,6 +163,22 @@ public class SdTunnels extends BaseEntity
             percentage = new SdSafetyIndex();
         }
         return percentage;
+    }
+
+    public List<SdTunnelSubarea> getSdTunnelSubareas() {
+        return sdTunnelSubareas;
+    }
+
+    public void setSdTunnelSubareas(List<SdTunnelSubarea> sdTunnelSubareas) {
+        this.sdTunnelSubareas = sdTunnelSubareas;
+    }
+
+    public List<SdTunnelSubarea> getList() {
+        return list;
+    }
+
+    public void setList(List<SdTunnelSubarea> list) {
+        this.list = list;
     }
 
     public void setPercentage(SdSafetyIndex percentage) {
@@ -270,28 +306,26 @@ public class SdTunnels extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("tunnelId", getTunnelId())
-            .append("tunnelName", getTunnelName())
-            .append("tunnelCode", getTunnelCode())
-            .append("tunnelAddress", getTunnelAddress())
-            .append("longitude", getLongitude())
-            .append("latitude", getLatitude())
-            .append("tunnelStationId", getTunnelStationId())
-            .append("tunnelStationName", getTunnelStationName())
-            .append("lane", getLane())
-            .append("coordinates", getCoordinates())
-            .append("remake", getRemake())
-            .append("poll", getPoll())
-            .append("storeConfigure", getStoreConfigure())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("tunnelLength", getTunnelLength())
-            .append("deptId", getDeptId())
-            .append("deptName", getDeptName())
-            .append("percentage", getPercentage())
-            .toString();
+        return "SdTunnels{" +
+                "tunnelId='" + tunnelId + '\'' +
+                ", tunnelName='" + tunnelName + '\'' +
+                ", tunnelCode='" + tunnelCode + '\'' +
+                ", tunnelAddress='" + tunnelAddress + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", tunnelStationId='" + tunnelStationId + '\'' +
+                ", tunnelStationName='" + tunnelStationName + '\'' +
+                ", lane=" + lane +
+                ", coordinates='" + coordinates + '\'' +
+                ", remake='" + remake + '\'' +
+                ", tunnelLength='" + tunnelLength + '\'' +
+                ", sdTunnelSubareas=" + sdTunnelSubareas +
+                ", poll=" + poll +
+                ", storeConfigure='" + storeConfigure + '\'' +
+                ", deptId=" + deptId +
+                ", deptName='" + deptName + '\'' +
+                ", list=" + list +
+                ", percentage=" + percentage +
+                '}';
     }
 }

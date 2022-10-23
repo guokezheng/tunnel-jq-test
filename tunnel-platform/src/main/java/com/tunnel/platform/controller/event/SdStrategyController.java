@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
-import com.tunnel.business.service.event.ISdStrategyService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 控制策略Controller
@@ -67,6 +68,24 @@ public class SdStrategyController extends BaseController
         return Result.success(sdStrategyService.selectSdStrategyById(id));
     }
 
+    @GetMapping(value = "/timeSharing/{tunnelId}")
+    @ApiOperation("工作台分时控制抽屉")
+    public Result<List<Map>> getTimeSharingInfo(@PathVariable("tunnelId") String tunnelId) {
+        return Result.success(sdStrategyService.getTimeSharingInfo(tunnelId));
+    }
+
+    @GetMapping(value = "/timeSharing/updateControlTime")
+    @ApiOperation("工作台分时控制抽屉修改控制时间")
+    public Result updateControlTime(@RequestParam("strategyId") Long strategyId,@RequestParam("controlTime") String controlTime) {
+        return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
+    }
+
+    @GetMapping(value = "/switch")
+    @ApiOperation("控制策略开关")
+    public Result strategySwitch(@RequestParam("strategyId") Long strategyId,@RequestParam("change") String change) {
+        return Result.toResult(sdStrategyService.strategySwitch(strategyId,change));
+    }
+
     /**
      * 根据策略id查询控制策略
      * @param id
@@ -106,12 +125,12 @@ public class SdStrategyController extends BaseController
      * 删除控制策略
      */
     @Log(title = "控制策略", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+	@DeleteMapping("/{id}")
     @ApiOperation("删除控制策略")
     @ApiImplicitParam(name = "rlIds", value = "需要删除的控制策略关系ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long ids)
+    public Result remove(@PathVariable Long id)
     {
-        return Result.toResult(sdStrategyService.deleteSdStrategyById(ids));
+        return Result.toResult(sdStrategyService.deleteSdStrategyById(id));
     }
 
     /**
@@ -129,7 +148,6 @@ public class SdStrategyController extends BaseController
      *
      * 修改控制策略
      */
-   // @PreAuthorize(hasPermi = "system:strategy:add')")
     @Log(title = "控制策略", businessType = BusinessType.UPDATE)
     @PostMapping(value = "/updateStrategysInfo")
     @ApiOperation("修改控制策略")
@@ -147,7 +165,6 @@ public class SdStrategyController extends BaseController
     {
     	String guid = UUIDUtil.getRandom32BeginTimePK();
     	return guid;
-//        return toAjax();
     }
 
     /**

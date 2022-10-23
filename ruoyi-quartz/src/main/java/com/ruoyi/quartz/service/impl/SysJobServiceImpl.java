@@ -2,12 +2,14 @@ package com.ruoyi.quartz.service.impl;
 
 import com.ruoyi.common.constant.ScheduleConstants;
 import com.ruoyi.common.exception.job.TaskException;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.ISysJobService;
 import com.ruoyi.quartz.util.CronUtils;
 import com.ruoyi.quartz.util.ScheduleUtils;
+import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import org.quartz.JobDataMap;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 定时任务调度信息 服务层
@@ -278,4 +282,52 @@ public class SysJobServiceImpl implements ISysJobService
         }
         return result;
     }
+
+    /**
+     * 批量添加定时任务
+     * @param maps
+     * @return
+     */
+    @Override
+    public int batchScheduledJob(List<Map> maps) throws SchedulerException {
+        List<SysJob> jobs = new ArrayList<>();
+        if (StringUtils.isNotEmpty(maps)) {
+            for (Map<String, Object> map : maps) {
+                String name = (String) map.get("name");
+                String guid = (String) map.get("guid");
+                String time = (String) map.get("time");
+                SysJob job = new SysJob();
+                // 定时任务名称
+                job.setJobName(name);
+                // 调用目标字符串
+                job.setInvokeTarget("ryTask.strategyParams('" + guid + "')");
+                // corn表达式
+                String cronDate = CronUtil.CronDate(time);
+                job.setCronExpression(cronDate);
+                // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+                job.setMisfirePolicy("1");
+                // 是否并发执行（0允许 1禁止）
+                job.setConcurrent("0");
+                // 状态（0正常 1暂停）
+                job.setStatus("0");
+                jobs.add(job);
+            }
+        }
+        if (jobs.size() > 0){
+            for (SysJob job : jobs) {
+                List<SysJob> jobList = jobMapper.selectJobList(job);
+                if (jobList.size() > 0) {
+                    for (SysJob sysJob : jobList) {
+                        deleteJob(sysJob);
+                    }
+                }
+            }
+        }
+        int result = -1;
+        if (jobs.size() > 0) {
+            result = jobMapper.batchScheduledJob(jobs);
+        }
+        return result;
+    }
+
 }

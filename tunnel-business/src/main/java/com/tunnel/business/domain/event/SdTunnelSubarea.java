@@ -3,7 +3,6 @@ package com.tunnel.business.domain.event;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * 隧道分区对象 sd_tunnel_subarea
@@ -11,7 +10,6 @@ import lombok.Data;
  * @author ruoyi
  * @date 2022-08-25
  */
-@Data
 public class SdTunnelSubarea extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -25,18 +23,52 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("分区名称")
     private String sName;
 
+    @Excel(name = "隧道名称")
+    @ApiModelProperty("隧道名称")
+    private String tunnelName;
+
+    /** 分区id */
+    @Excel(name = "方向")
+    @ApiModelProperty("分区方向")
+    private String direction;
+
     @ApiModelProperty("隧道Id")
     private String tunnelId;
 
+    @Excel(name = "桩号下限")
     @ApiModelProperty("桩号下限")
     private String pileMin;
 
+    @Excel(name = "桩号上限")
     @ApiModelProperty("桩号上限")
     private String pileMax;
 
     private String eqIdMin;
 
     private String eqIdMax;
+
+    public String getEqIdMin() {
+        return eqIdMin;
+    }
+
+    public void setEqIdMin(String eqIdMin) {
+        this.eqIdMin = eqIdMin;
+    }
+
+    public String getEqIdMax() {
+        return eqIdMax;
+    }
+
+    public void setEqIdMax(String eqIdMax) {
+        this.eqIdMax = eqIdMax;
+    }
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     @Override
     public String toString() {
@@ -46,6 +78,8 @@ public class SdTunnelSubarea extends BaseEntity
                 ", tunnelId='" + tunnelId + '\'' +
                 ", pileMin='" + pileMin + '\'' +
                 ", pileMax='" + pileMax + '\'' +
+                ", eqIdMin='" + eqIdMin + '\'' +
+                ", eqIdMax='" + eqIdMax + '\'' +
                 ", tunnelName='" + tunnelName + '\'' +
                 '}';
     }
@@ -59,7 +93,7 @@ public class SdTunnelSubarea extends BaseEntity
     }
 
     //sd_tunnels   tunnel_name
-    private String tunnelName;
+    //private String tunnelName;
 
 
     public void setsId(Long sId)

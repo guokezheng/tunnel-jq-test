@@ -7,9 +7,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excels;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
@@ -20,7 +17,6 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @date 2022-07-22
  */
 
-@Data
 @ApiModel("设备对象类")
 public class SdDevices extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -73,8 +69,8 @@ public class SdDevices extends BaseEntity {
     /**
      * 设备类型
      */
-    @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")
+   /* @ApiModelProperty("设备类型")
+    @Excel(name = "设备类型")*/
     private Long eqType;
 
 
@@ -82,7 +78,7 @@ public class SdDevices extends BaseEntity {
      * eqType对象
      */
     @Excels({
-            @Excel(name = "设备类型名称", targetAttr = "eqTypeName", type = Excel.Type.EXPORT),
+            @Excel(name = "设备类型名称", targetAttr = "typeName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("eqType对象")
     private SdEquipmentType eqTypeName;
@@ -98,19 +94,15 @@ public class SdDevices extends BaseEntity {
      * 设备品牌编号
      */
     @Excel(name = "设备品牌编号")
+
     @ApiModelProperty("设备品牌编号")
     private Long brandId;
-
-//    /**
-//     * 设备品牌
-//     */
-//    @Excel(name = "设备品牌")
-//    private String brandName;
 
     /**
      * 所属道路方向(上行、下行)
      */
     @Excel(name = "所属道路方向(上行、下行)")
+    //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;
 
@@ -536,14 +528,6 @@ public class SdDevices extends BaseEntity {
         return brandId;
     }
 
-//    public String getBrandName() {
-//        return brandName;
-//    }
-//
-//    public void setBrandName(String brandName) {
-//        this.brandName = brandName;
-//    }
-
     public void setEqDirection(String eqDirection) {
         this.eqDirection = eqDirection;
     }
@@ -848,60 +832,79 @@ public class SdDevices extends BaseEntity {
         return eqFeedbackAddress5;
     }
 
+    public String getfEqId() {
+        return fEqId;
+    }
+
+    public void setfEqId(String fEqId) {
+        this.fEqId = fEqId;
+    }
+
+    public SdEquipmentType getEqTypeName() {
+        return eqTypeName;
+    }
+
+    public void setEqTypeName(SdEquipmentType eqTypeName) {
+        this.eqTypeName = eqTypeName;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("eqId", getEqId())
-                .append("fEqId", getFEqId())
-                .append("eqTunnelId", getEqTunnelId())
-                .append("eqName", getEqName())
-                .append("eqType", getEqType())
-                .append("eqModel", getEqModel())
-                .append("brandId", getBrandId())
-//                .append("brand", getBrand())
-                .append("eqDirection", getEqDirection())
-                .append("eqLane", getLane())
-                .append("pile", getPile())
-                .append("pileNum", getPileNum())
-                .append("lat", getLat())
-                .append("lng", getLng())
-                .append("ip", getIp())
-                .append("port", getPort())
-                .append("secureKey", getSecureKey())
-                .append("eqUser", getEqUser())
-                .append("eqPwd", getEqPwd())
-                .append("protocol", getProtocol())
-                .append("protocolUrl", getProtocolUrl())
-                .append("protocolVersion", getProtocolVersion())
-                .append("protocolName", getProtocolName())
-                .append("dataType", getDataType())
-                .append("dataSource", getDataSource())
-                .append("deliveryTime", getDeliveryTime())
-                .append("warrantyEndTime", getWarrantyEndTime())
-                .append("installTime", getInstallTime())
-                .append("useLife", getUseLife())
-                .append("useStatus", getUseStatus())
-                .append("isMonitor", getIsMonitor())
-                .append("portStatus", getPortStatus())
-                .append("portStatusTime", getPortStatusTime())
-                .append("gatewayNetstatus", getGatewayNetstatus())
-                .append("gatewayNetstatusTime", getGatewayNetstatusTime())
-                .append("eqStatus", getEqStatus())
-                .append("eqStatusTime", getEqStatusTime())
-                .append("dmcontrolSeat", getDmcontrolSeat())
-                .append("eqLampType", getEqLampType())
-                .append("instructionSeat", getInstructionSeat())
-                .append("eqControlPointAddress", getEqControlPointAddress())
-                .append("eqFeedbackAddress1", getEqFeedbackAddress1())
-                .append("eqFeedbackAddress2", getEqFeedbackAddress2())
-                .append("eqFeedbackAddress3", getEqFeedbackAddress3())
-                .append("eqFeedbackAddress4", getEqFeedbackAddress4())
-                .append("eqFeedbackAddress5", getEqFeedbackAddress5())
-                .append("createBy", getCreateBy())
-                .append("createTime", getCreateTime())
-                .append("updateBy", getUpdateBy())
-                .append("updateTime", getUpdateTime())
-                .append("remark", getRemark())
-                .toString();
+        return "SdDevices{" +
+                "eqId='" + eqId + '\'' +
+                ", eqIds=" + eqIds +
+                ", fEqId='" + fEqId + '\'' +
+                ", deptId=" + deptId +
+                ", deptName='" + deptName + '\'' +
+                ", eqTunnelId='" + eqTunnelId + '\'' +
+                ", tunnelName=" + tunnelName +
+                ", eqName='" + eqName + '\'' +
+                ", eqType=" + eqType +
+                ", eqTypeName=" + eqTypeName +
+                ", eqModel='" + eqModel + '\'' +
+                ", brandId=" + brandId +
+                ", eqDirection='" + eqDirection + '\'' +
+                ", lane='" + lane + '\'' +
+                ", pile='" + pile + '\'' +
+                ", pileNum=" + pileNum +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
+                ", ip='" + ip + '\'' +
+                ", port='" + port + '\'' +
+                ", secureKey='" + secureKey + '\'' +
+                ", eqUser='" + eqUser + '\'' +
+                ", eqPwd='" + eqPwd + '\'' +
+                ", protocol='" + protocol + '\'' +
+                ", protocolUrl='" + protocolUrl + '\'' +
+                ", protocolVersion='" + protocolVersion + '\'' +
+                ", protocolName='" + protocolName + '\'' +
+                ", dataType='" + dataType + '\'' +
+                ", dataSource='" + dataSource + '\'' +
+                ", deliveryTime=" + deliveryTime +
+                ", warrantyEndTime=" + warrantyEndTime +
+                ", installTime=" + installTime +
+                ", useLife='" + useLife + '\'' +
+                ", useStatus='" + useStatus + '\'' +
+                ", isMonitor=" + isMonitor +
+                ", portStatus='" + portStatus + '\'' +
+                ", portStatusTime=" + portStatusTime +
+                ", gatewayNetstatus='" + gatewayNetstatus + '\'' +
+                ", gatewayNetstatusTime=" + gatewayNetstatusTime +
+                ", eqStatus='" + eqStatus + '\'' +
+                ", eqStatusTime=" + eqStatusTime +
+                ", dmcontrolSeat='" + dmcontrolSeat + '\'' +
+                ", eqLampType=" + eqLampType +
+                ", instructionSeat='" + instructionSeat + '\'' +
+                ", eqControlPointAddress='" + eqControlPointAddress + '\'' +
+                ", eqFeedbackAddress1='" + eqFeedbackAddress1 + '\'' +
+                ", eqFeedbackAddress2='" + eqFeedbackAddress2 + '\'' +
+                ", eqFeedbackAddress3='" + eqFeedbackAddress3 + '\'' +
+                ", eqFeedbackAddress4='" + eqFeedbackAddress4 + '\'' +
+                ", eqFeedbackAddress5='" + eqFeedbackAddress5 + '\'' +
+                ", instruction='" + instruction + '\'' +
+                ", seat='" + seat + '\'' +
+                ", qNumber='" + qNumber + '\'' +
+                ", controlStatus='" + controlStatus + '\'' +
+                '}';
     }
 }

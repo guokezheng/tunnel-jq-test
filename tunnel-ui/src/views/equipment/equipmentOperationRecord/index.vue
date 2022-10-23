@@ -27,7 +27,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -45,7 +45,7 @@
 <!--          v-hasPermi="['system:equipmentOperationRecord:remove']" >删除</el-button>-->
 <!--      </el-col>-->
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
+        <el-button type="primary" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
           v-hasPermi="['system:equipmentOperationRecord:export']" >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>

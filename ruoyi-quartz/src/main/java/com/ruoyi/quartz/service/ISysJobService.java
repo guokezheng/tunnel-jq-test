@@ -2,9 +2,11 @@ package com.ruoyi.quartz.service;
 
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.quartz.domain.SysJob;
+import com.tunnel.business.domain.event.SdStrategyModel;
 import org.quartz.SchedulerException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 定时任务调度信息信息 服务层
@@ -107,4 +109,12 @@ public interface ISysJobService
      * @return
      */
     public int updateState(SysJob job);
+
+    /**
+     * 批量添加定时任务
+     * @param maps
+     * @return
+     */
+    public int batchScheduledJob(List<Map> maps) throws SchedulerException;
+
 }

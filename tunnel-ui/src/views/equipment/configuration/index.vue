@@ -56,18 +56,52 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:configuration:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:configuration:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:configuration:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:configuration:export']"
+          >导出</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -81,7 +115,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -93,7 +127,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -105,7 +139,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
@@ -119,12 +153,14 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="configurationList"
       @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="id" align="center" prop="id" /> -->
@@ -170,16 +206,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:configuration:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:configuration:remove']"
             >删除</el-button
@@ -240,15 +274,15 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <!-- <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="form.url" alt="" />
-          </el-dialog> -->
+          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;">
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
         </el-form-item>
         <el-form-item label="图片宽度" prop="width">
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -261,7 +295,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -433,6 +467,7 @@ export default {
         createTime: null,
         updateTime: null,
       };
+      this.fileList = []
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -456,7 +491,7 @@ export default {
       this.reset();
       this.open = true;
       // this.fileList = [];
-      // 每次点击新增重置上传图片数组      
+      // 每次点击新增重置上传图片数组
       this.title = "添加隧道环境配置";
     },
     uploadSuccess(){
@@ -481,37 +516,44 @@ export default {
       if (this.fileList.length < 1) {
         return this.$modal.msgWarning("请上传图片");
       }
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit();
-      this.fileData.append("sdName", this.form.sdName);
-      this.fileData.append("environmentType", this.form.environmentType);
-      this.fileData.append("width", this.form.width);
-      this.fileData.append("height", this.form.height);
-      this.fileData.append("direction", this.form.direction);
-      this.fileData.append("remark", this.form.remark);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            this.fileData.append("id", this.form.id);
-            this.fileData.append("url", this.form.url);
-            this.fileData.append("removeIds", this.removeIds);
-            console.log(this.fileData,'this.fileData');
-            updateConfiguration(this.fileData).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.$refs.upload.clearFiles();
-              this.getList();
-            });
-          } else {
-            addConfiguration(this.fileData).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.$refs.upload.clearFiles();
-              this.getList();
-            });
+      const isLt100M = this.fileList.every(file => file.size / 1024 / 1024 < 1);
+      if (!isLt100M) {
+        this.$message.error('请检查，上传文件大小不能超过1MB!');
+      } else {
+        this.fileData = new FormData(); // new formData对象
+        this.$refs.upload.submit();
+        this.fileData.append("sdName", this.form.sdName);
+        this.fileData.append("environmentType", this.form.environmentType);
+        this.fileData.append("width", this.form.width);
+        this.fileData.append("height", this.form.height);
+        this.fileData.append("direction", this.form.direction);
+        this.fileData.append("remark", this.form.remark);
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            if (this.form.id != null) {
+              this.fileData.append("id", this.form.id);
+              this.fileData.append("url", this.form.url);
+              this.fileData.append("removeIds", this.removeIds);
+              console.log(this.fileData,'this.fileData');
+              updateConfiguration(this.fileData).then((response) => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.$refs.upload.clearFiles();
+                this.getList();
+              });
+            } else {
+              addConfiguration(this.fileData).then((response) => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.$refs.upload.clearFiles();
+                this.getList();
+              });
+              this.eqObj.uploadDisabled = false;
+            }
           }
-        }
-      });
+        });
+      }
+      
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -556,8 +598,8 @@ export default {
       // this.fileData.append("file", file.file);
     },
     handlePictureCardPreview(file) {
-      // this.dialogImageUrl = file.url;
-      // this.dialogVisible = true;
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     // 选取文件超过数量提示
     handleExceed(files, fileList) {
@@ -606,6 +648,14 @@ export default {
     openImg(url) {
       this.img = url;
       this.yn = !this.yn;
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

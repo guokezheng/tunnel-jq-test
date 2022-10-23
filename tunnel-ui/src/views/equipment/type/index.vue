@@ -27,22 +27,48 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          type="cyan"
-          icon="el-icon-search"
+          type="primary"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button 
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:type:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:type:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:type:remove']"
+          >删除</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
@@ -52,7 +78,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
+          plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
@@ -63,7 +90,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
+          plain
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
@@ -72,16 +100,16 @@
           >删除</el-button
         >
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:type:export']"-->
-<!--          >导出</el-button-->
-<!--        >-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button
+         type="warning"
+         icon="el-icon-download"
+         size="mini"
+         @click="handleExport"
+         v-hasPermi="['system:type:export']"
+         >导出</el-button
+       >
+     </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button
@@ -105,13 +133,15 @@
           />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="typeList"
-      max-height="610"
+      max-height="640"
       @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
@@ -141,24 +171,21 @@
           <el-button
             v-show="scope.row.typeId==31"
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="configData(scope.row)"
             v-hasPermi="['system:type:edit']"
             >配置参数</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:type:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:type:remove']"
             >删除</el-button
@@ -546,6 +573,14 @@ export default {
         },
         `system_type.xlsx`
       );
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

@@ -19,8 +19,22 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" @click="handleAdd"
+          v-hasPermi="['system:devices:add']">新增
+        </el-button>
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate"
+          v-hasPermi="['system:devices:edit']">修改
+        </el-button>
+        <el-button type="primary" plain  size="mini" :disabled="multiple" @click="handleDelete"
+          v-hasPermi="['system:devices:remove']">删除
+        </el-button>
+        <el-button type="primary" plain size="mini" @click="handleExport"
+          v-hasPermi="['system:devices:export']">导出
+        </el-button>
+        <el-button type="primary" plain size="mini" @click="handleImport"
+          v-hasPermi="['system:devices:import']">导入</el-button>
         <!-- <el-button
           type="info"
           icon="el-icon-s-help"
@@ -31,29 +45,29 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd"
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['system:devices:add']">新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
           v-hasPermi="['system:devices:edit']">修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['system:devices:remove']">删除
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport"
+        <el-button type="primary" plain icon="el-icon-download" size="mini" @click="handleExport"
           v-hasPermi="['system:devices:export']">导出
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="el-icon-upload" size="mini" @click="handleImport"
+        <el-button type="primary" plain plain icon="el-icon-upload" size="mini" @click="handleImport"
           v-hasPermi="['system:devices:import']">导入</el-button>
       </el-col>
       <div class="top-right-btn">
@@ -64,8 +78,10 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch = !showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
-    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" height="600">
+    </el-row> -->
+    <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="640"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备ID" align="center" prop="eqId" show-overflow-tooltip />
       <el-table-column label="所属隧道" align="center" prop="tunnelName.tunnelName" min-width="100" show-overflow-tooltip />
@@ -86,12 +102,12 @@
       <el-table-column label="设备端口号" align="center" prop="port" />
       <el-table-column label="桩号" align="center" prop="pile" min-width="150" show-overflow-tooltip />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180" fixed="right">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180" >
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="updateCmd(scope.row)"
+          <el-button size="mini" class="tableBlueButtton" @click="updateCmd(scope.row)"
             v-hasPermi="['system:devices:edit']">控制修改
           </el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+          <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)"
             v-hasPermi="['system:devices:remove']">删除
           </el-button>
         </template>
@@ -461,7 +477,7 @@
     </el-dialog>
 
     <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body>
+    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body class="zxc">
       <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
         :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :on-error="handleFileError"
@@ -639,6 +655,10 @@
               message: "请输入数字字母或横线",
             },
           ],
+          pileNum:[{
+            pattern: /^[1-9]\d*$/,
+            message: "只能输入整数",
+          }],
           // fEqId: [{
           //   required: true,
           //   message: "请选择plc主机",
@@ -1129,8 +1149,11 @@
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
         this.$alert(response.msg, "导入结果", {
+          customClass :'el-message-box_style',
           dangerouslyUseHTMLString: true
+
         });
+        this.$forceUpdate()
         this.getList();
       },
       // 文件上传失败处理
@@ -1194,11 +1217,18 @@
       submitFileForm() {
         this.$refs.upload.submit();
       },
-
+      // 表格行样式
+      tableRowClassName({ row, rowIndex }) {
+        if (rowIndex%2 == 0) {
+        return 'tableEvenRow';
+        } else {
+        return "tableOddRow";
+        }
+      },
     },
   };
 </script>
-<style scoped>
+<style scoped lang="scss">
   .el-select-dropdown__item.selected{
     color: #606266;
     font-weight: 400;
@@ -1206,5 +1236,14 @@
   ::v-deep .el-dialog__body{
     max-height: 690px;
     overflow: auto;
+  }
+
+</style>
+<style lang="scss">
+.el-message-box_style{
+    .el-message-box__content{
+      height: 500px !important;
+      overflow: auto !important;
+    }
   }
 </style>

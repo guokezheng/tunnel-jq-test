@@ -7,14 +7,14 @@ import { getToken } from '@/utils/auth'
 
 NProgress.configure({ showSpinner: false })
 
-const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
+const whiteList = ['/login','/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/
-    if (to.path === '/login') {
+    if (to.path === '/login'||to.path === '/loginjqtunnel') {
       next({ path: '/' })
       NProgress.done()
     } else {
@@ -41,8 +41,18 @@ router.beforeEach((to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入
       next()
-    } else {
-      next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+    }else {
+      //let str = window.location.pathname//获取当前路由
+      let str = to.path
+      if(str.indexOf("loginjqtunnel")!=-1){//单点登录
+        store.dispatch("Login1").then(() => {
+          next({ path: '/' })
+        }).catch(() => {
+          next(`/loginjqtunnel?redirect=${to.fullPath}`)// 否则全部重定向到登录页
+        })
+      }else{
+        next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+      }
       NProgress.done()
     }
   }

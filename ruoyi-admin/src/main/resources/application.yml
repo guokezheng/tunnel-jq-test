@@ -10,13 +10,22 @@ ruoyi:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
 #  profile: /Users/yqc/OpenSources/ruoyi
-  profile: /opt/suidao/file/uploadPath
+  profile: E:/opt/suidao/file/uploadPath
 #  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
 
+  # 文件上传 本地: local  阿里云： alioss
+  uploadType: local
+  # 阿里云oss存储配置
+  oss:
+    bucketName: bucket-wisdom-oss
+    endPoint: http://oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud/
+    accessKeyId: IDh1HEeliVnMImdxRH
+    accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
+    upFolder: upload
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
@@ -114,7 +123,7 @@ pagehelper:
 # Swagger配置
 swagger:
   # 是否开启swagger
-  enabled: true
+  enabled: false
   # 请求前缀
   pathMapping: /dev-api
 

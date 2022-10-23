@@ -1,5 +1,6 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
@@ -39,7 +40,12 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @return 雷达监测感知数据
      */
     @Override
-    public List<SdRadarDetectData> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
+    public List<Map<String,String>> selectSdRadarDetectDataList(SdRadarDetectData sdRadarDetectData) {
+        Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdRadarDetectData.setDeptId(deptId);
         return sdRadarDetectDataMapper.selectSdRadarDetectDataList(sdRadarDetectData);
     }
 
@@ -93,6 +99,7 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
      * @param tunnelId
      * @return
      */
+    @Override
     public Object[] eventById(String tunnelId) {
         List<Map> maps = sdRadarDetectDataMapper.eventById(tunnelId);
         ArrayList<Object> time = new ArrayList<>();
@@ -107,5 +114,11 @@ public class SdRadarDetectDataServiceImpl implements ISdRadarDetectDataService {
         resArr[0] = time;
         resArr[1] = num;
         return resArr;
+    }
+
+    @Override
+    public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(String tunnelId) {
+        List<Map<String, Object>> maps = sdRadarDetectDataMapper.vehicleMonitoringInRecent24Hours(tunnelId);
+        return maps;
     }
 }

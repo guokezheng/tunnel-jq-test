@@ -41,6 +41,9 @@ public class SdTunnelsController extends BaseController
         startPage();
         if (null == sdTunnels.getDeptId() || "".equals(sdTunnels.getDeptId())){
             Long deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
             sdTunnels.setDeptId(deptId);
         }
         List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList(sdTunnels);

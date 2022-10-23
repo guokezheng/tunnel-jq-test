@@ -20,11 +20,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
-        <association property="sdTunnelSubarea" javaType="sdTunnelSubarea">
-            <id column="sid" property="sId"/>
-            <result column="sName" property="sName"/>
-            <result column="tunnelId" property="tunnelId"/>
-        </association>
+        <association property="sdTunnelSubarea" column="subarea_id" javaType="sdTunnelSubarea" resultMap="subareaResult" />
+        <association property="sdTunnels" javaType="SdTunnels" column="tunnel_id" resultMap="tunnelResult" />
     </resultMap>
 
 	<resultMap id="eventTypeResult" type="SdEventType">
@@ -43,10 +40,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
     <resultMap id="subareaResult" type="SdTunnelSubarea">
-        <id property="sId" column="s_id" />
+        <id property="sId" column="subarea_id" />
         <result property="sName" column="s_name" />
         <result property="tunnelId" column="tunnel_id" />
     </resultMap>
+
+    <resultMap id="tunnelResult" type="SdTunnels">
+        <id property="tunnelId" column="tunnel_id" />
+        <result property="tunnelName" column="tunnel_name" />
+    </resultMap>
+
 
     <sql id="selectSdReservePlanVo">
         select id,subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time from sd_reserve_plan
@@ -54,20 +57,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
-            group_concat(DISTINCT E.strategy_id) strategy_id, A.create_by, A.create_time, A.update_by, A.update_time,
-        	B.event_type, group_concat(DISTINCT C.strategy_name) strategy_name, C.strategy_info, C.strategy_type, D.s_name sName
+#             --group_concat(DISTINCT E.strategy_id) strategy_id,
+        (select GROUP_CONCAT(process.strategy_id) from sd_reserve_process process where process.reserve_id =  A.id) as strategy_id,
+        B.event_type,
+        (select GROUP_CONCAT(strategy.strategy_name) from sd_strategy strategy,sd_reserve_process process  where
+                process.strategy_id = strategy.id and process.reserve_id = A.id) as strategy_name,
+#             --group_concat(DISTINCT C.strategy_name) strategy_name,
+            C.strategy_info, C.strategy_type, D.s_name,F.tunnel_name
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id
         left join sd_strategy C on E.strategy_id = C.id
-        left join sd_tunnel_subarea D on D.tunnel_id = C.tunnel_id
+        left join sd_tunnel_subarea D on D.s_id = A.subarea_id
         left join sd_tunnels F on D.tunnel_id = F.tunnel_id
         <where>
-            <if test="tunnelId != null">and F.tunnel_id = #{tunnelId}</if>
-            <if test="category != null">and A.category = #{category}</if>
+            <if test="tunnelId != null and tunnelId!=''">and F.tunnel_id = #{tunnelId}</if>
+            <if test="category != null and category!=''">and A.category = #{category}</if>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (F.dept_id = #{params.deptId} OR F.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         group by A.id
         ORDER BY A.id DESC
@@ -153,13 +164,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id id, plan_type name
         from sd_plan_type
     </select>
-    
+
     <select id="selectSdReservePlanBySubareaId" parameterType="sdReservePlan" resultMap="SdReservePlanResult">
-        select id, subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id 
+        select id, subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id
         from sd_reserve_plan
         <where>
             <if test="subareaId != null"> and subarea_id = #{subareaId}</if>
             <if test="category != null"> and category = #{category}</if>
+            <if test="planTypeId != null"> and plan_type_id = #{planTypeId}</if>
         </where>
     </select>
 

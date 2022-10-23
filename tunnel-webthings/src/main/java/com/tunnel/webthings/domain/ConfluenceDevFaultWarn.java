@@ -2,14 +2,12 @@ package com.tunnel.webthings.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy
  * @date 2022/7/20 10:59
  * 合流区预警设备故障告警类
  */
-@Data
 @ApiModel("合流区预警设备故障告警类")
 public class ConfluenceDevFaultWarn {
 
@@ -43,4 +41,99 @@ public class ConfluenceDevFaultWarn {
     @ApiModelProperty("备注")
     private String remark;
 
+    public String getDevCode() {
+        return devCode;
+    }
+
+    public void setDevCode(String devCode) {
+        this.devCode = devCode;
+    }
+
+    public Integer getDevType() {
+        return devType;
+    }
+
+    public void setDevType(Integer devType) {
+        this.devType = devType;
+    }
+
+    public String getDevName() {
+        return devName;
+    }
+
+    public void setDevName(String devName) {
+        this.devName = devName;
+    }
+
+    public String getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
+    }
+
+    public String getDevTime() {
+        return devTime;
+    }
+
+    public void setDevTime(String devTime) {
+        this.devTime = devTime;
+    }
+
+    public Integer getEnvTriType() {
+        return envTriType;
+    }
+
+    public void setEnvTriType(Integer envTriType) {
+        this.envTriType = envTriType;
+    }
+
+    public String getFaultCode() {
+        return faultCode;
+    }
+
+    public void setFaultCode(String faultCode) {
+        this.faultCode = faultCode;
+    }
+
+    public String getEnvLon() {
+        return envLon;
+    }
+
+    public void setEnvLon(String envLon) {
+        this.envLon = envLon;
+    }
+
+    public String getEnvLat() {
+        return envLat;
+    }
+
+    public void setEnvLat(String envLat) {
+        this.envLat = envLat;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfluenceDevFaultWarn{" +
+                "devCode='" + devCode + '\'' +
+                ", devType=" + devType +
+                ", devName='" + devName + '\'' +
+                ", msgType='" + msgType + '\'' +
+                ", devTime='" + devTime + '\'' +
+                ", envTriType=" + envTriType +
+                ", faultCode='" + faultCode + '\'' +
+                ", envLon='" + envLon + '\'' +
+                ", envLat='" + envLat + '\'' +
+                ", remark='" + remark + '\'' +
+                '}';
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 雷达监测感知数据Controller
@@ -35,7 +36,7 @@ public class SdRadarDetectDataController extends BaseController
     public TableDataInfo list(SdRadarDetectData sdRadarDetectData)
     {
         startPage();
-        List<SdRadarDetectData> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
+        List<Map<String,String>> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
         return getDataTable(list);
     }
 
@@ -47,9 +48,9 @@ public class SdRadarDetectDataController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdRadarDetectData sdRadarDetectData)
     {
-        List<SdRadarDetectData> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
+        List<Map<String,String>> list = sdRadarDetectDataService.selectSdRadarDetectDataList(sdRadarDetectData);
         ExcelUtil<SdRadarDetectData> util = new ExcelUtil<SdRadarDetectData>(SdRadarDetectData.class);
-        return util.exportExcel(list, "雷达监测感知数据数据");
+        return util.exportExcel(null, "雷达监测感知数据数据");
     }
 
     /**

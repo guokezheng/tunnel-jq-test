@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 调度任务信息操作处理
@@ -195,5 +196,15 @@ public class SysJobController extends BaseController
     @PutMapping("/updateState")
     public AjaxResult updateState(@RequestBody SysJob job) {
         return AjaxResult.success(jobService.updateState(job));
+    }
+
+    /**
+     * 批量添加定时任务
+     * @param maps
+     * @return
+     */
+    @PostMapping("/batchScheduledJob")
+    public AjaxResult batchAddScheduledJob(@RequestBody List<Map> maps) throws SchedulerException {
+        return AjaxResult.success(jobService.batchScheduledJob(maps));
     }
 }

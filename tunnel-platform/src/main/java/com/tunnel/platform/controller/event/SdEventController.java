@@ -126,8 +126,33 @@ public class SdEventController extends BaseController
      * @return
      */
     @GetMapping("/getEvent")
-    public AjaxResult getEvent()
+    public AjaxResult getEvent(SdEvent sdEvent)
     {
-        return AjaxResult.success(sdEventService.getEvent());
+        return AjaxResult.success(sdEventService.getEvent(sdEvent));
+    }
+
+    /**
+     * 统计今日事件
+     * @return
+     */
+    @GetMapping("/getTodayEventCount")
+    @ApiOperation("统计今日事件")
+    public Result getTodayEventCount() {
+        return Result.success(sdEventService.getTodayEventCount());
+    }
+
+    /**
+     * 根据事件属性获取所在分区ID
+     * @param tunnelId
+     * @param stakeNum
+     * @param direction
+     * @return
+     */
+    @GetMapping("/getSubareaByStakeNum")
+    @ApiOperation("根据事件桩号获取所在的分区")
+    public Result getSubareaByStakeNum(@RequestParam("tunnelId") String tunnelId,
+                                       @RequestParam("stakeNum") String stakeNum,
+                                       @RequestParam("direction")String direction){
+        return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
     }
 }

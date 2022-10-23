@@ -163,7 +163,6 @@ public class SdComponentController extends BaseController
             @ApiImplicitParam(name = "removeIds", value = "需要删除的ID合集", required = true, dataType = "Long", paramType = "path",dataTypeClass = Long.class),
 
     })
-
     public Result updateComponentPlan(MultipartFile[] file,
     								@RequestParam("id") Long id,
     		    		            @RequestParam("equipmentName") String equipmentName,

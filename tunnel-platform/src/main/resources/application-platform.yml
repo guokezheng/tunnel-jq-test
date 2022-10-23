@@ -39,3 +39,13 @@ spring:
       # manual：当每一批poll()的数据被ListenerConsumer处理之后, 手动调用Acknowledgment.acknowledge()后提交
       # manual_immediate：手动调用Acknowledgment.acknowledge()后立即提交，一般推荐使用这种
       ack-mode: manual_immediate
+
+sso:
+  # 获取授权码
+  authCode: http://10.166.154.213:30001/auth/sso/test/code
+  # 获取Token
+  token: http://10.166.154.213:30001/auth/sso/token
+  # 获取当前登录用户信息
+  userInfo: http://10.166.154.213:30001/sys/user/info
+  #业务中台分配应用ID
+  appId: jq_tunnel_server

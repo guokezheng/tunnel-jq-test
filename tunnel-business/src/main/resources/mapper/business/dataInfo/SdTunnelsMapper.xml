@@ -25,6 +25,8 @@
         <result property="tunnelLength" column="tunnel_length"/>
         <result property="deptId" column="dept_id" />
         <result property="deptName" column="dept_name" />
+        <result property="startPile" column="start_pile" />
+        <result property="endPile" column="end_pile" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
         <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
             <result property="sId" column="s_id" />
@@ -41,13 +43,13 @@
     <sql id="selectSdTunnelsVo">
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
-               create_time, update_by, update_time, dept_id from sd_tunnels
+               create_time, update_by, update_time, dept_id,start_pile,end_pile from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
         select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
         t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
-        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name, ifnull(i.security_percentage,'0') security_percentage
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,ifnull(i.security_percentage,'0') security_percentage
         from sd_tunnels t
         left join sys_dept d on t.dept_id = d.dept_id
         left join sd_safety_index i on i.tunnel_id = t.tunnel_id
@@ -58,13 +60,30 @@
             </if>
             <if test="poll != null ">and t.poll = #{poll}</if>
             <if test="storeConfigure != null  and storeConfigure != ''">and t.store_configure = #{storeConfigure}</if>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            ${params.dataScope}
+        </where>
+    </select>
+    <select id="verifyTunnelOnly" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
+        t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name, ifnull(i.security_percentage,'0') security_percentage
+        from sd_tunnels t
+        left join sys_dept d on t.dept_id = d.dept_id
+        left join sd_safety_index i on i.tunnel_id = t.tunnel_id
+        <where>
+            <if test="tunnelName != null and tunnelName != ''">and t.tunnel_name = #{tunnelName}
+            </if>
+            <if test="tunnelId != null and tunnelId != ''">and t.tunnel_id = #{tunnelId}
+            </if>
             <if test="deptId != null ">
                 AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
             ${params.dataScope}
         </where>
     </select>
-
     <select id="selectSdTunnelsById" parameterType="String" resultMap="SdTunnelsResult">
         <include refid="selectSdTunnelsVo"/>
         where tunnel_id = #{tunnelId}
@@ -92,6 +111,8 @@
             <if test="updateTime != null">update_time,</if>
             <if test="tunnelLength != null">tunnel_length,</if>
             <if test="deptId != null">dept_id,</if>
+            <if test="startPile != null">start_pile,</if>
+            <if test="endPile != null">end_pile,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -113,6 +134,8 @@
             <if test="updateTime != null">#{updateTime},</if>
             <if test="tunnelLength != null">#{tunnelLength},</if>
             <if test="deptId != null">#{deptId},</if>
+            <if test="startPile != null">#{startPile},</if>
+            <if test="endPile != null">#{endPile},</if>
         </trim>
     </insert>
 
@@ -137,6 +160,8 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="tunnelLength != null">tunnel_length = #{tunnelLength},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="startPile != null">start_pile = #{startPile},</if>
+            <if test="endPile != null">end_pile = #{endPile}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>
@@ -189,5 +214,12 @@
                dept_id
         from sd_tunnels
         where dept_id = #{deptId}
+    </select>
+
+
+    <!--查询所有隧道列表-->
+    <select id="getTunnelList" resultType="java.util.Map">
+        select tunnel_id tunnelId,tunnel_name tunnelName
+        from sd_tunnels
     </select>
 </mapper>

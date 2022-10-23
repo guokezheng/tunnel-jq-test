@@ -50,12 +50,43 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:role:add']"
+        >新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:role:edit']"
+        >修改</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:role:remove']"
+        >删除</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:role:export']"
+        >导出</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -100,15 +131,15 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="roleList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" max-height="640">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色编号" prop="roleId" width="120" sortable />
-      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" width="150" />
-      <el-table-column label="显示顺序" prop="roleSort" width="100" sortable />
-      <el-table-column label="状态" align="center" width="100">
+      <el-table-column label="角色编号" prop="roleId" sortable />
+      <el-table-column label="角色名称" prop="roleName" :show-overflow-tooltip="true" />
+      <el-table-column label="权限字符" prop="roleKey" :show-overflow-tooltip="true" />
+      <el-table-column label="显示顺序" prop="roleSort" sortable />
+      <el-table-column label="状态" align="center" >
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
@@ -118,7 +149,7 @@
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180" sortable>
+      <el-table-column label="创建时间" align="center" prop="createTime"  sortable>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
@@ -127,22 +158,25 @@
         <template slot-scope="scope" v-if="scope.row.roleId !== 1">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:role:edit']"
           >修改</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:role:remove']"
           >删除</el-button>
           <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:role:edit']">
-            <span class="el-dropdown-link">
+            <!-- <span class="el-dropdown-link">
               <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-            </span>
+            </span> -->
+            <el-button
+            size="mini"
+            style="margin-left:10px"
+            class="tableBlueButtton"
+          >更多</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"
                 v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>
@@ -621,7 +655,15 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    }
+    },
+    // 表格样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

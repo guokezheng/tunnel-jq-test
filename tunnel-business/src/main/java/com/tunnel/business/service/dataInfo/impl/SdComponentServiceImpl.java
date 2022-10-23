@@ -1,8 +1,8 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.oss.OssUtil;
 import com.tunnel.business.domain.dataInfo.SdComponent;
 import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
 import com.tunnel.business.mapper.dataInfo.SdComponentMapper;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +55,9 @@ public class SdComponentServiceImpl implements ISdComponentService {
     @Override
     public List<SdComponent> selectSdComponentList(SdComponent sdComponent) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdComponent.getParams().put("deptId", deptId);
         return sdComponentMapper.selectSdComponentList(sdComponent);
     }
@@ -77,29 +78,32 @@ public class SdComponentServiceImpl implements ISdComponentService {
             String guid = UUIDUtil.getRandom32BeginTimePK();//生成guid
             sdComponent.setFileId(guid);//文件关联ID
             for (int i = 0; i < file.length; i++) {
+                //参考原代码:图片是要保存至 upload 目录
+                String savePath = OssUtil.upload(file[i], "upload");
                 //从缓存中获取文件的存储路径
-                String fileServerPath = RuoYiConfig.getUploadPath();
+                //String fileServerPath = RuoYiConfig.getUploadPath();
                 //原文件名
                 String filename = file[i].getOriginalFilename();
                 //原文件扩展名
                 String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                 // 新的全名
                 String newFileName = extendName;
-                // 加路径全名
-                File dir = new File(fileServerPath + "/" + newFileName);
-                File filepath = new File(fileServerPath);
                 SdEquipmentFile sdEquipmentFile = new SdEquipmentFile();
                 sdEquipmentFile.setFileId(guid);
                 sdEquipmentFile.setFileName(newFileName);//文件名称
-                sdEquipmentFile.setUrl(fileServerPath + "/" + newFileName);//文件路径
+                //sdEquipmentFile.setUrl(fileServerPath + "/" + newFileName);//文件路径
+                sdEquipmentFile.setUrl(savePath);//文件路径
                 sdEquipmentFile.setCreateBy(SecurityUtils.getUsername());
                 sdEquipmentFile.setCreateTime(DateUtils.getNowDate());
                 list.add(sdEquipmentFile);
+                // 加路径全名
+               /* File dir = new File(fileServerPath + "/" + newFileName);
+                File filepath = new File(fileServerPath);
                 if (!filepath.exists()) {
                     filepath.mkdirs();
                 } else {
                 }
-                file[i].transferTo(dir);
+                file[i].transferTo(dir);*/
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,31 +134,36 @@ public class SdComponentServiceImpl implements ISdComponentService {
             sdComponent.setFileId(guid);//文件关联ID
             if (file != null && file.length > 0) {
                 for (int i = 0; i < file.length; i++) {
+                    //参考原代码:图片是要保存至 upload 目录
+                    String savePath = OssUtil.upload(file[i], "upload");
+
                     //从缓存中获取文件的存储路径
-                    String fileServerPath = RuoYiConfig.getUploadPath();//Global.getUploadPath()
+                    //String fileServerPath = RuoYiConfig.getUploadPath();//Global.getUploadPath()
                     //原文件名
                     String filename = file[i].getOriginalFilename();
                     //原文件扩展名
                     String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                     // 新的全名
                     String newFileName = extendName;
-                    // 加路径全名
-                    File dir = new File(fileServerPath + "/" + newFileName);
-                    File filepath = new File(fileServerPath);
+
                     SdEquipmentFile sdEquipmentFile = new SdEquipmentFile();
                     sdEquipmentFile.setFileId(guid);
                     sdEquipmentFile.setFileName(newFileName);//文件名称
-                    sdEquipmentFile.setUrl(fileServerPath + "/" + newFileName);//文件路径
+                    //sdEquipmentFile.setUrl(fileServerPath + "/" + newFileName);//文件路径
+                    sdEquipmentFile.setUrl(savePath);//文件路径
                     sdEquipmentFile.setFileName(newFileName);
                     sdEquipmentFile.setCreateBy(SecurityUtils.getUsername());
                     sdEquipmentFile.setCreateTime(DateUtils.getNowDate());
                     list.add(sdEquipmentFile);
 
+                    // 加路径全名
+                   /* File dir = new File(fileServerPath + "/" + newFileName);
+                    File filepath = new File(fileServerPath);
                     if (!filepath.exists()) {
                         filepath.mkdirs();
                     } else {
                     }
-                    file[i].transferTo(dir);
+                    file[i].transferTo(dir);*/
                 }
                 result = sdEquipmentFileMapper.brachInsertSdEquipmentFile(list);
             }
@@ -167,7 +176,7 @@ public class SdComponentServiceImpl implements ISdComponentService {
             if (result >= 0) {
                 result = sdComponentMapper.updateSdComponent(sdComponent);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }

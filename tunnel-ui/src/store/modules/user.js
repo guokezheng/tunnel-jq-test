@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/login'
+import { login, logout,callBack, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -50,6 +50,20 @@ const user = {
       })
     },
 
+    Login1({ commit }, login1) {
+
+      return new Promise((resolve, reject) => {
+        callBack().then(res => {
+          setToken(res.token)
+          //alert(res.token)
+          commit('SET_TOKEN', res.token)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
@@ -71,7 +85,7 @@ const user = {
         })
       })
     },
-    
+
     // 退出系统
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {

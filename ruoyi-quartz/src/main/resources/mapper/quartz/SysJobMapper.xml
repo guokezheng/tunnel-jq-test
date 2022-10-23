@@ -108,4 +108,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		)
 	</insert>
 
+	<insert id="batchScheduledJob" parameterType="List">
+		insert into sys_job(
+			job_id,
+			job_name,
+			invoke_target,
+			cron_expression,
+			misfire_policy,
+			concurrent,
+			status,
+			remark,
+			create_by,
+			create_time
+		)values
+		 <foreach collection="jobs" item="item" index="index" separator=",">
+			 (
+				#{item.jobId},
+				#{item.jobName},
+				#{item.invokeTarget},
+				#{item.cronExpression},
+				#{item.misfirePolicy},
+				#{item.concurrent},
+				#{item.status},
+				#{item.remark},
+				#{item.createBy},
+				sysdate()
+			)
+		</foreach>
+	</insert>
+
 </mapper> 

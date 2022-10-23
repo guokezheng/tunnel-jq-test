@@ -56,6 +56,12 @@ export default {
           eqType: "交通事故",
           state: "处置中",
         },
+        {
+          time: "14:17:00",
+          stakeNum: "K600+000",
+          eqType: "交通事故",
+          state: "处置中",
+        },
       ],
     };
   },
@@ -116,10 +122,14 @@ export default {
     tr{
       background-color: #010F23;
     }
+    // .el-table__header-wrapper .el-table__cell
     .el-table__header-wrapper {
-      line-height: 28px;
+      line-height: 20px;
       .cell {
         line-height: 14px;
+      }
+      .el-table__cell{
+        border: none !important;
       }
       th {
         background: rgba(1, 121, 255, 0.18) !important;
@@ -136,6 +146,10 @@ export default {
       .cell {
         line-height: 14px;
       }
+      .el-table__cell{
+        border: none !important;
+
+      }
     }
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #4395c1 !important;
@@ -146,7 +160,7 @@ export default {
     /*table滚动条背景色 */
     .el-table__body-wrapper::-webkit-scrollbar {
       background-color: #c4e8f6;
-      width: 10px;
+      width: 1px;
       height: 10px;
     }
   
@@ -156,6 +170,11 @@ export default {
     }
    
   }
+  .el-table{
+    border: none !important;
+    background: transparent !important;
+  }
+
   // ::v-deep .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
   //     border-bottom:none !important;
   //   }
@@ -165,6 +184,12 @@ export default {
     width: 100%;
     height: 0px;
   }
+  ::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
+    background: rgba(1, 121, 255, 0.18) !important;
+
+      color: white;
+      cursor: pointer;
+    }
 }
 </style>
   

@@ -17,3 +17,12 @@ export function video(query) {
     params: query
   })
 }
+
+// 三图一视点处理 让后台在处置流程中加上事件确认流程
+export function userConfirm(query) {
+  return request({
+    url: "/eventFlow/userConfirm/" + query,
+    method: 'get',
+    params: query
+  })
+}

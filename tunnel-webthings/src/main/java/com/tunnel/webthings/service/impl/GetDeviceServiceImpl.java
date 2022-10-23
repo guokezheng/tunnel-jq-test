@@ -4,7 +4,6 @@ import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.webthings.dao.TunnelIotDeviceMapper;
-import com.tunnel.webthings.domain.DataSystemUsers;
 import com.tunnel.webthings.domain.DeviceParameter;
 import com.tunnel.webthings.service.GetDeviceService;
 import com.tunnel.webthings.service.SendMsgService;
@@ -58,22 +57,22 @@ public class GetDeviceServiceImpl implements GetDeviceService {
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         String token = getDataToken();
-        requestHeaders.add("Authorization","Bearer "+token);
-        HashMap<String,Object> map=new HashMap<>();
-        map.put("devCategory",dev.getDevCategory());
-        map.put("devNo",dev.getDevNo());
-        map.put("devType",dev.getDevType());
-        map.put("opmaCliqueId",dev.getOpmaCliqueId());
-        map.put("opmaManagerCropId",dev.getOpmaManagerCropId());
-        map.put("opmaManagerId",dev.getOpmaManagerId());
-        map.put("roadId",dev.getRoadId());
-        map.put("stationId",dev.getStationId());
+        requestHeaders.add("Authorization", "Bearer " + token);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("devCategory", dev.getDevCategory());
+        map.put("devNo", dev.getDevNo());
+        map.put("devType", dev.getDevType());
+        map.put("opmaCliqueId", dev.getOpmaCliqueId());
+        map.put("opmaManagerCropId", dev.getOpmaManagerCropId());
+        map.put("opmaManagerId", dev.getOpmaManagerId());
+        map.put("roadId", dev.getRoadId());
+        map.put("stationId", dev.getStationId());
         //请求体
-        HttpEntity<Map<String,Object>> requestEntity = new HttpEntity<>(map, requestHeaders);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(map, requestHeaders);
         //发送请求
-        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(host+deviceList, requestEntity, Map.class);
-        HashMap<String,Object> hashMap = (HashMap<String, Object>) responseEntity.getBody();
-        log.info("返回值-->{}",hashMap);
+        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(host + deviceList, requestEntity, Map.class);
+        HashMap<String, Object> hashMap = (HashMap<String, Object>) responseEntity.getBody();
+        log.info("返回值-->{}", hashMap);
         JSON parse = JSONUtil.parse(hashMap.get("data"));
         List<ResponseVO> list = JSONUtil.toList(parse.toString(), ResponseVO.class);
         return list;
@@ -85,98 +84,94 @@ public class GetDeviceServiceImpl implements GetDeviceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void copyData(){
-       int number = deviceMapper.selectCount();
-       SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-       if (number>0){
+    public void copyData() {
+        int number = deviceMapper.selectCount();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (number > 0) {
             deviceMapper.deleteDevice();
-           //查询数据(参数非必填)
-           //插入数据库
-           DeviceParameter deviceParameter=new DeviceParameter();
-           deviceParameter.setDevType("001");
-           List<ResponseVO> devList = getDevList(deviceParameter);
-           devList.forEach(
-                   f->{
-                       if (StringUtils.isNotEmpty(f.getDevType())){
-                           f.setDType(Integer.parseInt(f.getDevType()));
-                       }
-                       f.setRDirection(f.getRoadDirection()+"");
-                       f.setULife(f.getUseLife()+"");
-                       f.setUStatus(f.getUseStatus()+"");
-                       try {
-                           if (StringUtils.isNotEmpty(f.getDeliveryTime())){
-                               f.setDyTime(sdf.parse(f.getDeliveryTime()));
-                           }
-                           if (StringUtils.isNotEmpty(f.getWarrantyEndTime())){
-                               f.setWEndTime(sdf.parse(f.getWarrantyEndTime()));
-                           }
-                           if (StringUtils.isNotEmpty(f.getInstallTime())){
-                               f.setInTime(sdf.parse(f.getInstallTime()));
-                           }
-                           if (StringUtils.isNotEmpty(f.getPortStatusTime())){
-                               f.setPStatusTime(sdf.parse(f.getPortStatusTime()));
-                           }
-                           if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())){
-                               f.setGNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
-                           }
-                           if (StringUtils.isNotEmpty(f.getDevStatusTime())){
-                               f.setDStatusTime(sdf.parse(f.getDevStatusTime()));
-                           }
-                       } catch (ParseException e) {
-                           e.printStackTrace();
-                       }
-                   }
-           );
-           deviceMapper.insertDevice(devList);
-       }else {
-           //查询数据(参数非必填)
-           //插入数据库
-           DeviceParameter deviceParameter=new DeviceParameter();
-           deviceParameter.setDevType("001");
-           List<ResponseVO> devList = getDevList(deviceParameter);
-           devList.forEach(
-               f->{
-                   if (StringUtils.isNotEmpty(f.getDevType())){
-                       f.setDType(Integer.parseInt(f.getDevType()));
-                   }
-                   f.setRDirection(f.getRoadDirection()+"");
-                   f.setULife(f.getUseLife()+"");
-                   f.setUStatus(f.getUseStatus()+"");
-                   try {
-                       if (StringUtils.isNotEmpty(f.getDeliveryTime())){
+            //查询数据(参数非必填)
+            //插入数据库
+            DeviceParameter deviceParameter = new DeviceParameter();
+            deviceParameter.setDevType("001");
+            List<ResponseVO> devList = getDevList(deviceParameter);
+            devList.forEach(f -> {
+                if (StringUtils.isNotEmpty(f.getDevType())) {
+                    f.setdType(Integer.parseInt(f.getDevType()));
+                }
+                f.setrDirection(f.getRoadDirection() + "");
+                f.setuLife(f.getUseLife() + "");
+                f.setuStatus(f.getUseStatus() + "");
+                try {
+                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
                         f.setDyTime(sdf.parse(f.getDeliveryTime()));
-                       }
-                       if (StringUtils.isNotEmpty(f.getWarrantyEndTime())){
-                        f.setWEndTime(sdf.parse(f.getWarrantyEndTime()));
-                       }
-                       if (StringUtils.isNotEmpty(f.getInstallTime())){
+                    }
+                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
+                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
                         f.setInTime(sdf.parse(f.getInstallTime()));
-                       }
-                       if (StringUtils.isNotEmpty(f.getPortStatusTime())){
-                        f.setPStatusTime(sdf.parse(f.getPortStatusTime()));
-                       }
-                       if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())){
-                        f.setGNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
-                       }
-                       if (StringUtils.isNotEmpty(f.getDevStatusTime())){
-                        f.setDStatusTime(sdf.parse(f.getDevStatusTime()));
-                       }
-                   } catch (ParseException e) {
-                       e.printStackTrace();
-                   }
-               }
-           );
-           deviceMapper.insertDevice(devList);
-       }
+                    }
+                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
+                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
+                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
+                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            });
+            deviceMapper.insertDevice(devList);
+        } else {
+            //查询数据(参数非必填)
+            //插入数据库
+            DeviceParameter deviceParameter = new DeviceParameter();
+            deviceParameter.setDevType("001");
+            List<ResponseVO> devList = getDevList(deviceParameter);
+            devList.forEach(f -> {
+                if (StringUtils.isNotEmpty(f.getDevType())) {
+                    f.setdType(Integer.parseInt(f.getDevType()));
+                }
+                f.setrDirection(f.getRoadDirection() + "");
+                f.setuLife(f.getUseLife() + "");
+                f.setuStatus(f.getUseStatus() + "");
+                try {
+                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
+                        f.setDyTime(sdf.parse(f.getDeliveryTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
+                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
+                        f.setInTime(sdf.parse(f.getInstallTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
+                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
+                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
+                    }
+                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
+                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            });
+            deviceMapper.insertDevice(devList);
+        }
     }
 
     /**
-     *获取token
+     * 获取token
      */
     private String getDataToken() {
         RestTemplate restTemplate = new RestTemplate();
-        Map map = restTemplate.postForObject(token, null,Map.class);
+        Map map = restTemplate.postForObject(token, null, Map.class);
         String accessToken = map.get("access_token").toString();
-        return  accessToken;
+        return accessToken;
     }
 }

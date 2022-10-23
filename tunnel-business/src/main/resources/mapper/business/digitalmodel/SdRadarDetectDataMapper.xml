@@ -21,9 +21,10 @@
         <result property="detectTime" column="detect_time"/>
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
+        <result property="deptId" column="dept_id" />
     </resultMap>
 
-    <sql id="selectSdRadarDetectDataVo">
+    <sql id="selectSdRadarDetectDataVo" >
         select id,
                vehicle_id,
                tunnel_id,
@@ -41,32 +42,54 @@
         from sd_radar_detect_data
     </sql>
 
-    <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultMap="SdRadarDetectDataResult">
-        <include refid="selectSdRadarDetectDataVo"/>
+    <select id="selectSdRadarDetectDataList" parameterType="SdRadarDetectData" resultType="java.util.Map">
+        select detect.id,
+        detect.vehicle_id as vehicleId,
+        detect.tunnel_id as tunnelId,
+        detect.vehicle_type as vehicleType,
+        detect.vehicle_color as vehicleColor,
+        detect.longitude,
+        detect.latitude,
+        detect.speed,
+        detect.lane_num as laneNum,
+        detect.course_angle as courseAngle,
+        detect.vehicle_license as vehicleLicense,
+        detect.license_color as licenseColor,
+        detect.stake_num as stakeNum,
+        detect.detect_time as detectTime,
+        tunnul.tunnel_name as tunnulName
+        from sd_radar_detect_data detect
+        left join sd_tunnels tunnul on detect.tunnel_id = tunnul.tunnel_id
         <where>
             1=1
-            <if test="vehicleId != null  and vehicleId != ''">and vehicle_id = #{vehicleId}</if>
-            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
-            <if test="vehicleType != null  and vehicleType != ''">and vehicle_type = #{vehicleType}</if>
-            <if test="vehicleColor != null  and vehicleColor != ''">and vehicle_color = #{vehicleColor}</if>
-            <if test="longitude != null  and longitude != ''">and longitude = #{longitude}</if>
-            <if test="latitude != null  and latitude != ''">and latitude = #{latitude}</if>
-            <if test="speed != null  and speed != ''">and speed = #{speed}</if>
-            <if test="laneNum != null  and laneNum != ''">and lane_num = #{laneNum}</if>
-            <if test="courseAngle != null  and courseAngle != ''">and course_angle = #{courseAngle}</if>
-            <if test="vehicleLicense != null  and vehicleLicense != ''">and vehicle_license = #{vehicleLicense}</if>
-            <if test="licenseColor != null  and licenseColor != ''">and license_color = #{licenseColor}</if>
-            <if test="stakeNum != null  and stakeNum != ''">and stake_num = #{stakeNum}</if>
-            <if test="detectTime != null ">and detect_time = #{detectTime}</if>
-
+            <if test="vehicleId != null  and vehicleId != ''">and detect.vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''">and detect.tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''">and detect.vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''">and detect.vehicle_color = #{vehicleColor}</if>
+            <if test="longitude != null  and longitude != ''">and detect.longitude = #{longitude}</if>
+            <if test="latitude != null  and latitude != ''">and detect.latitude = #{latitude}</if>
+            <if test="speed != null  and speed != ''">and detect.speed = #{speed}</if>
+            <if test="laneNum != null  and laneNum != ''">and detect.lane_num = #{laneNum}</if>
+            <if test="courseAngle != null  and courseAngle != ''">and detect.course_angle = #{courseAngle}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''">and detect.vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''">and detect.license_color = #{licenseColor}</if>
+            <if test="stakeNum != null  and stakeNum != ''">and detect.stake_num = #{stakeNum}</if>
+            <if test="detectTime != null ">and detect.detect_time = #{detectTime}</if>
 
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(detect.detect_time) = curdate()
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (tunnul.dept_id = #{deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
         </where>
+        order by detect.detect_time desc
     </select>
 
     <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">
@@ -150,5 +173,23 @@
           and detect_time &lt;= NOW()
           and tunnel_id = #{tunnelId}
         GROUP BY time
+    </select>
+
+    <select id="vehicleMonitoringInRecent24Hours" parameterType="String" resultType="hashmap">
+        SELECT HOUR(t.time) hour, ifnull(sa.num,0) AS count FROM
+            (SELECT   DATE_FORMAT( DATE_SUB( NOW(),INTERVAL ( -(@i:=@i-1) ) HOUR ) ,'%Y-%m-%d %H') AS 'time'
+            FROM (
+            SELECT a  FROM
+            (SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4'   ) AS a
+            JOIN ( SELECT  '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b
+            ON 1
+            ) AS b  ,(SELECT @i:=+1)  AS i) AS t
+            LEFT JOIN
+            (SELECT DATE_FORMAT(DATE_SUB( b.detect_time,INTERVAL MINUTE(NOW())-60 MINUTE ) ,'%Y-%m-%d %H') AS date, count(b.vehicle_id) AS num
+            FROM (SELECT a.vehicle_id,a.detect_time	from sd_radar_detect_data a WHERE a.detect_time &gt;= (NOW() - interval 25 hour)
+            and tunnel_id = #{tunnelId}
+            GROUP BY a.vehicle_id) b GROUP BY date )
+            AS sa
+        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H')  GROUP BY t.time
     </select>
 </mapper>

@@ -4,6 +4,7 @@ package com.tunnel.business.service.event;
 import com.tunnel.business.domain.event.SdEvent;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件管理Service接口
@@ -74,7 +75,13 @@ public interface ISdEventService {
      *
      * @return
      */
-    List<SdEvent> getEvent();
+    List<SdEvent> getEvent(SdEvent sdEvent);
+
+    /**
+     * 统计今日事件
+     * @return
+     */
+    Map getTodayEventCount();
 
 
     /**
@@ -84,4 +91,20 @@ public interface ISdEventService {
      * @return
      */
     List<SdEvent> getEventList(List<Long> eventIdList);
+
+    /**
+     * 拼接得到默认的事件标题
+     * @param sdEvent 事件信息
+     * @param tunnelMap 隧道名称Map
+     * @param eventTypeMap 事件类型Map
+     * @return
+     */
+    String getDefaultEventTitle(SdEvent sdEvent,Map<String,String> tunnelMap,Map<Long,String> eventTypeMap);
+
+    /**
+     * 根据事件桩号 获取分区Id
+     * @param stakeNum
+     * @return
+     */
+    Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction);
 }

@@ -1,13 +1,11 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+
+import jdk.nashorn.internal.objects.annotations.Getter;
 
 /**
  * 设备类型数据项表
  */
-@Getter
-@AllArgsConstructor
 public enum DevicesTypeItemEnum {
 
     CO(1, "CO"),
@@ -26,11 +24,31 @@ public enum DevicesTypeItemEnum {
     EVACUATION_SIGN_FREQUENCY(21, "疏散标志频率"),
     EVACUATION_SIGN_FIREMARK(22, "疏散标志事件标号"),
     GUIDANCE_LAMP_IS_OPEN(23, "诱导灯是否开灯"),
-    EVACUATION_SIGN_IS_OPEN(24, "疏散标志是否开灯");
+    EVACUATION_SIGN_IS_OPEN(24, "疏散标志是否开灯"),
+    FLAME_DETECTOR_ALARM(25, "火焰探测器报警"),
+    SHOU_BAO_ALARM(26, "手报报警"),
+    FENG_JI_STATUS(27, "风机状态"),
+    JIA_QIANG_ZHAO_MING_OPEN_STATUS(28, "加强照明开关状态"),
+    INFORMATION_BOARD_CONTENT(29, "情报板显示内容"),
+    CAMERA_ERROR_CONTETN(30, "相机异常事件描述"),
+    RADAR_ERROR_CONTETN(31, "雷达异常事件描述");
 
 
     private int code;
     private String name;
+
+    DevicesTypeItemEnum(int code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * 判断是否包含

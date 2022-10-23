@@ -4,6 +4,7 @@ package com.tunnel.business.service.event;
 import com.tunnel.business.domain.event.SdTrigger;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 触发器Service接口
@@ -27,6 +28,7 @@ public interface ISdTriggerService {
      * @return
      */
     SdTrigger selectSdTriggerByRelateId(Long relateId);
+
 
     /**
      * 查询触发器列表

@@ -17,7 +17,7 @@
             />
           </el-select>
           </el-form-item>
-    
+
         <el-form-item label="车型" prop="tunnelId">
           <el-select
             v-model="queryParams.vType"
@@ -26,10 +26,10 @@
             style="width: 100%"
           >
             <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+              v-for="dict in dict.type.sd_wj_vehicle_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
             />
           </el-select>
         </el-form-item>
@@ -44,35 +44,77 @@
             style="width: 100%"
           >
             <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+              v-for="dict in dict.type.sd_use_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
             />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-          <!-- <el-col :span="1.5"> -->
+          <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+          <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+          <el-button type="primary" plain size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
+          <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleUpdateMaterial"
+          v-hasPermi="['system:vehicle:edit']"
+          >修改</el-button
+        >
+          <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
         <el-button
-          type="warning"
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:vehicle:export']"
+        >导出</el-button>
+          <!-- <el-col :span="1.5"> -->
+
+      <!-- </el-col> -->
+        </el-form-item>
+
+      </el-form>
+
+      <!-- <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
+        </el-col>
+        <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['business:SdEmergencyPer:remove']"
+          >删除</el-button
+        >
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['monitor:logininfor:export']"
+          v-hasPermi="['system:vehicle:export']"
         >导出</el-button>
-      <!-- </el-col> -->
-        </el-form-item>
-        
-      </el-form>
-
-      <el-row :gutter="10" class="mb8">
-        <el-col :span="1.5">
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增</el-button>
-        </el-col>
+      </el-col>
         <div class="top-right-btn">
           <el-tooltip class="item" effect="dark" content="刷新" placement="top">
             <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -81,25 +123,36 @@
             <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
           </el-tooltip>
         </div>
-      </el-row>
+      </el-row> -->
 
-      <el-table v-loading="loading" :data="mechanismList" @selection-change="handleSelectionChange">
+      <el-table v-loading="loading" :data="mechanismList" @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName" max-height="640"
+      >
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="机构" align="center" prop="orgName" />
         <el-table-column label="车牌" align="center" prop="plateNumber" />
-        <el-table-column label="车型" align="center" prop="vType" />
+        <el-table-column label="车型" align="center" prop="vType">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.sd_wj_vehicle_type" :value="scope.row.vType"/>
+          </template>
+        </el-table-column>
         <el-table-column label="存放地点" align="center" prop="vPlace" />
-        <el-table-column label="使用状态" align="center" prop="useStatus"  />
+        <el-table-column label="使用状态" align="center" prop="useStatus">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.sd_use_status" :value="scope.row.useStatus"/>
+          </template>
+        </el-table-column>
         <el-table-column label="车载终端安装" align="center" prop="terminalInstall" />
         <el-table-column label="技术状态描述" align="center" prop="statusDesc" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:material:edit']">修改</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:material:remove']">删除</el-button>
+            <el-button size="mini" class="tableBlueButtton" @click="handleUpdateMaterial(scope.row)" v-hasPermi="['system:vehicle:edit']">修改</el-button>
+            <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:vehicle:remove']">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-
+      <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
       <!-- 添加/修改应急资源对话框 -->
       <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :before-close="cancel">
         <el-form ref="form" :model="form" :rules="rules" label-width="106px">
@@ -130,10 +183,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
+                v-for="dict in dict.type.sd_wj_vehicle_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
               />
             </el-select>
           </el-form-item>
@@ -149,10 +202,10 @@
               style="width: 100%"
             >
               <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
+                v-for="dict in dict.type.sd_use_status"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
               />
             </el-select>
           </el-form-item>
@@ -181,14 +234,21 @@ deleteForm,
 exportData,
 veicleOrgId
 } from "@/api/equipment/yingJiGou/emergencyVehicles";
+import {
+  batchDelete,
+} from "@/api/surveyVehicle/api.js";
+
   export default{
+    dicts: ["sd_use_status","sd_wj_vehicle_type"],
     data(){
       return{
         tunnelData:[{tunnelName:1,tunnelId:2}],
+        exportLoading:false,
         // 遮罩层
         loading: false,
         // 选中数组
         ids: [],
+        total:0,
         // 非单个禁用
         single: true,
         // 非多个禁用
@@ -196,6 +256,8 @@ veicleOrgId
         // 弹出层标题
         title: "",
         queryParams:{
+          pageNum: 1,
+          pageSize: 10,
         },
         form:{},
         mechanismList:[],
@@ -222,7 +284,7 @@ veicleOrgId
           statusDesc: [
             { required: true, message: '请输入技术状态描述', trigger: 'statusDesc' }
           ]
-          
+
         },
         open:false,
         orgData:'',
@@ -232,8 +294,13 @@ veicleOrgId
     created(){
       this.getList();
       veicleOrgId().then(res=>{
+        console.log(res.data,"机构名称")
         this.orgData=res.data
       })
+      this.getDicts("sd_wj_vehicle_type").then((data) => {
+      console.log(data, "车型");
+      this.vehicleTypeList = data.data;
+    });
     },
     methods:{
        /** 导出按钮操作 */
@@ -247,15 +314,17 @@ veicleOrgId
         this.exportLoading = false;
       }).catch(() => {});
     },
-      /** 查询应急机构列表 */     
+      /** 查询应急机构列表 */
      getList(queryParams={}) {
       handleQueryList(queryParams).then(res=>{
        if(res.code==200){
         this.mechanismList=res.rows
+        this.total = res.total;
+
        }
-       
+
       })
-     this.loading = false;      
+     this.loading = false;
       },
       /** 搜索按钮操作 */
       handleQuery() {
@@ -267,7 +336,7 @@ veicleOrgId
       resetQuery() {
         this.resetForm("queryForm");
         this.$refs.queryForm.resetFields()
-        this.queryForm = {
+        this.queryParams = {
           pageNum: 1,
           pageSize: 10,
          orgName:null,
@@ -285,7 +354,7 @@ veicleOrgId
       handleAdd() {
         this.reset();
         this.open = true;
-        this.title = "添加应急资源";
+        this.title = "添加应急车辆";
       },
       // 表单重置
       reset() {
@@ -311,7 +380,7 @@ veicleOrgId
       submitForm() {
       this.$refs["form"].validate(async valid => {
           if (valid) {
-            if ( this.title == '修改应急资源') {
+            if ( this.title == '修改应急车辆') {
               console.log(this.form,'formfffffff');
               await updateForm(this.form).then(response => {
                 if (response.code === 200) {
@@ -340,20 +409,18 @@ veicleOrgId
         this.open = false;
         this.reset();
       },
-   
+
       /** 修改按钮操作 */
-      handleUpdateMaterial(scope) {
+      handleUpdateMaterial(row) {
         // this.reset();
-        // const id = row.id || this.ids
-        console.log(scope,'scope');
+        const id = row.orgId?[row.orgId]:this.ids;
         this.open=true
-        this.title='修改应急资源'
+        this.title='修改应急车辆'
         // console.log(scope,'row.idrow.id');
-        editForm(scope.id).then(res => {
+        editForm(id).then(res => {
            if(res.code==200) {
-            this.form=res.data           
+            this.form=res.data
            }
-          console.log(res,'sssssssssssssss');
           // this.form = response.data;
           // this.open = true;
           // this.title = "修改应急资源";
@@ -361,26 +428,30 @@ veicleOrgId
       },
      /** 删除按钮操作 */
       handleDelete(row) {
-        // const ids = row.id || this.ids;
-        // console.log(row,'rowrorrrrr');
+        const ids = row.orgId?[row.orgId]:this.ids;
+        var that = this
         this.$confirm('是否确认删除?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          // return delMaterial(ids);
-        }).then(() => {
-         
-          deleteForm(row.id).then(res=>{
-              conosole.log(res,'res')
-              if(res.code==200){
-                this.getList()
-              }
-          })         
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        }).catch(function() {});
+          batchDelete(ids).then((res) =>{
+            if(res.code == 200){
+              that.$modal.msgSuccess("删除成功");
+              that.getList();
+              that.$forceUpdate()
+            }
+          })
+        })
       },
+      // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
     }
   }
 </script>

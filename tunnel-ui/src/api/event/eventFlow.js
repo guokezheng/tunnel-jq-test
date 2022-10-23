@@ -1,6 +1,14 @@
+/*
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-09-05 09:35:35
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-09-25 16:08:16
+ * @FilePath: \tunnel-ui\src\api\event\eventFlow.js
+ * @Description: è¿™æ˜¯é»˜è®¤è®¾ç½®,è¯·è®¾ç½®`customMade`, æ‰“å¼€koroFileHeaderæŸ¥çœ‹é…ç½® è¿›è¡Œè®¾ç½®: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import request from '@/utils/request'
 
-// ²éÑ¯ÊÂ¼ş´¦ÀíÁ÷³ÌÁĞ±í
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½
 export function listEventFlow(query) {
   return request({
     url: '/eventFlow/list',
@@ -9,7 +17,7 @@ export function listEventFlow(query) {
   })
 }
 
-// ²éÑ¯ÊÂ¼ş´¦ÀíÁ÷³ÌÏêÏ¸
+// ï¿½ï¿½Ñ¯ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸
 export function getEventFlow(id) {
   return request({
     url: '/eventFlow/' + id,
@@ -17,7 +25,7 @@ export function getEventFlow(id) {
   })
 }
 
-// ĞÂÔöÊÂ¼ş´¦ÀíÁ÷³Ì
+// ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 export function addEventFlow(data) {
   return request({
     url: '/eventFlow',
@@ -26,7 +34,7 @@ export function addEventFlow(data) {
   })
 }
 
-// ĞŞ¸ÄÊÂ¼ş´¦ÀíÁ÷³Ì
+// ï¿½Ş¸ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 export function updateEventFlow(data) {
   return request({
     url: '/eventFlow',
@@ -35,10 +43,18 @@ export function updateEventFlow(data) {
   })
 }
 
-// É¾³ıÊÂ¼ş´¦ÀíÁ÷³Ì
+// É¾ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 export function delEventFlow(id) {
   return request({
     url: '/eventFlow/' + id,
-    method: 'delete'
+    method: 'delete',
+  })
+}
+// åº”æ€¥è°ƒåº¦æ¢å¤é¢„æ¡ˆæ¥å£
+export function getListBySId(query) {
+  return request({
+    url: '/plan/getListBySId',
+    method: 'get',
+    params: query
   })
 }

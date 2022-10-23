@@ -4,6 +4,7 @@ package com.tunnel.business.service.event;
 import com.tunnel.business.domain.event.SdEventType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 事件类型Service接口
@@ -59,4 +60,12 @@ public interface ISdEventTypeService {
      * @return 结果
      */
     int deleteSdEventTypeById(Long id);
+
+
+    /**
+     * 获取所有事件类型Map格式
+     * key: id,value: 事件类型名称
+     * @return
+     */
+    Map<Long,String> getEventTypeMap();
 }

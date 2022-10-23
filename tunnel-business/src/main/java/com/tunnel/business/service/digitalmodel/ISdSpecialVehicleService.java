@@ -4,6 +4,7 @@ package com.tunnel.business.service.digitalmodel;
 import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,7 +28,7 @@ public interface ISdSpecialVehicleService {
      * @param sdSpecialVehicle 重点车辆
      * @return 重点车辆集合
      */
-    List<SdSpecialVehicles> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle);
+    List<Map<String,String>> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle);
 
     /**
      * 新增重点车辆

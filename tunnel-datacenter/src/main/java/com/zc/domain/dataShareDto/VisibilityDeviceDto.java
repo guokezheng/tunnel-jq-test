@@ -1,12 +1,11 @@
 package com.zc.domain.dataShareDto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+
 
 /**
  * 能见度设备数据查询
  */
-@Data
 public class VisibilityDeviceDto {
 
     //系统id
@@ -28,4 +27,55 @@ public class VisibilityDeviceDto {
     //结束时间
     @JsonProperty(value = "end_time")
     private String endTime;
+
+    public String getSysId() {
+        return sysId;
+    }
+
+    public void setSysId(String sysId) {
+        this.sysId = sysId;
+    }
+
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
+    public String getDevNo() {
+        return devNo;
+    }
+
+    public void setDevNo(String devNo) {
+        this.devNo = devNo;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public String toString() {
+        return "VisibilityDeviceDto{" +
+                "sysId='" + sysId + '\'' +
+                ", serviceCode='" + serviceCode + '\'' +
+                ", devNo='" + devNo + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                '}';
+    }
 }

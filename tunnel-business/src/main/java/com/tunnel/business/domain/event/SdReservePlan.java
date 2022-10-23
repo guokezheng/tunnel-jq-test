@@ -6,9 +6,6 @@ import com.ruoyi.common.core.domain.BaseEntity;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
@@ -19,7 +16,6 @@ import java.util.List;
  * @date 2020-09-10
  */
 @ApiModel("预案信息实体")
-@Data
 public class SdReservePlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -91,6 +87,7 @@ public class SdReservePlan extends BaseEntity
 
     @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
+
 
     public String getTunnelId() {
         return tunnelId;
@@ -234,23 +231,24 @@ public class SdReservePlan extends BaseEntity
 		this.strategyNames = strategyNames;
 	}
 
-	@Override
+    @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("planTypeId", getPlanTypeId())
-            .append("planDescription", getPlanDescription())
-            .append("planName", getPlanName())
-            .append("planFileId", getPlanFileId())
-            .append("strategyId", getStrategyId())
-            .append("strategyNames", getStrategyNames())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("eventType", getEventType())
-            .append("strategy", getStrategy())
-            .append("pFileList", getpFileList())
-            .toString();
+        return "SdReservePlan{" +
+                "id=" + id +
+                ", tunnelId='" + tunnelId + '\'' +
+                ", subareaId=" + subareaId +
+                ", planTypeId=" + planTypeId +
+                ", category='" + category + '\'' +
+                ", eventType=" + eventType +
+                ", pFileList=" + pFileList +
+                ", strategy=" + strategy +
+                ", planDescription='" + planDescription + '\'' +
+                ", planName='" + planName + '\'' +
+                ", planFileId='" + planFileId + '\'' +
+                ", strategyId='" + strategyId + '\'' +
+                ", strategyNames=" + strategyNames +
+                ", sdTunnelSubarea=" + sdTunnelSubarea +
+                ", sdTunnels=" + sdTunnels +
+                '}';
     }
 }

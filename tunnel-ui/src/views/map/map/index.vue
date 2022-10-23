@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-08 23:06:27
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-09-19 09:41:17
+ * @LastEditTime: 2022-09-25 08:41:00
  * @FilePath: \tunnel-ui\src\views\workbench\config\gisMap.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -17,7 +17,7 @@
       :treetBoxTop="treetBoxTop"
       :treetBoxRight="treetBoxRight"
   ></gisMap> -->
-  <div class="mapBox" style="height: calc(100% + 60px)">
+  <div class="mapBox" style="height: 100%">
     <gisMap :tunnelInfo="tunnelInfo" style="height: 100% !important"></gisMap>
     <div class="leftCharts">
       <leftChart1 />
@@ -86,20 +86,23 @@ export default {
 }
 .leftCharts {
   width: 20%;
-  height: calc(100% + 60px);
+  height: 100%;
   position: absolute;
   top: 0;
   left: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
   box-shadow: 20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  padding-top: 4px;
 }
 .rightCharts {
   width: 20%;
-  height: calc(100% + 60px);
+  height: 100%;
   position: absolute;
   top: 0;
   right: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
   box-shadow: -20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  padding-top: 4px;
+
 }
 </style>

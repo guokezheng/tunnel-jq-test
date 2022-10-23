@@ -1,9 +1,10 @@
-package com.tunnel.business.service.event;
+package com.tunnel.platform.service.event;
 
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 控制策略Service接口
@@ -20,6 +21,27 @@ public interface ISdStrategyService {
      */
     SdStrategy selectSdStrategyById(Long id);
 
+    /**
+     * 工作台分时控制抽屉
+     * @return
+     */
+    List<Map> getTimeSharingInfo(String tunnelId);
+
+    /**
+     * 工作台分时控制抽屉修改控制时间
+     * @param strategyId
+     * @param controlTime
+     * @return
+     */
+    int updateControlTime(Long strategyId,String controlTime);
+
+    /**
+     * 控制策略状态开关
+     * @param strategyId
+     * @param change
+     * @return
+     */
+    int strategySwitch(Long strategyId,String change);
 
     /**
      * 查询控制策略

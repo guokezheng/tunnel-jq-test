@@ -155,7 +155,8 @@ public class SdDevicesController extends BaseController
     @PostMapping("/export")
     public AjaxResult export(SdDevices sdDevices)
     {
-        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
+        //List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         return util.exportExcel( list, "设备详情");
     }

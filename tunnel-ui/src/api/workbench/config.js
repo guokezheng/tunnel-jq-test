@@ -24,11 +24,11 @@ export function proportionOfEquipment(query) {
   })
 }
 // 车辆监测数据
-export function vehicleMonitoring(query) {
+export function vehicleMonitoringInRecent24Hours(data) {
   return request({
-    url: '/radar/data/byId',
-    method: 'get',
-    params: query
+    url: '/workspace/vehicleMonitoringInRecent24Hours',
+    method: 'post',
+    data: data
   })
 }
 // 重点车辆监测数据
@@ -120,11 +120,53 @@ export function getDeviceData(query) {
   })
 }
 
-// 诱导灯弹窗数据
+// 车指弹窗数据
 export function controlDevice(data) {
   return request({
     url: '/workspace/controlDevice',
     method: 'post',
     data: data
+  })
+}
+
+// 诱导灯弹窗数据
+export function controlGuidanceLampDevice(data) {
+  return request({
+    url: '/workspace/controlGuidanceLampDevice',
+    method: 'post',
+    data: data
+  })
+}
+
+// 车指批量控制抽屉
+export function batchControlCarFinger(data) {
+  return request({
+    url: '/workspace/batchControlCarFinger',
+    method: 'post',
+    data: data
+  })
+}
+
+// 定时控制抽屉 获取数据
+export function timeSharing(tunnelId) {
+  return request({
+    url: '/strategy/timeSharing/' + tunnelId,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 修改控制状态
+export function updateControlTime(strategyId,controlTime) {
+  return request({
+    url: '/strategy/timeSharing/updateControlTime?strategyId=' + strategyId + '&controlTime=' + controlTime,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 控制开关
+export function timeStrategySwitch(strategyId,change) {
+  return request({
+    url: '/strategy/switch?strategyId='+strategyId + '&change=' + change,
+    method: 'get',
   })
 }

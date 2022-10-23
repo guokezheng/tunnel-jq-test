@@ -6,8 +6,10 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -38,16 +43,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     private ISdFixedCodeService sdFixedCodeService;
     @Autowired
     private ISdTunnelsService sdTunnelsService;
-
     @Autowired
     private ISdEquipmentTypeService equipmentTypeService;
-
     @Autowired
     private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
     @Autowired
     private IInductionlampControlStatusParamService iInductionlampControlStatusParamService;
     @Autowired
     private InductionlampControlStatusParamMapper inductionlampControlStatusParamMapper;
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
 
 
     /**
@@ -69,7 +74,53 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
-        return sdDevicesMapper.queryDeviceById(eqId);
+        Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
+        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("") || devices.get("eqStatus").equals("0")) {
+            devices.put("eqStatus","2");
+        }
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(eqId);
+        List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (!deviceDataList.isEmpty()) {
+            for (int i = 0;i < deviceDataList.size();i++) {
+                SdDeviceData data = deviceDataList.get(i);
+                //诱导灯
+                if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
+                        devices.put("frequency", data.getData());
+                    }
+                //疏散标志
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
+                        devices.put("frequency", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
+                        devices.put("fireMark", data.getData());
+                    }
+                //车指
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
+                        devices.put("state", data.getData());
+                    }
+                //声光报警器
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
+                    if (data != null && (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
+                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode()))) {
+                        if (devices.get("eqState") != null && devices.get("eqState").equals("1")) {
+                            devices.put("state", data.getData());
+                        }
+                    }
+                }
+            }
+        }
+        return devices;
     }
 
     /**
@@ -81,6 +132,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<SdDevices> selectSdDevicesList(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
+        return devicesList;
+    }
+
+    /**
+     * 查询设备列表-导出
+     *
+     * @param sdDevices 设备
+     * @return 设备
+     */
+    @Override
+    public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
         return devicesList;
     }
 
@@ -731,12 +794,32 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sb.toString();
     }
 
+    /**
+     * 一键车道控制
+     *
+     * @param map
+     * @return
+     */
     @Override
-    public List<SdDevices> updateCarFingerById(List<SdDevices> sdDevices) {
+    public List<SdDevices> batchControlCarFinger(Map<String, Object> map) {
         List<SdDevices> sdDevicesList = new ArrayList<>();
-        for (SdDevices devices : sdDevices) {
-            List<SdDevices> sdDevicesLists = sdDevicesMapper.selectCarFingerById(devices);
-            sdDevicesLists.forEach(x -> sdDevicesList.add(x));
+        String tunnelName = (String) map.get("tunnelId");
+        String direction = map.get("direction").toString();
+        List<Object> list = (List<Object>) map.get("lane");
+        if (map.get("lane") == null || list.size() == 0) {
+            throw new RuntimeException("车指批量控制隧道车道信息为空");
+        }
+        for (Object lane : list) {
+            if (lane == null || lane.toString().equals("")) {
+                throw new RuntimeException("车指批量控制隧道车道信息为空");
+            }
+            SdDevices devices = new SdDevices();
+            devices.setEqTunnelId(tunnelName);
+            devices.setEqType(1L);
+            devices.setEqDirection(direction);
+            devices.setLane(lane.toString());
+            List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);
+            sdDevicesList.addAll(sdDevicesLists);
         }
         return sdDevicesList;
     }
@@ -765,4 +848,42 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return sdDevicesMapper.updateSdDevicesByFEqId(sdDevices);
     }
 
+    @Override
+    public List<Map<String, Object>> getDeviceAndState(String tunnelId) {
+        List<Map<String, Object>> deviceData = sdDevicesMapper.selectDeviceDataAndState(tunnelId);
+        if(deviceData.size()<1){
+            return null;
+        }
+        int laneSize = sdDevicesMapper.selectLaneSize();
+        // 根据方向进行分组
+        Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {
+            @Override
+            public String apply(Map<String, Object> t) {
+                Object object = t.get("direction");
+                String string = object.toString();
+                return string;
+            }
+        };
+        Map<String, List<Map<String, Object>>> collect = deviceData.stream().collect(Collectors.groupingBy(direction));
+        List<Map<String, Object>> result = new ArrayList<Map<String,Object>>();
+        for (Map.Entry<String, List<Map<String, Object>>> m : collect.entrySet()) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("name", m.getKey());
+            map.put("list", m.getValue());
+            result.add(map);
+        }
+        List<Map<String, Object>> list = (List<Map<String, Object>>) result.get(0).get("list");
+        // 根据lane去重
+        list = list.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toCollection(() ->
+                                new TreeSet<>(Comparator.comparing((o)-> o.get("lane") + ";" + o.get("lane")))), ArrayList::new));
+        result.get(0).put("list",list);
+        System.out.println(result);
+        return result;
+    }
+    public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
 }

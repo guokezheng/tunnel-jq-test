@@ -37,7 +37,7 @@ public class SysDeptController extends BaseController
     /**
      * 获取部门列表
      */
-    @PreAuthorize("@ss.hasPermi('system:dept:list')")
+//    @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list")
     @ApiOperation("获取部门列表")
     public Result list(SysDept dept)

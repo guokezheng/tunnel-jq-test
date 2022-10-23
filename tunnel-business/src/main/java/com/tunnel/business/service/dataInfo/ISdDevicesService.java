@@ -161,16 +161,28 @@ public interface ISdDevicesService {
 
 
     /**
-     * 根据隧道id,方向,所属车道筛选出车道指示器
-     *
-     * @param sdDevices
+     * 一键车道控制
      * @return
      */
-    List<SdDevices> updateCarFingerById(List<SdDevices> sdDevices);
+    List<SdDevices> batchControlCarFinger(Map<String,Object> map);
 
     List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 
     List<Map<String, Object>> getDevicesByTypeAndTunnel(SdDevices sdDevices);
 
     int updateSdDevicesByFEqId(SdDevices sdDevices);
+
+    /**
+     * 查询设备的实时状态
+     *
+     * @param tunnelId@return
+     */
+    public List<Map<String,Object>> getDeviceAndState(String tunnelId);
+
+    /**
+     * 查询设备管理列表-导出
+     * @param sdDevices
+     * @return
+     */
+    List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 }

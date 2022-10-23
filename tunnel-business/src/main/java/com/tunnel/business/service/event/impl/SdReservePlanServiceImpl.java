@@ -1,9 +1,9 @@
 package com.tunnel.business.service.event.impl;
 
-import com.ruoyi.common.config.RuoYiConfig;
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.oss.OssUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
@@ -22,12 +22,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 预案信息Service业务层处理
@@ -116,37 +111,53 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public List<SdReservePlan> selectSdReservePlanList(SdReservePlan sdReservePlan) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdReservePlan.getParams().put("deptId", deptId);
         List<SdReservePlan> list = sdReservePlanMapper.selectSdReservePlanList(sdReservePlan);
+        StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
             List<String> strategyNames = new ArrayList<>();
             Long subareaId = list.get(i).getSubareaId();
             SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
+            if (sdTunnelSubarea == null) {
+                continue;
+            }
             list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
             list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
-            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
-                String[] strategys = list.get(i).getStrategyId().split(",");
-                int index = 0;
-                for (String strategy : strategys) {
-                    String things = "";
-                    if (strategy != null && !"".equals(strategy)) {
-                        if (!"-1".equals(strategy)) {
-                            if (strategy == null || strategy.equals("")) {
-                                continue;
-                            }
-                            index++;
-                            SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(strategy));
-                            if (sds == null) {
-                                logger.error("策略未找到！");
-                                continue;
-                            }
-                            //things = things + sds.getStrategyName();
-                            things = things + index + "、" + sds.getStrategyName();
-                            strategyNames.add(things);
-                        }
-                    }
+            String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
+            if (StrUtil.isNotBlank(strategyNamesStr)) {
+                strategyNames = Arrays.asList(strategyNamesStr.split(","));
+                for (int j = 0; j < strategyNames.size(); j++) {
+                    int num = j + 1;
+                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
+                    buffer.setLength(0);
                 }
             }
             list.get(i).setStrategyNames(strategyNames);
+//            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
+//                String[] strategys = list.get(i).getStrategyId().split(",");
+//                int index = 0;
+//                for (String strategy : strategys) {
+//                    String things = "";
+//                    if (strategy != null && !"".equals(strategy)) {
+//                        if (!"-1".equals(strategy)) {
+//                            if (strategy == null || strategy.equals("")) {
+//                                continue;
+//                            }
+//                            index++;
+//                            SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(strategy));
+//                            if (sds == null) {
+//                                logger.error("策略未找到！");
+//                                continue;
+//                            }
+//                            //things = things + sds.getStrategyName();
+//                            things = things + index + "、" + sds.getStrategyName();
+//                            strategyNames.add(things);
+//                        }
+//                    }
+//                }
+//                list.get(i).setStrategyNames(strategyNames);
+//            }
         }
         return list;
     }
@@ -165,59 +176,59 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         }
         int result = -1;
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
-        try {
-            if ("#^#".equals(sdReservePlan.getPlanDescription())) {
-                sdReservePlan.setPlanDescription(null);
-            }
-            //创建时间
-            sdReservePlan.setCreateTime(DateUtils.getNowDate());
-            //设置当前创建人
-            sdReservePlan.setCreateBy(SecurityUtils.getUsername());
-            //生成guid
-            String guid = UUIDUtil.getRandom32BeginTimePK();
-            if (file.length > 0) {
-                //文件关联ID
-                sdReservePlan.setPlanFileId(guid);
-                for (int i = 0; i < file.length; i++) {
-                    // 从缓存中获取文件存储路径
-                    String fileServerPath = RuoYiConfig.getUploadPath();
-                    // 原图文件名
-                    String filename = file[i].getOriginalFilename();
-                    // 原图扩展名
-                    String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
-                    // 新的全名
-                    String fileName = extendName;
-                    // 加路径全名
-                    File dir = new File(fileServerPath + "/" + fileName);
+        if ("#^#".equals(sdReservePlan.getPlanDescription())) {
+            sdReservePlan.setPlanDescription(null);
+        }
+        //创建时间
+        sdReservePlan.setCreateTime(DateUtils.getNowDate());
+        //设置当前创建人
+        sdReservePlan.setCreateBy(SecurityUtils.getUsername());
+        //生成guid
+        String guid = UUIDUtil.getRandom32BeginTimePK();
+        if (file != null && file.length > 0) {
+            //文件关联ID
+            sdReservePlan.setPlanFileId(guid);
+            for (int i = 0; i < file.length; i++) {
+                String savePath = OssUtil.upload(file[i], "upload");
+
+
+                // 从缓存中获取文件存储路径
+                //String fileServerPath = RuoYiConfig.getUploadPath();
+                // 原图文件名
+                String filename = file[i].getOriginalFilename();
+                // 原图扩展名
+                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+                // 新的全名
+                String fileName = extendName;
+
+                SdReservePlanFile planFile = new SdReservePlanFile();
+                planFile.setPlanFileId(guid);
+                //planFile.setUrl(fileServerPath + "/" + fileName);
+                planFile.setUrl(savePath);
+                planFile.setFileName(fileName);
+                planFile.setCreateBy(SecurityUtils.getUsername());
+                planFile.setCreateTime(DateUtils.getNowDate());
+                list.add(planFile);
+
+                // 加路径全名
+                    /*File dir = new File(fileServerPath + "/" + fileName);
                     File filepath = new File(fileServerPath);
-
-                    SdReservePlanFile planFile = new SdReservePlanFile();
-                    planFile.setPlanFileId(guid);
-                    planFile.setUrl(fileServerPath + "/" + fileName);
-                    planFile.setFileName(fileName);
-                    planFile.setCreateBy(SecurityUtils.getUsername());
-                    planFile.setCreateTime(DateUtils.getNowDate());
-                    list.add(planFile);
-
                     if (!filepath.exists()) {
                         filepath.mkdirs();
                     } else {
                     }
-                    file[i].transferTo(dir);
-                }
-                result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
-                if (result > -1) {
-                    result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
-                }
-            } else {
-                sdReservePlan.setPlanFileId(null);//文件关联ID
-                result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
+                    file[i].transferTo(dir);*/
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
+            result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
+            if (result > -1) {
+                result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
+            }
+        } else {
+            sdReservePlan.setPlanFileId(null);//文件关联ID
+            result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
         }
+
+
         /*int result = sdReservePlanMapper.insertSdReservePlan(sdReservePlan);
         if(result>-1){
         	result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
@@ -242,60 +253,58 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         sdReservePlan.setUpdateTime(DateUtils.getNowDate());
 //        return sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
-        try {
-            if ("-1".equals(sdReservePlan.getStrategyId())) {
-                sdReservePlan.setStrategyId(null);
-            }
-            if ("#^#".equals(sdReservePlan.getPlanDescription())) {
-                sdReservePlan.setPlanDescription(null);
-            }
-            sdReservePlan.setUpdateTime(DateUtils.getNowDate());//创建时间
-            sdReservePlan.setUpdateBy(SecurityUtils.getUsername());//设置当前创建人
-            String guid = sdReservePlan.getPlanFileId();//关联ID--guid
-            sdReservePlan.setPlanFileId(guid);//文件关联ID
+        if ("-1".equals(sdReservePlan.getStrategyId())) {
+            sdReservePlan.setStrategyId(null);
+        }
+        if ("#^#".equals(sdReservePlan.getPlanDescription())) {
+            sdReservePlan.setPlanDescription(null);
+        }
+        sdReservePlan.setUpdateTime(DateUtils.getNowDate());//创建时间
+        sdReservePlan.setUpdateBy(SecurityUtils.getUsername());//设置当前创建人
+        String guid = sdReservePlan.getPlanFileId();//关联ID--guid
+        sdReservePlan.setPlanFileId(guid);//文件关联ID
 
-            if (file != null && file.length > 0) {
-                for (int i = 0; i < file.length; i++) {
-                    // 从缓存中获取文件存储路径
-                    String fileServerPath = RuoYiConfig.getUploadPath();//Global.getUploadPath()
-                    // 原图文件名
-                    String filename = file[i].getOriginalFilename();
-                    // 原图扩展名
-                    String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
-                    // 新的全名
-                    String fileName = extendName;
-                    // 加路径全名
-                    File dir = new File(fileServerPath + "/" + fileName);
+        if (file != null && file.length > 0) {
+            for (int i = 0; i < file.length; i++) {
+                String savePath = OssUtil.upload(file[i], "upload");
+                // 从缓存中获取文件存储路径
+                //String fileServerPath = RuoYiConfig.getUploadPath();//Global.getUploadPath()
+                // 原图文件名
+                String filename = file[i].getOriginalFilename();
+                // 原图扩展名
+                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+                // 新的全名
+                String fileName = extendName;
+
+                SdReservePlanFile planFile = new SdReservePlanFile();
+                planFile.setPlanFileId(guid);
+                //planFile.setUrl(fileServerPath + "/" + fileName);
+                planFile.setUrl(savePath);
+                planFile.setFileName(fileName);
+                planFile.setCreateBy(SecurityUtils.getUsername());
+                planFile.setCreateTime(DateUtils.getNowDate());
+                list.add(planFile);
+
+                // 加路径全名
+                   /* File dir = new File(fileServerPath + "/" + fileName);
                     File filepath = new File(fileServerPath);
-
-                    SdReservePlanFile planFile = new SdReservePlanFile();
-                    planFile.setPlanFileId(guid);
-                    planFile.setUrl(fileServerPath + "/" + fileName);
-                    planFile.setFileName(fileName);
-                    planFile.setCreateBy(SecurityUtils.getUsername());
-                    planFile.setCreateTime(DateUtils.getNowDate());
-                    list.add(planFile);
-
                     if (!filepath.exists()) {
                         filepath.mkdirs();
                     } else {
                     }
-                    file[i].transferTo(dir);
-                }
-                result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
-            } else {
-                logger.info("当前文件信息为空或文件没有发生改动");
+                    file[i].transferTo(dir);*/
             }
-            if (ids.length > 0) {
-                result = sdReservePlanFileMapper.deleteSdReservePlanFileByIds(ids);//ids 为要删除的sd_reserve_plan_file id数组
-            }
-            if (result >= 0) {
-                result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
+            result = sdReservePlanFileMapper.brachInsertSdReservePlanFile(list);
+        } else {
+            logger.info("当前文件信息为空或文件没有发生改动");
         }
+        if (ids.length > 0) {
+            result = sdReservePlanFileMapper.deleteSdReservePlanFileByIds(ids);//ids 为要删除的sd_reserve_plan_file id数组
+        }
+        if (result >= 0) {
+            result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
+        }
+
         return result;
     }
 
@@ -326,9 +335,9 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         SdReservePlan sdReservePlan = sdReservePlanMapper.selectSdReservePlanById(id);
         if (sdReservePlan != null) {
             result = sdReservePlanMapper.deleteSdReservePlanById(id);
-            if (result > -1) {
-                result = sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
-                result = sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
+            if (result > 0) {
+                sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
+                sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
             }
         }
         return result;
@@ -392,7 +401,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan) {
-        sdReservePlan.setCategory("1");
         List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
         return sdReservePlans;
     }
@@ -405,6 +413,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             Map<String, Object> map = new HashMap<>();
             map.put("id", sdTunnelSubarea.getsId());
             map.put("SubareaName", sdTunnelSubarea.getsName());
+            map.put("direction", sdTunnelSubarea.getDirection());
+
             SdReservePlan sdReservePlan = new SdReservePlan();
             sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
             List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);

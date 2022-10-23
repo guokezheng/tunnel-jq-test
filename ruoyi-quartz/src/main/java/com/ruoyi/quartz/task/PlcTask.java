@@ -7,22 +7,23 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
+import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
 import com.tunnel.deal.plc.modbus.util.Modbus4jReadUtils;
+import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * PLC定时任务调度
@@ -44,9 +45,37 @@ public class PlcTask {
     @Autowired
     private RadarEventService radarEventService;
 
+    @Autowired
+    private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
     //
     public void createModbusTcpMaster() {
-        ModbusTcpMaster.getInstance().init();
+//        ModbusTcpMaster.getInstance().init();
+        System.out.println("本地环境不开启创建PLC客户端");
+    }
+
+    public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state, String type) {
+        List<SdDeviceNowState> dataList = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject();
+        SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
+        sdDeviceNowState.setEqId(sdDevices.getEqId());
+        sdDeviceNowState.setEqType(sdDevices.getEqType());
+        sdDeviceNowState.setEqStatus(sdDevices.getEqStatus());
+        sdDeviceNowState.setEqDirection(sdDevices.getEqDirection());
+        sdDeviceNowState.setEqName(sdDevices.getEqName());
+        sdDeviceNowState.setEqTunnelId(sdDevices.getEqTunnelId());
+        sdDeviceNowState.setPile(sdDevices.getPile());
+        sdDeviceNowState.setState(state[0]);
+        if (type.equals("fsfx")) {
+            sdDeviceNowState.setFs(state[1]);
+            sdDeviceNowState.setFx(state[2]);
+        } else if (type.equals("covi")) {
+            sdDeviceNowState.setCo(state[1]);
+            sdDeviceNowState.setVi(state[2]);
+        }
+        dataList.add(sdDeviceNowState);
+        jsonObject.put("deviceStatus", dataList);
+        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
     }
 
     public void modbusTcpDataHandle() {
@@ -72,6 +101,10 @@ public class PlcTask {
                             System.out.printf("桩号:" + sdDevice.getPile() + "，状态：" + state);
                             System.out.println("------------------------------------");
                             insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode(), state);
+                            //通过websocket推送实时状态
+                            String[] states = new String[3];
+                            states[0] = state;
+                            sendNowDeviceStatusByWebsocket(sdDevice, states, "cz");
                             //推送设备状态
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
@@ -100,6 +133,15 @@ public class PlcTask {
                                 windDirection = "反向";
                             }
                             insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.FENG_XIANG.getCode(), windDirection);
+                            //通过websocket推送实时状态
+                            SdDeviceTypeItem sdDeviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode()));
+                            String state = FS.toString() + sdDeviceTypeItem.getUnit() + "/" + windDirection;
+                            String[] states = new String[3];
+                            states[0] = state;
+                            states[1] = FS.toString() + sdDeviceTypeItem.getUnit();
+                            states[2] = windDirection;
+                            sendNowDeviceStatusByWebsocket(sdDevice, states, "fsfx");
+                            //推送数据到万集
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
                             map.put("deviceType", sdDevice.getEqType());
@@ -120,6 +162,12 @@ public class PlcTask {
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
                         System.out.println("------------------------------------");
                         insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode(), number.toString());
+                        //通过websocket推送实时状态
+                        String state = number.toString() + "lux";
+                        String[] states = new String[3];
+                        states[0] = state;
+                        sendNowDeviceStatusByWebsocket(sdDevice, states, "brightnessInside");
+                        //推送数据到万集
                         Map<String, Object> map = new HashMap<>();
                         map.put("deviceId", sdDevice.getEqId());
                         map.put("deviceType", sdDevice.getEqType());
@@ -139,6 +187,12 @@ public class PlcTask {
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
                         System.out.println("------------------------------------");
                         insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode(), number.toString());
+                        //通过websocket推送实时状态
+                        String state = number.toString() + "cd/㎡";
+                        String[] states = new String[3];
+                        states[0] = state;
+                        sendNowDeviceStatusByWebsocket(sdDevice, states, "brightnessOutside");
+                        //推送数据到万集
                         Map<String, Object> map = new HashMap<>();
                         map.put("deviceId", sdDevice.getEqId());
                         map.put("deviceType", sdDevice.getEqType());
@@ -162,6 +216,17 @@ public class PlcTask {
                             System.out.println("------------------------------------");
                             insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.CO.getCode(), CO.toString());
                             insertIntoDeviceData(sdDevice, DevicesTypeItemEnum.VI.getCode(), VI.toString());
+                            //通过websocket推送实时状态
+                            String[] states = new String[3];
+                            SdDeviceTypeItem sdDeviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(Long.valueOf(DevicesTypeItemEnum.CO.getCode()));
+                            String state = "CO:" + CO.toString() + sdDeviceTypeItem.getUnit() + "/";
+                            states[1] = CO.toString() + sdDeviceTypeItem.getUnit();
+                            sdDeviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(Long.valueOf(DevicesTypeItemEnum.VI.getCode()));
+                            state = state + "VI:" + VI.toString() + sdDeviceTypeItem.getUnit();
+                            states[2] = VI.toString() + sdDeviceTypeItem.getUnit();
+                            states[0] = state;
+                            sendNowDeviceStatusByWebsocket(sdDevice, states, "covi");
+                            //推送数据到万集
                             Map<String, Object> map = new HashMap<>();
                             map.put("deviceId", sdDevice.getEqId());
                             map.put("deviceType", sdDevice.getEqType());
@@ -179,24 +244,24 @@ public class PlcTask {
         }
     }
 
-    public String getCheZhiState(boolean fHong,boolean fLv,boolean zHong,boolean zLv){
-        String state="";
-        if (zLv && fHong){
-            state="1";
-        }else if (zHong && fLv){
-            state="2";
-        }else if (zHong && fHong){
-            state="3";
-        }else if (zLv && (fHong==false && fLv==false)){
-            state="5";
-        }else if (zHong && (fHong==false && fLv==false) ){
-            state="6";
-        }else if (fLv && (zHong==false && zLv==false) ){
-            state="7";
-        }else if (fHong && (zHong==false && zLv==false) ){
-            state="7";
-        }else {
-            state="4";
+    public String getCheZhiState(boolean fHong, boolean fLv, boolean zHong, boolean zLv) {
+        String state = "";
+        if (zLv && fHong) {
+            state = "1";
+        } else if (zHong && fLv) {
+            state = "2";
+        } else if (zHong && fHong) {
+            state = "3";
+        } else if (zLv && (fHong == false && fLv == false)) {
+            state = "5";
+        } else if (zHong && (fHong == false && fLv == false)) {
+            state = "6";
+        } else if (fLv && (zHong == false && zLv == false)) {
+            state = "7";
+        } else if (fHong && (zHong == false && zLv == false)) {
+            state = "7";
+        } else {
+            state = "4";
         }
         return state;
     }
@@ -207,7 +272,7 @@ public class PlcTask {
         sdDeviceData.setDeviceId(devices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));
         SdDeviceData deviceData = sdDeviceDataMapper.selectLastRecord(sdDeviceData);
-        if(deviceData != null) {
+        if (deviceData != null) {
             deviceData.setData(value);
             deviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.updateSdDeviceData(deviceData);
@@ -227,10 +292,10 @@ public class PlcTask {
         if (sdDeviceDataRecords.size() > 0) {
             SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecords.get(sdDeviceDataRecords.size() - 1);
             Date createTime = deviceDataRecord.getCreateTime();
-            if(createTime != null) {
+            if (createTime != null) {
                 Date nowdate = new Date();
-                long sec = (nowdate.getTime()-createTime.getTime()) / 1000L / 60L;
-                if(sec < 5L){
+                long sec = (nowdate.getTime() - createTime.getTime()) / 1000L / 60L;
+                if (sec < 5L) {
                     log.info("当前设备类型为{}的数据记录时间小于5分钟，不需要新增数据", itemId);
                     return;
                 }

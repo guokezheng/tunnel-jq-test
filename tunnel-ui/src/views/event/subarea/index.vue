@@ -1,6 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      
+      v-show="showSearch"
+      label-width="80px"
+    >
       <el-form-item label="分区名称" prop="sName">
         <el-input
           v-model="queryParams.sName"
@@ -11,21 +18,68 @@
         />
       </el-form-item>
       <el-form-item label="隧道名称" prop="tunnelId">
-        <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道" clearable >
+        <el-select
+          v-model="queryParams.tunnelId"
+          placeholder="请选择隧道"
+          clearable
+        >
           <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelName"
-              :label="item.tunnelName"
-              :value="item.tunnelId"/>
+            v-for="item in tunnelData"
+            :key="item.tunnelName"
+            :label="item.tunnelName"
+            :value="item.tunnelId"
+          />
         </el-select>
-      </el-form-item>     
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['tunnel:subarea:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['tunnel:subarea:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['tunnel:subarea:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['tunnel:subarea:export']"
+          >导出</el-button
+        >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -34,76 +88,98 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['tunnel:subarea:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['tunnel:subarea:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['tunnel:subarea:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['tunnel:subarea:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      ></right-toolbar>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="subareaList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="subareaList"
+      @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="640"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
 
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
 
-      <el-table-column label="分区名称" align="center" prop="sName" />      
+      <el-table-column label="分区名称" align="center" prop="sName" />
       <el-table-column label="隧道名称" align="center" prop="tunnelName" />
+      <el-table-column
+        label="方向"
+        align="center"
+        :formatter="eqDirectionFormat"
+      />
       <el-table-column label="桩号下限" align="center" prop="pileMin" />
       <el-table-column label="桩号上限" align="center" prop="pileMax" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['tunnel:subarea:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['tunnel:subarea:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -124,15 +200,20 @@
         <!-- <el-form-item label="隧道id" prop="tunnelId">
           <el-input v-model="form.tunnelId" placeholder="请输入隧道id" />
         </el-form-item> -->
-        <el-form-item label="隧道名称" prop="tunnelId" >
-        <el-select v-model="form.tunnelId" placeholder="请选择隧道" class="tunnelName" >
-          <el-option
+        <el-form-item label="隧道名称" prop="tunnelId">
+          <el-select
+            v-model="form.tunnelId"
+            placeholder="请选择隧道"
+            class="tunnelName"
+          >
+            <el-option
               v-for="item in tunnelData"
               :key="item.tunnelName"
               :label="item.tunnelName"
-              :value="item.tunnelId"/>
-        </el-select>
-      </el-form-item>
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
 
         <el-form-item label="桩号下限" prop="pileMin">
           <el-input v-model="form.pileMin" placeholder="请输入桩号下限" />
@@ -150,10 +231,16 @@
 </template>
 
 <script>
-
 // import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/tunnel/subarea";
 
-import { listSubarea, getSubarea, delSubarea, addSubarea, updateSubarea, exportSubarea } from "@/api/event/subarea";
+import {
+  listSubarea,
+  getSubarea,
+  delSubarea,
+  addSubarea,
+  updateSubarea,
+  exportSubarea,
+} from "@/api/event/subarea";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 
 export default {
@@ -194,33 +281,37 @@ export default {
       // 表单校验
       rules: {
         sName: [
-            { required: true, message: '请输入分区名称', trigger: 'change' }
-          ],
-          tunnelId: [
-            { required: true, message: '请选择隧道名称', trigger: 'change' }
-          ],
-          sName: [
-            { required: true, message: '请输入分区名称', trigger: 'change' }
-          ],
-
+          { required: true, message: "请输入分区名称", trigger: "change" },
+        ],
+        tunnelId: [
+          { required: true, message: "请选择隧道名称", trigger: "change" },
+        ],
+        pileMin: [
+          { required: true, message: "请输入桩号下限", trigger: "blur" },
+        ],
+        pileMax: [
+          { required: true, message: "请输入桩号上限", trigger: "blur" },
+        ]
       },
 
-      tunnelData:[]
-
+      tunnelData: [],
     };
   },
   created() {
     this.getList();
-    this.getTunnels()
+    this.getTunnels();
   },
 
   methods: {
+    eqDirectionFormat(row, column) {
+      return row.direction == 1 ? "上行" : "下行";
+    },
     // 隧道名称 下拉框
     getTunnels() {
-        listTunnels().then(response => {
-          this.tunnelData = response.rows;
-          console.log( this.tunnelData,' this.tunnelData')
-        console.log( this.subareaList,'this.subareaListthis.subareaList')
+      listTunnels().then((response) => {
+        this.tunnelData = response.rows;
+        console.log(this.tunnelData, " this.tunnelData");
+        console.log(this.subareaList, "this.subareaListthis.subareaList");
         // this.tunnelData.forEach((item,index)=>{
         //     this.subareaList.forEach((it,id)=>{
         //         if(item.tunnelId==it.tunnelId){
@@ -228,19 +319,17 @@ export default {
         //         }
         //     })
         // })
-        });
-      
-        
-      },
+      });
+    },
 
     /** 查询隧道分区列表 */
     getList() {
       this.loading = true;
-      listSubarea(this.queryParams).then(response => {
+      listSubarea(this.queryParams).then((response) => {
         this.subareaList = response.rows;
         this.total = response.total;
         this.loading = false;
-        console.log(response,'responseresponse')
+        console.log(response, "responseresponse");
       });
     },
     // 取消按钮
@@ -259,7 +348,7 @@ export default {
         createTime: null,
         pileMax: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
       };
       this.resetForm("form");
     },
@@ -275,9 +364,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.sId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.sId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -288,8 +377,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const sId = row.sId || this.ids
-      getSubarea(sId).then(response => {
+      const sId = row.sId || this.ids;
+      getSubarea(sId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改隧道分区";
@@ -297,17 +386,21 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
+          if(!new RegExp('^[1-9][0-9]*$').test(this.form.pileMax) || !new RegExp('^[1-9][0-9]*$').test(this.form.pileMin) ){
+            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            return;
+          }
           if (this.form.sId != null) {
-            updateSubarea(this.form).then(response => {
+            updateSubarea(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
               // this.getTunnels()
             });
           } else {
-            addSubarea(this.form).then(response => {
+            addSubarea(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -320,35 +413,49 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const sIds = row.sId || this.ids;
-      this.$modal.confirm('是否确认删除隧道分区编号为"' + sIds + '"的数据项？').then(function() {
-        return delSubarea(sIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-        // this.getTunnels()
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除隧道分区编号为"' + sIds + '"的数据项？')
+        .then(function () {
+          return delSubarea(sIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+          // this.getTunnels()
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有隧道分区数据项？').then(() => {
-        this.exportLoading = true;
-        return exportSubarea(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
-  }
+      this.$modal
+        .confirm("是否确认导出所有隧道分区数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportSubarea(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
+  },
 };
 </script>
 
 
 <style scoped>
-
-.tunnelName{
+.tunnelName {
   width: 378px;
 }
-
 </style>
 

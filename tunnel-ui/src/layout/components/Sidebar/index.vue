@@ -131,7 +131,7 @@ export default {
             .is-vertical{display: none;}
         }
         .index_menu{position: relative;
-            .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:24px;font-size:16px;cursor: pointer;}
+            .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
             .el-icon-arrow-left{left:42%;color:white;}
             .el-icon-arrow-right{right:-4%;color:white;}
             a{display: unset !important;}
@@ -151,9 +151,9 @@ export default {
        }
     }
     .theme-light{
-        .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:17px;font-size:16px;cursor: pointer;}
-        .index_menu .el-icon-arrow-left{left:31%;color: #000 !important;;}
-        .index_menu .el-icon-arrow-right{right: 0% !important;;color: #000 !important;;}
+        .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
+        .index_menu .el-icon-arrow-left{left:42%;color: #fff !important;;}
+        .index_menu .el-icon-arrow-right{right: -4% !important;;color: #fff !important;;}
     }
 
     // .theme-dark #app .sidebar-container .el-menu-item, .theme-dark #app .sidebar-container .el-submenu__title {
@@ -165,7 +165,7 @@ export default {
         text-shadow: 1px 1px white;
         background-image: url(../../../assets/cloudControl/navBg.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 58%;
+        background-position: 0% 58%;
     }
     .theme-dark #app .workbenchNavbar .router-link-active{
        color: #f19f39 !important;
@@ -173,6 +173,8 @@ export default {
        background-image: url(../../../assets/cloudControl/navBg.png) !important;
        background-repeat: no-repeat;
        background-position: 0% 58%;
+       height: 72px;
+        line-height: 72px;
     }
     .theme-light  #app .el-menu--horizontal .is-active > .el-submenu__title,
      .theme-light #app .sidebar-container .el-menu-item.is-active,
@@ -181,7 +183,9 @@ export default {
         color: #ffdb82 !important;
         background-image: url(../../../assets/cloudControl/navBg2.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 50%;
+        background-position: 0% 50%;
+        height: 72px;
+        line-height: 72px;
     }
 
     // 工作台按钮样式
@@ -189,8 +193,8 @@ export default {
         // padding-left: 20px;
         a {
             height: 100%;
-            font-size: 14px;
-            line-height: 65px;
+            font-size: 16px;
+            line-height: 72px;
         }
     }
     .workbenchNavbar{

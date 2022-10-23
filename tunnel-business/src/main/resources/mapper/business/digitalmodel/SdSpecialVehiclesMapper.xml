@@ -29,23 +29,41 @@
         from sd_special_vehicle
     </sql>
 
-    <select id="selectSdSpecialVehicleList" parameterType="SdSpecialVehicles" resultMap="SdSpecialVehicleResult">
-        <include refid="selectSdSpecialVehicleVo"/>
+    <select id="selectSdSpecialVehicleList" parameterType="SdSpecialVehicles" resultType="java.util.Map">
+        select vehicle.id,
+        vehicle.vehicle_id as vehicleId,
+        vehicle.tunnel_id as tunnelId,
+        vehicle.vehicle_type as vehicleType,
+        vehicle.vehicle_color as vehicleColor,
+        vehicle.vehicle_license as vehicleLicense,
+        vehicle.license_color as licenseColor,
+        vehicle.start_time as startTime,
+        vehicle.end_time as endTime,
+        tunnul.tunnel_name as tunnelName
+        from sd_special_vehicle vehicle
+        left join sd_tunnels tunnul on tunnul.tunnel_id = vehicle.tunnel_id
         <where>
             1=1
-            <if test="vehicleId != null  and vehicleId != ''">and vehicle_id = #{vehicleId}</if>
-            <if test="tunnelId != null  and tunnelId != ''">and tunnel_id = #{tunnelId}</if>
-            <if test="vehicleType != null  and vehicleType != ''">and vehicle_type = #{vehicleType}</if>
-            <if test="vehicleColor != null  and vehicleColor != ''">and vehicle_color = #{vehicleColor}</if>
-            <if test="vehicleLicense != null  and vehicleLicense != ''">and vehicle_license = #{vehicleLicense}</if>
-            <if test="licenseColor != null  and licenseColor != ''">and license_color = #{licenseColor}</if>
+            <if test="vehicleId != null  and vehicleId != ''">and vehicle.vehicle_id = #{vehicleId}</if>
+            <if test="tunnelId != null  and tunnelId != ''">and vehicle.tunnel_id = #{tunnelId}</if>
+            <if test="vehicleType != null  and vehicleType != ''">and vehicle.vehicle_type = #{vehicleType}</if>
+            <if test="vehicleColor != null  and vehicleColor != ''">and vehicle.vehicle_color = #{vehicleColor}</if>
+            <if test="vehicleLicense != null  and vehicleLicense != ''">and vehicle.vehicle_license = #{vehicleLicense}</if>
+            <if test="licenseColor != null  and licenseColor != ''">and vehicle.license_color = #{licenseColor}</if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+                and date_format(vehicle.start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(vehicle.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(vehicle.start_time) = curdate()
+            </if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (tunnul.dept_id = #{params.deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
         </where>
+        order by vehicle.start_time desc
     </select>
 
     <select id="selectSdSpecialVehicleById" parameterType="String" resultMap="SdSpecialVehicleResult">

@@ -1,15 +1,12 @@
 package com.tunnel.webthings.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jdk.nashorn.internal.objects.annotations.Getter;
 
 /**
  *
  * @author dzy
  * @date 2022/7/19 14:34
  */
-@Getter
-@AllArgsConstructor
 public enum MsgType {
     /**
      * 车道上下行
@@ -48,6 +45,19 @@ public enum MsgType {
 
     private final String code;
     private final String value;
+
+    MsgType(String code, String value) {
+        this.code = code;
+        this.value = value;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getValue() {
+        return value;
+    }
 
     public static String getValue(String code) {
         // 遍历枚举

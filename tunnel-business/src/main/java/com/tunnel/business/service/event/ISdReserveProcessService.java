@@ -93,4 +93,12 @@ public interface ISdReserveProcessService {
      * @return
      */
     List<Map> selectPreviewDisplay(Long reserveId);
+
+    /**
+     * 预案执行
+     *
+     * @param reserveId
+     * @return
+     */
+    Integer planImplementa(String eventId, Long reserveId);
 }

@@ -2,13 +2,11 @@ package com.tunnel.business.domain.digitalmodel;
 
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy
  * @date 2022/9/7 10:55
  */
-@Data
 public class SdRadarDevice {
 
     /**
@@ -44,10 +42,126 @@ public class SdRadarDevice {
     @ApiModelProperty("模型位置姿态缩放信息，需要孪生平台预设信息")
     private String transform;
 
+    @ApiModelProperty("设备IP")
+    private String ip;
+
     /**
      * 设备数据：包括设备实时数据、实时状态，根据deviceType区分
      */
 //    private WjDeviceData deviceData;
 
     private JSONObject deviceData;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
+
+    public Integer getDeviceStatus() {
+        return deviceStatus;
+    }
+
+    public void setDeviceStatus(Integer deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public String getStakeNum() {
+        return stakeNum;
+    }
+
+    public void setStakeNum(String stakeNum) {
+        this.stakeNum = stakeNum;
+    }
+
+    public String getTransform() {
+        return transform;
+    }
+
+    public void setTransform(String transform) {
+        this.transform = transform;
+    }
+
+    public JSONObject getDeviceData() {
+        return deviceData;
+    }
+
+    public void setDeviceData(JSONObject deviceData) {
+        this.deviceData = deviceData;
+    }
+
+    @Override
+    public String toString() {
+        return "SdRadarDevice{" +
+                "deviceType='" + deviceType + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", deviceCode='" + deviceCode + '\'' +
+                ", deviceStatus=" + deviceStatus +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", direction='" + direction + '\'' +
+                ", stakeNum='" + stakeNum + '\'' +
+                ", transform='" + transform + '\'' +
+                ", deviceData=" + deviceData +
+                '}';
+    }
 }

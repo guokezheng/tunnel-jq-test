@@ -1,5 +1,6 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.mapper.digitalmodel.SdSpecialVehiclesMapper;
 import com.tunnel.business.service.digitalmodel.ISdSpecialVehicleService;
@@ -39,7 +40,9 @@ public class SdSpecialVehicleServiceImpl implements ISdSpecialVehicleService {
      * @return 重点车辆
      */
     @Override
-    public List<SdSpecialVehicles> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle) {
+    public List<Map<String,String>> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdSpecialVehicle.getParams().put("deptId", deptId);
         return sdSpecialVehicleMapper.selectSdSpecialVehicleList(sdSpecialVehicle);
     }
 

@@ -1,13 +1,13 @@
 <!--
  * @Author: zbguopeng 18053314396@163.com
  * @Date: 2022-06-23 11:07:04
- * @LastEditors: zbguopeng 18053314396@163.com
- * @LastEditTime: 2022-08-01 11:36:11
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-09-27 20:23:48
  * @FilePath: \tunnel-ui\src\layout\components\AppMain.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <section :class="path == '/index'?'':'app-main'">
+  <section :class="getRoute2($route.path)?'appMainIndex':'app-main'" >
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key" />
@@ -17,33 +17,48 @@
 </template>
 
 <script>
-import TopNav from '@/components/TopNav'
+import TopNav from "@/components/TopNav";
 export default {
-  name: 'AppMain',
+  name: "AppMain",
   components: {
-    TopNav
+    TopNav,
   },
   data() {
-    return{
-      path:''
-    }
+    return {
+      path: "",
+    };
   },
   computed: {
     cachedViews() {
-      return this.$store.state.tagsView.cachedViews
+      return this.$store.state.tagsView.cachedViews;
     },
     key() {
-      this.path = this.$route.path
-      return this.$route.path
-      
+      this.path = this.$route.path;
+      return this.$route.path;
     },
     topNav: {
       get() {
-        return this.$store.state.settings.topNav
-      }
+        return this.$store.state.settings.topNav;
+      },
     },
   },
-}
+  methods:{
+    getRoute2(path){
+      var arr = [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ];
+      if (arr.includes(path)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -56,7 +71,7 @@ export default {
   // overflow: hidden;
 }
 
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   // padding-top: 50px;
 }
 
@@ -67,7 +82,7 @@ export default {
     // overflow: hidden;
   }
 
-  .fixed-header+.app-main {
+  .fixed-header + .app-main {
     // padding-top: 84px;
   }
 }

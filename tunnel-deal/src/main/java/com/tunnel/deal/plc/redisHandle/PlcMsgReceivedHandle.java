@@ -11,7 +11,7 @@ import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.plc.fins.CmdProcess;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
-import com.zc.common.core.redis.RedisMessageDispatcher;
+import com.zc.common.core.redis.pubsub.RedisMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

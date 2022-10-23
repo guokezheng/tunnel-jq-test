@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-07 22:06:50
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-09-18 18:04:03
+ * @LastEditTime: 2022-10-20 11:05:43
  * @FilePath: \tunnel-ui\src\api\event\event.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,7 +17,7 @@ export function listEvent(query) {
   })
 }
 
-// ��ѯ�¼�������ϸ
+// 获取事件详情
 export function getEvent(id) {
   return request({
     url: '/event/' + id,
@@ -75,18 +75,30 @@ export function listDevices(query) {
     params: query
   })
 }
-//查询隧道分区
-export function getSubareaByTunnelId(tunnelId) {
-  return request({
-    url: '/plan/getListBytId?tunnelId=' + tunnelId,
-    method: 'get',
-  })
-}
 
 // ��ѯ����
 export function getWarnEvent(query) {
   return request({
     url: '/event/getEvent',
+    method: 'get',
+    params: query
+  })
+}
+
+//执行预案eventId:'',reserveId:
+export function getImplement(query) {
+  return request({
+    url: '/plan/process/implement',
+    method: 'Post',
+    data: query
+  })
+}
+
+// 获取事故点
+
+export function getSubareaByStakeNum(query) {
+  return request({
+    url: '/event/getSubareaByStakeNum',
     method: 'get',
     params: query
   })

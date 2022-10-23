@@ -1,6 +1,6 @@
 .theme-dark {
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
-    background-color: #00afe0;
+    background-color: #00588f;
     height: 56px;
     line-height: 56px;
     color: white !important;
@@ -24,6 +24,132 @@
     }
   }
   #app {
+    .separate{
+      background: #E2EEFE;
+    }
+    .app-container{
+      background: white;
+    }
+    
+    .el-table tr{
+      background-color: #FFFFFF;
+    }
+    .el-table .el-table__cell{
+      height: 40px;
+      line-height: 40px;
+    }
+    // 输入框背景色
+    .el-input--small .el-input__inner{
+      background-color: #F2F8FF;
+    }
+    // 下拉框背景色
+    .el-input--medium .el-input__inner{
+      background-color: #F2F8FF;
+    }
+    // 时间框背景色
+    .el-range-editor.el-input__inner{
+      background-color: #F2F8FF;
+    }
+    .el-range-editor--small .el-range-input{
+      background-color: #F2F8FF;
+    }
+    // 所有表格高度调小
+    .el-table--medium .el-table__cell{
+      padding: 0;
+    }
+    // 设备预警、事件预警表单
+    .warningStatistics{
+      color: #606266;
+    }
+    // 表单label
+    .el-form-item__label{
+      color: #606266;
+    }
+    // 翻页组件
+    .pagination-container {
+      background-color: transparent;
+      .el-pagination__total {
+        color: #606266;
+      }
+      .el-pagination__jump {
+        color: #606266;
+        .el-input__inner{
+          background: white;
+        }
+      }
+      .el-pagination.is-background .btn-prev,
+      .el-pagination.is-background .btn-next,
+      .el-pagination.is-background .el-pager li {
+        background-color: white;
+        color: #606266;
+        border: 1px solid #DCDFE6;
+      }
+     
+      .el-pagination.is-background .el-pager li .active{
+        background-color: #00afe0 !important;
+
+      }
+      .el-pagination .el-pager .active{
+        background-color: #00afe0;
+      }
+    }
+    // 应急预案 表格内相关策略
+    .el-tag{
+      background-color: #ebf7ff;
+    }
+    // 面包屑
+    .app-breadcrumb.el-breadcrumb {
+      background: white;
+      .no-redirect {
+        color: #97a8be;
+      }
+    }
+    // 表格内按钮 红色
+    .tableDelButtton{
+      // width: 50px;
+      padding: 0 5px;
+      font-size: 14px;
+      color: #FA6F8E;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #FA6F8E;
+    }
+    .tableDelButtton:hover{
+      color: white;
+      background: #FA6F8E !important;
+    }
+    .tableBlueButtton{
+      padding: 0 5px;
+      font-size: 14px;
+      color: #39ADFF;
+      height: 28px;
+      border-radius: 3px;
+      border: 1px solid #39ADFF;
+    }
+    .tableBlueButtton:hover{
+      color: white;
+      background: #39ADFF;
+    }
+    // 浅色版部分小细节需要黑色字
+    .textColorClass{
+      color:#303133
+    }
+    .mapCharts{
+      .el-table--medium .el-table__cell{
+        padding: 10px 0;
+      }
+    }
+    .el-table__body-wrapper .el-table__cell{
+      border-left: solid 1px #E1E4E6;
+    }
+    .el-table__body-wrapper tbody{
+      border-right: solid 1px #E1E4E6;
+
+    }
+    .el-table__header-wrapper .el-table__cell{
+      border-left: solid 1px #E1E4E6;
+      border-top: solid 1px #E1E4E6;
+    }
     .el-scrollbar__wrap::-webkit-scrollbar-track {
       background-color: #1d58a9;
     }
@@ -109,6 +235,9 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
+        height: 72px;
+        line-height: 72px;
+        font-size: 16px;
       }
 
       // menu hover
@@ -314,14 +443,18 @@
   .my-back{
     background-color: #cdedfa;
   }
-   .topNav_head{background-image:url(../images/head_bg.png);background-size: 100% 100%;height:65px;}
+   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 123%;height:72px;}
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background-color: white !important;
       border: solid 1px #0a88bd;
       color: #003a5d;
       // box-shadow: 0px 0px 10px #68B5FF;
-      width: 170px;
+      width: 160px;
+      height: 32px;
+      line-height: 28px;
+      font-size: 15px;
+
   }
   .siteClass {
     line-height: unset;
@@ -489,6 +622,9 @@
   }
   .eventDiglog{
     .el-dialog{
+      .el-form{
+        padding: 15px;
+      }
         //background-image: url(../cloudControl/dialog5.png) !important;
         //background-repeat: no-repeat;
         //background-size: 100% 100%;
@@ -612,6 +748,10 @@
       background-color: #c4e8f6;
       cursor: pointer;
     }
+    .el-table__body tr .hover-row > td .el-table__cell{
+      background-color: #c4e8f6;
+
+    }
     /* table滚动条的滑块*/
     .el-table__body-wrapper::-webkit-scrollbar-thumb {
       background-color: #00c2ff;
@@ -720,6 +860,13 @@
       }
     }
   }
+  .yuntaiPic,.jiaJian{
+    > div:nth-of-type(1),
+    > div:nth-of-type(3) {
+    border: solid 1px #003a5d;
+    }
+  }
+  
   // 隧道配置页面
   // .configurePage {
   //   background-color: #d6edf9 !important;
@@ -822,6 +969,17 @@
     }
     .handleLightClass {
       background: #07C2FF !important;
+    }
+    // 工作台分时控制 开关
+    .el-switch__core{
+      background: linear-gradient(177deg, #00070D, #005AA8);
+      border: 1px solid #005E96;
+    }
+    .ledLighting .is-checked .el-switch__core:after{
+      background: #00C8FF;
+    }
+    .ledLighting .el-switch__core:after{
+      background: #3F88B5;
     }
   }
   .drawerActive{
@@ -945,7 +1103,15 @@
       }
     }
   }
-  
+  .drawerTop{
+    .chezhiDrawerDirection{
+      background: rgba($color: #0A88BD, $alpha: 0.7);
+    }
+    .chezhiControlButton{
+      background: #D8D8D8 linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+      color: white;
+    }
+  }
   
   
 }

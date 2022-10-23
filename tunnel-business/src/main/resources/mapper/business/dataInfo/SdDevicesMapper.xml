@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqFeedbackAddress1"    column="eq_feedback_address1"    />
         <result property="eqFeedbackAddress2"    column="eq_feedback_address2"    />
         <result property="eqFeedbackAddress3"    column="eq_feedback_address3"    />
-        <result property="eqFeedbackAddress4"    column="eq_feedback_address4"    />
+        <result property="eqFeedbackAddress4"    column="eq_feedbacka_address4"    />
         <result property="eqFeedbackAddress5"    column="eq_feedback_address5"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -75,7 +75,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectSdDevicesVo">
         select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, eq_model, brand_id,
-        <!-- brand_name, -->
         eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol, protocol_url,
         protocol_version, protocol_name, data_type, data_source, delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
@@ -123,6 +122,55 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+
+
+    <select id="selectSdDevicesList_exp" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
+        dit.dict_label as eq_direction,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol, a.protocol_url, a.protocol_version,
+        a.protocol_name, a.data_type, a.data_source, a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
+        a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+        a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
+        a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
+        ,c.tunnel_name, a.control_status
+        from sd_devices a
+        left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
+        left join sd_equipment_type d on a.eq_type = d.type_id
+        left join sys_dept e on e.dept_id = c.dept_id
+        left join sys_dict_data dit on dit.dict_value = a.eq_direction
+        <where>
+            and dit.dict_type = 'sd_direction'
+            <if test="fEqId != null and fEqId != ''">
+                and a.f_eq_id = #{fEqId}
+            </if>
+            <if test="eqId != null and eqId != ''">and a.eq_id = #{eqId}</if>
+            <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
+            <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="eqLampType != null and eqLampType != ''">and a.eq_lamp_type = #{eqLampType}</if>
+            <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
+            <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+            <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
+            <if test="isMonitor != null  ">and a.is_monitor = #{isMonitor}</if>
+            <if test="protocol != null and protocol !=''">
+                and a.protocol = #{protocol}
+            </if>
+            <if test="eqIds != null and eqIds.size()>0">
+                AND a.eq_id IN
+                <foreach item="item" index="index" collection="eqIds" open="("  close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="deptId != null ">
+                AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            ${params.dataScope}
+        </where>
+        order by a.create_time desc, a.update_time desc
+
+    </select>
+
     <select id="selectSdDevicesById" parameterType="String" resultMap="SdDevicesResult">
         <include refid="selectSdDevicesVo"/>
         where eq_id = #{eqId}
@@ -133,17 +181,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select a.eq_id eqId,a.eq_name eqName, a.f_eq_id fEqId,b.tunnel_id tunnelId, b.tunnel_name tunnelName,
         a.eq_type eqType,t.type_name typeName,s.dept_id deptId, s.dept_name deptName,
         a.eq_model eqModel, a.brand_id brandId,
-        <!-- a.brand_name brandName, -->
         a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
         a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.protocol, a.protocol_url protocolUrl,
         a.protocol_version protocolVersion, a.protocol_name protocolName, a.data_type dataType, a.data_source dataSource,
-        <!-- a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, -->
-    <!-- a.use_status, a.is_monitor,port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time,-->
-    a.eq_status eqStatus,a.eq_status_time eqStatusTime,
-        <!--  a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
-      a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, -->
+        IFNULL(a.eq_status,"2") eqStatus,a.eq_status_time eqStatusTime,
           a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
-      <!-- a.control_status -->
      from sd_devices a
      left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
      left join sd_equipment_type t on a.eq_type = t.type_id
@@ -559,9 +601,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectDevice" resultMap="SdDevicesResult">
-        select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark
+        select eq_id,eq_type,eq_name,eq_status,lng,lat,eq_direction,pile,remark,ip
         from sd_devices
         where eq_tunnel_id =#{tunnelId}
+        and eq_type in (1,10,5,18,7,17,19,31,16,23,26)
     </select>
 
     <select id="selectDeviceByHost" resultType="String">
@@ -611,5 +654,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_device_data sdd
         left join sd_device_type_item sdt on sdd.item_id=sdt.id
         where device_id=#{eqId}
+    </select>
+
+    <select id="selectDeviceDataAndState" resultType="hashmap">
+        SELECT
+            A.id,
+            A.device_id deviceId,
+            A.item_id iteamId,
+            A.`data` state,
+            C.eq_type typeId,
+            C.lane lane,
+            C.eq_direction direction
+        FROM
+        sd_device_data A
+        LEFT JOIN sd_device_type_item B ON B.id = A.item_id
+        LEFT JOIN sd_devices C ON A.device_id = C.eq_id AND B.device_type_id = C.eq_type
+        WHERE
+            C.eq_type = 1 and C.eq_tunnel_id = #{tunnelId}
+    </select>
+
+    <select id="selectLaneSize" resultType="int">
+        select MAX(A.lane) from sd_devices A
+        where A.eq_type = 1 and A.eq_direction = 0
+    </select>
+
+    <select id="batchControlCarFinger" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select * from sd_devices a
+        <where>
+            <if test="eqTunnelId != null ">and a.eq_tunnel_id = #{eqTunnelId}</if>
+            <if test="eqType != null ">and a.eq_type = #{eqType}</if>
+            <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
+            <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
+        </where>
+    </select>
+
+    <select id="getReserveProcessDevices" parameterType="String" resultType="Map">
+        select a.eq_id,a.eq_name,a.pile,a.pile_num,a.eq_status from sd_devices a where a.eq_id in
+        <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+            #{item}
+        </foreach>
     </select>
 </mapper>

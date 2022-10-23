@@ -98,7 +98,7 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0'">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0' && stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -114,7 +114,7 @@
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'&& stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -126,6 +126,17 @@
                       :src="item.url[0]"
                       v-if="item.url.length > 1"
                     />
+                    <div style="margin: 0 0 0 10px; display: inline-block">
+                      {{ item.name }}
+                    </div>
+                  </el-row>
+                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                    <img
+                      :width="iconWidth"
+                      :height="iconHeight"
+                      :src="item.url[0]"
+                    />
+                  
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
@@ -160,7 +171,7 @@
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
-import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import { getDevice } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
@@ -197,7 +208,7 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           // 查询设备当前状态 --------------------------------
-          getInfo(this.eqInfo.clickEqType).then((response) => {
+          getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
             this.stateForm.state = response.data.state;
             console.log(this.stateForm.state, "this.stateForm.state");
@@ -223,7 +234,7 @@ export default {
         isControl: 1,
       };
       await getStateByData(param).then((response) => {
-        // console.log(response, "查询设备状态图标");
+        console.log(response, "查询设备状态图标");
         list = response.rows;
       });
 
@@ -274,12 +285,17 @@ export default {
       console.log(this.stateForm.state,"单选框点击绑定")
       const param = {
         devId: this.stateForm.eqId, //设备id
-        devType: this.eqInfo.clickEqType,
         state :this.stateForm.state
       };
 
       controlDevice(param).then((response) => {
-        console.log(response, "提交控制");
+        if(response.data == 0){
+          this.$modal.msgError("控制失败");
+        }else if(response.data == 1){
+          this.$modal.msgSuccess("控制成功");
+
+        }
+
         this.$emit("dialogClose");
       });
     },

@@ -11,11 +11,17 @@ import com.tunnel.business.domain.event.*;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
+import com.tunnel.business.service.event.ISdReservePlanService;
+import com.tunnel.business.utils.json.JSONObject;
+import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件处理流程Service业务层处理
@@ -33,6 +39,12 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
 
     @Autowired
     private ISdEventTypeService eventTypeService;
+
+    @Autowired
+    private ISdReservePlanService reservePlanService;
+
+    @Autowired
+    private ISdEventService eventService;
 
     /**
      * 查询事件处理流程
@@ -54,6 +66,48 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
     @Override
     public List<SdEventFlow> selectSdEventFlowList(SdEventFlow sdEventFlow) {
         return sdEventFlowMapper.selectSdEventFlowList(sdEventFlow);
+    }
+
+    /**
+     * 执行预案保存事件处理流程记录
+     * @param eventId
+     * @param data
+     * @return
+     */
+    @Override
+    public int execPlanSaveEventFlow(String eventId, Map data) {
+        List<String> strategyList = (List)data.get("strategy");
+        StringBuffer buffer = new StringBuffer();
+        String strategyNames = strategyList.stream().collect(Collectors.joining("、"));
+        buffer.append("执行了").append(data.get("planName")).append("：").append(strategyNames);
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription(buffer.toString());
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        JSONObject json = new JSONObject();
+        json.put("eventFlow",flow);
+        WebSocketService.broadcast("eventFlow",json);
+        return sdEventFlowMapper.insertSdEventFlow(flow);
+    }
+    /**
+     * 确认事件
+     * @param eventId
+     * @return
+     */
+    @Override
+    public int saveUserConfirmFlow(String eventId) {
+//        StringBuffer buffer = new StringBuffer();
+//        buffer.append("用户").append(SecurityUtils.getUsername()).append("确认了该事件");
+        SdEventFlow flow = new SdEventFlow();
+        flow.setFlowDescription("用户确认了该事件");
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        JSONObject json = new JSONObject();
+        json.put("eventFlow",flow);
+        WebSocketService.broadcast("eventFlow",json);
+        return sdEventFlowMapper.insertSdEventFlow(flow);
     }
 
     /**
@@ -104,32 +158,64 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
     }
 
     /**
+     * 添加事件流程记录--批量
+     *
+     * @param list 事件列表信息
+
+     * @return
+     */
+    @Override
+    public void addEventFlowBatch(List<SdEvent> list) {
+        for(SdEvent sdEvent : list){
+            addEventStartFlow(sdEvent);
+        }
+    }
+
+    /**
      * 添加事件开始-事件流程记录
      *
      * @param sdEvent 事件信息
      * @return
      */
     @Override
-    public int addEventStartFlow(SdEvent sdEvent, String source) {
-        SdTunnels tunnel = tunnelsService.selectSdTunnelsById(sdEvent.getTunnelId());
-        //查询方向字典值
-        String direction = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
-        //查询事件类型
-        SdEventType sdEventType = eventTypeService.selectSdEventTypeById(sdEvent.getEventTypeId());
-        String eventTypeName = sdEventType.getEventType();
+    public int addEventStartFlow(SdEvent sdEvent) {
+//        //隧道名称
+//        String tunnelName = tunnelMap.get(sdEvent.getTunnelId());
+//        String direction = sdEvent.getDirection();
+//        //查询方向字典值
+//        String directionDict = "";
+//        if(!StringUtils.isEmpty(direction)){
+//            directionDict = DictUtils.getDictLabel(DictTypeEnum.sd_direction.getCode(), sdEvent.getDirection());
+//        }
+//
+//        //事件类型名称
+//        String eventTypeName = eventTypeMap.get(sdEvent.getEventTypeId());
         SdEventFlow eventFlow = new SdEventFlow();
-        eventFlow.setEventId(sdEvent.getFlowId());
-        eventFlow.setFlowTime(sdEvent.getEventTime());
+        eventFlow.setEventId(String.valueOf(sdEvent.getId()));
+        eventFlow.setFlowTime(DateUtils.getNowDate());
+
+        String eventSource = sdEvent.getEventSource();
+        String eventSourceDesc = EventDescEnum.getName(eventSource);
+
         //拼接事件流程描述
         StringBuffer desc = new StringBuffer();
-        if (!StringUtils.isEmpty(source)) {
-            desc.append(source);
+        if (!StringUtils.isEmpty(eventSourceDesc)) {
+            desc.append(eventSourceDesc);
         }
-        desc.append(tunnel.getTunnelName()).append(sdEvent.getStakeNum()).append(direction)
-                .append("发生").append(eventTypeName).append("事件.");
-        //###隧道桩号##方向发生###事件
+        if(!StringUtils.isEmpty(sdEvent.getEventTitle())){
+            desc.append(sdEvent.getEventTitle());
+        }
+
+//        if(!StringUtils.isEmpty(directionDict)){
+//            desc.append(directionDict);
+//        }
+//        if(!StringUtils.isEmpty(sdEvent.getStakeNum())){
+//            desc.append("桩号").append(sdEvent.getStakeNum());
+//        }
+//        desc.append("发生").append(eventTypeName).append("事件");
+        //###隧道##方向桩号##发生###事件
         eventFlow.setFlowDescription(desc.toString());
-        eventFlow.setFlowHandler(SecurityUtils.getUsername());
+
         int row = sdEventFlowMapper.insertSdEventFlow(eventFlow);
         return row;
     }

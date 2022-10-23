@@ -101,9 +101,26 @@ export function sendAnalogCom(data) {
   })
 }
 // 查询单个设备的实时数据状态
-export function getInfo(eqId) {
+export function getDevice(eqId) {
   return request({
-    url: '/system/storage/' + eqId,
+    url: '/devices/getDevice/' + eqId,
     method: 'get'
   })
 }
+
+//  批量控制
+export function updateCarFinger(query) {
+  return request({
+    url: '/workspace/updateCarFinger/',
+    method: 'post',
+    params: query
+  })
+}
+
+export function getDeviceDataAndState(tunnelId) {
+  return request({
+    url: '/workspace/getDeviceDataAndState?tunnelId=' + tunnelId,
+    method: 'get'
+  })
+}
+

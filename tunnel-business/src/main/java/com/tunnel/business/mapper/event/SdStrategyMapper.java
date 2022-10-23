@@ -77,6 +77,18 @@ public interface SdStrategyMapper
     public int deleteSdStrategyByIds(Long[] ids);
 
     /**
+     * 工作台分时控制抽屉数据
+     * @return
+     */
+    public List<Map> getTimeSharingInfo(String tunnelId);
+
+    /**
+     * 获取策略关联的所有定时任务ID
+     * @param ids
+     * @return
+     */
+    public Long[] getStrategyRefJobIds(Long[] ids);
+    /**
      * 批量删除控制策略
      * 
      * @param rlIds 需要删除的数据RLID

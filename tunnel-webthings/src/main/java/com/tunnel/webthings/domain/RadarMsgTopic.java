@@ -2,14 +2,12 @@ package com.tunnel.webthings.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy
  * {@code @date} 2022/7/22 11:04
  * 雷达信息数据实体类
  */
-@Data
 @ApiModel("雷达消息数据类实体")
 public class RadarMsgTopic {
 
@@ -79,4 +77,207 @@ public class RadarMsgTopic {
     @ApiModelProperty("备用字段")
     private String spare;
 
+    public String getFuseId() {
+        return fuseId;
+    }
+
+    public void setFuseId(String fuseId) {
+        this.fuseId = fuseId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Integer getPtcType() {
+        return ptcType;
+    }
+
+    public void setPtcType(Integer ptcType) {
+        this.ptcType = ptcType;
+    }
+
+    public Integer getLane() {
+        return lane;
+    }
+
+    public void setLane(Integer lane) {
+        this.lane = lane;
+    }
+
+    public Integer getDirect() {
+        return direct;
+    }
+
+    public void setDirect(Integer direct) {
+        this.direct = direct;
+    }
+
+    public Double getVehL() {
+        return vehL;
+    }
+
+    public void setVehL(Double vehL) {
+        this.vehL = vehL;
+    }
+
+    public Double getVehW() {
+        return vehW;
+    }
+
+    public void setVehW(Double vehW) {
+        this.vehW = vehW;
+    }
+
+    public Double getVehH() {
+        return vehH;
+    }
+
+    public void setVehH(Double vehH) {
+        this.vehH = vehH;
+    }
+
+    public String getVehPlate() {
+        return vehPlate;
+    }
+
+    public void setVehPlate(String vehPlate) {
+        this.vehPlate = vehPlate;
+    }
+
+    public String getVehPlateColor() {
+        return vehPlateColor;
+    }
+
+    public void setVehPlateColor(String vehPlateColor) {
+        this.vehPlateColor = vehPlateColor;
+    }
+
+    public String getVehColor() {
+        return vehColor;
+    }
+
+    public void setVehColor(String vehColor) {
+        this.vehColor = vehColor;
+    }
+
+    public String getVehBrand() {
+        return vehBrand;
+    }
+
+    public void setVehBrand(String vehBrand) {
+        this.vehBrand = vehBrand;
+    }
+
+    public Double getPtcLon() {
+        return ptcLon;
+    }
+
+    public void setPtcLon(Double ptcLon) {
+        this.ptcLon = ptcLon;
+    }
+
+    public Double getPtcLat() {
+        return ptcLat;
+    }
+
+    public void setPtcLat(Double ptcLat) {
+        this.ptcLat = ptcLat;
+    }
+
+    public Double getPtcEle() {
+        return ptcEle;
+    }
+
+    public void setPtcEle(Double ptcEle) {
+        this.ptcEle = ptcEle;
+    }
+
+    public Double getAmapLon() {
+        return amapLon;
+    }
+
+    public void setAmapLon(Double amapLon) {
+        this.amapLon = amapLon;
+    }
+
+    public Double getAmapLat() {
+        return amapLat;
+    }
+
+    public void setAmapLat(Double amapLat) {
+        this.amapLat = amapLat;
+    }
+
+    public Double getPtcSpeed() {
+        return ptcSpeed;
+    }
+
+    public void setPtcSpeed(Double ptcSpeed) {
+        this.ptcSpeed = ptcSpeed;
+    }
+
+    public Double getPtcHeading() {
+        return ptcHeading;
+    }
+
+    public void setPtcHeading(Double ptcHeading) {
+        this.ptcHeading = ptcHeading;
+    }
+
+    public Integer getVehType() {
+        return vehType;
+    }
+
+    public void setVehType(Integer vehType) {
+        this.vehType = vehType;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getSpare() {
+        return spare;
+    }
+
+    public void setSpare(String spare) {
+        this.spare = spare;
+    }
+
+    @Override
+    public String toString() {
+        return "RadarMsgTopic{" +
+                "fuseId='" + fuseId + '\'' +
+                ", id='" + id + '\'' +
+                ", ptcType=" + ptcType +
+                ", lane=" + lane +
+                ", direct=" + direct +
+                ", vehL=" + vehL +
+                ", vehW=" + vehW +
+                ", vehH=" + vehH +
+                ", vehPlate='" + vehPlate + '\'' +
+                ", vehPlateColor='" + vehPlateColor + '\'' +
+                ", vehColor='" + vehColor + '\'' +
+                ", vehBrand='" + vehBrand + '\'' +
+                ", ptcLon=" + ptcLon +
+                ", ptcLat=" + ptcLat +
+                ", ptcEle=" + ptcEle +
+                ", amapLon=" + amapLon +
+                ", amapLat=" + amapLat +
+                ", ptcSpeed=" + ptcSpeed +
+                ", ptcHeading=" + ptcHeading +
+                ", vehType=" + vehType +
+                ", createTime='" + createTime + '\'' +
+                ", spare='" + spare + '\'' +
+                '}';
+    }
 }

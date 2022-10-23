@@ -2,7 +2,6 @@ package com.tunnel.webthings.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.util.List;
 
@@ -11,7 +10,6 @@ import java.util.List;
  * @author ZHC
  * {@code @date} 2022/7/21
  */
-@Data
 @ApiModel("所有主题父类")
 public class ReceiveTopic {
 
@@ -42,4 +40,90 @@ public class ReceiveTopic {
     @ApiModelProperty("信息")
     private String ex;
 
+    public List<String> getDevNo() {
+        return devNo;
+    }
+
+    public void setDevNo(List<String> devNo) {
+        this.devNo = devNo;
+    }
+
+    public String getDevN() {
+        return devN;
+    }
+
+    public void setDevN(String devN) {
+        this.devN = devN;
+    }
+
+    public String getDevType() {
+        return devType;
+    }
+
+    public void setDevType(String devType) {
+        this.devType = devType;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public String getDirectType() {
+        return directType;
+    }
+
+    public void setDirectType(String directType) {
+        this.directType = directType;
+    }
+
+    public String getDirectTypeDesc() {
+        return directTypeDesc;
+    }
+
+    public void setDirectTypeDesc(String directTypeDesc) {
+        this.directTypeDesc = directTypeDesc;
+    }
+
+    public String getRandom() {
+        return random;
+    }
+
+    public void setRandom(String random) {
+        this.random = random;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getEx() {
+        return ex;
+    }
+
+    public void setEx(String ex) {
+        this.ex = ex;
+    }
+
+    @Override
+    public String toString() {
+        return "ReceiveTopic{" +
+                "devNo=" + devNo +
+                ", devN='" + devN + '\'' +
+                ", devType='" + devType + '\'' +
+                ", timeStamp='" + timeStamp + '\'' +
+                ", directType='" + directType + '\'' +
+                ", directTypeDesc='" + directTypeDesc + '\'' +
+                ", random='" + random + '\'' +
+                ", user='" + user + '\'' +
+                ", ex='" + ex + '\'' +
+                '}';
+    }
 }

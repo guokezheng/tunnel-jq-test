@@ -1,13 +1,11 @@
 package com.tunnel.business.domain.digitalmodel;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 /**
  * @author dzy
  * @date 2022/9/6 11:25
  */
-@Data
 public class WjDeviceData {
 
     @ApiModelProperty("设备实时运行状态")
@@ -52,4 +50,138 @@ public class WjDeviceData {
     @ApiModelProperty("设备状态")
     private Integer deviceStatus;
 
+    @ApiModelProperty("设备状态")
+    private Integer alarmSource;
+
+    public Integer getRunStatus() {
+        return runStatus;
+    }
+
+    public void setRunStatus(Integer runStatus) {
+        this.runStatus = runStatus;
+    }
+
+    public String getRunDate() {
+        return runDate;
+    }
+
+    public void setRunDate(String runDate) {
+        this.runDate = runDate;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public Integer getRunMode() {
+        return runMode;
+    }
+
+    public void setRunMode(Integer runMode) {
+        this.runMode = runMode;
+    }
+
+    public Double getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(Double windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public String getWindDirection() {
+        return windDirection;
+    }
+
+    public void setWindDirection(String windDirection) {
+        this.windDirection = windDirection;
+    }
+
+    public Double getCO() {
+        return CO;
+    }
+
+    public void setCO(Double CO) {
+        this.CO = CO;
+    }
+
+    public Double getVI() {
+        return VI;
+    }
+
+    public void setVI(Double VI) {
+        this.VI = VI;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public Integer getDeviceStatus() {
+        return deviceStatus;
+    }
+
+    public void setDeviceStatus(Integer deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
+    public Integer getAlarmSource() {
+        return alarmSource;
+    }
+
+    public void setAlarmSource(Integer alarmSource) {
+        this.alarmSource = alarmSource;
+    }
+
+    @Override
+    public String toString() {
+        return "WjDeviceData{" +
+                "runStatus=" + runStatus +
+                ", runDate='" + runDate + '\'' +
+                ", unit='" + unit + '\'' +
+                ", runMode=" + runMode +
+                ", windSpeed=" + windSpeed +
+                ", windDirection='" + windDirection + '\'' +
+                ", CO=" + CO +
+                ", VI=" + VI +
+                ", message='" + message + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", deviceType='" + deviceType + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", deviceStatus=" + deviceStatus +
+                ", alarmSource=" + alarmSource +
+                '}';
+    }
 }

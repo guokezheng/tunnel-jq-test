@@ -136,9 +136,9 @@
 
       <div class="warningTop">
         <div class="photoBox">
-          <img  src="../../assets/images/warningPhoto.png"></img>
+          <img  src="../../assets/images/warningPhoto.png" />
           <div>
-            <img v-for="item of 4" src="../../assets/images/warningPhoto.png"></img>
+            <img v-for="(item,index) of 4" src="../../assets/images/warningPhoto.png" :key="index" />
           </div>
         </div>
         <div class="processBox">
@@ -393,7 +393,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '';
+          // location.href = '';
+          location.href = '/#/login';
         })
       }).catch(() => {});
     },
@@ -641,7 +642,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 72px;
     &:focus {
       outline: none;
     }
@@ -671,7 +672,7 @@ export default {
         justify-content: center;
         align-items: center;
         span{
-          font-size:14px;
+          font-size:16px;
           margin-left:10px;
         }
         .user-avatar {

@@ -4,6 +4,7 @@ package com.tunnel.business.mapper.dataInfo;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 隧道Mapper接口
@@ -28,6 +29,14 @@ public interface SdTunnelsMapper
      * @return 隧道集合
      */
     public List<SdTunnels> selectSdTunnelsList(SdTunnels sdTunnels);
+
+    /**
+     * 查询隧道是否重复
+     *
+     * @param sdTunnels 隧道
+     * @return 隧道集合
+     */
+    public List<SdTunnels> verifyTunnelOnly(SdTunnels sdTunnels);
 
     /**
      * 新增隧道
@@ -68,5 +77,13 @@ public interface SdTunnelsMapper
      */
     public List<SdTunnels> selectSdTunnelsSubList(SdTunnels sdTunnels);
     public List<SdTunnels> deptId(Long deptId);
+
+
+    /**
+     * 查询所有隧道列表
+     * 查询隧道表部分字段，避免频繁查询大字段store_configure
+     * @return
+     */
+    List<Map<String,String>> getTunnelList();
 
 }

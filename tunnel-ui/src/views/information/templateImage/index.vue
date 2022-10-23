@@ -5,7 +5,7 @@
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
-      label-width="68px"
+      label-width="40px"
     >
       <el-form-item label="文本" prop="word">
         <el-input
@@ -19,18 +19,51 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:templateImage:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:templateImage:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:templateImage:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:templateImage:export']"
+          >导出</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -81,24 +114,26 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      height="630"
+      max-height="640"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'creatTime', order: 'descending'}"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
           <el-table-column label="序号"
       type="index"
       width="50">
     </el-table-column>
-      <el-table-column type="selection" width="55" align="center" />
+
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-        
+
         <template slot-scope="scope">
 　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
 　　    </template>
@@ -118,18 +153,16 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:vocabulary:edit']"
+            v-hasPermi="['system:templateImage:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vocabulary:remove']"
+            v-hasPermi="['system:templateImage:remove']"
             >删除</el-button
           >
         </template>
@@ -159,7 +192,7 @@
         <el-form-item label="图片路径" prop="pictureUrl">
           <!-- <el-input v-model="form.url" placeholder="请输入图片路径" /> -->
           <el-upload
-            id="file"
+            id="promise"
             :class="{disabled:eqObj.uploadDisabled}"
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -183,7 +216,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -196,7 +229,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -205,7 +238,7 @@
           />
           px
         </el-form-item>
-        
+
         <!-- <el-form-item label="图片类型" prop="imageType">
           <el-input v-model="form.imageType" placeholder="请输入图片类型" />
         </el-form-item> -->
@@ -377,18 +410,27 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
       this.title = "添加情报板模板图片";
+
+      this.open = true;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
+      var that = this;
+      that.fileList = [];
       getTemplateImageInfo(id).then((response) => {
+        console.log(response,"修改情报板图片")
         this.form = response.data;
-        this.open = true;
-        this.planRoadmapUrl(that.form.iFileList);
         this.title = "修改情报板图片";
+
+        this.open = true;
+        // this.planRoadmapUrl(that.form.iFileList);
+        that.fileList.push({
+          name: this.form.pictureName,
+          url: this.form.pictureUrl,
+        });
       });
     },
     async planRoadmapUrl(iFileList) {
@@ -420,7 +462,7 @@ export default {
       this.fileData.append("vmsSize", this.form.vmsSize);
       this.fileData.append("imageRemark", this.form.imageRemark);
       this.fileData.append("speed", this.form.speed);
-      this.fileData.append("deleteflag", this.form.deleteflag);
+      this.fileData.append("deleteflag", this.form.deleteflag == false ? '0' : '1');
       console.log(this.fileData)
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -458,7 +500,7 @@ export default {
         }
       )
         .then(function () {
-          return delVocabulary(ids);
+          return deleteTemplateImage(ids);
         })
         .then(() => {
           this.getList();
@@ -529,6 +571,14 @@ export default {
     openImg(url) {
       this.img = url;
       this.yn = !this.yn;
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

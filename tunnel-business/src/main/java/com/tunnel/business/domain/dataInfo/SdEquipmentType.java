@@ -4,9 +4,6 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
@@ -17,7 +14,6 @@ import java.util.List;
  * @param <SdEquipmentStateIconFile>
  * @date 2020-08-27
  */
-@Data
 @ApiModel("设备类型实体")
 public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 {
@@ -57,6 +53,7 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
 
     @ApiModelProperty("设备大类")
     private String bigType;
+
 
     @Override
     public String toString() {

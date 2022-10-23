@@ -1,7 +1,6 @@
 package com.tunnel.business.domain.event;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.util.Date;
 
@@ -9,7 +8,6 @@ import java.util.Date;
  * @author dzy
  * @date 2022/9/4 14:32
  */
-@Data
 public class SdRadarDetectData {
 
     @ApiModelProperty("数据流水号")
@@ -57,4 +55,173 @@ public class SdRadarDetectData {
 
     private String endTime;
     private String startTime;
+
+    private Long deptId;
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getRecordSerialNumber() {
+        return recordSerialNumber;
+    }
+
+    public void setRecordSerialNumber(String recordSerialNumber) {
+        this.recordSerialNumber = recordSerialNumber;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(String vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
+    public String getVehicleColor() {
+        return vehicleColor;
+    }
+
+    public void setVehicleColor(String vehicleColor) {
+        this.vehicleColor = vehicleColor;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public String getLaneNum() {
+        return laneNum;
+    }
+
+    public void setLaneNum(String laneNum) {
+        this.laneNum = laneNum;
+    }
+
+    public String getCourseAngle() {
+        return courseAngle;
+    }
+
+    public void setCourseAngle(String courseAngle) {
+        this.courseAngle = courseAngle;
+    }
+
+    public String getVehicleLicense() {
+        return vehicleLicense;
+    }
+
+    public void setVehicleLicense(String vehicleLicense) {
+        this.vehicleLicense = vehicleLicense;
+    }
+
+    public String getLicenseColor() {
+        return licenseColor;
+    }
+
+    public void setLicenseColor(String licenseColor) {
+        this.licenseColor = licenseColor;
+    }
+
+    public String getStakeNum() {
+        return stakeNum;
+    }
+
+    public void setStakeNum(String stakeNum) {
+        this.stakeNum = stakeNum;
+    }
+
+    public Date getDetectTime() {
+        return detectTime;
+    }
+
+    public void setDetectTime(Date detectTime) {
+        this.detectTime = detectTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    @Override
+    public String toString() {
+        return "SdRadarDetectData{" +
+                "recordSerialNumber='" + recordSerialNumber + '\'' +
+                ", id=" + id +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", tunnelId='" + tunnelId + '\'' +
+                ", vehicleType='" + vehicleType + '\'' +
+                ", vehicleColor='" + vehicleColor + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", speed='" + speed + '\'' +
+                ", laneNum='" + laneNum + '\'' +
+                ", courseAngle='" + courseAngle + '\'' +
+                ", vehicleLicense='" + vehicleLicense + '\'' +
+                ", licenseColor='" + licenseColor + '\'' +
+                ", stakeNum='" + stakeNum + '\'' +
+                ", detectTime=" + detectTime +
+                ", endTime='" + endTime + '\'' +
+                ", startTime='" + startTime + '\'' +
+                '}';
+    }
 }

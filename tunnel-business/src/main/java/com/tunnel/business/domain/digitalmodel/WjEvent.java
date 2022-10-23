@@ -2,7 +2,6 @@ package com.tunnel.business.domain.digitalmodel;
 
 import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 
 import java.util.List;
 
@@ -10,7 +9,6 @@ import java.util.List;
  * @author dzy
  * @date 2022/9/2 9:51
  */
-@Data
 public class WjEvent extends BaseEntity {
 
     @ApiModelProperty("事件编码")
@@ -45,4 +43,120 @@ public class WjEvent extends BaseEntity {
 
     @ApiModelProperty("事件结束时间戳")
     private String eventTimeStampEnd;
+
+    @ApiModelProperty("隧道方向 1北向--上行 2南向--下行")
+    private String direction;
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public Long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
+
+    public Byte getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(Byte eventType) {
+        this.eventType = eventType;
+    }
+
+    public Byte getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(Byte stationId) {
+        this.stationId = stationId;
+    }
+
+    public Byte getLaneNo() {
+        return laneNo;
+    }
+
+    public void setLaneNo(Byte laneNo) {
+        this.laneNo = laneNo;
+    }
+
+    public Byte getTargetNum() {
+        return targetNum;
+    }
+
+    public void setTargetNum(Byte targetNum) {
+        this.targetNum = targetNum;
+    }
+
+    public String getStakeNum() {
+        return stakeNum;
+    }
+
+    public void setStakeNum(String stakeNum) {
+        this.stakeNum = stakeNum;
+    }
+
+    public List<WjConfidence> getTargetList() {
+        return targetList;
+    }
+
+    public void setTargetList(List<WjConfidence> targetList) {
+        this.targetList = targetList;
+    }
+
+    public Double getEventLongitude() {
+        return eventLongitude;
+    }
+
+    public void setEventLongitude(Double eventLongitude) {
+        this.eventLongitude = eventLongitude;
+    }
+
+    public Double getEventLatitude() {
+        return eventLatitude;
+    }
+
+    public void setEventLatitude(Double eventLatitude) {
+        this.eventLatitude = eventLatitude;
+    }
+
+    public String getEventTimeStampStart() {
+        return eventTimeStampStart;
+    }
+
+    public void setEventTimeStampStart(String eventTimeStampStart) {
+        this.eventTimeStampStart = eventTimeStampStart;
+    }
+
+    public String getEventTimeStampEnd() {
+        return eventTimeStampEnd;
+    }
+
+    public void setEventTimeStampEnd(String eventTimeStampEnd) {
+        this.eventTimeStampEnd = eventTimeStampEnd;
+    }
+
+    @Override
+    public String toString() {
+        return "WjEvent{" +
+                "eventId=" + eventId +
+                ", eventType=" + eventType +
+                ", stationId=" + stationId +
+                ", laneNo=" + laneNo +
+                ", targetNum=" + targetNum +
+                ", stakeNum='" + stakeNum + '\'' +
+                ", targetList=" + targetList +
+                ", eventLongitude=" + eventLongitude +
+                ", eventLatitude=" + eventLatitude +
+                ", eventTimeStampStart='" + eventTimeStampStart + '\'' +
+                ", eventTimeStampEnd='" + eventTimeStampEnd + '\'' +
+                '}';
+    }
 }

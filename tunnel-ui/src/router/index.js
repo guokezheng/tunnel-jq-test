@@ -40,6 +40,11 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/loginjqtunnel',
+    component: (resolve) => require(['@/views/loginjqtunnel'], resolve),
+    hidden: true
+  },
+  {
     path: '/cloudControl/index',
     name: 'index2',
     hidden: true,

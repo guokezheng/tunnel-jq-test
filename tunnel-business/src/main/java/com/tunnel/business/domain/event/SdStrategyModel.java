@@ -96,7 +96,7 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("手动控制")
     private List<Map> manualControl;
 
-    @ApiModelProperty("定时控制")
+    @ApiModelProperty("定时控制 || 自动触发")
     private List<Map> autoControl;
 
     @ApiModelProperty("分时控制")

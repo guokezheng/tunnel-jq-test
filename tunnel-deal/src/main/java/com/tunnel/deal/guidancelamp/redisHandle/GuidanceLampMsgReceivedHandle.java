@@ -5,9 +5,10 @@ import com.google.auto.service.AutoService;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.utils.util.SpringContextUtils;
+
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
-import com.zc.common.core.redis.RedisMessageDispatcher;
+import com.zc.common.core.redis.pubsub.RedisMessageDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.zc.common.constant.RedisChannelConstants;
-import com.zc.common.core.redis.RedisMessageDispatcher;
+import com.zc.common.core.redis.pubsub.RedisMessageDispatcher;
 import com.zc.relay.dto.DownData;
 import com.zc.relay.dto.DownDataChildDevice;
 import com.zc.relay.dto.DownSetData;

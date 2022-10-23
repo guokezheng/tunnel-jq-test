@@ -1,15 +1,11 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * 设备类型
  *
  * @author yangqichao
  */
-@Getter
-@AllArgsConstructor
 public enum DevicesStatusEnum {
 
     DEVICE_ON_LINE("1", "在线"), DEVICE_OFF_LINE("2", "离线"), DEVICE_ERROR("3", "故障");
@@ -59,5 +55,18 @@ public enum DevicesStatusEnum {
 
     public String getName() {
         return name;
+    }
+
+    DevicesStatusEnum(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

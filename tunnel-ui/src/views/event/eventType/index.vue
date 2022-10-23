@@ -11,15 +11,40 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:eventType:add']"
+        >新增</el-button>
+        <!-- <el-button
+          type="primary" 
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:eventType:edit']"
+        >修改</el-button> -->
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:eventType:remove']"
+        >删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="primary" 
+          plain
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
@@ -28,7 +53,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary" 
+          plain
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
@@ -38,7 +64,8 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary" 
+          plain
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
@@ -46,15 +73,15 @@
           v-hasPermi="['system:eventType:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['system:eventType:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button
+         type="warning"
+         icon="el-icon-download"
+         size="mini"
+         @click="handleExport"
+         v-hasPermi="['system:eventType:export']"
+       >导出</el-button>
+     </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -63,25 +90,26 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName" max-height="640"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
+          <!-- <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            class="tableBlueButtton"
+            @click="update(scope.row)"
             v-hasPermi="['system:eventType:edit']"
-          >修改</el-button>
+          >修改</el-button> -->
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
+            
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:eventType:remove']"
           >删除</el-button>
@@ -194,6 +222,8 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
+      console.log("ids>>>>>",this.ids)
+
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -206,13 +236,23 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
+      const id = row.id || this.ids[0]
       getEventType(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改事件类型";
       });
     },
+
+    update(row) {
+      this.reset();
+      getEventType(row.id).then(response => {
+        this.form = response.data;
+        this.open = true;
+        this.title = "修改事件类型";
+      });
+    },
+
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
@@ -256,7 +296,15 @@ export default {
       this.download('business/eventType/export', {
         ...this.queryParams
       }, `system_eventType.xlsx`)
-    }
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

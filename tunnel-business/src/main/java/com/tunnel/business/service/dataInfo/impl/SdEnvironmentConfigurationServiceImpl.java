@@ -12,6 +12,7 @@ import com.tunnel.business.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +78,11 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
      */
     @Override
     public int insertSdEnvironmentConfiguration(MultipartFile[] file, SdEnvironmentConfiguration sdEnvironmentConfiguration) {
+        if (sdEnvironmentConfiguration.getWidth().equals("0")) {
+            throw new RuntimeException("图标宽度不能为0");
+        } else if (sdEnvironmentConfiguration.getHeight().equals("0")) {
+            throw new RuntimeException("图标高度不能为0");
+        }
         sdEnvironmentConfiguration.setCreateTime(DateUtils.getNowDate());
         sdEnvironmentConfiguration.setDirection(sdEnvironmentConfiguration.getDirection().equals("null") ? null : sdEnvironmentConfiguration.getDirection());
         sdEnvironmentConfiguration.setEnvironmentType(sdEnvironmentConfiguration.getEnvironmentType().equals("null") ? null : sdEnvironmentConfiguration.getEnvironmentType());
@@ -90,6 +96,22 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
             String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
             sdEnvironmentConfiguration.setUrl(guid);
             for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+
+
                 // 从缓存中获取文件存储路径
                 String fileServerPath = RuoYiConfig.getUploadPath();
                 // 原图文件名
@@ -104,7 +126,8 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
 
                 SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                 iconFile.setStateIconId(guid);
-                iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+                // iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+                iconFile.setUrl(imageBaseStr);
                 iconFile.setStateIconName(fileName);
                 iconFile.setCreateBy(SecurityUtils.getUsername());
                 iconFile.setCreateTime(DateUtils.getNowDate());
@@ -142,6 +165,21 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
         sdEnvironmentConfiguration.setUrl(guid);// 文件关联ID
         if (file != null && file.length > 0) {
             for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+
                 // 从缓存中获取文件存储路径
                 String fileServerPath = RuoYiConfig.getUploadPath();
                 // 原图文件名
@@ -156,7 +194,8 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
 
                 SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                 iconFile.setStateIconId(guid);
-                iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+                // iconFile.setUrl(fileServerPath + "/equipmentIcon/" + fileName);
+                iconFile.setUrl(imageBaseStr);
                 iconFile.setStateIconName(fileName);
                 iconFile.setCreateBy(SecurityUtils.getUsername());
                 iconFile.setCreateTime(DateUtils.getNowDate());
@@ -200,5 +239,25 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
     @Override
     public int deleteSdEnvironmentConfigurationById(Long id) {
         return sdEnvironmentConfigurationMapper.deleteSdEnvironmentConfigurationById(id);
+    }
+
+    /**
+     * 查询隧道环境配置列表-导出
+     *
+     * @param sdEnvironmentConfiguration 隧道环境配置
+     * @return 隧道环境配置
+     */
+    @Override
+    public List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList_exp(SdEnvironmentConfiguration sdEnvironmentConfiguration) {
+        List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationMapper.selectSdEnvironmentConfigurationList_exp(sdEnvironmentConfiguration);
+        list.forEach(e -> {
+            String fileId = e.getUrl();
+            if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                sdEquipmentStateIconFile.setStateIconId(e.getUrl());
+                e.setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+            }
+        });
+        return list;
     }
 }

@@ -375,6 +375,7 @@ export default {
 
         // 获取触发器的数据
         getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
+          console.log(res, "触发器数据");
           this.strategyForm.triggers.id = res.data.id;
           this.strategyForm.triggers.comparePattern = res.data.comparePattern;
           this.strategyForm.triggers.compareValue = res.data.compareValue;

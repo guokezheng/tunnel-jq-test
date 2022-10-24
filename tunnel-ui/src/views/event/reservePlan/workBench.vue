@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-10-22 10:41:51
+ * @LastEditTime: 2022-10-24 08:52:53
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -65,7 +65,36 @@
           />
         </div>
       </div>
-      <el-steps :active="1" simple>
+      <div class="scrollBox">
+        <div
+          v-for="item in previewList"
+          :key="item.strategyId"
+          :style="{ width: 100 / previewList.length + '%', height: '80px' }"
+        >
+          <p class="scrollTitle">
+            <el-tag type="success" size="medium">{{
+              item.strategyName
+            }}</el-tag>
+          </p>
+          <vue-seamless-scroll
+            :class-option="defaultOption"
+            class="listContent"
+            :data="item.equipmentData"
+          >
+            <div
+              v-for="(items, index) in item.equipmentData"
+              :key="index"
+              class="listRow"
+            >
+              <div>
+                {{ index + 1 }}:{{ items.eq_name }}状态:
+                {{ items.eq_status }}
+              </div>
+            </div>
+          </vue-seamless-scroll>
+        </div>
+      </div>
+      <!-- <el-steps :active="1" simple>
         <el-step
           v-for="item in previewList"
           :key="item.strategyId"
@@ -73,7 +102,7 @@
           status="success"
         >
         </el-step>
-      </el-steps>
+      </el-steps> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="workbenchOpenEvent">取 消</el-button>
         <el-button type="primary" @click="workbenchOpenEvent">确 定</el-button>
@@ -83,6 +112,7 @@
 </template>
 
 <script>
+import vueSeamlessScroll from "vue-seamless-scroll";
 import {
   addProcess,
   getListByRId,
@@ -91,6 +121,9 @@ import {
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
 export default {
+  components: {
+    vueSeamlessScroll,
+  },
   data() {
     return {
       tunnelId: "", //隧道id
@@ -99,6 +132,20 @@ export default {
       selectedIconList: null, //设备图标渲染数据
       previewList: null, //预览数据
     };
+  },
+  computed: {
+    defaultOption() {
+      return {
+        step: 0.2, // 数值越大速度滚动越快
+        limitMoveNum: 2, // 开始无缝滚动的数据量 this.dataList.length
+        hoverStop: true, // 是否开启鼠标悬停stop
+        direction: 1, // 0向下 1向上 2向左 3向右
+        openWatch: true, // 开启数据实时监控刷新dom
+        singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
+    },
   },
   methods: {
     init() {
@@ -225,5 +272,27 @@ export default {
   flex-direction: column;
   /* // align-items: center; */
   width: 40px !important;
+}
+.listContent {
+  height: 70%;
+  font-size: 14px;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.scrollBox {
+  width: 100%;
+  height: 125px;
+  display: flex;
+  .scrollTitle {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  .listRow {
+    div {
+      text-align: center;
+    }
+  }
 }
 </style>

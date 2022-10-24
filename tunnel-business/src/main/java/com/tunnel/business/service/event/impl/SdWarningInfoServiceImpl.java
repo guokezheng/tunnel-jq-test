@@ -2,6 +2,7 @@ package com.tunnel.business.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
@@ -86,8 +87,10 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
         List<SdWarningInfo> list = sdWarningInfoMapper.selectSdWarningInfoList(sdWarningInfo);
         for (int i = 0; i < list.size(); i++) {
             String url = list.get(i).getPicture();
-            String base64url = ImgTobase64.ioToBase64(url);
-            list.get(i).setPicture(base64url);
+            if(StringUtils.isNotNull(url)){
+                String base64url = ImgTobase64.ioToBase64(url);
+                list.get(i).setPicture(base64url);
+            }
         }
         return list;
     }

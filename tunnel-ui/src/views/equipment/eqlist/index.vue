@@ -129,7 +129,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型" prop="eqType">
               <el-select v-model="form.eqType" placeholder="请选择设备类型" @change="changeEqType(form.eqType)">
                 <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
                 </el-option>
@@ -639,7 +639,11 @@
             message: "请选择所属隧道",
             trigger: "change",
           }, ],
-          eqType:[{required: true, message: "请选择设备类型", trigger: "blur"}],
+          eqType:[{
+            required: true,
+            message: "请选择设备类型",
+            trigger: "blur",
+          }],
           eqName: [{
             required: true,
             message: "请选择设备名称",
@@ -830,6 +834,10 @@
         console.log(form,'form')
         if(!form.eqTunnelId){
           this.$modal.msgError("请选择所属隧道");
+          return;
+        }
+        if(!form.eqType){
+          this.$modal.msgError("请选择设备类型");
           return;
         }
         // if(!form.eqType){

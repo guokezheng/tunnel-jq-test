@@ -186,7 +186,7 @@
         <el-form-item label="设备类型" prop="equipment_type">
           <el-radio-group
             v-model="eqForm.equipment_type"
-            @change.native="eqTypeChange()"
+            @change="eqTypeChange()"
           >
             <el-radio-button
               :label="item.typeId"
@@ -361,6 +361,7 @@ export default {
       });
       getStrategy(this.id).then((response) => {
         let data = response.data;
+        this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
@@ -459,10 +460,12 @@ export default {
     },
     // 编辑操作
     async updateStrategyInfoData() {
-      await getGuid().then((res) => {
-        this.strategyForm.jobRelationId = res;
-        this.strategyForm.id = this.id;
-      });
+      if (this.sink == "add") {
+        await getGuid().then((res) => {
+          this.strategyForm.jobRelationId = res;
+          this.strategyForm.id = this.id;
+        });
+      }
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -578,7 +581,8 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if (this.eqForm.equipments.length > 1) {
+      console.log(this.eqForm.equipments, "设备数据");
+      if (this.eqForm.equipments.length >= 1) {
         this.eqForm.equipments = "";
       }
       this.listDevices();

@@ -44,8 +44,8 @@
                           <div class="ButtonBox">
                             <div class="recovery">{{ itm.planName }}</div>
                             <div class="button">
-                              <div @click="getPreview(itm)">预览</div>
-                              <div @click="eventDo(itm)">执行</div>
+                              <div class="handle" @click="getPreview(itm)">预览</div>
+                              <div class="handle" @click="eventDo(itm)">执行</div>
                             </div>
                           </div>
                         </div>
@@ -1300,7 +1300,7 @@ export default {
           height: 50%;
           position: absolute;
           display: inline-block;
-          z-index: 2;
+          z-index: 4;
           .partitionBox {
             width: 100%;
             height: 100%;
@@ -1879,8 +1879,12 @@ export default {
   cursor: pointer !important;
 }
 .closeButton {
+  z-index: 960619;
   width: 100%;
   text-align: center;
   padding: 10px 0;
+}
+.handle {
+  cursor: pointer;
 }
 </style>

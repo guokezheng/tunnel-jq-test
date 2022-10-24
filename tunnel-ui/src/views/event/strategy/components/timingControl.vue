@@ -285,7 +285,6 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
-        console.log("定时控制新增重置表单");
       }
       this.getEquipmentType();
       this.getTunnels();
@@ -298,6 +297,7 @@ export default {
       });
       getStrategy(this.id).then((response) => {
         let data = response.data;
+        this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
@@ -381,10 +381,12 @@ export default {
     },
     // 编辑操作
     async updateStrategyInfoData() {
-      await getGuid().then((res) => {
-        this.strategyForm.jobRelationId = res;
-        this.strategyForm.id = this.id;
-      });
+      if (this.sink == "add") {
+        await getGuid().then((res) => {
+          this.strategyForm.jobRelationId = res;
+          this.strategyForm.id = this.id;
+        });
+      }
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -471,7 +473,7 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if (this.eqForm.equipments.length > 1) {
+      if (this.eqForm.equipments.length >= 1) {
         this.eqForm.equipments = "";
       }
       this.listDevices();

@@ -47,10 +47,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
+        <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
@@ -111,7 +108,6 @@
       :header-cell-style="{ 'text-align': 'center' }"
       max-height="640"
       :row-class-name="tableRowClassName"
-
     >
       <el-table-column
         label="隧道名称"
@@ -147,7 +143,6 @@
             inactive-color="#ccc"
             active-value="0"
             inactive-value="1"
-           
             @change="changeStrategyState(scope.row)"
           >
           </el-switch>
@@ -278,13 +273,14 @@ import manualControl from "./components/manualControl"; //手动控制
 import timingControl from "./components/timingControl"; //定时控制
 import autoControl from "./components/autoControl"; //自动触发
 import timeControl from "./components/timeControl"; //分时控制
-
+import cron from "@/components/cron/cron.vue";
 export default {
   components: {
     manualControl,
     timingControl,
     autoControl,
     timeControl,
+    cron,
   },
   data() {
     return {
@@ -666,6 +662,7 @@ export default {
         .then((_) => {
           this.strategyForm.strategyType = "";
           this.dialogVisible = false;
+          // this.$refs.cron.checkClear();
           done();
         })
         .catch((_) => {});
@@ -881,10 +878,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
   },

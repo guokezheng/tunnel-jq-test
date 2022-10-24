@@ -188,7 +188,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-show="scope.row.planFileId != null"
+            v-show="scope.row.planFileId != 'null'"
             icon="el-icon-link"
             size="mini"
             style="cursor: pointer; color: #39adff"
@@ -196,7 +196,7 @@
             @click="openFileDrawer(scope.row)"
             >点击查看
           </el-button>
-          <div v-show="scope.row.planFileId == null">无</div>
+          <div v-show="scope.row.planFileId == 'null'">无</div>
         </template>
       </el-table-column>
       <el-table-column

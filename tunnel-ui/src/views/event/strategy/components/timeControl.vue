@@ -60,6 +60,11 @@
               <el-time-select
                 format="HH:mm:ss"
                 value-format="HH:mm:ss"
+                :picker-options="{
+                  start: '05 :30',
+                  step: '00:15',
+                  end: '23:30',
+                }"
                 v-model="item.controlTime"
                 placeholder="选择时间"
               >
@@ -470,7 +475,7 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if (this.eqForm.equipments.length > 1) {
+      if (this.eqForm.equipments.length >= 1) {
         this.eqForm.equipments = "";
       }
       this.listDevices();

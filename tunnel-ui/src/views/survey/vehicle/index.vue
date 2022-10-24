@@ -412,8 +412,9 @@ import {
 
       /** 修改按钮操作 */
       handleUpdateMaterial(row) {
+        console.log(row,"row");
         // this.reset();
-        const id = row.orgId?[row.orgId]:this.ids;
+        const id = row.id?[row.id]:this.ids;
         this.open=true
         this.title='修改应急车辆'
         // console.log(scope,'row.idrow.id');

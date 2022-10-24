@@ -525,7 +525,7 @@
             <div class="ledLighting">
               <span>{{ item.strategy_name }} </span>
               <el-switch
-                v-model="item.strategyState"
+                v-model="item.strategy_state"
                 
                 active-value="0"
                 inactive-value="1"
@@ -737,7 +737,7 @@
     </div>
     <!-- 操作日志 弹窗 -->
     <el-dialog
-      class="workbench-dialog batch-table eventDiglog"
+      class="workbench-dialog batch-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
       width="1000px"
@@ -828,6 +828,7 @@
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
+        
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column
@@ -857,7 +858,7 @@
           label="创建时间"
           align="center"
           prop="createTime"
-          width="180"
+          width="220"
           sortable
         >
           <template slot-scope="scope">
@@ -3464,8 +3465,13 @@ export default {
     },
     timStrategySwitch(item){
 
-      timeStrategySwitch(item.strategy_id,item.strategyState).then((res)=>{
-        this.$modal.msgSuccess("控制成功");
+      timeStrategySwitch(item.strategy_id,item.strategy_state).then((res)=>{
+        if(item.strategy_state == 0){
+          this.$modal.msgSuccess("开启成功");
+        }else if(item.strategy_state == 1){
+          this.$modal.msgSuccess("关闭成功");
+
+        }
       })
     },
     // // 抽屉 车指控制
@@ -3570,8 +3576,6 @@ export default {
       this.drawerA = false;
       this.drawerCVisible = false;
       timeSharing(this.tunnelId).then((res) => {
-        // console.log(res);
-        // var arr = []
         for(var item of res.data){
           item.arr = item.time.split('-')
           console.log(item,"item");
@@ -6908,7 +6912,7 @@ export default {
 
     .handleLightClass {
       height: 28px;
-      margin-left: 10px;
+      margin-left: 5px;
       width: 40px;
       text-align: center;
       // background-color: #07C2FF !important;
@@ -7409,7 +7413,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 87%;
+  width: 85%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -7819,12 +7823,19 @@ input {
   width: 100%;
   height: 15rem;
 }
-.eventDiglog .el-dialog .el-form {
-  padding: 15px !important;
-  .el-form-item__content .el-button {
-    width: 88px;
-    height: 22px;
-    border: none;
+.eventDiglog, .operationDiglog{
+  .el-dialog .el-form {
+    padding: 15px !important;
+    .el-form-item__content .el-button {
+      width: 88px;
+      height: 22px;
+      border: none;
+    }
+  } 
+  .el-table{
+    padding: 0 15px;
+    margin-bottom: 60px;
+   
   }
 }
 ::v-deep .eventDiglog .el-button--medium {

@@ -2,13 +2,20 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="事件类型" prop="eventType">
-        <el-input
+        <el-select
           v-model="queryParams.eventType"
-          placeholder="请输入事件类型"
+          placeholder="请选择事件类型"
           clearable
           size="small"
-          @keyup.enter.native="handleQuery"
-        />
+          style="width: 180px"
+        >
+          <el-option
+            v-for="item in eventTypeData"
+            :key="item.id"
+            :label="item.eventType"
+            :value="item.id"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
@@ -171,6 +178,8 @@ export default {
         pageSize: 10,
         eventType: null,
       },
+      //事件类型
+      eventTypeData: {},
       // 表单参数
       form: {},
       // 表单校验
@@ -181,6 +190,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getEventType()
   },
   methods: {
     /** 查询事件类型列表 */
@@ -190,6 +200,13 @@ export default {
         this.eventTypeList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    /** 查询事件类型列表 */
+    getEventType() {
+      listEventType().then((response) => {
+        console.log(response, "responseresponse");
+        this.eventTypeData = response.rows; 
       });
     },
     // 取消按钮

@@ -172,7 +172,9 @@ export default {
     getChartMes() {
       getTodayLDData(this.eqInfo.equipmentId).then((response) => {
         console.log(response, "亮度检测器数据");
-        this.nowData = parseFloat(response.data.nowData).toFixed(2)
+        if(response.data.nowData){
+          this.nowData = parseFloat(response.data.nowData).toFixed(2)
+        }
         var xData = [];
         var yData = [];
 

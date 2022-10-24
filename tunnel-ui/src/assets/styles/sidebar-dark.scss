@@ -90,7 +90,8 @@
 
       }
       .el-pagination .el-pager .active{
-        background-color: #00afe0;
+        background-color: #00afe0 !important;
+        color: white !important;
       }
     }
     // 应急预案 表格内相关策略
@@ -620,19 +621,19 @@
         //background-image: url(../cloudControl/dialog6.png) !important;
     }
   }
-  .eventDiglog{
-    .el-dialog{
-      .el-form{
-        padding: 15px;
-      }
-        //background-image: url(../cloudControl/dialog5.png) !important;
-        //background-repeat: no-repeat;
-        //background-size: 100% 100%;
-    }
-    .el-dialog__header .el-dialog__title{
-      color: #000000 !important;
-    }
-  }
+  // .eventDiglog{
+    // .el-dialog{
+    //   .el-form{
+    //     padding: 15px;
+    //   }
+    //     //background-image: url(../cloudControl/dialog5.png) !important;
+    //     //background-repeat: no-repeat;
+    //     //background-size: 100% 100%;
+    // }
+    // .el-dialog__header .el-dialog__title{
+    //   color: #000000 !important;
+    // }
+  // }
   .batch-dialog{
     .el-dialog{
         //background-image: url(../cloudControl/dialog4.png) !important;
@@ -768,6 +769,9 @@
     color: #2c5ea2 !important;
   }
   .explain-table {
+    .el-table{
+      padding: 15px;
+    }
     .el-table .el-table__header-wrapper th{
       background-color: #fff !important;
       color:#0a88bd !important;
@@ -804,7 +808,31 @@
     border: none !important;
     color: white !important;
   }
+   // 操作日志
+   .operationDiglog{
+    .el-table{
+      background: transparent;
+      padding: 0 15px;
+      margin-bottom: 60px;
+      .el-table__body{
+        width: calc(100% - 30px) !important;
+      }
+      td.el-table__cell{
+        border-bottom: solid 1px  #0a88bd !important;
+      }
+      th.is-leaf{
+        border-bottom: solid 1px  #0a88bd !important;
+
+      }
+    }
+   }
   .eventDiglog {
+    .title{
+      color: #003a5d;
+    }
+    .el-dialog__header{
+      display: none;
+    }
     //鼠标停留在table
     .el-table--enable-row-hover .el-table__body tr:hover > td {
       background-color: #c4e8f6;
@@ -856,7 +884,7 @@
         border: solid 1px #00c2ff;
       }
       h3{
-        color: #000 !important;
+        color: #003a5d !important;
       }
     }
   }

@@ -22,9 +22,12 @@ ruoyi:
   # 阿里云oss存储配置
   oss:
     bucketName: bucket-wisdom-oss
-    endPoint: http://oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud/
-    accessKeyId: IDh1HEeliVnMImdxRH
+    # 这个需要在高速云网络环境下才可以访问，如果部署在高速云环境则需要打开此注释，目前先用IP
+#    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
+    endPoint: 10.166.26.35
+    accessKeyId: h1HEeliVnMImdxRH
     accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
+    outAccessDomainName: https://${ruoyi.oss.bucketName}.${ruoyi.oss.endPoint}/
     upFolder: upload
 # 开发环境配置
 server:

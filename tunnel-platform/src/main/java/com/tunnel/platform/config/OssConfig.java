@@ -16,6 +16,9 @@ public class OssConfig {
     @Value("${ruoyi.oss.accessKeySecret}")
     private String accessKeySecret;
 
+    @Value("${ruoyi.oss.outAccessDomainName}")
+    private String outAccessDomainName;
+
     @Value("${ruoyi.oss.bucketName}")
     private String bucketName;
 
@@ -31,6 +34,7 @@ public class OssConfig {
         OssUtil.setEndPoint(endPoint);
         OssUtil.setAccessKeyId(accessKeyId);
         OssUtil.setAccessKeySecret(accessKeySecret);
+        OssUtil.setOutAccessDomainName(outAccessDomainName);
         OssUtil.setBucketName(bucketName);
         OssUtil.setUpFolder(upFolder);
         OssUtil.setUploadType(uploadType);

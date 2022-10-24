@@ -168,7 +168,11 @@ public class OssUtil {
         return savePath;
     }
 
-
+    /**
+     *  文件下载 支持本地下载和从OSS下载
+     * @param filePath 文件的保存路径
+     * @param response
+     */
     public static void download(String filePath, HttpServletResponse response) {
         InputStream inputStream = null;
         OutputStream outputStream = null;

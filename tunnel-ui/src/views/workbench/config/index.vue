@@ -7271,6 +7271,9 @@ export default {
 }
 
 .workbench-header {
+  // position: absolute;
+  // top: 0px;
+  // left: 0px;
   padding-right: 20px;
   height: 45px;
   margin-top:6px;

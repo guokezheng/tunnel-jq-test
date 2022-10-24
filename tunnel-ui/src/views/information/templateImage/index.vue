@@ -389,6 +389,7 @@ export default {
         speed: null,
         deleteflag: null,
       };
+      this.fileList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -460,12 +461,21 @@ export default {
       this.fileData.append("imageWidth", this.form.imageWidth);
       this.fileData.append("imageHeight", this.form.imageHeight);
       this.fileData.append("vmsSize", this.form.vmsSize);
-      this.fileData.append("imageRemark", this.form.imageRemark);
-      this.fileData.append("speed", this.form.speed);
+      this.fileData.append("imageRemark", this.form.imageRemark == null ? '' : this.form.imageRemark);
+      this.fileData.append("speed", this.form.speed == null ? '' : this.form.speed);
       this.fileData.append("deleteflag", this.form.deleteflag == false ? '0' : '1');
       console.log(this.fileData)
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          console.log(this.fileData.file);
+          if(parseInt(this.form.imageWidth) == 0){
+            this.$modal.msgError("图片宽度不能为0");
+            return;
+          }
+          if(parseInt(this.form.imageHeight) == 0){
+            this.$modal.msgError("图片高度不能为0");
+            return;
+          }
           if (this.form.id != null) {
             this.fileData.append("id", this.form.id);
             this.fileData.append("pictureUrl", this.form.pictureUrl);

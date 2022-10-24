@@ -87,7 +87,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
         List<SdWarningInfo> list = sdWarningInfoMapper.selectSdWarningInfoList(sdWarningInfo);
         for (int i = 0; i < list.size(); i++) {
             String url = list.get(i).getPicture();
-            if(StringUtils.isNotNull(url)){
+            if(StringUtils.isNotNull(url) && StringUtils.isNotEmpty(url)){
                 String base64url = ImgTobase64.ioToBase64(url);
                 list.get(i).setPicture(base64url);
             }

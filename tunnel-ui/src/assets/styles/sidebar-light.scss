@@ -169,6 +169,10 @@
         color: white;
         border: 1px solid #05AFE3;
       }
+      .el-pagination .el-pager .active{
+        background-color: #00afe0 !important;
+        color: white !important;
+      }
     }
     // 面包屑
     .app-breadcrumb.el-breadcrumb {
@@ -793,7 +797,134 @@
         font-size: 13px;
       }
   }
-  .explain-table,.eventDiglog {
+  // 事件彈窗
+  .eventDiglog{
+    .title{
+      color: white;
+    }
+    
+    .el-dialog__header{
+      display: none;
+    }
+    // 表格隔行变色
+    .tableEvenRow{
+      background: #2B5F96;
+    }
+    .tableOddRow{
+      background: #326CA9;
+    }
+    .el-dialog{
+      background: #071930;
+      .el-dialog__body{
+         color: white;
+      }
+    }
+    .warningTop, .warningBottom{
+      background: #1B4670;
+    }
+    .el-table::before, .el-table--group::after, .el-table--border::after{
+      background: transparent;
+    }
+    .el-table{
+      background: transparent;
+      .el-table__body{
+        width: 100%;
+      }
+      tr{
+        color: white;
+      }
+      .el-table__header-wrapper th{
+        background-color: #00ADFF !important;
+        color:#fff !important;
+      }
+      th.el-table__cell.is-leaf, .el-table td.el-table__cell{
+        border-bottom: solid 1px  #0a88bd !important;
+      }
+    }
+    /*table滚动条背景色 */
+    .el-table__body-wrapper::-webkit-scrollbar {
+      background-color: #c4e8f6;
+      width: 5px;
+    }
+
+    /* table滚动条的滑块*/
+    .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #00c2ff;
+    }
+    /* 鼠标悬浮*/
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: #0e2c53;
+    }
+  }
+  // 操作日志
+  .operationDiglog{
+    .el-loading-mask{
+      background: transparent;
+    }
+    .el-table::before, .el-table--group::after, .el-table--border::after{
+      background: transparent;
+    }
+    .el-table{
+      background: transparent;
+      padding: 0 15px;
+      margin-bottom: 60px;
+      .el-table__body{
+        width: calc(100% - 30px);
+      }
+      tr{
+        color: white;
+      }
+      .el-table__header-wrapper th{
+        background-color: #00ADFF !important;
+        color:#fff !important;
+      }
+      td.el-table__cell{
+        border-bottom: solid 1px  #0a88bd !important;
+      }
+    }
+    /*table滚动条背景色 */
+    .el-table__body-wrapper::-webkit-scrollbar {
+      background-color: #c4e8f6;
+      width: 5px;
+    }
+
+    /* table滚动条的滑块*/
+    .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #00c2ff;
+    }
+    /* 鼠标悬浮*/
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: #0e2c53;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active{
+      background-color: #00afe0 !important;
+      color: white !important;
+    }
+  }
+  .menuAdministration{
+    .el-table__expand-icon{
+      color: white;
+    }
+  }
+  // 工作台车道滚动条样式
+  .vehicleLane{
+    scrollbar-width: thin;
+    scrollbar-color: #6969dd #e0e0e0;
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+      transform: translateY(-5px);
+    }
+    ::-webkit-scrollbar-track {
+      background-color: #c4e8f6;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #00c2ff;
+    }
+   
+    
+  }
+  .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{
       border-bottom: solid 1px  #0a88bd !important;
     }

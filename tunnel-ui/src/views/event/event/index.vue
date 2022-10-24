@@ -975,7 +975,7 @@ export default {
     getEventType() {
       listEventType().then((response) => {
         console.log(response, "responseresponse");
-        this.eventTypeData = response.rows;
+        this.eventTypeData = response.rows; 
       });
     },
     // 状态字典翻译

@@ -632,24 +632,22 @@
         <el-table-column
           type="selection"
           :reserve-selection="true"
-          width="55"
           align="center"
         />
         <el-table-column
           label="预案名称"
           align="center"
           prop="planName"
-          width="200"
         />
         <el-table-column label="预案描述" align="left" prop="planDescription" />
       </el-table>
-      <pagination
+      <!-- <pagination
         v-show="planTotal > 0"
         :total="planTotal"
         :page.sync="planQueryParams.pageNum"
         :limit.sync="planQueryParams.pageSize"
         @pagination="getPlanList"
-      />
+      /> -->
       <div slot="footer">
         <el-button type="primary" @click="savePlan">保 存</el-button>
         <el-button @click="planCancel">关 闭</el-button>

@@ -71,6 +71,7 @@
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       max-height="640"
       :row-class-name="tableRowClassName"
+      class="menuAdministration"
     >
       <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
       <el-table-column prop="icon" label="图标" align="center" width="100">

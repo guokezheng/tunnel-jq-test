@@ -178,8 +178,12 @@ export default {
     getChartMes(){
       getTodayCOVIData(this.eqInfo.equipmentId).then((response) =>{
             console.log(response,"covi数据");
-            this.COnowData = parseFloat(response.data.COnowData).toFixed(2)
-            this.VInowData = parseFloat(response.data.VInowData).toFixed(2)
+            if(response.data.COnowData){
+              this.COnowData = parseFloat(response.data.COnowData).toFixed(2)
+            }
+            if(response.data.VInowData){
+              this.VInowData = parseFloat(response.data.VInowData).toFixed(2)
+            }
             var coXdata = []
             var coYdata = []
             var viXdata = []

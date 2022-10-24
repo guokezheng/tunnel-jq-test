@@ -166,7 +166,7 @@
           >
           <el-button
             size="mini"
-            class="tableDelButtton" 
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:SdEmergencyPer:remove']"
             >删除</el-button
@@ -285,7 +285,7 @@ export default {
         updateTime: null,
         createTime: null,
         updateBy: null,
-        userName: null,
+        // userName: null,
         groupName: null,
       },
       // 表单校验
@@ -362,7 +362,7 @@ export default {
         tunnelId: null,
         groupName: null,
         userName: null,
-        tunnelId: null,
+        // tunnelId: null,
       }
     },
     // 多选框选中数据

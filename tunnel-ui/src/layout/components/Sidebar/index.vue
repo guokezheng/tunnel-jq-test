@@ -15,7 +15,7 @@
         </template>
 
         <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper"
-            :style="topNav?'width:55%;height:100%;':''" ref="scroll">
+            :style="topNav?'width:55%;height:100%;position: absolute;left: 702px;top: 0;':''" ref="scroll">
             <el-menu
                 ref="currentNav"
                 :default-active="activeMenu"
@@ -201,6 +201,9 @@ export default {
         width:10%;
         float: left;
         text-align: left;
+        position: absolute;
+        top: 0;
+        left: 560px;
         span {
             margin-left: 10px;
         }

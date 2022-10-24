@@ -419,7 +419,9 @@ export default {
     top: 0;
   }
 }
-
+.has-logo{
+  background: rgb(0, 67, 117);
+}
 .drawer-bg {
   background: #000;
   opacity: 0.3;
@@ -507,5 +509,8 @@ export default {
 }
 .el-icon-s-order:before {
   font-size: 24px;
+}
+.main-container>div{
+  background: rgb(0, 67, 117);
 }
 </style>

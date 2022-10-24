@@ -605,7 +605,13 @@ export default {
     padding: 0px !important;
   }
 // .theme-dark .navbar{background-color:unset;}
-.theme-light .navbar{background-color:unset;}
+.navbar{
+  background: rgb(0, 67, 117);
+  position: absolute;
+    top: 0;
+    right: 0;
+}
+.theme-light .navbar{background-color:unset; }
 .theme-dark .right-menu #screenfull{color:white;}
 .el-dropdown-menu_theme-blue{
   background-color:rgba(0,74,119,0.9);

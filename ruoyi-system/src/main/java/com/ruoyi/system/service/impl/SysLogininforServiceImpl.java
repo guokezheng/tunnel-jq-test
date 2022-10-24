@@ -40,11 +40,10 @@ public class SysLogininforServiceImpl implements ISysLogininforService
     @Override
     public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor)
     {
-        Long deptId = SecurityUtils.getDeptId();
-        if (deptId == null) {
-            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        if (SecurityUtils.getUsername() != null && !SecurityUtils.getUsername().equals("")) {
+            String username = SecurityUtils.getUsername();
+            logininfor.setUserName(username);
         }
-        logininfor.getParams().put("deptId", deptId);
         return logininforMapper.selectLogininforList(logininfor);
     }
 

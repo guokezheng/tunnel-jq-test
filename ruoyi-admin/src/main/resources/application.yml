@@ -85,7 +85,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password: 
+    password:
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -177,5 +177,17 @@ wj:
 
 #两级平台权限控制：管理站、高速云
 authorize:
-  #  name: GLZ
-  name: GSY
+  name: GLZ
+  #name: GSY
+  gsy_host: http://10.168.56.206:8000
+    tunnel_push_url:
+    device_push_url:
+  glz_host:
+    wzb_glz_host: http://10.168.65.231:8000
+    th_glz_host: http://10.168.65.232:8000
+    mz_glz_host: http://10.168.65.233:8000
+    yts_glz_host: http://10.168.65.234:8000
+    jly_glz_host: http://10.168.65.235:8000
+    #设备控制接口
+  control_device_url:
+

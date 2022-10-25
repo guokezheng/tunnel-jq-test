@@ -134,7 +134,8 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative; left: 0px"
+          style="position: relative;"
+          :style="topNav?'width:85%;left:0px':'width:88%;left:2%'"
         >
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
@@ -386,12 +387,12 @@
         <div
           style="
             position: absolute;
-            right: 0;
             display: flex;
             justify-content: space-between;
             flex-direction: column;
             height: 100%;
           "
+          :style="topNav?'right: 0;':'right: 55px;'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i class="el-icon-caret-left"></i>车道控制模块
@@ -3318,12 +3319,12 @@ export default {
       };
     },
     navigationHeight() {
-      const topNav = this.$store.state.settings.topNav;
+      this.topNav = this.$store.state.settings.topNav;
       const needTagsView = this.$store.state.settings.tagsView;
       let h = 0;
-      h += 72;
-      if (!topNav) {
-        if (needTagsView) h += 34;
+      h += 50;
+      if (!this.topNav) {
+        if (needTagsView) h += 22;
       }
 
       return h;
@@ -7271,9 +7272,6 @@ export default {
 }
 
 .workbench-header {
-  // position: absolute;
-  // top: 0px;
-  // left: 0px;
   padding-right: 20px;
   height: 45px;
   margin-top:6px;
@@ -7416,7 +7414,6 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 85%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -7914,8 +7911,8 @@ input {
 
 }
 .paginationWorkbench{
-  position: fixed;
-  bottom: 250px !important;
+  position: static;
+  // bottom: 250px !important;
   height: 60px;
 }
 </style>

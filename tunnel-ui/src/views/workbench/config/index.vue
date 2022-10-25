@@ -209,7 +209,7 @@
                     :key="index"
                     :style="{
                       left: item.position.left + 'px',
-                      top: item.position.top + 'px',
+                      top: item.position.top + 20 + 'px',
                       'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                     }"
                     :class="

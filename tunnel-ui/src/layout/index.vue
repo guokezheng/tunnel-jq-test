@@ -19,7 +19,7 @@
               :class="{ 'fixed-header': fixedHeader }"
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
-              <navbar style="display: block" />
+              <navbar style="display: block;height:72px" />
               <tags-view v-if="needTagsView" />
             </div>
             <app-main />

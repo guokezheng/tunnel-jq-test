@@ -235,7 +235,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item prop="stopTime" label="停留时间(秒)" label-width="40%">
+            <el-form-item prop="stopTime" label="停留时间(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
                 controls-position="right"
@@ -956,13 +956,17 @@ export default {
       };
       console.log(params,'params')
       getGalleryList(params).then((data) => {
+        console.log(data,"data")
+
         if (!data) {
           return;
         }
-        let list = data.sort((dataA, dataB) => {
+        let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;
         });
         this.imgUrl.push(...list);
+        console.log(this.imgUrl,"this.imgUrl")
+
       });
     },
   },

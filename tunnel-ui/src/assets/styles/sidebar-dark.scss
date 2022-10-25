@@ -24,6 +24,7 @@
     }
   }
   #app {
+    
     .separate{
       background: #E2EEFE;
     }
@@ -96,7 +97,7 @@
     }
     // 应急预案 表格内相关策略
     .el-tag{
-      background-color: red;
+      background-color: #ebf7ff;
     }
     // 面包屑
     .app-breadcrumb.el-breadcrumb {
@@ -174,7 +175,7 @@
       // display:flex;
       -webkit-transition: width 0.28s;
       transition: width 0.28s;
-      // width: $base-sidebar-width !important;
+      width: $base-sidebar-width !important;
       // background-color: $base-menu-background;
       // border-image: linear-gradient(to bottom, #5ec5ec 0%,#fff 75%,#65c8ee 100%) 30 30;
       height: 100%;
@@ -187,6 +188,10 @@
       // overflow: hidden;
       -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
       box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+
+      .el-submenu__title:hover{
+        background-color: #3a71a8 ;
+      }
 
       // reset element-ui css
       .horizontal-collapse-transition {
@@ -813,7 +818,7 @@
     .el-table{
       background: transparent;
       padding: 0 15px;
-      margin-bottom: 60px;
+      // margin-bottom: 60px;
       .el-table__body{
         width: calc(100% - 30px) !important;
       }

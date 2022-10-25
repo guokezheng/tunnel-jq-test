@@ -274,7 +274,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;">
+          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;margin: 0 auto;">
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>

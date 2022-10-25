@@ -156,9 +156,10 @@
         label="预案描述"
         prop="planDescription"
         width="200"
+        :show-overflow-tooltip='true'
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           <el-popover
             :content="scope.row.planDescription"
             placement="top-start"
@@ -177,7 +178,7 @@
               {{ scope.row.planDescription }}
             </div>
           </el-popover>
-        </template>
+        </template> -->
       </el-table-column>
 
       <el-table-column
@@ -188,7 +189,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-show="scope.row.planFileId != 'null'"
+            v-show="scope.row.planFileId != null"
             icon="el-icon-link"
             size="mini"
             style="cursor: pointer; color: #39adff"
@@ -196,7 +197,7 @@
             @click="openFileDrawer(scope.row)"
             >点击查看
           </el-button>
-          <div v-show="scope.row.planFileId == 'null'">无</div>
+          <div v-show="scope.row.planFileId == null">无</div>
         </template>
       </el-table-column>
       <el-table-column

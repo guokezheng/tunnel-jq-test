@@ -69,10 +69,11 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" label-width="0">
+              <el-form-item prop="triggers.deviceId" label-width="300">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
+                  multiple
                   @change="selectDataItem()"
                 >
                   <el-option
@@ -382,26 +383,33 @@ export default {
           this.strategyForm.triggers.compareValue = res.data.compareValue;
           this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId;
           this.strategyForm.triggers.elementId = res.data.elementId;
-          this.strategyForm.triggers.deviceId = res.data.deviceId;
-        });
-
-        listRl({ strategyId: row.id }).then((response) => {
-          this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
           listDevices({
-            eqType: response.rows[0].eqTypeId,
+            eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
-          }).then((res) => {
-            this.equipmentData = res.rows;
+            eqDirection: this.strategyForm.direction,
+          }).then((data) => {
+            this.deviceName = data.rows;
+            this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
           });
-          this.strategyForm.autoControl = response.rows;
-          for (var i = 0; i < response.rows.length; i++) {
-            var attr = response.rows[i];
-            this.strategyForm.autoControl[i].value = attr.equipments.split(",");
-            this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
-            this.strategyForm.autoControl[i].state = attr.state;
-            this.strategyForm.autoControl[i].type = attr.eqTypeId;
-            this.strategyForm.autoControl[i].typeName = attr.eqType.typeName;
-          }
+          listRl({ strategyId: row.id }).then((response) => {
+            this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
+            listDevices({
+              eqType: response.rows[0].eqTypeId,
+              eqTunnelId: this.strategyForm.tunnelId,
+            }).then((list) => {
+              this.equipmentData = list.rows;
+            });
+            this.strategyForm.autoControl = response.rows;
+            for (var i = 0; i < response.rows.length; i++) {
+              var attr = response.rows[i];
+              this.strategyForm.autoControl[i].value =
+                attr.equipments.split(",");
+              this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
+              this.strategyForm.autoControl[i].state = attr.state;
+              this.strategyForm.autoControl[i].type = attr.eqTypeId;
+              this.strategyForm.autoControl[i].typeName = attr.eqType.typeName;
+            }
+          });
         });
       });
     },
@@ -478,6 +486,8 @@ export default {
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
+      this.strategyForm.triggers.deviceId =
+        this.strategyForm.triggers.deviceId.toString();
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();

@@ -1,10 +1,18 @@
 <template>
   <div class="app-container">
-    <div style="display: flex;font-size: 14px;width: 100%;align-items: center;">
+    <div
+      style="display: flex; font-size: 14px; width: 100%; align-items: center"
+    >
       <div class="warningStatistics">设备预警统计:</div>
-      <div class="EquipStatistics">今日故障设备统计: <span>{{allmsg}}</span></div>
-      <div class="EquipStatistics">今日执行故障设备: <span>{{process}}</span></div>
-      <div class="EquipStatistics">今日故障设备执行率: <span>{{proportion}}</span></div>
+      <div class="EquipStatistics">
+        今日故障设备统计: <span>{{ allmsg }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日执行故障设备: <span>{{ process }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日故障设备执行率: <span>{{ proportion }}</span>
+      </div>
     </div>
 
     <el-form
@@ -23,7 +31,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="预警时间" prop="warningTime" >
+      <el-form-item label="预警时间" prop="warningTime">
         <el-date-picker
           v-model="dateRange"
           size="small"
@@ -53,18 +61,14 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          
-          size="mini"
-          @click="handleQuery"
+        <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
         <el-button
-          type="primary" 
+          type="primary"
           plain
           size="mini"
           @click="seeWarningType()"
@@ -144,9 +148,8 @@
       :data="warningInfoList"
       @selection-change="handleSelectionChange"
       max-height="570"
-      :default-sort = "{prop: 'warningTime', order: 'descending'}"
+      :default-sort="{ prop: 'warningTime', order: 'descending' }"
       :row-class-name="tableRowClassName"
-
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column
@@ -180,7 +183,10 @@
       </el-table-column>
       <el-table-column label="方向" align="center" prop="holeDirection">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sd_direction" :value="scope.row.holeDirection"/>
+          <dict-tag
+            :options="dict.type.sd_direction"
+            :value="scope.row.holeDirection"
+          />
         </template>
       </el-table-column>
       <el-table-column
@@ -428,7 +434,7 @@
       append-to-body
     >
       <el-button
-        type="primary" 
+        type="primary"
         plain
         size="mini"
         @click="handleWarningTypeAdd"
@@ -555,7 +561,10 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="warningTypeBtnLoading" @click="warningTypeFormSubmitForm"
+        <el-button
+          type="primary"
+          :loading="warningTypeBtnLoading"
+          @click="warningTypeFormSubmitForm"
           >确 定</el-button
         >
         <el-button @click="warningTypeFormCancel">取 消</el-button>
@@ -601,7 +610,10 @@
         <el-input v-model="warnConditionForm.description" v-show="false" />
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="warnConditonBtnLoading" @click="warnConditonSubmitForm"
+        <el-button
+          type="primary"
+          :loading="warnConditonBtnLoading"
+          @click="warnConditonSubmitForm"
           >确 定</el-button
         >
         <el-button @click="warnConditonCancel">取 消</el-button>
@@ -634,11 +646,7 @@
           :reserve-selection="true"
           align="center"
         />
-        <el-table-column
-          label="预案名称"
-          align="center"
-          prop="planName"
-        />
+        <el-table-column label="预案名称" align="center" prop="planName" />
         <el-table-column label="预案描述" align="left" prop="planDescription" />
       </el-table>
       <!-- <pagination
@@ -748,7 +756,12 @@
         </el-table>
       </div>
       <div slot="footer">
-        <el-button type="primary" :loading="doStrategyBtnLoading" @click="doStrategy">确定执行</el-button>
+        <el-button
+          type="primary"
+          :loading="doStrategyBtnLoading"
+          @click="doStrategy"
+          >确定执行</el-button
+        >
         <el-button @click="doStrategyCancel"> 关 闭 </el-button>
       </div>
     </el-dialog>
@@ -763,7 +776,7 @@ import {
   delWarningInfo,
   addWarningInfo,
   updateWarningInfo,
-  getWarningInfoCount
+  getWarningInfoCount,
 } from "@/api/event/warningInfo";
 import { listEventType } from "@/api/event/eventType";
 import { addEvent } from "@/api/event/event";
@@ -791,7 +804,7 @@ import { download } from "@/utils/request";
 export default {
   name: "WarningInfo",
   //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
-  dicts: ['sd_direction'],
+  dicts: ["sd_direction"],
   watch: {
     drawer(val) {
       if (!val) {
@@ -915,9 +928,9 @@ export default {
       doStrategyBtnLoading: false,
       seeStrategyList: [],
       handleIds: [],
-      allmsg:'',
-      process:'',
-      proportion:''
+      allmsg: "",
+      process: "",
+      proportion: "",
     };
   },
   created() {
@@ -932,17 +945,17 @@ export default {
     this.getDicts("sd_warning_type_judge").then((response) => {
       this.judgeOptions = response.data;
     });
-    this.getWarningInfo()
+    this.getWarningInfo();
   },
   methods: {
     // 事件预警统计
-    getWarningInfo(){
-      getWarningInfoCount().then((res) =>{
-        console.log(res,"事件预警统计")
-        this.allmsg = res.data.allmsg
-        this.process = res.data.process
-        this.proportion = res.data.proportion
-      })
+    getWarningInfo() {
+      getWarningInfoCount().then((res) => {
+        console.log(res, "事件预警统计");
+        this.allmsg = res.data.allmsg;
+        this.process = res.data.process;
+        this.proportion = res.data.proportion;
+      });
     },
     //=========================查看相关预案信息----开始========================================================
     //关闭相关预案
@@ -979,7 +992,7 @@ export default {
 
     // 执行 选择的策略
     async doStrategy() {
-      this.doStrategyBtnLoading = true
+      this.doStrategyBtnLoading = true;
       if (this.handleIds.length > 0) {
         this.$modal.msgSuccess("执行策略中.......");
         for (let i = 0; i < this.handleIds.length; i++) {
@@ -989,7 +1002,7 @@ export default {
       } else {
         this.$modal.msgError("请先选择需要执行的策略！");
       }
-      this.doStrategyBtnLoading = false
+      this.doStrategyBtnLoading = false;
     },
     //关闭执行策略对话框
     doStrategyCancel() {
@@ -1007,7 +1020,7 @@ export default {
     },
     // 选中当前行
     handlePlanRowClick(row) {
-      this.$refs.multipleTable.toggleRowSelection(row)
+      this.$refs.multipleTable.toggleRowSelection(row);
     },
     // 打开查看预警类型对话框
     seeWarningType() {
@@ -1058,8 +1071,8 @@ export default {
     },
     //提交 设置预警值 ，关闭对话框
     warnConditonSubmitForm() {
-      if(this.warnConditonBtnLoading) return
-      this.warnConditonBtnLoading = true
+      if (this.warnConditonBtnLoading) return;
+      this.warnConditonBtnLoading = true;
       this.$refs["warnConditionForm"].validate(async (valid) => {
         if (valid) {
           await updateWarningType(this.warnConditionForm).then((response) => {
@@ -1070,15 +1083,15 @@ export default {
             }
           });
         }
-        this.warnConditonBtnLoading = false
+        this.warnConditonBtnLoading = false;
       });
     },
     //提交 设置预警值 ，关闭对话框
     async warningTypeFormSubmitForm() {
-      this.warningTypeBtnLoading = true
+      this.warningTypeBtnLoading = true;
       await this.$refs["warningTypeForm"].validate((valid) => {
         if (valid) {
-          this.warningTypeForm.sourceType = 0
+          this.warningTypeForm.sourceType = 0;
           addWarningType(this.warningTypeForm).then((response) => {
             if (response.code === 200) {
               this.$modal.msgSuccess("新增成功");
@@ -1088,7 +1101,7 @@ export default {
           });
         }
       });
-      this.warningTypeBtnLoading = false
+      this.warningTypeBtnLoading = false;
     },
     /////////////////////////////添加预案//////////////////////////////
     // 查询预案列表
@@ -1141,14 +1154,22 @@ export default {
     },
     // 删除预警类型
     handleDeletePlan(row) {
-      delWarningType(row.id).then((response) => {
-        if (response.code === 200) {
-          this.$modal.msgSuccess("删除成功");
-          this.loadWarningTypeList();
-        }
-      }).catch(() => {
-        this.$modal.msgError('删除失败，请稍后重试！')
-      });
+      this.$confirm("是否确认删除？", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          delWarningType(row.id).then((response) => {
+            if (response.code === 200) {
+              this.$modal.msgSuccess("删除成功");
+              this.loadWarningTypeList();
+            }
+          });
+        })
+        .catch(() => {
+          this.$modal.msgError("删除失败，请稍后重试！");
+        });
     },
     //关闭添加预案 对话框
     planCancel() {
@@ -1195,7 +1216,7 @@ export default {
       listWarningInfo(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
           this.warningInfoList = response.rows;
-          console.log(response,"response.total")
+          console.log(response, "response.total");
           this.total = response.total;
           this.loading = false;
         }
@@ -1203,15 +1224,15 @@ export default {
     },
     // 处理状态字典翻译
     processStateFormat(row, column) {
-      if(row.processState == 0){
-				return "未处理"
-			}else if(row.processState == 1){
-				return "已处理"
-			}else if(row.processState == 2){
-				return "已忽略"
-			}else if(row.processState == 3){
-				return "转为事件"
-			}
+      if (row.processState == 0) {
+        return "未处理";
+      } else if (row.processState == 1) {
+        return "已处理";
+      } else if (row.processState == 2) {
+        return "已忽略";
+      } else if (row.processState == 3) {
+        return "转为事件";
+      }
     },
     // 级别 字典翻译
     eventGradeFormat(row, column) {
@@ -1339,15 +1360,11 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除选中数据项?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm("是否确认删除选中数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
           return delWarningInfo(ids);
         })
@@ -1431,12 +1448,12 @@ export default {
       this.resetEvent();
       this.drawer = false;
     },
-     // 表格的行样式
-     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
   },
@@ -1451,36 +1468,36 @@ export default {
 }
 </style>
 <style scoped lang="scss">
-  .EquipStatistics{
-    width: 200px;
-    height: 40px;
-    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
-    color: white;
-    text-align: center;
-    line-height: 40px;
-    font-weight: 400;
-    font-size: 16px;
-    margin-left: 14px;
-    >span{
-      font-size: 24px;
-      font-weight: 600;
-      vertical-align: middle;
-    }
+.EquipStatistics {
+  width: 200px;
+  height: 40px;
+  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+  color: white;
+  text-align: center;
+  line-height: 40px;
+  font-weight: 400;
+  font-size: 16px;
+  margin-left: 14px;
+  > span {
+    font-size: 24px;
+    font-weight: 600;
+    vertical-align: middle;
   }
- ::v-deep .el-table__header tr,
-  .el-table__header th {
-    padding: 0;
-    height: 40px;
+}
+::v-deep .el-table__header tr,
+.el-table__header th {
+  padding: 0;
+  height: 40px;
 }
 ::v-deep .el-table__body tr,
-  .el-table__body td {
-    padding: 0;
-    height: 40px;
+.el-table__body td {
+  padding: 0;
+  height: 40px;
 }
-.warningStatistics{
-    line-height: 60px;
-    font-size: 14px;
-    // color: #606266;
-    font-weight: 700;
-  }
+.warningStatistics {
+  line-height: 60px;
+  font-size: 14px;
+  // color: #606266;
+  font-weight: 700;
+}
 </style>

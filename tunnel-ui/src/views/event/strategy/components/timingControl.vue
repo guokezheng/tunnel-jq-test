@@ -49,7 +49,7 @@
           </el-form-item>
           <el-form-item style="margin-top: -10px; margin-bottom: 0px">
             <cron
-              v-if="showCronBox"
+              v-show="showCronBox"
               v-model.trim="strategyForm.schedulerTime"
               ref="cron"
               @changeValue="changeValue"
@@ -59,10 +59,7 @@
               星期中的日期 年份</span
             >
           </el-form-item>
-          <el-form-item
-            v-show="strategyForm.strategyType == '1'"
-            style="width: 90%"
-          >
+          <el-form-item style="width: 90%">
             <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
               <el-button
                 slot="append"
@@ -285,6 +282,10 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
+        this.$nextTick(() => {
+          this.showCronBox = false;
+          this.$refs.cron.checkClear();
+        });
       }
       this.getEquipmentType();
       this.getTunnels();

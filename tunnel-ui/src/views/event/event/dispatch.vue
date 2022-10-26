@@ -127,6 +127,7 @@
 
           <div v-show="changeVideo == 0" class="formBox">
             <div class="formTitle">
+
               <div style="float: left">事件详情</div>
               <div class="formButton formButton1" @click="eventFormClose">
                 <el-image :src="require('@/assets/icons/relieve.png')" />
@@ -135,6 +136,10 @@
               <div class="formButton formButton2" @click="submitEventForm">
                 <el-image :src="require('@/assets/icons/update.png')" />
                 <div>更新信息</div>
+              </div>
+              <div class="formButton formButton3" @click="returnList">
+                <el-image :src="require('@/assets/icons/return.png')" />
+                <div>返回列表</div>
               </div>
             </div>
             <el-form
@@ -782,6 +787,12 @@ export default {
     // this.getSubareaByStakeNumData();
   },
   methods: {
+    //返回列表
+    returnList() {
+      this.$router.push({
+        path: "/emergency/administration/event",
+      });
+    },
     // 关闭事件弹窗
     closeDialog(item, index) {
       this.fqIndex = null;
@@ -1503,8 +1514,12 @@ export default {
     margin-right: 4px;
   }
 }
+.formButton3 {
+  background-image: linear-gradient(2deg, #19b9ea, #07a1fb);
+}
 .formButton2 {
   background-image: linear-gradient(2deg, #4b6ad4, #07a1fb);
+  margin-left: 10px;
 }
 .formButton1 {
   background: linear-gradient(2deg, #37d8ac, #1ccf7b);

@@ -39,8 +39,17 @@ public class PlatformApiServiceImpl implements PlatformApiService {
 
     private static final Logger log = LoggerFactory.getLogger(PlatformApiService.class);
 
+    /**
+     * 高速云设备管理接收地址
+     */
     @Value("${authorize.gsy.device_push_url}")
     private String devicePushUrl;
+
+    /**
+     * 高速云隧道管理接收地址
+     */
+    @Value("${authorize.gsy.tunnel_push_url}")
+    private String tunnelPushUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -84,6 +93,26 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         try {
             ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(devicePushUrl, requestEntity, String.class);
             log.info("返回值 --> {}", stringResponseEntity.getBody());
+            return 1;
+        } catch (Exception e) {
+            log.error("高速云推送失败！{}", e.getMessage());
+        }
+        return 0;
+    }
+
+    @Override
+    public int tunnelsPush(List<SdTunnels> sdTunnelsList) {
+        JSONArray objects = JSONObject.parseArray(JSONObject.toJSONString(sdTunnelsList));
+        //请求头
+        HttpHeaders requestHeaders = new HttpHeaders();
+        //设置JSON格式数据
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        //requestHeaders.add("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjgwYmViZjFjLWUxNDYtNDQyZC1hNjA4LWI4ZjdjZGUyNzc2ZSJ9.Rw-a71HfnvpBwwyK2G_w5tTGeHxugXHj1MlDvdWhx8c-3leM9bmbMKWyIRV_SVq5rUt9eLNQtqcktZYk5Yhlgw");
+        HttpEntity<String> requestEntity = new HttpEntity<>(objects.toString(), requestHeaders);
+        try {
+            ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(devicePushUrl, requestEntity, String.class);
+            log.info("返回值 --> {}", stringResponseEntity.getBody());
+            return 1;
         } catch (Exception e) {
             log.error("高速云推送失败！{}", e.getMessage());
         }
@@ -95,7 +124,6 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     public int insertSdDevices(List<SdDevices> sdDevicesList) {
         int count = 0;
         for(SdDevices sdDevices : sdDevicesList){
-            sdDevices.setEqId("1211212121212121");
             sdDevices.setCreateTime(DateUtils.getNowDate());
             //判断当前是否是诱导灯设备
             Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
@@ -172,7 +200,6 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     public int updateSdDevices(List<SdDevices> sdDevicesList) {
         int count = 0;
         for(SdDevices sdDevices : sdDevicesList){
-            sdDevices.setEqId("1211212121212121");
             sdDevices.setUpdateTime(DateUtils.getNowDate());
             String eqId = sdDevices.getEqId();
             Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
@@ -283,7 +310,6 @@ public class PlatformApiServiceImpl implements PlatformApiService {
                 }
             }
             String[] eqIds = sdDevices.getEqIds().toArray(new String[sdDevices.getEqIds().size()]);
-            eqIds[0] = "1211212121212121";
             count = sdDevicesMapper.deleteSdDevicesByIds(eqIds);
         }
         return count;

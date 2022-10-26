@@ -1,6 +1,7 @@
 package com.tunnel.business.service.platformAuthApi;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 
 import java.util.List;
 
@@ -18,6 +19,14 @@ public interface PlatformApiService {
      * @return
      */
     int devicesPush(List<SdDevices> sdDevicesList);
+
+    /**
+     * http推送隧道数据
+     *
+     * @param sdTunnelsList
+     * @return
+     */
+    int tunnelsPush(List<SdTunnels> sdTunnelsList);
 
     /**
      * 新增设备(接收)

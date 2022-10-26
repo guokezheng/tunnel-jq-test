@@ -178,7 +178,7 @@
                   v-for="dict in dict.type.brand"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
+                  :value="parseInt(dict.value)"
                 />
               </el-select>
             </el-form-item>
@@ -330,7 +330,7 @@
                   v-for="dict in dict.type.sd_is_monitor"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
+                  :value="parseInt(dict.value)"
                 />
               </el-select>
             </el-form-item>

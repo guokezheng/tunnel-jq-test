@@ -371,6 +371,16 @@ public class SdDevices extends BaseEntity {
     @ApiModelProperty("点位地址5")
     private String eqFeedbackAddress5;
 
+    /**
+     * 推送类型 add(新增)、edit(修改)、del(删除)、import(导入)
+     */
+    private String pushType;
+
+    /**
+     * 是否更新
+     */
+    private boolean updateSupport;
+
     public void setEqId(String eqId) {
         this.eqId = eqId;
     }
@@ -848,6 +858,22 @@ public class SdDevices extends BaseEntity {
         this.eqTypeName = eqTypeName;
     }
 
+    public String getPushType() {
+        return pushType;
+    }
+
+    public void setPushType(String pushType) {
+        this.pushType = pushType;
+    }
+
+    public boolean isUpdateSupport() {
+        return updateSupport;
+    }
+
+    public void setUpdateSupport(boolean updateSupport) {
+        this.updateSupport = updateSupport;
+    }
+
     @Override
     public String toString() {
         return "SdDevices{" +
@@ -905,6 +931,8 @@ public class SdDevices extends BaseEntity {
                 ", seat='" + seat + '\'' +
                 ", qNumber='" + qNumber + '\'' +
                 ", controlStatus='" + controlStatus + '\'' +
+                ", pushType='" + pushType + '\'' +
+                ", updateSupport='" + updateSupport + '\'' +
                 '}';
     }
 }

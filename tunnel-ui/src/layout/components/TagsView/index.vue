@@ -242,6 +242,7 @@ export default {
 .theme-dark .tags-view-container{background-color: unset;}
 .theme-light .tags-view-container{background-color: unset;}
 .tags-view-container {
+  display:none;
   height: 34px;
   width: 100%;
   background: #fff;

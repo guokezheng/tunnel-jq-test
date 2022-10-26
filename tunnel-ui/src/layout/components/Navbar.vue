@@ -688,7 +688,7 @@ export default {
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: #fff;
       vertical-align: text-bottom;
       >>> .el-dropdown-menu{padding:0 25px;background-color:rgba(0,61,96,.8);}
       &.hover-effect {
@@ -731,7 +731,7 @@ export default {
 }
 .theme-linght .white_icon{color: #999!important;}
 // .theme-dark .white_icon{color: white!important;}
-.theme-dark .main-container .white_icon{color: #999 !important}
+.theme-dark .main-container .white_icon{color: #fff !important}
 .theme-dark-navbar .white_icon{color: white!important;}
 .theme-blue .white_icon{color: white!important;}
 .theme-blue .el-icon-bell{color:white;font-size:21px;}

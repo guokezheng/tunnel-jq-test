@@ -365,6 +365,7 @@ export default {
     getList() {
       this.loading = true;
       getTemplateImageList(this.queryParams).then((response) => {
+        console.log(response,"情报板列表");
         this.vocabularyList = response.rows;
         this.total = response.total;
         this.loading = false;

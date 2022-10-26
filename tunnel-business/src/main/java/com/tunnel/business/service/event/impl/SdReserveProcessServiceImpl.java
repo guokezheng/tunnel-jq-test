@@ -196,6 +196,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         List<Map> mapList = new ArrayList<>();
         // 预案流程节点
         List<SdReserveProcess> list = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
+        if(list.size() < 1){
+            return null;
+        }
         for (SdReserveProcess process : list) {
             HashMap<String, Object> map = new HashMap<>();
             // 预案Id
@@ -209,11 +212,14 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             // 设备类型Id
             map.put("deviceTypeId", process.getDeviceTypeId());
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
-
+            if(rlList.size() < 1){
+                continue;
+            }
             map.put("strategyRl", rlList);
             List<String> strings = new ArrayList<>();
             List<List> iFileList = new ArrayList<>();
             List<Map> equipmentData = new ArrayList<>();
+
             for (SdStrategyRl rl : rlList) {
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));

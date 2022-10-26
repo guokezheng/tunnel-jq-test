@@ -155,11 +155,19 @@ public class SdReserveProcessController extends BaseController
     public AjaxResult implement(@RequestBody Map<String, String> stringObjectMap) {
         String eventId = stringObjectMap.get("eventId");
         Long reserveId = Long.parseLong(stringObjectMap.get("reserveId"));
+        //预案流程节点
         List<SdReserveProcess> reserveProcesses = sdReserveProcessService.selectSdReserveProcessByRId(reserveId);
+        if(reserveProcesses.size() < 1){
+            return AjaxResult.error("当前预案未匹配到可执行策略");
+        }
         Integer result = -1;
+        //保存处理流程
         result = sdReserveProcessService.planImplementa(eventId,reserveId);
         for (SdReserveProcess process : reserveProcesses){
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            if(rlList.size()<1){
+                continue;
+            }
             for (SdStrategyRl rl : rlList) {
                 String[] split = rl.getEquipments().split(",");
                 for (String devId : split){

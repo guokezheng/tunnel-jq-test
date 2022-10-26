@@ -22,6 +22,12 @@
     background-color: #00598f;
   }
   #app {
+    // 侧边栏样式
+    .sidebar-container{
+      .el-submenu__title:hover{
+        background-color: #3a71a8 ;
+      }
+    }
     // 外边框
     .separate{
       background: #1B4670;
@@ -856,6 +862,17 @@
       background-color: #0e2c53;
     }
   }
+  // 表格页 tooltip
+  .tabularPage{
+    .el-tooltip__popper{
+      max-width:20%;
+    }
+    .el-tooltip__popper,.el-tooltip__popper.is-dark{
+      background:rgb(48, 65, 86) !important;
+      color: #fff !important;
+      line-height: 24px;
+    }
+  }
   // 操作日志
   .operationDiglog{
     .el-loading-mask{
@@ -867,7 +884,6 @@
     .el-table{
       background: transparent;
       padding: 0 15px;
-      margin-bottom: 60px;
       .el-table__body{
         width: calc(100% - 30px);
       }

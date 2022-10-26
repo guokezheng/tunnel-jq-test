@@ -179,9 +179,10 @@ wj:
 authorize:
   name: GLZ
   #name: GSY
-  gsy_host: http://10.168.56.206:8000
-    tunnel_push_url:
-    device_push_url:
+  gsy:
+    host: http://10.168.64.171:8000
+    #tunnel_push_url:
+    device_push_url: ${authorize.gsy.host}/platform/api/devicesAccept
   glz_host:
     wzb_glz_host: http://10.168.65.231:8000
     th_glz_host: http://10.168.65.232:8000
@@ -189,5 +190,5 @@ authorize:
     yts_glz_host: http://10.168.65.234:8000
     jly_glz_host: http://10.168.65.235:8000
     #设备控制接口
-  control_device_url:
+  #control_device_url:
 

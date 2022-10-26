@@ -902,9 +902,10 @@
       // 取消按钮
       cancel() {
         this.open = false;
-        this.reset();
+        this.submitFormLoading = false;
+        this.reset()
       },
-      cancelInstruction() {
+      cancelInstruction () {
         this.instructionDialog = false;
       },
       // 表单重置

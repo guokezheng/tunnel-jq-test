@@ -69,8 +69,8 @@ public class SdDevices extends BaseEntity {
     /**
      * 设备类型
      */
-   /* @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")*/
+    @ApiModelProperty("设备类型")
+    @Excel(name = "设备类型")
     private Long eqType;
 
 

@@ -133,6 +133,11 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道所属部门名称")
     private String deptName;
 
+    /**
+     * 隧道ID集合
+     */
+    private List<String> tunnelIds;
+
     private List<SdTunnelSubarea> list;
 
 
@@ -304,6 +309,14 @@ public class SdTunnels extends BaseEntity
         return storeConfigure;
     }
 
+    public List<String> getTunnelIds() {
+        return tunnelIds;
+    }
+
+    public void setTunnelIds(List<String> tunnelIds) {
+        this.tunnelIds = tunnelIds;
+    }
+
     @Override
     public String toString() {
         return "SdTunnels{" +
@@ -324,6 +337,7 @@ public class SdTunnels extends BaseEntity
                 ", storeConfigure='" + storeConfigure + '\'' +
                 ", deptId=" + deptId +
                 ", deptName='" + deptName + '\'' +
+                ", tunnelIds='" + tunnelIds + '\'' +
                 ", list=" + list +
                 ", percentage=" + percentage +
                 '}';

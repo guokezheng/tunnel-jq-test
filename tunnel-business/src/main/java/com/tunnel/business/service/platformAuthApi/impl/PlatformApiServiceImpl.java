@@ -49,8 +49,8 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     /**
      * 高速云隧道管理接收地址
      */
-    /*@Value("${authorize.gsy.tunnel_push_url}")
-    private String tunnelPushUrl;*/
+    @Value("${authorize.gsy.tunnel_push_url}")
+    private String tunnelPushUrl;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -86,14 +86,18 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     private SdTunnelsMapper sdTunnelsMapper;
 
     @Override
-    public int devicesPush(List<SdDevices> sdDevicesList) {
-        JSONArray objects = JSONObject.parseArray(JSONObject.toJSONString(sdDevicesList));
+    public int devicesPush(List<SdDevices> sdDevicesList, String pushType, String userName) {
+        Map map = new HashMap();
+        map.put("sdDevicesList", sdDevicesList);
+        map.put("pushType", pushType);
+        map.put("userName", userName);
+        String objects = JSONObject.toJSONString(map);
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         //requestHeaders.add("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjgwYmViZjFjLWUxNDYtNDQyZC1hNjA4LWI4ZjdjZGUyNzc2ZSJ9.Rw-a71HfnvpBwwyK2G_w5tTGeHxugXHj1MlDvdWhx8c-3leM9bmbMKWyIRV_SVq5rUt9eLNQtqcktZYk5Yhlgw");
-        HttpEntity<String> requestEntity = new HttpEntity<>(objects.toString(), requestHeaders);
+        HttpEntity<String> requestEntity = new HttpEntity<>(objects, requestHeaders);
         try {
             ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(devicePushUrl, requestEntity, String.class);
             log.info("返回值 --> {}", stringResponseEntity.getBody());
@@ -104,12 +108,11 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         return 0;
     }
 
-    /*@Override
-    public int tunnelsPush(List<SdTunnels> sdTunnelsList) {
-        JSONArray objects = JSONObject.parseArray(JSONObject.toJSONString(sdTunnelsList));
+    @Override
+    public int tunnelsPush(List<SdTunnels> sdTunnelsList, String pushType) {
         Map map = new HashMap();
         map.put("sdTunnelsList", sdTunnelsList);
-        map.put("pushType", "add");
+        map.put("pushType", pushType);
         String s = JSONObject.toJSONString(map);
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
@@ -125,7 +128,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
             log.error("高速云推送失败！{}", e.getMessage());
         }
         return 0;
-    }*/
+    }
 
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
@@ -324,6 +327,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     }
 
     @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int importSdDevices(List<SdDevices> sdDevicesList) {
         if (StringUtils.isNull(sdDevicesList) || sdDevicesList.size() == 0) {
             throw new ServiceException("导入设备数据不能为空！");
@@ -343,7 +347,9 @@ public class PlatformApiServiceImpl implements PlatformApiService {
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
 //                        sb.append(getIpleftPad(devices.getEqControlPointAddress()));//点位地址
 //                        devices.setEqControlPointAddress(sb.toString());
-                        devices.setCreateBy(SecurityUtils.getUsername());
+
+                        //devices.setCreateBy(SecurityUtils.getUsername());
+
                         List<SdDevices> list = new ArrayList<>();
                         list.add(devices);
                         this.insertSdDevices(list);
@@ -357,7 +363,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
                 } else if (devices.isUpdateSupport()) {
                     Map map = checkDevices(devices);
                     if ((Boolean) map.get("flag")) {
-                        devices.setUpdateBy(SecurityUtils.getUsername());
+                        //devices.setUpdateBy(SecurityUtils.getUsername());
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
@@ -397,18 +403,17 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         return 1;
     }
 
-    /*@Override
+    @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int insertSdTunnels(List<SdTunnels> sdTunnelsList) {
         int count = 0;
         for(SdTunnels sdTunnels : sdTunnelsList){
-            sdTunnels.setTunnelId("1212121212");
             SdTunnels tunnelsById = sdTunnelsMapper.selectSdTunnelsById(sdTunnels.getTunnelId());
             if (tunnelsById != null) {
                 throw new RuntimeException("当前隧道ID已经存在，请核对后重试！");
             }
             SdTunnels onlyTunnelName = new SdTunnels();
-            //onlyTunnelName.setTunnelName(sdTunnels.getTunnelName());
-            onlyTunnelName.setTunnelName("1212121212");
+            onlyTunnelName.setTunnelName(sdTunnels.getTunnelName());
             List<SdTunnels> tunnels = sdTunnelsMapper.verifyTunnelOnly(onlyTunnelName);
             if (tunnels.size() > 0) {
                 throw new RuntimeException("当前隧道名称已经存在，请核对后重试！");
@@ -423,7 +428,29 @@ public class PlatformApiServiceImpl implements PlatformApiService {
             count = sdTunnelsMapper.insertSdTunnels(sdTunnels);
         }
         return count;
-    }*/
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public int updateSdTunnels(List<SdTunnels> sdTunnelsList) {
+        int count = 0;
+        for(SdTunnels sdTunnels : sdTunnelsList){
+            sdTunnels.setUpdateTime(DateUtils.getNowDate());
+            count = sdTunnelsMapper.updateSdTunnels(sdTunnels);
+        }
+        return count;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
+    public int deleteSdTunnelsByIds(List<SdTunnels> sdTunnelsList) {
+        int count = 0;
+        for(SdTunnels sdTunnels : sdTunnelsList){
+            String[] tunnelIds = sdTunnels.getTunnelIds().toArray(new String[sdTunnels.getTunnelIds().size()]);
+            count = sdTunnelsMapper.deleteSdTunnelsByIds(tunnelIds);
+        }
+        return count;
+    }
 
     public void insertOrUpdateOrDeleteSdDeviceCmd(SdDevices devices) {
         SdEquipmentState sdEquipmentState = new SdEquipmentState();

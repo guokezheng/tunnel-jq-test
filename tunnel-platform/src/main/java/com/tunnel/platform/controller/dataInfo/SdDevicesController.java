@@ -50,6 +50,9 @@ public class SdDevicesController extends BaseController
     @Value("${authorize.name}")
     private String platformName;
 
+    /**
+     * 推送、接收controller
+     */
     @Autowired
     private PlatformApiController sdPlatformApiController;
 

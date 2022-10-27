@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 二级平台推送Controller
@@ -53,13 +54,13 @@ public class PlatformApiController {
      * @param sdTunnelsList 隧道集合(推送)
      * @return
      */
-    public Result tunnelsPush(List<SdTunnels> sdTunnelsList){
+    /*public Result tunnelsPush(List<SdTunnels> sdTunnelsList){
         if(sdTunnelsList.size() > 0){
             return Result.toResult(platformApiService.tunnelsPush(sdTunnelsList));
         }else {
             return Result.error();
         }
-    }
+    }*/
 
     /**
      * 设备接收接口
@@ -95,27 +96,29 @@ public class PlatformApiController {
      * @param requestEntity 隧道集合(接收)
      * @return
      */
-    @PostMapping(value = "/tunnelsAccept")
+    /*@PostMapping(value = "/tunnelsAccept")
     public Result tunnelsAccept(HttpEntity<String> requestEntity){
         String deviceData = requestEntity.getBody();
-        //把String转为list
-        JSONArray jsonArray = JSONObject.parseArray(deviceData);
-        String data = jsonArray.toJSONString();
-        //String data = JSONObject.toJSONString(jsonArray, SerializerFeature.WriteClassName);
-        List<SdTunnels> sdDevicesList = JSONObject.parseArray(data, SdTunnels.class);
-        //获取第一条数据
-        SdTunnels sdTunnels = sdDevicesList.get(0);
+        //把map拆分
+        JSONObject object = JSONObject.parseObject(deviceData);
+        //获取到数据集合
+        JSONArray sdTunnelsList = JSONObject.parseArray(object.getJSONArray("sdTunnelsList").toString());
+        //获取到推送类型
+        String pushType = object.get("pushType").toString();
+        //将集合转为list
+        List<SdTunnels> sdDevicesList = JSONObject.parseArray(sdTunnelsList.toString(), SdTunnels.class);
+
         //判断推送类型：add(新增)、edit(修改)、del(删除)、import(导入)
         int count = 0;
-        if("add".equals(sdTunnels.getPushType())){
-            //count = platformApiService.insertSdDevices(sdDevicesList);
-        }else if("edit".equals(sdTunnels.getPushType())){
+        if("add".equals(pushType)){
+            count = platformApiService.insertSdTunnels(sdDevicesList);
+        }else if("edit".equals(pushType)){
             //count = platformApiService.updateSdDevices(sdDevicesList);
-        }else if("del".equals(sdTunnels.getPushType())){
+        }else if("del".equals(pushType)){
             //count = platformApiService.deleteSdDevices(sdDevicesList);
         }else {
             //count = platformApiService.importSdDevices(sdDevicesList);
         }
         return Result.toResult(count);
-    }
+    }*/
 }

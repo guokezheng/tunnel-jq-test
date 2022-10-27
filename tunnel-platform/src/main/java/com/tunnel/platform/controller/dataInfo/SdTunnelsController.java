@@ -6,15 +6,19 @@ import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.PathParam;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +34,18 @@ public class SdTunnelsController extends BaseController
 {
     @Autowired
     private ISdTunnelsService sdTunnelsService;
+
+    /**
+     * 平台
+     */
+    @Value("${authorize.name}")
+    private String platformName;
+
+    /**
+     * 推送、接收controller
+     */
+    @Autowired
+    private PlatformApiController platformApiController;
 
     /**
      * 查询隧道列表
@@ -69,7 +85,14 @@ public class SdTunnelsController extends BaseController
     @PostMapping
     public Result add(@RequestBody SdTunnels sdTunnels)
     {
-        return Result.toResult(sdTunnelsService.insertSdTunnels(sdTunnels));
+        int i = sdTunnelsService.insertSdTunnels(sdTunnels);
+        /*if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            List<SdTunnels> sdTunnelsList = new ArrayList<>();
+            sdTunnels.setPushType("add");
+            sdTunnelsList.add(sdTunnels);
+            platformApiController.tunnelsPush(sdTunnelsList);
+        }*/
+        return Result.toResult(i);
     }
 
     /**

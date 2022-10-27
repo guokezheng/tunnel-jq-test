@@ -26,7 +26,7 @@ public interface PlatformApiService {
      * @param sdTunnelsList
      * @return
      */
-    int tunnelsPush(List<SdTunnels> sdTunnelsList);
+    //int tunnelsPush(List<SdTunnels> sdTunnelsList);
 
     /**
      * 新增设备(接收)
@@ -59,4 +59,12 @@ public interface PlatformApiService {
      * @return 结果
      */
     int importSdDevices(List<SdDevices> sdDevicesList);
+
+    /**
+     * 新增隧道
+     *
+     * @param sdTunnelsList 隧道集合(接收)
+     * @return 结果
+     */
+    /*int insertSdTunnels(List<SdTunnels> sdTunnelsList);*/
 }

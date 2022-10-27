@@ -11,6 +11,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.platformAuthApi.PlatformApiService;
 import org.slf4j.Logger;
@@ -48,8 +49,8 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     /**
      * 高速云隧道管理接收地址
      */
-    @Value("${authorize.gsy.tunnel_push_url}")
-    private String tunnelPushUrl;
+    /*@Value("${authorize.gsy.tunnel_push_url}")
+    private String tunnelPushUrl;*/
 
     @Autowired
     private RestTemplate restTemplate;
@@ -81,6 +82,9 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     @Autowired
     private ISdEquipmentTypeService equipmentTypeService;
 
+    @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
+
     @Override
     public int devicesPush(List<SdDevices> sdDevicesList) {
         JSONArray objects = JSONObject.parseArray(JSONObject.toJSONString(sdDevicesList));
@@ -100,24 +104,28 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         return 0;
     }
 
-    @Override
+    /*@Override
     public int tunnelsPush(List<SdTunnels> sdTunnelsList) {
         JSONArray objects = JSONObject.parseArray(JSONObject.toJSONString(sdTunnelsList));
+        Map map = new HashMap();
+        map.put("sdTunnelsList", sdTunnelsList);
+        map.put("pushType", "add");
+        String s = JSONObject.toJSONString(map);
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
         //requestHeaders.add("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJsb2dpbl91c2VyX2tleSI6IjgwYmViZjFjLWUxNDYtNDQyZC1hNjA4LWI4ZjdjZGUyNzc2ZSJ9.Rw-a71HfnvpBwwyK2G_w5tTGeHxugXHj1MlDvdWhx8c-3leM9bmbMKWyIRV_SVq5rUt9eLNQtqcktZYk5Yhlgw");
-        HttpEntity<String> requestEntity = new HttpEntity<>(objects.toString(), requestHeaders);
+        HttpEntity<String> requestEntity = new HttpEntity<>(s, requestHeaders);
         try {
-            ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(devicePushUrl, requestEntity, String.class);
+            ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity(tunnelPushUrl, requestEntity, String.class);
             log.info("返回值 --> {}", stringResponseEntity.getBody());
             return 1;
         } catch (Exception e) {
             log.error("高速云推送失败！{}", e.getMessage());
         }
         return 0;
-    }
+    }*/
 
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
@@ -388,6 +396,34 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         }
         return 1;
     }
+
+    /*@Override
+    public int insertSdTunnels(List<SdTunnels> sdTunnelsList) {
+        int count = 0;
+        for(SdTunnels sdTunnels : sdTunnelsList){
+            sdTunnels.setTunnelId("1212121212");
+            SdTunnels tunnelsById = sdTunnelsMapper.selectSdTunnelsById(sdTunnels.getTunnelId());
+            if (tunnelsById != null) {
+                throw new RuntimeException("当前隧道ID已经存在，请核对后重试！");
+            }
+            SdTunnels onlyTunnelName = new SdTunnels();
+            //onlyTunnelName.setTunnelName(sdTunnels.getTunnelName());
+            onlyTunnelName.setTunnelName("1212121212");
+            List<SdTunnels> tunnels = sdTunnelsMapper.verifyTunnelOnly(onlyTunnelName);
+            if (tunnels.size() > 0) {
+                throw new RuntimeException("当前隧道名称已经存在，请核对后重试！");
+            }
+//        SdTunnels onlyDeptId = new SdTunnels();
+//        onlyDeptId.setDeptId(sdTunnels.getDeptId());
+//        tunnels = sdTunnelsMapper.verifyTunnelOnly(onlyDeptId);
+//        if (tunnels.size() > 0) {
+//            throw new RuntimeException("当前部门已添加隧道！");
+//        }
+            sdTunnels.setCreateTime(DateUtils.getNowDate());
+            count = sdTunnelsMapper.insertSdTunnels(sdTunnels);
+        }
+        return count;
+    }*/
 
     public void insertOrUpdateOrDeleteSdDeviceCmd(SdDevices devices) {
         SdEquipmentState sdEquipmentState = new SdEquipmentState();

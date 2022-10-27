@@ -857,21 +857,6 @@ export default {
           this.$modal.msgError("新增失败，请删除重建控制策略！");
         }
       });
-      // return
-      /* }addJob({jobName:this.strategyForm.strategyName,//任务名称
-            invokeTarget:"ryTask.strategyParams('"+guid+"')",//调用目标字符串
-            cronExpression:str,//corn表达式
-            misfirePolicy:'3',//计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-            concurrent:'0',//'是否并发执行（0允许 1禁止）'
-            status:'0',//状态（0正常 1暂停）'
-            relationId:guid
-            }).then(response => {
-            if (response.code === 200) {
-                this.$modal.msgSuccess("新增任务成功");
-             }else{
-               this.$modal.msgError("新增失败，请删除重建控制策略！");
-             }
-        }) */
     },
     changeValue(value) {
       this.changeVal = value;

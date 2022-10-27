@@ -508,6 +508,10 @@ export default {
       });
       this.chooseEq = false; //关闭弹窗
       this.index = 0;
+      // 如果设备操作状态已选择,则重置状态值
+      if (this.strategyForm.autoControl[index].state) {
+        this.strategyForm.autoControl[index].state = "";
+      }
       listEqTypeStateIsControl({
         stateTypeId: this.eqForm.equipment_type,
         isControl: 1,

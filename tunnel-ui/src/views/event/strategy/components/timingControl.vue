@@ -368,7 +368,12 @@ export default {
       this.$refs["timingControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          if (autoControl[0].value.length == 0 || autoControl[0].state == "") {
+
+          if (
+            autoControl.length < 1 ||
+            autoControl[0].value.length == 0 ||
+            autoControl[0].state == ""
+          ) {
             return this.$modal.msgError("请选择设备并添加执行操作");
           }
           // 判断是修改还是删除
@@ -420,6 +425,10 @@ export default {
       });
       this.chooseEq = false; //关闭弹窗
       this.index = 0;
+      // 如果设备操作状态已选择,则重置状态值
+      if (this.strategyForm.autoControl[index].state) {
+        this.strategyForm.autoControl[index].state = "";
+      }
       listEqTypeStateIsControl({
         stateTypeId: this.eqForm.equipment_type,
         isControl: 1,

@@ -2,8 +2,8 @@
     <div class="mapCharts">
       <div class="title">
           <img :src="iconSrc"/>
-          <div >隧道交通流量趋势</div>
-          <div >trend of tunnel traffic flow</div>
+          <div >交通流量趋势</div>
+          <div >Traffic flow trend</div>
   
       </div>
       <img :src="src" class="titleIcon" />

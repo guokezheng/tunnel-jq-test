@@ -105,7 +105,7 @@ export default {
   position: fixed;
   left: 50%;
   right: 50%;
-  bottom: 50px;
+  bottom: 40px;
 }
 .pagination-container.hidden {
   display: none;

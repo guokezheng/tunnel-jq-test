@@ -15,7 +15,7 @@
 
 <script>
 import logoImg from '@/assets/logo/logo.png'
-import zclogoImg from '@/assets/logo/zclogo.png'
+import zclogoImg from '@/assets/logo/sdgsLogo.png'
 
 import variables from '@/assets/styles/variables.scss'
 import TopNav from '@/components/TopNav'
@@ -86,7 +86,7 @@ export default {
     }
     & .zcSidebar-logo{
       width: 34px;
-      height: 28px;
+      height: 34px;
       vertical-align: middle;
     }
     & .sidebar-title {

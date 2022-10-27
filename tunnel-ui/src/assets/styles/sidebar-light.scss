@@ -3,7 +3,7 @@
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     background-color: #00588f;
     height: 56px !important;
-    line-height: 56px !important;
+    line-height: 55px !important;
     border-radius: 0;
     i{
       color: white;
@@ -22,11 +22,10 @@
     background-color: #00598f;
   }
   #app {
-    // 侧边栏样式
-    .sidebar-container{
-      .el-submenu__title:hover{
-        background-color: #3a71a8 ;
-      }
+    .breadcrumbAppmainBox{
+      background-color: #1B4670;
+      padding: 10px;
+      // height: 100%;
     }
     // 外边框
     .separate{
@@ -247,7 +246,11 @@
       // overflow: hidden;
       -webkit-box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
       box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
-
+     
+      .el-submenu__title:hover{
+        background-color: #3a71a8 ;
+      }
+      // 二级菜单左移
       // reset element-ui css
       .horizontal-collapse-transition {
         transition: 0s width ease-in-out, 0s padding-left ease-in-out,
@@ -342,11 +345,11 @@
 
     .hideSidebar {
       .sidebar-container {
-        width: 54px !important;
+        width: 0px !important;
       }
 
       .main-container {
-        margin-left: 54px;
+        margin-left: 0px;
       }
 
       .submenu-title-noDropdown {
@@ -548,7 +551,7 @@
   }
   .topNav_head{
     background-image:url(../images/head_bg2.png);
-    background-size: 100% 123%;
+    background-size: 100% 126%;
     height:72px;
     // background-color: #010913;
     position: relative;
@@ -928,8 +931,7 @@
     scrollbar-color: #6969dd #e0e0e0;
     ::-webkit-scrollbar {
       width: 5px;
-      height: 5px;
-      transform: translateY(-5px);
+      height: 1px;
     }
     ::-webkit-scrollbar-track {
       background-color: #c4e8f6;

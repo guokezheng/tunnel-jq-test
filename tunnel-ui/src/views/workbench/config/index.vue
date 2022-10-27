@@ -128,15 +128,16 @@
           </el-button>
         </div>
       </div>
-      <div class="vehicleLane">
+      <div class="vehicleLane" >
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative;"
-          :style="topNav?'width:85%;left:0px':'width:88%;left:2%'"
+          style="position: relative;left:2%;"
+         
         >
+        <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
           <div
@@ -210,7 +211,7 @@
                     :key="index"
                     :style="{
                       left: item.position.left + 'px',
-                      top: item.position.top  + 'px',
+                      top: item.position.top + 'px',
                       'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                     }"
                     :class="
@@ -378,6 +379,7 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
+            :style="topNav?'width:125px':'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -392,7 +394,7 @@
             flex-direction: column;
             height: 100%;
           "
-          :style="topNav?'right: 0;':'right: 55px;'"
+          :class="topNav?'topNavRightDeawer':'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i class="el-icon-caret-left"></i>车道控制模块
@@ -3322,10 +3324,10 @@ export default {
       this.topNav = this.$store.state.settings.topNav;
       const needTagsView = this.$store.state.settings.tagsView;
       let h = 0;
-      h += 50;
-      if (!this.topNav) {
-        if (needTagsView) h += 22;
-      }
+      h += 72;
+      // if (!this.topNav) {
+      //   if (needTagsView) h += 22;
+      // }
 
       return h;
     },
@@ -6679,7 +6681,7 @@ export default {
 <style lang="scss" scoped>
 .siblings {
   position: fixed;
-  top: 130px;
+  top: 121px;
   width: 100%;
   height: 61.8%;
 
@@ -7012,8 +7014,17 @@ export default {
   width: 100%;
   display: flex;
   position: relative;
-  margin-top: 6px;
+  margin-top: 2px;
 }
+.contentTopNav{
+  width:85%;left:0px
+}
+// .openSidebar .contentLeftNav{
+//   width:88%;left:3.2%
+// }
+// .hideSidebar .contentLeftNav{
+//   width:88%;left:2%
+// }
 
 #vehicle,
 #energyConsumption,
@@ -7097,6 +7108,7 @@ export default {
   .footMiniBox {
     width: 24.5%;
     height: 100%;
+    overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);
     // background-position: center;
     // background-repeat: no-repeat;
@@ -7144,7 +7156,7 @@ export default {
   position: relative;
   left: 0px;
   font-size: 16px;
-  width: 125px;
+  // width: 125px;
   height: 46px;
   line-height: 46px;
   font-weight: 500;
@@ -7161,7 +7173,15 @@ export default {
     margin-right: 20px;
   }
 }
-
+.topNavRightDeawer{
+  right: 0;
+}
+.openSidebar .leftNavRightDeawer{
+  right: 240px;
+}
+.hideSidebar .leftNavRightDeawer{
+  right: 55px;
+}
 // .bigTypeButton{
 //     color: #baddff;
 //     background-image: url(../../../assets/cloudControl/right_button.png);
@@ -7329,7 +7349,7 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
-  margin-top:6px;
+  margin-top:2px;
   display: flex;
   justify-content: space-between;
 }
@@ -7469,6 +7489,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
+  width:88%;
   height: 100%;
   display: flex;
   align-items: center;

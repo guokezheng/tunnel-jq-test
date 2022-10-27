@@ -5,8 +5,8 @@
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" v-if="!topNav"/>
     </template>
     <!-- 面包屑 -->
-    <breadcrumb :style="$route.path == '/index'?'display:none;':''" id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && sideTheme != 'theme-blue'"/>
-    <div class="right-menu">
+    <!-- <breadcrumb :style="getRoute($route.path) ?'display:none;':''" id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && sideTheme != 'theme-blue'"/> -->
+    <div class="right-menu" >
       <template v-if="device!=='mobile'">
         <template v-if="sideTheme != 'theme-blue'">
           <screenfull :id="topNav && sideTheme == 'theme-dark'?'top_icon':'screenfull'" class="right-menu-item hover-effect white_icon" />
@@ -381,6 +381,20 @@ export default {
     }, 5000 * 1)
   },
   methods: {
+    getRoute(path) {
+      var arr = [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ];
+      if (arr.includes(path)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     // 获取当前角色信息
     getUser() {
       getUserProfile().then(response => {
@@ -644,7 +658,7 @@ export default {
 }
 .navbar {
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   // background: #fff;
   // box-shadow: 0 1px 4px rgba(0,21,41,.08);

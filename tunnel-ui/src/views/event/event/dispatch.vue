@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container dispatchAss" >
     <div style="height: 100%; display: flex; justify-content: space-between">
       <div style="height: 100%; width: 66%">
         <el-card class="bottomEventForm">

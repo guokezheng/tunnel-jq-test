@@ -154,8 +154,9 @@ p {
 .app-container {
   padding: 16px;
   box-sizing: border-box;
-  overflow: hidden;
+  // overflow: hidden;
   height: 100%;
+  width: 100%;
   // background: white;
 }
 // 内页标题全部样式

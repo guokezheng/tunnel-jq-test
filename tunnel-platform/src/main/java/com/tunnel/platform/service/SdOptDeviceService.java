@@ -36,8 +36,8 @@ public class SdOptDeviceService {
         //设备所属管理站host
         String host = getGlzHost(String.valueOf(tunnel.getDeptId()));
         //接口地址
-        //String url = host + "/workspace/commonControl";
-        String url = "http://localhost:8000/workspace/commonControl";
+        String url = host + "/workspace/commonControl";
+        //String url = "http://localhost:8000/workspace/commonControl";
 
         //设置请求头
         HttpHeaders headers = new HttpHeaders();

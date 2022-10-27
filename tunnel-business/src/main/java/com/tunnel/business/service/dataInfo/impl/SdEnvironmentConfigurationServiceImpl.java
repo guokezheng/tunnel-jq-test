@@ -1,6 +1,5 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdEnvironmentConfiguration;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Encoder;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,18 +109,14 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                     throw new RuntimeException("图片转换base64异常");
                 }
 
-
                 // 从缓存中获取文件存储路径
-                String fileServerPath = RuoYiConfig.getUploadPath();
+                //String fileServerPath = RuoYiConfig.getUploadPath();
                 // 原图文件名
                 String filename = file[i].getOriginalFilename();
                 // 原图扩展名
                 String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                 // 新的全名
                 String fileName = extendName;
-                // 加路径全名
-                File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
-                File filepath = new File(fileServerPath + "/equipmentIcon");
 
                 SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                 iconFile.setStateIconId(guid);
@@ -133,6 +127,9 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                 iconFile.setCreateTime(DateUtils.getNowDate());
                 list.add(iconFile);
 
+                // 加路径全名
+                /*File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
+                File filepath = new File(fileServerPath + "/equipmentIcon");
                 if (!filepath.exists()) {
                     filepath.mkdirs();
                 } else {
@@ -141,7 +138,7 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                     file[i].transferTo(dir);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
             sdEquipmentIconFileMapper.brachInsertStateIconFile(list);
         }
@@ -181,16 +178,13 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                 }
 
                 // 从缓存中获取文件存储路径
-                String fileServerPath = RuoYiConfig.getUploadPath();
+                //String fileServerPath = RuoYiConfig.getUploadPath();
                 // 原图文件名
                 String filename = file[i].getOriginalFilename();
                 // 原图扩展名
                 String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                 // 新的全名
                 String fileName = extendName;
-                // 加路径全名
-                File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
-                File filepath = new File(fileServerPath + "/equipmentIcon");
 
                 SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                 iconFile.setStateIconId(guid);
@@ -201,6 +195,10 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                 iconFile.setCreateTime(DateUtils.getNowDate());
                 list.add(iconFile);
 
+
+                // 加路径全名
+                /*File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
+                File filepath = new File(fileServerPath + "/equipmentIcon");
                 if (!filepath.exists()) {
                     filepath.mkdirs();
                 } else {
@@ -209,7 +207,7 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
                     file[i].transferTo(dir);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
             }
             sdEquipmentIconFileMapper.brachInsertStateIconFile(list);
         }

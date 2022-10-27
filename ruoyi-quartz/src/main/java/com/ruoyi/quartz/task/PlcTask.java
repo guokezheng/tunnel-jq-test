@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -47,6 +49,9 @@ public class PlcTask {
 
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Resource
+    private RedisCache redisCache;
 
     //
     public void createModbusTcpMaster() {
@@ -281,6 +286,8 @@ public class PlcTask {
             sdDeviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
         }
+        //redis存储设备实时数据
+        redisCache.setCacheMapValue("deviceData",sdDeviceData.getDeviceId()+"-"+sdDeviceData.getItemId(),sdDeviceData);
         //每5分钟记录一次数据存储，车指不需要存储
         if (DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId) {
             return;

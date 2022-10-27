@@ -85,4 +85,9 @@ public interface SdTriggerMapper
      */
     public int deleteSdTriggerByRelateIds(Long[] ids);
 
+    /**
+     * 获取所有触发器
+     * @return
+     */
+    public List<Map> getAllTrigger();
 }

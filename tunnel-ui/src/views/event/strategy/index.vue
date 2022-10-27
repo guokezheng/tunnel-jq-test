@@ -844,7 +844,7 @@ export default {
       //  if(this.model == '2'){
       addJob({
         jobName: this.strategyForm.strategyName, //任务名称
-        invokeTarget: "ryTask.strategyParams('" + guid + "')", //调用目标字符串
+        invokeTarget: "strategyTask.strategyParams('" + guid + "')", //调用目标字符串
         cronExpression: this.strategyForm.schedulerTime, //corn表达式
         misfirePolicy: "1", //计划执行错误策略（1立即执行 2执行一次 3放弃执行）
         concurrent: "0", //'是否并发执行（0允许 1禁止）'
@@ -898,5 +898,4 @@ export default {
   white-space: pre-line;
 }
 </style>
-  
-  
+

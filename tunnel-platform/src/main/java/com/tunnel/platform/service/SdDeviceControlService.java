@@ -16,6 +16,7 @@ import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,12 +28,21 @@ public class SdDeviceControlService {
 
     private static final Logger log = LoggerFactory.getLogger(SdDeviceControlService.class);
 
+    @Value("${authorize.name}")
+    private String deploymentType;
+
+    @Autowired
+    private SdOptDeviceService sdOptDeviceService;
+
     @Autowired
     private ISdDevicesService sdDevicesService;
+
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
+
     @Autowired
     private ISdOperationLogService sdOperationLogService;
+
 
     /**
      * 批量控制设备方法参数不能为空，否则直接返回0（控制失败）
@@ -42,6 +52,110 @@ public class SdDeviceControlService {
      * 控制方式controlType(控制方式   0：手动 1：时间控制 2：光强控制 3:预案控制)
      * */
     public Integer controlDevices(Map<String, Object> map) {
+        if (map == null || map.isEmpty()) {
+            //当前设备控制参数为空，直接返回
+            log.error("当前设备控制参数为空");
+            return 0;
+        }
+
+        if ("GSY".equals(deploymentType)) {
+            sdOptDeviceService.optSingleDevice(map);
+            return 1;
+        }
+
+        //控制车指
+        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+            throw new RuntimeException("未指定设备，请联系管理员");
+        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+        } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+        }
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        String controlType = map.get("controlType").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(devId);
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
+        List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setOperationState(state);
+        sdOperationLog.setControlType(controlType);
+        int controlState = 0;
+        String fireMark = "";
+        //控制车指
+        if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+            sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"cz");
+            //控制诱导灯
+        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
+            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+            }
+            String brightness = map.get("brightness").toString();
+            String frequency = map.get("frequency").toString();
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
+            data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
+            sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            states[1] = brightness;
+            states[2] = frequency;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
+            //控制疏散标志
+        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+            } else if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
+                throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
+            }
+            fireMark = map.get("fireMark").toString();
+            String brightness = map.get("brightness").toString();
+            String frequency = map.get("frequency").toString();
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
+            data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
+            sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            states[1] = brightness;
+            states[2] = frequency;
+            states[3] = fireMark;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
+        }
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return controlState;
+    }
+
+
+    public Integer controlDevices222(Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             //当前设备控制参数为空，直接返回
             log.error("当前设备控制参数为空");

@@ -178,9 +178,7 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     //管理站推送事件数据到物联中台kafka
     public void sendDataToOtherSystem(List<SdEvent> eventList, SdEvent sdEvent) {
-        if ((authorizeName == null || authorizeName.equals("")) && !authorizeName.equals("GLZ")) {
-            return;
-        } else if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("devNo", "S00063700001980001");
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));

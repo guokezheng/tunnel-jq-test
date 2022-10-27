@@ -53,17 +53,19 @@ public class KafkaReadListenToTunnelEvent {
          */
         System.err.println("authorizeName:" + authorizeName);
         log.info("{}, {}, {}, {}", record.topic(), record.partition(), record.offset(), record.value());
-        if (record.value() != null || !record.value().toString().equals("")) {
-            System.out.println(record.value());
-            JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
-            Object o = jsonObject.get("event");
-            SdEvent sdEvent = JSONUtil.toBean(o.toString(), SdEvent.class);
-            SdEvent event = sdEventMapper.selectSdEventById(sdEvent.getId());
-            if (event != null) {
-                sdEvent.setUpdateTime(new Date());
-                sdEventMapper.updateSdEvent(sdEvent);
-            } else {
-                sdEventMapper.insertSdEvent(sdEvent);
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GSY")) {
+            if (record.value() != null || !record.value().toString().equals("")) {
+                System.out.println(record.value());
+                JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+                Object o = jsonObject.get("event");
+                SdEvent sdEvent = JSONUtil.toBean(o.toString(), SdEvent.class);
+                SdEvent event = sdEventMapper.selectSdEventById(sdEvent.getId());
+                if (event != null) {
+                    sdEvent.setUpdateTime(new Date());
+                    sdEventMapper.updateSdEvent(sdEvent);
+                } else {
+                    sdEventMapper.insertSdEvent(sdEvent);
+                }
             }
         }
         consumer.commitSync();

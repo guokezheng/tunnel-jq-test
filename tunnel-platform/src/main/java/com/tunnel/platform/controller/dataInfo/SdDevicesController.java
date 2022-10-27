@@ -236,9 +236,8 @@ public class SdDevicesController extends BaseController
             //管理站平台下推送
             if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
                 List<SdDevices> sdDevicesList = new ArrayList<>();
-                sdDevices.setPushType("add");
                 sdDevicesList.add(sdDevices);
-                sdPlatformApiController.devicesPush(sdDevicesList);
+                sdPlatformApiController.devicesPush(sdDevicesList,"add",null);
             }
             return Result.toResult(i);
         }
@@ -269,9 +268,8 @@ public class SdDevicesController extends BaseController
         //管理站平台下推送
         if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
             List<SdDevices> sdDevicesList = new ArrayList<>();
-            sdDevices.setPushType("edit");
             sdDevicesList.add(sdDevices);
-            sdPlatformApiController.devicesPush(sdDevicesList);
+            sdPlatformApiController.devicesPush(sdDevicesList,"edit",null);
         }
         return Result.toResult(i);
     }
@@ -291,9 +289,8 @@ public class SdDevicesController extends BaseController
             List<SdDevices> sdDevicesList = new ArrayList<>();
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqIds(Arrays.asList(eqIds));
-            sdDevices.setPushType("del");
             sdDevicesList.add(sdDevices);
-            sdPlatformApiController.devicesPush(sdDevicesList);
+            sdPlatformApiController.devicesPush(sdDevicesList,"del",null);
         }
         return Result.toResult(i);
     }
@@ -317,8 +314,7 @@ public class SdDevicesController extends BaseController
         //管理站平台下推送
         if(PlatformAuthEnum.GLZ.getCode().equals(platformName)){
             userList.stream().forEach(sdDevices -> sdDevices.setUpdateSupport(updateSupport));
-            userList.stream().forEach(sdDevices -> sdDevices.setPushType("import"));
-            sdPlatformApiController.devicesPush(userList);
+            sdPlatformApiController.devicesPush(userList,"import",operName);
         }
         return AjaxResult.success(message);
     }

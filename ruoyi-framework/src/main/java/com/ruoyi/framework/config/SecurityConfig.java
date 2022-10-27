@@ -126,7 +126,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/payment/wxPay/notify").anonymous()
                 // 滑块验证码
                 .antMatchers("/login", "/captcha/get", "/captcha/check", "/getCaptchaOnOff").anonymous()
-                .antMatchers("/platform/api/devicesAccept").permitAll()
+                .antMatchers("/platform/api/devicesAccept", "/platform/api/tunnelsAccept").permitAll()
 
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()

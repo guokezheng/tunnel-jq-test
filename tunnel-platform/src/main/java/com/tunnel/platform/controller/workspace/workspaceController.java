@@ -19,8 +19,11 @@ import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.platform.service.SdDeviceControlService;
+import com.tunnel.platform.service.SdOptDeviceService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -55,7 +58,12 @@ public class workspaceController extends BaseController {
     private ISdRadarDetectDataService sdRadarDetectDataService;
     @Autowired
     private SdDeviceControlService sdDeviceControlService;
+    @Autowired
+    private SdOptDeviceService sdOptDeviceService;
 
+
+    @Value("${authorize.name}")
+    private String deploymentType;
 
     //3d测试
     @PostMapping("/test")
@@ -74,6 +82,13 @@ public class workspaceController extends BaseController {
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
             throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
         }
+
+        if ("GSY".equals(deploymentType)) {
+            sdOptDeviceService.optSingleDevice(map);
+            return AjaxResult.success(1);
+        }
+
+
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
@@ -111,6 +126,11 @@ public class workspaceController extends BaseController {
             throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
         } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
             throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+        }
+
+        if ("GSY".equals(deploymentType)) {
+            sdOptDeviceService.optSingleDevice(map);
+            return AjaxResult.success();
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
@@ -150,7 +170,7 @@ public class workspaceController extends BaseController {
     }
 
     @PostMapping("/vehicleMonitoringInRecent24Hours")
-    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map){
+    public AjaxResult vehicleMonitoringInRecent24Hours(@RequestBody Map<String, Object> map) {
         if (map == null || map.isEmpty() || map.get("tunnelId") == null || map.get("tunnelId").toString().equals("")) {
             throw new RuntimeException("车辆监测查询条件中隧道不能为空");
         }
@@ -164,7 +184,7 @@ public class workspaceController extends BaseController {
      * @return
      */
     @PostMapping("/batchControlCarFinger")
-    public AjaxResult batchControlCarFinger(@RequestBody Map<String,Object> carFingerDevices) {
+    public AjaxResult batchControlCarFinger(@RequestBody Map<String, Object> carFingerDevices) {
         //查询所有需要批量控制的车指设备
         if (carFingerDevices == null || carFingerDevices.isEmpty()) {
             throw new RuntimeException("车指批量控制设备信息为空");
@@ -178,7 +198,7 @@ public class workspaceController extends BaseController {
         List<SdDevices> list = sdDevicesService.batchControlCarFinger(carFingerDevices);
         Map<String, Object> map = new HashMap<>();
         Integer controlDevices = 0;
-        for (int i = 0;i < list.size();i++) {
+        for (int i = 0; i < list.size(); i++) {
             String eqId = list.get(i).getEqId();
             String state = carFingerDevices.get("state").toString();
             map.put("devId", eqId);
@@ -193,4 +213,19 @@ public class workspaceController extends BaseController {
     public AjaxResult selectDeviceDataAndState(String tunnelId) {
         return AjaxResult.success(sdDevicesService.getDeviceAndState(tunnelId));
     }
+
+
+    @PostMapping("/commonControl")
+    public Integer commonControl(@RequestBody Map<String, Object> params) {
+        //参数校验
+        Assert.notEmpty(params, "控制设备参数为空");
+        String devId = (String) params.get("devId");
+        String state = (String) params.get("state");
+        Assert.hasText(devId, "设备参数{devId}必传");
+        Assert.hasText(state, "设备控制状态参数{state}必传");
+
+        Integer controlState  = sdDeviceControlService.controlDevices(params);
+        return controlState;
+    }
+
 }

@@ -189,6 +189,14 @@ authorize:
     mz_glz_host: http://10.168.65.233:8000
     yts_glz_host: http://10.168.65.234:8000
     jly_glz_host: http://10.168.65.235:8000
+  #管理站部门id配置，用于管理站分发
+  dept_id:
+    #文祖北隧道管理站，太河隧道管理站，庙子隧道管理站，仰天山隧道管理站，九龙峪隧道管理站
+    wzb_glz_dept_id: 10101
+    th_glz_dept_id: 10301
+    mz_glz_dept_id: 10701
+    yts_glz_dept_id: 10702
+    jly_glz_dept_id: 10703
     #设备控制接口
   #control_device_url:
 

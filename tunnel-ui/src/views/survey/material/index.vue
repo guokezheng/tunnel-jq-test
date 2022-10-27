@@ -538,16 +538,19 @@ export default {
         pageNum: obj.pageNum,
         pageSize: obj.pageSize,
         materialType: obj.materialType,
+        
       }
       // 有开始桩号
       if(obj.station) {
         if(!obj.endStation) {
+          this.loading = false;
           return this.$modal.msgWarning("桩号查询必须同时有'开始桩号'和'结束桩号'")
         }
       }
       // 有结束桩号
       if(obj.endStation) {
         if(!obj.station) {
+          this.loading = false;
           return this.$modal.msgWarning("桩号查询必须同时有'开始桩号'和'结束桩号'")
         }
       }
@@ -634,6 +637,8 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
+      this.materialList = []
+
       this.getList();
     },
     /** 重置按钮操作 */

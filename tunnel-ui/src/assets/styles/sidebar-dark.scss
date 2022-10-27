@@ -2,7 +2,7 @@
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
     background-color: #00588f;
     height: 56px;
-    line-height: 56px;
+    line-height: 55px;
     color: white !important;
     i{
       color: white;
@@ -24,14 +24,21 @@
     }
   }
   #app {
-    
+    .breadcrumbAppmainBox{
+      background-color: #E2EEFE;
+      padding: 10px;
+      // height: 100%;
+    }
     .separate{
       background: #E2EEFE;
     }
     .app-container{
       background: white;
     }
-    
+    .dispatchAss{
+      background: #E2EEFE !important;
+
+    }
     .el-table tr{
       background-color: #FFFFFF;
     }
@@ -300,11 +307,11 @@
 
     .hideSidebar {
       .sidebar-container {
-        width: 54px !important;
+        width: 0px !important;
       }
 
       .main-container {
-        margin-left: 54px;
+        margin-left: 0px;
       }
 
       .submenu-title-noDropdown {
@@ -449,7 +456,7 @@
   .my-back{
     background-color: #cdedfa;
   }
-   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 123%;height:72px;}
+   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 126%;height:72px;}
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background-color: white !important;

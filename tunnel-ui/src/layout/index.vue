@@ -20,9 +20,18 @@
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
               <navbar style="display: block;height:72px" />
-              <tags-view v-if="needTagsView" />
+              <!-- <tags-view v-if="needTagsView" /> -->
             </div>
+            <div :class="getRoute2($route.path)?'':'breadcrumbAppmainBox'" style="height:100%">
+              <breadcrumb
+              :style="'display:' + getRoute($route.path) + ';'"
+              ref="Breadcrumb"
+              id="breadcrumb-container"
+              class="breadcrumb-container"
+            />
             <app-main />
+            </div>
+
             <right-panel>
               <settings />
             </right-panel>
@@ -89,7 +98,6 @@
               ref="Breadcrumb"
               id="breadcrumb-container"
               class="breadcrumb-container"
-              
             />
             <app-main />
             <right-panel>

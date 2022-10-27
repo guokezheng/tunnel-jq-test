@@ -17,7 +17,7 @@
       :treetBoxTop="treetBoxTop"
       :treetBoxRight="treetBoxRight"
   ></gisMap> -->
-  <div class="mapBox" style="height: 100%">
+  <div class="mapBox" style="height: 100%;position: relative;">
     <gisMap :tunnelInfo="tunnelInfo" style="height: 100% !important"></gisMap>
     <div class="leftCharts">
       <leftChart1 />

@@ -1,5 +1,6 @@
 package com.tunnel.business.service.digitalmodel.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -30,13 +31,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.util.*;
 
 /**
@@ -47,6 +47,10 @@ import java.util.*;
 public class RadarEventServiceImpl implements RadarEventService {
 
     private static final Logger log = LoggerFactory.getLogger(RadarEventServiceImpl.class);
+    /**
+     * 时间戳格式
+     */
+    private static final String sdf_pattern = "yyyy-MM-dd HH:mm:ss.SSS";
     @Autowired
     private ISdEventService sdEventService;
     @Autowired
@@ -67,13 +71,23 @@ public class RadarEventServiceImpl implements RadarEventService {
 
     @Autowired
     private RedisCache redisCache;
+
     @Autowired
+    @Qualifier("kafkaOneTemplate")
     private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    @Qualifier("kafkaTwoTemplate")
+    private KafkaTemplate<String, String> kafkaTwoTemplate;
 
     @Value("${wj.imagePath}")
     private String picUrl;
     @Value("${wj.url}")
     private String prefix;
+    @Value("${eventTopic}")
+    private String eventTopic;
+    @Value("${authorize.name}")
+    private String authorizeName;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -110,6 +124,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdEvent.setDirection(f.getDirection() + "");
                 }
                 wjMapper.updateEvent(sdEvent);
+                //推送事件数据到物联中台kafka
+                sendDataToOtherSystem(null, sdEvent);
             } else {
                 sdEvent.setId(f.getEventId());
                 String eventType = WJEnum.getValue(f.getEventType());
@@ -145,6 +161,8 @@ public class RadarEventServiceImpl implements RadarEventService {
         });
         if (CollectionUtils.isNotEmpty(eventList)) {
             wjMapper.insertWjEvent(eventList);
+            //推送新添加的事件数据到物联中台
+            sendDataToOtherSystem(eventList, null);
             log.info("---插入数据list---{}", eventList);
             List<SdEvent> sdEventList = sdEventService.getEventList(eventIdList);
             JSONObject object = new JSONObject();
@@ -156,6 +174,26 @@ public class RadarEventServiceImpl implements RadarEventService {
 //            WebSocketServer.sendMessage(object.toString());
         }
         return AjaxResult.success();
+    }
+
+    //管理站推送事件数据到物联中台kafka
+    public void sendDataToOtherSystem(List<SdEvent> eventList, SdEvent sdEvent) {
+        if ((authorizeName == null || authorizeName.equals("")) && !authorizeName.equals("GLZ")) {
+            return;
+        } else if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            if (eventList.size() > 0) {
+                for (int i = 0;i < eventList.size();i++) {
+                    jsonObject.put("event", eventList.get(i));
+                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
+                }
+            } else if (sdEvent != null) {
+                jsonObject.put("event", sdEvent);
+                kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
+            }
+        }
     }
 
     @Override

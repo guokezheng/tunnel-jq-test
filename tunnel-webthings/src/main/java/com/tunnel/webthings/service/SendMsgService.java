@@ -14,7 +14,7 @@ public interface SendMsgService {
 
     String sendDirect(String devNo,String devType);
 
-    AjaxResult sendEvent(SendMsgVO msgVO);
+    AjaxResult sendEvent();
 
     String sendDevStatus(RadarMsgTopicVo vo);
 

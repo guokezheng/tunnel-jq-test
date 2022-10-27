@@ -200,3 +200,8 @@ authorize:
     #设备控制接口
   #control_device_url:
 
+
+#物联中台事件topic
+eventTopic: "wq_tunnelEvent"
+#物联中台设备状态topic
+devStatusTopic: "wq_devStatusTopic"

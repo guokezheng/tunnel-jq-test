@@ -2,6 +2,7 @@ package com.tunnel.business.service.informationBoard.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
@@ -92,7 +93,6 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                 for (int i = 0; i < templateContent.size(); i++) {
                     JSONObject tempContent = templateContent.getJSONObject(i);
                     SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
-                    sdVmsTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
                     sdVmsTemplateContent.setTemplateId(templateId);
                     sdVmsTemplateContent.setContent(tempContent.get("content").toString());
                     sdVmsTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
@@ -103,8 +103,13 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                /*     if(tempContent.containsKey("img") && tempContent.get("img") != null){
                     	sdVmsTemplateContent.setImageUrl(tempContent.get("img").toString());
                     }*/
-
-                    sdVmsTemplateContentMapper.updateSdVmsTemplateContent(sdVmsTemplateContent);
+                    Object id = tempContent.get("id");
+                    if(StringUtils.isNotNull(id)){
+                        sdVmsTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
+                        sdVmsTemplateContentMapper.updateSdVmsTemplateContent(sdVmsTemplateContent);
+                    }else {
+                        sdVmsTemplateContentMapper.insertSdVmsTemplateContent(sdVmsTemplateContent);
+                    }
                     count++;
                 }
                 return count;

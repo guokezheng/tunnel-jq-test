@@ -372,11 +372,6 @@ public class SdDevices extends BaseEntity {
     private String eqFeedbackAddress5;
 
     /**
-     * 推送类型 add(新增)、edit(修改)、del(删除)、import(导入)
-     */
-    private String pushType;
-
-    /**
      * 是否更新
      */
     private boolean updateSupport;
@@ -858,14 +853,6 @@ public class SdDevices extends BaseEntity {
         this.eqTypeName = eqTypeName;
     }
 
-    public String getPushType() {
-        return pushType;
-    }
-
-    public void setPushType(String pushType) {
-        this.pushType = pushType;
-    }
-
     public boolean isUpdateSupport() {
         return updateSupport;
     }
@@ -931,7 +918,6 @@ public class SdDevices extends BaseEntity {
                 ", seat='" + seat + '\'' +
                 ", qNumber='" + qNumber + '\'' +
                 ", controlStatus='" + controlStatus + '\'' +
-                ", pushType='" + pushType + '\'' +
                 ", updateSupport='" + updateSupport + '\'' +
                 '}';
     }

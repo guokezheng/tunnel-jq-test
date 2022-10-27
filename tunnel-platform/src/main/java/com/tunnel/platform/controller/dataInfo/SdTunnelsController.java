@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.PathParam;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -86,12 +88,8 @@ public class SdTunnelsController extends BaseController
     public Result add(@RequestBody SdTunnels sdTunnels)
     {
         int i = sdTunnelsService.insertSdTunnels(sdTunnels);
-        /*if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
-            List<SdTunnels> sdTunnelsList = new ArrayList<>();
-            sdTunnels.setPushType("add");
-            sdTunnelsList.add(sdTunnels);
-            platformApiController.tunnelsPush(sdTunnelsList);
-        }*/
+        //管理站平台下推送数据
+        pushData(sdTunnels,"add",i);
         return Result.toResult(i);
     }
 
@@ -103,7 +101,10 @@ public class SdTunnelsController extends BaseController
     @PutMapping
     public Result edit(@RequestBody SdTunnels sdTunnels)
     {
-        return Result.toResult(sdTunnelsService.updateSdTunnels(sdTunnels));
+        int i = sdTunnelsService.updateSdTunnels(sdTunnels);
+        //管理站平台下推送数据
+        pushData(sdTunnels,"edit",i);
+        return Result.toResult(i);
     }
 
     /**
@@ -115,7 +116,16 @@ public class SdTunnelsController extends BaseController
 	@DeleteMapping("/{tunnelIds}")
     public Result remove(@PathVariable String[] tunnelIds)
     {
-        return Result.toResult(sdTunnelsService.deleteSdTunnelsByIds(tunnelIds));
+        int i = sdTunnelsService.deleteSdTunnelsByIds(tunnelIds);
+        //管理站平台下推送数据
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            List<SdTunnels> sdTunnelsList = new ArrayList<>();
+            SdTunnels sdTunnels = new SdTunnels();
+            sdTunnels.setTunnelIds(Arrays.asList(tunnelIds));
+            sdTunnelsList.add(sdTunnels);
+            platformApiController.tunnelsPush(sdTunnelsList,"del");
+        }
+        return Result.toResult(i);
     }
 
     /**
@@ -136,4 +146,11 @@ public class SdTunnelsController extends BaseController
         return Result.success(sdTunnelsService.deptId(deptId));
     }
 
+    public void pushData(SdTunnels sdTunnels, String pushType, int count){
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && count > 0){
+            List<SdTunnels> sdTunnelsList = new ArrayList<>();
+            sdTunnelsList.add(sdTunnels);
+            platformApiController.tunnelsPush(sdTunnelsList,pushType);
+        }
+    }
 }

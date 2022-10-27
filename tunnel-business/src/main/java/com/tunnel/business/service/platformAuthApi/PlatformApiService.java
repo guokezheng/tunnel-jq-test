@@ -18,7 +18,7 @@ public interface PlatformApiService {
      * @param sdDevicesList
      * @return
      */
-    int devicesPush(List<SdDevices> sdDevicesList);
+    int devicesPush(List<SdDevices> sdDevicesList, String pushType, String userName);
 
     /**
      * http推送隧道数据
@@ -26,7 +26,7 @@ public interface PlatformApiService {
      * @param sdTunnelsList
      * @return
      */
-    //int tunnelsPush(List<SdTunnels> sdTunnelsList);
+    int tunnelsPush(List<SdTunnels> sdTunnelsList, String pushType);
 
     /**
      * 新增设备(接收)
@@ -66,5 +66,21 @@ public interface PlatformApiService {
      * @param sdTunnelsList 隧道集合(接收)
      * @return 结果
      */
-    /*int insertSdTunnels(List<SdTunnels> sdTunnelsList);*/
+    int insertSdTunnels(List<SdTunnels> sdTunnelsList);
+
+    /**
+     * 修改隧道
+     *
+     * @param sdTunnelsList 隧道集合(接收)
+     * @return 结果
+     */
+    int updateSdTunnels(List<SdTunnels> sdTunnelsList);
+
+    /**
+     * 批量删除隧道
+     *
+     * @param sdTunnelsList 需要删除的隧道ID(接收)
+     * @return 结果
+     */
+    int deleteSdTunnelsByIds(List<SdTunnels> sdTunnelsList);
 }

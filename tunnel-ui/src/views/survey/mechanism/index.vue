@@ -398,23 +398,22 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.orgId?[row.orgId]:this.ids;
-        var that = this
-        this.$confirm('是否确认删除?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          batchDelete(ids).then((res) =>{
-            if(res.code == 200){
-              console.log(res);
-              that.$modal.msgSuccess("删除成功");
-              that.getList();
-              that.$forceUpdate()
-            }
-          })
-        })
-       
+      const ids = row.orgId ? [row.orgId] : this.ids;
+      var that = this;
+      this.$confirm("是否确认删除?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        batchDelete(ids).then((res) => {
+          if (res.code == 200) {
+            console.log(res);
+            that.$modal.msgSuccess("删除成功");
+            that.getList();
+            that.$forceUpdate();
+          }
+        });
+      });
     },
   },
 };

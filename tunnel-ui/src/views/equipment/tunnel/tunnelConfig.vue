@@ -577,7 +577,7 @@ export default {
               });
 
             //桩号
-            console.log(list[i].pile, "list[i].pile");
+            console.log(list[i],list[i].pile.length, list[i].position.left - ( 2*list[i].pile.length - 20 ), "list[i].pile");
             let t = "";
             if (list[i].pile) {
               if (list[i].pile.length > 10) {
@@ -594,7 +594,7 @@ export default {
               } else if (list[i].pile.length <= 10) {
                 t = that.svg.paper
                   .text(
-                    list[i].position.left,
+                    list[i].position.left + 2,
                     list[i].position.top + iconHeight + 35,
                     list[i].pile
                   )
@@ -614,9 +614,11 @@ export default {
             });
           }
         } else {
+          console.log(iconWidth,iconWidth<20,'iconWidth')
+          let num = iconWidth<30?(iconWidth<25?10:2):-8;
           var img3 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth, //此处增加+ iconWidth
+            list[i].position.left + iconWidth +num, //此处增加+ iconWidth
             list[i].position.top,
             iconWidth,
             iconHeight
@@ -645,11 +647,18 @@ export default {
                 "font-size": 12,
               });
             t.attr({
-              x: list[i].position.left + 5,
+              x: list[i].position.left - (2 * Number(list[i].pile.length) + 14 - 40),
             });
+            console.log(list[i],r,'list[i]')
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
+            // if(list[i].eqType == 5){
+            //   img[i] = that.svg.paper.g(r - 10, t, img3).attr({
+            //     class: "mydrags",
+            //   });
+            // }
+            
           } else {
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
@@ -957,6 +966,7 @@ export default {
             });
 
             if (item.eqType == 7 || item.eqType == 117) {
+              // let num = iconWidth>=29?-24:0;
               // 加强照明  电光标志
               img3 = this.svg.paper
                 .image(url, 5 + iconWidth, 0, iconWidth, iconHeight)
@@ -965,7 +975,7 @@ export default {
                 });
             } else {
               img3 = this.svg.paper
-                .image(url, 25 + iconWidth, 0, iconWidth, iconHeight)
+                .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
                 .attr({
                   id: item.eqId,
                 });

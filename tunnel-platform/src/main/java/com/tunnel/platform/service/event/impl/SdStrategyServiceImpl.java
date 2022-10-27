@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
+import com.ruoyi.quartz.util.CronUtils;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.SdDeviceCmd;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -618,25 +619,24 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             sdStrategyRlMapper.insertSdStrategyRl(rl);
             Long refId = rl.getId();
             //新增定时任务
-            try {
-                SysJob job = new SysJob();
-                // 定时任务名称
-                job.setJobName(model.getStrategyName());
-                // 调用目标字符串
-                job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
-                // corn表达式
-                job.setCronExpression(sty.getSchedulerTime());
-                // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-                job.setMisfirePolicy("1");
-                // 是否并发执行（0允许 1禁止）
-                job.setConcurrent("0");
-                // 状态（0正常 1暂停）
-                job.setStatus("0");
-                sysJobMapper.insertJob(job);
-                jobIdList.add(job.getJobId().toString());
-            } catch (Exception e) {
-                throw new RuntimeException("添加定时任务失败！");
+            SysJob job = new SysJob();
+            // 定时任务名称
+            job.setJobName(model.getStrategyName());
+            // 调用目标字符串
+            job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
+            // corn表达式 校验是否合规
+            if(!CronUtils.isValid(sty.getSchedulerTime())){
+                throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
             }
+            job.setCronExpression(sty.getSchedulerTime());
+            // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
+            job.setMisfirePolicy("1");
+            // 是否并发执行（0允许 1禁止）
+            job.setConcurrent("0");
+            // 状态（0正常 1暂停）
+            job.setStatus("0");
+            sysJobMapper.insertJob(job);
+            jobIdList.add(job.getJobId().toString());
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);

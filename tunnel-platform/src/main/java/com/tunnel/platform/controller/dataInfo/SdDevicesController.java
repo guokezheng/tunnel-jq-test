@@ -227,7 +227,8 @@ public class SdDevicesController extends BaseController
         sd.setEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
         if (list.size()>0){
-            return Result.error(1,"当前设备ID重复，请重新输入");
+           // return Result.error(1,"当前设备ID重复，请重新输入");
+            return Result.error("当前设备ID重复，请重新输入");
         } else {
             int i = sdDevicesService.insertSdDevices(sdDevices);
             if (sdDevices.getEqType() != 31L) {

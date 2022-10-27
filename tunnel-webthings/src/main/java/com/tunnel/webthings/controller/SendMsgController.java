@@ -32,8 +32,8 @@ public class SendMsgController {
 
     @PostMapping("/event")
     @ApiOperation("发送事件数据")
-    public Result event(@Validated @RequestBody SendMsgVO msgVO){
-        return Result.success(sendMsgService.sendEvent(msgVO));
+    public Result event(){
+        return Result.success(sendMsgService.sendEvent());
     }
 
     @PutMapping("/storage")

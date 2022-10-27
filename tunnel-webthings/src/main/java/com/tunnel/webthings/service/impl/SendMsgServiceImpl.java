@@ -9,6 +9,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.webthings.dao.SendMsgMapper;
 import com.tunnel.webthings.domain.ActiveLuminousSigns;
 import com.tunnel.webthings.domain.ConfluenceDevFaultWarn;
@@ -21,11 +23,13 @@ import com.tunnel.webthings.vo.SendMsgVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -47,12 +51,18 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Value("${iot.url}")
     private String url;
 
-
     @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private SendMsgMapper msgMapper;
+
+    @Autowired
+    @Qualifier("kafkaTwoTemplate")
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
 
     /**
@@ -60,74 +70,18 @@ public class SendMsgServiceImpl implements SendMsgService {
      */
     @Override
     public String sendDirect(String devNo,String devType) {
-        //查询字典
-        List<Jqdict> jqdict = msgMapper.selectDict();
-        //模拟指令数据
-        Map<String, Object> dev01Map = new HashMap<>();
-        dev01Map.put("devNo", devNo); //设备编号，必填
-        dev01Map.put("devType", devType); //设备类型，必填
-        //指令数据，格式根据业务自定义开始
-        dev01Map.put("directType", "ActiveLuminousSigns"); //指令A
-        dev01Map.put("directTypeDesc", "主动发光标志数据描述"+RandomUtil.randomString(3)); //指令A描述
-        dev01Map.put("random", RandomUtil.randomString(128)); //随机写入
-        //指令数据，格式根据业务自定义结束
-        dev01Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
-        //设备自定义字段
-        ActiveLuminousSigns acls=new ActiveLuminousSigns();
-        acls.setTaskType("130");
-        acls.setBacklitSwitch("1");
-        acls.setBacklightBrightness("5");
-        acls.setReversibleLanes("1100");
-        acls.setDroopCompensation("2");
-        acls.setMeasuredCurrent("实测电流：数据来源 标准牌实时监测背光电流");
-        acls.setDefaultCurrent("默认电流：标志牌安装后检测电流");
-        dev01Map.put("expands", acls); //自定义扩展数据，选填
-        dev01Map.put("user",SecurityUtils.getUsername());
-        List<String> devNos = CollUtil.newArrayList(devNo);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map);
-        Map<String, Object> content = new HashMap<>();
-        content.put("devList", devList);
-
-        //调用接口
-        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId03.getCode(), devType, devNos, MsgType.msgUp.getCode(), content);
-        return s;
+        return null;
     }
 
     @Override
-    public AjaxResult sendEvent(SendMsgVO msgVO) {
-        String devType = msgVO.getDevType();
-        String[] devNos = msgVO.getDevNo().split(",");
-        //发送事件数据
-        Map<String, Object> eventmap = new HashMap<>();
-        eventmap.put("devNo",devNos);
-        eventmap.put("devType",devType);
-        eventmap.put("directType","ConfluenceDevFaultWarn");
-        eventmap.put("directTypeDesc","合流区预警设备故障告警"+RandomUtil.randomString(4));
-        eventmap.put("random", RandomUtil.randomString(20)); //随机写入
-        eventmap.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
-
-        //事件自定义字段
-        ConfluenceDevFaultWarn confluenceDevFaultWarn = new ConfluenceDevFaultWarn();
-        confluenceDevFaultWarn.setDevCode("devNo在String数组");
-        confluenceDevFaultWarn.setDevType(Integer.parseInt(devType));
-        confluenceDevFaultWarn.setDevName("预警设备");
-        confluenceDevFaultWarn.setMsgType("消息类型：告警消息");
-        confluenceDevFaultWarn.setDevTime(DateUtil.format(DateUtil.date(), sdf_pattern));
-        confluenceDevFaultWarn.setEnvTriType(1);
-        confluenceDevFaultWarn.setFaultCode("3");
-        confluenceDevFaultWarn.setEnvLon("116.75199");
-        confluenceDevFaultWarn.setEnvLat("36.55358");
-        confluenceDevFaultWarn.setRemark("这是一个备注信息");
-        eventmap.put("expands", confluenceDevFaultWarn); //自定义字段
-        eventmap.put("user",SecurityUtils.getUsername());
-
-        List<String> devNo = CollUtil.newArrayList(devNos);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(eventmap);
-        Map<String, Object> content = new HashMap<>();
-        content.put("devList", devList);
-
-        String s = this.sendData(MsgType.msg31.getCode(), MsgType.msgId02.getCode(), devType, devNo, MsgType.msgUp.getCode(), content);
-        return AjaxResult.success(s);
+    public AjaxResult sendEvent() {
+        JSONObject jsonObject = new JSONObject();
+        SdEvent sdEvent = sdEventMapper.selectSdEventById(143768L);
+        jsonObject.put("event", sdEvent);
+        jsonObject.put("devNo", "S00063700001980001");
+        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+        kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+        return AjaxResult.success("1");
     }
 
     @Override
@@ -183,8 +137,8 @@ public class SendMsgServiceImpl implements SendMsgService {
 
     @Override
     public AjaxResult storages(SdStateStorage sdStateStorage) {
-        String devNo="G00030001A1990001";
-        String devType="199";
+        String devNo="S00063700001980001";
+        String devType="198";
         //时间戳
         String format = DateUtil.format(DateUtil.date(), sdf_pattern);
         //消息数据

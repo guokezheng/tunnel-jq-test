@@ -44,7 +44,7 @@ public class KafkaReadListenToDevStatusTopic {
 //        log.info("------>{}",record.value());
         Object value = record.value();
         String devStatus = value.toString();
-        if (StrUtil.contains(devStatus,"G00030001A1990001") || StrUtil.contains(devStatus,"G00030001A1990002")) {
+        if (StrUtil.contains(devStatus,"S00063700001980001")) {
 //            log.info("---RadarMsg--->{}",record.value());
             sdRadarMsgTopicVO = JSONUtil.toBean(devStatus, SdRadarMsgTopicVO.class);
             boolean notEmpty = ObjectUtil.isNotEmpty(sdRadarMsgTopicVO);

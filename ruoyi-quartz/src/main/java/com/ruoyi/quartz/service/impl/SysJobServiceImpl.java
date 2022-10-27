@@ -300,7 +300,7 @@ public class SysJobServiceImpl implements ISysJobService
                 // 定时任务名称
                 job.setJobName(name);
                 // 调用目标字符串
-                job.setInvokeTarget("ryTask.strategyParams('" + guid + "')");
+                job.setInvokeTarget("strategyTask.strategyParams('" + guid + "')");
                 // corn表达式
                 String cronDate = CronUtil.CronDate(time);
                 job.setCronExpression(cronDate);

@@ -623,7 +623,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 // 定时任务名称
                 job.setJobName(model.getStrategyName());
                 // 调用目标字符串
-                job.setInvokeTarget("ryTask.strategyParams('" + refId + "')");
+                job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                 // corn表达式
                 job.setCronExpression(sty.getSchedulerTime());
                 // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
@@ -676,7 +676,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 定时任务名称
                     job.setJobName(model.getStrategyName());
                     // 调用目标字符串
-                    job.setInvokeTarget("ryTask.strategyParams('" + refId + "')");
+                    job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
                     // corn表达式
                     String cronDate = CronUtil.CronDate(timeStr);
                     job.setCronExpression(cronDate);

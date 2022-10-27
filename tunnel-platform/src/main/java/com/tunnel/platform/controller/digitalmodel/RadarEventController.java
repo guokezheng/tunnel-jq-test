@@ -80,19 +80,20 @@ public class RadarEventController {
      * @param record
      * @param item
      */
-    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
+//    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         String participantNum = map.get("participantNum")+"";
         if (Integer.parseInt(participantNum)>0){
             service.insertRadarDetect(map);
-        }else {
-            List<SdRadarDetectData> dataList = new ArrayList<>();
-            JSONObject object = new JSONObject();
-            object.put("radarDataList", dataList);
-            WebSocketService.broadcast("radarDataList",object.toString());
         }
+//        else {
+//            List<SdRadarDetectData> dataList = new ArrayList<>();
+//            JSONObject object = new JSONObject();
+//            object.put("radarDataList", dataList);
+//            WebSocketService.broadcast("radarDataList",object.toString());
+//        }
         //手动提交
         item.acknowledge();
     }
@@ -111,7 +112,7 @@ public class RadarEventController {
      * 雷达-设备运行数据
      * topic wjDeviceRunningInfo
      */
-    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
+//    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
     public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);

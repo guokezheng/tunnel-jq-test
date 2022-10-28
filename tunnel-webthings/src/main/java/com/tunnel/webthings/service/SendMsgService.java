@@ -2,6 +2,7 @@ package com.tunnel.webthings.service;
 
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.webthings.vo.RadarMsgTopicVo;
 import com.tunnel.webthings.vo.SendMsgVO;
@@ -19,4 +20,6 @@ public interface SendMsgService {
     String sendDevStatus(RadarMsgTopicVo vo);
 
     AjaxResult storages(SdStateStorage sdStateStorage);
+
+    int pushDevicesStatusToOtherSystem(SdDevices sdDevices, String role, String status);
 }

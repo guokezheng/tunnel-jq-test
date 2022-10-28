@@ -10,6 +10,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ModbusTcpMaster {
-
 
     public static Map<String, ModbusMaster> masterMap = new HashMap<>();
     /**
@@ -38,6 +38,8 @@ public class ModbusTcpMaster {
     ISdTunnelsService tunnelService;
     @Autowired
     ISdDevicesService devicesService;
+    @Autowired
+    SendDeviceStatusToKafkaService sendData;
 
     private ModbusTcpMaster() {
     }
@@ -52,7 +54,7 @@ public class ModbusTcpMaster {
     // 在构造方法执行后执行
     public void init() {
         //创建PLC客户端
-        createClient();
+//        createClient();
     }
 
     private void createClient() {
@@ -113,14 +115,17 @@ public class ModbusTcpMaster {
         } catch (ModbusInitException e) {
             plcDev.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             devicesService.updateSdDevices(plcDev);
+            sendData.pushDevicesStatusToOtherSystem(plcDev, "1", "off");
             plcDevList.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             devicesService.updateSdDevicesByFEqId(plcDevList);
+            sendData.pushDevicesStatusToOtherSystem(plcDevList, "2", "off");
             return null;
         }
         devicesService.updateSdDevices(plcDev);
+        sendData.pushDevicesStatusToOtherSystem(plcDev, "1", "on");
         devicesService.updateSdDevicesByFEqId(plcDevList);
+        sendData.pushDevicesStatusToOtherSystem(plcDevList, "2", "on");
         return master;
     }
-
 
 }

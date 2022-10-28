@@ -575,7 +575,6 @@ export default {
         2: "greenClass",
         3: "redClass",
       },
-
       // 遮罩层
       loading: true,
       dloading: false,

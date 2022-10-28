@@ -275,6 +275,7 @@ import {
   editTemplateImage,
   addTemplateImage,
   getTemplateImageInfo,
+  exportTemplateImage,
 } from "@/api/board/templateimage";
 import { loadPicture } from "@/api/equipment/type/api.js";
 import $ from "jquery";
@@ -533,13 +534,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有情报板敏感字管理数据项?", "警告", {
+      this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          return exportVocabulary(queryParams);
+          return exportTemplateImage(queryParams);
         })
         .then((response) => {
           this.$download.name(response.msg);

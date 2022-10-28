@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.oss.OssUtil;
 import com.tunnel.business.domain.dataInfo.SdComponent;
 import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
 import com.tunnel.business.service.dataInfo.ISdComponentService;
@@ -20,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -119,28 +118,9 @@ public class SdComponentController extends BaseController
    // @ApiOperation("下载文件")
   //  @ApiImplicitParam(name = "id", value = "设备档案文件ID", required = true, dataType = "Long", paramType = "path",dataTypeClass = Long.class)
     public void downloadFile(HttpServletResponse response,@PathVariable("id") Long id) {
-    	try {
-    		SdEquipmentFile sdEquipmentFile = sdEquipmentFileService.selectSdEquipmentFileById(id);
-    		String path = sdEquipmentFile.getUrl();
-            File file = new File(path);
-            InputStream fis;
-            fis = new BufferedInputStream(new FileInputStream(path));
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            response.reset();
-            String fileName = URLEncoder.encode(sdEquipmentFile.getFileName(),"UTF-8");
-            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
-            response.addHeader("Content-Length", "" + file.length());
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-            response.setContentType("application/octet-stream");
-            toClient.write(buffer);
-            toClient.flush();
-            toClient.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		};
+        SdEquipmentFile sdEquipmentFile = sdEquipmentFileService.selectSdEquipmentFileById(id);
+        String path = sdEquipmentFile.getUrl();
+        OssUtil.download(path,response);
 	}
     /**
      * 修改预案信息

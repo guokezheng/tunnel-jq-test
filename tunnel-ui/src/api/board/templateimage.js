@@ -50,3 +50,12 @@ export function deleteTemplateImage(id) {
         method: 'delete'
     })
 }
+
+// 导出情报板图片
+export function exportTemplateImage(query) {
+  return request({
+    url: '/system/upload/export',
+    method: 'get',
+    params: query
+  })
+}

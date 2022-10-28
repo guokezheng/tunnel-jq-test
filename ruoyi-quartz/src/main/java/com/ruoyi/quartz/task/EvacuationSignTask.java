@@ -2,6 +2,7 @@ package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -10,8 +11,8 @@ import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
-import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-//疏散标志定时任务调度
+/**
+ * 疏散标志定时任务调度
+ */
 @Component("evacuationSignTask")
 public class EvacuationSignTask {
     private static final Logger log = LoggerFactory.getLogger(EvacuationSignTask.class);
@@ -29,6 +32,7 @@ public class EvacuationSignTask {
 
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
+    private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
 
     public void handle() {
         //定时获取疏散当前状态
@@ -43,7 +47,7 @@ public class EvacuationSignTask {
                 continue;
             } else {
                 //进行状态查询
-                sendCommand(devices, devices.getIp(), devices.getPort());
+//                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }
@@ -52,8 +56,10 @@ public class EvacuationSignTask {
         String state = "";
         if (codeMap == null || codeMap.isEmpty()) {
             log.info("当前疏散标志控制器已经离线，存储状态到设备管理表中");
-            sdDevices.setEqStatus("2");
+            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             sdDevices.setEqStatusTime(new Date());
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "off");
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "off");
         } else {
             if (codeMap.get("openState") != null) {
                 state = codeMap.get("openState").toString();
@@ -62,8 +68,10 @@ public class EvacuationSignTask {
             } else if (codeMap.get("fireMark") != null) {
                 state = codeMap.get("fireMark").toString();
             }
-            sdDevices.setEqStatus("1");
+            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             sdDevices.setEqStatusTime(new Date());
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "on");
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "on");
             log.info("当前设备在线更新设备管理表中的状态");
         }
         //更新疏散标志控制器状态，疏散标志子设备状态也需要更改
@@ -88,7 +96,7 @@ public class EvacuationSignTask {
         sdDeviceNowState.setFrequency(state[2]);
         dataList.add(sdDeviceNowState);
         jsonObject.put("deviceStatus", dataList);
-        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
+//        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
     }
 
     private static void sendDataToWanJi(SdDevices sdDevices, String runStatus, String runMode) {
@@ -151,10 +159,12 @@ public class EvacuationSignTask {
             data.setData(value);
             data.setUpdateTime(new Date());
             deviceDataMapper.updateSdDeviceData(data);
+            sendData.pushDevicesDataNowTime(data);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             deviceDataMapper.insertSdDeviceData(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData);
         }
     }
 

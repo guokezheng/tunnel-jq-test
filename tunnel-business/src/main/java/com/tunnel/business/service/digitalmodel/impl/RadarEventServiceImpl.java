@@ -88,6 +88,8 @@ public class RadarEventServiceImpl implements RadarEventService {
     private String eventTopic;
     @Value("${authorize.name}")
     private String authorizeName;
+    @Value("${devStatusTopic}")
+    private static String devStatusTopic;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -364,6 +366,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                     }
                     //将设备状态保存到设备表
                     if (CollectionUtils.isNotEmpty(list)) {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("devNo", "S00063700001980001");
+                        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
                         list.forEach(
                                 t -> {
                                     //当前t为单个设备信息，需要把异常事件增加device_data
@@ -383,16 +388,25 @@ public class RadarEventServiceImpl implements RadarEventService {
                                                 data.setData(value);
                                                 data.setUpdateTime(new Date());
                                                 sdDeviceDataMapper.updateSdDeviceData(data);
+                                                jsonObject.put("deviceData", data);
+                                                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                                log.info("推送物联中台kafka内容：" + jsonObject);
                                             } else {
                                                 sdDeviceData.setData(value);
                                                 sdDeviceData.setCreateTime(new Date());
                                                 sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+                                                jsonObject.put("deviceData", sdDeviceData);
+                                                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                                log.info("推送物联中台kafka内容：" + jsonObject);
                                             }
                                             //接收到摄像机和雷达的数据，直接回传给万集
                                             sendDataToWanJi(t, value);
                                         }
                                     }
                                     devicesMapper.updateSdDevicesBatch(t.getEqId(), t.getEqStatus());
+                                    jsonObject.put("deviceStatus", t);
+                                    kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                                    log.info("推送物联中台kafka内容：" + jsonObject);
                                 }
                         );
                     }

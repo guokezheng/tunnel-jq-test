@@ -88,6 +88,13 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
         if (!jsonObject.isEmpty()) {
             String templateId = jsonObject.get("templateId").toString();
             JSONArray templateContent = jsonObject.getJSONArray("templateContent");
+            JSONArray templateDelContent = jsonObject.getJSONArray("templateDelContent");
+            if(templateDelContent.size() > 0){
+                for(int i = 0; i < templateDelContent.size(); i++){
+                    JSONObject jsonObject1 = templateDelContent.getJSONObject(i);
+                    sdVmsTemplateContentMapper.deleteSdVmsTemplateContentById(Long.valueOf(jsonObject1.get("id").toString()));
+                }
+            }
             if (templateContent.size() > 0) {
                 int count = 0;
                 for (int i = 0; i < templateContent.size(); i++) {

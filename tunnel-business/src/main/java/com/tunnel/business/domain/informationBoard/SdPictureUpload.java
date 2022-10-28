@@ -39,7 +39,7 @@ public class SdPictureUpload extends BaseEntity
     private String imageHeight;
 
     /** 图片类型 */
-    @Excel(name = "图片类型")
+    //@Excel(name = "图片类型")
     private String imageType;
 
     /** 图片分辨率 */

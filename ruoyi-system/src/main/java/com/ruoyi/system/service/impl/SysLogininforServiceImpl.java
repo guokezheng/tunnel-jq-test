@@ -1,13 +1,17 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
+import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysLogininfor;
 import com.ruoyi.system.mapper.SysLogininforMapper;
 import com.ruoyi.system.service.ISysLogininforService;
+
+import static com.ruoyi.common.utils.SecurityUtils.getLoginUser;
 
 /**
  * 系统访问日志情况信息 服务层处理
@@ -40,9 +44,12 @@ public class SysLogininforServiceImpl implements ISysLogininforService
     @Override
     public List<SysLogininfor> selectLogininforList(SysLogininfor logininfor)
     {
-        if (SecurityUtils.getUsername() != null && !SecurityUtils.getUsername().equals("")) {
-            String username = SecurityUtils.getUsername();
-            logininfor.setUserName(username);
+        SysRole roles = getLoginUser().getUser().getRoles().get(0);
+        if(!"admin".equals(roles.getRoleKey())){
+            if (SecurityUtils.getUsername() != null && !SecurityUtils.getUsername().equals("")) {
+                String loginName = SecurityUtils.getUsername();
+                logininfor.setLoginName(loginName);
+            }
         }
         return logininforMapper.selectLogininforList(logininfor);
     }

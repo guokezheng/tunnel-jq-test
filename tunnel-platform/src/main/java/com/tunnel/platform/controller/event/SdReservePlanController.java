@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.oss.OssUtil;
 import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
 import com.tunnel.business.domain.event.SdReservePlan;
+import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
 import com.tunnel.business.service.event.ISdReservePlanFileService;
 import com.tunnel.business.service.event.ISdReservePlanService;
@@ -113,8 +114,8 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/{id}")
     public void downloadFile(HttpServletResponse response, @PathVariable("id") Long id) {
-        SdEquipmentFile sdEquipmentFile = sdEquipmentFileService.selectSdEquipmentFileById(id);
-        String path = sdEquipmentFile.getUrl();
+        SdReservePlanFile planFile = sdReservePlanFileService.selectSdReservePlanFileById(id);
+        String path = planFile.getUrl();
         OssUtil.download(path,response);
     }
 

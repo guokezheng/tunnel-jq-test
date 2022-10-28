@@ -1,13 +1,14 @@
 package com.tunnel.platform.controller.event;
 
 import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.oss.OssUtil;
+import com.tunnel.business.domain.dataInfo.SdEquipmentFile;
 import com.tunnel.business.domain.event.SdReservePlan;
-import com.tunnel.business.domain.event.SdReservePlanFile;
+import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
 import com.tunnel.business.service.event.ISdReservePlanFileService;
 import com.tunnel.business.service.event.ISdReservePlanService;
 import io.swagger.annotations.Api;
@@ -19,8 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.URLEncoder;
 import java.util.List;
 
 /**
@@ -37,6 +36,9 @@ public class SdReservePlanController extends BaseController {
     private ISdReservePlanService sdReservePlanService;
     @Autowired
     private ISdReservePlanFileService sdReservePlanFileService;
+    @Autowired
+    private ISdEquipmentFileService sdEquipmentFileService;
+
 
     /**
      * 查询预案信息列表
@@ -111,32 +113,9 @@ public class SdReservePlanController extends BaseController {
     @Log(title = "预案信息")
     @PostMapping(value = "/{id}")
     public void downloadFile(HttpServletResponse response, @PathVariable("id") Long id) {
-        try {
-            // TODO: 2022/10/22 如果文件上传到 阿里OSS,则需要从阿里OSS下载，现在接口现在还没有，后期需要补充，这里代码也得改动
-            SdReservePlanFile planFile = sdReservePlanFileService.selectSdReservePlanFileById(id);
-            String path = planFile.getUrl();
-            path = RuoYiConfig.getProfile() + path;
-
-            File file = new File(path);
-            InputStream fis;
-            fis = new BufferedInputStream(new FileInputStream(path));
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            response.reset();
-            String fileName = URLEncoder.encode(planFile.getFileName(), "UTF-8");
-            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
-            response.addHeader("Content-Length", "" + file.length());
-            response.addHeader("Access-Control-Allow-Origin", "*");
-            OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
-            response.setContentType("application/octet-stream");
-            toClient.write(buffer);
-            toClient.flush();
-            toClient.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ;
+        SdEquipmentFile sdEquipmentFile = sdEquipmentFileService.selectSdEquipmentFileById(id);
+        String path = sdEquipmentFile.getUrl();
+        OssUtil.download(path,response);
     }
 
 

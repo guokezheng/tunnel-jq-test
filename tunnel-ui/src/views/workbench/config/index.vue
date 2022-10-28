@@ -5,7 +5,6 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
-        
         <el-row
           class="menu-b"
           style="display: flex; align-items: center"
@@ -42,17 +41,20 @@
                 size="mini"
                 @click="setTunnel(item, index)"
                 :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
-                style="display: flex; justify-content: center;height:32px;line-height: 20px;font-size: 15px;"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  height: 32px;
+                  line-height: 20px;
+                  font-size: 15px;
+                "
               >
                 <div>{{ item.tunnelName }}</div>
               </el-button>
             </el-tooltip>
           </el-button-group>
         </el-row>
-        <div
-          class="flex-row"
-          style="z-index: 8"
-        >
+        <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
             <el-input-number
@@ -128,16 +130,15 @@
           </el-button>
         </div>
       </div>
-      <div class="vehicleLane" >
+      <div class="vehicleLane">
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative;left:2%;"
-         
+          style="position: relative; left: 2%"
         >
-        <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
+          <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
           <div
@@ -158,7 +159,12 @@
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
 
-                <div class="wrapper" id="eq-wrapper" @mousemove="mouseoversImage"  @mouseleave="mouseleaveImage">
+                <div
+                  class="wrapper"
+                  id="eq-wrapper"
+                  @mousemove="mouseoversImage"
+                  @mouseleave="mouseleaveImage"
+                >
                   <!-- <div
                   class="wrapper"
                   id="eq-wrapper"
@@ -379,7 +385,7 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
-            :style="topNav?'width:125px':'width:100px'"
+            :style="topNav ? 'width:125px' : 'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -394,7 +400,7 @@
             flex-direction: column;
             height: 100%;
           "
-          :class="topNav?'topNavRightDeawer':'leftNavRightDeawer'"
+          :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i class="el-icon-caret-left"></i>车道控制模块
@@ -524,15 +530,18 @@
           :append-to-body="true"
           class="drawerCenter"
         >
-          <div v-for="(item, index) in timStrategyList" :key="index" style="width:100%;">
+          <div
+            v-for="(item, index) in timStrategyList"
+            :key="index"
+            style="width: 100%"
+          >
             <div class="ledLighting">
               <span>{{ item.strategy_name }} </span>
               <el-switch
                 v-model="item.strategy_state"
-                
                 active-value="0"
                 inactive-value="1"
-                @change = "timStrategySwitch(item)"
+                @change="timStrategySwitch(item)"
               >
               </el-switch>
             </div>
@@ -554,10 +563,13 @@
                   size="mini"
                   :clearable="false"
                   value-format="HH:mm:ss"
-
                 >
                 </el-time-picker>
-                <el-button type="primary" size="mini" class="handleLightClass" @click="timingStrategy(item)"
+                <el-button
+                  type="primary"
+                  size="mini"
+                  class="handleLightClass"
+                  @click="timingStrategy(item)"
                   >确定
                 </el-button>
               </div>
@@ -573,7 +585,8 @@
           class="drawerBottom"
         >
           <div
-            style="height: 150px;
+            style="
+              height: 150px;
               overflowy: auto;
               padding: 5px;
               padding-left: 10px;
@@ -586,9 +599,7 @@
               "
             >
               <span style="padding-left: 5px">预警类型</span>
-              <span style="padding-left: 28px; line-height: 40px"
-                >触发值</span
-              >
+              <span style="padding-left: 28px; line-height: 40px">触发值</span>
               <span style="padding-left: 28px; line-height: 40px"
                 >相关预案</span
               >
@@ -608,7 +619,7 @@
                   {{ item.strategyName }}
                 </div>
                 <div style="width: 66px; margin-right: 5px; padding-left: 5px">
-                  {{' >200' }}
+                  {{ " >200" }}
                 </div>
                 <div class="reservePlan">{{ itm }}</div>
               </div>
@@ -831,7 +842,6 @@
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
-        
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column
@@ -2470,7 +2480,7 @@ import {
   batchControlCarFinger,
   timeSharing,
   updateControlTime,
-  timeStrategySwitch
+  timeStrategySwitch,
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -2509,7 +2519,7 @@ export default {
   },
   data() {
     return {
-      timStrategyList:[],//定时控制
+      timStrategyList: [], //定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
       tunnelLane: "", //当前隧道有几条车道
@@ -3438,9 +3448,8 @@ export default {
       };
       batchControlCarFinger(param).then((res) => {
         console.log(res);
-        if(res.data == 0){
-      this.$modal.msgWarning("控制失败");
-
+        if (res.data == 0) {
+          this.$modal.msgWarning("控制失败");
         }
       });
     },
@@ -3460,22 +3469,20 @@ export default {
         console.log(res);
       });
     },
-    timingStrategy(item){
-      var time = item.arr.join('-')
-      updateControlTime(item.strategy_id,time).then((res) =>{
+    timingStrategy(item) {
+      var time = item.arr.join("-");
+      updateControlTime(item.strategy_id, time).then((res) => {
         this.$modal.msgSuccess("修改时间成功");
-      })
+      });
     },
-    timStrategySwitch(item){
-
-      timeStrategySwitch(item.strategy_id,item.strategy_state).then((res)=>{
-        if(item.strategy_state == 0){
+    timStrategySwitch(item) {
+      timeStrategySwitch(item.strategy_id, item.strategy_state).then((res) => {
+        if (item.strategy_state == 0) {
           this.$modal.msgSuccess("开启成功");
-        }else if(item.strategy_state == 1){
+        } else if (item.strategy_state == 1) {
           this.$modal.msgSuccess("关闭成功");
-
         }
-      })
+      });
     },
     // // 抽屉 车指控制
     // controlCheZhi(num) {
@@ -3579,12 +3586,12 @@ export default {
       this.drawerA = false;
       this.drawerCVisible = false;
       timeSharing(this.tunnelId).then((res) => {
-        for(var item of res.data){
-          item.arr = item.time.split('-')
-          console.log(item,"item");
+        for (var item of res.data) {
+          item.arr = item.time.split("-");
+          console.log(item, "item");
         }
         this.timStrategyList = res.data;
-        console.log(this.timStrategyList,"this.timStrategyList");
+        console.log(this.timStrategyList, "this.timStrategyList");
       });
     },
     isDrawerC() {
@@ -3670,7 +3677,7 @@ export default {
       this.loading = true;
       listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
-          console.log(response,"操作日志列表")
+          console.log(response, "操作日志列表");
           this.logList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -5095,14 +5102,13 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
-              that.selectedIconList.forEach((item,indx)=>{
+              that.selectedIconList.forEach((item, indx) => {
                 // if(item.eqName=='固定摄像机（枪机）'){
-                if(item.eqType=='23'){
+                if (item.eqType == "23") {
                   item.position.left = item.position.left + 10;
                   item.position.top = item.position.top;
-                }
-                else if(item.eqType=='21'){
-                // else if(item.eqName=='紧急电话'){
+                } else if (item.eqType == "21") {
+                  // else if(item.eqName=='紧急电话'){
                   item.position.left = item.position.left + 20;
                   item.position.top = item.position.top;
                 }
@@ -5111,74 +5117,64 @@ export default {
                 //   item.position.left = item.position.left + 20;
                 //   item.position.top = item.position.top;
                 // }
-                else if(item.eqType=='1'){
-                // else if(item.eqName=='车道指示器'){
+                else if (item.eqType == "1") {
+                  // else if(item.eqName=='车道指示器'){
                   item.position.left = item.position.left - 4;
                   item.position.top = item.position.top + 20;
-                }
-                else if(item.eqType=='7'){
-                // else if(item.eqName=='加强照明'){
+                } else if (item.eqType == "7") {
+                  // else if(item.eqName=='加强照明'){
                   item.position.left = item.position.left + 60;
                   item.position.top = item.position.top - 6;
-                }
-                else if(item.eqType=='9'){
-                // else if(item.eqName=='基本照明'){
+                } else if (item.eqType == "9") {
+                  // else if(item.eqName=='基本照明'){
                   item.position.left = item.position.left + 26;
                   item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='19'){
-                // else if(item.eqName[0]+item.eqName[1]=='CO'){
+                } else if (item.eqType == "19") {
+                  // else if(item.eqName[0]+item.eqName[1]=='CO'){
                   item.position.left = item.position.left + 20;
                   // item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='24'){
-                // else if(item.eqName[0]+item.eqName[1]=='云台'){
+                } else if (item.eqType == "24") {
+                  // else if(item.eqName[0]+item.eqName[1]=='云台'){
                   item.position.left = item.position.left + 22;
                   // item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='13'){
-                // else if(item.eqName=='水泵'){
+                } else if (item.eqType == "13") {
+                  // else if(item.eqName=='水泵'){
                   item.position.left = item.position.left + 30;
                   // item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='3'){
-                // else if(item.eqName=='交通信号灯'){
+                } else if (item.eqType == "3") {
+                  // else if(item.eqName=='交通信号灯'){
                   item.position.left = item.position.left + 16;
                   // item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='8'){
-                // else if(item.eqName=='引道照明'){
+                } else if (item.eqType == "8") {
+                  // else if(item.eqName=='引道照明'){
                   item.position.left = item.position.left + 16;
                   // item.position.top = item.position.top - 4;
-                }
-                else if(item.eqType=='17'){
-                // else if(item.eqName.substring(0,7)=='风速风向检测器'){
+                } else if (item.eqType == "17") {
+                  // else if(item.eqName.substring(0,7)=='风速风向检测器'){
                   item.position.left = item.position.left + 26;
                   // item.position.top = item.position.top - 4;
-                }   
-                else if(item.eqType=='5'){    
-                // else if(item.eqName.substring(0,7)=='亮度检测器'){
+                } else if (item.eqType == "5") {
+                  // else if(item.eqName.substring(0,7)=='亮度检测器'){
                   item.position.left = item.position.left + 26;
                   // item.position.top = item.position.top - 4;
                 }
-
-              })
+              });
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
               );
-              for(var item of that.selectedIconList){
-                if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
-                  console.log(item,"000000000000000000000")
+              for (var item of that.selectedIconList) {
+                if (
+                  this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
+                  item.eqType == 29
+                ) {
+                  console.log(item, "000000000000000000000");
                   // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
-                }else {
+                } else {
                   this.robotShow = false;
-
                 }
               }
-              
-              
             })
             .then(() => {
               that.initEharts();
@@ -5390,32 +5386,31 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if(deviceData.eqStatus == 1){
+                    if (deviceData.eqStatus == 1) {
                       if (deviceData.eqType == 19) {
-                      this.selectedIconList[j].num =
-                        "CO:" +
-                        parseFloat(deviceData.CO).toFixed(2) +
-                        "/PPM  VI:" +
-                        parseFloat(deviceData.VI).toFixed(2) +
-                        "KM";
-                    } else if (deviceData.eqType == 17) {
-                      this.selectedIconList[j].num =
-                        parseFloat(deviceData.FS).toFixed(2) +
-                        "m/s " +
-                        deviceData.FX;
-                    } else if (deviceData.eqType == 5) {
-                      if (deviceData.DWLD) {
                         this.selectedIconList[j].num =
-                          parseFloat(deviceData.DWLD).toFixed(2) + "lux";
-                      }
-                    } else if (deviceData.eqType == 18) {
-                      if (deviceData.DNLD) {
+                          "CO:" +
+                          parseFloat(deviceData.CO).toFixed(2) +
+                          "/PPM  VI:" +
+                          parseFloat(deviceData.VI).toFixed(2) +
+                          "KM";
+                      } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
-                          parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                          parseFloat(deviceData.FS).toFixed(2) +
+                          "m/s " +
+                          deviceData.FX;
+                      } else if (deviceData.eqType == 5) {
+                        if (deviceData.DWLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                        }
+                      } else if (deviceData.eqType == 18) {
+                        if (deviceData.DNLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                        }
                       }
                     }
-                    }
-                    
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -5515,14 +5510,13 @@ export default {
     onDropped(key) {},
     /*点击设备类型*/
     displayControl(value, lable) {
-      for(var item of this.selectedIconList){
+      for (var item of this.selectedIconList) {
         if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
           // console.log()
           // this.dictList = this.dict.type.sd_sys_name;
           this.robotShow = true;
-        }else {
+        } else {
           this.robotShow = false;
-
         }
       }
       // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
@@ -5609,9 +5603,9 @@ export default {
     },
     clickRobot() {
       this.eqInfo.clickEqType = 29;
-      for(var item of this.selectedIconList){
-        if(item.eqType == 29){
-          console.log(item,"机器人")
+      for (var item of this.selectedIconList) {
+        if (item.eqType == 29) {
+          console.log(item, "机器人");
         }
       }
     },
@@ -6298,10 +6292,10 @@ export default {
     },
     // 查看策略，表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
     //========================================控制策略结束================================================
@@ -6313,7 +6307,6 @@ export default {
       this.title = "操作日志";
       this.operationLogDialog = true;
       this.getList();
-
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -6770,8 +6763,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   display: flex;
-    align-items: center;
-    justify-content: center;
+  align-items: center;
+  justify-content: center;
 }
 
 //抽屉的高度
@@ -6935,7 +6928,7 @@ export default {
     }
   }
 
-   .ledLighting {
+  .ledLighting {
     height: 36px;
     // background-color: #4EAACF;
     line-height: 40px;
@@ -6948,7 +6941,7 @@ export default {
     // }
   }
 
-   .Time {
+  .Time {
     display: flex;
     align-items: flex-start;
     height: 50px;
@@ -7029,8 +7022,9 @@ export default {
   position: relative;
   margin-top: 2px;
 }
-.contentTopNav{
-  width:85%;left:0px
+.contentTopNav {
+  width: 85%;
+  left: 0px;
 }
 // .openSidebar .contentLeftNav{
 //   width:88%;left:3.2%
@@ -7186,13 +7180,13 @@ export default {
     margin-right: 20px;
   }
 }
-.topNavRightDeawer{
+.topNavRightDeawer {
   right: 0;
 }
-.openSidebar .leftNavRightDeawer{
+.openSidebar .leftNavRightDeawer {
   right: 240px;
 }
-.hideSidebar .leftNavRightDeawer{
+.hideSidebar .leftNavRightDeawer {
   right: 55px;
 }
 // .bigTypeButton{
@@ -7362,7 +7356,7 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
-  margin-top:2px;
+  margin-top: 2px;
   display: flex;
   justify-content: space-between;
 }
@@ -7502,7 +7496,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width:88%;
+  width: 88%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -7912,7 +7906,8 @@ input {
   width: 100%;
   height: 15rem;
 }
-.eventDiglog, .operationDiglog{
+.eventDiglog,
+.operationDiglog {
   .el-dialog .el-form {
     padding: 15px !important;
     .el-form-item__content .el-button {
@@ -7920,11 +7915,10 @@ input {
       height: 22px;
       border: none;
     }
-  } 
-  .el-table{
+  }
+  .el-table {
     padding: 0 15px;
     margin-bottom: 60px;
-   
   }
 }
 ::v-deep .eventDiglog .el-button--medium {
@@ -7933,7 +7927,7 @@ input {
   padding: 0px !important;
 }
 .eventDiglog .el-table {
-  padding:15px;
+  padding: 15px;
   padding-top: 0;
   background-color: transparent !important;
   margin-bottom: 65px;
@@ -7986,20 +7980,19 @@ input {
   height: 40px;
   line-height: 40px;
 }
-.reservePlan{
+.reservePlan {
   cursor: pointer;
-  width:190px;
+  width: 190px;
   border-radius: 5px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.reservePlan:hover{
-  background: #00BBF5;
-  width:220px;
-
+.reservePlan:hover {
+  background: #00bbf5;
+  width: 220px;
 }
-.paginationWorkbench{
+.paginationWorkbench {
   position: static;
   // bottom: 250px !important;
   height: 60px;

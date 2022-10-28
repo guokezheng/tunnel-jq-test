@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="事件类型" prop="eventType">
         <el-select
           v-model="queryParams.eventType"
@@ -13,20 +19,25 @@
             v-for="item in eventTypeData"
             :key="item.id"
             :label="item.eventType"
-            :value="item.id"
+            :value="item.eventType"
           />
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button
+        >
         <el-button
-          type="primary" 
+          type="primary"
           plain
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:eventType:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
         <!-- <el-button
           type="primary" 
           plain
@@ -37,13 +48,14 @@
           v-hasPermi="['system:eventType:edit']"
         >修改</el-button> -->
         <el-button
-          type="primary" 
+          type="primary"
           plain
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:eventType:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -99,13 +111,21 @@
       </div>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="eventTypeList" @selection-change="handleSelectionChange"
-    :row-class-name="tableRowClassName" max-height="640"
+    <el-table
+      v-loading="loading"
+      :data="eventTypeList"
+      @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <!-- <el-button
             size="mini"
@@ -116,16 +136,16 @@
           <el-button
             size="mini"
             class="tableDelButtton"
-            
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:eventType:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -148,7 +168,13 @@
 </template>
 
 <script>
-import { listEventType, getEventType, delEventType, addEventType, updateEventType } from "@/api/event/eventType";
+import {
+  listEventType,
+  getEventType,
+  delEventType,
+  addEventType,
+  updateEventType,
+} from "@/api/event/eventType";
 
 export default {
   name: "EventType",
@@ -184,19 +210,22 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        eventType: [{required: true, message: '请输入事件类型', trigger: 'blur'}],
-      }
+        eventType: [
+          { required: true, message: "请输入事件类型", trigger: "blur" },
+        ],
+      },
     };
   },
   created() {
     this.getList();
-    this.getEventType()
+    this.getEventType();
   },
   methods: {
     /** 查询事件类型列表 */
     getList() {
       this.loading = true;
-      listEventType(this.queryParams).then(response => {
+      console.log(this.queryParams);
+      listEventType(this.queryParams).then((response) => {
         this.eventTypeList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -206,7 +235,7 @@ export default {
     getEventType() {
       listEventType().then((response) => {
         console.log(response, "responseresponse");
-        this.eventTypeData = response.rows; 
+        this.eventTypeData = response.rows;
       });
     },
     // 取消按钮
@@ -222,7 +251,7 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
       };
       this.resetForm("form");
     },
@@ -238,11 +267,11 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      console.log("ids>>>>>",this.ids)
+      this.ids = selection.map((item) => item.id);
+      console.log("ids>>>>>", this.ids);
 
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -253,8 +282,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids[0]
-      getEventType(id).then(response => {
+      const id = row.id || this.ids[0];
+      getEventType(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改事件类型";
@@ -263,7 +292,7 @@ export default {
 
     update(row) {
       this.reset();
-      getEventType(row.id).then(response => {
+      getEventType(row.id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改事件类型";
@@ -272,10 +301,10 @@ export default {
 
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateEventType(this.form).then(response => {
+            updateEventType(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -283,7 +312,7 @@ export default {
               }
             });
           } else {
-            addEventType(this.form).then(response => {
+            addEventType(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
@@ -297,31 +326,38 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm('是否确认删除选中数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
+      this.$confirm("是否确认删除选中数据项?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(function () {
           return delEventType(ids);
-        }).then(() => {
+        })
+        .then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
-        }).catch(function() {});
+        })
+        .catch(function () {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('business/eventType/export', {
-        ...this.queryParams
-      }, `system_eventType.xlsx`)
+      this.download(
+        "business/eventType/export",
+        {
+          ...this.queryParams,
+        },
+        `system_eventType.xlsx`
+      );
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
-  }
+  },
 };
 </script>

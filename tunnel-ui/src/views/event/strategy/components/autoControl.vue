@@ -454,7 +454,12 @@ export default {
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          if (autoControl[0].value.length == 0 || autoControl[0].state == "") {
+          console.log(autoControl.length);
+          if (
+            !autoControl.length ||
+            autoControl[0].value.length == 0 ||
+            autoControl[0].state == ""
+          ) {
             return this.$modal.msgError("请选择设备并添加执行操作");
           }
           // 判断是修改还是删除

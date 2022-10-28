@@ -39,53 +39,59 @@ public class SendDeviceStatusToKafkaService {
     private SdDevicesMapper sdDevicesMapper;
 
     @Value("${authorize.name}")
-    private String auth;
+    private String authorizeName;
 
     @Autowired
     private ISdDevicesService sdDevicesService;
 
     public void pushDevicesDataNowTime(SdDeviceData data) {
-        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        jsonObject.put("deviceData", data);
-        kafkaTemplate.send(devStatusTopic, jsonObject.toString());
-        log.info("推送物联中台kafka内容：" + jsonObject);
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            jsonObject.put("deviceData", data);
+            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            log.info("推送物联中台kafka内容：" + jsonObject);
+        }
     }
 
     public void pushDevicesDataRecord(SdDeviceDataRecord data) {
-        com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        jsonObject.put("deviceDataRecord", data);
-        kafkaTemplate.send(devStatusTopic, jsonObject.toString());
-        log.info("推送物联中台kafka内容：" + jsonObject);
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            com.alibaba.fastjson.JSONObject jsonObject = new JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            jsonObject.put("deviceDataRecord", data);
+            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            log.info("推送物联中台kafka内容：" + jsonObject);
+        }
     }
 
     public void pushDevicesStatusToOtherSystem(SdDevices sdDevices, String role, String status) {
-        com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        if (role.equals("1")) {
-            SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
-            if (status.equals("off")) {
-                devices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
-            } else if (status.equals("on")) {
-                devices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
-            }
-            jsonObject.put("deviceStatus", devices);
-            kafkaTemplate.send(devStatusTopic, jsonObject.toString());
-        } else if (role.equals("2")) {
-            List<SdDevices> devicesList = sdDevicesMapper.selectFireComponentsList(sdDevices);
-            for (int i = 0;i < devicesList.size();i++) {
-                SdDevices dev = devicesList.get(i);
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GLZ")) {
+            com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
+            jsonObject.put("devNo", "S00063700001980001");
+            jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+            if (role.equals("1")) {
+                SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
                 if (status.equals("off")) {
-                    dev.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                    devices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
                 } else if (status.equals("on")) {
-                    dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                    devices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
                 }
-                jsonObject.put("deviceStatus", dev);
+                jsonObject.put("deviceStatus", devices);
                 kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+            } else if (role.equals("2")) {
+                List<SdDevices> devicesList = sdDevicesMapper.selectFireComponentsList(sdDevices);
+                for (int i = 0;i < devicesList.size();i++) {
+                    SdDevices dev = devicesList.get(i);
+                    if (status.equals("off")) {
+                        dev.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                    } else if (status.equals("on")) {
+                        dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                    }
+                    jsonObject.put("deviceStatus", dev);
+                    kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                }
             }
         }
     }

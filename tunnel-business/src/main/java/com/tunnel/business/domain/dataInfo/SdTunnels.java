@@ -79,6 +79,30 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道长度")
     private String tunnelLength;
 
+    @ApiModelProperty("隧道开始桩号")
+    private String startPile;
+
+    @ApiModelProperty("隧道结束桩号")
+    private String endPile;
+
+    public String getStartPile() {
+        return startPile;
+    }
+
+    public void setStartPile(String startPile) {
+        this.startPile = startPile;
+    }
+
+    public String getEndPile() {
+        return endPile;
+    }
+
+    public void setEndPile(String endPile) {
+        this.endPile = endPile;
+    }
+
+
+
     @ApiModelProperty("隧道分区")
     public List<SdTunnelSubarea> sdTunnelSubareas;
 
@@ -108,6 +132,11 @@ public class SdTunnels extends BaseEntity
 
     @ApiModelProperty("隧道所属部门名称")
     private String deptName;
+
+    /**
+     * 隧道ID集合
+     */
+    private List<String> tunnelIds;
 
     private List<SdTunnelSubarea> list;
 
@@ -280,6 +309,14 @@ public class SdTunnels extends BaseEntity
         return storeConfigure;
     }
 
+    public List<String> getTunnelIds() {
+        return tunnelIds;
+    }
+
+    public void setTunnelIds(List<String> tunnelIds) {
+        this.tunnelIds = tunnelIds;
+    }
+
     @Override
     public String toString() {
         return "SdTunnels{" +
@@ -300,6 +337,7 @@ public class SdTunnels extends BaseEntity
                 ", storeConfigure='" + storeConfigure + '\'' +
                 ", deptId=" + deptId +
                 ", deptName='" + deptName + '\'' +
+                ", tunnelIds='" + tunnelIds + '\'' +
                 ", list=" + list +
                 ", percentage=" + percentage +
                 '}';

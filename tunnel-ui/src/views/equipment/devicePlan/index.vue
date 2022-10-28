@@ -5,20 +5,24 @@
         <el-input v-model="queryParams.equipmentName" placeholder="请输入设备名称" clearable size="small" @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" @click="handleAdd" v-hasPermi="['system:component:add']">新增</el-button>
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:component:edit']">修改</el-button>
+        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDelete"
+          v-hasPermi="['system:component:remove']">删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:component:add']">新增</el-button>
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:component:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:component:edit']">修改</el-button>
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:component:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
           v-hasPermi="['system:component:remove']">删除</el-button>
       </el-col>
       <div class="top-right-btn">
@@ -29,11 +33,14 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
 
 
-    <el-table ref="table" v-loading="loading" :data="componentList" @selection-change="handleSelectionChange" @row-click="handlePlanRowClick">
+    <el-table ref="table" v-loading="loading" :data="componentList"
+     @selection-change="handleSelectionChange" @row-click="handlePlanRowClick"
+    :row-class-name="tableRowClassName" max-height="640"
+     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备名称" align="center" prop="equipmentName" />
       <el-table-column label="设备品牌" align="center" prop="brand" />
@@ -52,16 +59,15 @@
      <el-table-column label="备注" align="center" prop="remark"  />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:component:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:component:remove']">删除</el-button>
+          <el-button size="mini" class="tableBlueButtton" @click="handleUpdate(scope.row)" v-hasPermi="['system:component:edit']">修改</el-button>
+          <el-button size="mini"  class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:component:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
-
-    <el-drawer class="zwsj" :title="drawerFileTitle" :visible.sync="drawerFile" :direction="direction" :before-close="handleFileClose">
+    <el-dialog :title="drawerFileTitle" :visible.sync="drawerFile" width="740px" append-to-body :before-close="handleFileClose">
       <el-table v-loading="loading" :data="planFileList">
         <el-table-column label="序号" width="100px" align="center">
           <template slot-scope="scope">
@@ -75,9 +81,23 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-drawer>
-
-    <el-drawer class="zwsj" :title="drawerTitle" :visible.sync="open" :direction="direction" :before-close="handleClose" @close="handleDraClose">
+    </el-dialog>
+    <!-- <el-drawer class="zwsj" :title="drawerFileTitle" :visible.sync="drawerFile" :direction="direction" :before-close="handleFileClose">
+      <el-table v-loading="loading" :data="planFileList">
+        <el-table-column label="序号" width="100px" align="center">
+          <template slot-scope="scope">
+            {{scope.$index+1}}
+          </template>
+        </el-table-column>
+        <el-table-column label="文件名称" align="center" prop="fileName" />
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button size="mini" type="text" @click="loadFile(scope.row)" v-hasPermi="['business:plan:edit']">下载</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer> -->
+    <el-dialog :title="drawerTitle" :visible.sync="open" width="740px" append-to-body :before-close="drawerClose">
       <el-form ref="form1" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="设备名称" prop="equipmentName" style="width: 80%;">
           <el-input v-model="form.equipmentName" placeholder="请输入设备名称" />
@@ -123,7 +143,54 @@
           <el-button style="width: 30%;" @click="drawerClose">取 消</el-button>
         </el-form-item>
       </el-form>
-    </el-drawer>
+    </el-dialog>
+    <!-- <el-drawer class="zwsj" :title="drawerTitle" :visible.sync="open" :direction="direction" :before-close="handleClose" @close="handleDraClose">
+      <el-form ref="form1" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="设备名称" prop="equipmentName" style="width: 80%;">
+          <el-input v-model="form.equipmentName" placeholder="请输入设备名称" />
+        </el-form-item>
+        <el-form-item label="设备品牌" prop="brand" style="width: 80%;">
+          <el-input v-model="form.brand" placeholder="请输入设备品牌" />
+        </el-form-item>
+        <el-form-item label="设备型号" prop="model" style="width: 80%;">
+          <el-input v-model="form.model" placeholder="请输入设备型号" />
+        </el-form-item>
+        <el-form-item label="所属隧道" prop="tunnelId">
+          <el-select
+            v-model="form.tunnelId"
+            placeholder="请选择隧道"
+            clearable
+            style="width: 76%;"
+          >
+            <el-option
+              v-for="item in tunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="生产厂家" prop="manufacturer" style="width: 80%;">
+          <el-input v-model="form.manufacturer" placeholder="请输入生产厂家" />
+        </el-form-item>
+
+        <el-form-item label="相关文档" prop="equipmentLocation">
+          <el-upload style="width: 80%;" multiple class="upload-demo" ref="upload" :limit="5" action="http://xxx.xxx.xxx/personality/uploadExcel"
+            :on-preview="handlePreview" :on-change="handleChange" :on-remove="handleRemove" :on-exceed="handleExceed"
+            :file-list="fileList" :http-request="uploadFile" :auto-upload="false" >
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <span slot="tip" class="el-upload__tip" style="font-style: italic;color: #acacac;padding-left:5%;">*注*：上传文件不可超过1m</span>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark" style="width: 80%;">
+          <textarea class="el-textarea__inner" v-model="form.remark"  :rows="5" placeholder="请输入备注" />
+        </el-form-item>
+        <el-form-item style="text-align: center;text-align: center;width: 100%;">
+          <el-button style="width: 30%;"  type="primary" @click="submitUpload" v-prevent-click>保 存</el-button>
+          <el-button style="width: 30%;" @click="drawerClose">取 消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-drawer> -->
   </div>
 </template>
 
@@ -535,6 +602,9 @@
           this.$modal.msgError("请输入设备名称！");
           return;
         }
+        if (this.form.equipmentName.length >30 || this.form.brand.length>30) {
+          return;
+        }
         if (!this.form.brand) {
           this.$modal.msgError("请输入设备品牌！");
           return;
@@ -653,11 +723,19 @@
         this.download('business/component/export', {
           ...this.queryParams
         }, `system_component.xlsx`)
+      },
+      // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
       }
+    },
     }
   };
 </script>
-<style>
+<style scoped>
   .el-drawer__header {
     background: #dcdfe6;
     padding: 0 10px;

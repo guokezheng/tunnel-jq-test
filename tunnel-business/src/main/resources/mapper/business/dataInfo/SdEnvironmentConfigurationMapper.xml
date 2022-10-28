@@ -30,6 +30,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
         </where>
     </select>
+
+
+
+    <select id="selectSdEnvironmentConfigurationList_exp" parameterType="SdEnvironmentConfiguration" resultMap="SdEnvironmentConfigurationResult">
+        <!--<include refid="selectSdEnvironmentConfigurationVo"/>-->
+        select conf.id, conf.sd_name, conf.url, typ.type_name as environment_type, conf.width, conf.height, dit.dict_label as direction, conf.create_by, conf.remark, conf.create_time, conf.update_time from sd_environment_configuration conf
+        left join sd_equipment_type typ on typ.type_id = conf.environment_type
+        left join sys_dict_data dit on dit.dict_value = conf.direction
+        <where>
+            <if test="sdName != null  and sdName != ''"> and sd_name like concat('%', #{sdName}, '%')</if>
+            <if test="environmentType != null  and environmentType != ''"> and environment_type = #{environmentType}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+            and dit.dict_type = 'sd_direction'
+        </where>
+    </select>
     
     <select id="selectSdEnvironmentConfigurationById" parameterType="Long" resultMap="SdEnvironmentConfigurationResult">
         <include refid="selectSdEnvironmentConfigurationVo"/>

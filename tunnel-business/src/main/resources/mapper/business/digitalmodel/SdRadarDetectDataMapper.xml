@@ -21,6 +21,7 @@
         <result property="detectTime" column="detect_time"/>
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
+        <result property="deptId" column="dept_id" />
     </resultMap>
 
     <sql id="selectSdRadarDetectDataVo" >
@@ -75,14 +76,20 @@
             <if test="stakeNum != null  and stakeNum != ''">and detect.stake_num = #{stakeNum}</if>
             <if test="detectTime != null ">and detect.detect_time = #{detectTime}</if>
 
-
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &gt;= date_format(#{detect.startTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(detect_Time,'%y%m%d') &lt;= date_format(#{detect.endTime},'%y%m%d')
+                and date_format(detect.detect_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+            </if>
+            <if test="(startTime ==null or startTime =='') and (endTime==null or endTime =='')">
+                and date(detect.detect_time) = curdate()
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND (tunnul.dept_id = #{deptId} OR tunnul.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
         </where>
+        order by detect.detect_time desc
     </select>
 
     <select id="selectSdRadarDetectDataById" parameterType="String" resultMap="SdRadarDetectDataResult">

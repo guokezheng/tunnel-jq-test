@@ -3,29 +3,30 @@ package com.tunnel.platform.controller.dataInfo;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
+import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 设备Controller
@@ -42,6 +43,18 @@ public class SdDevicesController extends BaseController
     private ISdDevicesService sdDevicesService;
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
+
+    /**
+     * 平台
+     */
+    @Value("${authorize.name}")
+    private String platformName;
+
+    /**
+     * 推送、接收controller
+     */
+    @Autowired
+    private PlatformApiController sdPlatformApiController;
 
     /**
      * 查询设备列表
@@ -155,7 +168,8 @@ public class SdDevicesController extends BaseController
     @PostMapping("/export")
     public AjaxResult export(SdDevices sdDevices)
     {
-        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
+        //List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         return util.exportExcel( list, "设备详情");
     }
@@ -213,11 +227,18 @@ public class SdDevicesController extends BaseController
         sd.setEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
         if (list.size()>0){
-            return Result.error(1,"当前设备ID重复，请重新输入");
+           // return Result.error(1,"当前设备ID重复，请重新输入");
+            return Result.error("当前设备ID重复，请重新输入");
         } else {
             int i = sdDevicesService.insertSdDevices(sdDevices);
             if (sdDevices.getEqType() != 31L) {
                 sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
+            }
+            //管理站平台下推送
+            if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+                List<SdDevices> sdDevicesList = new ArrayList<>();
+                sdDevicesList.add(sdDevices);
+                sdPlatformApiController.devicesPush(sdDevicesList,"add",null);
             }
             return Result.toResult(i);
         }
@@ -245,6 +266,12 @@ public class SdDevicesController extends BaseController
         if (sdDevices.getEqType() != 31L) {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
         }
+        //管理站平台下推送
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            List<SdDevices> sdDevicesList = new ArrayList<>();
+            sdDevicesList.add(sdDevices);
+            sdPlatformApiController.devicesPush(sdDevicesList,"edit",null);
+        }
         return Result.toResult(i);
     }
 
@@ -257,7 +284,16 @@ public class SdDevicesController extends BaseController
     @ApiImplicitParam(name = "eqIds", value = "需要删除的设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result remove(@PathVariable String[] eqIds)
     {
-        return Result.toResult(sdDevicesService.deleteSdDevicesByIds(eqIds));
+        int i = sdDevicesService.deleteSdDevicesByIds(eqIds);
+        //管理站平台下推送
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            List<SdDevices> sdDevicesList = new ArrayList<>();
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqIds(Arrays.asList(eqIds));
+            sdDevicesList.add(sdDevices);
+            sdPlatformApiController.devicesPush(sdDevicesList,"del",null);
+        }
+        return Result.toResult(i);
     }
 
     @PostMapping("/importTemplate")
@@ -276,6 +312,11 @@ public class SdDevicesController extends BaseController
         List<SdDevices> userList = util.importExcel(file.getInputStream());
         String operName = SecurityUtils.getUsername();
         String message = sdDevicesService.importSdDevices(userList, updateSupport, operName);
+        //管理站平台下推送
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName)){
+            userList.stream().forEach(sdDevices -> sdDevices.setUpdateSupport(updateSupport));
+            sdPlatformApiController.devicesPush(userList,"import",operName);
+        }
         return AjaxResult.success(message);
     }
     /**

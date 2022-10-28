@@ -116,7 +116,7 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="typeAbbr != null">#{typeAbbr},</if>
             <if test="iconWidth != null">#{iconWidth},</if>
             <if test="iconHeight != null">#{iconHeight},</if>
-            <if test="isControl != null">#{is_control},</if>
+            <if test="isControl != null">#{isControl},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>

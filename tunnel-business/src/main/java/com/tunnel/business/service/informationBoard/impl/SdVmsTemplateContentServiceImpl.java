@@ -2,6 +2,7 @@ package com.tunnel.business.service.informationBoard.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
@@ -79,7 +80,7 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
     /**
      * 修改发布模板内容
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param jsonObject 发布模板内容
      * @return 结果
      */
     @Override
@@ -87,12 +88,18 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
         if (!jsonObject.isEmpty()) {
             String templateId = jsonObject.get("templateId").toString();
             JSONArray templateContent = jsonObject.getJSONArray("templateContent");
+            JSONArray templateDelContent = jsonObject.getJSONArray("templateDelContent");
+            if(templateDelContent.size() > 0){
+                for(int i = 0; i < templateDelContent.size(); i++){
+                    JSONObject jsonObject1 = templateDelContent.getJSONObject(i);
+                    sdVmsTemplateContentMapper.deleteSdVmsTemplateContentById(Long.valueOf(jsonObject1.get("id").toString()));
+                }
+            }
             if (templateContent.size() > 0) {
                 int count = 0;
                 for (int i = 0; i < templateContent.size(); i++) {
                     JSONObject tempContent = templateContent.getJSONObject(i);
                     SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
-                    sdVmsTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
                     sdVmsTemplateContent.setTemplateId(templateId);
                     sdVmsTemplateContent.setContent(tempContent.get("content").toString());
                     sdVmsTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
@@ -103,8 +110,13 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                /*     if(tempContent.containsKey("img") && tempContent.get("img") != null){
                     	sdVmsTemplateContent.setImageUrl(tempContent.get("img").toString());
                     }*/
-
-                    sdVmsTemplateContentMapper.updateSdVmsTemplateContent(sdVmsTemplateContent);
+                    Object id = tempContent.get("id");
+                    if(StringUtils.isNotNull(id)){
+                        sdVmsTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
+                        sdVmsTemplateContentMapper.updateSdVmsTemplateContent(sdVmsTemplateContent);
+                    }else {
+                        sdVmsTemplateContentMapper.insertSdVmsTemplateContent(sdVmsTemplateContent);
+                    }
                     count++;
                 }
                 return count;

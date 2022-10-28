@@ -60,14 +60,22 @@
                 <img :src="item.imgUrl" style="width: 100%" />
               </el-carousel-item>
             </el-carousel>
-            <div style="width:100%;height:200px;position: absolute; top: 0;text-align: center;" v-show="urls.length == 0">
+            <div
+              style="
+                width: 100%;
+                height: 200px;
+                position: absolute;
+                top: 0;
+                text-align: center;
+              "
+              v-show="urls.length == 0"
+            >
               <el-image
-              :src="require('@/assets/icons/outline.png')"
-              style=" width: 229px"
-            />
-            <div style="font-weight:bold">暂无内容!</div>
+                :src="require('@/assets/icons/outline.png')"
+                style="width: 229px"
+              />
+              <div style="font-weight: bold">暂无内容!</div>
             </div>
-            
           </div>
         </div>
         <div class="eventRight">
@@ -81,7 +89,9 @@
           </div>
           <div class="eventRow">
             <div>车道号:</div>
-            <div>{{ eventMes.laneNo }}<span v-if="eventMes.laneNo">车道</span></div>
+            <div>
+              {{ eventMes.laneNo }}<span v-if="eventMes.laneNo">车道</span>
+            </div>
           </div>
           <div class="eventRow">
             <div>事件位置经度:</div>
@@ -106,7 +116,7 @@
 
           <div style="width: 90%; display: flex; margin-top: 80px">
             <div class="handle button" @click="handleDispatch(eventMes)">
-              处 理
+              应急调度
             </div>
             <div class="ignore button" @click="handleIgnore(eventMes)">
               忽 略
@@ -148,9 +158,9 @@ export default {
     this.getEventTypeList();
   },
   mounted() {
-    bus.$on('getPicId',(e) =>{
-      this.init(e)
-    })
+    bus.$on("getPicId", (e) => {
+      this.init(e);
+    });
   },
   methods: {
     /** 查询事件类型列表 */
@@ -167,20 +177,17 @@ export default {
       }
     },
     init(id) {
-      console.log(id, "init三图一视页面接收事件id");
       if (id) {
         const param = {
           id: id,
         };
         listEvent(param).then((response) => {
-          if(response.rows.length>0){
+          if (response.rows.length > 0) {
             this.eventMes = response.rows[0];
-          console.log(this.eventMes, "responseresponseresponse");
-
           }
         });
+        this.getUrl(id);
       }
-      this.getUrl(id);
       this.eventPicDialog = true;
     },
     getUrl(id) {
@@ -202,15 +209,14 @@ export default {
 
     // 忽略事件
     handleIgnore(event) {
-      if(event){
+      if (event) {
         const param = {
-        id: event.id,
-        eventState: "2",
-      };
-      updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
-        this.$modal.msgSuccess("已成功忽略");
-      });
+          id: event.id,
+          eventState: "2",
+        };
+        updateEvent(param).then((response) => {
+          this.$modal.msgSuccess("已成功忽略");
+        });
       }
       this.$emit("closePicDialog");
       this.$emit("closeDialog");
@@ -231,12 +237,12 @@ export default {
         path: "/emergency/administration/dispatch",
         query: { id: event.id },
       });
-      if(this.eventMes.eventState == "3"){
+      if (this.eventMes.eventState == "3") {
         userConfirm(event.id).then(() => {});
       }
       bus.$emit("closePicDialog");
       bus.$emit("closeDialog");
-      bus.$emit("closeTableDialog")
+      bus.$emit("closeTableDialog");
       this.eventPicDialog = false;
     },
     closeDialogTable() {
@@ -349,14 +355,14 @@ export default {
     color: #fff;
   }
   .handle {
-    background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+    background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
   }
   .handle:hover {
     background-color: #e1aa43;
     color: white;
   }
   .ignore {
-    background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
   .ignore:hover {
     background-color: #19b9ea;

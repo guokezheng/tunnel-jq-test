@@ -15,7 +15,7 @@
         </template>
 
         <el-scrollbar :class="settings.sideTheme" wrap-class="scrollbar-wrapper"
-            :style="topNav?'width:55%;height:100%;':''" ref="scroll">
+            :style="topNav?'width:55%;height:100%;position: absolute;left: 702px;top: 0;':''" ref="scroll">
             <el-menu
                 ref="currentNav"
                 :default-active="activeMenu"
@@ -131,8 +131,8 @@ export default {
             .is-vertical{display: none;}
         }
         .index_menu{position: relative;
-            .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:24px;font-size:16px;cursor: pointer;}
-            .el-icon-arrow-left{left:42%;color:white;}
+            .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
+            .el-icon-arrow-left{left:37%;color:white;}
             .el-icon-arrow-right{right:-4%;color:white;}
             a{display: unset !important;}
         }
@@ -151,41 +151,41 @@ export default {
        }
     }
     .theme-light{
-        .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:17px;font-size:16px;cursor: pointer;}
-        .index_menu .el-icon-arrow-left{left:31%;color: #000 !important;;}
-        .index_menu .el-icon-arrow-right{right: 0% !important;;color: #000 !important;;}
+        .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
+        .index_menu .el-icon-arrow-left{left:37%;color: #fff !important;;}
+        .index_menu .el-icon-arrow-right{right: -4% !important;;color: #fff !important;;}
     }
 
     // .theme-dark #app .sidebar-container .el-menu-item, .theme-dark #app .sidebar-container .el-submenu__title {
     //     color: white !important;
     // }
-    .theme-dark #app .sidebar-container .theme-dark .is-active > .el-submenu__title,
-    .theme-dark #app .sidebar-container .el-menu-item.is-active{
+    .theme-dark #app .topNav_head .sidebar-container .theme-dark .is-active > .el-submenu__title,
+    .theme-dark #app .topNav_head .sidebar-container .el-menu-item.is-active{
         color: #f19f39 !important;
         text-shadow: 1px 1px white;
         background-image: url(../../../assets/cloudControl/navBg.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 58%;
+        background-position: 52% 52%;
     }
-    .theme-dark #app .workbenchNavbar .router-link-active{
+    .theme-dark #app .topNav_head .workbenchNavbar .router-link-active{
        color: #f19f39 !important;
        text-shadow: 1px 1px white;
        background-image: url(../../../assets/cloudControl/navBg.png) !important;
        background-repeat: no-repeat;
-       background-position: 0% 58%;
-       height: 56px;
-        line-height: 56px;
+       background-position: 100% 58%;
+       height: 72px;
+        line-height: 72px;
     }
-    .theme-light  #app .el-menu--horizontal .is-active > .el-submenu__title,
-     .theme-light #app .sidebar-container .el-menu-item.is-active,
-     .theme-light #app .sidebar-container .theme-light .is-active > .el-submenu__title,
-     .theme-light #app .workbenchNavbar .router-link-active{
+    .theme-light  #app .topNav_head  .el-menu--horizontal .is-active > .el-submenu__title,
+     .theme-light #app .topNav_head  .sidebar-container .el-menu-item.is-active,
+     .theme-light #app .topNav_head  .sidebar-container .theme-light .is-active > .el-submenu__title,
+     .theme-light #app .topNav_head  .workbenchNavbar .router-link-active{
         color: #ffdb82 !important;
         background-image: url(../../../assets/cloudControl/navBg2.png) !important;
         background-repeat: no-repeat;
-        background-position: 20% 50%;
-        height: 56px;
-        line-height: 56px;
+        background-position: 52% 52%;
+        height: 72px;
+        line-height: 72px;
     }
 
     // 工作台按钮样式
@@ -193,14 +193,18 @@ export default {
         // padding-left: 20px;
         a {
             height: 100%;
-            font-size: 14px;
-            line-height: 65px;
+            font-size: 16px;
+            line-height: 72px;
+            padding-left: 40px;
         }
     }
     .workbenchNavbar{
         width:10%;
         float: left;
         text-align: left;
+        position: absolute;
+        top: 0;
+        left: 560px;
         span {
             margin-left: 10px;
         }

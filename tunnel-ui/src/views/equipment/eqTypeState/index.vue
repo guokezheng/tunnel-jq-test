@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="120px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="70px">
       <el-form-item label="设备类型" prop="stateTypeId">
         <el-select v-model="queryParams.stateTypeId" placeholder="请选择设备类型" clearable size="small">
           <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
@@ -12,25 +12,28 @@
         </el-select>
       </el-form-item> -->
       <el-form-item>
-        <el-button type="cyan" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDeleteAll"
+          v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-form-item>
     </el-form>
-
+<!-- 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:eqTypeState:add']">新增</el-button>
-      </el-col> -->
       <el-col :span="1.5">
-        <el-button type="success" icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:eqTypeState:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
+        <el-button type="primary" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDeleteAll"
           v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:eqTypeState:export']">导出</el-button>-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport" v-hasPermi="['system:eqTypeState:export']">导出</el-button>
+     </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button size="mini" circle icon="el-icon-refresh" @click="handleQuery" />
@@ -39,10 +42,12 @@
           <el-button size="mini" circle icon="el-icon-search" @click="showSearch=!showSearch" />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table v-loading="loading" :data="eqTypeStateList"
-    max-height="610" @selection-change="handleSelectionChange">
+    max-height="640" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->
       <!-- <el-table-column label="设备类型" align="center" prop="typeId" /> -->
@@ -50,12 +55,12 @@
       <el-table-column label="状态类型" align="center" prop="stateType" />
      <!-- <el-table-column label="设备状态code" align="center" prop="deviceState" />
       <el-table-column label="状态名称" align="center" prop="stateName" /> -->
-      <el-table-column label="状态名称" align="center" prop="stateNames" />
+      <el-table-column label="状态名称" align="center" prop="stateNames" width="700"/>
      <!-- <el-table-column label="是否可控" align="center" prop="isControl" :formatter="eqControlFormat" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
-          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)" v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
+          <el-button size="mini" class="tableBlueButtton" @click="handleUpdate(scope.row)" v-hasPermi="['system:eqTypeState:edit']">修改</el-button>
+          <el-button size="mini"  class="tableDelButtton" @click="handleDelete(scope.row)" v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,7 +74,7 @@
           <el-row>
             <el-col :span="6">
               <el-form-item label="设备类型" prop="stateTypeId">
-                <el-select v-model="form.stateTypeId" placeholder="请选择设备类型">
+                <el-select v-model="form.stateTypeId" placeholder="请选择设备类型" disabled>
                   <el-option v-for="item in typeStateData" :key="item.typeId" :label="item.typeName" :value="item.typeId"></el-option>
                 </el-select>
               </el-form-item>
@@ -116,6 +121,7 @@
             </el-row>
           </template>
           <template v-else>
+            <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
             <el-row v-for="(item,index) in equipmentStates" :key="index">
               <el-col :span="3">
                 <el-form-item label="设备状态" prop="deviceState">
@@ -162,9 +168,9 @@
                 </el-form-item>                 
               </el-col>
               
-              <el-col :span="1">
+              <!-- <el-col :span="1">
                 <div class="dialogButton" @click="addFrom()">添加</div>
-              </el-col>
+              </el-col> -->
               <el-col :span="1">
                 <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
               </el-col>
@@ -463,6 +469,7 @@
             this.sid=2
           }else if(selection[0].stateType=='设备运行状态'){
              this.sid=1
+
           }
         }
         this.single = selection.length !== 1
@@ -490,9 +497,9 @@
           id=this.ids
         }
         console.log(row.stateType,'stateTypestateTypev')
-       if(row.stateType === '设备数据状态' && row.stateType) {
+       if((row.stateType === '设备数据状态' && row.stateType) || this.sid == 2) {
           staTyId=2
-       }else if(row.stateType === '设备运行状态' && row.stateType){
+       }else if((row.stateType === '设备运行状态' && row.stateType) || this.sid == 1){
         staTyId=1
        }else if(row.stateType ===undefined ){
         staTyId=0
@@ -831,6 +838,14 @@
       },  
      
       //=======================================文件上传end===============================
+      // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
     }
   };
 </script>
@@ -853,12 +868,12 @@
  ::v-deep .el-col-4 {
       width: 15.666667%
  }
- ::v-deep .el-form-item--medium .el-form-item__label{
-  width:96px!important;
- }
- ::v-deep .el-form-item--medium .el-form-item__content{
-  margin-left: 96px!important;
- }
+//  ::v-deep .el-form-item--medium .el-form-item__label{
+//   width:96px!important;
+//  }
+//  ::v-deep .el-form-item--medium .el-form-item__content{
+//   margin-left: 96px!important;
+//  }
 ::v-deep .el-upload-list--picture-card .el-upload-list__item{
    width: 30px !important;
    height: 30px !important;
@@ -868,10 +883,17 @@
   height: 24px;
   border: solid 1px #ccc;
   border-radius: 4px;
-  text-align: center;
-  line-height: 24px;
   font-size: 12px;
   margin-top: 5px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.addFormButton{
+  position: absolute;
+  top: 55px;
+  left: 25%;
+  
 }
 </style>

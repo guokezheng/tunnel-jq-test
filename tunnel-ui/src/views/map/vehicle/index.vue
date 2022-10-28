@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px" class="formClass">
       <!-- <el-form-item label="车辆id" prop="vehicleId">
         <el-input
           v-model="queryParams.vehicleId"
@@ -76,13 +76,21 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['special:vehicle:export']"
+        >导出</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -113,10 +121,10 @@
           @click="handleDelete"
           v-hasPermi="['special:vehicle:remove']"
         >删除</el-button>
-      </el-col> -->
+      </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary" 
           plain
           icon="el-icon-download"
           size="mini"
@@ -126,9 +134,11 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" height="600">
+    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" max-height="640" 
+              :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
@@ -422,15 +432,28 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    }
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>
 <style scoped lang="scss">
   ::v-deep .el-form-item__content{
-    width:200px !important;
+    // width:190px !important;
     .el-date-editor{
       width: 100%;
+    }
+  }
+  .formClass{
+    .el-select,.el-date-editor{
+      width:170px;
     }
   }
 </style>

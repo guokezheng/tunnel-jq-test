@@ -4,6 +4,7 @@ package com.tunnel.business.mapper.event;
 import com.tunnel.business.domain.event.SdTrigger;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 触发器Mapper接口
@@ -28,6 +29,7 @@ public interface SdTriggerMapper
      * @return 触发器
      */
     public SdTrigger selectSdTriggerByRelateId(Long relateId);
+
 
     /**
      * 查询触发器列表
@@ -83,4 +85,9 @@ public interface SdTriggerMapper
      */
     public int deleteSdTriggerByRelateIds(Long[] ids);
 
+    /**
+     * 获取所有触发器
+     * @return
+     */
+    public List<Map> getAllTrigger();
 }

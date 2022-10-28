@@ -5,8 +5,8 @@
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" v-if="!topNav"/>
     </template>
     <!-- 面包屑 -->
-    <breadcrumb :style="$route.path == '/index'?'display:none;':''" id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && sideTheme != 'theme-blue'"/>
-    <div class="right-menu">
+    <!-- <breadcrumb :style="getRoute($route.path) ?'display:none;':''" id="breadcrumb-container" class="breadcrumb-container" v-if="!topNav && sideTheme != 'theme-blue'"/> -->
+    <div class="right-menu" >
       <template v-if="device!=='mobile'">
         <template v-if="sideTheme != 'theme-blue'">
           <screenfull :id="topNav && sideTheme == 'theme-dark'?'top_icon':'screenfull'" class="right-menu-item hover-effect white_icon" />
@@ -105,8 +105,27 @@
         </el-dropdown-menu>
       </el-dropdown>
 
-      <el-dialog class="eventDiglog " v-dialogDrag :title="eventTitle" :visible.sync="eventopen" width="95%" append-to-body :close-on-click-modal="false" @close="closeDialog">
-      <div class="app-container"  style="height: 650px;">
+      <el-dialog class="eventDiglog " v-dialogDrag :visible.sync="eventopen" width="95%" append-to-body >
+      <!-- <div class="app-container"  style="height: 650px;"> -->
+        <div class="title">
+          {{eventTitle}}
+          <img
+            src="../../assets/cloudControl/dialogHeader.png"
+            style="height: 30px"
+          />
+          <img
+            src="../../assets/cloudControl/closeIcon.png"
+            style="
+              height: 14px;
+              position: absolute;
+              right: 10px;
+              top: 10px;
+              cursor: pointer;
+            "
+            @click="closeDialog()"
+          />
+        </div>
+        <div class="blueLine"></div>
         <div class="warning">
           <div style="color: #0a88bd;font-size: 24px;">
                 {{warning.inforSources}}
@@ -134,94 +153,94 @@
             </div>
         </div>-->
 
-      <div class="warningTop">
-        <div class="photoBox">
-          <img  src="../../assets/images/warningPhoto.png"></img>
-          <div>
-            <img v-for="item of 4" src="../../assets/images/warningPhoto.png"></img>
+        <div class="warningTop">
+          <div class="photoBox">
+            <img  src="../../assets/images/warningPhoto.png" />
+            <div>
+              <img v-for="(item,index) of 4" src="../../assets/images/warningPhoto.png" :key="index" />
+            </div>
+          </div>
+          <div class="processBox">
+              <el-timeline>
+                  <el-timeline-item
+                    v-for="(activity, index) in activities"
+                    :key="index"
+                    color="#0bbd87">
+                    {{activity.content}}
+                  </el-timeline-item>
+              </el-timeline>
+          </div>
+          <div class="strategyBox">
+            <el-table :data="strategyList" header-align="center" height="230" :row-class-name="tableRowClassName">
+                <el-table-column  property="name" align="center" label="策略名称"></el-table-column>
+                <el-table-column  property="type" align="center" label="策略类型"></el-table-column>
+                <el-table-column  property="message" align="center" label="策略信息"></el-table-column>
+            </el-table>
+            <div slot="footer"  class="strategyFooter" style="text-align: left;">
+                <el-button @click="startStrategy" style="margin-left: 22%;" >转为事件</el-button>
+              <el-button @click="startStrategy" style="margin-left: 2%;" >执 行</el-button>
+              <el-button @click="ignoreEvent" style="margin-left: 2%;">忽 略</el-button>
+              <el-button @click="cancel" style="margin-left: 2%;">取 消</el-button>
+            </div>
           </div>
         </div>
-        <div class="processBox">
-             <el-timeline>
-                <el-timeline-item
-                  v-for="(activity, index) in activities"
-                  :key="index"
-                  color="#0bbd87">
-                  {{activity.content}}
-                </el-timeline-item>
-             </el-timeline>
-        </div>
-        <div class="strategyBox">
-          <el-table :data="strategyList" header-align="center" height="200">
-              <el-table-column  property="name" align="center" label="策略名称"></el-table-column>
-              <el-table-column  property="type" align="center" label="策略类型"></el-table-column>
-              <el-table-column  property="message" align="center" label="策略信息"></el-table-column>
-          </el-table>
-          <div slot="footer"  class="strategyFooter" style="text-align: left;">
-              <el-button @click="startStrategy" style="margin-left: 22%;" >转为事件</el-button>
-             <el-button @click="startStrategy" style="margin-left: 2%;" >执 行</el-button>
-             <el-button @click="ignoreEvent" style="margin-left: 2%;">忽 略</el-button>
-             <el-button @click="cancel" style="margin-left: 2%;">取 消</el-button>
-           </div>
-        </div>
-      </div>
-      <div class="warningBottom">
-        <div class="warningTable">
-          <h3>消防物资</h3>
-          <el-table :data="emdeviceList" header-align="center" height="200">
-              <el-table-column  property="mileage" align="center" label="桩号" width="130"></el-table-column>
-              <el-table-column  property="eqFire" align="center" label="灭火器" width="80"></el-table-column>
-              <el-table-column  property="eqFireHydrant" align="center" label="消火栓" width="70"></el-table-column>
-              <el-table-column  property="eqFoam" align="center" label="水成膜"></el-table-column>
-          </el-table>
-        </div>
-        <div class="humanTable">
-          <h3>应急人员</h3>
-          <el-table :data="emergencyPerList" header-align="center">
-              <el-table-column  property="userName" align="center" label="应急人员"></el-table-column>
-              <el-table-column  property="groupName" align="center" label="所属组"></el-table-column>
-              <el-table-column  property="phone" align="center" label="联系电话"></el-table-column>
-          </el-table>
-        </div>
-        <div class="trafficTable">
-          <h3>交通流量</h3>
-          <el-table :data="trafficList" header-align="center">
-              <el-table-column  property="byLane" align="center" label="车道号"></el-table-column>
-              <el-table-column  property="byVehicelNum" align="center" label="车流量"></el-table-column>
-              <el-table-column  property="bySpeed" align="center" label="平均速度"></el-table-column>
-              <el-table-column  property="fSpaceOccupyRation" align="center" label="占有率"></el-table-column>
-          </el-table>
-        </div>
-        <div class="CoTable">
-          <h3>CO/VI监测</h3>
-          <el-table :data="devicesList" header-align="center" height="200">
-             <el-table-column  prop="eqTypeName" align="center" label="监测内容"></el-table-column>
-              <el-table-column  prop="remark" align="center" label="监测设备"></el-table-column>
-              <el-table-column  prop="sensorValue" align="center" label="监测数据">
-                <template slot-scope="scope">
-                  <span>{{scope.row.sensorValue}}</span>
-                  <span v-if="scope.row.eqTypeId=='14'">
-                      ppm
-                  </span>
-                  <span v-else-if="scope.row.eqTypeId=='5'">
-                      lux
-                  </span>
-                  <span v-else-if="scope.row.eqTypeId=='6'">
-                     cd/m²
-                  </span>
-                  <span v-else-if="scope.row.eqTypeId=='16'">
-                      m/s
-                  </span>
-                  <span v-else-if="scope.row.eqTypeId=='15'">
-                    1/km
-                  </span>
-                </template>
-              </el-table-column>
-          </el-table>
-        </div>
+        <div class="warningBottom">
+          <div class="warningTable">
+            <h3>消防物资</h3>
+            <el-table :data="emdeviceList" header-align="center" height="200" :row-class-name="tableRowClassName">
+                <el-table-column  property="mileage" align="center" label="桩号" width="130"></el-table-column>
+                <el-table-column  property="eqFire" align="center" label="灭火器" width="80"></el-table-column>
+                <el-table-column  property="eqFireHydrant" align="center" label="消火栓" width="70"></el-table-column>
+                <el-table-column  property="eqFoam" align="center" label="水成膜"></el-table-column>
+            </el-table>
+          </div>
+          <div class="humanTable">
+            <h3>应急人员</h3>
+            <el-table :data="emergencyPerList" header-align="center" height="200"  :row-class-name="tableRowClassName">
+                <el-table-column  property="userName" align="center" label="应急人员"></el-table-column>
+                <el-table-column  property="groupName" align="center" label="所属组"></el-table-column>
+                <el-table-column  property="phone" align="center" label="联系电话"></el-table-column>
+            </el-table>
+          </div>
+          <div class="trafficTable">
+            <h3>交通流量</h3>
+            <el-table :data="trafficList" header-align="center" height="200"  :row-class-name="tableRowClassName">
+                <el-table-column  property="byLane" align="center" label="车道号"></el-table-column>
+                <el-table-column  property="byVehicelNum" align="center" label="车流量"></el-table-column>
+                <el-table-column  property="bySpeed" align="center" label="平均速度"></el-table-column>
+                <el-table-column  property="fSpaceOccupyRation" align="center" label="占有率"></el-table-column>
+            </el-table>
+          </div>
+          <div class="CoTable">
+            <h3>CO/VI监测</h3>
+            <el-table :data="devicesList" header-align="center" height="200" :row-class-name="tableRowClassName">
+              <el-table-column  prop="eqTypeName" align="center" label="监测内容" width="150"></el-table-column>
+                <el-table-column  prop="remark" align="center" label="监测设备"></el-table-column>
+                <el-table-column  prop="sensorValue" align="center" label="监测数据">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.sensorValue}}</span>
+                    <span v-if="scope.row.eqTypeId=='14'">
+                        ppm
+                    </span>
+                    <span v-else-if="scope.row.eqTypeId=='5'">
+                        lux
+                    </span>
+                    <span v-else-if="scope.row.eqTypeId=='6'">
+                      cd/m²
+                    </span>
+                    <span v-else-if="scope.row.eqTypeId=='16'">
+                        m/s
+                    </span>
+                    <span v-else-if="scope.row.eqTypeId=='15'">
+                      1/km
+                    </span>
+                  </template>
+                </el-table-column>
+            </el-table>
+          </div>
 
-      </div>
-      </div>
+        </div>
+      <!-- </div> -->
       </el-dialog>
     </div>
   </div>
@@ -266,6 +285,9 @@ export default {
         {name:'风机正转策略',type:'手动控制',message:'主风机控制执行正转'},
         {name:'车道指示器禁行策略',type:'手动控制',message:'普通车道指示器控制执行...'},
         {name:'车道指示器禁行策略',type:'手动控制',message:'普通车道指示器控制执行...'},
+        {name:'车道指示器禁行策略',type:'手动控制',message:'普通车道指示器控制执行...'},
+        {name:'车道指示器禁行策略',type:'手动控制',message:'普通车道指示器控制执行...'},
+
       ],
       activities: [{
         content: '根据周边视频确认警情',
@@ -359,6 +381,20 @@ export default {
     }, 5000 * 1)
   },
   methods: {
+    getRoute(path) {
+      var arr = [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ];
+      if (arr.includes(path)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     // 获取当前角色信息
     getUser() {
       getUserProfile().then(response => {
@@ -393,7 +429,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          location.href = '';
+          // location.href = '';
+          location.href = '/#/login';
         })
       }).catch(() => {});
     },
@@ -565,6 +602,14 @@ export default {
       this.checked.value8 = false
       this.checked.value9 = false */
     },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 }
 </script>
@@ -574,7 +619,13 @@ export default {
     padding: 0px !important;
   }
 // .theme-dark .navbar{background-color:unset;}
-.theme-light .navbar{background-color:unset;}
+.navbar{
+  background: rgb(0, 67, 117);
+  position: absolute;
+    top: 0;
+    right: 0;
+}
+.theme-light .navbar{background-color:unset; }
 .theme-dark .right-menu #screenfull{color:white;}
 .el-dropdown-menu_theme-blue{
   background-color:rgba(0,74,119,0.9);
@@ -607,7 +658,7 @@ export default {
 }
 .navbar {
   height: 100%;
-  overflow: hidden;
+  // overflow: hidden;
   position: relative;
   // background: #fff;
   // box-shadow: 0 1px 4px rgba(0,21,41,.08);
@@ -641,7 +692,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 72px;
     &:focus {
       outline: none;
     }
@@ -651,7 +702,7 @@ export default {
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: #fff;
       vertical-align: text-bottom;
       >>> .el-dropdown-menu{padding:0 25px;background-color:rgba(0,61,96,.8);}
       &.hover-effect {
@@ -671,7 +722,7 @@ export default {
         justify-content: center;
         align-items: center;
         span{
-          font-size:14px;
+          font-size:16px;
           margin-left:10px;
         }
         .user-avatar {
@@ -694,23 +745,49 @@ export default {
 }
 .theme-linght .white_icon{color: #999!important;}
 // .theme-dark .white_icon{color: white!important;}
-.theme-dark .main-container .white_icon{color: #999 !important}
+.theme-dark .main-container .white_icon{color: #fff !important}
 .theme-dark-navbar .white_icon{color: white!important;}
 .theme-blue .white_icon{color: white!important;}
 .theme-blue .el-icon-bell{color:white;font-size:21px;}
 .theme-dark .el-icon-bell{color:white;font-size:21px;}
 .theme-dark #app .sidebar-container .theme-dark .el-submenu .el-menu-item:hover{background-color:unset;}
 .theme-light .navbar .right-menu .right-menu-item{color: white!important;}
-.eventDiglog{
-  .el-dialog__header .el-dialog__title{
-   font-size: 24px;
-   font-weight: bolder;
+::v-deep .el-dialog__body{
+    padding:0px 0px 10px 0px !important;
   }
-  .el-dialog__headerbtn i {
-      font-size: 25px;
+.eventDiglog{
+  
+  .title {
+      padding-left: 20px;
+      height: 30px;
+      line-height: 30px;
+      // color: white;
+      font-size: 14px;
+      font-weight: bold;
+      background: linear-gradient(
+        270deg,
+        rgba(1, 149, 251, 0) 0%,
+        rgba(1, 149, 251, 0.35) 100%
+      );
+      border-top: solid 2px white;
+      display: flex;
+      justify-content: space-between;
+      border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
+      margin: 0 !important;
+    }
+    
+  // .el-dialog__header .el-dialog__title{
+  //  font-size: 24px;
+  //  font-weight: bolder;
+  // }
+  // .el-dialog__headerbtn i {
+  //     font-size: 25px;
+  // }
+  .el-dialog__header{
+    display: none !important;
   }
   h3{
-    margin: 5px 5px 5px 20px;
+    margin: 5px 5px 5px 0px;
     text-align: left;
     font-weight: normal;
   }
@@ -727,9 +804,10 @@ export default {
   line-height: 60px;
 }
 .warningTop{
-  width: 100%;
+  width: calc(100% - 40px);
   height: 45%;
   display: flex;
+  margin: 0 20px;
   .photoBox{
     width: 24.2%;
     height: 100%;
@@ -768,12 +846,12 @@ export default {
     width: 53.8%;
     height: 100%;
     margin-left: 1%;
-    padding: 20px;
+    padding: 20px 0;
 
     .el-table{
       margin-bottom: 10px;
       .el-table__header-wrapper th{
-        background-color: #d6edf9 !important;
+        // background-color: #d6edf9 !important;
       }
     }
     .strategyFooter{
@@ -791,11 +869,11 @@ export default {
   }
 }
 .warningBottom{
-  width: 100%;
+  width: calc(100% - 40px);
   height: 36%;
-  margin-top: 20px;
   display: flex;
-
+  margin: 0px 20px 10px 20px ;
+  padding: 10px 0px;
   >div{
     width: 25%;
     height: 100%;
@@ -806,7 +884,7 @@ export default {
   }
   .warningTable{
     overflow-y: auto;
-    padding: 0 20px;
+    // padding: 0 20px;
     .el-table::before, .el-table--group::after, .el-table--border::after{
       background-color: transparent !important;
     }
@@ -818,9 +896,7 @@ export default {
 </style>
 
 <style lang="scss">
-  .el-dialog__body{
-    padding:0px 20px 10px 20px;
-  }
+  
     .videoDiv{
       width: 35%;
       float: left;

@@ -236,6 +236,7 @@ export default {
   height: 25%;
   width: 100%;
   margin-left: 18px;
+  position: relative;
 
   .title {
     color: white;

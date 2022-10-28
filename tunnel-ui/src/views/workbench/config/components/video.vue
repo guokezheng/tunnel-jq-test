@@ -26,14 +26,20 @@
       </div>
       <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
       <div style="width: 100%; height: 200px; padding: 0 15px">
-        <!--   <video class="h5video_" id="h5sVideo1" muted="muted" style="width:100%;height:100%;"></video> -->
+        <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
+          muted
+          autoplay
+          disablePictureInPicture="true"
+          controlslist="nodownload noremoteplayback noplaybackrate"
+          loopstyle="width:100%;height:100%;"></video> -->
         <video
           id="h5sVideo1"
           class="h5video_"
           controls
           muted
           autoplay
-          loop
+          disablePictureInPicture="true"
+          controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
         ></video>
       </div>
@@ -43,7 +49,7 @@
         label-width="90px"
         label-position="left"
         size="mini"
-        style="padding:0 15px 15px 15px;"
+        style="padding: 0 15px 15px 15px"
       >
         <el-tabs class="videoTabs" v-model="videoActive">
           <el-tab-pane label="详细信息" name="information">
@@ -78,18 +84,18 @@
                 </el-form-item>
               </el-col>
             </el-row>
-            <el-row>
+            <!-- <el-row>
               <el-col :span="13">
                 <el-form-item label="上行摄像机:">
-                  {{ '1000米' }}
+                  {{ "1000米" }}
                 </el-form-item>
               </el-col>
               <el-col :span="11">
                 <el-form-item label="下行摄像机:">
-                  {{ '1000米' }}
+                  {{ "1000米" }}
                 </el-form-item>
               </el-col>
-            </el-row>
+            </el-row> -->
           </el-tab-pane>
           <el-tab-pane label="摄像机参数" name="videoParams">
             <el-row>
@@ -144,6 +150,15 @@
         </el-tabs>
       </el-form>
       <div slot="footer">
+        <el-button
+          type="primary"
+          size="mini"
+          @click="videoYunTai()"
+          style="width: 80px"
+          class="submitButton"
+          v-show="stateForm.eqType == 24"
+          >云台控制</el-button
+        >
         <el-button
           type="primary"
           size="mini"
@@ -222,7 +237,7 @@
           >重 置</el-button
         >
       </el-form>
-      <div style="width: 100%; height: 400px; overflow-y: auto">
+      <div style="width: 100%; height: 400px; overflow-y: auto; margin-bottom: 50px;">
         <div
           style="
             width: 19%;
@@ -230,7 +245,8 @@
             height: 200px;
             margin-left: 9px;
           "
-          v-for="(item,index) in videoList" :key="index"
+          v-for="(item, index) in videoList"
+          :key="index"
         >
           <div style="width: calc(100% - 20px); height: 50%; margin: 5px auto">
             <el-image
@@ -257,7 +273,102 @@
         :limit.sync="queryParams.pageSize"
         @pagination="handleQuery"
         style="height: 40px; margin-right: 30px"
+        class="paginationWorkbench"
       />
+    </el-dialog>
+    <el-dialog
+      v-dialogDrag
+      class="workbench-dialog"
+      :title="title"
+      width="1000px"
+      append-to-body
+      :visible="yunTaiVisible"
+      :before-close="handleClosee"
+    >
+      <el-row class="yuntaiBox">
+        <el-col :span="18">
+          <div class="yuntaiVideoBox">
+             
+            <video
+              class="yunTaiVideo"
+              id="tt"
+              :src="videoMoNi"
+              controls
+              muted
+              autoplay
+              disablePictureInPicture="true"
+              controlslist="nodownload noremoteplayback noplaybackrate"
+              loopstyle="width:100%;height:100%;"
+            ></video>
+          </div>
+          <div class="yuntaiPic">
+            <div @click="clickLeft()"><</div>
+            <div>
+              <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
+            </div>
+            <div @click="clickRight()">></div>
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div class="fangxiang"></div>
+          <div class="jiaJian">
+            <div>-</div>
+            <div>变倍</div>
+            <div>+</div>
+          </div>
+          <div class="jiaJian">
+            <div>-</div>
+            <div>聚焦</div>
+            <div>+</div>
+          </div>
+          <div class="jiaJian">
+            <div>-</div>
+            <div>光圈</div>
+            <div>+</div>
+          </div>
+          <div class="sliderClass">
+            <div>0</div>
+            <el-slider v-model="yunTaiForm.slider" :max="255"></el-slider>
+            <div>255</div>
+          </div>
+          <div class="switchClass">
+            <div>雨刷</div>
+            <el-switch
+              style="display: block"
+              v-model="yunTaiForm.yuShua"
+              active-color="#01AAFD"
+              inactive-color="#ddd"
+              active-text="开"
+              inactive-text="关"
+            >
+            </el-switch>
+          </div>
+          <div class="switchClass">
+            <div>灯光</div>
+            <el-switch
+              style="display: block"
+              v-model="yunTaiForm.dengGuang"
+              active-color="#01AAFD"
+              inactive-color="#ddd"
+              active-text="开"
+              inactive-text="关"
+            >
+            </el-switch>
+          </div>
+          <div class="switchClass">
+            <div>除雪</div>
+            <el-switch
+              style="display: block"
+              v-model="yunTaiForm.chuXue"
+              active-color="#01AAFD"
+              inactive-color="#ddd"
+              active-text="开"
+              inactive-text="关"
+            >
+            </el-switch>
+          </div>
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -268,28 +379,34 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 
 export default {
-  props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
+  props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
-
       title: "",
       cameraVisible: true, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       eventTypeData: [], //事件类型
+      yunTaiVisible:false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
       }, //历史记录表单
       dateRange: [], //选择时间数组
       total: 0, // 总条数
-      src: require("@/assets/Example/v1.mp4"),
-
+      src: require("@/assets/images/warningPhoto.png"),
+      videoMoNi: require("../../../../assets/Example/d1.mp4"),
       videoList: [
         {
-          pic: require("@/assets/images/warningPhoto.png"),
+          pic: require("@/assets/images/ruoyi-login-background.jpg"),
+          time: "2022-03-11 14:47:13",
+          event: "事件: 道路拥堵",
+          status: "正在进行",
+        },
+        {
+          pic: require("@/assets/images/login-background.jpg"),
           time: "2022-03-11 14:47:13",
           event: "事件: 道路拥堵",
           status: "正在进行",
@@ -307,11 +424,12 @@ export default {
           status: "正在进行",
         },
         {
-          pic: require("@/assets/images/warningPhoto.png"),
+          pic: require("@/assets/Example/pic2.jpg"),
           time: "2022-03-11 14:47:13",
           event: "事件: 道路拥堵",
           status: "正在进行",
         },
+        
         {
           pic: require("@/assets/images/warningPhoto.png"),
           time: "2022-03-11 14:47:13",
@@ -325,13 +443,7 @@ export default {
           status: "正在进行",
         },
         {
-          pic: require("@/assets/images/warningPhoto.png"),
-          time: "2022-03-11 14:47:13",
-          event: "事件: 道路拥堵",
-          status: "正在进行",
-        },
-        {
-          pic: require("@/assets/images/warningPhoto.png"),
+          pic: require("@/assets/Example/pic1.jpg"),
           time: "2022-03-11 14:47:13",
           event: "事件: 道路拥堵",
           status: "正在进行",
@@ -349,32 +461,39 @@ export default {
           status: "正在进行",
         },
       ],
+      yunTaiForm: {
+        slider: 0,
+        yuShua: true,
+        dengGuang: false,
+        chuXue: true,
+      },
+      picPage:1,
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
-    this.getmessage()
-    // 根据设备id 获取弹窗内信息
-   
+    this.getmessage();
+    if(this.videoList.length > 4){
+      this.picList = this.videoList.slice(0,4)
+    }
   },
   methods: {
-    async getmessage(){
+    // 根据设备id 获取弹窗内信息
+    async getmessage() {
       if (this.eqInfo.equipmentId) {
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-        console.log(res, "查询摄像机弹窗信息");
-        this.stateForm = res.data;
-        this.title = this.stateForm.eqName;
-        displayH5sVideoAll(res.data.secureKey);
-
-       
-      });
-      // await getInfo(this.eqInfo.clickEqType).then((response) => {
-      //     console.log(response, "查询设备当前状态");
-      //     this.stateForm.state = response.data.state;
-      //   });
-    } else {
-      this.$modal.msgWarning("没有设备Id");
-    }
+          console.log(res, "查询摄像机弹窗信息");
+          this.stateForm = res.data;
+          this.title = this.stateForm.eqName;
+          displayH5sVideoAll(res.data.secureKey);
+        });
+        // await getInfo(this.eqInfo.clickEqType).then((response) => {
+        //     console.log(response, "查询设备当前状态");
+        //     this.stateForm.state = response.data.state;
+        //   });
+      } else {
+        this.$modal.msgWarning("没有设备Id");
+      }
     },
     getDirection(num) {
       for (var item of this.directionList) {
@@ -407,13 +526,43 @@ export default {
       this.cameraVisible = false;
       this.historyVisible = true;
     },
+    // 云台控制
+    videoYunTai() {
+      this.cameraVisible = false;
+      this.yunTaiVisible = true;
+    },
     // 历史记录表单查询
     handleQuery() {},
     // 历史记录表单重置
     resetQuery() {
       this.resetForm("queryForm");
     },
-    
+    clickLeft(){
+      if(this.videoList.length > 4){
+
+        if(this.picPage == 2){
+          this.picList = this.videoList.slice(0,4)
+          this.picPage = 1
+        }else if(this.picPage == 1){
+          this.picList = this.videoList.slice(4,8)
+          this.picPage = 2
+        }
+        this.$forceUpdate()
+
+      }
+    },
+    clickRight(){
+      if(this.videoList.length > 4){
+        if(this.picPage == 2){
+          this.picList = this.videoList.slice(0,4)
+          this.picPage = 1
+        }else if(this.picPage == 1){
+          this.picList = this.videoList.slice(4,8)
+          this.picPage = 2
+        }
+        this.$forceUpdate()
+      }
+    },
   },
 };
 </script>
@@ -440,7 +589,7 @@ export default {
   background-color: #638ca6;
 }
 ::v-deep .el-pagination__total {
-  color: "#01AAFD !important";
+  color: #01AAFD !important;
 }
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .btn-next,
@@ -451,11 +600,133 @@ export default {
 .el-pagination.is-background .btn-next:disabled {
   color: "#01AAFD !important";
 }
-::v-deep .el-tabs__nav-wrap::after{
+::v-deep .el-tabs__nav-wrap::after {
   background-color: #dfe4ed;
   opacity: 0.4;
 }
-::v-deep .el-tabs__active-bar{
-  background-color: #01AAFD;
+::v-deep .el-tabs__active-bar {
+  background-color: #01aafd;
+}
+.yuntaiBox {
+  width: 100%;
+  height: 600px;
+  padding: 20px;
+  // border: solid 1px red;
+  > .el-col:nth-of-type(1) {
+    padding-right: 10px;
+  }
+  .yuntaiVideoBox {
+    width: 100%;
+    height: 400px;
+    .yunTaiVideo{
+      width: 100%;
+      height: 100%;
+      object-fit: cover; 
+      z-index: -100
+    }
+  }
+  .yuntaiPic {
+    width: 100%;
+    height: calc(100% - 450px);
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    > div:nth-of-type(1),
+    > div:nth-of-type(3) {
+      width: 30px;
+      height: 30px;
+      // border: solid 1px white;
+      border-radius: 15px;
+      text-align: center;
+      line-height: 28px;
+      font-size: 20px;
+    }
+    > div:nth-of-type(1) {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    > div:nth-of-type(2) {
+      width: calc(100% - 60px);
+      height: 100%;
+    }
+    > div:nth-of-type(3) {
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    img{
+      width: 25%;
+      height: 100%;
+      padding-right: 5px;
+    }
+  }
+  .fangxiang {
+    widows: 100%;
+    height: 40%;
+    border: solid 1px white;
+  }
+  .jiaJian {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+    > div:nth-of-type(1),
+    > div:nth-of-type(3) {
+      width: 23px;
+      height: 23px;
+      // border: solid 1px white;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 18px;
+    }
+    > div:nth-of-type(1) {
+      line-height: 18px;
+    }
+    > div:nth-of-type(3) {
+      line-height: 22px;
+    }
+  }
+  .sliderClass {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 15px;
+    > .el-slider {
+      width: 50%;
+    }
+  }
+  .switchClass {
+    width: 100%;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 22px;
+  }
+}
+::v-deep .el-switch__label{
+  color:#0A6591 !important;
+}
+::v-deep .el-switch__label.is-active{
+  color:#FF9900 !important;
+}
+::v-deep .el-switch__core{
+  height: 14px;
+}
+::v-deep .el-switch__core:after{
+  height: 12px;
+  width: 12px;
+  top: 0;
+}
+::v-deep .el-switch.is-checked .el-switch__core::after{
+  margin-left: -12px;
+}
+.paginationWorkbench{
+  position: fixed;
+  bottom: 350px !important;
+  height: 60px;
 }
 </style>

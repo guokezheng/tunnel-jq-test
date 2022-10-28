@@ -54,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_devices c on a.eq_id = c.eq_id
         left join sd_equipment_type d on a.eq_type_id = d.type_id
         left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id
+        and state_type = 2
         where 1=1 and a.create_time <![CDATA[ > ]]> DATE_SUB(CURDATE(),INTERVAL 3 day)
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>
@@ -71,6 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </if>
         <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
             and date_format(a.create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+        </if>
+        <if test="params.deptId != null and params.deptId != ''">
+            AND (b.dept_id = #{params.deptId} OR b.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
         </if>
         order by a.create_time desc
     </select>

@@ -284,7 +284,7 @@ export default {
 ::v-deep.sliderClass {
   .el-slider__runway {
     width: 100%;
-    background-color: #006784;
+    // background-color: #006784;
     margin: 12px 0;
   }
   .el-slider__bar {
@@ -337,9 +337,9 @@ export default {
   z-index: 10;
   font-size: 10px;
 }
-::v-deep .el-input__inner {
-  color: white !important;
-}
+// ::v-deep .el-input__inner {
+//   color: white !important;
+// }
 // ::v-deep .el-input {
 //   width: 86%;
 // }

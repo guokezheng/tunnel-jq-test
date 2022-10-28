@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog">
+    <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog" :modal-append-to-body='false' >
       <div class="title">
         事件详情
         <img
@@ -27,7 +27,7 @@
           v-for="(item, index) in tabList"
           :key="index"
         >
-          <el-table :data="item.list" class="eventTable" height="492" >
+          <el-table :data="item.list" class="eventTable" height="492" :row-class-name="tableRowClassName">
             <el-table-column
               label="隧道名称"
               align="center"
@@ -40,7 +40,7 @@
               align="center"
               prop="eventType.eventType"
             />
-            <el-table-column label="车道号" align="center" prop="laneNo" />
+            <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
             <el-table-column
               label="事件经度"
               align="center"
@@ -51,8 +51,16 @@
               align="center"
               prop="eventLatitude"
             />
-            <el-table-column label="开始时间" align="center" prop="startTime" />
-            <el-table-column label="结束时间" align="center" prop="endTime" />
+            <el-table-column label="开始时间" align="center" prop="startTime">
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.startTime, '{h}:{i}:{s}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="结束时间" align="center" prop="endTime" >
+              <template slot-scope="scope">
+                <span>{{ parseTime(scope.row.endTime, '{h}:{i}:{s}') }}</span>
+              </template>
+            </el-table-column>
             <el-table-column
               label="操作"
               align="center"
@@ -110,7 +118,23 @@ export default {
       // showTable:false,
       eventTableDialog: false,
       activeName: "0",
-      tabList: [],
+      tabList: [
+        // {
+        //   dictLabel:'雷达',
+        //   dictValue:'1',
+        //   list:[
+        //     {
+        //       tunnels:{
+        //         tunnelName:'666'
+        //       },
+        //       eventType:{
+        //         eventType:'222'
+        //       },
+        //       stakeNum:1,
+        //     }
+        //   ]
+        // }
+      ],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
     };
@@ -131,8 +155,8 @@ export default {
         }
       }
       console.log(this.tabList);
-      this.eventTableDialog = true;
-      this.showTable = true
+      // this.eventTableDialog = true;
+      // this.showTable = true
     },
     deep: true,
   },
@@ -148,6 +172,9 @@ export default {
   mounted(){
     bus.$on('closeTableDialog', () => {
        this.eventTableDialog = false
+    })
+    bus.$on('openTableDialog', () => {
+       this.eventTableDialog = true
     })
   },
   methods: {
@@ -173,6 +200,7 @@ export default {
             }
           })
         });
+        bus.$emit("getEvtList")
       } else {
         this.$modal.msgError("没有接收到事件id");
       }
@@ -202,6 +230,14 @@ export default {
    
     handleClick(tab, event) {
       console.log(tab, event);
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };
@@ -279,7 +315,7 @@ export default {
   .eventTable,
   .el-table {
     color: white;
-    background: #071930;
+    background: #071930 !important;
     // 表头下划边框
     th.el-table__cell.is-leaf,
     .el-table td.el-table__cell {
@@ -293,7 +329,7 @@ export default {
     }
     // 表格内容背景色
     tr {
-      background-color: #071930;
+      background-color: #071930 !important;
     }
     tr:hover > td {
       background-color: #0e2c53 !important;
@@ -308,6 +344,9 @@ export default {
     .el-table__body-wrapper .el-table__cell {
       // border: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
       border-bottom: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
+    }
+    .el-table__body-wrapper{
+      overflow-y:auto;
     }
   }
 }

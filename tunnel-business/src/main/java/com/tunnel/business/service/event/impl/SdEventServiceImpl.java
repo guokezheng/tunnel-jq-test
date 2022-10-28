@@ -7,15 +7,20 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdTunnelSubarea;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 事件管理Service业务层处理
@@ -30,6 +35,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdEventFlowMapper sdEventFlowMapper;
+
+    @Autowired
+    private SdTunnelSubareaMapper sdTunnelSubareaMapper;
 
 
     /**
@@ -51,6 +59,13 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> selectSdEventList(SdEvent sdEvent) {
+        if (SecurityUtils.getDeptId() != null && SecurityUtils.getDeptId() != 0L) {
+            Long deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
+            sdEvent.getParams().put("deptId", deptId);
+        }
         return sdEventMapper.selectSdEventList(sdEvent);
     }
 
@@ -147,6 +162,11 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> getEvent(SdEvent sdEvent) {
+        Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdEvent.getParams().put("deptId", deptId);
         return sdEventMapper.getEvent(sdEvent);
     }
 
@@ -198,5 +218,59 @@ public class SdEventServiceImpl implements ISdEventService {
         titleDesc.append("发生").append(eventTypeName).append("事件");
 
         return titleDesc.toString();
+    }
+
+    @Override
+    public Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction) {
+        //1.根据隧道、方向获取所有同一方向上的分区数据
+        Long subareaId =0L;
+        SdTunnelSubarea subarea = new SdTunnelSubarea();
+        subarea.setTunnelId(tunnelId);
+        subarea.setDirection(direction);
+        List<SdTunnelSubarea> subareaData = sdTunnelSubareaMapper.selectSdTunnelSubareaList(subarea);
+        if(subareaData.size() < 1){
+            return subareaId;
+        }
+        //2.根据桩号遍历匹配
+        try{
+            Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            for(SdTunnelSubarea data:subareaData){
+                Integer upLimit = Integer.parseInt(data.getPileMax());
+                Integer downLimit = Integer.parseInt(data.getPileMin());
+                if(upLimit >= compareValue && compareValue >= downLimit){
+                    subareaId = data.getsId();
+                    return subareaId;
+                }
+            }
+            //如果没有取到 取最近的分区ID
+            //所有分区桩号
+            String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
+            String[] pileStr = s.split(",");
+            int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
+            int index = Math.abs(compareValue-allPile[0]);
+            int result = allPile[0];
+            int mark = 0;
+            for (int i=0;i<allPile.length;i++) {
+                int abs = Math.abs(compareValue-allPile[i]);
+                if(abs <= index){
+                    index = abs;
+                    result = allPile[i];
+                    mark = i+1;
+                }
+            }
+            String pile = String.valueOf(result);
+            List<SdTunnelSubarea> only = new ArrayList<>();
+            if(mark %2 !=0){
+                //最接近的值为桩号下限
+                only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
+                subareaId = only.get(0).getsId();
+            }else{
+                only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
+                subareaId = only.get(0).getsId();
+            }
+        }catch (Exception ex){
+            throw new RuntimeException("数据处理异常");
+        }
+        return subareaId;
     }
 }

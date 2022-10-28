@@ -1,3 +1,11 @@
+/*
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-10-17 09:18:00
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-10-21 09:32:21
+ * @FilePath: \tunnel-ui\src\api\event\strategy.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import request from '@/utils/request'
 
 // 查询控制策略列表
@@ -43,7 +51,7 @@ export function delStrategy(id) {
   })
 }
 // 新增控制策略
-export function addStrategysInfo(data) {
+export function addStrategyInfo(data) {
   return request({
     url: '/strategy/addStrategysInfo',
     method: 'post',
@@ -51,7 +59,7 @@ export function addStrategysInfo(data) {
   })
 }
 // 修改控制策略
-export function updateStrategysInfo(data) {
+export function updateStrategyInfo(data) {
   return request({
     url: '/strategy/updateStrategysInfo',
     method: 'post',
@@ -84,10 +92,10 @@ export function getRl(id) {
 }
 
 
-export function updateState(data) {
+export function updateState(query) {
   return request({
-    url: '/monitor/job/updateState',
-    method: 'put',
-    data: data
+    url: '/strategy/switch',
+    method: 'get',
+    params: query
   })
 }

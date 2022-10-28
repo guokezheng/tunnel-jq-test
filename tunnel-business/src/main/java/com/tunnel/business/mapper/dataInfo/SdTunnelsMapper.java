@@ -31,6 +31,14 @@ public interface SdTunnelsMapper
     public List<SdTunnels> selectSdTunnelsList(SdTunnels sdTunnels);
 
     /**
+     * 查询隧道是否重复
+     *
+     * @param sdTunnels 隧道
+     * @return 隧道集合
+     */
+    public List<SdTunnels> verifyTunnelOnly(SdTunnels sdTunnels);
+
+    /**
      * 新增隧道
      *
      * @param sdTunnels 隧道

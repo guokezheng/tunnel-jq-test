@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
 import com.tunnel.business.mapper.event.SdReservePlanMapper;
@@ -48,6 +49,8 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      */
     @Override
     public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea) {
+        Long deptId = SecurityUtils.getDeptId();
+        sdTunnelSubarea.getParams().put("deptId", deptId);
         return sdTunnelSubareaMapper.selectSdTunnelSubareaLists(sdTunnelSubarea);
     }
 
@@ -111,7 +114,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      * @return
      */
     @Override
-    public List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId) {
+    public List<Map> selectSdTunnelSubareaByTunnelId(String tunnelId,Long eventTypeId) {
         List<Map> mapList = new ArrayList<>();
         List<SdTunnelSubarea> sdTunnelSubareas = sdTunnelSubareaMapper.selectSdTunnelSubareaByTunnelId(tunnelId);
         for (SdTunnelSubarea sdTunnelSubarea : sdTunnelSubareas) {
@@ -126,6 +129,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
             map.put("eqIdMax",sdTunnelSubarea.getEqIdMax());
             SdReservePlan sdReservePlan = new SdReservePlan();
             sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
+            sdReservePlan.setPlanTypeId(eventTypeId);
             List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);
             map.put("reservePlans", sdReservePlans);
             mapList.add(map);

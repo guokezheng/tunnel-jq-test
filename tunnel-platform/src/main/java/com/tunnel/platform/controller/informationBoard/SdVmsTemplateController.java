@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 查询情报板模板列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:list')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdVmsTemplate sdVmsTemplate)
     {
@@ -42,7 +43,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 导出情报板模板列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:export')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:export')")
     @Log(title = "情报板模板", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdVmsTemplate sdVmsTemplate)
@@ -55,7 +56,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 获取情报板模板详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:query')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -65,7 +66,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 新增情报板模板
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:add')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:add')")
     @Log(title = "情报板模板", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody JSONObject jsonObject)
@@ -76,7 +77,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 修改情报板模板
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:edit')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:edit')")
     @Log(title = "情报板模板", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody JSONObject jsonObject)
@@ -87,7 +88,7 @@ public class SdVmsTemplateController extends BaseController
     /**
      * 删除情报板模板
      */
-//    @PreAuthorize("@ss.hasPermi('system:template:remove')")
+    @PreAuthorize("@ss.hasPermi('system:templateConfig:remove')")
     @Log(title = "情报板模板", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

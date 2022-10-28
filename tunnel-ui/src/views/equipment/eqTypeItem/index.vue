@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="数据项编号" prop="itemCode">
         <el-input
           v-model="queryParams.itemCode"
@@ -29,27 +29,58 @@
         />
       </el-form-item> -->
       <el-form-item label="设备类型" prop="deviceTypeId">
-              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" >
+              <el-select v-model="queryParams.deviceTypeId" placeholder="请选择设备类型" clearable>
                 <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
                 </el-option>
               </el-select>
             </el-form-item>
-      <el-form-item label="单位" prop="unit">
+      <el-form-item label="单位名称" prop="unit">
         <el-input
           v-model="queryParams.unit"
-          placeholder="请输入单位"
+          placeholder="请输入单位名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['eqType:item:add']"
+        >新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['eqType:item:edit']"
+        >修改</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['eqType:item:remove']"
+        >删除</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['eqType:item:export']"
+        >导出</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -62,7 +93,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -73,7 +104,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -84,7 +115,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
@@ -94,30 +125,30 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange" max-height="640"
+    :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />
       <el-table-column label="数据项名称" align="center" prop="itemName" />
       <el-table-column label="设备类型" align="center" prop="typeName">
       </el-table-column>
 
-      <el-table-column label="单位" align="center" prop="unit" />
+      <el-table-column label="单位名称" align="center" prop="unit" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['eqType:item:edit']"
           >修改</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['eqType:item:remove']"
           >删除</el-button>
@@ -360,7 +391,15 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    }
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

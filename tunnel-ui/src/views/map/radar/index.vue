@@ -53,13 +53,22 @@
       </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button> 
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary" 
+          plain
+          
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['radar:data:export']"
+        >导出</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -90,10 +99,10 @@
           @click="handleDelete"
           v-hasPermi="['radar:data:remove']"
         >删除</el-button>
-      </el-col> -->
+      </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary" 
           plain
           icon="el-icon-download"
           size="mini"
@@ -103,9 +112,11 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange" height="600">
+    <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange" max-height="640" 
+              :row-class-name="tableRowClassName"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="隧道名称" align="center" prop="tunnulName" />
       <el-table-column label="车辆类型" align="center" prop="vehicleType" :formatter="vehicleTypeFormat" />
@@ -449,7 +460,15 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    }
+    },
+    // 表格行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

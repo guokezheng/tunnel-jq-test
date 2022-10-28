@@ -162,11 +162,9 @@ public interface ISdDevicesService {
 
     /**
      * 一键车道控制
-     *
-     * @param sdDevices
      * @return
      */
-    List<SdDevices> updateCarFingerById(Map<String,Object> map);
+    List<SdDevices> batchControlCarFinger(Map<String,Object> map);
 
     List<SdDevices> selectIsControlSdDevicesList(SdDevices sdDevices);
 
@@ -180,4 +178,11 @@ public interface ISdDevicesService {
      * @param tunnelId@return
      */
     public List<Map<String,Object>> getDeviceAndState(String tunnelId);
+
+    /**
+     * 查询设备管理列表-导出
+     * @param sdDevices
+     * @return
+     */
+    List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 }

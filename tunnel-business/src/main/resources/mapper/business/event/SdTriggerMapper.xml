@@ -46,6 +46,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdTriggerVo"/>
         where id = #{id}
     </select>
+    <select id="getAllTrigger"  resultType="hashmap">
+        SELECT strategy.id,main.compare_pattern,strategy.strategy_type,main.compare_value,main.device_type_id,device.device_id,rl.state upstate,main.element_id
+         FROM sd_strategy strategy
+            right join sd_strategy_rl rl on rl.strategy_id = strategy.id
+            right join sd_trigger main on main.relate_id = rl.strategy_id
+            right join sd_trigger_device device on main.id = device.trigger_id
+        where strategy.strategy_type='2'
+    </select>
 
     <select id="selectSdTriggerByRelateId" parameterType="Long" resultMap="SdTriggerResult">
         select a.id, a.relate_id, a.device_type_id, b.device_id, a.trigger_type, a.element_id, a.compare_pattern, a.compare_value,
@@ -55,7 +63,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_device_type_item c on a.element_id = c.id
         where relate_id = #{relateId}
     </select>
-        
     <insert id="insertSdTrigger" parameterType="SdTrigger" useGeneratedKeys="true" keyProperty="id">
         insert into sd_trigger
         <trim prefix="(" suffix=")" suffixOverrides=",">

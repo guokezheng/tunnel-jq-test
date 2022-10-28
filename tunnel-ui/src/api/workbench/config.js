@@ -137,3 +137,36 @@ export function controlGuidanceLampDevice(data) {
     data: data
   })
 }
+
+// 车指批量控制抽屉
+export function batchControlCarFinger(data) {
+  return request({
+    url: '/workspace/batchControlCarFinger',
+    method: 'post',
+    data: data
+  })
+}
+
+// 定时控制抽屉 获取数据
+export function timeSharing(tunnelId) {
+  return request({
+    url: '/strategy/timeSharing/' + tunnelId,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 修改控制状态
+export function updateControlTime(strategyId,controlTime) {
+  return request({
+    url: '/strategy/timeSharing/updateControlTime?strategyId=' + strategyId + '&controlTime=' + controlTime,
+    method: 'get',
+  })
+}
+
+// 定时控制抽屉 控制开关
+export function timeStrategySwitch(strategyId,change) {
+  return request({
+    url: '/strategy/switch?strategyId='+strategyId + '&change=' + change,
+    method: 'get',
+  })
+}

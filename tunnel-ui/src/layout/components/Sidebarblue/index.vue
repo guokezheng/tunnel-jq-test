@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'has-logo':showLogo}" style="height:50px">
+    <div :class="{'has-logo':showLogo}" style="height:50px;background: #004375;">
         <logo-blue :class="weatherView == 'true'?'index_logo':'blue_index_logo'" :collapse="isCollapse"/>
         <div class="workbenchNavbar">
             <router-link to="/index">

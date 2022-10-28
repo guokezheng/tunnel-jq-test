@@ -5,10 +5,56 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
-        <div
-          class="flex-row"
-          style="position: absolute; right: 0px; top: 0.7vh; z-index: 8"
+        <el-row
+          class="menu-b"
+          style="display: flex; align-items: center"
+          :style="isManagementStation ? 'padding-left:100px;' : ''"
         >
+          <el-cascader
+            v-model="tunnelQueryParams.deptId"
+            :options="siteList"
+            :props="siteProps"
+            :show-all-levels="false"
+            @change="changeSite"
+            placeholder="请选择"
+            size="mini"
+            class="siteClass"
+            popper-class="popper-class-site"
+            v-show="!isManagementStation"
+          />
+          <el-button-group
+            class="menu-button-group"
+            style="margin-left: 3px"
+            :style="isManagementStation ? 'display: flex;' : ''"
+          >
+            <el-tooltip
+              class="item"
+              popper-class="wb-tip"
+              v-for="(item, index) in tunnelList"
+              :key="index"
+              effect="dark"
+              :content="item.tunnelLength"
+              placement="top-start"
+            >
+              <el-button
+                type="info"
+                size="mini"
+                @click="setTunnel(item, index)"
+                :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  height: 32px;
+                  line-height: 20px;
+                  font-size: 15px;
+                "
+              >
+                <div>{{ item.tunnelName }}</div>
+              </el-button>
+            </el-tooltip>
+          </el-button-group>
+        </el-row>
+        <div class="flex-row" style="z-index: 8">
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
             <el-input-number
@@ -79,54 +125,10 @@
             size="mini"
             icon="el-icon-tickets"
             @click="operationLogPage"
-            style="margin-right: 1vw"
           >
             操作日志
           </el-button>
         </div>
-        <el-row
-          class="menu-b"
-          style="display: flex; align-items: center"
-          :style="isManagementStation ? 'padding-left:100px;' : ''"
-        >
-          <el-cascader
-            v-model="tunnelQueryParams.deptId"
-            :options="siteList"
-            :props="siteProps"
-            :show-all-levels="false"
-            @change="changeSite"
-            placeholder="请选择"
-            size="mini"
-            class="siteClass"
-            popper-class="popper-class-site"
-            v-show="!isManagementStation"
-          />
-          <el-button-group
-            class="menu-button-group"
-            style="margin-left: 3px"
-            :style="isManagementStation ? 'display: flex;' : ''"
-          >
-            <el-tooltip
-              class="item"
-              popper-class="wb-tip"
-              v-for="(item, index) in tunnelList"
-              :key="index"
-              effect="dark"
-              :content="item.tunnelLength"
-              placement="top-start"
-            >
-              <el-button
-                type="info"
-                size="mini"
-                @click="setTunnel(item, index)"
-                :class="index == buttonIndex ? 'tunnelBtnStyle' : ''"
-                style="display: flex; justify-content: center"
-              >
-                <div>{{ item.tunnelName }}</div>
-              </el-button>
-            </el-tooltip>
-          </el-button-group>
-        </el-row>
       </div>
       <div class="vehicleLane">
         <div
@@ -134,8 +136,9 @@
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative; left: 0px"
+          style="position: relative; left: 2%"
         >
+          <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
           <div
@@ -159,12 +162,18 @@
                 <div
                   class="wrapper"
                   id="eq-wrapper"
+                  @mousemove="mouseoversImage"
+                  @mouseleave="mouseleaveImage"
+                >
+                  <!-- <div
+                  class="wrapper"
+                  id="eq-wrapper"
                   @mousedown="dian"
                   @mousemove="yi"
                   @mouseup="li"
                   @mouseover="mouseoversImage"
                   @mouseleave="mouseleaveImage"
-                >
+                > -->
                   <!-- 鼠标移动时产生的蓝框 -->
                   <div
                     id="container"
@@ -376,6 +385,7 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
+            :style="topNav ? 'width:125px' : 'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -385,19 +395,19 @@
         <div
           style="
             position: absolute;
-            right: 0;
             display: flex;
             justify-content: space-between;
             flex-direction: column;
             height: 100%;
           "
+          :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>一键车道控制模块
+            <i class="el-icon-caret-left"></i>车道控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
-            <i class="el-icon-caret-left"></i>定时控制模块
+            <i class="el-icon-caret-left"></i>分时控制模块
           </div>
           <div class="triggerControl" @click="isDrawerC()">
             <i class="el-icon-caret-left"></i>触发控制模块
@@ -412,281 +422,157 @@
           :append-to-body="true"
           class="drawerTop"
         >
-          <div
-            style="width: 100%; height: 100%; padding: 20px 10px; display: flex"
-          >
-            <div class="drawerBox">
-              <div
-                v-for="(item, index) in directionList"
-                :key="index"
-                class="drawerDirection"
+          <div style="width: 100%; height: 100%; position: relative">
+            <div class="jianbianLine"></div>
+            <div class="chezhiDrawerDirection">
+              {{ directionList[0].dictLabel }}
+            </div>
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm0.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
               >
-                {{ item.dictLabel }}
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm0.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
+              </el-select>
+              <div class="chezhiControlButton" @click="chezhiControl(0)">
+                控制
               </div>
             </div>
-            <div style="width: 75%; height: 100%">
-              <div class="drawerCheckbox">
-                <el-checkbox-group v-model="checkList1">
-                  <el-checkbox
-                    v-for="(item, index) in tunnelLane"
-                    :key="index"
-                    :label="index + 1"
-                  >
-                  </el-checkbox>
-                </el-checkbox-group>
-                <el-button
-                  type="primary"
-                  class="control"
-                  @click="controlCheZhi('0')"
-                  >控制</el-button
-                >
-              </div>
-              <div class="drawerCheckbox" v-if="directionList.length > 1">
-                <el-checkbox-group v-model="checkList2">
-                  <el-checkbox
-                    v-for="(item, index) in tunnelLane"
-                    :key="index"
-                    :label="index + 1"
-                  >
-                  </el-checkbox>
-                </el-checkbox-group>
-                <el-button
-                  type="primary"
-                  class="control"
-                  @click="controlCheZhi('1')"
-                  >控制</el-button
-                >
-              </div>
-            </div>
-          </div>
 
-          <!-- <div class="bingZhou">
-            <span>济南方向：</span>
-            <div class="number" :class="checked1 ? 'drawerActive' : 'drawerNo'">
-              1
+            <div class="chezhiDrawerDirection">
+              {{ directionList[1].dictLabel }}
             </div>
-            <el-checkbox v-model="checked1" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked2 ? 'drawerActive' : 'drawerNo'">
-              2
+            <div class="chezhiDrawerInfo">
+              <div class="chezhiName">车道:</div>
+              <el-select
+                v-model="chezhiForm1.lane"
+                size="small"
+                multiple
+                collapse-tags
+                class="chezhiLaneSelect"
+              >
+                <el-option
+                  v-for="item in chezhiLaneList"
+                  :key="item.laneId"
+                  :label="item.laneName"
+                  :value="item.laneId"
+                />
+              </el-select>
+              <div class="chezhiName">状态:</div>
+              <el-select
+                v-model="chezhiForm1.state"
+                size="small"
+                class="chezhiStateSelect"
+              >
+                <el-option
+                  v-for="item in chezhiStateList"
+                  :key="item.Id"
+                  :value="item.deviceState"
+                  :label="item.stateName"
+                >
+                  <div style="display: flex; align-items: center">
+                    <el-image
+                      :src="item.url[0]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <el-image
+                      :src="item.url[1]"
+                      style="width: 20px; height: 20px"
+                    ></el-image>
+                    <div style="margin-left: 4px">{{ item.stateName }}</div>
+                  </div>
+                </el-option>
+              </el-select>
+              <div class="chezhiControlButton" @click="chezhiControl(1)">
+                控制
+              </div>
             </div>
-            <el-checkbox v-model="checked2" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked3 ? 'drawerActive' : 'drawerNo'">
-              3
-            </div>
-            <el-checkbox v-model="checked3" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
           </div>
-          <div class="bingZhou">
-            <span>博山方向：</span>
-            <div class="number" :class="checked4 ? 'drawerActive' : 'drawerNo'">
-              1
-            </div>
-            <el-checkbox v-model="checked4" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked5 ? 'drawerActive' : 'drawerNo'">
-              2
-            </div>
-            <el-checkbox v-model="checked5" class="checkbox"></el-checkbox>
-            <div class="number" :class="checked6 ? 'drawerActive' : 'drawerNo'">
-              3
-            </div>
-            <el-checkbox v-model="checked6" class="checkbox"></el-checkbox>
-            <el-button type="primary" class="control">控制</el-button>
-          </div> -->
         </el-drawer>
         <el-drawer
-          title="照明亮度自动控制"
+          title="分时控制模块"
           :visible.sync="drawerB"
           :modal="false"
           :append-to-body="true"
           class="drawerCenter"
         >
-          <div class="ledLighting">
-            <span>引道照明时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan1"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
+          <div
+            v-for="(item, index) in timStrategyList"
+            :key="index"
+            style="width: 100%"
+          >
+            <div class="ledLighting">
+              <span>{{ item.strategy_name }} </span>
+              <el-switch
+                v-model="item.strategy_state"
+                active-value="0"
+                inactive-value="1"
+                @change="timStrategySwitch(item)"
               >
-              </el-time-picker>
+              </el-switch>
             </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照明1时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan2"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan3"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>加强照明2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan4"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
-            </div>
-          </div>
-          <div class="ledLighting">
-            <span>基本照明2时序自动控制 </span>
-            <el-switch
-              v-model="kaiGuan5"
-              active-color="#B6DEEE"
-              inactive-color="#B6DEEE"
-            >
-            </el-switch>
-          </div>
-          <div class="Time">
-            <div class="timeStart">
-              <span class="setTime">开启时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-            </div>
-            <div class="timeEnd">
-              <span class="setTime">关闭时间：</span>
-              <el-time-picker
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00',
-                }"
-                size="mini"
-                :clearable="false"
-              >
-              </el-time-picker>
-              <el-button type="primary" size="mini" class="handleLightClass"
-                >确定
-              </el-button>
+            <div class="Time">
+              <div class="timeStart">
+                <span class="setTime">开启时间：</span>
+                <el-time-picker
+                  v-model="item.arr[0]"
+                  size="mini"
+                  :clearable="false"
+                  value-format="HH:mm:ss"
+                >
+                </el-time-picker>
+              </div>
+              <div class="timeEnd">
+                <span class="setTime">关闭时间：</span>
+                <el-time-picker
+                  v-model="item.arr[1]"
+                  size="mini"
+                  :clearable="false"
+                  value-format="HH:mm:ss"
+                >
+                </el-time-picker>
+                <el-button
+                  type="primary"
+                  size="mini"
+                  class="handleLightClass"
+                  @click="timingStrategy(item)"
+                  >确定
+                </el-button>
+              </div>
             </div>
           </div>
         </el-drawer>
@@ -712,9 +598,10 @@
                 color: #00c2ff;
               "
             >
-              <span style="padding-left: 5px">策略名称</span>
+              <span style="padding-left: 5px">预警类型</span>
+              <span style="padding-left: 28px; line-height: 40px">触发值</span>
               <span style="padding-left: 28px; line-height: 40px"
-                >策略信息</span
+                >相关预案</span
               >
             </div>
             <div v-for="(item, index) in isDrawerCList" :key="index">
@@ -731,7 +618,10 @@
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.strategyName }}
                 </div>
-                <div>{{ itm }}</div>
+                <div style="width: 66px; margin-right: 5px; padding-left: 5px">
+                  {{ " >200" }}
+                </div>
+                <div class="reservePlan">{{ itm }}</div>
               </div>
             </div>
           </div>
@@ -789,28 +679,30 @@
               class="listContent"
               :data="realTimeList"
             >
-            <div
-                v-for="(item, index) in realTimeList"
-                :key="index"
-                class="listRow"
-                style="display: flex;"
-              >
-                <div style="text-align: center; width: 15px;margin-left: 25px;">
-                  {{ index + 1 }}
-                </div>
-                <div style="width: 95px; text-align: center;margin-left:10px">
-                  {{ item.vehicleLicense }}
-                </div>
-                <div style="width: 112px; text-align: center;margin-left:30px">
-                  {{ item.speed }}km/h
-                </div>
-                <div style="width: 86px; text-align: center;margin-left:35px">
-                  {{ item.laneNum }}车道
-                </div>
-                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
+              <div
+                v-for="(item, index) in realTimeList"
+                :key="index"
+                class="listRow"
+                style="display: flex"
+              >
+                <div style="text-align: center; width: 15px; margin-left: 25px">
+                  {{ index + 1 }}
+                </div>
+                <div style="width: 95px; text-align: center; margin-left: 10px">
+                  {{ item.vehicleLicense }}
+                </div>
+                <div
+                  style="width: 112px; text-align: center; margin-left: 30px"
+                >
+                  {{ item.speed }}km/h
+                </div>
+                <div style="width: 86px; text-align: center; margin-left: 35px">
+                  {{ item.laneNum }}车道
+                </div>
+                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
                   {{ getCheXing(item.vehicleType) }}
                 </div> -->
-              </div>
+              </div>
             </vue-seamless-scroll>
           </div>
         </div>
@@ -859,7 +751,7 @@
     </div>
     <!-- 操作日志 弹窗 -->
     <el-dialog
-      class="workbench-dialog batch-table eventDiglog"
+      class="workbench-dialog batch-table operationDiglog"
       :title="title"
       :visible.sync="operationLogDialog"
       width="1000px"
@@ -946,6 +838,7 @@
         v-loading="loading"
         :data="logList"
         min-height="200"
+        max-height="400"
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
@@ -973,12 +866,12 @@
           prop="controlType"
           :formatter="controlTypeFormat"
         />
-        <el-table-column label="用户名称" align="center" prop="userName" />
+        <!-- <el-table-column label="用户名称" align="center" prop="userName" /> -->
         <el-table-column
           label="创建时间"
           align="center"
           prop="createTime"
-          width="180"
+          width="220"
           sortable
         >
           <template slot-scope="scope">
@@ -992,10 +885,11 @@
         :page.sync="queryParams.pageNum"
         :limit.sync="queryParams.pageSize"
         @pagination="getList"
+        class="paginationWorkbench"
       />
-      <div slot="footer">
+      <!-- <div slot="footer">
         <el-button type="primary" @click="cancel">关 闭</el-button>
-      </div>
+      </div> -->
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2583,6 +2477,10 @@ import {
   vehicleMonitoringInRecent24Hours,
   special,
   getDeviceData,
+  batchControlCarFinger,
+  timeSharing,
+  updateControlTime,
+  timeStrategySwitch,
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -2621,12 +2519,13 @@ export default {
   },
   data() {
     return {
+      timStrategyList: [], //定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
       tunnelLane: "", //当前隧道有几条车道
       eqInfo: {},
       brandList: [],
-      directionList: [], //设备方向字典
+      directionList: [{}, {}], //设备方向字典
       // coviVisible: false,
 
       // radioEqType31: 2,
@@ -2659,12 +2558,12 @@ export default {
       kaiGuan4: false,
       kaiGuan5: false,
       kaiGuan6: false,
-      checked1: false,
-      checked2: false,
-      checked3: false,
-      checked4: false,
-      checked5: false,
-      checked6: false,
+      // checked1: false,
+      // checked2: false,
+      // checked3: false,
+      // checked4: false,
+      // checked5: false,
+      // checked6: false,
       isDrawerCList: [],
 
       value1: new Date(),
@@ -3049,6 +2948,49 @@ export default {
           label: "500",
         },
       ],
+      // 一键车道指示器 车道下拉框
+      chezhiLaneList: [],
+      chezhiLaneList1: [
+        {
+          laneId: 1,
+          laneName: "一车道",
+        },
+      ],
+      chezhiLaneList2: [
+        {
+          laneId: 1,
+          laneName: "一车道",
+        },
+        {
+          laneId: 2,
+          laneName: "二车道",
+        },
+      ],
+      chezhiLaneList3: [
+        {
+          laneId: 1,
+          laneName: "一车道",
+        },
+        {
+          laneId: 2,
+          laneName: "二车道",
+        },
+        {
+          laneId: 3,
+          laneName: "三车道",
+        },
+      ],
+      // 一键车指状态下拉框
+      chezhiStateList: [],
+      // 一键车道指示器表单
+      chezhiForm0: {
+        lane: [],
+        state: "",
+      },
+      chezhiForm1: {
+        lane: [],
+        state: "",
+      },
       lightControForm: {
         index: 0,
         lCDirection: "",
@@ -3213,6 +3155,10 @@ export default {
     },
   },
   created: function () {
+    this.getDicts("sd_direction").then((data) => {
+      console.log(data, "方向");
+      this.directionList = data.data;
+    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -3238,10 +3184,7 @@ export default {
       console.log(data, "设备厂商");
       this.brandList = data.data;
     });
-    this.getDicts("sd_direction").then((data) => {
-      console.log(data, "方向");
-      this.directionList = data.data;
-    });
+
     this.getDicts("sd_monitor_state").then((data) => {
       console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
@@ -3250,7 +3193,7 @@ export default {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
     });
-
+    this.getTunnelState();
     //调取滚动条
     this.srollAuto();
   },
@@ -3388,13 +3331,13 @@ export default {
       };
     },
     navigationHeight() {
-      const topNav = this.$store.state.settings.topNav;
+      this.topNav = this.$store.state.settings.topNav;
       const needTagsView = this.$store.state.settings.tagsView;
       let h = 0;
-      h += 66;
-      if (!topNav) {
-        if (needTagsView) h += 34;
-      }
+      h += 72;
+      // if (!this.topNav) {
+      //   if (needTagsView) h += 22;
+      // }
 
       return h;
     },
@@ -3458,25 +3401,102 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 抽屉车指批量控制 车道下拉框
+    getTunnelLane() {
+      this.chezhiLaneList = [];
+      if (this.tunnelLane == 1) {
+        this.chezhiLaneList = this.chezhiLaneList1;
+      } else if (this.tunnelLane == 2) {
+        this.chezhiLaneList = this.chezhiLaneList2;
+      } else if (this.tunnelLane == 3) {
+        this.chezhiLaneList = this.chezhiLaneList3;
+      }
+    },
+    // 抽屉车指批量控制 状态下拉框
+    getTunnelState() {
+      const param = {
+        stateTypeId: 1,
+        isControl: 1,
+      };
+      getStateByData(param).then((response) => {
+        console.log(response, "查询设备状态图标");
+        // this.chezhiStateList = response.rows;
+        this.chezhiStateList = [];
+        for (let i = 0; i < response.rows.length; i++) {
+          let iconUrl = [];
+          if (response.rows[i].iFileList != null) {
+            for (let j = 0; j < response.rows[i].iFileList.length; j++) {
+              let img = response.rows[i].iFileList[j].url;
+              iconUrl.push(img);
+            }
+          }
+          this.chezhiStateList.push({
+            deviceState: response.rows[i].deviceState,
+            stateName: response.rows[i].stateName,
+            url: iconUrl,
+          });
+        }
+      });
+    },
+    // 控制按钮
+    chezhiControl(num) {
+      const param = {
+        tunnelId: this.tunnelId,
+        direction: num,
+        state: this["chezhiForm" + num].state,
+        lane: this["chezhiForm" + num].lane,
+      };
+      batchControlCarFinger(param).then((res) => {
+        console.log(res);
+        if (res.data == 0) {
+          this.$modal.msgWarning("控制失败");
+        }
+      });
+    },
     getDeviceDataAndStateData() {
       getDeviceDataAndState(this.tunnelId).then((result) => {
         console.log(result, "批量控制");
         this.BulkData = result.data;
       });
     },
-    // 抽屉 车指控制
-    controlCheZhi(num) {
-      console.log(num, "num");
-      console.log(this.checkList1, "checkList1");
-      console.log(this.checkList2, "checkList2");
-      // 上传成功后记得把this.checkList清空
+    // 定时控制
+    timingControl() {
+      const param = {
+        tunnelId: this.tunnelId,
+        strategyType: 3,
+      };
+      timingStrategyList(param).then((res) => {
+        console.log(res);
+      });
     },
+    timingStrategy(item) {
+      var time = item.arr.join("-");
+      updateControlTime(item.strategy_id, time).then((res) => {
+        this.$modal.msgSuccess("修改时间成功");
+      });
+    },
+    timStrategySwitch(item) {
+      timeStrategySwitch(item.strategy_id, item.strategy_state).then((res) => {
+        if (item.strategy_state == 0) {
+          this.$modal.msgSuccess("开启成功");
+        } else if (item.strategy_state == 1) {
+          this.$modal.msgSuccess("关闭成功");
+        }
+      });
+    },
+    // // 抽屉 车指控制
+    // controlCheZhi(num) {
+    //   console.log(num, "num");
+    //   console.log(this.checkList1, "checkList1");
+    //   console.log(this.checkList2, "checkList2");
+    //   // 上传成功后记得把this.checkList清空
+    // },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
       bus.$emit("openPicDialog");
-      bus.$emit("getPicId",num);
+      bus.$emit("getPicId", num);
 
-      console.log(num,"num")
+      console.log(num, "num");
     },
     // 车型通过字典表获取值
     getCheXing(num) {
@@ -3558,19 +3578,27 @@ export default {
     //抽屉
     isDrawerA() {
       this.drawerA = true;
+      this.drawerB = false;
+      this.drawerCVisible = false;
     },
     isDrawerB() {
       this.drawerB = true;
-      listStrategy({
-        strategyType: 1,
-        tunnelId: this.currentTunnel.id,
-      }).then((response) => {
-        console.log(response, "定时任务抽屉");
-        // this.isDrawerCList = response.rows
+      this.drawerA = false;
+      this.drawerCVisible = false;
+      timeSharing(this.tunnelId).then((res) => {
+        for (var item of res.data) {
+          item.arr = item.time.split("-");
+          console.log(item, "item");
+        }
+        this.timStrategyList = res.data;
+        console.log(this.timStrategyList, "this.timStrategyList");
       });
     },
     isDrawerC() {
       this.drawerCVisible = true;
+      this.drawerA = false;
+      this.drawerB = false;
+
       listStrategy({
         strategyType: 2,
         tunnelId: this.currentTunnel.id,
@@ -3649,6 +3677,7 @@ export default {
       this.loading = true;
       listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
+          console.log(response, "操作日志列表");
           this.logList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -4843,6 +4872,10 @@ export default {
         }
       }
     },
+    // onmousemove(e) {
+    //   let et = e || window.event;
+    //   et.preventDefault(); // 阻止默认事件发生
+    // },
     /* -------------------鼠标拖动end------------------*/
 
     /* 查询隧道列表 */
@@ -4861,11 +4894,11 @@ export default {
         this.getDeviceDataAndStateData();
         var newDict = this.dict.type.sd_sys_name;
         if (this.tunnelId != "JQ-JiNan-WenZuBei-MJY") {
-          this.robotShow = false;
+          // this.robotShow = false;
           this.dictList = newDict.slice(0, 8);
         } else if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
           this.dictList = this.dict.type.sd_sys_name;
-          this.robotShow = true;
+          // this.robotShow = true;
         }
         this.tunnelList = [];
         this.checkboxTunnel = [];
@@ -4884,6 +4917,8 @@ export default {
           this.selectEquipmentType(this.currentTunnel.id);
           this.getTunnelData(this.currentTunnel.id);
         }
+        this.getTunnelLane();
+        // this.timingControl()
       });
     },
     /* 查询设备类型*/
@@ -5066,11 +5101,80 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              that.getRealTimeData()
+              that.getRealTimeData();
+              that.selectedIconList.forEach((item, indx) => {
+                // if(item.eqName=='固定摄像机（枪机）'){
+                if (item.eqType == "23") {
+                  item.position.left = item.position.left + 10;
+                  item.position.top = item.position.top;
+                } else if (item.eqType == "21") {
+                  // else if(item.eqName=='紧急电话'){
+                  item.position.left = item.position.left + 20;
+                  item.position.top = item.position.top;
+                }
+                // else if(item.eqType=='紧急电话'){
+                // else if(item.eqName=='紧急电话'){
+                //   item.position.left = item.position.left + 20;
+                //   item.position.top = item.position.top;
+                // }
+                else if (item.eqType == "1") {
+                  // else if(item.eqName=='车道指示器'){
+                  item.position.left = item.position.left - 4;
+                  item.position.top = item.position.top + 20;
+                } else if (item.eqType == "7") {
+                  // else if(item.eqName=='加强照明'){
+                  item.position.left = item.position.left + 60;
+                  item.position.top = item.position.top - 6;
+                } else if (item.eqType == "9") {
+                  // else if(item.eqName=='基本照明'){
+                  item.position.left = item.position.left + 26;
+                  item.position.top = item.position.top - 4;
+                } else if (item.eqType == "19") {
+                  // else if(item.eqName[0]+item.eqName[1]=='CO'){
+                  item.position.left = item.position.left + 20;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "24") {
+                  // else if(item.eqName[0]+item.eqName[1]=='云台'){
+                  item.position.left = item.position.left + 22;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "13") {
+                  // else if(item.eqName=='水泵'){
+                  item.position.left = item.position.left + 30;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "3") {
+                  // else if(item.eqName=='交通信号灯'){
+                  item.position.left = item.position.left + 16;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "8") {
+                  // else if(item.eqName=='引道照明'){
+                  item.position.left = item.position.left + 16;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "17") {
+                  // else if(item.eqName.substring(0,7)=='风速风向检测器'){
+                  item.position.left = item.position.left + 26;
+                  // item.position.top = item.position.top - 4;
+                } else if (item.eqType == "5") {
+                  // else if(item.eqName.substring(0,7)=='亮度检测器'){
+                  item.position.left = item.position.left + 26;
+                  // item.position.top = item.position.top - 4;
+                }
+              });
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
               );
+              for (var item of that.selectedIconList) {
+                if (
+                  this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
+                  item.eqType == 29
+                ) {
+                  console.log(item, "000000000000000000000");
+                  // this.dictList = this.dict.type.sd_sys_name;
+                  this.robotShow = true;
+                } else {
+                  this.robotShow = false;
+                }
+              }
             })
             .then(() => {
               that.initEharts();
@@ -5261,6 +5365,7 @@ export default {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
           var deviceData = response.data[eqId];
+          // console.log(deviceData,'deviceDatadeviceData')
           if (deviceData) {
             // let type = deviceData.eqType;
 
@@ -5271,7 +5376,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -5281,27 +5386,29 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if (deviceData.eqType == 19) {
-                      this.selectedIconList[j].num =
-                        "CO:" +
-                        parseFloat(deviceData.CO).toFixed(2) +
-                        "/PPM  VI:" +
-                        parseFloat(deviceData.VI).toFixed(2) +
-                        "KM";
-                    } else if (deviceData.eqType == 17) {
-                      this.selectedIconList[j].num =
-                        parseFloat(deviceData.FS).toFixed(2) +
-                        "m/s " +
-                        deviceData.FX;
-                    } else if (deviceData.eqType == 5) {
-                      if (deviceData.DWLD) {
+                    if (deviceData.eqStatus == 1) {
+                      if (deviceData.eqType == 19) {
                         this.selectedIconList[j].num =
-                          parseFloat(deviceData.DWLD).toFixed(2) + "lux";
-                      }
-                    } else if (deviceData.eqType == 18) {
-                      if (deviceData.DNLD) {
+                          "CO:" +
+                          parseFloat(deviceData.CO).toFixed(2) +
+                          "/PPM  VI:" +
+                          parseFloat(deviceData.VI).toFixed(2) +
+                          "KM";
+                      } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
-                          parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                          parseFloat(deviceData.FS).toFixed(2) +
+                          "m/s " +
+                          deviceData.FX;
+                      } else if (deviceData.eqType == 5) {
+                        if (deviceData.DWLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                        }
+                      } else if (deviceData.eqType == 18) {
+                        if (deviceData.DNLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                        }
                       }
                     }
                   }
@@ -5403,15 +5510,24 @@ export default {
     onDropped(key) {},
     /*点击设备类型*/
     displayControl(value, lable) {
-      if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
-        if (lable == "巡检机器人" || lable == "全部设备") {
+      for (var item of this.selectedIconList) {
+        if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
+          // console.log()
+          // this.dictList = this.dict.type.sd_sys_name;
           this.robotShow = true;
         } else {
           this.robotShow = false;
         }
-      } else {
-        this.robotShow = false;
       }
+      // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
+      //   if (lable == "巡检机器人" || lable == "全部设备") {
+      //     this.robotShow = true;
+      //   } else {
+      //     this.robotShow = false;
+      //   }
+      // } else {
+      //   this.robotShow = false;
+      // }
 
       $(".leftButtonS")
         .eq(value)
@@ -5487,6 +5603,11 @@ export default {
     },
     clickRobot() {
       this.eqInfo.clickEqType = 29;
+      for (var item of this.selectedIconList) {
+        if (item.eqType == 29) {
+          console.log(item, "机器人");
+        }
+      }
     },
     //================================================单个配置开始==================================
     /* 打开配置界面*/
@@ -6171,11 +6292,11 @@ export default {
     },
     // 查看策略，表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      // if (rowIndex%2 == 0) {
-      // return 'even-row';
-      // } else {
-      return "odd-row";
-      // }
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
     },
     //========================================控制策略结束================================================
     /* 跳至操作日志页面*/
@@ -6185,6 +6306,7 @@ export default {
       // });
       this.title = "操作日志";
       this.operationLogDialog = true;
+      this.getList();
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -6565,9 +6687,9 @@ export default {
 <style lang="scss" scoped>
 .siblings {
   position: fixed;
-  top: 116px;
+  top: 121px;
   width: 100%;
-  height: 62%;
+  height: 61.8%;
 
   .eqTypeListClass {
     float: left;
@@ -6580,7 +6702,7 @@ export default {
 
   //车道控制
   .indicatorLight {
-    width: 25px;
+    width: 30px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6589,15 +6711,17 @@ export default {
     );
     color: white;
     writing-mode: vertical-lr;
-    text-align: center;
     letter-spacing: 5px;
-    font-size: 13px;
+    font-size: 16px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   //照明控制
   .brightnessControl {
-    width: 25px;
+    width: 30px;
     height: 33%;
     background: linear-gradient(
       90deg,
@@ -6610,8 +6734,11 @@ export default {
     text-align: center;
     //文字间隔
     letter-spacing: 5px;
-    font-size: 13px;
+    font-size: 16px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .el-icon-close:before {
@@ -6620,7 +6747,7 @@ export default {
 }
 // 触发控制模块
 .triggerControl {
-  width: 25px;
+  width: 30px;
   height: 33%;
   background: linear-gradient(
     90deg,
@@ -6633,8 +6760,11 @@ export default {
   text-align: center;
   //文字间隔
   letter-spacing: 5px;
-  font-size: 13px;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 //抽屉的高度
@@ -6669,20 +6799,27 @@ export default {
 }
 
 .drawerTop {
-  height: 21%;
-  top: 115px;
+  height: 62%;
+  top: 130px;
+  right: 38px;
 }
 .drawerCenter {
-  height: 21%;
-  top: 33%;
+  height: 62%;
+  top: 130px;
+  right: 38px;
+
+  // top: 33%;
 }
 .drawerBottom {
-  height: 20.4%;
-  top: 54%;
+  height: 62%;
+  top: 130px;
+  right: 38px;
+
+  // top: 54%;
 }
 .drawerBox {
   width: 25%;
-  height: 100%;
+  height: 25%;
   align-items: center;
   .drawerDirection {
     width: 100%;
@@ -6791,7 +6928,7 @@ export default {
     }
   }
 
-  > .ledLighting {
+  .ledLighting {
     height: 36px;
     // background-color: #4EAACF;
     line-height: 40px;
@@ -6799,12 +6936,12 @@ export default {
     font-size: 14px;
     // color: #fff;
 
-    .el-switch__core:after {
-      background-color: #0f8ab9;
-    }
+    // .el-switch__core:after {
+    //   background-color: #0f8ab9;
+    // }
   }
 
-  > .Time {
+  .Time {
     display: flex;
     align-items: flex-start;
     height: 50px;
@@ -6839,7 +6976,7 @@ export default {
 
     .handleLightClass {
       height: 28px;
-      margin-left: 10px;
+      margin-left: 5px;
       width: 40px;
       text-align: center;
       // background-color: #07C2FF !important;
@@ -6883,8 +7020,18 @@ export default {
   width: 100%;
   display: flex;
   position: relative;
-  margin-top: 6px;
+  margin-top: 2px;
 }
+.contentTopNav {
+  width: 85%;
+  left: 0px;
+}
+// .openSidebar .contentLeftNav{
+//   width:88%;left:3.2%
+// }
+// .hideSidebar .contentLeftNav{
+//   width:88%;left:2%
+// }
 
 #vehicle,
 #energyConsumption,
@@ -6896,7 +7043,7 @@ export default {
 
 .el-input-number {
   width: 5.4vw;
-  line-height: 30px;
+  line-height: 28px;
 
   // .el-input-number__decrease, .el-input-number__increase {
   //   color: #e1feff;
@@ -6968,6 +7115,7 @@ export default {
   .footMiniBox {
     width: 24.5%;
     height: 100%;
+    overflow: hidden;
     // background-image: url(../../../assets/cloudControl/footer_bg.png);
     // background-position: center;
     // background-repeat: no-repeat;
@@ -7015,9 +7163,9 @@ export default {
   position: relative;
   left: 0px;
   font-size: 16px;
-  width: 110px;
-  height: 4vh;
-  line-height: 4vh;
+  // width: 125px;
+  height: 46px;
+  line-height: 46px;
   font-weight: 500;
   caret-color: rgba(0, 0, 0, 0);
   text-align: center;
@@ -7032,7 +7180,15 @@ export default {
     margin-right: 20px;
   }
 }
-
+.topNavRightDeawer {
+  right: 0;
+}
+.openSidebar .leftNavRightDeawer {
+  right: 240px;
+}
+.hideSidebar .leftNavRightDeawer {
+  right: 55px;
+}
 // .bigTypeButton{
 //     color: #baddff;
 //     background-image: url(../../../assets/cloudControl/right_button.png);
@@ -7200,11 +7356,16 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
+  margin-top: 2px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .flex-row {
   display: flex;
-  flex-direction: row;
+  // flex-direction: row;
+  height: 32px;
+  align-items: center;
 }
 
 .my-back {
@@ -7278,7 +7439,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   padding-right: 10px;
-  height: 30px;
+  height: 32px;
 }
 
 .menu-title {
@@ -7335,7 +7496,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 87%;
+  width: 88%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -7745,12 +7906,19 @@ input {
   width: 100%;
   height: 15rem;
 }
-.eventDiglog .el-dialog .el-form {
-  padding: 15px !important;
-  .el-form-item__content .el-button {
-    width: 88px;
-    height: 22px;
-    border: none;
+.eventDiglog,
+.operationDiglog {
+  .el-dialog .el-form {
+    padding: 15px !important;
+    .el-form-item__content .el-button {
+      width: 88px;
+      height: 22px;
+      border: none;
+    }
+  }
+  .el-table {
+    padding: 0 15px;
+    margin-bottom: 60px;
   }
 }
 ::v-deep .eventDiglog .el-button--medium {
@@ -7759,7 +7927,10 @@ input {
   padding: 0px !important;
 }
 .eventDiglog .el-table {
+  padding: 15px;
+  padding-top: 0;
   background-color: transparent !important;
+  margin-bottom: 65px;
 }
 .el-table .fixed-width .el-button--mini {
   padding-left: 7px;
@@ -7808,6 +7979,23 @@ input {
   padding: 0px 20px !important;
   height: 40px;
   line-height: 40px;
+}
+.reservePlan {
+  cursor: pointer;
+  width: 190px;
+  border-radius: 5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.reservePlan:hover {
+  background: #00bbf5;
+  width: 220px;
+}
+.paginationWorkbench {
+  position: static;
+  // bottom: 250px !important;
+  height: 60px;
 }
 </style>
 <style lang="scss">
@@ -7894,7 +8082,40 @@ input {
   top: 0;
   left: 0;
 }
-
+.chezhiDrawerDirection {
+  width: 100%;
+  height: 30px;
+  padding-left: 10px;
+  line-height: 30px;
+}
+.chezhiDrawerInfo {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px 0 5px;
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  .chezhiName {
+    width: 40px;
+    margin-left: 5px;
+  }
+  .chezhiLaneSelect {
+    width: 136px;
+  }
+  .chezhiStateSelect {
+    width: 100px;
+  }
+  .chezhiControlButton {
+    width: 50px;
+    height: 32px;
+    // border:solid 1px #A3B7CF;
+    border-radius: 2px;
+    margin-left: 8px;
+    text-align: center;
+    line-height: 31px;
+    cursor: pointer;
+  }
+}
 /*单个设备配置框 */
 .workbench-dialog {
   // .el-dialog{

@@ -235,7 +235,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item prop="stopTime" label="停留时间(秒)" label-width="40%">
+            <el-form-item prop="stopTime" label="停留时间(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
                 controls-position="right"
@@ -347,6 +347,7 @@ export default {
         coordinate:'',//起始点位置;前3位代表x点的位值，后3位代表y点的位置
       },
       templateContent: [],
+      templateDelContent: [],
       fontTypeOptions: [
         {
             code: 'KaiTi',
@@ -622,13 +623,7 @@ export default {
             trigger: "blur",
           },
         ],
-        remark:[
-          {
-            required: true,
-            message: '请选择入屏方式',
-            trigger: "blur",
-          },
-        ]
+
       };
     },
     divStyle: function () {
@@ -666,6 +661,7 @@ export default {
       this.isAdd = !this.dataForm.id;
       this.visible = true;
       console.log(this.dataForm.id,'这是模板id');
+      this.templateDelContent = [];
       this.$nextTick(() => {
         if (this.isAdd) {
           this.$refs["dataForm"] && this.$refs["dataForm"].resetFields();
@@ -803,7 +799,7 @@ export default {
       });
       getTemplateContent(this.dataForm.id).then((data) => {
         this.templateContent = data.rows;
-        
+
         if (this.templateContent.length == 0) {
           this.templateContent.push({
             content: "",
@@ -844,14 +840,15 @@ export default {
         console.log(params)
         // 修改
         await editTemplate(this.dataForm).then((data) => {});
-		
+
         this.templateContent.forEach((e) => {
           e.img = e.imageName;
         });
-		
+
         var params = {
           templateContent: this.templateContent,
           templateId: this.dataForm.id,
+          templateDelContent: this.templateDelContent,
         }
         editTemplateContent(params).then(response => {
           console.log(response,'返回结果');
@@ -932,6 +929,9 @@ export default {
           this.templateContent.indexOf(data) ==
           this.templateContent.indexOf(this.templateContent[i])
         ) {
+          if(data.id){
+            this.templateDelContent.push(data);
+          }
           this.templateContent.splice(this.templateContent.indexOf(data), 1);
         }
       }
@@ -962,13 +962,17 @@ export default {
       };
       console.log(params,'params')
       getGalleryList(params).then((data) => {
+        console.log(data,"data")
+
         if (!data) {
           return;
         }
-        let list = data.sort((dataA, dataB) => {
+        let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;
         });
         this.imgUrl.push(...list);
+        console.log(this.imgUrl,"this.imgUrl")
+
       });
     },
   },

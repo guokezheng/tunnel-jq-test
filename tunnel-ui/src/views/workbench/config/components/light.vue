@@ -98,7 +98,7 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0'">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0' && stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -114,7 +114,7 @@
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'&& stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -126,6 +126,17 @@
                       :src="item.url[0]"
                       v-if="item.url.length > 1"
                     />
+                    <div style="margin: 0 0 0 10px; display: inline-block">
+                      {{ item.name }}
+                    </div>
+                  </el-row>
+                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                    <img
+                      :width="iconWidth"
+                      :height="iconHeight"
+                      :src="item.url[0]"
+                    />
+                  
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
@@ -223,7 +234,7 @@ export default {
         isControl: 1,
       };
       await getStateByData(param).then((response) => {
-        // console.log(response, "查询设备状态图标");
+        console.log(response, "查询设备状态图标");
         list = response.rows;
       });
 
@@ -278,7 +289,13 @@ export default {
       };
 
       controlDevice(param).then((response) => {
-        console.log(response, "提交控制");
+        if(response.data == 0){
+          this.$modal.msgError("控制失败");
+        }else if(response.data == 1){
+          this.$modal.msgSuccess("控制成功");
+
+        }
+
         this.$emit("dialogClose");
       });
     },

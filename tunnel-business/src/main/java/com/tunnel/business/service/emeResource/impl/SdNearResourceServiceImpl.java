@@ -1,6 +1,7 @@
 package com.tunnel.business.service.emeResource.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.emeResource.SdNearResource;
 import com.tunnel.business.mapper.emeResource.SdNearResourceMapper;
 import com.tunnel.business.service.emeResource.ISdNearResourceService;
@@ -39,6 +40,11 @@ public class SdNearResourceServiceImpl implements ISdNearResourceService {
      */
     @Override
     public List<SdNearResource> selectSdNearResourceList(SdNearResource sdNearResource) {
+        Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        sdNearResource.getParams().put("deptId", deptId);
         return sdNearResourceMapper.selectSdNearResourceList(sdNearResource);
     }
 

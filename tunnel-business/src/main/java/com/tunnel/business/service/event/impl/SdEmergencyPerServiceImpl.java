@@ -1,7 +1,9 @@
 package com.tunnel.business.service.event.impl;
 
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.mapper.SysDictDataMapper;
 import com.tunnel.business.domain.event.SdEmergencyPer;
 import com.tunnel.business.mapper.event.SdEmergencyPerMapper;
 import com.tunnel.business.service.event.ISdEmergencyPerService;
@@ -26,6 +28,8 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
 
     @Autowired
     private SdEmergencyPerMapper sdEmergencyPerMapper;
+    @Autowired
+    private SysDictDataMapper sysDictDataMapper;
 
     /**
      * 查询应急人员信息
@@ -48,7 +52,21 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
     public List<SdEmergencyPer> selectSdEmergencyPerList(SdEmergencyPer sdEmergencyPer) {
         Long deptId = SecurityUtils.getDeptId();
         sdEmergencyPer.getParams().put("deptId", deptId);
-        return sdEmergencyPerMapper.selectSdEmergencyPerList(sdEmergencyPer);
+        List<SdEmergencyPer> pers = sdEmergencyPerMapper.selectSdEmergencyPerList(sdEmergencyPer);
+        List<SysDictData> dictData = sysDictDataMapper.selectDictDataByType("sd_emergency_post");
+        for (int p = 0;p < pers.size();p++) {
+            SdEmergencyPer per = pers.get(p);
+            for (int i = 0;i < dictData.size();i++) {
+                SysDictData sysDictData = dictData.get(i);
+                if (sysDictData != null && sysDictData.getDictValue() != null && !sysDictData.getDictValue().equals("")) {
+                    if (per != null && per.getGroupName().equals(sysDictData.getDictValue())) {
+                        per.setGroupName(sysDictData.getDictLabel());
+                        break;
+                    }
+                }
+            }
+        }
+        return pers;
     }
 
     /**

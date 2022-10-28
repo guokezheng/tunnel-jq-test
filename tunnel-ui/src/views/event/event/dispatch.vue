@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container dispatchAss" >
     <div style="height: 100%; display: flex; justify-content: space-between">
       <div style="height: 100%; width: 66%">
         <el-card class="bottomEventForm">
@@ -22,9 +22,8 @@
                     left: item.left / 1.34 + 'px',
                     top: item.top / 1.34 + 'px',
                   }"
-                  @mouseleave="mouseleave(index)"
                 >
-                  <!--  @mouseleave="mouseleave(index)" -->
+                <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
                   <div
                     class="rightClickClass"
@@ -33,19 +32,31 @@
                   >
                     <div class="row1">{{ item.sName }}</div>
                     <div class="recoveryBox">
-                      <div
-                        class="endButton"
-                        v-for="itm in item.reservePlans"
-                        :key="itm.sId"
+                      <el-scrollbar
+                        style="height: 100%; width: 100%"
+                        wrap-style="overflow-x:hidden;"
                       >
-                        <div class="ButtonBox">
-                          <div class="recovery">{{ itm.planName }}</div>
-                          <div class="button">
-                            <div @click="getPreview(itm)">预览</div>
-                            <div @click="eventDo(itm)">执行</div>
+                        <div
+                          class="endButton"
+                          v-for="itm in item.reservePlans"
+                          :key="itm.sId"
+                        >
+                          <div class="ButtonBox">
+                            <div class="recovery">{{ itm.planName }}</div>
+                            <div class="button">
+                              <div class="handle" @click="getPreview(itm)">预览</div>
+                              <div class="handle" @click="eventDo(itm)">执行</div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </el-scrollbar>
+                        <div class="closeButton">
+                          <el-button
+                          size="mini"
+                          type="primary"
+                          @click="closeDialog(item,index)"
+                          >关闭</el-button>
+                        </div>
                     </div>
                   </div>
                 </div>
@@ -105,7 +116,7 @@
                       "
                       :width="item.iconWidth / 1.26"
                       :height="item.iconHeight / 1.26"
-                      :key="item.deptId + indexs"
+                      :key="item.eqId + indexs"
                       :src="url"
                     />
                   </div>
@@ -116,6 +127,7 @@
 
           <div v-show="changeVideo == 0" class="formBox">
             <div class="formTitle">
+
               <div style="float: left">事件详情</div>
               <div class="formButton formButton1" @click="eventFormClose">
                 <el-image :src="require('@/assets/icons/relieve.png')" />
@@ -124,6 +136,10 @@
               <div class="formButton formButton2" @click="submitEventForm">
                 <el-image :src="require('@/assets/icons/update.png')" />
                 <div>更新信息</div>
+              </div>
+              <div class="formButton formButton3" @click="returnList">
+                <el-image :src="require('@/assets/icons/return.png')" />
+                <div>返回列表</div>
               </div>
             </div>
             <el-form
@@ -212,7 +228,7 @@
                 </el-col>
               </el-row>
               <!-- <el-row> -->
-                <!--  <el-col :span="8">
+              <!--  <el-col :span="8">
                   <el-form-item label="影响程度" prop="tunnelId">
                     <el-select v-model="eventForm.tunnelId" placeholder="请选择影响程度" clearable size="small" >
                       <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
@@ -220,13 +236,13 @@
                     </el-select>
                   </el-form-item>
                 </el-col> -->
-                <!-- <el-col :span="8">
+              <!-- <el-col :span="8">
                   <el-form-item label="压车长度:" prop="eventTitle">
                     <el-input  v-model="eventForm.eventTitle"  style="width: 100px" />
                     <span> KM</span>
                   </el-form-item>
                 </el-col> -->
-                <!-- <el-col :span="8">
+              <!-- <el-col :span="8">
                   <el-form-item label="事件等级 " prop="eventGrade">
                     <el-radio-group v-model="eventForm.eventGrade">
                       <el-radio
@@ -498,17 +514,17 @@
                   width="60"
                 />
                 <el-table-column label="联系方式" align="center" prop="phone" />
-                <el-table-column
+                <!-- <el-table-column
                   label="操作"
                   align="center"
                   class-name="small-padding"
                   width="60"
-                >
-                  <template slot-scope="scope">
+                > -->
+                  <!-- <template slot-scope="scope">
                     <div class="phoneButton">
                       <el-image :src="require('@/assets/icons/phone.png')" />
                     </div>
-                  </template>
+                  </template> -->
                 </el-table-column>
               </el-table>
             </div>
@@ -516,7 +532,7 @@
           <el-col :span="13" style="height: 100%">
             <!-- 事件流程 -->
             <div class="rightBox processBox">
-              <el-steps :active="1">
+              <el-steps :active="eventMsg.eventState">
                 <el-step title="事件预警" icon="el-icon-edit"></el-step>
                 <el-step title="事故确认" icon="el-icon-upload"></el-step>
                 <el-step title="处置中" icon="el-icon-picture"></el-step>
@@ -526,7 +542,7 @@
                 <el-timeline-item
                   placement="top"
                   v-for="(item, index) in eventList"
-                  :key="index+item.flowTime"
+                  :key="index + item.flowTime"
                   color="#00A0FF"
                 >
                   <div>{{ item.flowTime }}</div>
@@ -536,33 +552,44 @@
                 </el-timeline-item>
               </el-timeline>
               <div class="endButton">
-                <div
-                  class="ButtonBox"
-                  v-for="(item, index) in hfData"
-                  :key="index"
+                <el-scrollbar
+                  style="height: 100%; width: 100%"
+                  wrap-style="overflow-x:hidden;"
                 >
-                  <div class="recovery">{{ item.planName }}</div>
-                  <div class="button">
-                    <div @click="getPreview(item)">预览</div>
-                    <div @click="eventDo(item)">执行</div>
+                  <div
+                    class="ButtonBox"
+                    v-for="(item, index) in hfData"
+                    :key="index"
+                  >
+                    <div class="recovery">{{ item.planName }}</div>
+                    <div class="button">
+                      <div @click="getPreview(item)">预览</div>
+                      <div @click="eventDo(item)">执行</div>
+                    </div>
                   </div>
-                </div>
+                </el-scrollbar>
               </div>
             </div>
             <div class="rightBox implement">
               <div class="title">已执行</div>
               <div style="height: calc(100% - 26px); overflow: auto">
-                <div class="implementContent" v-for="(item,index) in zxList" :key="index">
+                <div
+                  class="implementContent"
+                  v-for="(item, index) in zxList"
+                  :key="index"
+                >
                   <el-image
                     class="implementIcon"
                     :src="require('@/assets/icons/implementIcon.png')"
                   ></el-image>
                   <div class="contentBox">
                     <div class="row1">
-                      <div>{{item.eqName}}</div>
-                      <div>{{getDirection(item.eqDirection)}}</div>
+                      <div>{{ item.eqName }}</div>
+                      <div>{{ getDirection(item.eqDirection) }}</div>
                     </div>
-                    <div class="row2">{{getEqType(item.state,item.eqType)}}</div>
+                    <div class="row2">
+                      {{ getEqType(item.state, item.eqType) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -571,10 +598,12 @@
         </el-row>
       </div>
     </div>
+    <work-bench ref="workBench"></work-bench>
   </div>
 </template>
 
 <script>
+import workBench from "@/views/event/reservePlan/workBench";
 import { mapState } from "vuex";
 import $ from "jquery";
 import { icon, laneImage } from "../../../utils/configData.js";
@@ -582,13 +611,17 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 import { listMaterial } from "@/api/system/material";
-import { listEqTypeState,getStateByData } from "@/api/equipment/eqTypeState/api";
+import {
+  listEqTypeState,
+  getStateByData,
+} from "@/api/equipment/eqTypeState/api";
 
 import {
   listEvent,
   updateEvent,
   getEvent,
   getImplement,
+  getSubareaByStakeNum,
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -600,30 +633,23 @@ import {
 } from "@/api/event/reserveProcess";
 export default {
   name: "dispatch",
+  components: {
+    workBench,
+  },
   data() {
     return {
+      // 隧道开始桩号
+      startPile: "",
+      // 隧道结束桩号
+      endPile: "",
       timer: null,
       eqTypeStateList: null,
       eventMsg: null,
       fqIndex: null,
       hfData: null, //恢复预案列表
       planListEnd: null,
-      previewList: null,
       partitionData: null,
-      planList1: [
-        {
-          text: "火灾报警1区",
-        },
-        {
-          text: "火灾报警2区",
-        },
-        {
-          text: "火灾报警3区",
-        },
-        {
-          text: "火灾报警4区",
-        },
-      ],
+      planList1: [],
       lightSwitch: 0,
       changeVideo: 0,
       eqTunnelData: [],
@@ -674,13 +700,6 @@ export default {
       personnelList: [],
       //应急物资
       materialList: [],
-      coviList: [
-        {
-          name: "CO",
-          phone: "XXX",
-          phone2: "0.00",
-        },
-      ],
       //车道列表
       laneUrlList: laneImage,
       eventForm: {
@@ -703,7 +722,7 @@ export default {
       upList: [],
       downList: [],
       selectedIconList: [], //配置图标
-      zxList:[]
+      zxList: [],
     };
   },
   computed: {
@@ -711,7 +730,6 @@ export default {
       deviceStatus: (state) => state.websocket.deviceStatus,
       deviceStatusChangeLog: (state) => state.websocket.deviceStatusChangeLog,
       eventFlow: (state) => state.websocket.eventFlow,
-
     }),
   },
   watch: {
@@ -724,11 +742,11 @@ export default {
       console.log(event, "已执行");
       this.zxList.push(event[0]);
     },
-    eventFlow(event) {
-      // console.log(event, "websockt工作台接收感知事件数据");
-      console.log(event, "已执行11");
-      var zxc = event;
-    },
+    // eventFlow(event) {
+    //   // console.log(event, "websockt工作台接收感知事件数据");
+    //   console.log(event, "已执行11");
+    //   var zxc = event;
+    // },
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -745,6 +763,7 @@ export default {
         id: this.$route.query.id,
       };
       listEvent(param).then((response) => {
+        console.log(response, "事件详情");
         this.eventForm = response.rows[0];
         this.eventForm.eventType = response.rows[0].eventType.eventType;
         this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
@@ -759,18 +778,51 @@ export default {
       this.directionList = data.data;
     });
     const param = {
-        isControl: 1,
-      };
-    getStateByData(param).then((res) =>{
-      console.log(res.rows,"查设备状态 正红泛绿...")
-      this.eqTypeList = res.rows
-    })
+      isControl: 1,
+    };
+    getStateByData(param).then((res) => {
+      console.log(res.rows, "查设备状态 正红泛绿...");
+      this.eqTypeList = res.rows;
+    });
+    // this.getSubareaByStakeNumData();
   },
   methods: {
-    getEqType(state,eqType){
-      for(var item of this.eqTypeList){
-        if(eqType == item.stateTypeId && Number(item.deviceState) == state){
-          return item.stateName
+    //返回列表
+    returnList() {
+      this.$router.push({
+        path: "/emergency/administration/event",
+      });
+    },
+    // 关闭事件弹窗
+    closeDialog(item, index) {
+      this.fqIndex = null;
+    },
+    getSubareaByStakeNumData() {
+      console.log(this.eventMsg, "---------------");
+      let data = {
+        tunnelId: this.eventMsg.tunnelId,
+        stakeNum: this.eventMsg.stakeNum,
+        direction: this.eventMsg.direction,
+      };
+      //获取事故点对应分区id
+      getSubareaByStakeNum(data).then((res) => {
+        let subareaByStakeNum = res.data;
+        this.planListEnd.forEach((item, index) => {
+          console.log("事故点分区id:", subareaByStakeNum);
+          if (item.sId == subareaByStakeNum) {
+            this.fqIndex = index;
+            item.style =
+              "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+            item.show = true;
+            this.getListBySIdData(item.id);
+          }
+        });
+      });
+    },
+    getEqType(state, eqType) {
+      for (var item of this.eqTypeList) {
+        if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
+          return item.stateName;
         }
       }
     },
@@ -922,13 +974,21 @@ export default {
       getImplement(data).then((result) => {
         if (result.code == 200) {
           this.$modal.msgSuccess(result.msg);
-          this.accidentInit()
+          this.accidentInit();
         }
       });
     },
+    // 获取当前事件详细信息
     async getEventData() {
       await getEvent(this.$route.query.id).then((result) => {
         this.eventMsg = result.data;
+        console.log(this.eventMsg, "时间详情");
+        // 如果为“未处理”状态，改为“处理中”状态
+        if (this.eventMsg.eventState == 3) {
+          let row = this.eventMsg;
+          row.eventState = 0;
+          updateEvent(row);
+        }
       });
       this.getSubareaByTunnel();
       this.getmaterialList(); //应急物资
@@ -955,62 +1015,20 @@ export default {
     // },
 
     async getSubareaByTunnel() {
-      const params = this.eventMsg.tunnelId;
-      await getSubareaByTunnelId(params).then((result) => {
+      var tunnelId = this.eventMsg.tunnelId;
+      var eventTypeId = this.eventMsg.eventTypeId;
+      await getSubareaByTunnelId(tunnelId, eventTypeId).then((result) => {
         this.planList1 = result.data;
       });
     },
-    // 预览
+    // 预览按钮
     getPreview(row) {
-      previewDisplay(row.id).then((res) => {
-        this.previewList = res;
-        var deviceList = [];
-        for (let i = 0; i < this.previewList.length; i++) {
-          var item = this.previewList[i].strategyRl;
-          for (let z = 0; z < item.length; z++) {
-            var arr = this.previewList[i].iFileList[z];
-            if (item[z].equipments.indexOf(",")) {
-              deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            } else {
-              deviceList.push({
-                list: item[z].equipments,
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
-            }
-          }
-        }
-        this.deviceList = deviceList;
-        this.ChangeDeviceState();
+      this.$nextTick(() => {
+        this.$refs.workBench.id = row.id; //预案ID
+        this.$refs.workBench.tunnelId = this.eventMsg.tunnelId;
+        this.$refs.workBench.init();
       });
-      this.workbenchOpen = true;
-    },
-    ChangeDeviceState() {
-      for (let i = 0; i < this.selectedIconList.length; i++) {
-        for (let x = 0; x < this.deviceList.length; x++) {
-          var eqType = this.selectedIconList[i].eqType;
-          if ((eqType ?? "") !== "") {
-            if (eqType == this.deviceList[x].eqId) {
-              var brr = this.deviceList[x].list;
-              for (let p = 0; p < brr.length; p++) {
-                if (this.selectedIconList[i].eqId == brr[p]) {
-                  this.selectedIconList[i].url = [];
-                  let url = this.deviceList[x].file;
-                  url.forEach((item) => {
-                    this.selectedIconList[i].url.push(item.url);
-                  });
-                }
-              }
-            }
-          }
-        }
-      }
+      // this.workbenchOpen = true;
     },
     /** 查询应急人员信息列表 */
     getpersonnelList() {
@@ -1060,6 +1078,9 @@ export default {
         .then(() => {
           this.planListEnd = null;
           this.$modal.msgSuccess("事件处理成功");
+          this.$router.push({
+            path: "/emergency/administration/event",
+          });
         })
         .catch(() => {});
     },
@@ -1081,15 +1102,16 @@ export default {
       };
     },
     /* 获取隧道配置信息*/
-    getTunnelData() {
+    async getTunnelData() {
       var tunnelId = this.eventMsg.tunnelId; //"JQ-JiNan-WenZuBei-MJY";
       let that = this;
       that.upList = [];
       that.downList = [];
-
-      getTunnels(tunnelId).then((response) => {
+      await getTunnels(tunnelId).then((response) => {
+        this.startPile = response.data.startPile;
+        this.endPile = response.data.endPile;
+        console.log(this.startPile, this.endPile, "000000000000");
         let res = response.data.storeConfigure;
-        // console.log(response.data, "12312312");
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
@@ -1111,8 +1133,10 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  if (bxx.pileMin == "0") {
-                    if (String(axx.pile).trim() == String(bxx.pileMax).trim()) {
+                  //如果分区的最小值 == 隧道的最小值
+                  if (bxx.pileMin == this.startPile) {
+                    if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                      // console.log(axx, axx.eqName, "axx");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
                       var leftMin = 0;
@@ -1123,8 +1147,9 @@ export default {
                       bxx.top = deviceHeight;
                       bxx.left = leftMin;
                     }
-                  } else if (bxx.pileMax == "100") {
-                    if (String(axx.pile).trim() == String(bxx.pileMin).trim()) {
+                    //如果分区的最大值 == 隧道的最大值
+                  } else if (bxx.pileMax == this.endPile) {
+                    if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
                       var leftMax = Number(1640);
                       var leftMin = axx.position.left;
                       var deviceWidth = Number(leftMax) - Number(leftMin);
@@ -1135,19 +1160,17 @@ export default {
                       bxx.left = leftMin;
                     }
                   } else {
-                    if (String(bxx.pileMin).trim() == String(axx.pile).trim()) {
+                    if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
                       bxx.leftMin = axx.position.left;
                       bxx.deviceHeight = axx.position.top;
                     }
-                    if (String(bxx.pileMax).trim() == String(axx.pile).trim()) {
+                    if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
                       bxx.leftMax = axx.position.left;
                     }
                   }
                 }
               }
               this.planList1.forEach((item, index) => {
-                // item.style = "display:none;";
-                // debugger;
                 if (item.leftMax != undefined && item.leftMin != undefined) {
                   var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
                   item.width = deviceWidth;
@@ -1155,53 +1178,13 @@ export default {
                   item.top = item.deviceHeight;
                   item.left = item.leftMin;
                 }
-                console.log(item.direction, "方向");
                 if (item.direction == "1") {
                   item.top = 0;
                 }
-                // 当前事故点的桩号
-                var positionCurrent = this.getNumber(this.eventMsg.stakeNum);
-                var positionMin = this.getNumber(item.pileMin);
-                var positionMax = this.getNumber(item.pileMax);
-                console.log(
-                  positionCurrent,
-                  positionMin,
-                  positionMax,
-                  "方向=>",
-                  this.eventMsg.direction
-                );
-                if (this.planList1.length == 4) {
-                  if (
-                    positionCurrent > positionMin &&
-                    item.direction == this.eventMsg.direction
-                  ) {
-                    this.fqIndex = index;
-                    item.style =
-                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                    // this.rightClick(index);
-                    item.show = true;
-                    this.getListBySIdData(item.id);
-                  }
-                } else {
-                  if (
-                    positionCurrent > positionMin &&
-                    positionCurrent < positionMax &&
-                    item.direction == this.eventMsg.direction
-                  ) {
-                    console.log(item, "zxczxc");
-                    this.fqIndex = index;
-                    item.style =
-                      "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-                    // this.rightClick(index);
-                    item.show = true;
-                    this.getListBySIdData(item.id);
-                  }
-                }
               });
-
-              console.log(this.selectedIconList);
               this.planListEnd = this.planList1;
-              console.log(this.planListEnd);
+              console.log(this.planListEnd, "最终分区数据");
+              this.getSubareaByStakeNumData();
             })
             .then(() => {});
         } else {
@@ -1215,9 +1198,6 @@ export default {
           that.rightDirection = "";
         }
       });
-    },
-    getNumber(number) {
-      return number.replace(/[^0-9]/gi, "");
     },
     getUrl() {
       const param3 = {
@@ -1331,7 +1311,7 @@ export default {
           height: 50%;
           position: absolute;
           display: inline-block;
-          z-index: 2;
+          z-index: 4;
           .partitionBox {
             width: 100%;
             height: 100%;
@@ -1356,7 +1336,7 @@ export default {
             box-shadow: 0 0 5px white;
             .recoveryBox {
               height: 100%;
-              display: flex;
+              // display: flex;
             }
             .row1 {
               width: 100%;
@@ -1503,7 +1483,7 @@ export default {
 .app-container {
   // background-color: #D6EDFB;
   padding: 0px 16px;
-  height: calc(100% + 60px);
+  height: 100%;
   padding: 20px;
 }
 .formTitle {
@@ -1534,8 +1514,12 @@ export default {
     margin-right: 4px;
   }
 }
+.formButton3 {
+  background-image: linear-gradient(2deg, #19b9ea, #07a1fb);
+}
 .formButton2 {
   background-image: linear-gradient(2deg, #4b6ad4, #07a1fb);
+  margin-left: 10px;
 }
 .formButton1 {
   background: linear-gradient(2deg, #37d8ac, #1ccf7b);
@@ -1599,20 +1583,6 @@ export default {
     line-height: 20px;
     margin: 0px auto 0px auto;
   }
-  // .planMiniBox{
-  //   width: 43%;height: 68px;border-radius: 10px;border: solid 1px #00A0FF;display: inline-block;margin: 8px;
-  //   >.miniTitle{
-  //     width: 100%;text-align: center;font-size: 12px;line-height: 24px;font-weight: bold;border-bottom: dashed 1px #00A0FF;
-  //     height: 30px;line-height: 30px;
-  //   }
-  //   >.planButtonS{
-  //     height: 26px;width: 100%;display: flex;justify-content: space-around;padding-top: 4px;color: white;font-size: 12px;
-  //     text-align: center;line-height: 23px;
-  //     >div{
-  //       width: 45%;height: 100%;background: linear-gradient(2deg, #4B6AD4, #07A1FB);border-radius: 2px;cursor: pointer;
-  //     }
-  //   }
-  // }
 }
 .phoneBox {
   margin-top: 10px;
@@ -1724,6 +1694,9 @@ export default {
     margin-right: 8px;
     padding-left: 20px;
   }
+  .endButton .ButtonBox:nth-child(2n) {
+    margin-left: 5%;
+  }
   .endButton {
     width: 100%;
     height: 65px;
@@ -1732,9 +1705,10 @@ export default {
     justify-content: space-between;
     font-size: 14px;
     .ButtonBox {
-      width: 32%;
+      width: 45%;
       height: 100%;
       border-radius: 4px;
+      float: left;
       .recovery {
         width: 100%;
         height: 45%;
@@ -1871,19 +1845,25 @@ export default {
   justify-content: space-around;
 }
 .mousemoveBox {
+  .recoveryBox .endButton:nth-child(2n) {
+    margin-right: 0px;
+  }
   .recoveryBox {
-    height: 80% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, 50%);
-    grid-template-rows: repeat(2, 50%);
+    height: 65% !important;
+    // display: grid !important;
+    // grid-template-columns: repeat(2, 50%);
+    // grid-template-rows: repeat(2, 50%);
     padding: 5px 10px;
     .endButton {
       padding: 5px;
       box-sizing: border-box;
+      width: 48%;
+      float: left;
+      margin-right: 4%;
       .ButtonBox {
         border: 1px solid #07a1fb;
         .recovery {
-          font-size: 15px;
+          font-size: 14px;
           text-align: center;
           border-bottom: 1px dashed #07a1fb;
         }
@@ -1909,5 +1889,17 @@ export default {
 }
 .active .rightClickClass {
   display: block;
+}
+.hover {
+  cursor: pointer !important;
+}
+.closeButton {
+  z-index: 960619;
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+}
+.handle {
+  cursor: pointer;
 }
 </style>

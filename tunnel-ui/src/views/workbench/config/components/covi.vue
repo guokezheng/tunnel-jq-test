@@ -80,12 +80,12 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="CO值:">
-              {{ coValue }}<span style="padding-left:5px">PPM</span>
+              {{ COnowData }}<span style="padding-left:5px" v-if="COnowData">PPM</span>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              {{ viValue }}<span style="padding-left:5px">KM</span>
+              {{ VInowData }}<span style="padding-left:5px" v-if="VInowData">KM</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -147,8 +147,10 @@ export default {
       visible: true,
       tab: "co",
       mychart: null,
-      coValue:'',
-      viValue:''
+      // coValue:'',
+      // viValue:'',
+      COnowData:'',
+      VInowData:''
     };
   },
   created() {
@@ -176,6 +178,12 @@ export default {
     getChartMes(){
       getTodayCOVIData(this.eqInfo.equipmentId).then((response) =>{
             console.log(response,"covi数据");
+            if(response.data.COnowData){
+              this.COnowData = parseFloat(response.data.COnowData).toFixed(2)
+            }
+            if(response.data.VInowData){
+              this.VInowData = parseFloat(response.data.VInowData).toFixed(2)
+            }
             var coXdata = []
             var coYdata = []
             var viXdata = []
@@ -184,13 +192,13 @@ export default {
             for(var item of response.data.todayCOData){
               coXdata.push(item.order_hour)
               coYdata.push(item.count)
-              this.coValue = coYdata[coYdata.length-1]
-              console.log(co,"co");
+              // this.coValue = coYdata[coYdata.length-1]
+              // console.log(co,"co");
             }
             for(var item of response.data.todayVIData){
               viXdata.push(item.order_hour)
               viYdata.push(item.count)
-              this.viValue = viYdata[viYdata.length-1]
+              // this.viValue = viYdata[viYdata.length-1]
 
             }
             this.$nextTick(() => {

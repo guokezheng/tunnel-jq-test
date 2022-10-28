@@ -1652,7 +1652,7 @@ export default {
       const topNav = this.$store.state.settings.topNav
       const needTagsView = this.$store.state.settings.tagsView
       let h = 0
-      h += 50
+      h += 72
       if(!topNav) {
         if(needTagsView) h += 34
       }

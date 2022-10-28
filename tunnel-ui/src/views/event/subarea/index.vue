@@ -4,8 +4,9 @@
       :model="queryParams"
       ref="queryForm"
       :inline="true"
+      
       v-show="showSearch"
-      label-width="68px"
+      label-width="80px"
     >
       <el-form-item label="分区名称" prop="sName">
         <el-input
@@ -33,18 +34,52 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['tunnel:subarea:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['tunnel:subarea:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['tunnel:subarea:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['tunnel:subarea:export']"
+          >导出</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -58,7 +93,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -70,7 +105,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -82,7 +117,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
@@ -96,12 +131,14 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="subareaList"
       @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="分区id" align="center" prop="sId" /> -->
@@ -125,16 +162,14 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['tunnel:subarea:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['tunnel:subarea:remove']"
             >删除</el-button
@@ -251,9 +286,12 @@ export default {
         tunnelId: [
           { required: true, message: "请选择隧道名称", trigger: "change" },
         ],
-        sName: [
-          { required: true, message: "请输入分区名称", trigger: "change" },
+        pileMin: [
+          { required: true, message: "请输入桩号下限", trigger: "blur" },
         ],
+        pileMax: [
+          { required: true, message: "请输入桩号上限", trigger: "blur" },
+        ]
       },
 
       tunnelData: [],
@@ -350,6 +388,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          if(!new RegExp('^[1-9][0-9]*$').test(this.form.pileMax) || !new RegExp('^[1-9][0-9]*$').test(this.form.pileMin) ){
+            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            return;
+          }
           if (this.form.sId != null) {
             updateSubarea(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
@@ -397,6 +439,14 @@ export default {
           this.exportLoading = false;
         })
         .catch(() => {});
+    },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

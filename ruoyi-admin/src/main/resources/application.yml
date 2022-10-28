@@ -10,13 +10,25 @@ ruoyi:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
 #  profile: /Users/yqc/OpenSources/ruoyi
-  profile: /opt/suidao/file/uploadPath
+  profile: E:/opt/suidao/file/uploadPath
 #  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
 
+  # 文件上传 本地: local  阿里云： alioss
+  uploadType: local
+  # 阿里云oss存储配置
+  oss:
+    bucketName: bucket-wisdom-oss
+    # 这个需要在高速云网络环境下才可以访问，如果部署在高速云环境则需要打开此注释，目前先用IP
+#    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
+    endPoint: 10.166.26.35
+    accessKeyId: h1HEeliVnMImdxRH
+    accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
+    outAccessDomainName: https://${ruoyi.oss.bucketName}.${ruoyi.oss.endPoint}/
+    upFolder: upload
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
@@ -45,7 +57,7 @@ spring:
   messages:
     # 国际化资源文件路径
     basename: i18n/messages
-  profiles: 
+  profiles:
     active: druid,webthings,deal,platform
   # 文件上传
   servlet:
@@ -73,7 +85,7 @@ spring:
     # 数据库索引
     database: 0
     # 密码
-    password: 
+    password:
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -95,7 +107,7 @@ token:
     secret: abcdefghijklmnopqrstuvwxyz
     # 令牌有效期（默认30分钟）
     expireTime: 8760
-  
+
 # MyBatis Plus配置
 mybatis-plus:
   # 搜索指定包别名
@@ -106,10 +118,10 @@ mybatis-plus:
   configLocation: classpath:mybatis/mybatis-config.xml
 
 # PageHelper分页插件
-pagehelper: 
+pagehelper:
   helperDialect: mysql
   supportMethodsArguments: true
-  params: count=countSql 
+  params: count=countSql
 
 # Swagger配置
 swagger:
@@ -119,7 +131,7 @@ swagger:
   pathMapping: /dev-api
 
 # 防止XSS攻击
-xss: 
+xss:
   # 过滤开关
   enabled: true
   # 排除链接（多个用逗号分隔）
@@ -161,3 +173,35 @@ aj:
 wj:
   imagePath: /eventimage
   url: http://10.3.16.4/img
+
+
+#两级平台权限控制：管理站、高速云
+authorize:
+  name: GLZ
+  #name: GSY
+  gsy:
+    host: http://10.168.65.230:8000
+    tunnel_push_url: ${authorize.gsy.host}/platform/api/tunnelsAccept
+    device_push_url: ${authorize.gsy.host}/platform/api/devicesAccept
+  glz_host:
+    wzb_glz_host: http://10.168.65.231:8000
+    th_glz_host: http://10.168.65.232:8000
+    mz_glz_host: http://10.168.65.233:8000
+    yts_glz_host: http://10.168.65.234:8000
+    jly_glz_host: http://10.168.65.235:8000
+  #管理站部门id配置，用于管理站分发
+  dept_id:
+    #文祖北隧道管理站，太河隧道管理站，庙子隧道管理站，仰天山隧道管理站，九龙峪隧道管理站
+    wzb_glz_dept_id: 10101
+    th_glz_dept_id: 10301
+    mz_glz_dept_id: 10701
+    yts_glz_dept_id: 10702
+    jly_glz_dept_id: 10703
+    #设备控制接口
+  #control_device_url:
+
+
+#物联中台事件topic
+eventTopic: "wq_tunnelEvent"
+#物联中台设备状态topic
+devStatusTopic: "wq_devStatusTopic"

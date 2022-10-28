@@ -1,5 +1,8 @@
 package com.ruoyi.framework.config;
 
+import com.ruoyi.framework.security.filter.JwtAuthenticationTokenFilter;
+import com.ruoyi.framework.security.handle.AuthenticationEntryPointImpl;
+import com.ruoyi.framework.security.handle.LogoutSuccessHandlerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -9,14 +12,14 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.filter.CorsFilter;
-import com.ruoyi.framework.security.filter.JwtAuthenticationTokenFilter;
-import com.ruoyi.framework.security.handle.AuthenticationEntryPointImpl;
-import com.ruoyi.framework.security.handle.LogoutSuccessHandlerImpl;
 
 /**
  * spring security配置
@@ -54,6 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
      */
     @Autowired
     private CorsFilter corsFilter;
+
+//    @Resource
+//    private CustomPasswordEncoder customPasswordEncoder;
 
     /**
      * 解决 无法直接注入 AuthenticationManager
@@ -96,7 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 过滤请求
                 .authorizeRequests()
                 // 对于登录login 注册register 验证码captchaImage 允许匿名访问
-                .antMatchers("/login", "/register","/system/user/getToken", "/captchaImage", "/appLogin","/wjData/eventData","/wjData/eventImage","/wjData/eventVideo","/wjData/specialCar","/zcData/baseDeviceStatus","/wjData/sendBaseDeviceStatus","/websocket","/websocket/test").anonymous()
+                .antMatchers("/login", "/register","/system/user/getToken", "/captchaImage", "/appLogin",
+                        "/wjData/eventData","/wjData/eventImage","/wjData/eventVideo","/wjData/specialCar",
+                        "/zcData/baseDeviceStatus","/wjData/sendBaseDeviceStatus","/websocket","/websocket/test","/thirdPart/login").anonymous()
                 .antMatchers(
                         HttpMethod.GET,
                         "/",
@@ -118,6 +126,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/payment/wxPay/notify").anonymous()
                 // 滑块验证码
                 .antMatchers("/login", "/captcha/get", "/captcha/check", "/getCaptchaOnOff").anonymous()
+                .antMatchers("/platform/api/devicesAccept", "/platform/api/tunnelsAccept").permitAll()
 
                 // 除上面外的所有请求全部需要鉴权认证
                 .anyRequest().authenticated()
@@ -140,6 +149,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider(){
+
+        //  log.info("Configuring pre authentication provider");
+
+        UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper =
+                new UserDetailsByNameServiceWrapper<>(
+                        userDetailsService);
+
+        PreAuthenticatedAuthenticationProvider it = new PreAuthenticatedAuthenticationProvider();
+        it.setPreAuthenticatedUserDetailsService(wrapper);
+
+        return it;
+    }
+
     /**
      * 身份认证接口
      */
@@ -147,5 +171,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+        auth.authenticationProvider(preAuthenticatedAuthenticationProvider());
+//        auth.userDetailsService(userDetailsService).passwordEncoder(customPasswordEncoder);
     }
 }

@@ -68,6 +68,9 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
     @Override
     public List<SdXfwaterRecord> selectSdXfwaterRecordList(SdXfwaterRecord sdXfwaterRecord) {
         Long deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
         sdXfwaterRecord.setDeptId(deptId);
         List<SdXfwaterRecord> sdXfwaterRecords = sdXfwaterRecordMapper.selectSdXfwaterRecordList(sdXfwaterRecord);
         Date nowdate = new Date();

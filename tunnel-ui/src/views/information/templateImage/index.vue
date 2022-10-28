@@ -5,7 +5,7 @@
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
-      label-width="68px"
+      label-width="40px"
     >
       <el-form-item label="文本" prop="word">
         <el-input
@@ -17,20 +17,50 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
+        <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:templateImage:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:templateImage:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:templateImage:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleExport"
+          v-hasPermi="['system:templateImage:export']"
+          >导出</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -81,27 +111,31 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="vocabularyList"
-      height="630"
+      max-height="640"
       @selection-change="handleSelectionChange"
-      :default-sort = "{prop: 'creatTime', order: 'descending'}"
+      :default-sort="{ prop: 'creatTime', order: 'descending' }"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="序号"
-      type="index"
-      width="50">
-    </el-table-column>
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" type="index" width="50"> </el-table-column>
+
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-        
         <template slot-scope="scope">
-　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
-　　    </template>
+          　　　　
+          <img
+            :src="scope.row.pictureUrl"
+            width="35px"
+            height="35px"
+            class="pictureUrl"
+          />
+          　　
+        </template>
       </el-table-column>
       <el-table-column label="图片宽度" align="center" prop="imageWidth" />
       <el-table-column label="图片高度" align="center" prop="imageHeight" />
@@ -118,18 +152,16 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:vocabulary:edit']"
+            v-hasPermi="['system:templateImage:edit']"
             >修改</el-button
           >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vocabulary:remove']"
+            v-hasPermi="['system:templateImage:remove']"
             >删除</el-button
           >
         </template>
@@ -159,8 +191,8 @@
         <el-form-item label="图片路径" prop="pictureUrl">
           <!-- <el-input v-model="form.url" placeholder="请输入图片路径" /> -->
           <el-upload
-            id="file"
-            :class="{disabled:eqObj.uploadDisabled}"
+            id="promise"
+            :class="{ disabled: eqObj.uploadDisabled }"
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
             list-type="picture-card"
@@ -171,6 +203,7 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
             :onSuccess="uploadSuccess"
+            accept=".png, .jpg"
             :limit="1"
           >
             <i class="el-icon-plus"></i>
@@ -183,7 +216,7 @@
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标宽度"
             :max="999"
             :min="0"
@@ -196,7 +229,7 @@
           <!-- <el-input v-model="form.height" placeholder="请输入图片高度" /> -->
           <el-input-number
             style="width: 200px"
-            controls-position="right" 
+            controls-position="right"
             placeholder="图标高度"
             :max="999"
             :min="0"
@@ -205,7 +238,7 @@
           />
           px
         </el-form-item>
-        
+
         <!-- <el-form-item label="图片类型" prop="imageType">
           <el-input v-model="form.imageType" placeholder="请输入图片类型" />
         </el-form-item> -->
@@ -222,7 +255,8 @@
           <el-switch
             v-model="form.deleteflag"
             active-color="#13ce66"
-            inactive-color="#ff4949">
+            inactive-color="#ff4949"
+          >
           </el-switch>
         </el-form-item>
       </el-form>
@@ -241,6 +275,7 @@ import {
   editTemplateImage,
   addTemplateImage,
   getTemplateImageInfo,
+  exportTemplateImage,
 } from "@/api/board/templateimage";
 import { loadPicture } from "@/api/equipment/type/api.js";
 import $ from "jquery";
@@ -250,21 +285,21 @@ export default {
   data() {
     var checkWidth = (rule, value, callback) => {
       if (value <= 0 || value >= 1000) {
-        callback(new Error('宽度大于0，小于1000'));
+        callback(new Error("宽度大于0，小于1000"));
       } else {
-        console.log(this.ruleForm,'this.ruleForm')
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('imageWidth');
+        console.log(this.ruleForm, "this.ruleForm");
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("imageWidth");
         }
         callback();
       }
     };
     var checkHeight = (rule, value, callback) => {
       if (value <= 0 || value >= 1000) {
-        callback(new Error('高度大于0，小于1000'));
+        callback(new Error("高度大于0，小于1000"));
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('imageHeight');
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("imageHeight");
         }
         callback();
       }
@@ -278,7 +313,7 @@ export default {
       //图片路径
       img: "",
       fileList: [],
-      eqObj:{uploadDisabled:false},
+      eqObj: { uploadDisabled: false },
       // 遮罩层
       loading: true,
       // 选中数组
@@ -309,18 +344,24 @@ export default {
       // 表单校验
       rules: {
         pictureName: [
-          { required: true, message: '请输入名称', trigger: 'blur'},
-          { min: 1, max: 30, message: '长度在1~30个字符之间', trigger: 'blur'},
+          { required: true, message: "请输入名称", trigger: "blur" },
+          { min: 1, max: 30, message: "长度在1~30个字符之间", trigger: "blur" },
         ],
         imageWidth: [
-          { required: true, message: '请输入图片宽度', trigger: ['blur', 'change']},
+          {
+            required: true,
+            message: "请输入图片宽度",
+            trigger: ["blur", "change"],
+          },
         ],
         imageHeight: [
-          { required: true, message: '请输入图片高度', trigger: ['blur', 'change']},
+          {
+            required: true,
+            message: "请输入图片高度",
+            trigger: ["blur", "change"],
+          },
         ],
-        vmsSize:[
-          {required: true, message: '请输入分辨率', trigger: 'blur'}
-        ]
+        vmsSize: [{ required: true, message: "请输入分辨率", trigger: "blur" }],
       },
     };
   },
@@ -332,6 +373,7 @@ export default {
     getList() {
       this.loading = true;
       getTemplateImageList(this.queryParams).then((response) => {
+        console.log(response, "情报板列表");
         this.vocabularyList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -356,6 +398,7 @@ export default {
         speed: null,
         deleteflag: null,
       };
+      this.fileList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -377,18 +420,27 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
       this.title = "添加情报板模板图片";
+
+      this.open = true;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
+      var that = this;
+      that.fileList = [];
       getTemplateImageInfo(id).then((response) => {
+        console.log(response, "修改情报板图片");
         this.form = response.data;
-        this.open = true;
-        this.planRoadmapUrl(that.form.iFileList);
         this.title = "修改情报板图片";
+
+        this.open = true;
+        // this.planRoadmapUrl(that.form.iFileList);
+        that.fileList.push({
+          name: this.form.pictureName,
+          url: this.form.pictureUrl,
+        });
       });
     },
     async planRoadmapUrl(iFileList) {
@@ -397,7 +449,7 @@ export default {
       for (let i = 0; i < iFileList.length; i++) {
         let iconName = iFileList[i].stateIconName;
         // let iconUrl = await that.picture(iFileList[i].url);
-        let iconUrl = iFileList[i].url
+        let iconUrl = iFileList[i].url;
         that.fileList.push({
           name: iconName,
           url: iconUrl,
@@ -418,12 +470,30 @@ export default {
       this.fileData.append("imageWidth", this.form.imageWidth);
       this.fileData.append("imageHeight", this.form.imageHeight);
       this.fileData.append("vmsSize", this.form.vmsSize);
-      this.fileData.append("imageRemark", this.form.imageRemark);
-      this.fileData.append("speed", this.form.speed);
-      this.fileData.append("deleteflag", this.form.deleteflag);
-      console.log(this.fileData)
+      this.fileData.append(
+        "imageRemark",
+        this.form.imageRemark == null ? "" : this.form.imageRemark
+      );
+      this.fileData.append(
+        "speed",
+        this.form.speed == null ? "" : this.form.speed
+      );
+      this.fileData.append(
+        "deleteflag",
+        this.form.deleteflag == false ? "0" : "1"
+      );
+      console.log(this.fileData);
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          console.log(this.fileData.file);
+          if (parseInt(this.form.imageWidth) == 0) {
+            this.$modal.msgError("图片宽度不能为0");
+            return;
+          }
+          if (parseInt(this.form.imageHeight) == 0) {
+            this.$modal.msgError("图片高度不能为0");
+            return;
+          }
           if (this.form.id != null) {
             this.fileData.append("id", this.form.id);
             this.fileData.append("pictureUrl", this.form.pictureUrl);
@@ -448,17 +518,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除该条情报板模板图片?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm("是否确认删除该条情报板模板图片?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(function () {
-          return delVocabulary(ids);
+          return deleteTemplateImage(ids);
         })
         .then(() => {
           this.getList();
@@ -468,13 +534,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有情报板敏感字管理数据项?", "警告", {
+      this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          return exportVocabulary(queryParams);
+          return exportTemplateImage(queryParams);
         })
         .then((response) => {
           this.$download.name(response.msg);
@@ -485,10 +551,10 @@ export default {
       this.fileList = fileList;
       if (fileList.length >= 1) {
         this.eqObj.uploadDisabled = true;
-        this.$set(this.eqObj, 'uploadDisabled', true);
+        this.$set(this.eqObj, "uploadDisabled", true);
       } else {
-          this.eqObj.uploadDisabled = false;
-          this.$set(this.eqObj, 'uploadDisabled', false);
+        this.eqObj.uploadDisabled = false;
+        this.$set(this.eqObj, "uploadDisabled", false);
       }
       this.$forceUpdate();
     },
@@ -504,8 +570,8 @@ export default {
     uploadFile(file) {
       this.fileData.append("file", file.file); // append增加数据
     },
-    uploadSuccess(){
-      console.log('成功了')
+    uploadSuccess() {
+      console.log("成功了");
       this.$refs.upload.clearFiles();
     },
     // 选取文件超过数量提示
@@ -529,6 +595,14 @@ export default {
     openImg(url) {
       this.img = url;
       this.yn = !this.yn;
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
     },
   },
 };

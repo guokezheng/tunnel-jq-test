@@ -1,16 +1,18 @@
 <template>
   <div class="app-container">
-    <div style="display: flex;font-size: 16px;width: 100%;justify-content: space-between;">
-      <div style="line-height: 60px;">设备预警统计:</div>
-      <el-card class="card-box">
-        今日故障设备统计: {{allmsg}}
-      </el-card>
-      <el-card class="card-box">
-        今日执行故障设备: {{process}}
-      </el-card>
-      <el-card class="card-box">
-        今日故障设备执行率: {{proportion}}
-      </el-card>
+    <div
+      style="display: flex; font-size: 14px; width: 100%; align-items: center"
+    >
+      <div class="warningStatistics">设备预警统计:</div>
+      <div class="EquipStatistics">
+        今日故障设备统计: <span>{{ allmsg }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日执行故障设备: <span>{{ process }}</span>
+      </div>
+      <div class="EquipStatistics">
+        今日故障设备执行率: <span>{{ proportion }}</span>
+      </div>
     </div>
 
     <el-form
@@ -60,29 +62,37 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          type="cyan"
-          icon="el-icon-search"
+          type="primary"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary" 
+          plain
+          size="mini"
+          @click="seeWarningType()"
+          v-hasPermi="['system:warningInfo:add']"
+          >查看预警类型</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
+          type="primary" 
+          plain
           size="mini"
           @click="seeWarningType()"
           v-hasPermi="['system:warningInfo:add']"
           >查看预警类型</el-button
         >
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="primary"
           icon="el-icon-plus"
@@ -110,7 +120,7 @@
           @click="handleDelete"
           v-hasPermi="['system:warningInfo:remove']"
         >删除</el-button>
-      </el-col> -->
+      </el-col>
       <div class="top-right-btn">
         <el-tooltip class="item" effect="dark" content="刷新" placement="top">
           <el-button
@@ -134,7 +144,7 @@
           />
         </el-tooltip>
       </div>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -142,6 +152,8 @@
       @selection-change="handleSelectionChange"
       max-height="570"
       :default-sort = "{prop: 'warningTime', order: 'descending'}"
+      :row-class-name="tableRowClassName"
+
     >
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column
@@ -173,12 +185,14 @@
           <span>{{ parseTime(scope.row.warningTime, '{y}-{m}-{d}') }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column
-        label="车洞"
-        align="center"
-        prop="holeDirection"
-        :formatter="holeDirectionFormat"
-      />
+      <el-table-column label="方向" align="center" prop="holeDirection">
+        <template slot-scope="scope">
+          <dict-tag
+            :options="dict.type.sd_direction"
+            :value="scope.row.holeDirection"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         label="预警内容"
         align="center"
@@ -194,12 +208,13 @@
       <el-table-column label="处理人" align="center" prop="nickName" />
       <el-table-column label="文件（图片）" align="center" prop="picture">
         <template slot-scope="scope">
-          <el-popover placement="top-end" title="" trigger="click">
-            <img :src="scope.row.picture" style="width: 600px; height: 600px" />
+          <el-popover placement="top-end" title="" trigger="click" >
+            <img :src="scope.row.picture" style="width: 600px; height: 600px" v-if="scope.row.picture "/>
             <img
               slot="reference"
               :src="scope.row.picture"
-              style="width: 100px; height: 100px; cursor: pointer"
+              style="width: 65px; height: 35px; cursor: pointer"
+              v-if="scope.row.picture"
             />
           </el-popover>
         </template>
@@ -216,7 +231,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="handleIgnore(scope.row)"
             v-hasPermi="['system:warningInfo:edit']"
             >忽略</el-button
@@ -224,7 +239,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="handleOk(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >已解决</el-button
@@ -232,7 +247,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToEventOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >转为事件</el-button
@@ -240,7 +255,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToStrategyOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >执行相关策略</el-button
@@ -248,7 +263,7 @@
           <el-button
             v-show="scope.row.processState === '0'"
             size="mini"
-            type="text"
+            class="tableBlueButtton"
             @click="turnToPlanOpen(scope.row)"
             v-hasPermi="['system:warningInfo:remove']"
             >查看相关预案</el-button
@@ -424,8 +439,8 @@
       append-to-body
     >
       <el-button
-        type="success"
-        icon="el-icon-plus"
+        type="primary" 
+        plain
         size="mini"
         @click="handleWarningTypeAdd"
         v-hasPermi="['system:warningInfo:add']"
@@ -551,7 +566,10 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="warningTypeBtnLoading" @click="warningTypeFormSubmitForm"
+        <el-button
+          type="primary"
+          :loading="warningTypeBtnLoading"
+          @click="warningTypeFormSubmitForm"
           >确 定</el-button
         >
         <el-button @click="warningTypeFormCancel">取 消</el-button>
@@ -597,7 +615,10 @@
         <el-input v-model="warnConditionForm.description" v-show="false" />
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" :loading="warnConditonBtnLoading" @click="warnConditonSubmitForm"
+        <el-button
+          type="primary"
+          :loading="warnConditonBtnLoading"
+          @click="warnConditonSubmitForm"
           >确 定</el-button
         >
         <el-button @click="warnConditonCancel">取 消</el-button>
@@ -628,24 +649,22 @@
         <el-table-column
           type="selection"
           :reserve-selection="true"
-          width="55"
           align="center"
         />
         <el-table-column
           label="预案名称"
           align="center"
           prop="planName"
-          width="200"
         />
         <el-table-column label="预案描述" align="left" prop="planDescription" />
       </el-table>
-      <pagination
+      <!-- <pagination
         v-show="planTotal > 0"
         :total="planTotal"
         :page.sync="planQueryParams.pageNum"
         :limit.sync="planQueryParams.pageSize"
         @pagination="getPlanList"
-      />
+      /> -->
       <div slot="footer">
         <el-button type="primary" @click="savePlan">保 存</el-button>
         <el-button @click="planCancel">关 闭</el-button>
@@ -746,7 +765,12 @@
         </el-table>
       </div>
       <div slot="footer">
-        <el-button type="primary" :loading="doStrategyBtnLoading" @click="doStrategy">确定执行</el-button>
+        <el-button
+          type="primary"
+          :loading="doStrategyBtnLoading"
+          @click="doStrategy"
+          >确定执行</el-button
+        >
         <el-button @click="doStrategyCancel"> 关 闭 </el-button>
       </div>
     </el-dialog>
@@ -788,6 +812,8 @@ import {
 import { download } from "@/utils/request";
 export default {
   name: "WarningInfo",
+  //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
+  dicts: ['sd_direction'],
   watch: {
     drawer(val) {
       if (!val) {
@@ -911,9 +937,9 @@ export default {
       doStrategyBtnLoading: false,
       seeStrategyList: [],
       handleIds: [],
-      allmsg:'',
-      process:'',
-      proportion:''
+      allmsg: "",
+      process: "",
+      proportion: "",
     };
   },
   created() {
@@ -928,7 +954,7 @@ export default {
     this.getDicts("sd_warning_type_judge").then((response) => {
       this.judgeOptions = response.data;
     });
-    this.getWarningInfo()
+    this.getWarningInfo();
   },
   methods: {
     // 事件预警统计
@@ -1137,14 +1163,22 @@ export default {
     },
     // 删除预警类型
     handleDeletePlan(row) {
-      delWarningType(row.id).then((response) => {
-        if (response.code === 200) {
-          this.$modal.msgSuccess("删除成功");
-          this.loadWarningTypeList();
-        }
-      }).catch(() => {
-        this.$modal.msgError('删除失败，请稍后重试！')
-      });
+      this.$confirm("是否确认删除？", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          delWarningType(row.id).then((response) => {
+            if (response.code === 200) {
+              this.$modal.msgSuccess("删除成功");
+              this.loadWarningTypeList();
+            }
+          });
+        })
+        .catch(() => {
+          this.$modal.msgError("删除失败，请稍后重试！");
+        });
     },
     //关闭添加预案 对话框
     planCancel() {
@@ -1427,6 +1461,14 @@ export default {
       this.resetEvent();
       this.drawer = false;
     },
+     // 表格的行样式
+     tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   },
 };
 </script>
@@ -1438,10 +1480,37 @@ export default {
   font-size: 1.125rem;
 }
 </style>
-<style scoped>
-  .card-box{
-    width: 30%;
+<style scoped lang="scss">
+  .EquipStatistics{
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
     text-align: center;
-    font-weight: bold;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+    >span{
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+  }
+ ::v-deep .el-table__header tr,
+  .el-table__header th {
+    padding: 0;
+    height: 40px;
+}
+::v-deep .el-table__body tr,
+  .el-table__body td {
+    padding: 0;
+    height: 40px;
+}
+.warningStatistics{
+    line-height: 60px;
+    font-size: 14px;
+    // color: #606266;
+    font-weight: 700;
   }
 </style>

@@ -1,6 +1,5 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import com.alibaba.druid.sql.dialect.odps.ast.OdpsStatisticClause;
 import com.github.pagehelper.util.StringUtil;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
@@ -76,6 +75,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public Map<String, String> queryDeviceById(String eqId) {
         Map<String, String> devices = sdDevicesMapper.queryDeviceById(eqId);
+        if (devices.get("eqStatus") == null || devices.get("eqStatus").equals("") || devices.get("eqStatus").equals("0")) {
+            devices.put("eqStatus","2");
+        }
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(eqId);
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
@@ -84,34 +86,34 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 SdDeviceData data = deviceDataList.get(i);
                 //诱导灯
                 if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()))) {
-                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode())) {
                         devices.put("state", data.getData());
-                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode())) {
                         devices.put("brightness", data.getData());
-                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode())) {
                         devices.put("frequency", data.getData());
                     }
                 //疏散标志
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
-                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode())) {
                         devices.put("state", data.getData());
-                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode())) {
                         devices.put("brightness", data.getData());
-                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode())) {
                         devices.put("frequency", data.getData());
-                    } else if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
                         devices.put("fireMark", data.getData());
                     }
                 //车指
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
-                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
                         devices.put("state", data.getData());
                     }
                 //声光报警器
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode()))) {
-                    if (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
-                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode())) {
-                        if (devices.get("state") != null || devices.get("state").equals("0")) {
+                    if (data != null && (data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode())
+                            || data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode()))) {
+                        if (devices.get("eqState") != null && devices.get("eqState").equals("1")) {
                             devices.put("state", data.getData());
                         }
                     }
@@ -130,6 +132,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<SdDevices> selectSdDevicesList(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
+        return devicesList;
+    }
+
+    /**
+     * 查询设备列表-导出
+     *
+     * @param sdDevices 设备
+     * @return 设备
+     */
+    @Override
+    public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
         return devicesList;
     }
 
@@ -787,18 +801,24 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      * @return
      */
     @Override
-    public List<SdDevices> updateCarFingerById(Map<String, Object> map) {
+    public List<SdDevices> batchControlCarFinger(Map<String, Object> map) {
         List<SdDevices> sdDevicesList = new ArrayList<>();
-        String tunnelName = (String) map.get("tunnelName");
+        String tunnelName = (String) map.get("tunnelId");
         String direction = map.get("direction").toString();
-        List<String> list = (List<String>) map.get("lane");
-        for (String lane : list) {
+        List<Object> list = (List<Object>) map.get("lane");
+        if (map.get("lane") == null || list.size() == 0) {
+            throw new RuntimeException("车指批量控制隧道车道信息为空");
+        }
+        for (Object lane : list) {
+            if (lane == null || lane.toString().equals("")) {
+                throw new RuntimeException("车指批量控制隧道车道信息为空");
+            }
             SdDevices devices = new SdDevices();
             devices.setEqTunnelId(tunnelName);
             devices.setEqType(1L);
             devices.setEqDirection(direction);
-            devices.setLane(lane);
-            List<SdDevices> sdDevicesLists = sdDevicesMapper.selectSdDevicesList(devices);
+            devices.setLane(lane.toString());
+            List<SdDevices> sdDevicesLists = sdDevicesMapper.batchControlCarFinger(devices);
             sdDevicesList.addAll(sdDevicesLists);
         }
         return sdDevicesList;
@@ -831,6 +851,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<Map<String, Object>> getDeviceAndState(String tunnelId) {
         List<Map<String, Object>> deviceData = sdDevicesMapper.selectDeviceDataAndState(tunnelId);
+        if(deviceData.size()<1){
+            return null;
+        }
         int laneSize = sdDevicesMapper.selectLaneSize();
         // 根据方向进行分组
         Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {

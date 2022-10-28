@@ -1,5 +1,5 @@
 <template>
-  <el-breadcrumb class="app-breadcrumb" separator="/">
+  <el-breadcrumb class="app-breadcrumb" separator="/" :style="topNav?'':'width:100%'">
     <transition-group name="breadcrumb">
       <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
         <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>
@@ -24,6 +24,12 @@ export default {
       }
       this.getBreadcrumb()
     }
+  },
+  computed: {
+   
+    topNav() {
+      return this.$store.state.settings.topNav;
+    },
   },
   created() {
     this.getBreadcrumb()
@@ -63,8 +69,10 @@ export default {
 .app-breadcrumb.el-breadcrumb {
   display: inline-block;
   font-size: 14px;
-  line-height: 50px;
-  margin-left: 8px;
+  line-height: 28px;
+  margin-bottom: 10px;
+  background: white;
+  padding-left: 10px;
 
   .no-redirect {
     color: #97a8be;

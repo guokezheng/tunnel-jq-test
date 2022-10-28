@@ -40,18 +40,52 @@
       <el-form-item>
         <el-button
           type="primary"
-          icon="el-icon-search"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:change:add']"
+          >新增</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:change:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:change:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:change:export']"
+          >导出</el-button
         >
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -103,13 +137,16 @@
         :showSearch.sync="showSearch"
         @queryTable="getList"
       ></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table
       v-loading="loading"
       :data="changeList"
       @selection-change="handleSelectionChange"
       :default-sort = "{prop: 'changeTime', order: 'descending'}"
+      max-height="640"
+      :row-class-name="tableRowClassName"
+
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="更换时间" align="center" prop="id" /> -->
@@ -126,8 +163,8 @@
           <span>{{ parseTime(scope.row.changeTime, "{y}-{m}-{d}") }}</span>
         </template> -->
       </el-table-column>
-      <el-table-column label="桩号" align="center" prop="eqDirection" />
-      <el-table-column label="方向" align="center" prop="stakeMark" />
+      <el-table-column label="桩号" align="center" prop="stakeMark" />
+      <el-table-column label="方向" align="center" prop="eqDirection" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"
@@ -135,18 +172,16 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <!-- <el-button
+          <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:change:edit']"
             >修改</el-button
-          > -->
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:change:remove']"
             >删除</el-button
@@ -192,10 +227,10 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="桩号" prop="eqDirection">
-          <el-input v-model="form.eqDirection" placeholder="请输入桩号" />
+          <el-input v-model="form.stakeMark" placeholder="请输入桩号" />
         </el-form-item>
         <el-form-item label="方向" prop="stakeMark">
-          <el-select v-model="form.stakeMark" placeholder="请选择方向">
+          <el-select v-model="form.eqDirection" placeholder="请选择方向">
             <el-option label="上行" value="0" />
             <el-option label="下行" value="1" />
           </el-select>
@@ -259,7 +294,13 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        deviceName: [{required: true, message: '请填写设备名称', trigger: 'blur'}],
+        deviceId: [{required: true, message: '请填写设备ID', trigger: 'blur'}],
+        changeTime: [{required: true, message: '请填写更换时间', trigger: 'blur'}],
+        eqDirection: [{required: true, message: '请选择方向', trigger: 'blur'}],
+        stakeMark: [{required: true, message: '请填写桩号信息', trigger: 'blur'}],
+      },
     };
   },
   created() {
@@ -280,10 +321,10 @@ export default {
         this.total = response.total;
         this.loading = false;
         this.changeList.forEach((e) => {
-          if (e.stakeMark == 0) {
-            e.stakeMark = "上行";
-          } else if (e.stakeMark == 1) {
-            e.stakeMark = "下行";
+          if (e.eqDirection == 0) {
+            e.eqDirection = "上行";
+          } else if (e.eqDirection == 1) {
+            e.eqDirection = "下行";
           }
         });
       });
@@ -387,6 +428,14 @@ export default {
           this.exportLoading = false;
         })
         .catch(() => {});
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
   },
 };

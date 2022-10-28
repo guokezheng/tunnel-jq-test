@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
-import com.tunnel.business.service.event.ISdStrategyService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 控制策略Controller
@@ -65,6 +66,24 @@ public class SdStrategyController extends BaseController
     public Result<SdStrategy> getInfo(@PathVariable("id") Long id)
     {
         return Result.success(sdStrategyService.selectSdStrategyById(id));
+    }
+
+    @GetMapping(value = "/timeSharing/{tunnelId}")
+    @ApiOperation("工作台分时控制抽屉")
+    public Result<List<Map>> getTimeSharingInfo(@PathVariable("tunnelId") String tunnelId) {
+        return Result.success(sdStrategyService.getTimeSharingInfo(tunnelId));
+    }
+
+    @GetMapping(value = "/timeSharing/updateControlTime")
+    @ApiOperation("工作台分时控制抽屉修改控制时间")
+    public Result updateControlTime(@RequestParam("strategyId") Long strategyId,@RequestParam("controlTime") String controlTime) {
+        return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
+    }
+
+    @GetMapping(value = "/switch")
+    @ApiOperation("控制策略开关")
+    public Result strategySwitch(@RequestParam("strategyId") Long strategyId,@RequestParam("change") String change) {
+        return Result.toResult(sdStrategyService.strategySwitch(strategyId,change));
     }
 
     /**

@@ -16,6 +16,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
@@ -47,6 +48,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
     private static SdEventTypeMapper sdEventTypeMapper = SpringUtils.getBean(SdEventTypeMapper.class);
     private static SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
     private static SdDeviceDataMapper sdDeviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
+    private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
     private EventLoopGroup group;
 
     /**
@@ -85,6 +87,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                         deviceData.setData("0");
                         deviceData.setUpdateTime(new Date());
                         sdDeviceDataMapper.updateSdDeviceData(deviceData);
+                        sendData.pushDevicesDataNowTime(deviceData);
                     }
                 }
                 //复位清除预警
@@ -173,10 +176,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 sdDeviceData.setData("1");
                 sdDeviceData.setCreateTime(new Date());
                 sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+                sendData.pushDevicesDataNowTime(sdDeviceData);
             } else {
                 SdDeviceData devData = deviceData.get(0);
                 devData.setUpdateTime(new Date());
                 sdDeviceDataMapper.updateSdDeviceData(devData);
+                sendData.pushDevicesDataNowTime(devData);
             }
             //存储事件到事件表
             SdEvent sdEvent = new SdEvent();
@@ -263,11 +268,21 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             devices.setEqStatus(status);
             devices.setEqStatusTime(new Date());
             sdDevicesMapper.updateSdDevices(devices);
+            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                sendData.pushDevicesStatusToOtherSystem(devices, "1", "off");
+            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
+                sendData.pushDevicesStatusToOtherSystem(devices, "1", "on");
+            }
             String feqId = devices.getEqId();
             fireComponentDevice.setFEqId(feqId);
             fireComponentDevice.setEqStatus(status);
             fireComponentDevice.setEqStatusTime(new Date());
             sdDevicesMapper.updateSdDevicesByFEqId(fireComponentDevice);
+            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "off");
+            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
+                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "on");
+            }
             List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(fireComponentDevice);
             for (int j = 0; j < fireComponentsList.size(); j++) {
                 SdDevices fireComponent = fireComponentsList.get(j);
@@ -308,10 +323,12 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             data.setData(value);
             data.setUpdateTime(new Date());
             sdDeviceDataMapper.updateSdDeviceData(data);
+            sendData.pushDevicesDataNowTime(data);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData);
         }
     }
 

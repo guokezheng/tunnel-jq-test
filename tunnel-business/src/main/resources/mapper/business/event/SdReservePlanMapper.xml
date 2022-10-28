@@ -71,11 +71,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnel_subarea D on D.s_id = A.subarea_id
         left join sd_tunnels F on D.tunnel_id = F.tunnel_id
         <where>
-            <if test="tunnelId != null">and F.tunnel_id = #{tunnelId}</if>
-            <if test="category != null">and A.category = #{category}</if>
+            <if test="tunnelId != null and tunnelId!=''">and F.tunnel_id = #{tunnelId}</if>
+            <if test="category != null and category!=''">and A.category = #{category}</if>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
+            <if test="params.deptId != null and params.deptId != ''">
+                AND (F.dept_id = #{params.deptId} OR F.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            </if>
         </where>
         group by A.id
         ORDER BY A.id DESC
@@ -168,6 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="subareaId != null"> and subarea_id = #{subareaId}</if>
             <if test="category != null"> and category = #{category}</if>
+            <if test="planTypeId != null"> and plan_type_id = #{planTypeId}</if>
         </where>
     </select>
 

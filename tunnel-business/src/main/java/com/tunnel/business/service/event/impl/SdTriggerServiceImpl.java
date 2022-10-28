@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 触发器Service业务层处理
@@ -60,6 +61,7 @@ public class SdTriggerServiceImpl implements ISdTriggerService {
         }
         return new SdTrigger();
     }
+
 
     /**
      * 查询触发器列表

@@ -6,7 +6,6 @@
           v-model="queryParams.title"
           placeholder="请输入系统模块"
           clearable
-          style="width: 240px;"
           size="small"
           @keyup.enter.native="handleQuery"
         />
@@ -16,7 +15,6 @@
           v-model="queryParams.operName"
           placeholder="请输入操作人员"
           clearable
-          style="width: 240px;"
           size="small"
           @keyup.enter.native="handleQuery"
         />
@@ -27,7 +25,6 @@
           placeholder="操作类型"
           clearable
           size="small"
-          style="width: 240px"
         >
           <el-option
             v-for="dict in dict.type.sys_oper_type"
@@ -43,7 +40,6 @@
           placeholder="操作状态"
           clearable
           size="small"
-          style="width: 240px"
         >
           <el-option
             v-for="dict in dict.type.sys_common_status"
@@ -57,7 +53,7 @@
         <el-date-picker
           v-model="dateRange"
           size="small"
-          style="width: 360px"
+          style="width: 215px"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetimerange"
           range-separator="-"
@@ -67,33 +63,41 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['monitor:operlog:export']"
+        >导出</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['monitor:operlog:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          @click="handleClean"-->
-<!--          v-hasPermi="['monitor:operlog:remove']"-->
-<!--        >清空</el-button>-->
-<!--      </el-col>-->
+    <!-- <el-row :gutter="10" class="mb8">
+     <el-col :span="1.5">
+       <el-button
+         type="danger"
+         plain
+         icon="el-icon-delete"
+         size="mini"
+         :disabled="multiple"
+         @click="handleDelete"
+         v-hasPermi="['monitor:operlog:remove']"
+       >删除</el-button>
+     </el-col>
+     <el-col :span="1.5">
+       <el-button
+         type="danger"
+         plain
+         icon="el-icon-delete"
+         size="mini"
+         @click="handleClean"
+         v-hasPermi="['monitor:operlog:remove']"
+       >清空</el-button>
+     </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -106,10 +110,12 @@
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
     <el-table ref="tables" v-loading="loading"
-    max-height="610" :data="list" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
+              max-height="610" :data="list" @selection-change="handleSelectionChange" 
+              :default-sort="defaultSort" @sort-change="handleSortChange"
+              :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="日志编号" align="center" prop="operId" />
       <el-table-column label="系统模块" align="center" prop="title" />
@@ -136,8 +142,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-view"
+            class="tableBlueButtton"
             @click="handleView(scope.row,scope.index)"
             v-hasPermi="['monitor:operlog:query']"
           >详细</el-button>
@@ -313,7 +318,15 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
-    }
+    },
+    // 表格样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
+    },
   }
 };
 </script>

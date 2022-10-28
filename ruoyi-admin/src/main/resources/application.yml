@@ -180,8 +180,8 @@ authorize:
   name: GLZ
   #name: GSY
   gsy:
-    host: http://10.168.64.171:8000
-    #tunnel_push_url:
+    host: http://10.168.65.230:8000
+    tunnel_push_url: ${authorize.gsy.host}/platform/api/tunnelsAccept
     device_push_url: ${authorize.gsy.host}/platform/api/devicesAccept
   glz_host:
     wzb_glz_host: http://10.168.65.231:8000

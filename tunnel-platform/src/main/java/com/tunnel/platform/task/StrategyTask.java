@@ -1,18 +1,12 @@
 package com.tunnel.platform.task;
 
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.quartz.task.RyTask;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.event.SdStrategyRl;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
-import com.tunnel.business.mapper.event.SdTriggerMapper;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

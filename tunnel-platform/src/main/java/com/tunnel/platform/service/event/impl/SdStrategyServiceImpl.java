@@ -73,7 +73,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     private SdTriggerDeviceMapper sdTriggerDeviceMapper;
 
     @Autowired
-    private SysJobMapper sysJobMapper;
+    private SysJobServiceImpl sysJobService;
 
 
 
@@ -123,9 +123,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 rl.setControlTime(timeParam[i]);
                 updateRows += sdStrategyRlMapper.updateSdStrategyRl(rl);
                 Long jobId = Long.valueOf(relationId[i]);
-                SysJob job = sysJobMapper.selectJobById(jobId);
+                SysJob job = sysJobService.selectJobById(jobId);
                 job.setCronExpression(CronUtil.CronDate(timeParam[i]));
-                updateRows += sysJobMapper.updateJob(job);
+                updateRows += sysJobService.updateJob(job);
                 if(updateRows < 2){
                     return 0;
                 }
@@ -157,15 +157,15 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(StrUtil.isBlank(relationId)) {
                 return 1;
             }
-            String[] jobIds = relationId.split(",");
-            SysJob job = new SysJob();
-            updateRows = 0;
-            for (int i = 0; i < jobIds.length; i++) {
-                job = sysJobMapper.selectJobById(Long.valueOf(jobIds[i]));
-                job.setStatus(change);
-                updateRows += sysJobMapper.updateJob(job);
-            }
-            if(updateRows < jobIds.length){
+            try {
+                String[] jobIds =  relationId.split(",");
+                SysJob job = new SysJob();
+                for (int i = 0; i < jobIds.length; i++) {
+                    job = sysJobService.selectJobById(Long.valueOf(jobIds[i]));
+                    job.setStatus(change);
+                    sysJobService.updateJob(job);
+                }
+            } catch (Exception e) {
                 throw new RuntimeException("数据处理异常");
             }
         }
@@ -328,7 +328,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             //查询策略下的所有定时任务ID
             try {
                 Long[] jobIds = sdStrategyMapper.getStrategyRefJobIds(ids);
-                sysJobMapper.deleteJobByIds(jobIds);
+                sysJobService.deleteJobByIds(jobIds);
             } catch (Exception e) {
                 throw new RuntimeException("定时任务处理异常");
             }
@@ -379,7 +379,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             for (int i = 0; i < jobIds.length; i++) {
                 param[i] = Long.valueOf(jobIds[i]);
             }
-            sysJobMapper.deleteJobByIds(param);
+            sysJobService.deleteJobByIds(param);
         } catch (Exception e) {
             throw new RuntimeException("定时任务处理异常");
         }
@@ -634,8 +634,12 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             // 是否并发执行（0允许 1禁止）
             job.setConcurrent("0");
             // 状态（0正常 1暂停）
-            job.setStatus("0");
-            sysJobMapper.insertJob(job);
+            job.setStatus("1");
+            try{
+                sysJobService.insertJob(job);
+            }catch (Exception ex){
+                throw new RuntimeException("定时任务处理异常");
+            }
             jobIdList.add(job.getJobId().toString());
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
@@ -685,8 +689,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     // 是否并发执行（0允许 1禁止）
                     job.setConcurrent("0");
                     // 状态（0正常 1暂停）
-                    job.setStatus("0");
-                    sysJobMapper.insertJob(job);
+                    job.setStatus("1");
+                    sysJobService.insertJob(job);
                     jobIdList.add(job.getJobId().toString());
                 } catch (Exception e) {
                     throw new RuntimeException("添加定时任务失败！");

@@ -126,13 +126,13 @@ export default {
 
     // .theme-light .el-scrollbar__wrap{background-color:white;}
     // .theme-light #app .sidebar-container{background-color: white;}
-    .theme-light,.theme-dark{
+    .theme-light,.theme-dark,.theme-blue{
         .el-scrollbar{
             .is-vertical{display: none;}
         }
         .index_menu{position: relative;
             .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
-            .el-icon-arrow-left{left:37%;color:white;}
+            .el-icon-arrow-left{left:48%;color:white;}
             .el-icon-arrow-right{right:-4%;color:white;}
             a{display: unset !important;}
         }
@@ -152,7 +152,7 @@ export default {
     }
     .theme-light{
         .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
-        .index_menu .el-icon-arrow-left{left:37%;color: #fff !important;;}
+        .index_menu .el-icon-arrow-left{left:48%;color: #fff !important;;}
         .index_menu .el-icon-arrow-right{right: -4% !important;;color: #fff !important;;}
     }
 
@@ -161,13 +161,30 @@ export default {
     // }
     .theme-dark #app .topNav_head .sidebar-container .theme-dark .is-active > .el-submenu__title,
     .theme-dark #app .topNav_head .sidebar-container .el-menu-item.is-active{
+        color: #ffdb82 !important;
+        // text-shadow: 1px 1px white;
+        background-image: url(../../../assets/cloudControl/navBg2.png) !important;
+        background-repeat: no-repeat;
+        background-position: 70% 52%;
+    }
+    .theme-dark #app .topNav_head .workbenchNavbar .router-link-active{
+       color: #ffdb82 !important;
+    //    text-shadow: 1px 1px white;
+       background-image: url(../../../assets/cloudControl/navBg2.png) !important;
+       background-repeat: no-repeat;
+       background-position: 100% 58%;
+       height: 72px;
+        line-height: 72px;
+    }
+    .theme-blue #app .topNav_head .sidebar-container .theme-blue .is-active > .el-submenu__title,
+    .theme-blue #app .topNav_head .sidebar-container .el-menu-item.is-active{
         color: #f19f39 !important;
         text-shadow: 1px 1px white;
         background-image: url(../../../assets/cloudControl/navBg.png) !important;
         background-repeat: no-repeat;
-        background-position: 52% 52%;
+        background-position: 70% 52%;
     }
-    .theme-dark #app .topNav_head .workbenchNavbar .router-link-active{
+    .theme-blue #app .topNav_head .workbenchNavbar .router-link-active{
        color: #f19f39 !important;
        text-shadow: 1px 1px white;
        background-image: url(../../../assets/cloudControl/navBg.png) !important;
@@ -183,7 +200,7 @@ export default {
         color: #ffdb82 !important;
         background-image: url(../../../assets/cloudControl/navBg2.png) !important;
         background-repeat: no-repeat;
-        background-position: 52% 52%;
+        background-position: 70% 52%;
         height: 72px;
         line-height: 72px;
     }
@@ -204,7 +221,7 @@ export default {
         text-align: left;
         position: absolute;
         top: 0;
-        left: 560px;
+        left: 540px;
         span {
             margin-left: 10px;
         }

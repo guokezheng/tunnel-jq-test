@@ -22,6 +22,9 @@
     background-color: #00598f;
   }
   #app {
+    .deviceIcon{
+      background: #1B4670 !important;
+    }
     .breadcrumbAppmainBox{
       background-color: #1B4670;
       padding: 10px;
@@ -567,10 +570,9 @@
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
       background: linear-gradient(177deg, #00ACED, #0079DB);
-      opacity: 0.8;
+      // opacity: 0.8;
       border-radius: 4px;
       color: #fff;
-      opacity: 0.8;
       border: none !important;
       // box-shadow: 0px 0px 10px #68B5FF;
       width: 160px;
@@ -993,7 +995,7 @@
       // width: 100px;
       color: #fff;
       background: linear-gradient(177deg, #00ACED, #0079DB);
-      opacity: 0.8;
+      // opacity: 0.8;
       border: none;
       text-align: center;
     border-radius: 2px;

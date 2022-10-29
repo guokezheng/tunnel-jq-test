@@ -14,6 +14,7 @@
           @change="changeSelection"
           clearable
           size="small"
+
         >
           <el-option
             v-for="(item, index) in eqTunnelData"
@@ -29,6 +30,7 @@
           placeholder="请选择预案类别"
           clearable
           size="small"
+
         >
           <el-option
             v-for="(item, index) in planCategory"
@@ -158,7 +160,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        :show-overflow-tooltip="true"
+        :show-overflow-tooltip='true'
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <!-- <template slot-scope="scope">
@@ -191,7 +193,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-show="scope.row.planFileId != null"
+            v-show="scope.row.planFileId != 'null'"
             icon="el-icon-link"
             size="mini"
             style="cursor: pointer; color: #39adff"
@@ -199,7 +201,7 @@
             @click="openFileDrawer(scope.row)"
             >点击查看
           </el-button>
-          <div v-show="scope.row.planFileId == null">无</div>
+          <div v-show="scope.row.planFileId == 'null'">无</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -491,6 +493,7 @@
         :model="reservePlanDrawForm"
         :rules="rules"
         label-width="120px"
+
       >
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
@@ -1405,6 +1408,12 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      
+      // this.$nextTick(() => {
+      //   this.$refs["addForm1"].clearValidate();
+      // });
+      this.resetForm("addForm1");
+
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
@@ -1426,13 +1435,14 @@ export default {
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
+
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&
           this.reservePlanDrawForm.strategyId != null
         ) {
           this.multipleSelectionIds =
-            this.reservePlanDrawForm.strategyId.split("；");
+            this.reservePlanDrawForm.strategyId.split(";");
         }
 
         let fileInfo = response.data.pFileList;
@@ -1446,12 +1456,12 @@ export default {
         //文件回显
       });
       // this.drawer = true;
-      this.$nextTick(() => {
-        this.$refs["form1"].resetFields();
-      });
-      this.$nextTick(() => {
-        this.$refs["form1"].clearValidate();
-      });
+      // this.$nextTick(() => {
+      //   this.$refs["form1"].resetFields();
+      // });
+      // this.$nextTick(() => {
+      //   this.$refs["form1"].clearValidate();
+      // });
       this.dialogFormVisible = true;
       this.title = "修改预案信息";
     },

@@ -120,8 +120,9 @@
                   v-for="(item, index) in imgUrl"
                   :key="index"
                   style="margin-top: 12px"
+                  v-if="item.pictureUrl"
                 >
-                  <el-checkbox :label="item.pictureUrl">
+                  <el-checkbox :label="item.pictureUrl" >
                     <div class="photo">
                       <img
                         :src="item.pictureUrl"
@@ -623,7 +624,7 @@ export default {
             trigger: "blur",
           },
         ],
-
+        
       };
     },
     divStyle: function () {
@@ -799,7 +800,7 @@ export default {
       });
       getTemplateContent(this.dataForm.id).then((data) => {
         this.templateContent = data.rows;
-
+        
         if (this.templateContent.length == 0) {
           this.templateContent.push({
             content: "",
@@ -840,11 +841,11 @@ export default {
         console.log(params)
         // 修改
         await editTemplate(this.dataForm).then((data) => {});
-
+		
         this.templateContent.forEach((e) => {
           e.img = e.imageName;
         });
-
+		
         var params = {
           templateContent: this.templateContent,
           templateId: this.dataForm.id,

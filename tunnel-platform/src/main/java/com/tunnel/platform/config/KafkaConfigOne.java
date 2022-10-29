@@ -68,8 +68,8 @@ public class KafkaConfigOne {
 //        props.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, maxRequestSize);
         props.put(ProducerConfig.BATCH_SIZE_CONFIG,batchSize);
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG,bufferMemory);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         return props;
     }
 

@@ -14,7 +14,6 @@
           @change="changeSelection"
           clearable
           size="small"
-
         >
           <el-option
             v-for="(item, index) in eqTunnelData"
@@ -30,7 +29,6 @@
           placeholder="请选择预案类别"
           clearable
           size="small"
-
         >
           <el-option
             v-for="(item, index) in planCategory"
@@ -160,7 +158,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        :show-overflow-tooltip='true'
+        :show-overflow-tooltip="true"
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <!-- <template slot-scope="scope">
@@ -1407,7 +1405,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.resetReservePlanDrawForm();
+      // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
       tunnelNames().then((res) => {
@@ -1428,7 +1426,6 @@ export default {
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
-
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&

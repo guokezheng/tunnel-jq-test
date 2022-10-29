@@ -2,8 +2,13 @@ package com.tunnel.platform.task;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.mapper.event.SdTriggerMapper;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +31,14 @@ public class StrategyTask {
      * @param strategyRlId
      */
     public void strategyParams(String strategyRlId) {
-        System.err.println("---------------------------------strategyRlId  "+strategyRlId);
-
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
         String[] split = sdStrategyRl.getEquipments().split(",");
         for (String devId : split){
             Map<String,Object> map = new HashMap<>();
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
-            map.put("controlType","3");
+            map.put("controlType",sdStrategy.getStrategyType());
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }
@@ -44,56 +48,54 @@ public class StrategyTask {
      */
 //    @Scheduled(fixedRate = 3000)
     public void triggerJob(){
-        System.err.println("---------------------------------triggerJob  正在执行");
-
-//        //触发器数据
-//        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getAllTrigger();
-//        Map<String,Object> map = new HashMap<>();
-//        triggerData.forEach(s->{
-//            String equipment = s.get("device_id").toString();
-//            String itemId = s.get("element_id").toString();
-//            String[] equipmentIds = equipment.split(",");
-//            for(String eq:equipmentIds){
-//                //redis取当前设备实时数据
-//                SdDeviceData deviceData = redisCache.getCacheMapValue("deviceData",eq+"-"+itemId);
-//                if(deviceData == null){
-//                    SdDeviceData sdDeviceData = new SdDeviceData();
-//                    sdDeviceData.setDeviceId(eq);
-//                    sdDeviceData.setItemId(Long.valueOf(itemId));
-//                    deviceData = SpringUtils.getBean(SdDeviceDataMapper.class).selectLastRecord(sdDeviceData);
-//                    if(deviceData == null){
-//                        continue;
-//                    }
-//                }
-//                BigDecimal realTimeData = new BigDecimal(deviceData.getData()).setScale(2, BigDecimal.ROUND_HALF_UP);
-//                BigDecimal compareValue = new BigDecimal((Integer)s.get("compare_value")).setScale(2, BigDecimal.ROUND_HALF_UP);
-//                String upState = s.get("upstate").toString();
-//                Integer comparePattern = (Integer)s.get("compare_pattern");
-//                //比较设备实时数据与触发值
-//                int compare = realTimeData.compareTo(compareValue);
-//                boolean isControl = false;
-//                switch (comparePattern){
-//                    //(0:>；1:>=；2:<；3:<=；4:==；5:!=；6:in；7:between；)
-//                    case 0 : isControl = compare == 1;break;
-//                    case 1 : isControl = compare == 1 || compare == 0;break;
-//                    case 2 : isControl = compare == -1;break;
-//                    case 3 : isControl = compare == -1 || compare == 0;break;
-//                    case 4 : isControl = compare == 0;break;
-//                    default: isControl = false;
-//                        break;
-//                }
-//                //下发设备
-//                if(isControl){
-//                    Arrays.stream(equipmentIds).forEach(eqId->{
-//                        map.put("devId",eqId);
-//                        map.put("state",upState);
-//                        map.put("controlType","3");
-//                        SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
-//                        map.clear();
-//                    });
-//                    break;
-//                }
-//            }
-//        });
+        //触发器数据
+        Map<String,Object> map = new HashMap<>();
+        List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getAllTrigger();
+        triggerData.forEach(s->{
+            String equipment = s.get("device_id").toString();
+            String itemId = s.get("element_id").toString();
+            String[] equipmentIds = equipment.split(",");
+            for(String eq:equipmentIds){
+                //redis取当前设备实时数据
+                SdDeviceData deviceData = redisCache.getCacheMapValue("deviceData",eq+"-"+itemId);
+                if(deviceData == null){
+                    SdDeviceData sdDeviceData = new SdDeviceData();
+                    sdDeviceData.setDeviceId(eq);
+                    sdDeviceData.setItemId(Long.valueOf(itemId));
+                    deviceData = SpringUtils.getBean(SdDeviceDataMapper.class).selectLastRecord(sdDeviceData);
+                    if(deviceData == null){
+                        continue;
+                    }
+                }
+                BigDecimal realTimeData = new BigDecimal(deviceData.getData()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal compareValue = new BigDecimal(s.get("compare_value").toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                String upState = s.get("upstate").toString();
+                Integer comparePattern = (Integer)s.get("compare_pattern");
+                //比较设备实时数据与触发值
+                int compare = realTimeData.compareTo(compareValue);
+                boolean isControl = false;
+                switch (comparePattern){
+                    //(0:>；1:>=；2:<；3:<=；4:==；5:!=；6:in；7:between；)
+                    case 0 : isControl = compare == 1; break;
+                    case 1 : isControl = compare == 1 || compare == 0; break;
+                    case 2 : isControl = compare == -1; break;
+                    case 3 : isControl = compare == -1 || compare == 0; break;
+                    case 4 : isControl = compare == 0; break;
+                    default: isControl = false;
+                        break;
+                }
+                //下发设备
+                if(isControl){
+                    Arrays.stream(equipmentIds).forEach(eqId->{
+                        map.put("devId",eqId);
+                        map.put("state",upState);
+                        map.put("controlType",s.get("strategy_type").toString());
+                        SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
+                        map.clear();
+                    });
+                    break;
+                }
+            }
+        });
     }
 }

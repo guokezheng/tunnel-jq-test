@@ -1172,10 +1172,10 @@
       },
       /** 下载模板操作 */
       importTemplate() {
-        exportDevicesTemplate()
-          .then((response) => {
-            this.$download.name(response.msg);
-          });
+       /* exportDevicesTemplate()*/
+          /*.then((response) => {*/
+            this.$download.name('设备数据.xlsx',false);
+          /*});*/
       },
       insertEqControlPointAddress() {
         this.$refs["instructionForm"].validate((valid) => {

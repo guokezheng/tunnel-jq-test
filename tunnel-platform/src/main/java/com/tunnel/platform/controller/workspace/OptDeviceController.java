@@ -26,9 +26,7 @@ public class OptDeviceController {
     @PostMapping(value = "/optSingleDevice")
     public AjaxResult optSingleDevice(@RequestBody Map<String, Object> params) {
         Integer workState = 0;
-        if ("GLZ".equals(deploymentType)) {
-            workState = sdDeviceControlService.controlDevices(params);
-        } else {
+        if ("GSY".equals(deploymentType)) {
             workState = sdOptDeviceService.optSingleDevice(params);
         }
         return AjaxResult.success(workState);

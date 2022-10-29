@@ -59,7 +59,6 @@
                b.tunnel_name
         from sd_tunnel_subarea a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
-
         <where>
             1=1
             <if test="params.deptId != null and params.deptId != ''">
@@ -71,6 +70,7 @@
             <if test="pileMax != null and pileMax != ''">and a.pile_max = #{pileMax}</if>
             <if test="pileMin != null and pileMin != ''">and a.pile_min = #{pileMin}</if>
         </where>
+        order by a.s_id
     </select>
 
     <select id="selectSdTunnelSubareaBySId" parameterType="Long" resultMap="SdTunnelSubareaResult">

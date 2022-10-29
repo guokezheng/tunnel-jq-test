@@ -19,6 +19,7 @@ import com.tunnel.business.service.event.ISdReserveProcessService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,11 +97,17 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
         List<SdReserveProcess> list = new ArrayList<>();
+        //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
         for (SdReserveProcess process : sdReserveProcesses.getSdReserveProcesses()) {
-            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getHandleStrategyList()[1]);
+            Long[] strategyIds = process.getHandleStrategyList();
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(strategyIds[1]);
+            if(rlList.isEmpty()){
+                continue;
+            }
             SdReserveProcess reserveProcess = new SdReserveProcess();
             reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
             reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
@@ -112,6 +119,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             list.add(reserveProcess);
         }
         int result = -1;
+        if(list.isEmpty()){
+            throw new RuntimeException("无效数据、策略添加失败。");
+        }
         result = sdReserveProcessMapper.batchSdReserveProcess(list);
         return result;
     }
@@ -177,6 +187,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         List<SdReserveProcess> sdReserveProcesses = sdReserveProcessMapper.selectSdReserveProcessByRid(RId);
         for (SdReserveProcess process : sdReserveProcesses) {
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            if(rlList.isEmpty()){
+                continue;
+            }
             Long[] list = new Long[2];
             list[0] = Long.valueOf(rlList.get(0).getEqTypeId());
             list[1] = process.getStrategyId();

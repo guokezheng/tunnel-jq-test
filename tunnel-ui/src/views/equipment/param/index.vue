@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container deviceIcon">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="设备id" prop="equipmentId">
         <el-input
@@ -11,12 +11,35 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['inductionlamp:statusParam:add']"
+        >新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['inductionlamp:statusParam:edit']"
+        >修改</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['inductionlamp:statusParam:remove']"
+        >删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -49,23 +72,25 @@
           v-hasPermi="['inductionlamp:statusParam:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          :loading="exportLoading"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['inductionlamp:statusParam:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
+     <el-col :span="1.5">
+       <el-button
+         type="warning"
+         plain
+         icon="el-icon-download"
+         size="mini"
+         :loading="exportLoading"
+         @click="handleExport"
+         v-hasPermi="['inductionlamp:statusParam:export']"
+       >导出</el-button>
+     </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="paramList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="paramList" @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName" max-height="760"
+        >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备id" align="center" prop="equipmentId" />
+      <el-table-column label="设备id" align="center" prop="equipmentId" :show-overflow-tooltip="true"/>
       <el-table-column label="模式名称" align="center" prop="modeName" />
       <el-table-column label="模式编号" align="center" prop="modeCode" />
       <el-table-column label="光照开始值" align="center" prop="illuminationStart" />
@@ -83,20 +108,18 @@
       <el-table-column label="指令编码" align="center" prop="instructionsCode" />
       <el-table-column label="亮度参数" align="center" prop="brightnessParam" />
       <el-table-column label="次/min" align="center" prop="timeSecond" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="120">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
+            class="tableBlueButtton"
             v-hasPermi="['inductionlamp:statusParam:edit']"
           >修改</el-button>
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
             @click="handleDelete(scope.row)"
+            class="tableDelButtton"
             v-hasPermi="['inductionlamp:statusParam:remove']"
           >删除</el-button>
         </template>
@@ -343,6 +366,14 @@ export default {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
+    },
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
+      } else {
+      return "tableOddRow";
+      }
     },
     /** 导出按钮操作 */
     // handleExport() {

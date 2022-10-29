@@ -38,7 +38,7 @@
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px" class="formAddClass">+</span>
+        <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="deviation">
           <el-input
             style="width: 100px"
@@ -63,7 +63,7 @@
             <template slot="prepend">K</template>
           </el-input>
         </el-form-item>
-        <span style="margin: 0 5px" class="formAddClass">+</span>
+        <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="endDeviation">
           <el-input
             style="width: 100px"
@@ -75,11 +75,11 @@
           />
         </el-form-item>
       </el-form-item>
-      <!--      <el-form-item label="状态" prop="state">-->
-      <!--        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">-->
-      <!--          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
+<!--      <el-form-item label="状态" prop="state">-->
+<!--        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">-->
+<!--          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
+<!--        </el-select>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -157,7 +157,7 @@
       max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
+<!--      <el-table-column label="物资编号" align="center" prop="materialId" />-->
       <el-table-column label="物资名称" align="center" prop="materialName" />
       <el-table-column
         label="物资类型"
@@ -232,9 +232,9 @@
             style="padding-bottom: 60px"
           >
             <el-col :span="6">
-              <el-form-item label="" style="color: green">
+              <el-form-item label="" style="color: green;">
                 <template>
-                  <div v-if="item.type === '1'">
+                  <div v-if="item.type === '1' ">
                     <span class="kcczMessage">入库:</span>{{ item.changeStock }}
                   </div>
                   <div v-else-if="item.type === '2'">
@@ -285,9 +285,9 @@
     <!-- 添加/修改应急资源对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <!--        <el-form-item label="物资编号" prop="materialId">-->
-        <!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
-        <!--        </el-form-item>-->
+<!--        <el-form-item label="物资编号" prop="materialId">-->
+<!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
+<!--        </el-form-item>-->
         <el-form-item label="物资名称" prop="materialName">
           <el-input v-model="form.materialName" placeholder="请输入物资名称" />
         </el-form-item>
@@ -359,8 +359,8 @@
             placeholder="请输入保质期，例：3"
             style="display: table"
           >
-            <template slot="append">月</template>
-          </el-input>
+           <template slot="append">月</template>
+         </el-input>
         </el-form-item>
         <el-form-item label="生产日期" prop="dateOfManufacture">
           <el-date-picker
@@ -436,7 +436,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row style="margin-top: 10px">
+          <el-row style="margin-top: 10px;">
             <el-col :span="12">
               <el-form-item
                 label="库存数量"
@@ -447,12 +447,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="单位" prop="company" style="width: 240px">
+              <el-form-item label="单位" prop="company" style="width: 240px;">
                 <el-input v-model="formDetail.company" disabled />
               </el-form-item>
             </el-col>
           </el-row>
-          <el-form-item label="仓库位置" prop="position" style="width: 240px">
+          <el-form-item label="仓库位置" prop="position" style="width: 240px;">
             <el-input v-model="formDetail.position" disabled />
           </el-form-item>
         </fieldset>
@@ -521,10 +521,10 @@ import {
   addMaterial,
   updateMaterial,
   getCrkDetailById,
-  updateMaterialCrk,
+  updateMaterialCrk
 } from "@/api/system/material";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { number } from "echarts";
+import { number } from 'echarts';
 var type = "";
 var varid = "";
 export default {
@@ -779,7 +779,7 @@ export default {
     openCrkDrawer(row) {
       this.drawer = true;
       this.crkFormDetail.materialId = row.id; //通过物资id去查询出入库详情信息
-      getCrkDetailById(this.crkFormDetail).then((response) => {
+      getCrkDetailById(this.crkFormDetail).then(response => {
         if (response.code == 200) {
           this.list = response.data;
         }
@@ -824,25 +824,18 @@ export default {
         if (obj.endStation < obj.station) {
           return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'");
         }
-        obj.deviation == undefined ||
-        obj.deviation == null ||
-        obj.deviation == ""
-          ? (obj.deviation = 0)
-          : "";
-        obj.endDeviation == undefined ||
-        obj.endDeviation == null ||
-        obj.endDeviation == ""
-          ? (obj.endDeviation = 0)
-          : "";
-        if (obj.endStation == obj.station) {
-          if (obj.endDeviation <= obj.deviation) {
-            return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'");
+        obj.deviation == undefined || obj.deviation ==null || obj.deviation == '' ? obj.deviation = 0 : ''
+        obj.endDeviation == undefined || obj.endDeviation ==null || obj.endDeviation == '' ? obj.endDeviation = 0 : ''
+        if(obj.endStation == obj.station) {
+          if(obj.endDeviation <= obj.deviation ) {
+          this.loading = false;
+            return this.$modal.msgWarning("'结束桩号'要大于'开始桩号'")
           }
         }
-        params.station = "K" + "." + obj.station + "." + obj.deviation;
-        params.endStation = "K" + "." + obj.endStation + "." + obj.endDeviation;
+        params.station = 'K' + '.' +  obj.station + '.' + obj.deviation
+        params.endStation = 'K' + '.' +  obj.endStation + '.' + obj.endDeviation
       }
-      listMaterial(params).then((response) => {
+      listMaterial(params).then(response => {
         this.materialList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -880,7 +873,7 @@ export default {
       this.reset();
     },
     resetMaterial() {
-      this.$refs.crkFormDetail.resetFields();
+      this.$refs.crkFormDetail.resetFields()
     },
     // 表单重置
     reset() {
@@ -898,26 +891,26 @@ export default {
         state: undefined,
         createTime: undefined,
         updateTime: undefined,
-        price: undefined,
+        price: undefined
       };
       this.resetForm("form");
       this.crkFormRecord = {
         stock: undefined,
-        remark: undefined,
+        remark: undefined
       };
       this.resetForm("crkFormRecord");
     },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.materialList = [];
+      this.materialList = []
 
       this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
-      this.$refs.queryForm.resetFields();
+      this.$refs.queryForm.resetFields()
       this.queryForm = {
         pageNum: 1,
         pageSize: 10,
@@ -935,14 +928,14 @@ export default {
         deviation: null,
         endStation: null,
         endDeviation: null,
-      };
+      }
       this.handleQuery();
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map((item) => item.id);
-      this.single = selection.length !== 1;
-      this.multiple = !selection.length; //非多个禁用
+      this.ids = selection.map(item => item.id)
+      this.single = selection.length !== 1
+      this.multiple = !selection.length //非多个禁用
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -954,8 +947,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdateMaterial(row) {
       this.reset();
-      const id = row.id || this.ids;
-      getMaterial(id).then((response) => {
+      const id = row.id || this.ids
+      getMaterial(id).then(response => {
         this.form = response.data;
         this.open = true;
         this.title = "修改应急资源";
@@ -966,10 +959,10 @@ export default {
     submitForm() {
       // if(this.submitBtnLoading) return
       // this.submitBtnLoading = true
-      this.$refs["form"].validate(async (valid) => {
+      this.$refs["form"].validate(async valid => {
         if (valid) {
           if (this.form.id != undefined) {
-            await updateMaterial(this.form).then((response) => {
+            await updateMaterial(this.form).then(response => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
@@ -977,7 +970,7 @@ export default {
               }
             });
           } else {
-            await addMaterial(this.form).then((response) => {
+            await addMaterial(this.form).then(response => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");
                 this.open = false;
@@ -999,7 +992,7 @@ export default {
       this.rules.position = {};
       this.rules.price = {};
       this.reset();
-      getMaterial(rkid).then((response) => {
+      getMaterial(rkid).then(response => {
         this.formDetail = response.data;
         this.openCrkForm = true;
         if (this.flag == 1) {
@@ -1010,17 +1003,17 @@ export default {
       });
     },
     /** 出入库提交按钮 */
-    submitCrkFormRecord: function () {
+    submitCrkFormRecord: function() {
       this.crkFormRecord.materialId = this.formDetail.id;
       this.crkFormRecord.type = this.flag;
-      this.$refs["crkFormRecord"].validate((valid) => {
+      this.$refs["crkFormRecord"].validate(valid => {
         if (valid) {
           if (this.flag == 1) {
             if (this.crkFormRecord.changeStock == 0) {
               this.$modal.msgError("请重新输入入库数量");
               return;
             }
-            updateMaterialCrk(this.crkFormRecord).then((response) => {
+            updateMaterialCrk(this.crkFormRecord).then(response => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("入库成功");
                 this.openCrkForm = false;
@@ -1029,15 +1022,11 @@ export default {
             });
           }
           if (this.flag == 2) {
-            if (
-              this.crkFormRecord.changeStock > this.formDetail.inventoryQuantity
-            ) {
-              this.$modal.msgError(
-                "当前库存不足，无法完成库存操作，请重新选择出库数量"
-              );
+            if (this.crkFormRecord.changeStock > this.formDetail.inventoryQuantity) {
+              this.$modal.msgError("当前库存不足，无法完成库存操作，请重新选择出库数量");
               return;
             }
-            updateMaterialCrk(this.crkFormRecord).then((response) => {
+            updateMaterialCrk(this.crkFormRecord).then(response => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("出库成功");
                 this.openCrkForm = false;
@@ -1045,6 +1034,7 @@ export default {
               }
             });
           }
+
         }
       });
     },
@@ -1052,29 +1042,22 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$confirm("是否确认删除?", "警告", {
+      this.$confirm('是否确认删除?', "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-          return delMaterial(ids);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        })
-        .catch(function () {});
+        type: "warning"
+      }).then(function() {
+        return delMaterial(ids);
+      }).then(() => {
+        this.getList();
+        this.$modal.msgSuccess("删除成功");
+      }).catch(function() {});
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download(
-        "system/material/export",
-        {
-          ...this.queryParams,
-        },
-        `system_material.xlsx`
-      );
+      this.download('system/material/export', {
+        ...this.queryParams
+      }, `system_material.xlsx`)
     },
     //关闭drawer
     materialFormClose() {
@@ -1083,10 +1066,10 @@ export default {
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
       } else {
-        return "tableOddRow";
+      return "tableOddRow";
       }
     },
     // // 查询参数-桩号-获取焦点
@@ -1142,7 +1125,7 @@ export default {
     //   this.queryStationVisible = false
     //   this.$refs.queryStationForm.resetFields()
     // }
-  },
+  }
 };
 </script>
 <style scoped>
@@ -1154,6 +1137,7 @@ export default {
 h3 {
   text-decoration: underline;
   color: red;
+
 }
 
 .el-input {
@@ -1167,9 +1151,9 @@ h3 {
   background-color: #1890ff;
   border-color: #1890ff;
 
-  .el-message__content {
-    color: #ffffff;
-  }
+.el-message__content {
+  color: #ffffff;
+}
 }
 
 .el-drawer__header {
@@ -1221,7 +1205,7 @@ h3 {
     vertical-align: top;
 } */
 
-.dateClass {
+.dateClass{
   width: 100%;
   display: inline-table;
   vertical-align: middle;

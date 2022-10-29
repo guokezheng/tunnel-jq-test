@@ -39,7 +39,7 @@ public class KafkaReadListenToTunnelEvent {
      * @param consumer
      */
 
-    @KafkaListener(topics = {"wq_tunnelEvent"})
+    @KafkaListener(topics = {"wq_tunnelEvent"}, containerFactory = "kafkaTwoContainerFactory")
     public void tunnelEventData(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         /**
          * {"timeStamp":"2022-10-27 14:08:53.243",

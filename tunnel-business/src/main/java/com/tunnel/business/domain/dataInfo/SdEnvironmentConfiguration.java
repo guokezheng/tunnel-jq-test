@@ -42,7 +42,7 @@ public class SdEnvironmentConfiguration extends BaseEntity {
     /**
      * 环境类型
      */
-    @Excel(name = "环境类型")
+    @Excel(name = "环境类型",dictType = "environment")
     @ApiModelProperty("环境类型")
     private String environmentType;
 
@@ -63,7 +63,7 @@ public class SdEnvironmentConfiguration extends BaseEntity {
     /**
      * 方向
      */
-    @Excel(name = "方向")
+    @Excel(name = "方向",dictType = "direction")
     @ApiModelProperty("方向")
     private String direction;
     private List<SdEquipmentStateIconFile> iFileList;

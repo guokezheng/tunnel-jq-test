@@ -274,7 +274,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;margin: 0 auto;">
+          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;margin: 0 auto;" class="environmentPicDialog">
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
@@ -372,7 +372,7 @@ export default {
       // 遮罩层
       loading: true,
       fileList: [],
-       dialogImageUrl: "",
+      dialogImageUrl: "",
       fileData: "", // 文件上传数据（多文件合一）
       dialogVisible: false,
       // 导出遮罩层
@@ -589,7 +589,7 @@ export default {
           }
         });
       }
-
+      
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -703,4 +703,9 @@ export default {
 .disabled .el-button--success.is-plain {
     display: none !important;
 }
+.environmentPicDialog .el-dialog__headerbtn{
+    top: 10px !important;
+  }
+
 </style>
+

@@ -32,6 +32,7 @@ spring:
         bootstrap-servers: 10.3.16.40:9092
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        max-poll-records: 500
       # 监听
   #    listener:
   #      # record：当每一条记录被消费者监听器（ListenerConsumer）处理之后提交
@@ -68,6 +69,7 @@ spring:
         auto-offset-reset: earliest  #kafka出现错误重启后，会找到未消费的offset继续消费
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        max-poll-records: 5
         security:
           protocol: SASL_PLAINTEXT
           properties:

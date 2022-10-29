@@ -106,7 +106,7 @@ export default {
   .el-submenu__title{height:50px;line-height:50px;}
   .el-submenu .el-menu{flex-flow: column;}
   .topSubmenu .el-icon-arrow-down:before{content:unset;}
-  .theme-dark,.theme-light{
+  .theme-dark,.theme-light,.theme-blue{
     .nest-menu{
       .el-menu-item{
         .svg-icon{margin:0 10px;}

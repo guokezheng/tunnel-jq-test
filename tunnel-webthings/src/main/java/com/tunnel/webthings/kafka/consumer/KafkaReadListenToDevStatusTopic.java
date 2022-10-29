@@ -52,7 +52,7 @@ public class KafkaReadListenToDevStatusTopic {
      * @param acknowledgment
      * @param consumer
      */
-    @KafkaListener(topics = {"wq_devStatusTopic"})
+    @KafkaListener(topics = {"wq_devStatusTopic"}, containerFactory = "kafkaTwoContainerFactory")
     public void devStatusData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         log.info("{}", record.value());
         if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GSY")) {

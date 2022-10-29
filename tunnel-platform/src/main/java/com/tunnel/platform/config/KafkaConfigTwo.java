@@ -14,6 +14,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class KafkaConfigTwo {
     private String groupId;
     @Value("${spring.kafka.wulian.consumer.auto-offset-reset}")
     private String offset;
+    @Value("${spring.kafka.wulian.consumer.max-poll-records}")
+    private String maxPollRecordes;
 //    @Value("${spring.kafka.wulian.producer.linger-ms}")
 //    private Integer lingerMs;
 //    @Value("${spring.kafka.wulian.producer.max-request-size}")
@@ -51,6 +54,7 @@ public class KafkaConfigTwo {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
 
@@ -82,10 +86,11 @@ public class KafkaConfigTwo {
         props.put(ConsumerConfig.GROUP_ID_CONFIG,groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put("session.timeout.ms", 3000000);
+        props.put("max.poll.records", maxPollRecordes);
+        props.put("session.timeout.ms", 30000);
         props.put("security.protocol", "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021'");
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';");
         return props;
     }
 }

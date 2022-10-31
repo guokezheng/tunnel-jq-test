@@ -78,7 +78,7 @@
       </div>
     </el-dialog>
     <!--设备 选择对话框-->
-    <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="equipmentVisible" width="540px"
+    <el-dialog v-dialogDrag class="equipment-dialog" :title="title" :visible.sync="equipmentVisible" width="560px"
       append-to-body>
       <div class="dialog-content">
         <div v-for="item in equipmentList" :key="item.id">
@@ -107,7 +107,7 @@
       </div>
     </el-dialog>
     <!--环境配置 选择对话框-->
-    <el-dialog v-dialogDrag class="equipment-dialog" title="环境配置" :visible.sync="EnvironmentVisible" width="540px"
+    <el-dialog v-dialogDrag class="equipment-dialog" title="环境配置" :visible.sync="EnvironmentVisible" width="560px"
       append-to-body>
       <div class="dialog-content">
         <div v-for="(items,index) in EnvironmentList[Environmentflag]" :key="index">
@@ -137,7 +137,7 @@
     </el-dialog>
     <!--风向等设备选择对话框-->
     <el-dialog v-dialogDrag class="equipment-dialog batch-table" :title="title" :visible.sync="paramVisible"
-      width="540px" append-to-body>
+      width="560px" append-to-body>
       <el-form ref="paramFrom" :rules="rules" :model="paramFrom" label-width="80px" label-position="left" size="mini"
         hide-required-asterisk>
         <el-table ref="multipleTable" :data="equipmentList" tooltip-effect="dark" style="width: 100%" max-height="400"
@@ -1909,6 +1909,8 @@ input {
     // background-color: #304156;
     padding-top: 20px;
     padding-bottom: 10px;
+    height: 600px;
+    overflow-y: auto;
   }
 
   .el-dialog__footer {

@@ -550,14 +550,14 @@ export default {
           //设备图标
           let img1 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth,
+            list[i].position.left + iconWidth - 6,
             list[i].position.top + iconHeight,
             iconWidth,
             iconHeight
           );
           let img2 = that.svg.paper.image(
             list[i].url[1],
-            list[i].position.left + iconWidth,
+            list[i].position.left + iconWidth +16,
             list[i].position.top + iconHeight,
             iconWidth,
             iconHeight
@@ -942,7 +942,7 @@ export default {
           if (url.length > 1) {
             let img1 = null;
             let img2 = null;
-            if (item.eqType == 2 ){
+            if (item.eqType == 2 || item.eqType == 1){
               img1 = this.svg.paper.image(
                 url[0],
                 8 + iconWidth,

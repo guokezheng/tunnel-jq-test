@@ -210,7 +210,7 @@
         </el-form-item>
         <el-form-item label="设备类型代号" prop="typeAbbr">
           <el-input v-model="form.typeAbbr" placeholder="请输入设备类型代号" />
-          <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div>
+          <!-- <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div> -->
         </el-form-item>
         <el-form-item label="是否可控" prop="isControl">
                   <el-select v-model="form.isControl" placeholder="请选择是否可控">
@@ -327,16 +327,19 @@ export default {
           ],
         typeAbbr:[
           { required: true, message: "设备代号不能为空", trigger: "blur" },
-          // {
-          //   pattern:/^\w+$/,
-          //   message: "只能输入数字、字母、下划线",
-          // },
+          {
+            pattern:/^\w+$/,
+            message: "只能输入数字、字母、下划线",
+          },
         ],
           iconWidth: [
-              { required: true, message: "图标宽度不能为空", trigger: "blur" }
+              { required: true, message: "图标宽度不能为空", trigger: "blur" },
+              { pattern: /^[1-9]\d*$/, message: '请输入0以上正整数', trigger: 'blur' },
+
           ],
           iconHeight: [
-              { required: true, message: "图标高度不能为空", trigger: "blur" }
+              { required: true, message: "图标高度不能为空", trigger: "blur" },
+              { pattern: /^[1-9]\d*$/, message: '请输入0以上正整数', trigger: 'blur' },
           ],
           bigType: [
               { required: true, message: "设备大类不能为空", trigger: 'change' }

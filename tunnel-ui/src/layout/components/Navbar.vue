@@ -748,8 +748,8 @@ export default {
 .theme-dark .main-container .white_icon{color: #fff !important}
 .theme-dark-navbar .white_icon{color: white!important;}
 .theme-blue .white_icon{color: white!important;}
-.theme-blue .el-icon-bell{color:white;font-size:21px;}
-.theme-dark .el-icon-bell{color:white;font-size:21px;}
+/* .theme-blue .el-icon-bell{color:white;font-size:21px;} */
+/* .theme-dark .el-icon-bell{color:white;font-size:21px;} */
 .theme-dark #app .sidebar-container .theme-dark .el-submenu .el-menu-item:hover{background-color:unset;}
 .theme-light .navbar .right-menu .right-menu-item{color: white!important;}
 ::v-deep .el-dialog__body{

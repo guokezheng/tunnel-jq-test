@@ -132,7 +132,7 @@ export default {
         }
         .index_menu{position: relative;
             .el-icon-arrow-left,.el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
-            .el-icon-arrow-left{left:48%;color:white;}
+            .el-icon-arrow-left{left:47%;color:white;}
             .el-icon-arrow-right{right:-4%;color:white;}
             a{display: unset !important;}
         }
@@ -152,7 +152,7 @@ export default {
     }
     .theme-light{
         .index_menu .el-icon-arrow-left,.index_menu .el-icon-arrow-right{position: absolute;top:29px;font-size:16px;cursor: pointer;}
-        .index_menu .el-icon-arrow-left{left:48%;color: #fff !important;;}
+        .index_menu .el-icon-arrow-left{left:47%;color: #fff !important;;}
         .index_menu .el-icon-arrow-right{right: -4% !important;;color: #fff !important;;}
     }
 
@@ -221,7 +221,7 @@ export default {
         text-align: left;
         position: absolute;
         top: 0;
-        left: 540px;
+        left: 510px;
         span {
             margin-left: 10px;
         }

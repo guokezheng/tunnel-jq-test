@@ -5,7 +5,7 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
-        
+
         <el-row
           class="menu-b"
           style="display: flex; align-items: center"
@@ -141,7 +141,7 @@
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
           style="position: relative;left:2%;"
-         
+
         >
         <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -544,7 +544,7 @@
               <span>{{ item.strategy_name }} </span>
               <el-switch
                 v-model="item.strategy_state"
-                
+
                 active-value="0"
                 inactive-value="1"
                 @change = "timStrategySwitch(item)"
@@ -851,7 +851,7 @@
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
-        
+
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column
@@ -3459,8 +3459,9 @@ export default {
       batchControlCarFinger(param).then((res) => {
         console.log(res);
         if(res.data == 0){
-      this.$modal.msgWarning("控制失败");
-
+          this.$modal.msgWarning("控制失败");
+        }else if (res.data == 1) {
+          this.$modal.msgSuccess("控制成功");
         }
       });
     },
@@ -3608,7 +3609,7 @@ export default {
         console.log(this.timStrategyList, "this.timStrategyList");
       });
       }
-      
+
     },
     isDrawerC() {
       this.drawerCVisible = true;
@@ -5431,7 +5432,7 @@ export default {
                       }
                     }
                     }
-                    
+
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -7938,11 +7939,11 @@ input {
       height: 22px;
       border: none;
     }
-  } 
+  }
   .el-table{
     padding: 0 15px;
     margin-bottom: 60px;
-   
+
   }
 }
 ::v-deep .eventDiglog .el-button--medium {

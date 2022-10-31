@@ -1,12 +1,13 @@
 package com.tunnel.platform.service;
 
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.config.GLZInfoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,19 +39,9 @@ public class SdOptDeviceService {
         //接口地址
         String url = host + "/workspace/commonControl";
         //String url = "http://localhost:8000/workspace/commonControl";
-
-        //设置请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        //请求方式
-        HttpMethod method = HttpMethod.POST;
-        //将请求头部和参数合成一个请求
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(params, headers);
-        //执行HTTP请求
-        ResponseEntity<Map> responseEntity = restTemplate.exchange(url, method, requestEntity, Map.class);
-
-        Integer controlState = (Integer) responseEntity.getBody().get("controlState");
-        return controlState;
+        String jsonObject = JSONObject.toJSONString(params);
+        String result = HttpUtil.post(url, jsonObject);
+        return Integer.parseInt(result);
     }
 
     public String getGlzHost(String deptId) {

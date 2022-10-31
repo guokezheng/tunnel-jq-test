@@ -232,7 +232,7 @@ public class workspaceController extends BaseController {
         String operIp = (String) params.get("operIp");
         Assert.hasText(devId, "设备参数{devId}必传");
         Assert.hasText(state, "设备控制状态参数{state}必传");
-        Assert.hasText(operIp, "指令发送方IP参数{operIp}必传");
+        Assert.hasText(operIp, "IP参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
     }

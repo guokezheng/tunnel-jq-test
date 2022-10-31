@@ -757,9 +757,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Override
     public String autoId(String tunnelId, Integer typeId) {
-        if (typeId == 1) {
-            return null;
-        }
         //所有隧道类型
         List<SdEquipmentType> equipmentTypes = sdDevicesMapper.selectList();
         //当前设备类型的设备id 如果为null则该设备没添加
@@ -778,7 +775,13 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             List<Integer> integerList = list.stream().map(
                     f -> {
                         int i = f.lastIndexOf("-");
-                        int length = f.length();
+                        int k = f.indexOf(" ");
+                        int length = 0;
+                        if(k > 0){
+                            length = k;
+                        }else {
+                            length = f.length();
+                        }
                         String s = f.substring(i + 1, length);
                         return Integer.parseInt(s);
                     }

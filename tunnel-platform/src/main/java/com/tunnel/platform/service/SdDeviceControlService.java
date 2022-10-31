@@ -1,6 +1,8 @@
 package com.tunnel.platform.service;
 
 import cn.hutool.json.JSONObject;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -59,6 +61,7 @@ public class SdDeviceControlService {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return 1;
         }
@@ -88,104 +91,8 @@ public class SdDeviceControlService {
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType(controlType);
-        int controlState = 0;
-        String fireMark = "";
-        //控制车指
-        if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
-            }
-            controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"cz");
-            //控制诱导灯
-        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
-            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
-            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
-            }
-            String brightness = map.get("brightness").toString();
-            String frequency = map.get("frequency").toString();
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
-            data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
-            }
-            controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            states[1] = brightness;
-            states[2] = frequency;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
-            //控制疏散标志
-        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
-            if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
-            } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
-            } else if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
-            }
-            fireMark = map.get("fireMark").toString();
-            String brightness = map.get("brightness").toString();
-            String frequency = map.get("frequency").toString();
-            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
-            data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-            if (data.size() > 0) {
-                sdOperationLog.setBeforeState(data.get(0).getData());
-            }
-            controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
-            sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            states[1] = brightness;
-            states[2] = frequency;
-            states[3] = fireMark;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
-        }
-        sdOperationLogService.insertSdOperationLog(sdOperationLog);
-        return controlState;
-    }
-
-
-    public Integer controlDevices222(Map<String, Object> map) {
-        if (map == null || map.isEmpty()) {
-            //当前设备控制参数为空，直接返回
-            log.error("当前设备控制参数为空");
-            return 0;
-        }
-        //控制车指
-        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备，请联系管理员");
-        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
-        } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
-        }
-        String devId = map.get("devId").toString();
-        String state = map.get("state").toString();
-        String controlType = map.get("controlType").toString();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        //获取当前设备状态
-        SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(devId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
-        List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-        //添加操作记录
-        SdOperationLog sdOperationLog = new SdOperationLog();
-        sdOperationLog.setEqTypeId(sdDevices.getEqType());
-        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
-        sdOperationLog.setEqId(sdDevices.getEqId());
-        sdOperationLog.setCreateTime(new Date());
-        sdOperationLog.setOperationState(state);
-        sdOperationLog.setControlType(controlType);
+        // TODO: 2022/10/31 参数校验
+        sdOperationLog.setOperIp(map.get("operIp").toString());
         int controlState = 0;
         String fireMark = "";
         //控制车指

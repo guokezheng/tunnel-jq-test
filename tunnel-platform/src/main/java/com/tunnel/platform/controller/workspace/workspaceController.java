@@ -4,6 +4,8 @@ import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -84,6 +86,7 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success(1);
         }
@@ -105,12 +108,15 @@ public class workspaceController extends BaseController {
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
+        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
+        sdOperationLog.setOperIp(ip);
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
@@ -129,6 +135,7 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success();
         }
@@ -165,6 +172,7 @@ public class workspaceController extends BaseController {
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
@@ -221,10 +229,11 @@ public class workspaceController extends BaseController {
         Assert.notEmpty(params, "控制设备参数为空");
         String devId = (String) params.get("devId");
         String state = (String) params.get("state");
+        String operIp = (String) params.get("operIp");
         Assert.hasText(devId, "设备参数{devId}必传");
         Assert.hasText(state, "设备控制状态参数{state}必传");
-
-        Integer controlState  = sdDeviceControlService.controlDevices(params);
+        Assert.hasText(operIp, "指令发送方IP参数{operIp}必传");
+        Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
     }
 

@@ -87,7 +87,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSdOperationLog" parameterType="SdOperationLog" useGeneratedKeys="true" keyProperty="id">
         insert into sd_operation_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
-
         	<if test="eqTypeId != null">eq_type_id,</if>
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="userName != null">user_name,</if>
@@ -103,9 +102,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="controlType != null">control_type,</if>
             <if test="state != null">state,</if>
             <if test="description != null">description,</if>
-            </trim>
-        	<trim prefix="values (" suffix=")" suffixOverrides=",">
-
+            <if test="operIp != null and operIp != ''">oper_ip</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqTypeId != null">#{eqTypeId},</if>
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="userName != null">#{userName},</if>
@@ -121,7 +120,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="controlType != null">#{controlType},</if>
             <if test="state != null">#{state},</if>
             <if test="description != null">#{description},</if>
-            </trim>
+            <if test="operIp != null and operIp != ''">#{operIp},</if>
+        </trim>
     </insert>
 
     <update id="updateSdOperationLog" parameterType="SdOperationLog">

@@ -4,6 +4,8 @@ import cn.hutool.json.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -105,6 +107,8 @@ public class workspaceController extends BaseController {
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
+        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
+        sdOperationLog.setOperIp(ip);
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
@@ -165,6 +169,8 @@ public class workspaceController extends BaseController {
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
+        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
+        sdOperationLog.setOperIp(ip);
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }

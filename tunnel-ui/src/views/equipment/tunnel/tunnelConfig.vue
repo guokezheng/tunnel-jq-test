@@ -940,20 +940,39 @@ export default {
             "font-size": 12,
           });
           if (url.length > 1) {
-            let img1 = this.svg.paper.image(
-              url[0],
-              10 + iconWidth,
-              0,
-              iconWidth,
-              iconHeight
-            );
-            let img2 = this.svg.paper.image(
-              url[1],
-              10 + iconWidth,
-              0,
-              iconWidth,
-              iconHeight
-            );
+            let img1 = null;
+            let img2 = null;
+            if (item.eqType == 2 ){
+              img1 = this.svg.paper.image(
+                url[0],
+                8 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
+              img2 = this.svg.paper.image(
+                url[1],
+                26 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
+            }else{
+              img1 = this.svg.paper.image(
+                url[0],
+                10 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
+              img2 = this.svg.paper.image(
+                url[1],
+                10 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
+            }
             img.push(
               this.svg.paper.g(r, t, img2, img1).drag().attr({
                 id: item.eqId,
@@ -969,17 +988,49 @@ export default {
               // let num = iconWidth>=29?-24:0;
               // 加强照明  电光标志
               img3 = this.svg.paper
-                .image(url, 5 + iconWidth, 0, iconWidth, iconHeight)
+                .image(url, 10, 0, iconWidth, iconHeight)
+                .attr({
+                  id: item.eqId,
+                });
+            }else if (item.eqType == 21 ) {
+              console.log(1111111111111111)
+              // "紧急电话"
+              img3 = this.svg.paper
+                .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
+                .attr({
+                  id: item.eqId,
+                });
+            }else if (item.eqType == 25 ) {
+              console.log(1111111111111111)
+              // "抓拍摄像机"
+              img3 = this.svg.paper
+                .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
                 .attr({
                   id: item.eqId,
                 });
             } else {
+              console.log(222222222222)
               img3 = this.svg.paper
                 .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
                 .attr({
                   id: item.eqId,
                 });
             }
+            // if (item.eqType == 7 || item.eqType == 117) {
+            //   // let num = iconWidth>=29?-24:0;
+            //   // 加强照明  电光标志
+            //   img3 = this.svg.paper
+            //     .image(url, 5 + iconWidth, 0, iconWidth, iconHeight)
+            //     .attr({
+            //       id: item.eqId,
+            //     });
+            // } else {
+            //   img3 = this.svg.paper
+            //     .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
+            //     .attr({
+            //       id: item.eqId,
+            //     });
+            // }
 
             img.push(
               this.svg.paper.g(r, t, img3).drag().attr({

@@ -281,7 +281,9 @@
               <el-date-picker
                     v-model="form.deliveryTime"
                     type="date"
-                    placeholder="请选择出场时间">
+                    placeholder="请选择出场时间" 
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -290,7 +292,9 @@
               <el-date-picker
                     v-model="form.warrantyEndTime"
                     type="date"
-                    placeholder="请选择维保截至时间">
+                    placeholder="请选择维保截至时间"
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -299,7 +303,9 @@
               <el-date-picker
                     v-model="form.installTime"
                     type="date"
-                    placeholder="请选择设备安装时间">
+                    placeholder="请选择设备安装时间"
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -393,13 +399,13 @@
               <el-input v-model="form.remark" placeholder="请输入备注" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="安装时间" prop="installTime">
               <el-date-picker clearable v-model="form.installTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请输入安装时间">
               </el-date-picker>
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
 <!--          <el-col :span="12">-->
 <!--            <el-form-item label="控制状态" prop="controlStatus">-->
@@ -554,6 +560,12 @@
         }
       }
       return {
+        //不能选择当前日期
+        optionsDisable: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          },
+        },
         //巡检状态
         showOrhide: false,
         // plc主机

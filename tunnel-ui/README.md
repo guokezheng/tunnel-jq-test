@@ -15,7 +15,7 @@ npm install --registry=https://registry.npm.taobao.org
 
 #新增视频流播放和gis地图
 npm install --save @vue/composition-api        
-npm install gis-map-tunnel@0.1.2
+npm install gis-map-tunnel@0.1.3
 
 # 启动服务
 npm run dev

@@ -5173,6 +5173,10 @@ export default {
                   // else if(item.eqName.substring(0,7)=='亮度检测器'){
                   item.position.left = item.position.left + 26;
                   // item.position.top = item.position.top - 4;
+                }else if (item.eqType == "6") {
+                  // else if(item.eqName.substring(0,7)=='应急照明'){
+                  item.position.left = item.position.left + 24;
+                  // item.position.top = item.position.top - 4;
                 }
               });
               console.log(

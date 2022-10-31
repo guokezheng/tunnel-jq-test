@@ -1177,7 +1177,7 @@ export default {
           });
         })
         .catch(() => {
-          this.$modal.msgError("删除失败，请稍后重试！");
+          // this.$modal.msgError("删除失败，请稍后重试！");
         });
     },
     //关闭添加预案 对话框

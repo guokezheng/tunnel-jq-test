@@ -5,6 +5,7 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
+        
         <el-row
           class="menu-b"
           style="display: flex; align-items: center"
@@ -54,7 +55,10 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
-        <div class="flex-row" style="z-index: 8">
+        <div
+          class="flex-row"
+          style="z-index: 8"
+        >
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
             <el-input-number
@@ -130,15 +134,16 @@
           </el-button>
         </div>
       </div>
-      <div class="vehicleLane">
+      <div class="vehicleLane" >
         <div
           class="content"
           ref="divRoller"
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
-          style="position: relative; left: 2%"
+          style="position: relative;left:2%;"
+         
         >
-          <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
+        <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
 
           <div
@@ -385,7 +390,7 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
-            :style="topNav ? 'width:125px' : 'width:100px'"
+            :style="topNav?'width:125px':'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -400,7 +405,7 @@
             flex-direction: column;
             height: 100%;
           "
-          :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
+          :class="topNav?'topNavRightDeawer':'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
             <i class="el-icon-caret-left"></i>车道控制模块
@@ -539,9 +544,10 @@
               <span>{{ item.strategy_name }} </span>
               <el-switch
                 v-model="item.strategy_state"
+                
                 active-value="0"
                 inactive-value="1"
-                @change="timStrategySwitch(item)"
+                @change = "timStrategySwitch(item)"
               >
               </el-switch>
             </div>
@@ -563,6 +569,7 @@
                   size="mini"
                   :clearable="false"
                   value-format="HH:mm:ss"
+
                 >
                 </el-time-picker>
                 <el-button
@@ -599,7 +606,9 @@
               "
             >
               <span style="padding-left: 5px">预警类型</span>
-              <span style="padding-left: 28px; line-height: 40px">触发值</span>
+              <span style="padding-left: 28px; line-height: 40px"
+                >触发值</span
+              >
               <span style="padding-left: 28px; line-height: 40px"
                 >相关预案</span
               >
@@ -619,7 +628,7 @@
                   {{ item.strategyName }}
                 </div>
                 <div style="width: 66px; margin-right: 5px; padding-left: 5px">
-                  {{ " >200" }}
+                  {{' >200' }}
                 </div>
                 <div class="reservePlan">{{ itm }}</div>
               </div>
@@ -842,6 +851,7 @@
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
+        
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column
@@ -2480,7 +2490,7 @@ import {
   batchControlCarFinger,
   timeSharing,
   updateControlTime,
-  timeStrategySwitch,
+  timeStrategySwitch
 } from "@/api/workbench/config.js";
 import {
   getDeviceBase,
@@ -2519,7 +2529,7 @@ export default {
   },
   data() {
     return {
-      timStrategyList: [], //定时控制
+      timStrategyList:[],//定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
       tunnelLane: "", //当前隧道有几条车道
@@ -3448,8 +3458,9 @@ export default {
       };
       batchControlCarFinger(param).then((res) => {
         console.log(res);
-        if (res.data == 0) {
-          this.$modal.msgWarning("控制失败");
+        if(res.data == 0){
+      this.$modal.msgWarning("控制失败");
+
         }
       });
     },
@@ -3469,20 +3480,22 @@ export default {
         console.log(res);
       });
     },
-    timingStrategy(item) {
-      var time = item.arr.join("-");
-      updateControlTime(item.strategy_id, time).then((res) => {
+    timingStrategy(item){
+      var time = item.arr.join('-')
+      updateControlTime(item.strategy_id,time).then((res) =>{
         this.$modal.msgSuccess("修改时间成功");
-      });
+      })
     },
-    timStrategySwitch(item) {
-      timeStrategySwitch(item.strategy_id, item.strategy_state).then((res) => {
-        if (item.strategy_state == 0) {
+    timStrategySwitch(item){
+
+      timeStrategySwitch(item.strategy_id,item.strategy_state).then((res)=>{
+        if(item.strategy_state == 0){
           this.$modal.msgSuccess("开启成功");
-        } else if (item.strategy_state == 1) {
+        }else if(item.strategy_state == 1){
           this.$modal.msgSuccess("关闭成功");
+
         }
-      });
+      })
     },
     // // 抽屉 车指控制
     // controlCheZhi(num) {
@@ -3585,6 +3598,7 @@ export default {
       this.drawerB = true;
       this.drawerA = false;
       this.drawerCVisible = false;
+      if(this.tunnelId){
       timeSharing(this.tunnelId).then((res) => {
         for (var item of res.data) {
           item.arr = item.time.split("-");
@@ -3593,6 +3607,8 @@ export default {
         this.timStrategyList = res.data;
         console.log(this.timStrategyList, "this.timStrategyList");
       });
+      }
+      
     },
     isDrawerC() {
       this.drawerCVisible = true;
@@ -3677,7 +3693,7 @@ export default {
       this.loading = true;
       listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
         (response) => {
-          console.log(response, "操作日志列表");
+          console.log(response,"操作日志列表")
           this.logList = response.rows;
           this.total = response.total;
           this.loading = false;
@@ -5386,31 +5402,32 @@ export default {
                   ) {
                     //取设备监测状态图标
                     this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-                    if (deviceData.eqStatus == 1) {
+                    if(deviceData.eqStatus == 1){
                       if (deviceData.eqType == 19) {
+                      this.selectedIconList[j].num =
+                        "CO:" +
+                        parseFloat(deviceData.CO).toFixed(2) +
+                        "/PPM  VI:" +
+                        parseFloat(deviceData.VI).toFixed(2) +
+                        "KM";
+                    } else if (deviceData.eqType == 17) {
+                      this.selectedIconList[j].num =
+                        parseFloat(deviceData.FS).toFixed(2) +
+                        "m/s " +
+                        deviceData.FX;
+                    } else if (deviceData.eqType == 5) {
+                      if (deviceData.DWLD) {
                         this.selectedIconList[j].num =
-                          "CO:" +
-                          parseFloat(deviceData.CO).toFixed(2) +
-                          "/PPM  VI:" +
-                          parseFloat(deviceData.VI).toFixed(2) +
-                          "KM";
-                      } else if (deviceData.eqType == 17) {
+                          parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                      }
+                    } else if (deviceData.eqType == 18) {
+                      if (deviceData.DNLD) {
                         this.selectedIconList[j].num =
-                          parseFloat(deviceData.FS).toFixed(2) +
-                          "m/s " +
-                          deviceData.FX;
-                      } else if (deviceData.eqType == 5) {
-                        if (deviceData.DWLD) {
-                          this.selectedIconList[j].num =
-                            parseFloat(deviceData.DWLD).toFixed(2) + "lux";
-                        }
-                      } else if (deviceData.eqType == 18) {
-                        if (deviceData.DNLD) {
-                          this.selectedIconList[j].num =
-                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
-                        }
+                          parseFloat(deviceData.DNLD).toFixed(2) + "lux";
                       }
                     }
+                    }
+                    
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -5510,13 +5527,14 @@ export default {
     onDropped(key) {},
     /*点击设备类型*/
     displayControl(value, lable) {
-      for (var item of this.selectedIconList) {
+      for(var item of this.selectedIconList){
         if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
           // console.log()
           // this.dictList = this.dict.type.sd_sys_name;
           this.robotShow = true;
-        } else {
+        }else {
           this.robotShow = false;
+
         }
       }
       // if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY") {
@@ -5603,9 +5621,9 @@ export default {
     },
     clickRobot() {
       this.eqInfo.clickEqType = 29;
-      for (var item of this.selectedIconList) {
-        if (item.eqType == 29) {
-          console.log(item, "机器人");
+      for(var item of this.selectedIconList){
+        if(item.eqType == 29){
+          console.log(item,"机器人")
         }
       }
     },
@@ -6292,10 +6310,10 @@ export default {
     },
     // 查看策略，表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
+      if (rowIndex%2 == 0) {
+      return 'tableEvenRow';
       } else {
-        return "tableOddRow";
+      return "tableOddRow";
       }
     },
     //========================================控制策略结束================================================
@@ -6307,6 +6325,7 @@ export default {
       this.title = "操作日志";
       this.operationLogDialog = true;
       this.getList();
+
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -6763,8 +6782,8 @@ export default {
   font-size: 16px;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
 }
 
 //抽屉的高度
@@ -6928,7 +6947,7 @@ export default {
     }
   }
 
-  .ledLighting {
+   .ledLighting {
     height: 36px;
     // background-color: #4EAACF;
     line-height: 40px;
@@ -6941,7 +6960,7 @@ export default {
     // }
   }
 
-  .Time {
+   .Time {
     display: flex;
     align-items: flex-start;
     height: 50px;
@@ -7180,13 +7199,13 @@ export default {
     margin-right: 20px;
   }
 }
-.topNavRightDeawer {
+.topNavRightDeawer{
   right: 0;
 }
-.openSidebar .leftNavRightDeawer {
+.openSidebar .leftNavRightDeawer{
   right: 240px;
 }
-.hideSidebar .leftNavRightDeawer {
+.hideSidebar .leftNavRightDeawer{
   right: 55px;
 }
 // .bigTypeButton{
@@ -7356,7 +7375,7 @@ export default {
 .workbench-header {
   padding-right: 20px;
   height: 45px;
-  margin-top: 2px;
+  margin-top:2px;
   display: flex;
   justify-content: space-between;
 }
@@ -7496,7 +7515,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 88%;
+  width:88%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -7915,10 +7934,11 @@ input {
       height: 22px;
       border: none;
     }
-  }
-  .el-table {
+  } 
+  .el-table{
     padding: 0 15px;
     margin-bottom: 60px;
+   
   }
 }
 ::v-deep .eventDiglog .el-button--medium {
@@ -7927,7 +7947,7 @@ input {
   padding: 0px !important;
 }
 .eventDiglog .el-table {
-  padding: 15px;
+  padding:15px;
   padding-top: 0;
   background-color: transparent !important;
   margin-bottom: 65px;
@@ -7980,19 +8000,20 @@ input {
   height: 40px;
   line-height: 40px;
 }
-.reservePlan {
+.reservePlan{
   cursor: pointer;
-  width: 190px;
+  width:190px;
   border-radius: 5px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
-.reservePlan:hover {
-  background: #00bbf5;
-  width: 220px;
+.reservePlan:hover{
+  background: #00BBF5;
+  width:220px;
+
 }
-.paginationWorkbench {
+.paginationWorkbench{
   position: static;
   // bottom: 250px !important;
   height: 60px;

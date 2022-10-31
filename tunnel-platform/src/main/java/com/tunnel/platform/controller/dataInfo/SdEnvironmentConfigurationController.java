@@ -51,7 +51,7 @@ public class SdEnvironmentConfigurationController extends BaseController {
     @Log(title = "隧道环境配置", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SdEnvironmentConfiguration sdEnvironmentConfiguration) {
-        List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationService.selectSdEnvironmentConfigurationList(sdEnvironmentConfiguration);
+        List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationService.selectSdEnvironmentList(sdEnvironmentConfiguration);
         ExcelUtil<SdEnvironmentConfiguration> util = new ExcelUtil<SdEnvironmentConfiguration>(SdEnvironmentConfiguration.class);
         return util.exportExcel(list, "隧道环境配置数据");
     }

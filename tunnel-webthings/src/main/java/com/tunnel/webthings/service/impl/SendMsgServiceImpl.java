@@ -73,6 +73,9 @@ public class SendMsgServiceImpl implements SendMsgService {
 
     @Autowired
     private SdDevicesMapper devicesMapper;
+    @Autowired
+    @Qualifier("kafkaOneTemplate")
+    private KafkaTemplate<String, String> kafkaOneTemplate;
 
 
     /**
@@ -87,10 +90,11 @@ public class SendMsgServiceImpl implements SendMsgService {
     public AjaxResult sendEvent() {
         JSONObject jsonObject = new JSONObject();
         SdEvent sdEvent = sdEventMapper.selectSdEventById(143768L);
-        jsonObject.put("event", sdEvent);
+        jsonObject.put("event", "1111111111111111111111111111111111111111111111111");
         jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+//        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+        kafkaOneTemplate.send("matchResultData", jsonObject.toString());
         return AjaxResult.success("1");
     }
 

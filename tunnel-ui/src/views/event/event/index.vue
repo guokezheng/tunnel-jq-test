@@ -987,6 +987,9 @@ export default {
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
+      if(!this.dateRange){
+        this.dateRange = []
+      }
       this.queryParams.startTime = this.dateRange[0];
       this.queryParams.endTime = this.dateRange[1];
       listEvent(this.addDateRange(this.queryParams)).then((response) => {

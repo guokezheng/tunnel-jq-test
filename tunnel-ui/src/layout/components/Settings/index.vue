@@ -31,7 +31,7 @@
             </div>
           </div>
           <!-- 新增主题---科技蓝 -->
-          <!-- <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-blue')">
+          <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-blue')">
             <img src="@/assets/images/icon_layout.svg" alt="blue">
             <div v-if="sideTheme === 'theme-blue'" class="setting-drawer-block-checbox-selectIcon" style="display: block;">
               <i aria-label="图标: check" class="anticon anticon-check">
@@ -42,7 +42,7 @@
                 </svg>
               </i>
             </div>
-          </div> -->
+          </div>
         </div>
 
         <div class="drawer-item">

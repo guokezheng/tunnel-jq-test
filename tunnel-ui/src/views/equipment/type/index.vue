@@ -251,7 +251,9 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
+          <el-dialog :visible.sync="dialogVisible" 
+          :append-to-body="true" style="width:600px !important;margin: 0 auto;"
+          >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
@@ -390,8 +392,8 @@ export default {
     },
 
     handlePictureCardPreview(file) {
-      // this.dialogImageUrl = file.url;
-      // this.dialogVisible = true;
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     // 上传文件
     uploadFile(file) {

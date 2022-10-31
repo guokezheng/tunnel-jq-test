@@ -883,4 +883,9 @@ export default {
   white-space: pre-line;
 }
 </style>
+<style scoped>
+.el-input--small .el-input__icon{
+  height: 34px;
+} 
+</style>
 

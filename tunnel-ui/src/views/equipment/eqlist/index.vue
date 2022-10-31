@@ -489,7 +489,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的设备数据
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="font-size: 12px;color:#39ADFF" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color: red" slot="tip">
           提示：仅允许导入“xls”或“xlsx”格式文件！
@@ -1172,10 +1172,10 @@
       },
       /** 下载模板操作 */
       importTemplate() {
-        exportDevicesTemplate()
-          .then((response) => {
-            this.$download.name(response.msg);
-          });
+       /* exportDevicesTemplate()*/
+          /*.then((response) => {*/
+            this.$download.name('设备数据.xlsx',false);
+          /*});*/
       },
       insertEqControlPointAddress() {
         this.$refs["instructionForm"].validate((valid) => {
@@ -1251,7 +1251,7 @@
 <style lang="scss">
 .el-message-box_style{
     .el-message-box__content{
-      height: 500px !important;
+      max-height: 500px !important;
       overflow: auto !important;
     }
   }

@@ -31,7 +31,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-
+    <select id="selectSdEnvironmentList" parameterType="SdEnvironmentConfiguration" resultMap="SdEnvironmentConfigurationResult">
+        SELECT
+        id,
+        sd_name,
+        url,
+        CASE
+        WHEN environment_type = '0' THEN
+        '消防管道'
+        WHEN environment_type = '1' THEN
+        '树'
+        WHEN environment_type = '2' THEN
+        '草'
+        WHEN environment_type = '3' THEN
+        '人行横洞'
+        WHEN environment_type = '4' THEN
+        '车型横洞'
+        WHEN environment_type = '5' THEN
+        '隧道名称'
+        WHEN environment_type = '6' THEN
+        '隧道方向'
+        END environment_type,
+        width,
+        height,
+        CASE
+        WHEN direction = '0' THEN
+        '横向'
+        WHEN direction = '1' THEN
+        '纵向'
+        END direction,
+        create_by,
+        remark,
+        create_time,
+        update_time
+        FROM
+        sd_environment_configuration
+        <where>
+            <if test="sdName != null  and sdName != ''"> and sd_name like concat('%', #{sdName}, '%')</if>
+            <if test="environmentType != null  and environmentType != ''"> and environment_type = #{environmentType}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+        </where>
+    </select>
 
     <select id="selectSdEnvironmentConfigurationList_exp" parameterType="SdEnvironmentConfiguration" resultMap="SdEnvironmentConfigurationResult">
         <!--<include refid="selectSdEnvironmentConfigurationVo"/>-->

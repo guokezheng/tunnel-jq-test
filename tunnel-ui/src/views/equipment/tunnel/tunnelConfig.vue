@@ -1525,7 +1525,7 @@ export default {
 
 /*自定义primary类型按钮样式*/
 .el-button--primary {
-  color: #c0ccda;
+  color: #fff;
   // background-color: #2e354f;
   // border: 1px solid #2e354f;
 }

@@ -191,7 +191,7 @@ export default {
 }
 
 .nest-menu li .el-submenu__title .svg-icon{margin:0 10px;}
-.theme-blue .el-menu--horizontal .el-menu .el-menu-item{background-color:rgb(19, 103,150);}
-.theme-blue .el-menu--horizontal .el-menu .el-menu-item:hover{background-color:#0d6da7;}
-.theme-blue .el-menu--horizontal .el-menu .el-menu-item span{color:white;}
+// .theme-blue .el-menu--horizontal .el-menu .el-menu-item{background-color:rgb(19, 103,150);}
+// .theme-blue .el-menu--horizontal .el-menu .el-menu-item:hover{background-color:#0d6da7;}
+// .theme-blue .el-menu--horizontal .el-menu .el-menu-item span{color:white;}
 </style>

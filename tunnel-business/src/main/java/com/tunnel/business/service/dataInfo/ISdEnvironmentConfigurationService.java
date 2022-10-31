@@ -26,7 +26,14 @@ public interface ISdEnvironmentConfigurationService {
      * @param sdEnvironmentConfiguration 隧道环境配置
      * @return 隧道环境配置集合
      */
-    List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList(SdEnvironmentConfiguration sdEnvironmentConfiguration);
+    List<SdEnvironmentConfiguration> selectSdEnvironmentConfigurationList(SdEnvironmentConfiguration sdEnvironmentConfiguration);/**
+
+     * 导出隧道环境配置列表
+     *
+     * @param sdEnvironmentConfiguration 隧道环境配置
+     * @return 隧道环境配置集合
+     */
+    List<SdEnvironmentConfiguration> selectSdEnvironmentList(SdEnvironmentConfiguration sdEnvironmentConfiguration);
 
     /**
      * 新增隧道环境配置

@@ -4,7 +4,7 @@
       :model="queryParams"
       ref="queryForm"
       :inline="true"
-      
+
       v-show="showSearch"
       label-width="80px"
     >
@@ -214,7 +214,16 @@
             />
           </el-select>
         </el-form-item>
-
+        <el-form-item label="方向" prop="direction">
+          <el-select v-model="form.direction" placeholder="请选择方向" class="tunnelName" clearable>
+            <el-option
+              v-for="dict in dict.type.sd_direction"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="桩号下限" prop="pileMin">
           <el-input v-model="form.pileMin" placeholder="请输入桩号下限" />
         </el-form-item>
@@ -245,6 +254,7 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 
 export default {
   name: "Subarea",
+  dicts: [ 'sd_direction'],
   data() {
     return {
       // 遮罩层
@@ -273,6 +283,7 @@ export default {
         pageSize: 10,
         sName: null,
         tunnelId: null,
+        direction: null,
         pileMin: null,
         pileMax: null,
       },
@@ -285,6 +296,9 @@ export default {
         ],
         tunnelId: [
           { required: true, message: "请选择隧道名称", trigger: "change" },
+        ],
+        direction: [
+          { required: true, message: "请选择方向", trigger: "change" },
         ],
         pileMin: [
           { required: true, message: "请输入桩号下限", trigger: "blur" },
@@ -304,7 +318,7 @@ export default {
 
   methods: {
     eqDirectionFormat(row, column) {
-      return row.direction == 1 ? "上行" : "下行";
+      return row.direction == 0 ? "上行" : "下行";
     },
     // 隧道名称 下拉框
     getTunnels() {
@@ -344,6 +358,7 @@ export default {
         sName: null,
         tunnelId: null,
         createBy: null,
+        direction: null,
         pileMin: null,
         createTime: null,
         pileMax: null,

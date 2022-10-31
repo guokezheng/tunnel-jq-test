@@ -61,6 +61,7 @@ public class SdDeviceControlService {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return 1;
         }
@@ -90,8 +91,8 @@ public class SdDeviceControlService {
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType(controlType);
-        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
-        sdOperationLog.setOperIp(ip);
+        // TODO: 2022/10/31 参数校验
+        sdOperationLog.setOperIp(map.get("operIp").toString());
         int controlState = 0;
         String fireMark = "";
         //控制车指

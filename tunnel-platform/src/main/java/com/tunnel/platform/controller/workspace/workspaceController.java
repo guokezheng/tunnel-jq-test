@@ -86,6 +86,7 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success(1);
         }
@@ -115,6 +116,7 @@ public class workspaceController extends BaseController {
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
@@ -133,6 +135,7 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success();
         }
@@ -169,8 +172,7 @@ public class workspaceController extends BaseController {
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
-        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
-        sdOperationLog.setOperIp(ip);
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return AjaxResult.success(controlState);
     }
@@ -227,10 +229,11 @@ public class workspaceController extends BaseController {
         Assert.notEmpty(params, "控制设备参数为空");
         String devId = (String) params.get("devId");
         String state = (String) params.get("state");
+        String operIp = (String) params.get("operIp");
         Assert.hasText(devId, "设备参数{devId}必传");
         Assert.hasText(state, "设备控制状态参数{state}必传");
-
-        Integer controlState  = sdDeviceControlService.controlDevices(params);
+        Assert.hasText(operIp, "指令发送方IP参数{operIp}必传");
+        Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
     }
 

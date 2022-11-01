@@ -8,7 +8,9 @@
       color: white;
     }
   }
-
+  .el-menu {
+    background: transparent;
+  }
   .el-select-dropdown {
     .el-scrollbar__wrap::-webkit-scrollbar-track {
       background-color: #ffffff;
@@ -498,9 +500,12 @@
   .menu-button-group{
     .el-button--info {
       // width: 100px;
-      color: #003a5d;
-      background-color: white !important;
-      border: 1px solid #0a88bd;
+      color: #fff;
+      background: linear-gradient(177deg, #00ACED, #0079DB);
+      // opacity: 0.8;
+      border: none;
+      text-align: center;
+    border-radius: 2px;
     }
   }
   .header{
@@ -512,6 +517,24 @@
     }
   }
   .zoomClass{
+    .input-with-select{
+      .el-input__inner{
+        padding: 15px;
+        width: 150px;
+      }
+      .el-input-group__append{
+        background-color: #00B0FF;
+        border: 1px solid #00B0FF;
+        padding: 0;
+        width: 30px;
+        .el-button{
+          width: 30px;
+          margin: -10px -10px;
+          padding: 0 15px;
+        }
+      }
+    }
+
     .el-input-number{
       // border: solid 1px #00c8ff;
       border-radius: 4px;

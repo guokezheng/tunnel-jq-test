@@ -139,7 +139,7 @@ export default {
             }
             .el-icon-arrow-right,.el-icon-arrow-left{position:absolute;top: 29px;font-size:16px;color:#fff;cursor: pointer;}
             .el-icon-arrow-right{right:-4%;}
-            .el-icon-arrow-left{left:48%;z-index: 999;}
+            .el-icon-arrow-left{left:47%;z-index: 999;}
             .is-horizontal{display:none;}
         }
         .el-menu{background-color:unset;}

@@ -54,7 +54,7 @@
     "fabric": "^4.1.0",
     "file-saver": "2.0.5",
     "fuse.js": "6.4.3",
-    "gis-map-tunnel": "^0.1.2",
+    "gis-map-tunnel": "^0.1.3",
     "highlight.js": "9.18.5",
     "imports-loader": "^0.8.0",
     "iview": "^3.3.3",

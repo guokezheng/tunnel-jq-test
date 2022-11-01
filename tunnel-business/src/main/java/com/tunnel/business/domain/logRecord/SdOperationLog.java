@@ -66,10 +66,20 @@ public class SdOperationLog extends BaseEntity
     private String beginTime;
     
     private String endTime;
-    
-    
 
-	public String getBeginTime() {
+    /** 操作地址 */
+    @Excel(name = "操作地址")
+    private String operIp;
+
+    public String getOperIp() {
+        return operIp;
+    }
+
+    public void setOperIp(String operIp) {
+        this.operIp = operIp;
+    }
+
+    public String getBeginTime() {
 		return beginTime;
 	}
 
@@ -285,6 +295,7 @@ public class SdOperationLog extends BaseEntity
             .append("description", getDescription())
             .append("beginTime",getBeginTime())
             .append("endTime",getEndTime())
+            .append("operIp",getOperIp())
             .toString();
     }
 

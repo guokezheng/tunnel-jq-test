@@ -27,8 +27,8 @@ public class GetDeviceController {
         return AjaxResult.success(voList);
     }
 
-    @PostMapping("/copyData")
-    public void copyData(){
-        getDeviceService.copyData();
-    }
+//    @PostMapping("/copyData")
+//    public void copyData(){
+//        getDeviceService.copyData();
+//    }
 }

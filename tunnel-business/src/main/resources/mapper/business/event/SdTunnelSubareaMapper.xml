@@ -10,6 +10,8 @@
         <result property="tunnelId" column="tunnel_id"/>
         <result property="pileMin" column="pile_min"/>
         <result property="pileMax" column="pile_max"/>
+        <result property="startPile" column="start_pile"/>
+        <result property="endPile" column="end_pile"/>
         <result property="createBy" column="create_by"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
@@ -25,6 +27,8 @@
                tunnel_id,
                pile_min,
                pile_max,
+               start_pile,
+               end_pile,
                create_by,
                direction,
                create_time,
@@ -41,6 +45,8 @@
             <if test="direction != null  and direction != ''">and direction = #{direction}</if>
             <if test="pileMax != null and pileMax != ''">and pile_max = #{pileMax}</if>
             <if test="pileMin != null and pileMin != ''">and pile_min = #{pileMin}</if>
+            <if test="startPile != null and startPile != ''">and start_pile = #{startPile}</if>
+            <if test="endPile != null and endPile != ''">and end_pile = #{endPile}</if>
         </where>
     </select>
 
@@ -51,6 +57,8 @@
                a.tunnel_id,
                a.pile_min,
                a.pile_max,
+               a.start_pile,
+               a.end_pile,
                a.create_by,
                a.create_time,
                a.update_by,
@@ -69,6 +77,8 @@
             <if test="direction != null  and direction != ''">and a.direction = #{direction}</if>
             <if test="pileMax != null and pileMax != ''">and a.pile_max = #{pileMax}</if>
             <if test="pileMin != null and pileMin != ''">and a.pile_min = #{pileMin}</if>
+            <if test="startPile != null and startPile != ''">and a.start_pile = #{startPile}</if>
+            <if test="endPile != null and endPile != ''">and a.end_pile = #{endPile}</if>
         </where>
         order by a.s_id
     </select>
@@ -84,6 +94,8 @@
                A.tunnel_id,
                A.pile_min,
                A.pile_max,
+               A.start_pile,
+               A.end_pile,
                A.direction,
                B.eq_id as eqIdMin,
                C.eq_id as eqIdMax
@@ -104,6 +116,8 @@
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="pileMin != null">pile_min,</if>
             <if test="pileMax != null">pile_max,</if>
+            <if test="startPile != null">start_pile,</if>
+            <if test="endPile != null">end_pile,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -116,6 +130,8 @@
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="pileMin != null">#{pileMin},</if>
             <if test="pileMax != null">#{pileMax},</if>
+            <if test="startPile != null">#{startPile},</if>
+            <if test="endPile != null">#{endPile},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -131,6 +147,8 @@
             <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="pileMin != null">pile_min = #{pileMin},</if>
             <if test="pileMax != null">pile_max = #{pileMax},</if>
+            <if test="startPile != null">start_pile = #{startPile},</if>
+            <if test="endPile != null">end_pile = #{endPile},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

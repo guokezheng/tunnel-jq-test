@@ -152,8 +152,8 @@
         align="center"
         :formatter="eqDirectionFormat"
       />
-      <el-table-column label="桩号下限" align="center" prop="pileMin" />
-      <el-table-column label="桩号上限" align="center" prop="pileMax" />
+      <el-table-column label="开始桩号" align="center" prop="startPile" />
+      <el-table-column label="结束桩号" align="center" prop="endPile" />
       <el-table-column
         label="操作"
         align="center"
@@ -187,8 +187,8 @@
     />
 
     <!-- 添加或修改隧道分区对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="530px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px" align="left">
         <el-form-item label="分区名称" prop="sName">
           <el-input v-model="form.sName" placeholder="请输入分区名称" />
         </el-form-item>
@@ -224,11 +224,17 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="桩号下限" prop="pileMin">
-          <el-input v-model="form.pileMin" placeholder="请输入桩号下限" />
+        <el-form-item label="开始桩号" prop="startPile">
+          <el-input v-model="form.startPile" placeholder="请输入开始桩号" @blur="setPileInt('start')"/>
         </el-form-item>
-        <el-form-item label="桩号上限" prop="pileMax">
-          <el-input v-model="form.pileMax" placeholder="请输入桩号上限" />
+        <el-form-item label="开始桩号(整形)" prop="pileMin">
+          <el-input v-model="form.pileMin" disabled="disabled" />
+        </el-form-item>
+        <el-form-item label="结束桩号" prop="endPile">
+          <el-input v-model="form.endPile"  placeholder="请输入结束桩号" @blur="setPileInt('end')"/>
+        </el-form-item>
+        <el-form-item label="结束桩号(整形)" prop="pileMax">
+          <el-input v-model="form.pileMax" disabled="disabled" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -286,6 +292,8 @@ export default {
         direction: null,
         pileMin: null,
         pileMax: null,
+        startPile: null,
+        endPile: null,
       },
       // 表单参数
       form: {},
@@ -300,11 +308,11 @@ export default {
         direction: [
           { required: true, message: "请选择方向", trigger: "change" },
         ],
-        pileMin: [
-          { required: true, message: "请输入桩号下限", trigger: "blur" },
+        startPile: [
+          { required: true, message: "请输入开始桩号", trigger: "blur" },
         ],
-        pileMax: [
-          { required: true, message: "请输入桩号上限", trigger: "blur" },
+        endPile: [
+          { required: true, message: "请输入结束桩号", trigger: "blur" },
         ]
       },
 
@@ -317,6 +325,24 @@ export default {
   },
 
   methods: {
+    setPileInt(param){
+      if(param=='start'){
+        let startPile = this.form.startPile;
+        if (startPile == null) {
+          return;
+        }
+        //var reg = startPile.replace(/[\u4e00-\u9fa5]/g, "");
+        let pileInt = startPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.pileMin = pileInt;
+      }else{
+        let endPile = this.form.endPile;
+        if (endPile == null) {
+          return;
+        }
+        let pileInt = endPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.pileMax = pileInt;
+      }
+    },
     eqDirectionFormat(row, column) {
       return row.direction == 0 ? "上行" : "下行";
     },
@@ -364,6 +390,8 @@ export default {
         pileMax: null,
         updateBy: null,
         updateTime: null,
+        startPile: null,
+        endPile: null
       };
       this.resetForm("form");
     },
@@ -404,7 +432,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if(!new RegExp('^[1-9][0-9]*$').test(this.form.pileMax) || !new RegExp('^[1-9][0-9]*$').test(this.form.pileMin) ){
-            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            this.$modal.msgWarning("桩号格式输入有误！");
             return;
           }
           if (this.form.sId != null) {

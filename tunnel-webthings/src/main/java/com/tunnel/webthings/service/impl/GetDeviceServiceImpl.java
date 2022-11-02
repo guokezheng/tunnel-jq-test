@@ -82,88 +82,88 @@ public class GetDeviceServiceImpl implements GetDeviceService {
      * 同步中台数据
      */
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void copyData() {
-        int number = deviceMapper.selectCount();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (number > 0) {
-            deviceMapper.deleteDevice();
-            //查询数据(参数非必填)
-            //插入数据库
-            DeviceParameter deviceParameter = new DeviceParameter();
-            deviceParameter.setDevType("001");
-            List<ResponseVO> devList = getDevList(deviceParameter);
-            devList.forEach(f -> {
-                if (StringUtils.isNotEmpty(f.getDevType())) {
-                    f.setdType(Integer.parseInt(f.getDevType()));
-                }
-                f.setrDirection(f.getRoadDirection() + "");
-                f.setuLife(f.getUseLife() + "");
-                f.setuStatus(f.getUseStatus() + "");
-                try {
-                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
-                        f.setDyTime(sdf.parse(f.getDeliveryTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
-                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
-                        f.setInTime(sdf.parse(f.getInstallTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
-                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
-                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
-                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            });
-            deviceMapper.insertDevice(devList);
-        } else {
-            //查询数据(参数非必填)
-            //插入数据库
-            DeviceParameter deviceParameter = new DeviceParameter();
-            deviceParameter.setDevType("001");
-            List<ResponseVO> devList = getDevList(deviceParameter);
-            devList.forEach(f -> {
-                if (StringUtils.isNotEmpty(f.getDevType())) {
-                    f.setdType(Integer.parseInt(f.getDevType()));
-                }
-                f.setrDirection(f.getRoadDirection() + "");
-                f.setuLife(f.getUseLife() + "");
-                f.setuStatus(f.getUseStatus() + "");
-                try {
-                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
-                        f.setDyTime(sdf.parse(f.getDeliveryTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
-                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
-                        f.setInTime(sdf.parse(f.getInstallTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
-                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
-                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
-                    }
-                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
-                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
-                    }
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            });
-            deviceMapper.insertDevice(devList);
-        }
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void copyData() {
+//        int number = deviceMapper.selectCount();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        if (number > 0) {
+//            deviceMapper.deleteDevice();
+//            //查询数据(参数非必填)
+//            //插入数据库
+//            DeviceParameter deviceParameter = new DeviceParameter();
+//            deviceParameter.setDevType("001");
+//            List<ResponseVO> devList = getDevList(deviceParameter);
+//            devList.forEach(f -> {
+//                if (StringUtils.isNotEmpty(f.getDevType())) {
+//                    f.setdType(Integer.parseInt(f.getDevType()));
+//                }
+//                f.setrDirection(f.getRoadDirection() + "");
+//                f.setuLife(f.getUseLife() + "");
+//                f.setuStatus(f.getUseStatus() + "");
+//                try {
+//                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
+//                        f.setDyTime(sdf.parse(f.getDeliveryTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
+//                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
+//                        f.setInTime(sdf.parse(f.getInstallTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
+//                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
+//                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
+//                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
+//                    }
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//            deviceMapper.insertDevice(devList);
+//        } else {
+//            //查询数据(参数非必填)
+//            //插入数据库
+//            DeviceParameter deviceParameter = new DeviceParameter();
+//            deviceParameter.setDevType("001");
+//            List<ResponseVO> devList = getDevList(deviceParameter);
+//            devList.forEach(f -> {
+//                if (StringUtils.isNotEmpty(f.getDevType())) {
+//                    f.setdType(Integer.parseInt(f.getDevType()));
+//                }
+//                f.setrDirection(f.getRoadDirection() + "");
+//                f.setuLife(f.getUseLife() + "");
+//                f.setuStatus(f.getUseStatus() + "");
+//                try {
+//                    if (StringUtils.isNotEmpty(f.getDeliveryTime())) {
+//                        f.setDyTime(sdf.parse(f.getDeliveryTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getWarrantyEndTime())) {
+//                        f.setwEndTime(sdf.parse(f.getWarrantyEndTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getInstallTime())) {
+//                        f.setInTime(sdf.parse(f.getInstallTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getPortStatusTime())) {
+//                        f.setpStatusTime(sdf.parse(f.getPortStatusTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getGatewayNetstatusTime())) {
+//                        f.setgNetstatusTime(sdf.parse(f.getGatewayNetstatusTime()));
+//                    }
+//                    if (StringUtils.isNotEmpty(f.getDevStatusTime())) {
+//                        f.setdStatusTime(sdf.parse(f.getDevStatusTime()));
+//                    }
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//            deviceMapper.insertDevice(devList);
+//        }
+//    }
 
     /**
      * 获取token

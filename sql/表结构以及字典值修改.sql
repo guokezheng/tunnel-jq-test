@@ -21,8 +21,8 @@ INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_typ
 
 
 -- 隧道表添加字段sd_tunnels，start_pile、end_pile
-alter table sd_tunnels add column start_pile varchar(20) comment '隧道开始桩号（整型）';
-alter table sd_tunnels add column end_pile varchar(20) comment '隧道结束桩号（整型）';
+alter table sd_tunnels add column start_pile varchar(20) comment '隧道开始桩号';
+alter table sd_tunnels add column end_pile varchar(20) comment '隧道结束桩号';
 
 -- 修改sd_equipment_state_icon_file表字段url的字段类型
 alter table sd_equipment_state_icon_file modify column url longtext comment '图标地址';
@@ -136,4 +136,15 @@ INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `componen
 INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('应急调度', 2252, 4, '', NULL, NULL, 1, 0, 'F', '0', '0', 'system:event:remove', '#', 'admin', '2022-10-19 08:55:21', '', NULL, '');
 
 
+--删除sd_devices_copy表
 
+--自动触发定时任务
+INSERT INTO `sys_job` VALUES ('自动触发任务', 'DEFAULT', 'strategyTask.triggerJob()', '0 0/5 * * * ?', '1', '0', '0', '', '2022-10-27 10:39:29', '', NULL, '');
+
+--隧道表桩号字段
+alter table sd_tunnels add column start_pile_num varchar(20) comment '隧道开始桩号（整型）';
+alter table sd_tunnels add column end_pile_num varchar(20) comment '隧道结束桩号（整型）';
+
+--隧道分区表桩号字段
+alter table sd_tunnel_subarea add column start_pile varchar(20) comment '开始桩号';
+alter table sd_tunnel_subarea add column end_pile varchar(20) comment '结束桩号';

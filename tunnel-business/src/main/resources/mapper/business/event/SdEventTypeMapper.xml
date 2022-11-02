@@ -11,10 +11,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="fId"    column="f_id"    />
+        <result property="simplifyName"    column="simplify_name"    />
     </resultMap>
 
     <sql id="selectSdEventTypeVo">
-        select id, event_type, create_by, create_time, update_by, update_time from sd_event_type
+        select id, event_type, create_by, create_time, update_by, update_time, f_id, simplify_name  from sd_event_type
     </sql>
 
     <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="SdEventTypeResult">
@@ -33,10 +35,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sd_event_type(
             <if test="eventType != null">event_type,</if>
             <if test="createBy != null">create_by,</if>
+            <if test="fId != null">f_id,</if>
+            <if test="createBy != null">simplify_name,</if>
          	create_time
  		)values(
             <if test="eventType != null">#{eventType},</if>
             <if test="createBy != null">#{createBy},</if>
+            <if test="fId != null">#{fId},</if>
+            <if test="simplifyName != null">#{simplifyName},</if>
             sysdate()
          )
     </insert>

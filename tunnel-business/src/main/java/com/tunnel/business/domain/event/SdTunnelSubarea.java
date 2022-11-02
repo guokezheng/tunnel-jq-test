@@ -35,13 +35,35 @@ public class SdTunnelSubarea extends BaseEntity
     @ApiModelProperty("隧道Id")
     private String tunnelId;
 
-    @Excel(name = "桩号下限")
     @ApiModelProperty("桩号下限")
     private String pileMin;
 
-    @Excel(name = "桩号上限")
     @ApiModelProperty("桩号上限")
     private String pileMax;
+
+    @Excel(name = "开始桩号")
+    @ApiModelProperty("开始桩号")
+    private String startPile;
+
+    @Excel(name = "结束桩号")
+    @ApiModelProperty("结束桩号")
+    private String endPile;
+
+    public String getStartPile() {
+        return startPile;
+    }
+
+    public void setStartPile(String startPile) {
+        this.startPile = startPile;
+    }
+
+    public String getEndPile() {
+        return endPile;
+    }
+
+    public void setEndPile(String endPile) {
+        this.endPile = endPile;
+    }
 
     private String eqIdMin;
 

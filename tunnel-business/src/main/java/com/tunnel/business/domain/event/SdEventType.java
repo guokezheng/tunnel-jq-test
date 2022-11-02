@@ -22,7 +22,29 @@ public class SdEventType extends BaseEntity
     @Excel(name = "事件类型")
     private String eventType;
 
-    public void setId(Long id) 
+    /** 简称 */
+    private String simplifyName;
+
+    /** 父Id */
+    private String fId;
+
+    public String getfId() {
+        return fId;
+    }
+
+    public void setfId(String fId) {
+        this.fId = fId;
+    }
+
+    public String getSimplifyName() {
+        return simplifyName;
+    }
+
+    public void setSimplifyName(String simplifyName) {
+        this.simplifyName = simplifyName;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

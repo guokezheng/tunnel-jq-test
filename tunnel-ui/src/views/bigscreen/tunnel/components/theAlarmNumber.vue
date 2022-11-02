@@ -7,36 +7,32 @@
     element-loading-background="#040f4e"
   >
     <div class="title">
-      今日{{ currentData.name }}
-      <span
+      本月预警事件
+      <!-- {{ currentData.name }} -->
+      <!-- <span
         style="margin-left: 0.5vw; font-size: 0.8vw; cursor: pointer"
         @click="SwitchingEvents"
         >切换</span
-      >
+      > -->
     </div>
     <div class="box">
       <div ref="echartsBox" class="box-left" id="TheAlarmNumber"></div>
-      <div class="box-center">
-        <div class="progressBar">
-          <div style="font-size: 0.8vw">已处置：</div>
-          <el-progress
-            :text-inside="true"
-            :stroke-width="16"
-            :percentage="hasDisposal"
-          ></el-progress>
+      <div class="box-center UnificationBox">
+        <div class="progressBar progress">
+          <p>已处置：</p>
+          <span>{{ hasDisposal }}</span>
         </div>
-        <div class="progressBarNot">
-          <div style="font-size: 0.8vw">未处置：</div>
-          <el-progress
-            :text-inside="true"
-            :stroke-width="16"
-            :percentage="notDDisposedOf"
-          ></el-progress>
+        <div class="progressBarNot progress">
+          <p>未处置：</p>
+          <span>{{ notDDisposedOf }}</span>
         </div>
       </div>
       <div class="box-right">
         <div class="listHeader">
-          <el-row type="flex" style="font-size: 0.8vw;background-color: rgba(255,255,255,0.2);">
+          <el-row
+            type="flex"
+            style="font-size: 0.8vw; background-color: rgba(255, 255, 255, 0.2)"
+          >
             <el-col style="width: 20vw; padding-left: 0.4vw">隧道</el-col>
             <el-col>发生时间</el-col>
             <el-col>详细信息</el-col>
@@ -75,7 +71,7 @@
 <script>
 import * as echarts from "echarts";
 import "echarts-liquidfill";
-import elementResizeDetectorMaker from 'element-resize-detector'
+import elementResizeDetectorMaker from "element-resize-detector";
 export default {
   props: {},
   data() {
@@ -204,20 +200,19 @@ export default {
     this.setData();
   },
   mounted() {
-    // this.initChart();
     this.initEchart();
-    this.watchSize()
+    this.watchSize();
   },
   methods: {
     watchSize() {
-			let that = this;
-			let erd = elementResizeDetectorMaker()
-			let Dom = that.$refs.echartsBox;//拿dom元素
-			//监听盒子的变化
-			erd.listenTo(Dom, function (element) {
-					let myChart = echarts.init(Dom);
-					myChart.resize();//echarts自带的方法可以使图表重新加载
-			})
+      let that = this;
+      let erd = elementResizeDetectorMaker();
+      let Dom = that.$refs.echartsBox; //拿dom元素
+      //监听盒子的变化
+      erd.listenTo(Dom, function (element) {
+        let myChart = echarts.init(Dom);
+        myChart.resize(); //echarts自带的方法可以使图表重新加载
+      });
     },
     setData(val) {
       this.fullscreenLoading = true;
@@ -231,200 +226,125 @@ export default {
         this.fullscreenLoading = false;
       }, 500);
     },
-    initChart() {
-      var object = { ...this.currentData };
-      var myChart = echarts.init(document.getElementById("TheAlarmNumber"));
-      var Options = {
-        title: {
-          text: "总数" + "\n" + "\n" + object.all,
-          top: "center",
-          left: "center",
-          textStyle: {
-            color: "#fff",
-            fontSize: 16,
-          },
-        },
-        tooltip: {
-          formatter: "{a} <br/>{b} : {c}件",
-        },
-        series: [
-          {
-            name: "总" + object.name + "数",
-            type: "pie",
-            radius: ["50%", "70%"],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-            },
-            data: [
-              { value: object.hasDisposal, name: "已处置" },
-              { value: object.notDDisposedOf, name: "未处置" },
-            ],
-          },
-        ],
-      };
-      Options && myChart.setOption(Options);
-    },
     initEchart() {
       var object = { ...this.currentData };
       var myChart = echarts.init(document.getElementById("TheAlarmNumber"));
-      function _pie2() {
-        let dataArr = [];
-        for (var i = 0; i < 8; i++) {
-          if (i % 2 === 0) {
-            dataArr.push({
-              name: (i + 1).toString(),
-              value: 25,
-              itemStyle: {
-                normal: {
-                  color: "rgba(88,142,197,0.5)",
-                },
-              },
-            });
-          } else {
-            dataArr.push({
-              name: (i + 1).toString(),
-              value: 20,
-              itemStyle: {
-                normal: {
-                  color: "rgba(0,0,0,0)",
-                },
-              },
-            });
-          }
-        }
-        return dataArr;
-      }
-      var value = object.hasDisposal / object.all;
-      var data = [value];
-      var option = {
-        title: [
+      var fontColor = "#fff";
+      let noramlSize = 16;
+      var datas = {
+        value: 98,
+        company: "%",
+        ringColor: [
           {
-            text: object.all + '\n' + '总数',
-            // x: "50%",
-            // y: "50%",
-            top: 'center',
-            left: 'center',
-            textStyle: {
-              fontSize: 20,
-              fontWeight: "400",
-              color: "#fff",
-              lineHeight: 20,
-              textAlign: "center",
-            },
+            offset: 0,
+            color: "#02d6fc", // 0% 处的颜色
+          },
+          {
+            offset: 1,
+            color: "#50fc73", // 100% 处的颜色
           },
         ],
+      };
+      var option = {
+        title: {
+          text: datas.value + datas.company,
+          x: "center",
+          y: "center",
+          textStyle: {
+            fontWeight: "normal",
+            color: "#fdfeff",
+            fontSize: "24",
+          },
+        },
+        //  color: ['#282c40'],
+        legend: {
+          show: false,
+          data: [],
+        },
+        color: ["#282c40", "#29aa82", "#f1b144"],
         tooltip: {
-          formatter: '{a} : '+ object.hasDisposal + '件' + '<br>' + '占比 : ' + (value * 100).toFixed(2) + '%',
+          trigger: "item",
+          padding: [10, 10, 10, 10],
+          formatter: "{b} :<br/> {d}%",
         },
         series: [
           {
-            type: "liquidFill",
-            name: '已处置',
-            radius: "57%",
-            center: ["50%", "50%"],
-            color: [
+            name: "Line 1",
+            type: "pie",
+            clockWise: true,
+            radius: ["45%", "52%"],
+            itemStyle: {
+              normal: {
+                label: {
+                  show: false,
+                },
+                labelLine: {
+                  show: false,
+                },
+              },
+            },
+            hoverAnimation: false,
+            data: [
               {
-                type: "linear",
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 1,
-                    color: "#6CDEFC",
+                value: datas.value,
+                name: "",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
                   },
-                  {
-                    offset: 0,
-                    color: "#429BF7",
-                  },
-                ],
-                globalCoord: false,
+                },
+              },
+              {
+                name: "",
+                value: 100 - datas.value,
               },
             ],
-            data: data,
-            backgroundStyle: {
-              borderWidth: 1,
-              color: "RGBA(51, 66, 127, 0.7)",
-            },
+          },
+          {
+            name: "",
+            type: "pie",
+            radius: ["59%", "69%"],
+            center: ["50%", "50%"],
             label: {
-              normal: {
-                show: false,
-                // formatter: (value * 100).toFixed(1) + "%",
-                // textStyle: {
-                //   fontSize: 28,
-                //   color: "#fff",
-                // },
-              },
-            },
-            outline: {
               show: false,
-              itemStyle: {
-                borderWidth: 0,
-              },
-              borderDistance: 0,
-            },
-          },
-          {
-            type: "pie",
-            zlevel: 1,
-            silent: true,
-            center: ["50%", "50%"],
-            radius: ["65%", "64%"],
-            hoverAnimation: false,
-            color: "rgba(88,142,197,0.5)",
-            label: {
-              normal: {
-                show: false,
-              },
+              fontSize: 13,
+              color: "#333",
             },
             labelLine: {
-              normal: {
-                show: false,
-              },
+              show: false,
+              // length: 6,
+              // length2: 15
             },
-
-            data: [1],
+            data: [
+              {
+                name: "已处置",
+                value: "98",
+              },
+              {
+                name: "未处置",
+                value: "2",
+              },
+            ],
           },
-          {
-            type: "pie",
-            zlevel: 2,
-            silent: true,
-            center: ["50%", "50%"],
-            radius: ["73%", "70%"],
-            startAngle: 50,
-            hoverAnimation: false,
-            label: {
-              normal: {
-                show: false,
-              },
-            },
-            labelLine: {
-              normal: {
-                show: false,
-              },
-            },
-            data: _pie2(),
-          },
-          {
-            type: "pie",
-            zlevel: 3,
-            silent: true,
-            center: ["50%", "50%"],
-            radius: ["68%", "69%"],
-            label: {
-              normal: {
-                show: false,
-              },
-            },
-            labelLine: {
-              normal: {
-                show: false,
-              },
-            },
-            data: _pie2(),
-          },
+          // {
+          //     type: 'pie',
+          //     radius: ['36%', '43%'],
+          //     center: ['50%', '50%'],
+          //     silent: true,
+          //     data: [{
+          //         name: '',
+          //         value: 1,
+          //     }]
+          // }
         ],
       };
 
@@ -456,7 +376,7 @@ export default {
     height: 18%;
     display: flex;
     align-items: flex-end;
-    color: #09bdef;
+    color: #fff;
   }
   .box {
     width: 100%;
@@ -471,9 +391,13 @@ export default {
       width: 20%;
       height: 100%;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      // flex-direction: column;
+      justify-content: space-between;
       padding-right: 0.5vw;
+      align-items: center;
+      height: 114px;
+      position: relative;
+      top: 33%;
       .title {
         margin-bottom: 0.5vw;
       }
@@ -510,6 +434,53 @@ export default {
           }
         }
       }
+    }
+  }
+}
+.UnificationBox {
+  .progress {
+    p {
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    span {
+      display: block;
+      text-align: center;
+      width: 100%;
+      font-size: 24px;
+    }
+  }
+  .progressBar {
+    p::before {
+      margin-right: 10px;
+      display: block;
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 35px;
+      background-color: #00f5fd;
+    }
+    span {
+      color: #00f5fd;
+    }
+  }
+  .progressBarNot {
+    p::before {
+      margin-right: 10px;
+      display: block;
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 35px;
+      background-color: #4affb4;
+    }
+    span {
+      color: #4affb4;
     }
   }
 }

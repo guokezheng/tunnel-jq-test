@@ -184,7 +184,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("devNo", "S00063700001980001");
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-            if (eventList.size() > 0) {
+            if (eventList != null && eventList.size() > 0) {
                 for (int i = 0;i < eventList.size();i++) {
                     jsonObject.put("event", eventList.get(i));
                     kafkaTwoTemplate.send(eventTopic, jsonObject.toString());

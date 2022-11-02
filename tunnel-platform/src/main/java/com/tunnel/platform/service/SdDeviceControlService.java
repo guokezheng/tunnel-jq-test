@@ -1,5 +1,6 @@
 package com.tunnel.platform.service;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
@@ -21,10 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Service
 public class SdDeviceControlService {
 
@@ -92,7 +91,9 @@ public class SdDeviceControlService {
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType(controlType);
         // TODO: 2022/10/31 参数校验
-        sdOperationLog.setOperIp(map.get("operIp").toString());
+        if(Optional.ofNullable(map.get("operIp")).isPresent()){
+            sdOperationLog.setOperIp(map.get("operIp").toString());
+        }
         int controlState = 0;
         String fireMark = "";
         //控制车指

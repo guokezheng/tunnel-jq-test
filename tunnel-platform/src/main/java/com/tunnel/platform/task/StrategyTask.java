@@ -1,14 +1,20 @@
 package com.tunnel.platform.task;
 
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.mapper.event.SdTriggerMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component("strategyTask")
 public class StrategyTask {
@@ -39,6 +42,21 @@ public class StrategyTask {
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
             map.put("controlType",sdStrategy.getStrategyType());
+            //todo 改成服务器IP
+            map.put("operIp","10.168.56.206");
+//            SdDevices sdDevices = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesById(devId);
+//            SdOperationLog sdOperationLog = new SdOperationLog();
+//            sdOperationLog.setEqTypeId(sdDevices.getEqType());
+//            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+//            sdOperationLog.setEqId(sdDevices.getEqId());
+//            sdOperationLog.setCreateTime(new Date());
+//            sdOperationLog.setOperationState(sdStrategyRl.getState());
+//            sdOperationLog.setControlType(sdStrategy.getStrategyType());
+//            // TODO: 2022/10/31 参数校验
+//            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+//            sdOperationLog.setState("1");
+//            SpringUtils.getBean(SdOperationLogMapper.class).insertSdOperationLog(sdOperationLog);
+
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

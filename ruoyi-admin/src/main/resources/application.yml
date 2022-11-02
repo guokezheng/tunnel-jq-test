@@ -205,3 +205,8 @@ authorize:
 eventTopic: "wq_tunnelEvent"
 #物联中台设备状态topic
 devStatusTopic: "wq_devStatusTopic"
+
+#物联中台设备基础数据topic
+tunnelDeviceBaseData: "tunnelDeviceBaseData"
+#物联中台隧道基础数据topic
+tunnelBaseData: "tunnelBaseData"

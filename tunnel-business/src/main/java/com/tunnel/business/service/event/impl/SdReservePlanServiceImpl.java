@@ -244,6 +244,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
+        sdReservePlan.setPlanFileId(UUIDUtil.getRandom32BeginTimePK());
         List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
         if (planList.size() > 0 && ids == null) {
             throw new RuntimeException("当前预案修改内容已经存在，请勿重复添加！");

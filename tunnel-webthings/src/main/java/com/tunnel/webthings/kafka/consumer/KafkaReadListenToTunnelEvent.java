@@ -67,7 +67,7 @@ public class KafkaReadListenToTunnelEvent {
                 } else {
                     sdEventMapper.insertSdEvent(sdEvent);
                 }
-                WebSocketService.broadcast("radarDataList", sdEvent.toString());
+                WebSocketService.broadcast("sdEventList", sdEvent.toString());
             }
         }
         consumer.commitSync();

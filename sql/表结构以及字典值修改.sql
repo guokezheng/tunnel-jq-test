@@ -150,5 +150,5 @@ alter table sd_tunnel_subarea add column start_pile varchar(20) comment '开始�
 alter table sd_tunnel_subarea add column end_pile varchar(20) comment '结束桩号';
 
 --事件类型sd_event_type
-alter table sd_event_type add column f_id varchar(20) comment '开始桩号';
-alter table sd_event_type add column simplify_name varchar(20) comment '结束桩号';
+alter table sd_event_type add column f_id varchar(20) comment '父类ID';
+alter table sd_event_type add column simplify_name varchar(20) comment '类型简称';

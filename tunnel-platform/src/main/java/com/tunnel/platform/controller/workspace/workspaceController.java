@@ -86,11 +86,11 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("controlType", "0");
             map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success(1);
         }
-
 
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
@@ -135,6 +135,7 @@ public class workspaceController extends BaseController {
         }
 
         if ("GSY".equals(deploymentType)) {
+            map.put("controlType", "0");
             map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success();
@@ -205,6 +206,8 @@ public class workspaceController extends BaseController {
         }
         List<SdDevices> list = sdDevicesService.batchControlCarFinger(carFingerDevices);
         Map<String, Object> map = new HashMap<>();
+        map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+
         Integer controlDevices = 0;
         for (int i = 0; i < list.size(); i++) {
             String eqId = list.get(i).getEqId();

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +32,7 @@ public class StrategyTask {
      * 定时、分时控制策略定时任务
      * @param strategyRlId
      */
-    public void strategyParams(String strategyRlId) {
+    public void strategyParams(String strategyRlId) throws UnknownHostException {
         SdStrategyRl sdStrategyRl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(Long.valueOf(strategyRlId));
         String[] split = sdStrategyRl.getEquipments().split(",");
         for (String devId : split){
@@ -39,6 +41,7 @@ public class StrategyTask {
             map.put("devId",devId);
             map.put("state",sdStrategyRl.getState());
             map.put("controlType",sdStrategy.getStrategyType());
+            map.put("operIp",InetAddress.getLocalHost().getHostAddress());
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

@@ -1,8 +1,6 @@
 package com.tunnel.platform.service;
 
 import cn.hutool.json.JSONObject;
-import com.ruoyi.common.utils.ServletUtils;
-import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -25,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 @Service
 public class SdDeviceControlService {
 
@@ -52,20 +51,18 @@ public class SdDeviceControlService {
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
      * 控制方式controlType(控制方式   0：手动 1：时间控制 2：光强控制 3:预案控制)
-     * */
+     */
     public Integer controlDevices(Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             //当前设备控制参数为空，直接返回
             log.error("当前设备控制参数为空");
             return 0;
         }
-
         if ("GSY".equals(deploymentType)) {
-            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+            //map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return 1;
         }
-
         //控制车指
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
             throw new RuntimeException("未指定设备，请联系管理员");
@@ -91,8 +88,10 @@ public class SdDeviceControlService {
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType(controlType);
-        // TODO: 2022/10/31 参数校验
-        sdOperationLog.setOperIp(map.get("operIp").toString());
+        if (null != map.get("operIp")) {
+            sdOperationLog.setOperIp(map.get("operIp").toString());
+        }
+
         int controlState = 0;
         String fireMark = "";
         //控制车指

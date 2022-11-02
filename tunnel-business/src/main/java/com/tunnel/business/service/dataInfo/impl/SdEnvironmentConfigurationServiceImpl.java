@@ -68,20 +68,6 @@ public class SdEnvironmentConfigurationServiceImpl implements ISdEnvironmentConf
         return list;
     }
 
-    @Override
-    public List<SdEnvironmentConfiguration> selectSdEnvironmentList(SdEnvironmentConfiguration sdEnvironmentConfiguration) {
-        List<SdEnvironmentConfiguration> list = sdEnvironmentConfigurationMapper.selectSdEnvironmentList(sdEnvironmentConfiguration);
-        list.forEach(e -> {
-            String fileId = e.getUrl();
-            if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
-                SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
-                sdEquipmentStateIconFile.setStateIconId(e.getUrl());
-                e.setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
-            }
-        });
-        return list;
-    }
-
     /**
      * 新增隧道环境配置
      *

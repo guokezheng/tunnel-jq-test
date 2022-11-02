@@ -615,18 +615,30 @@ export default {
           }
         } else {
           console.log(iconWidth,iconWidth<20,'iconWidth')
-          let num = iconWidth<30?(iconWidth<25?10:2):-8;
+          // let num = iconWidth<30?(iconWidth<25?10:2):-8;
+          // let num = 0;
           var img3 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth + num, //此处增加+ iconWidth
+            list[i].position.left + iconWidth, //此处增加+ iconWidth
             list[i].position.top,
             iconWidth,
             iconHeight
           );
           if (list[i].pile != "") {
+            let num2 = 0;
+            if(list[i].eqType==21){
+              //紧急电话
+              num2 = 12
+            }else if(list[i].eqType==19){
+              //CO/VI检测器
+              num2 = -8
+            }else if(list[i].eqType==34){
+              //固定摄像机（枪机
+              num2 = 20
+            }
             let r = that.svg.paper
               .rect(
-                list[i].position.left,
+                list[i].position.left - num2,
                 list[i].position.top + iconHeight + 2,
                 80,
                 18,
@@ -646,8 +658,9 @@ export default {
                 fill: "#a2a2a3",
                 "font-size": 12,
               });
+            
             t.attr({
-              x: list[i].position.left - (2 * Number(list[i].pile.length) + 14 - 40),
+              x: list[i].position.left - (2 * Number(list[i].pile.length) + 14 - 40) - num2,
             });
             console.log(list[i],r,'list[i]')
             img[i] = that.svg.paper.g(r, t, img3).attr({
@@ -739,6 +752,12 @@ export default {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),
       };
+      console.log(param,configData,'configData')
+      configData.eqList.forEach(v=>{
+        if(v.eqType==3){
+          console.log(v,'交通信号灯')
+        }
+      })
       updateTunnels(param).then((response) => {
         this.saveLoading = false;
         if (response.code === 200) {

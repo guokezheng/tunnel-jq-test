@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div
+    <!-- <div
       style="display: flex; font-size: 14px; width: 100%; align-items: center"
     >
       <div class="warningStatistics">事件预警统计:</div>
@@ -13,8 +13,9 @@
       <div class="EquipStatistics">
         今日预警事件执行率: <span>{{ eventMsg.bl }}</span>
       </div>
-    </div>
+    </div> -->
 
+  
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -149,6 +150,16 @@
       </div>
     </el-row> -->
 
+    <div class="butBox">
+      <div :class="searchValue=='126'?'xz':''" @click="qiehuan('126')">主动安全</div>
+      <div :class="searchValue=='127'?'xz':''" @click="qiehuan('127')">交通事件</div>
+      <div>设备故障</div>
+    </div>
+    <!-- <el-row>
+      <el-button type="primary" plain>主动安全</el-button>
+      <el-button type="primary" plain>交通事件</el-button>
+      <el-button type="primary" plain>设备故障</el-button>
+    </el-row> -->
     <el-table
       v-loading="loading"
       :data="eventList"
@@ -832,6 +843,8 @@ export default {
           },
         },
       ],
+      // 
+      searchValue : '126',
       // 弹出层标题
       title: "",
       // 状态字典
@@ -855,6 +868,7 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
+        searchValue:null,
       },
       allmsg: "",
       process: "",
@@ -984,6 +998,11 @@ export default {
         this.tunnelList = res.data;
       });
     },
+    // 切换按钮
+    qiehuan(inx){
+      this.searchValue=inx;
+      this.getList();
+    },
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
@@ -992,6 +1011,8 @@ export default {
       }
       this.queryParams.startTime = this.dateRange[0];
       this.queryParams.endTime = this.dateRange[1];
+      this.queryParams.searchValue = this.searchValue;
+      console.log(this.queryParams,this.addDateRange(this.queryParams))
       listEvent(this.addDateRange(this.queryParams)).then((response) => {
         console.log(response.rows, "查询事件管理列表");
         this.eventList = response.rows;
@@ -1002,6 +1023,23 @@ export default {
         this.loading = false;
       });
     },
+    // getList() {
+    //   this.loading = true;
+    //   if(!this.dateRange){
+    //     this.dateRange = []
+    //   }
+    //   this.queryParams.startTime = this.dateRange[0];
+    //   this.queryParams.endTime = this.dateRange[1];
+    //   listEvent(this.addDateRange(this.queryParams)).then((response) => {
+    //     console.log(response.rows, "查询事件管理列表");
+    //     this.eventList = response.rows;
+    //     this.$nextTick(() => {
+    //       this.$refs.tableRef.doLayout();
+    //     });
+    //     this.total = response.total;
+    //     this.loading = false;
+    //   });
+    // },
     /** 所属隧道 */
     getTunnel() {
       if (!this.queryParams.deptId) {
@@ -1167,6 +1205,26 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.butBox{
+  width: 280px;
+  display: flex;
+  padding: 4px 4px;
+  background: #9ecced;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+  // justify-content: space-between;
+  div{
+    padding: 6px 10px;
+    color: #fff;
+    letter-spacing: 1px;
+    cursor: pointer;
+  }
+  .xz{
+    background: #285b8d;
+    border-radius: 10px;
+  }
+}
 .addClass {
   .el-select {
     width: 250px;

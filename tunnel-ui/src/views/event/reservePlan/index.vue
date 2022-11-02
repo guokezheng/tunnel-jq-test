@@ -1626,6 +1626,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+::v-deep .in-checked-path .el-radio{
+   
+    display: none;
+  
+}
+
+v-deep .in-checked-path .el-radio{
+   
+   display: none;
+ 
+}
+// .in-checked-path{
+//   ::v-deep .el-radio__original{
+//     display: none;
+//   }
+// }
 .colflex {
   display: flex;
 }

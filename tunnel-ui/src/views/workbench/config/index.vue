@@ -5168,7 +5168,7 @@ export default {
                   // item.position.top = item.position.top - 4;
                 } else if (item.eqType == "3") {
                   // else if(item.eqName=='交通信号灯'){
-                  item.position.left = item.position.left + 16;
+                  item.position.left = item.position.left + 26;
                   // item.position.top = item.position.top - 4;
                 } else if (item.eqType == "8") {
                   // else if(item.eqName=='引道照明'){

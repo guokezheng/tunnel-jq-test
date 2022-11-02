@@ -618,7 +618,7 @@ export default {
           let num = iconWidth<30?(iconWidth<25?10:2):-8;
           var img3 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth +num, //此处增加+ iconWidth
+            list[i].position.left + iconWidth + num, //此处增加+ iconWidth
             list[i].position.top,
             iconWidth,
             iconHeight
@@ -981,7 +981,7 @@ export default {
           } else {
             var img3;
             t.attr({
-              x: 15,
+              x: 0,
             });
 
             if (item.eqType == 7 || item.eqType == 117) {

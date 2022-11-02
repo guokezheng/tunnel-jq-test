@@ -26,7 +26,7 @@ export default {
     };
   },
   mounted() {
-      console.log(this.placeDate,"地图")
+    console.log(this.placeDate, "地图");
     //   页面加载完,开始异步引入高德地图
     //创建了一个回调函数,高德地图加载完毕会调用
     this.initNetTick();
@@ -38,12 +38,12 @@ export default {
         this.init1(this.placeDate);
         this.initMarker();
         // 开启轮播
-          this.markers[0].setIcon(
+        this.markers[0].setIcon(
           "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
-          );
-          this.markers[0].setzIndex(101);
-          this.openWindows(this.markers[0]);
-          this.LoopClick();
+        );
+        this.markers[0].setzIndex(101);
+        this.openWindows(this.markers[0]);
+        this.LoopClick();
       });
     },
     initmap() {
@@ -88,9 +88,9 @@ export default {
           that.polygon = new AMap.Polygon({
             pathL: pathArray,
             // strokeColor: "#3FB8ED", //城市边界颜色
-            strokeColor: "#09BDEF",
+            strokeColor: "#00ffff",
             strokeWeight: 3,
-            fillColor: "#040F4E", // 遮罩背景色黑色
+            fillColor: "#004375", // 遮罩背景色黑色
             fillOpacity: 1,
           });
           that.polygon.setPath(pathArray);
@@ -101,7 +101,10 @@ export default {
     // 点击地图
     showInfoClick(e) {
       this.resetMarkers();
-      this.infoWindow.close(this.map, [this.infoWindowPosition.lng, this.infoWindowPosition.lat])
+      this.infoWindow.close(this.map, [
+        this.infoWindowPosition.lng,
+        this.infoWindowPosition.lat,
+      ]);
       var text =
         "您在 [ " +
         e.lnglat.getLng() +
@@ -148,7 +151,7 @@ export default {
           this.loopIndex = index;
         }
       });
-      
+
       // 点击坐标 更换坐标颜色为红色
       e.target.setIcon(
         "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
@@ -164,26 +167,35 @@ export default {
       this.LoopClick();
     },
     openWindows(e) {
-      var header = "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
-          "border-radius:10px;font-size:0.8vw;color:#04B4E2'>" 
-      var footer = "</div>"
+      var header =
+        "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
+        "border-radius:10px;font-size:0.8vw;color:#04B4E2'>";
+      var footer = "</div>";
       var contert;
-      var title = "<div>"+ e.w.title + "</div>"
-      var coordinates = "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>"
-      var tunnelLength = e.w.extData.tunnelLength==null ? '' : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>"
-      var affiliation = e.w.extData.affiliation==null ? '' : "<div>隧道所属：" + e.w.extData.affiliation + "</div>"
+      var title = "<div>" + e.w.title + "</div>";
+      var coordinates =
+        "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>";
+      var tunnelLength =
+        e.w.extData.tunnelLength == null
+          ? ""
+          : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>";
+      var affiliation =
+        e.w.extData.affiliation == null
+          ? ""
+          : "<div>隧道所属：" + e.w.extData.affiliation + "</div>";
       // 内容
-      contert = header + title + coordinates + tunnelLength + affiliation + footer
+      contert =
+        header + title + coordinates + tunnelLength + affiliation + footer;
       // 点击弹窗
       this.infoWindow = new AMap.InfoWindow({
         isCustom: true,
         anchor: "top-left",
-        content: contert
+        content: contert,
       });
       this.infoWindowPosition = {
         lng: e.w.position.lng,
         lat: e.w.position.lat,
-      }
+      };
       this.infoWindow.open(this.map, [e.w.position.lng, e.w.position.lat]);
     },
     // 重置图标颜色

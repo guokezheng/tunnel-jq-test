@@ -136,19 +136,22 @@ INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `componen
 INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('应急调度', 2252, 4, '', NULL, NULL, 1, 0, 'F', '0', '0', 'system:event:remove', '#', 'admin', '2022-10-19 08:55:21', '', NULL, '');
 
 
---删除sd_devices_copy表
+-- 删除sd_devices_copy表
 
---自动触发定时任务
+-- 自动触发定时任务
 INSERT INTO `sys_job` VALUES ('自动触发任务', 'DEFAULT', 'strategyTask.triggerJob()', '0 0/5 * * * ?', '1', '0', '0', '', '2022-10-27 10:39:29', '', NULL, '');
 
---隧道表桩号字段
+-- 隧道表桩号字段
 alter table sd_tunnels add column start_pile_num varchar(20) comment '隧道开始桩号（整型）';
 alter table sd_tunnels add column end_pile_num varchar(20) comment '隧道结束桩号（整型）';
 
---隧道分区表桩号字段
+-- 隧道分区表桩号字段
 alter table sd_tunnel_subarea add column start_pile varchar(20) comment '开始桩号';
 alter table sd_tunnel_subarea add column end_pile varchar(20) comment '结束桩号';
 
---事件类型sd_event_type
+-- 事件类型sd_event_type
 alter table sd_event_type add column f_id varchar(20) comment '父类ID';
 alter table sd_event_type add column simplify_name varchar(20) comment '类型简称';
+
+-- 设备控制记录表 sd_operation_log
+alter table sd_operation_log add column oper_ip varchar(100) comment 'IP地址'

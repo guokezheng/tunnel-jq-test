@@ -26,15 +26,8 @@ public class SdEventType extends BaseEntity
     private String simplifyName;
 
     /** 父Id */
-    private String fId;
+    private Long fId;
 
-    public String getfId() {
-        return fId;
-    }
-
-    public void setfId(String fId) {
-        this.fId = fId;
-    }
 
     public String getSimplifyName() {
         return simplifyName;
@@ -61,6 +54,14 @@ public class SdEventType extends BaseEntity
     public String getEventType() 
     {
         return eventType;
+    }
+
+    public Long getfId() {
+        return fId;
+    }
+
+    public void setfId(Long fId) {
+        this.fId = fId;
     }
 
     @Override

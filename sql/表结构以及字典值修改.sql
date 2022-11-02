@@ -148,3 +148,7 @@ alter table sd_tunnels add column end_pile_num varchar(20) comment '隧道结束
 --隧道分区表桩号字段
 alter table sd_tunnel_subarea add column start_pile varchar(20) comment '开始桩号';
 alter table sd_tunnel_subarea add column end_pile varchar(20) comment '结束桩号';
+
+--事件类型sd_event_type
+alter table sd_event_type add column f_id varchar(20) comment '开始桩号';
+alter table sd_event_type add column simplify_name varchar(20) comment '结束桩号';

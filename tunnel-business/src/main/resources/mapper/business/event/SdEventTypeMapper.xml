@@ -22,8 +22,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="SdEventTypeResult">
         <include refid="selectSdEventTypeVo"/>
         <where>
-            <if test="eventType != null  and eventType != ''"> and event_type like concat('%', #{eventType}, '%')</if>
-        </where>
+            f_id is not null
+            <if test="eventType != null  and eventType != ''">and event_type =#{eventType}</if>
+        </where> order by id
     </select>
 
     <select id="selectSdEventTypeById" parameterType="Long" resultMap="SdEventTypeResult">

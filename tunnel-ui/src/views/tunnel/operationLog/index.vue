@@ -37,6 +37,21 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="控制方式" prop="tunnelId">
+        <el-select
+          v-model="queryParams.controlType"
+          placeholder="请选择方式"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="dict in controlType"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
+          />
+        </el-select>
+      </el-form-item>
       <!-- <el-form-item label="设备名称" prop="tunnelId">
         <el-select v-model="queryParams.tunnelId" placeholder="请选择设备名称" clearable size="small">
           <el-option
@@ -250,6 +265,8 @@ export default {
       open: false,
       // 控制方式   3：手动 1：时间控制 2：光强控制字典
       controlTypeOptions: [],
+      // 控制状态
+      controlType:[],
       // 日期范围
       dateRange: [],
       //操作状态 0：成功，1：失败
@@ -282,6 +299,11 @@ export default {
     this.getTunnel();
     this.getEqType();
     /* this.getDevices(); */
+    
+    this.getDicts("sd_device_control_type").then((response) => {
+      console.log(response.data, "response.data");
+      this.controlType = response.data;
+    });
     this.getDicts("sd_control_type").then((response) => {
       console.log(response.data, "response.data");
       this.controlTypeOptions = response.data;

@@ -9,10 +9,11 @@
 import request from '@/utils/request'
 
 // 查询情报板模板图片列表
-export function getTemplateImageList() {
+export function getTemplateImageList(query) {
     return request({
       url: '/system/upload/list',
       method: 'get',
+      params: query
     })
 }
 

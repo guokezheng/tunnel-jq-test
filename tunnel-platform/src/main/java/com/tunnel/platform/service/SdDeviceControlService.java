@@ -51,7 +51,7 @@ public class SdDeviceControlService {
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
      * 控制方式controlType(控制方式   0：手动 1：时间控制 2：光强控制 3:预案控制)
-     */
+     * */
     public Integer controlDevices(Map<String, Object> map) {
         if (map == null || map.isEmpty()) {
             //当前设备控制参数为空，直接返回

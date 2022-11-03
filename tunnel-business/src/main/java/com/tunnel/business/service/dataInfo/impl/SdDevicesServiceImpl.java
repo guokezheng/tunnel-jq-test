@@ -774,15 +774,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             log.info("进来了--->当前设备类型数据库已有");
             List<Integer> integerList = list.stream().map(
                     f -> {
+                        //获取到最后标志位
                         int i = f.lastIndexOf("-");
-                        int k = f.indexOf(" ");
+                        int k = f.lastIndexOf("+");
                         int length = 0;
                         if(k > 0){
                             length = k;
                         }else {
                             length = f.length();
                         }
-                        String s = f.substring(i + 1, length);
+                        String s = f.substring(i + 1, length).trim();
                         return Integer.parseInt(s);
                     }
             ).sorted().collect(Collectors.toList());

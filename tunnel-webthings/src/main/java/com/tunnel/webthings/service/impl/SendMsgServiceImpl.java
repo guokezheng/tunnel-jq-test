@@ -37,6 +37,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,8 +90,9 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Override
     public AjaxResult sendEvent() {
         JSONObject jsonObject = new JSONObject();
-        SdEvent sdEvent = sdEventMapper.selectSdEventById(143768L);
-        jsonObject.put("event", "1111111111111111111111111111111111111111111111111");
+        SdEvent sdEvent = sdEventMapper.selectSdEventById(845674434130L);
+        sdEvent.setUpdateTime(new Date());
+        jsonObject.put("event", sdEvent);
         jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
 //        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());

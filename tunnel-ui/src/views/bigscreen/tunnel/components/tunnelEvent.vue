@@ -1,3 +1,11 @@
+<!--
+ * @Author: Praise-Sun 18053314396@163.com
+ * @Date: 2022-10-27 09:52:13
+ * @LastEditors: Praise-Sun 18053314396@163.com
+ * @LastEditTime: 2022-11-01 10:43:49
+ * @FilePath: \tunnel-ui\src\views\bigscreen\tunnel\components\tunnelEvent.vue
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
 <template>
   <div class="tunnelEvent-container">
     <div class="contentTitle">
@@ -10,7 +18,7 @@
 
 <script>
 import * as echarts from "echarts";
-import elementResizeDetectorMaker from 'element-resize-detector'
+import elementResizeDetectorMaker from "element-resize-detector";
 
 export default {
   data() {
@@ -23,18 +31,18 @@ export default {
   },
   mounted() {
     this.initChart();
-    this.watchSize()
+    this.watchSize();
   },
   methods: {
     watchSize() {
       let that = this;
-      let erd = elementResizeDetectorMaker()
-      let Dom = that.$refs.echartsBox;//拿dom元素
+      let erd = elementResizeDetectorMaker();
+      let Dom = that.$refs.echartsBox; //拿dom元素
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
-          let myChart = echarts.init(Dom);
-          myChart.resize();//echarts自带的方法可以使图表重新加载
-      })
+        let myChart = echarts.init(Dom);
+        myChart.resize(); //echarts自带的方法可以使图表重新加载
+      });
     },
     initChart() {
       var warningData = this.warningData;
@@ -51,125 +59,69 @@ export default {
       })();
 
       option = {
-        // backgroundColor: "#1A1835",
-        tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "shadow",
+        legend: {
+          lineStyle: {
+            type: "dashed",
+          },
+        },
+        xAxis: {
+          type: "category",
+          data: ["5日", "10日", "15日", "20日", "25日", "30日"],
+
+          axisLabel: {
+            //y轴文字的配置
+            textStyle: {
+              color: "#ffffff", //Y轴内容文字颜色
+            },
+          },
+          axisLine: {
+            //y轴线的配置
+            show: true, //是否展示
+            lineStyle: {
+              color: "#ffffff", //y轴线的颜色（若只设置了y轴线的颜色，未设置y轴文字的颜色，则y轴文字会默认跟设置的y轴线颜色一致）
+              width: 1, //y轴线的宽度
+              type: "solid", //y轴线为实线
+            },
+          },
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            //y轴文字的配置
             textStyle: {
               color: "#fff",
+              margin: 15,
+            },
+            // formatter: '{value} %'//y轴的每一个刻度值后面加上‘%’号
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLine: {
+            //y轴线的颜色以及宽度
+            show: false,
+            lineStyle: {
+              color: "#fff",
+              width: 1,
+              type: "solid",
+            },
+          },
+          splitLine: {
+            //分割线配置
+            show: true,
+            lineStyle: {
+              color: "#446984",
+              type: "dashed",
             },
           },
         },
-        grid: {
-          borderWidth: 0,
-          // top: 60,
-          // bottom: '10%',
-          left: "15%",
-          textStyle: {
-            color: "#fff",
-          },
-        },
-        // legend: {
-        //   x: "46%",
-        //   top: "11%",
-        //   textStyle: {
-        //     color: "#90979c"
-        //   },
-        //   data: ["预警量"]
-        // },
-        calculable: true,
-        xAxis: [
-          {
-            type: "category",
-            axisLine: {
-              lineStyle: {
-                color: "rgba(204,187,225,0.5)",
-              },
-            },
-            splitLine: {
-              show: false,
-            },
-            axisTick: {
-              show: false,
-            },
-            data: xData,
-          },
-        ],
-
-        yAxis: [
-          {
-            type: "value",
-            splitLine: {
-              show: false,
-            },
-            axisLine: {
-              lineStyle: {
-                color: "rgba(204,187,225,0.5)",
-              },
-            },
-            nameTextStyle: {
-              lineHeight: 15,
-            },
-          },
-        ],
-        dataZoom: [
-          {
-            show: true,
-            height: 22,
-            xAxisIndex: [0],
-            // bottom: 30,
-            start: 10,
-            end: 80,
-            handleIcon:
-              "path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z",
-            handleSize: "110%",
-            handleStyle: {
-              color: "#5B3AAE",
-            },
-            textStyle: {
-              color: "rgba(204,187,225,0.5)",
-            },
-            fillerColor: "rgba(67,55,160,0.4)",
-            borderColor: "rgba(204,187,225,0.5)",
-          },
-          {
-            type: "inside",
-            show: true,
-            height: 15,
-            start: 1,
-            end: 35,
-          },
-        ],
         series: [
           {
-            name: "预警量",
+            lineStyle: {
+              color: "#4db6eb",
+            },
+            data: [150, 230, 224, 218, 135, 147, 260],
             type: "line",
-            symbolSize: 10,
-            symbol: "circle",
-            itemStyle: {
-              color: "#6f7de3",
-            },
-            markPoint: {
-              label: {
-                normal: {
-                  textStyle: {
-                    color: "#fff",
-                  },
-                },
-              },
-              data: [
-                {
-                  type: "max",
-                  name: "最大值",
-                },
-                {
-                  type: "min",
-                  name: "最小值",
-                },
-              ],
-            },
-            data: warningData,
           },
         ],
       };

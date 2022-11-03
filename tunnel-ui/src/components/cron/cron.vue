@@ -124,15 +124,15 @@ export default {
         return this.$message.error("日期与星期不可以同时为“指定”");
       }
       if (this.dVal !== "?" && this.weekVal !== "?") {
-        this.dVal = "?";
-        this.weekVal = "?";
+        this.dVal = "*";
+        this.weekVal = "*";
         return this.$message.error("日期与星期不可以同时为“指定”");
       }
-      if (!this.dVal && !this.weekVal) {
-        this.dVal = "?";
-        this.weekVal = "?";
-        return this.$message.error("日期与星期不可以同时为“指定”");
-      }
+      // if (!this.dVal && !this.weekVal) {
+      //   this.dVal = "?";
+      //   this.weekVal = "?";
+      //   return this.$message.error("日期与星期不可以同时为“指定”");
+      // }
       // if (this.dVal == "" && this.weekVal == "?") {
       //   this.dVal = "?";
       //   this.weekVal = "?";

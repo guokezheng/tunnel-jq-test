@@ -1625,6 +1625,13 @@ export default {
   },
 };
 </script>
+<style>
+#cascader-menu-45-0 .el-radio{
+   
+   display: none !important;
+ 
+}
+</style>
 <style lang="scss" scoped>
 ::v-deep .in-checked-path .el-radio{
    
@@ -1632,11 +1639,13 @@ export default {
   
 }
 
-v-deep .in-checked-path .el-radio{
+::v-deep .in-checked-path .el-radio{
    
    display: none;
  
 }
+
+
 // .in-checked-path{
 //   ::v-deep .el-radio__original{
 //     display: none;

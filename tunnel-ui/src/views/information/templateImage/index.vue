@@ -211,8 +211,8 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="form.url" alt="" />
+          <el-dialog :visible.sync="dialogVisible" append-to-body>
+            <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
         <el-form-item label="图片宽度" prop="imageWidth">
@@ -307,6 +307,8 @@ export default {
       }
     };
     return {
+      dialogImageUrl:'',
+      dialogVisible:false,
       //需要移除的文件ids
       removeIds: [],
       fileData: "", // 文件上传数据（多文件合一）
@@ -374,6 +376,7 @@ export default {
   methods: {
     getList() {
       this.loading = true;
+      console.log(this.queryParams,"this.queryParams");
       getTemplateImageList(this.queryParams).then((response) => {
         console.log(response, "情报板列表");
         this.vocabularyList = response.rows;

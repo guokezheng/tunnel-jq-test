@@ -68,6 +68,8 @@
                   position: relative;
                   box-shadow: unset;
                   float: left;
+                  display: flex;
+                  align-items: center;
                 "
               />
               <template v-if="weatherView">

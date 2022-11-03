@@ -237,26 +237,29 @@ export default {
       activeTab: "direction0",
       //逆向预览列表
       previewLaneUrlList: [
-        require("@/assets/image/lane/2duan.png"),
-        require("@/assets/image/lane/2zhong.png"),
-        require("@/assets/image/lane/2chang.png"),
-        require("@/assets/image/lane/3duan.jpg"),
-        require("@/assets/image/lane/3zhong.jpg"),
-        require("@/assets/image/lane/3chang.jpg"),
-        require("@/assets/image/lane/4duan.png"),
-        require("@/assets/image/lane/4zhong.png"),
-        require("@/assets/image/lane/4chang.png"),
-        require("@/assets/image/lane/4chang+.png"),
+        // require("@/assets/image/lane/2duan.png"),
+        // require("@/assets/image/lane/2zhong.png"),
+        // require("@/assets/image/lane/2chang.png"),
+        // require("@/assets/image/lane/3duan.jpg"),
+        // require("@/assets/image/lane/3zhong.jpg"),
+        // require("@/assets/image/lane/3chang.jpg"),
+        // require("@/assets/image/lane/4duan.png"),
+        // require("@/assets/image/lane/4zhong.png"),
+        // require("@/assets/image/lane/4chang.png"),
+        // require("@/assets/image/lane/4chang+.png"),
 
-        require("@/assets/image/lane/2duanz.png"),
-        require("@/assets/image/lane/2zhongz.png"),
-        require("@/assets/image/lane/2changz.png"),
-        require("@/assets/image/lane/3duanz.jpg"),
-        require("@/assets/image/lane/3zhongz.jpg"),
-        require("@/assets/image/lane/3changz.jpg"),
-        require("@/assets/image/lane/4duanz.jpg"),
-        require("@/assets/image/lane/4zhongz.jpg"),
-        require("@/assets/image/lane/4changz.jpg"),
+        // require("@/assets/image/lane/2duanz.png"),
+        // require("@/assets/image/lane/2zhongz.png"),
+        // require("@/assets/image/lane/2changz.png"),
+        // require("@/assets/image/lane/3duanz.jpg"),
+        // require("@/assets/image/lane/3zhongz.jpg"),
+        // require("@/assets/image/lane/3changz.jpg"),
+        // require("@/assets/image/lane/4duanz.jpg"),
+        // require("@/assets/image/lane/4zhongz.jpg"),
+        // require("@/assets/image/lane/4changz.jpg"),
+        require("@/assets/image/lane/3blue_duan.png"),
+        require("@/assets/image/lane/3blue_chang.png"),
+        require("@/assets/image/lane/fenghuangshan.png"),
       ],
       //当前隧道
       selectedTunnel: {
@@ -979,18 +982,18 @@ export default {
             }else{
               img1 = this.svg.paper.image(
                 url[0],
-                10 + iconWidth,
-                0,
-                iconWidth,
-                iconHeight
-              );
+              10 + iconWidth,
+              0,
+              iconWidth,
+              iconHeight
+            );
               img2 = this.svg.paper.image(
-                url[1],
-                10 + iconWidth,
-                0,
-                iconWidth,
-                iconHeight
-              );
+              url[1],
+              10 + iconWidth,
+              0,
+              iconWidth,
+              iconHeight
+            );
             }
             img.push(
               this.svg.paper.g(r, t, img2, img1).drag().attr({
@@ -1631,7 +1634,7 @@ export default {
   clear: both;
   text-align: center;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1644,7 +1647,7 @@ export default {
 
 .config-content {
   width: 100%;
-  padding-bottom: 40px;
+  // padding-bottom: 40px;
   // margin-top: 20px;
 }
 

@@ -17,7 +17,7 @@
   }
 
   .el-scrollbar__wrap::-webkit-scrollbar {
-    width: 12px;
+    width: 1px;
     background-color: #00598f;
   }
 
@@ -277,7 +277,7 @@
 
       &.has-logo {
         .el-scrollbar {
-          height: calc(100% - 50px);
+          height: calc(100% - 144px);
         }
       }
 
@@ -709,6 +709,7 @@
     }
     .el-date-editor .el-range-input{
       background-color: #00152B !important;
+      color: white;
 
     }
    .el-pagination__total,.el-pagination__jump{
@@ -1013,6 +1014,23 @@
     }
   }
   .zoomClass{
+    .input-with-select{
+      .el-input__inner{
+        padding: 15px;
+        width: 150px;
+      }
+      .el-input-group__append{
+        background-color: #00B0FF;
+        border: 1px solid #00B0FF;
+        padding: 0;
+        width: 30px;
+        .el-button{
+          width: 30px;
+          margin: -10px -10px;
+          padding: 0 15px;
+        }
+      }
+    }
     .el-input-number{
       // border: solid 1px #00c8ff;
       border-radius: 4px;
@@ -1055,7 +1073,20 @@
       background: #00c8ff;
     }
   }
-  
+  .switchStyle{
+    .el-switch__core:after{
+      background: #00C8FF;
+    }
+    
+    .el-switch__core{
+      background: linear-gradient(2deg, #00070D, #005AA8);
+      border: solid 1px #0a88bd !important;
+    }
+
+    .display-box .el-switch__core:after{
+      background: #0a88bd;
+    }
+  }
   .rightButtonS{
     color: #fff;
     background-image: linear-gradient(to left,#004375,#0086ba);

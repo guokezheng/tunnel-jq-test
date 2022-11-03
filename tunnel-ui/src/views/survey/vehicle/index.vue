@@ -192,7 +192,7 @@
           </el-form-item>
 
           <el-form-item label="存放地点" prop="vPlace">
-            <el-input v-model="form.vPlace" placeholder="请输入存放地点" />
+            <el-input v-model="form.vPlace" placeholder="请输入存放地点" type="textarea"/>
           </el-form-item>
           <el-form-item label="使用状态" prop="useStatus">
             <el-select
@@ -210,10 +210,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="车载终端安装" prop="terminalInstall">
-            <el-input v-model="form.terminalInstall" placeholder="请输入车载终端安装" />
+            <el-input v-model="form.terminalInstall" placeholder="请输入车载终端安装" type="textarea"/>
           </el-form-item>
           <el-form-item label="技术状态描述" prop="statusDesc">
-            <el-input v-model="form.statusDesc" placeholder="请输入技术状态描述" />
+            <el-input v-model="form.statusDesc" placeholder="请输入技术状态描述" type="textarea"/>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -267,7 +267,9 @@ import {
             { required: true, message: '请选择机构', trigger: 'orgId' }
           ],
           plateNumber: [
-            { required: true, message: '请输入车牌', trigger: 'plateNumber' }
+            { required: true, message: '请输入车牌', trigger: 'plateNumber' },
+            { pattern: /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, 
+              message: '请输入正规格式的车牌号', trigger: 'blur' },
           ],
           vType: [
             { required: true, message: '请选择车型', trigger: 'vType' }

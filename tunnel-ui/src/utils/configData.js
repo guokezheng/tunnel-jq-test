@@ -405,7 +405,7 @@ let laneImage = [
     id: "2",
     name: "3车道-长",
     url: require('@/assets/image/lane/chaochang.png'),
-    width: 2400,
+    width: 4220,
     num: 3,
     direction: 0
   },

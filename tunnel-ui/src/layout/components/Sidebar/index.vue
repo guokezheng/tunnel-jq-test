@@ -2,7 +2,7 @@
   <div
     :class="{ 'has-logo': showLogo }"
     :style="{
-      height: topNav ? '65px' : '100%',
+      height: topNav ? '72px' : '100%',
     }"
   >
     <logo v-if="showLogo" :collapse="isCollapse" />
@@ -34,11 +34,7 @@
     <el-scrollbar
       :class="settings.sideTheme"
       wrap-class="scrollbar-wrapper"
-      :style="
-        topNav
-          ? 'width:55%;height:100%;position: absolute;left: 702px;top: 0;'
-          : ''
-      "
+      :style="topNav ? 'width:55%;height:100%;' : ''"
       ref="scroll"
     >
       <el-menu
@@ -124,10 +120,11 @@ export default {
     const childrenLength = this.$refs.currentNav.$el["childElementCount"];
     // 导航栏菜单
     if (childrenLength > 6) {
-      this.style = "min-width:18.7%;";
+      this.style = "min-width:20.7%;";
     } else {
       this.style = "width:20%;";
     }
+    console.log(this.sidebarRouters, "sidebarRouters");
   },
   methods: {
     prevScroll() {
@@ -180,18 +177,17 @@ export default {
     position: relative;
     .el-icon-arrow-left,
     .el-icon-arrow-right {
-      position: absolute;
-      top: 29px;
       font-size: 16px;
       cursor: pointer;
     }
     .el-icon-arrow-left {
-      left: 47%;
       color: white;
+      margin-left: 20px;
     }
     .el-icon-arrow-right {
-      right: -4%;
       color: white;
+      margin-left: 40px;
+
     }
     a {
       display: unset !important;
@@ -221,17 +217,13 @@ export default {
 .theme-light {
   .index_menu .el-icon-arrow-left,
   .index_menu .el-icon-arrow-right {
-    position: absolute;
-    top: 29px;
     font-size: 16px;
     cursor: pointer;
   }
   .index_menu .el-icon-arrow-left {
-    left: 47%;
     color: #fff !important;
   }
   .index_menu .el-icon-arrow-right {
-    right: -4% !important;
     color: #fff !important;
   }
 }
@@ -323,9 +315,8 @@ export default {
   width: 10%;
   float: left;
   text-align: left;
-  position: absolute;
-  top: 0;
-  left: 510px;
+  margin-left: 100px;
+
   span {
     margin-left: 10px;
   }

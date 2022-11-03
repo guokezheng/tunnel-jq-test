@@ -3,13 +3,17 @@
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link style="height:100%;" v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
         <el-menu-item style="height:52px;line-height:50px;overflow-y: auto;" :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+          <!-- <item  :title="onlyOneChild.meta.title" /> -->
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
+
         </el-menu-item>
       </app-link>
     </template>
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body :class="topNav?'topSubmenu':''">
       <template slot="title" style="height:52px;">
+        <!-- <item v-if="item.meta"  :title="item.meta.title"/> -->
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title"/>
+
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -103,7 +107,7 @@ export default {
 }
 </script>
 <style lang="scss" scope>
-  .el-submenu__title{height:50px;line-height:50px;}
+  .el-submenu__title{height:50px;line-height:50px;text-align: left;}
   .el-submenu .el-menu{flex-flow: column;}
   .topSubmenu .el-icon-arrow-down:before{content:unset;}
   .theme-dark,.theme-light,.theme-blue{

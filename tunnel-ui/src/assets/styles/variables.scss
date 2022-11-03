@@ -112,7 +112,7 @@ $theme-blue-rgba: rgba(0, 74, 119, 0.8);
     .el-scrollbar {
       .scrollbar-wrapper.el-scrollbar__wrap {
         margin: 0px !important;
-        overflow: hidden;
+        overflow: auto;
       }
     }
   }
@@ -187,7 +187,12 @@ $theme-blue-rgba: rgba(0, 74, 119, 0.8);
     .el-scrollbar {
       .scrollbar-wrapper.el-scrollbar__wrap {
         margin: 0px !important;
-        overflow: hidden;
+        overflow: auto;
+      }
+      .scrollbar-wrapper .el-scrollbar__wrap::-webkit-scrollbar {
+        width: 1px;
+        height: 1px;
+        // background-color: #1d58a9;
       }
     }
   }
@@ -218,9 +223,9 @@ $theme-blue-rgba: rgba(0, 74, 119, 0.8);
     }
   }
   #app {
-    .sidebar-container .theme-dark .el-submenu .is-active {
-      color: $theme-dark-bg-color !important;
-    }
+    // .sidebar-container .theme-dark .el-submenu .is-active {
+    //   color: $theme-dark-bg-color !important;
+    // }
     .sidebar-container .el-menu-item#left_nav.is-active {
       background-color: white !important;
       color: $theme-dark-bg-color !important;

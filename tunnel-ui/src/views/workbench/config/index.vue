@@ -5,7 +5,7 @@
       :style="{ height: 'calc(100vh - (' + navigationHeight + 'px))' }"
     >
       <div class="header workbench-header">
-
+        
         <el-row
           class="menu-b"
           style="display: flex; align-items: center"
@@ -60,6 +60,11 @@
           style="z-index: 8"
         >
           <div class="display-box zoomClass">
+            <el-input placeholder="请输入内容" v-model="screenEqName" class="input-with-select">
+              <el-button slot="append" icon="el-icon-search" @click="screenEqNameButton"></el-button>
+            </el-input>
+          </div>
+          <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
             <el-input-number
               v-model="zoom"
@@ -72,12 +77,12 @@
               {{ zoom + "%" }}
             </el-input-number>
           </div>
-          <div class="display-box">
+          <!-- <div class="display-box">
             <p class="zoom-title" style="font-size: 14px">
               {{ displayNumb == 0 ? "桩号开" : "桩号关" }}
             </p>
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
-          </div>
+          </div> -->
           <div class="display-box">
             <p class="zoom-title" style="font-size: 14px">
               {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
@@ -105,15 +110,20 @@
           >
             控制策略
           </el-button> -->
-          <!-- <el-button
+          <el-button
             class="flex-row"
             type="primary"
             size="mini"
             icon="el-icon-files"
             @click="batchManage"
+            v-if="batchManageType == 1"
           >
             批量操作
-          </el-button> -->
+          </el-button>
+          <div v-if="batchManageType == 2" class="batchManageButton">
+            <div @click="closeBatchManageDialog">取消</div>
+            <div @click="implementBatchManage">执行</div>
+          </div>
           <el-button
             class="flex-row"
             type="primary"
@@ -141,7 +151,7 @@
           @wheel.prevent="handleTableWheel"
           @contextmenu.prevent
           style="position: relative;left:2%;"
-
+         
         >
         <!-- :class="topNav?'contentTopNav':'contentLeftNav'" -->
           <!-- <div class="tunnelBox" :style="{ width: currentTunnel.lane.width + 80 + 'px' }" style="border: solid 1px yellow;"> -->
@@ -212,6 +222,7 @@
                       <img
                         src="../../../assets/logo/equipment_log/robot_zaixian.png"
                         class="robotAnimation"
+                        
                       />
                     </div>
                   </template>
@@ -234,6 +245,11 @@
                     @mousemove="openTooltip(item, index)"
                     @mouseleave="closeTooltip(item)"
                   >
+                    <!-- 设备图标上提示文字 -->
+                    <div v-if="item.eqName == screenEqName " class="screenEqNameBox">
+                        {{screenEqName}}
+                    </div>
+                    <div v-if="item.textFalse" class="textFalseBox">请选择同种设备</div>
                     <!-- <div class="tooltip" v-if="showTooltipIndex == index && showTooltip">{{ sensorContent(item) }}</div> -->
 
                     <el-tooltip
@@ -267,17 +283,20 @@
                         <img
                           v-for="(url, indexs) in item.url"
                           style="position: relative"
-                          :style="
-                            item.eqType || item.eqType == 0
-                              ? 'cursor: pointer;'
-                              : ''
+                          :style="{
+                            cursor:item.eqType || item.eqType == 0?'pointer':'',
+                            border:item.click == true?'solid 2px #09C3FC':'',
+                            transform:item.eqType == 23 && item.eqDirection == 0?'scale(-1,1)':''
+                          }
+                           
                           "
                           :width="item.iconWidth"
                           :height="item.iconHeight"
                           :key="item.eqId + indexs"
                           :src="url"
+                          :class="item.eqName == screenEqName ? 'screenEqNameClass':''"
+                          
                         />
-
                         <!-- 调光数值 -->
                         <label
                           style="
@@ -473,9 +492,10 @@
                   </div>
                 </el-option>
               </el-select>
-              <div class="chezhiControlButton" @click="chezhiControl(0)">
+              <el-button class="chezhiControlButton" @click="chezhiControl(0)" :disabled='chezhiDisabled'
+                 >
                 控制
-              </div>
+              </el-button>
             </div>
 
             <div class="chezhiDrawerDirection">
@@ -522,9 +542,9 @@
                   </div>
                 </el-option>
               </el-select>
-              <div class="chezhiControlButton" @click="chezhiControl(1)">
+              <el-button class="chezhiControlButton" @click="chezhiControl(1)" :disabled="chezhiDisabled">
                 控制
-              </div>
+              </el-button>
             </div>
           </div>
         </el-drawer>
@@ -544,7 +564,7 @@
               <span>{{ item.strategy_name }} </span>
               <el-switch
                 v-model="item.strategy_state"
-
+                
                 active-value="0"
                 inactive-value="1"
                 @change = "timStrategySwitch(item)"
@@ -758,6 +778,153 @@
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
     </div>
+    <!-- 批量操作弹窗 -->
+    
+    <el-dialog
+      class="workbench-dialog batch-table operationDiglog"
+      :title="title"
+      :visible.sync="batchManageDialog"
+      width="560px"
+      append-to-body
+      v-dialogDrag
+    >
+      <div
+        style="
+          width: 100%;
+          height: 10px;
+          display: flex;
+          justify-content: space-between;
+        "
+      >
+        <div class="dialogLine"></div>
+        <img
+          src="../../../assets/cloudControl/dialogHeader.png"
+          style="height: 30px; transform: translateY(-30px)"
+          @click="closeBatchManageDialog"
+        />
+      </div>
+      <el-table
+        ref="batchManageTable"
+        :data="batchManageList"
+        tooltip-effect="dark"
+        style="width: 100%;margin-bottom: 0px !important;"
+        max-height="220"
+        size="mini"
+        @row-click="handleRowClick"
+      >
+        <el-table-column
+          prop="eqName"
+          label="设备名称"
+          width="220"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="pile"
+          label="桩号"
+          width="120"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column label="方向">
+          <template slot-scope="scope">
+            <span>{{ getDirection(scope.row.eqDirection) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-form
+        :model="batchManageForm"
+        label-width="90px"
+        label-position="left"
+        size="mini"
+        style="padding: 15px; padding-top: 0px"
+      >
+        <el-form-item label="配置状态:">
+          <div class="wrap">
+            <el-radio-group
+              v-for="(item, index) in eqTypeStateList"
+              :key="index"
+              v-model="batchManageForm.state"
+              style="display: flex; flex-direction: column"
+              @change="$forceUpdate()"
+            >
+              <el-radio
+                v-if="batchManageForm.eqType == item.type && item.control == 1"
+                class="el-radio flex-row"
+                :label="item.state"
+                style="align-items: center"
+                :class="[
+                  String(batchManageForm.state) == String(item.state)
+                    ? 'el-radio-selcted'
+                    : '',
+                ]"
+              >
+                <el-row class="flex-row" v-if="batchManageForm.eqDirection == '0' && batchManageForm.eqType == (1 || 2)">
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                  />
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[1]"
+                    v-if="item.url.length > 1"
+                  />
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+                <el-row class="flex-row" v-if="batchManageForm.eqDirection == '1'&& batchManageForm.eqType == (1 || 2)">
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[1]"
+                  />
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                    v-if="item.url.length > 1"
+                  />
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+                <el-row class="flex-row" v-if="batchManageForm.eqType != (1 || 2)">
+                  <img
+                    :width="iconWidth"
+                    :height="iconHeight"
+                    :src="item.url[0]"
+                  />
+                
+                  <div style="margin: 0 0 0 10px; display: inline-block">
+                    {{ item.name }}
+                  </div>
+                </el-row>
+              </el-radio>
+            </el-radio-group>
+          </div>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" style="float: right; margin-bottom: 20px">
+            <el-button
+              type="primary"
+              size="mini"
+              @click="batchManageOK()"
+              style="width: 80px"
+              class="submitButton"
+              >确 定</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              @click="closeBatchManageDialog()"
+              style="width: 80px"
+              >取 消</el-button
+            >
+          </div>
+    </el-dialog>
     <!-- 操作日志 弹窗 -->
     <el-dialog
       class="workbench-dialog batch-table operationDiglog"
@@ -851,7 +1018,7 @@
         :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange"
         empty-text="暂无操作日志"
-
+        
       >
         <!-- <el-table-column type="selection" width="55" align="center" /> -->
         <el-table-column
@@ -2529,6 +2696,23 @@ export default {
   },
   data() {
     return {
+      chezhiDisabled:false,//车指按钮 返回接口结果前禁用
+      // 批量选择设备图标
+      iconWidth: "",
+      iconHeight: "",
+      // 多选框选中项表单
+      batchManageForm:{
+        state:'',
+        eqType:'',
+        eqDirection:''
+      },
+      itemEqId:[],//选中项id数组
+      itemEqType:'',//判断多选的设备类型是否相同
+      batchManageList:[],//多选设备数组
+      addBatchManage:false,//点击多选设备
+      batchManageDialog:false,//批量操作弹窗
+      batchManageType:1,
+      screenEqName:'',//筛选设备名称
       timStrategyList:[],//定时控制
       BulkData: [],
       realTimeList: [], //websockt推送实时车辆数据
@@ -3377,13 +3561,13 @@ export default {
 
     bus.$on("process", (e) => {
       console.log(e, "-----------");
-      if (e == "theme-light") {
-        this.echartsColor = "#fff";
+      if (e == "theme-blue") {
+        this.echartsColor = "#003a5d";
         this.getTunnelList();
         this.initEnergyConsumption();
         this.loadFocusCar();
-      } else if (e == "theme-dark") {
-        (this.echartsColor = "#0a88bd"), this.getTunnelList();
+      } else if (e == "theme-dark" || e == "theme-light") {
+        (this.echartsColor = "#fff"), this.getTunnelList();
         this.initEnergyConsumption();
         this.loadFocusCar();
       }
@@ -3411,6 +3595,62 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 批量操作弹窗获取方向
+    getDirection(num) {
+      for (var item of this.directionList) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
+    // 批量操作 弹窗确定
+    batchManageOK(){
+      const param = {
+        eqId: this.itemEqId,
+        eqDirection: this.batchManageForm.eqDirection,
+        state: this.batchManageForm.state,
+      }
+      batchManage(param).then((res) =>{
+
+      })
+    },
+    // 新版批量操作 点击变俩按钮
+    batchManage(){
+      this.batchManageType = 2
+      this.batchManageList = []
+      this.addBatchManage = true
+    },
+    // 批量操作 执行
+    implementBatchManage(){
+      this.title = '批量操作'
+      for(var item of this.selectedIconList){
+        if(item.click){
+          this.batchManageList.push(item)
+          this.batchManageDialog = true
+        }
+      }
+    },
+    // 关闭批量操作弹窗 / 批量操作取消
+    closeBatchManageDialog(){
+      this.batchManageDialog = false
+      this.batchManageType = 1
+      this.itemEqId = []
+      this.itemEqType = ''
+      this.addBatchManage = false
+      for(var item of this.selectedIconList){
+        item.click = false
+        this.$forceUpdate()
+      }
+    },
+    // 筛选设备名称
+    screenEqNameButton(){
+      console.log(this.screenEqName);
+      for(var item of this.selectedIconList){
+        if(item.eqName.indexOf(this.screenEqName)){
+          console.log(item,"itemitem");
+        }
+      }
+    },
     // 抽屉车指批量控制 车道下拉框
     getTunnelLane() {
       this.chezhiLaneList = [];
@@ -3450,6 +3690,7 @@ export default {
     },
     // 控制按钮
     chezhiControl(num) {
+      this.chezhiDisabled = true
       const param = {
         tunnelId: this.tunnelId,
         direction: num,
@@ -3459,10 +3700,12 @@ export default {
       batchControlCarFinger(param).then((res) => {
         console.log(res);
         if(res.data == 0){
-          this.$modal.msgWarning("控制失败");
+           this.$modal.msgWarning("控制失败");
         }else if (res.data == 1) {
           this.$modal.msgSuccess("控制成功");
         }
+        this.chezhiDisabled = false
+
       });
     },
     getDeviceDataAndStateData() {
@@ -3609,7 +3852,7 @@ export default {
         console.log(this.timStrategyList, "this.timStrategyList");
       });
       }
-
+      
     },
     isDrawerC() {
       this.drawerCVisible = true;
@@ -5448,7 +5691,7 @@ export default {
                       }
                     }
                     }
-
+                    
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
@@ -5651,7 +5894,64 @@ export default {
     //================================================单个配置开始==================================
     /* 打开配置界面*/
     async openStateSwitch(item) {
-      console.log(item, "点击的设备");
+      console.log(item,"item");
+      if(this.addBatchManage == true){
+        // 判断是否有选中项 有的话 判断本次点击和上次点击 设备类型是否一样 
+        // 要求每次点击选中的设备类型相同
+        if(this.itemEqType){
+          // 第二次点击时
+          for(var itm of this.selectedIconList){
+            //  多选 选择的设备类型相同时
+            if(itm.eqId == item.eqId && this.itemEqType == item.eqType){
+              // 比对id 如果曾点过 取消选框
+              const result = this.itemEqId.findIndex(item => item == itm.eqId);
+              if(result === -1){
+                itm.click = true
+                this.itemEqId.push(itm.eqId)
+                this.$forceUpdate()
+              }else{
+                this.itemEqId.splice(result,1)
+                itm.click = false
+                this.$forceUpdate()
+                if(this.itemEqId.length == 0){
+                  this.itemEqType = ''
+                  this.batchManageForm.eqType = ''
+                  this.batchManageForm.eqDirection = ''
+                  this.addBatchManage = false
+                  this.$forceUpdate()
+                }
+              }
+            }
+            // 多选 选择的设备类型不同时 提示红字
+            else if(itm.eqId == item.eqId && this.itemEqType != item.eqType){
+              itm.textFalse = true
+              this.$forceUpdate()
+            }
+          }
+        }else{
+          // 第一次点击时
+          for(let itm of this.selectedIconList){
+            // console.log(itm);
+            if(itm.eqId == item.eqId){
+              console.log(itm,"0000000000000000000000000");
+              itm.click = true
+              this.itemEqId.push(itm.eqId)
+              this.itemEqType = itm.eqType
+              this.batchManageForm.eqType = itm.eqType
+              this.batchManageForm.eqDirection = itm.eqDirection
+              console.log(this.batchManageForm);
+              this.$forceUpdate()
+              getType(itm.eqType).then((res) => {
+                console.log(res, "查询设备图标宽高");
+                this.iconWidth = res.data.iconWidth;
+                this.iconHeight = res.data.iconHeight;
+              });
+            }
+          }
+        }
+      }
+      else if(this.addBatchManage == false){
+        console.log(item, "点击的设备");
       this.eqInfo = {
         clickEqType: item.eqType,
         equipmentId: item.eqId,
@@ -6007,6 +6307,8 @@ export default {
       //     }
       //   }
       // }
+      }
+      
     },
     // loadFlv() {
     //   if (flvjs.isSupported()) {
@@ -6163,22 +6465,25 @@ export default {
     //================================================单个配置结束==================================
     //================================================批量配置开始====================================
     /* 点击批量配置*/
-    batchManage() {
-      this.devicesList = [];
-      this.batchVisible = true;
-      mode = "buttonSelection";
-      this.title = "批量操作";
-      // this.$refs.batchForm.clearValidate();
-      this.batchForm.eqType = this.eqTypeList[1].typeId;
-      let param = {
-        eqTunnelId: this.currentTunnel.id,
-        eqType: this.eqTypeList[1].typeId,
-        eqDirection: "",
-        lane: "",
-      };
-      this.batchFormDirection = 1;
-      this.selectEquipment(param);
-    },
+      // ------------------------------------------老版批量操作功能开始----------------------------------
+    // batchManage() {
+      // this.devicesList = [];
+      // this.batchVisible = true;
+      // mode = "buttonSelection";
+      // this.title = "批量操作";
+      // // this.$refs.batchForm.clearValidate();
+      // this.batchForm.eqType = this.eqTypeList[1].typeId;
+      // let param = {
+      //   eqTunnelId: this.currentTunnel.id,
+      //   eqType: this.eqTypeList[1].typeId,
+      //   eqDirection: "",
+      //   lane: "",
+      // };
+      // this.batchFormDirection = 1;
+      // this.selectEquipment(param);
+    // },
+      // ------------------------------------------老版批量操作功能结束----------------------------------
+
     /* 批量选择后*/
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -6725,6 +7030,60 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.batchManageButton{
+  width:120px;display:flex;justify-content: space-around;padding:0 5px;
+  color: #e1feff;
+  background: linear-gradient(2deg, #00070D, #005AA8) !important;
+  border: 1px solid #00c8ff;
+  font-size: 12px;
+  height: 32px;
+  align-items: center;
+  margin-right: 10px;
+  border-radius: 3px;
+  color:white;
+  text-align: center;
+  >div{
+    width:50px;
+    height:20px;
+    border-radius: 13px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+  >div:nth-of-type(1){
+    background: #C8C8C8;
+  }
+  >div:nth-of-type(2){
+    background: #00B0FF;
+  }
+}
+.screenEqNameClass{
+  border:solid 2px #09C3FC;
+  border-radius:4px;
+}
+.screenEqNameBox{
+  width:120px;height:40px;position:absolute;
+  top:-40px;left:30px;line-height: 28px;text-align: center;font-size: 10px;
+  background-image: url(../../../assets/cloudControl/screenEqName.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color:#07C3FC;
+}
+.textFalseBox{
+  width:120px;height:40px;position:absolute;
+  top:-40px;left:30px;line-height: 28px;text-align: center;font-size: 10px;
+  background-image: url(../../../assets/cloudControl/screenEqName.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color:#DA4A64;
+  opacity:0;
+  animation:fadenum 2s;
+}
+@keyframes fadenum{
+  0%{opacity:1;}
+  99%{opacity:1;}
+  100%{opacity:0;}
+}
+
 .siblings {
   position: fixed;
   top: 121px;
@@ -7227,7 +7586,7 @@ export default {
   right: 240px;
 }
 .hideSidebar .leftNavRightDeawer{
-  right: 55px;
+  right: 0px;
 }
 // .bigTypeButton{
 //     color: #baddff;
@@ -7278,6 +7637,9 @@ export default {
 
 ::v-deep .menu-b .el-select > .el-input {
   margin-top: 5px;
+}
+.menu-b .el-button-group>.el-button+.el-button {
+    margin-left: 10px;
 }
 
 // ::v-deep .menu-b .el-select--small{
@@ -7954,12 +8316,16 @@ input {
       width: 88px;
       height: 22px;
       border: none;
+      
     }
-  }
+    .el-form-item__content .el-button--mini{
+        padding:2px 15px !important;
+      }
+  } 
   .el-table{
     padding: 0 15px;
     margin-bottom: 60px;
-
+   
   }
 }
 ::v-deep .eventDiglog .el-button--medium {
@@ -8150,12 +8516,17 @@ input {
   .chezhiControlButton {
     width: 50px;
     height: 32px;
+    padding:0;
     // border:solid 1px #A3B7CF;
     border-radius: 2px;
     margin-left: 8px;
     text-align: center;
     line-height: 31px;
     cursor: pointer;
+    color:white;
+  }
+  .chezhiControlButton:hover{
+    color:white;
   }
 }
 /*单个设备配置框 */

@@ -251,7 +251,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" 
+          <el-dialog :visible.sync="dialogVisible"  class="modifyEqTypeDialog"
           :append-to-body="true" style="width:600px !important;margin: 0 auto;"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
@@ -599,5 +599,8 @@ export default {
     .el-upload {
       display: none;
     }
+  }
+  .modifyEqTypeDialog .el-dialog__headerbtn{
+    top: 10px !important;
   }
 </style>

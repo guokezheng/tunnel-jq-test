@@ -930,10 +930,15 @@ export default {
           this.templateContent.indexOf(data) ==
           this.templateContent.indexOf(this.templateContent[i])
         ) {
-          if(data.id){
-            this.templateDelContent.push(data);
+          if(this.templateContent.length == 1){
+            this.$modal.msgError("至少保留一条数据");
+          }else{
+            if(data.id){
+              this.templateDelContent.push(data);
+            }
+            this.templateContent.splice(this.templateContent.indexOf(data), 1);
           }
-          this.templateContent.splice(this.templateContent.indexOf(data), 1);
+          
         }
       }
     },

@@ -166,7 +166,7 @@
       }
   
       .el-scrollbar__wrap::-webkit-scrollbar {
-        width: 12px;
+        width: 1px;
         background-color: #1d58a9;
       }
   
@@ -222,7 +222,7 @@
   
         &.has-logo {
           .el-scrollbar {
-            height: calc(100% - 50px);
+            height: calc(100% - 144px);
           }
         }
   
@@ -500,6 +500,26 @@
       }
     }
     .zoomClass{
+      .input-with-select{
+        .el-input__inner{
+          padding: 15px;
+          width: 150px;
+        }
+        .el-input-group__append{
+          background-color: #0a88bd;
+          border: 1px solid #0a88bd;
+          padding: 0;
+          width: 30px;
+          .el-button{
+            width: 30px;
+            margin: -10px -10px;
+            padding: 0 15px;
+            .el-icon-search{
+              color: white;
+            }
+          }
+        }
+      }
       .el-input-number__decrease, .el-input-number__increase {
         // color: #e1feff;
         background-color: white !important;

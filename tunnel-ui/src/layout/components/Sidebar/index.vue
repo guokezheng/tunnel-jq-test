@@ -2,10 +2,6 @@
   <div
     :class="{ 'has-logo': showLogo }"
     :style="{
-      backgroundColor:
-        settings.sideTheme === 'theme-dark'
-          ? variables.menuBackground
-          : variables.menuLightBackground,
       height: topNav ? '65px' : '100%',
     }"
   >

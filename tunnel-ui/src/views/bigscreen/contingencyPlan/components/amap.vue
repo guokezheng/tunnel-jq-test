@@ -6,7 +6,7 @@
       <div>值班人员</div>
       <div>执行预案</div>
     </div> -->
-    <div class="changeFunction" >
+    <!-- <div class="changeFunction" >
      <el-tabs type="border-card" :tab-position="tabPosition" v-model="changeFunction" @tab-click="handleClick">
        <el-tab-pane name="1">
            <span slot="label"><i class="el-icon-c-scale-to-original"></i> 消防资源</span>
@@ -21,7 +21,7 @@
            </span>
        </el-tab-pane>
      </el-tabs>
-    </div>
+    </div> -->
     
     <div class="changeTunnel" v-show="showPlanTab">
         <el-tabs type="border-card" :tab-position="tabPosition" v-model="changeTunnel" @tab-click="handleClick2">

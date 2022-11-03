@@ -528,11 +528,12 @@ export default {
 }
 .videoCarousel {
   width: 25%;
-  height: 32%;
+  height: 31%;
   // border: solid 1px white;
   position: absolute;
   top: 67%;
   left: 1vw;
+  background-color: #00598f;
 }
 .reservePlan {
   width: 35%;

@@ -59,9 +59,7 @@ public class SdDeviceControlService {
             return 0;
         }
         if ("GSY".equals(deploymentType)) {
-            //map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
-            sdOptDeviceService.optSingleDevice(map);
-            return 1;
+            return sdOptDeviceService.optSingleDevice(map);
         }
         //控制车指
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {

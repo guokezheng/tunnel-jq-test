@@ -37,16 +37,16 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="设备名称" prop="tunnelId">
-        <el-select v-model="queryParams.tunnelId" placeholder="请选择设备名称" clearable size="small">
+       <el-form-item label="控制方式" prop="controlType">
+        <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
           <el-option
-            v-for="item in eqTunnelData"
-            :key="item.eqId"
-            :label="item.tunnelName"
-            :value="item.eqId"
+            v-for="dict in dict.type.sd_device_control_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
           />
         </el-select>
-      </el-form-item> -->
+      </el-form-item>
       <!-- <el-form-item label="设备名称" prop="eqId">
         <el-input
           v-model="queryParams.eqId"
@@ -101,26 +101,24 @@
         prop="typeName.typeName"
       />
       <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-      <!-- <el-table-column label="设备名称" align="center" prop="eqName" display:"none" /> -->
-      <el-table-column label="识别码" align="center" prop="code" display:"none"
-      /> <el-table-column label="操作前状态" align="center" prop="beforeState"
-      display:"none" />
+      <el-table-column label="识别码" align="center" prop="code" display:"none" />
+      <el-table-column label="操作前状态" align="center" prop="beforeState" display:"none" />
       <el-table-column
         label="操作状态"
         align="center"
         prop="stateName.stateName"
       />
-      <el-table-column
-        label="控制方式"
-        align="center"
-        prop="controlType"
-        :formatter="controlTypeFormat"
-      />
-      <el-table-column label="操作结果" align="center" prop="state"
-      :formatter="stateFormat" display:"none"/>
-      <!-- <el-table-column label="用户名称" align="center" prop="userName" /> -->
-      <el-table-column label="描述" align="center" prop="description"
-      display:"none" />
+      <el-table-column label="控制方式" align="center" prop="controlType">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sd_device_control_type" :value="scope.row.controlType"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
+
+      <el-table-column label="描述" align="center" prop="description" display:"none" />
+
+      <el-table-column label="操作地址" align="center" prop="operIp" />
+
       <el-table-column
         label="创建时间"
         align="center"
@@ -200,6 +198,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item label="操作结果" prop="state">
           <el-input v-model="form.state" placeholder="请输入操作是否成功" />
         </el-form-item>
@@ -223,6 +222,7 @@ import { listDevices } from "@/api/equipment/eqlist/api";
 import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
 export default {
   name: "OperationLog",
+  dicts: ['sd_device_control_type'],
   data() {
     return {
       // 遮罩层
@@ -286,7 +286,7 @@ export default {
       console.log(response.data, "response.data");
       this.controlTypeOptions = response.data;
     });
-    this.getDicts("sd_operation_log_state").then((response) => {
+    this.getDicts("sd_device_opt_state").then((response) => {
       this.operationStateOptions = response.data;
     });
   },
@@ -319,10 +319,6 @@ export default {
       listType().then((response) => {
         this.eqTypeData = response.rows;
       });
-    },
-    // 控制方式   3：手动 1：时间控制 2：光强控制字典翻译
-    controlTypeFormat(row, column) {
-      return this.selectDictLabel(this.controlTypeOptions, row.controlType);
     },
     //操作是否成功 0：成功 1：失败
     stateFormat(row, column) {

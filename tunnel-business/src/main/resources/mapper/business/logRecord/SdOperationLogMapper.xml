@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="controlType"    column="control_type"    />
         <result property="state"    column="state"    />
         <result property="description"    column="description"    />
+        <result property="operIp"    column="oper_ip"    />
         <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
         <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
         <association property="stateName"  column="id" javaType="SdEquipmentState" resultMap="stateNameResult" />
@@ -49,12 +50,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdOperationLogList" parameterType="SdOperationLog" resultMap="SdOperationLogResult">
         <!-- <include refid="selectSdOperationLogVo"/> -->
-        select a.id, a.eq_type_id,d.type_name, a.tunnel_id,b.tunnel_name, a.user_name, a.eq_id, c.eq_name, a.code,a.create_by, a.create_time, a.update_by, a.update_time, a.before_state, a.operation_state,e.state_name, a.control_type, a.state, a.description from sd_operation_log a
+        select
+        a.id,
+        a.eq_type_id,
+        d.type_name,
+        a.tunnel_id,
+        b.tunnel_name,
+        a.user_name,
+        a.eq_id,
+        c.eq_name,
+        a.code,
+        a.create_by,
+        a.create_time,
+        a.update_by,
+        a.update_time,
+        a.before_state,
+        a.operation_state,
+        e.state_name,
+        a.control_type,
+        a.state,
+        a.description,
+        a.oper_ip
+        from sd_operation_log a
         left join sd_tunnels b on a.tunnel_id = b.tunnel_id
         left join sd_devices c on a.eq_id = c.eq_id
         left join sd_equipment_type d on a.eq_type_id = d.type_id
-        left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id
-        and state_type = 2
+        left join sd_equipment_state e on a.operation_state = e.device_state AND  e.state_type_id=a.eq_type_id and state_type = 2
         where 1=1 and a.create_time <![CDATA[ > ]]> DATE_SUB(CURDATE(),INTERVAL 3 day)
         <if test="eqTypeId != null and eqTypeId != ''"> and a.eq_type_id = #{eqTypeId}</if>
         <if test="tunnelId != null and tunnelId != ''"> and a.tunnel_id = #{tunnelId}</if>

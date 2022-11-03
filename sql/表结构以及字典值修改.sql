@@ -154,4 +154,15 @@ alter table sd_event_type add column f_id varchar(20) comment '父类ID';
 alter table sd_event_type add column simplify_name varchar(20) comment '类型简称';
 
 -- 设备控制记录表 sd_operation_log
-alter table sd_operation_log add column oper_ip varchar(100) comment 'IP地址'
+alter table sd_operation_log add column oper_ip varchar(100) comment 'IP地址';
+
+-- 数据字典 设备控制方式
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '设备控制方式', 'sd_device_control_type', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '预案控制', '3', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '光强控制', '2', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '时间控制', '1', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '手动控制', '0', 'sd_device_control_type', 'default','0', 'admin', sysdate() );
+-- 数据字典 设备控制结果
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作状态', 'sd_device_opt_state', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '失败', '0', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '成功', '1', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );

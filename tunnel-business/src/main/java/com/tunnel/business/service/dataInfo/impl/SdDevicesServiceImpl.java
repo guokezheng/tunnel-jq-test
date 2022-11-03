@@ -568,6 +568,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         for (SdDevices devices : sdDevicesList) {
             try {
+                /*SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());*/
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());
                 if (StringUtils.isNull(d)) {
                     Map map = checkDevices(devices);
@@ -631,6 +632,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
         Long eqType = devices.getEqType();
+        SdEquipmentType sdeq = devices.getTypeName();
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());

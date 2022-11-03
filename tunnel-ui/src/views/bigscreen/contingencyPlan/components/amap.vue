@@ -50,11 +50,11 @@ export default {
   },
   data() {
     return {
-      tabclick:false,
-      showPlanTab:false,
-      changeTunnel:'1',
-      changeFunction:'1',
-      tabPosition: 'left',
+      tabclick: false,
+      showPlanTab: false,
+      changeTunnel: "1",
+      changeFunction: "1",
+      tabPosition: "left",
       map: null,
       polygon: null,
       marker: null,
@@ -68,36 +68,36 @@ export default {
     };
   },
   mounted() {
-      console.log(this.placeDate,"地图")
+    console.log(this.placeDate, "地图");
     //   页面加载完,开始异步引入高德地图
     //创建了一个回调函数,高德地图加载完毕会调用
     this.initNetTick();
   },
   methods: {
     handleClick(tab, event) {
-       if(tab.name == '3'){
-         if(this.tabclick == true){
-           this.showPlanTab = false
-           this.$emit('hideReservePlan')
-           this.tabclick = false
-         }else{
-           this.showPlanTab = true
-           this.$emit('showReservePlan')
-           this.changeTunnel = '1'
-           this.tabclick = true
-         }
-       }else{
-           this.tabclick = false
-           this.showPlanTab = false
-           this.$emit('hideReservePlan')
-       }
-    },
-    handleClick2(tab, event){
-        if(tab.name == '1'){
-            this.$emit('showReservePlan')
-        }else{
-            this.$emit('hideReservePlan')
+      if (tab.name == "3") {
+        if (this.tabclick == true) {
+          this.showPlanTab = false;
+          this.$emit("hideReservePlan");
+          this.tabclick = false;
+        } else {
+          this.showPlanTab = true;
+          this.$emit("showReservePlan");
+          this.changeTunnel = "1";
+          this.tabclick = true;
         }
+      } else {
+        this.tabclick = false;
+        this.showPlanTab = false;
+        this.$emit("hideReservePlan");
+      }
+    },
+    handleClick2(tab, event) {
+      if (tab.name == "1") {
+        this.$emit("showReservePlan");
+      } else {
+        this.$emit("hideReservePlan");
+      }
     },
     initNetTick() {
       this.$nextTick(() => {
@@ -105,19 +105,19 @@ export default {
         this.init1(this.placeDate);
         this.initMarker();
         // 开启轮播
-          this.markers[0].setIcon(
+        this.markers[0].setIcon(
           "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
-          );
-          this.markers[0].setzIndex(101);
-          this.openWindows(this.markers[0]);
-          this.LoopClick();
+        );
+        this.markers[0].setzIndex(101);
+        this.openWindows(this.markers[0]);
+        this.LoopClick();
       });
     },
     initmap() {
       // 所有关于地图的逻辑全部都要写在这个回调里面;
       // 保证高德地图加载完毕;
       var zoom = 8;
-    //   this.placeDate.name == "四川" ? (zoom = 6) : zoom;
+      //   this.placeDate.name == "四川" ? (zoom = 6) : zoom;
       this.map = new AMap.Map("container", {
         center: this.placeDate.centralPoint || [118.549381, 36.382265],
         resizeEnable: true, //是否监控地图容器尺寸变化
@@ -155,9 +155,9 @@ export default {
           that.polygon = new AMap.Polygon({
             pathL: pathArray,
             // strokeColor: "#3FB8ED", //城市边界颜色
-            strokeColor: "#09BDEF",
+            strokeColor: "#04bad0",
             strokeWeight: 3,
-            fillColor: "#040F4E", // 遮罩背景色黑色
+            fillColor: "#004375", // 遮罩背景色黑色
             fillOpacity: 1,
           });
           that.polygon.setPath(pathArray);
@@ -168,7 +168,10 @@ export default {
     // 点击地图
     showInfoClick(e) {
       this.resetMarkers();
-      this.infoWindow.close(this.map, [this.infoWindowPosition.lng, this.infoWindowPosition.lat])
+      this.infoWindow.close(this.map, [
+        this.infoWindowPosition.lng,
+        this.infoWindowPosition.lat,
+      ]);
       var text =
         "您在 [ " +
         e.lnglat.getLng() +
@@ -215,7 +218,7 @@ export default {
           this.loopIndex = index;
         }
       });
-      
+
       // 点击坐标 更换坐标颜色为红色
       e.target.setIcon(
         "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png"
@@ -225,32 +228,41 @@ export default {
       this.openWindows(e.target);
 
       // 点击坐标 切换视频
-    //   this.$emit("changeVideo", e.target.w.extData);
+      //   this.$emit("changeVideo", e.target.w.extData);
 
       // 开启定时器
       this.LoopClick();
     },
     openWindows(e) {
-      var header = "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
-          "border-radius:10px;font-size:0.8vw;color:#04B4E2'>" 
-      var footer = "</div>"
+      var header =
+        "<div style='background:rgba(2,19,88,0.8);padding:10px;border:solid 1px #04B4E2;" +
+        "border-radius:10px;font-size:0.8vw;color:#04B4E2'>";
+      var footer = "</div>";
       var contert;
-      var title = "<div>"+ e.w.title + "</div>"
-      var coordinates = "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>"
-      var tunnelLength = e.w.extData.tunnelLength==null ? '' : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>"
-      var affiliation = e.w.extData.affiliation==null ? '' : "<div>隧道所属：" + e.w.extData.affiliation + "</div>"
+      var title = "<div>" + e.w.title + "</div>";
+      var coordinates =
+        "<div>经纬度：" + e.w.position.lng + "/" + e.w.position.lat + "</div>";
+      var tunnelLength =
+        e.w.extData.tunnelLength == null
+          ? ""
+          : "<div>隧道长度：" + e.w.extData.tunnelLength + "</div>";
+      var affiliation =
+        e.w.extData.affiliation == null
+          ? ""
+          : "<div>隧道所属：" + e.w.extData.affiliation + "</div>";
       // 内容
-      contert = header + title + coordinates + tunnelLength + affiliation + footer
+      contert =
+        header + title + coordinates + tunnelLength + affiliation + footer;
       // 点击弹窗
       this.infoWindow = new AMap.InfoWindow({
         isCustom: true,
         anchor: "top-left",
-        content: contert
+        content: contert,
       });
       this.infoWindowPosition = {
         lng: e.w.position.lng,
         lat: e.w.position.lat,
-      }
+      };
       this.infoWindow.open(this.map, [e.w.position.lng, e.w.position.lat]);
     },
     // 重置图标颜色
@@ -299,7 +311,7 @@ export default {
           );
           this.openWindows(marker);
           // 点击坐标 切换视频
-        //   this.$emit("changeVideo", marker.w.extData);
+          //   this.$emit("changeVideo", marker.w.extData);
         }, 6000);
       }
     },
@@ -331,77 +343,76 @@ export default {
     }
   }
 }
-.changeFunction,.changeTunnel{
-    width: 13%;
-    height: 6vw;
-    border-left: solid 2px white;
-    background-color: rgba(255,255,255,0.1);
-    position: absolute;
-    top: 0%;
+.changeFunction,
+.changeTunnel {
+  width: 13%;
+  height: 6vw;
+  border-left: solid 2px white;
+  background-color: rgba(255, 255, 255, 0.1);
+  position: absolute;
+  top: 0%;
+  border-top-right-radius: 1vw;
+  border-bottom-right-radius: 1vw;
+  > div {
+    line-height: 2vw;
+    background: transparent;
+  }
+  ::v-deep .el-tabs {
+    height: 100%;
+  }
+  ::v-deep .el-tabs--border-card {
+    border: none;
+    .el-tabs__header {
+      border-bottom: none !important;
+    }
+  }
+  ::v-deep .is-active {
+    // background-color: transparent !important;
+    border-top-color: transparent !important;
+    border-bottom-color: transparent !important;
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  ::v-deep .el-tabs--border-card > .el-tabs__header .el-tabs__item:hover {
+    color: white;
+  }
+  ::v-deep .el-tabs--left.el-tabs--border-card .el-tabs__header.is-left {
+    background: transparent !important;
+    border-right: transparent !important;
+    width: 100%;
+    // border: solid 1px white;
     border-top-right-radius: 1vw;
     border-bottom-right-radius: 1vw;
-    >div{
-        line-height: 2vw;
-        background: transparent;
+    .el-tabs__nav {
+      height: 100%;
+      padding: 0 !important;
+      float: left;
+      width: 100%;
+      .el-tabs__item .is-left {
+        text-align: center !important;
+      }
     }
-    ::v-deep .el-tabs{
-            height: 100%;
+  }
+  ::v-deep .el-tabs--left .el-tabs__item.is-left {
+    text-align: left !important;
+    font-size: 0.9vw !important;
+    height: 2vw;
+    line-height: 2vw;
+  }
+  ::v-deep .el-tabs__nav {
+    div:nth-of-type(1) {
+      border-top-right-radius: 1vw !important;
     }
-    ::v-deep .el-tabs--border-card{
-        border: none;
-        .el-tabs__header{
-             border-bottom: none !important;
-        }
+    div:nth-of-type(3) {
+      border-bottom-right-radius: 1vw !important;
     }
-    ::v-deep .is-active{
-        // background-color: transparent !important;
-        border-top-color: transparent !important;
-        border-bottom-color:transparent !important;
-        color: white !important;
-        background-color: rgba(255,255,255,0.3) !important;
-    }
-    ::v-deep .el-tabs--border-card > .el-tabs__header .el-tabs__item:hover{
-        color: white;
-    }
-    ::v-deep .el-tabs--left.el-tabs--border-card .el-tabs__header.is-left{
-        background: transparent !important;
-        border-right: transparent !important;
-        width: 100%;
-        // border: solid 1px white;
-        border-top-right-radius: 1vw;
-        border-bottom-right-radius: 1vw;
-        .el-tabs__nav{
-            height: 100%;
-            padding: 0 !important;
-            float: left;
-            width: 100%;
-            .el-tabs__item .is-left{
-                text-align: center !important;
-            }
-        }
-    }
-    ::v-deep .el-tabs--left .el-tabs__item.is-left{
-        text-align: left !important;
-        font-size: 0.9vw !important;
-        height: 2vw;
-        line-height: 2vw;
-    }
-    ::v-deep .el-tabs__nav{
-        div:nth-of-type(1){
-            border-top-right-radius: 1vw !important;
-        }
-        div:nth-of-type(3){
-            border-bottom-right-radius: 1vw !important;
-        }
-    }
+  }
 }
-.changeTunnel{
-  
-    position: absolute;
-    top: 7vw;
-   font-size: 0.9vw;
-   color: white;
-   line-height: 2vw;
-    
+.changeTunnel {
+  position: absolute;
+  top: 7vw;
+  font-size: 0.9vw;
+  color: white;
+  line-height: 2vw;
 }
 </style>

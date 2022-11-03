@@ -84,7 +84,7 @@ export default {
       tabs: [
         { id: 0, name: "全视图", type: "tunnel" },
         { id: 1, name: "报警研判", type: "warning" },
-        { id: 2, name: "应急预案", type: "contingencyPlan" },
+        { id: 2, name: "应急处置", type: "contingencyPlan" },
         { id: 3, name: "智能能耗", type: "smartEnergyConsumption" },
       ],
       isAcitve: this.$cache.session.get("TABSSELECT") || "tunnel", // 当前页

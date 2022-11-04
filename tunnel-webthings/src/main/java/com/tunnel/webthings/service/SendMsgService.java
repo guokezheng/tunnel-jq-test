@@ -19,7 +19,7 @@ public interface SendMsgService {
 
     AjaxResult devicestatus(String devId);
 
-    AjaxResult devicesdata(String devId);
+    AjaxResult devicesdata(String devId,String state);
 
     String sendDevStatus(RadarMsgTopicVo vo);
 

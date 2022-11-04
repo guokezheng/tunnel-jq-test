@@ -74,7 +74,6 @@ public class KafkaReadListenToDevStatusTopic {
                     SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(o.toString(), SdDeviceDataRecord.class);
                     SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());
                     if (deviceDataRecord != null) {
-                        sdDeviceDataRecord.setUpdateTime(new Date());
                         sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
                     } else {
                         sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);

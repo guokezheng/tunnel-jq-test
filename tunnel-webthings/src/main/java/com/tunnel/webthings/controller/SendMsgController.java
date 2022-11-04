@@ -45,8 +45,8 @@ public class SendMsgController {
 
     @PostMapping("/devicesdata")
     @ApiOperation("发送设备数据")
-    public Result devicesdata(@RequestParam("devId") String devId){
-        return Result.success(sendMsgService.devicesdata(devId));
+    public Result devicesdata(@RequestParam("devId") String devId,@RequestParam("state") String state){
+        return Result.success(sendMsgService.devicesdata(devId,state));
     }
 
     @PutMapping("/storage")

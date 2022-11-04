@@ -119,7 +119,7 @@ public class SendMsgServiceImpl implements SendMsgService {
     }
 
     @Override
-    public AjaxResult devicesdata(String devId) {
+    public AjaxResult devicesdata(String devId,String state) {
         JSONObject jsonObject = new JSONObject();
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);
@@ -128,6 +128,7 @@ public class SendMsgServiceImpl implements SendMsgService {
             for (int i = 0;i < data.size();i++) {
                 SdDeviceData deviceData = data.get(i);
                 deviceData.setUpdateTime(new Date());
+                deviceData.setData(state);
                 jsonObject.put("deviceData", deviceData);
                 jsonObject.put("devNo", "S00063700001980001");
                 jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));

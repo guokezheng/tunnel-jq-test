@@ -43,6 +43,21 @@ public class KafkaConfigTwo {
 //    private Integer bufferMemory;
 
 
+    @Value("${spring.kafka.wulian.producer.security.protocol}")
+    private String producerSecurityProtocol;
+    @Value("${spring.kafka.wulian.producer.security.properties.sasl.mechanism}")
+    private String producerSecuritySaslMechanism;
+    @Value("${spring.kafka.wulian.producer.security.properties.sasl.jaas.config}")
+    private String producerSecuritySaslJaas;
+
+    @Value("${spring.kafka.wulian.consumer.security.protocol}")
+    private String consumerSecurityProtocol;
+    @Value("${spring.kafka.wulian.consumer.security.properties.sasl.mechanism}")
+    private String consumerSecuritySaslMechanism;
+    @Value("${spring.kafka.wulian.consumer.security.properties.sasl.jaas.config}")
+    private String consumerSecuritySaslJaas;
+
+
     @Bean
     public KafkaTemplate<String, String> kafkaTwoTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -72,9 +87,9 @@ public class KafkaConfigTwo {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put("session.timeout.ms", 3000000);
-        props.put("security.protocol", "SASL_PLAINTEXT");
-        props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';");
+        props.put("security.protocol", producerSecurityProtocol);
+        props.put(SaslConfigs.SASL_MECHANISM, producerSecuritySaslMechanism);
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, producerSecuritySaslJaas);
         return props;
     }
 
@@ -88,9 +103,9 @@ public class KafkaConfigTwo {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put("max.poll.records", maxPollRecordes);
         props.put("session.timeout.ms", 30000);
-        props.put("security.protocol", "SASL_PLAINTEXT");
-        props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';");
+        props.put("security.protocol", consumerSecurityProtocol);
+        props.put(SaslConfigs.SASL_MECHANISM, consumerSecuritySaslMechanism);
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, consumerSecuritySaslJaas);
         return props;
     }
 }

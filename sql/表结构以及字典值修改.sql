@@ -166,7 +166,8 @@ insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type
 insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作状态', 'sd_device_opt_state', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '失败', '0', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '成功', '1', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
-
+--数据字典  设备控制方式-预案执行添加
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) VALUES ( 8, '预案执行', '4', 'sd_control_type', 'default', '0', 'admin',  sysdate());
 --设备类型 sd_equipment_type
 alter table sd_equipment_type add column is_analog varchar(10) comment '是否模拟量设备1：是 0：否(用于触发策略筛选)';
 

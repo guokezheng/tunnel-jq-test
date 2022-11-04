@@ -305,6 +305,10 @@ export default {
       queryEqTypeParams: {
         isControl: 1,
       },
+      //模拟量设备查询
+      queryAnalogEqParams: {
+        isAnalog: 1,
+      },
       deviceName: [], //设备名称列表
       dataItem: [], //数据项
       symbol: [], //符号
@@ -354,7 +358,7 @@ export default {
     /** 获取当前策略数据 */
     async getStrategyData(row) {
       //获取设备
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
       });
       await listType(this.queryEqTypeParams).then((response) => {
@@ -710,7 +714,7 @@ export default {
     },
     // 查询触发器设备类型
     getAutoEqTypeList() {
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
         console.log(this.eqTypeList, "触发器设备类型");
       });

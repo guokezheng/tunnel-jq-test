@@ -174,7 +174,7 @@ public class SdReserveProcessController extends BaseController
                     Map<String,Object> map = new HashMap<>();
                     map.put("devId",devId);
                     map.put("state",rl.getState());
-                    map.put("controlType","3");
+                    map.put("controlType","4");
                     result = sdDeviceControlService.controlDevices(map);
                 }
             }

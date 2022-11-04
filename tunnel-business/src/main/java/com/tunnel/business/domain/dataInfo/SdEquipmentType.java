@@ -54,6 +54,16 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     @ApiModelProperty("设备大类")
     private String bigType;
 
+    @ApiModelProperty("是否模拟量设备")
+    private String isAnalog;
+
+    public String getIsAnalog() {
+        return isAnalog;
+    }
+
+    public void setIsAnalog(String isAnalog) {
+        this.isAnalog = isAnalog;
+    }
 
     @Override
     public String toString() {

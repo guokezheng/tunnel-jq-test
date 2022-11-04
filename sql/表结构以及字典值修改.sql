@@ -139,7 +139,7 @@ INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `componen
 -- 删除sd_devices_copy表
 
 -- 自动触发定时任务
-INSERT INTO `sys_job` VALUES ('自动触发任务', 'DEFAULT', 'strategyTask.triggerJob()', '0 0/5 * * * ?', '1', '0', '0', '', '2022-10-27 10:39:29', '', NULL, '');
+INSERT INTO `sys_job`(job_name,job_group,invoke_target,cron_expression,misfire_policy,concurrent,status,remark,create_by,create_time)VALUES ('自动触发任务', 'DEFAULT', 'strategyTask.triggerJob()', '0 0/5 * * * ?', '1', '0', '0', '','', '2022-10-27 10:39:29');
 
 -- 隧道表桩号字段
 alter table sd_tunnels add column start_pile_num varchar(20) comment '隧道开始桩号（整型）';
@@ -166,3 +166,13 @@ insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type
 insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作状态', 'sd_device_opt_state', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '失败', '0', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '成功', '1', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
+
+--设备类型 sd_equipment_type
+alter table sd_equipment_type add column is_analog varchar(10) comment '是否模拟量设备1：是 0：否(用于触发策略筛选)';
+
+-- -- 数据字典 设备所属系统
+-- INSERT INTO `sys_dict_data` VALUES (0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (1, '通风系统', '1', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:55', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (2, '照明系统', '2', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:13', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (3, '供配电系统', '3', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:27', 'admin', '2022-11-04 14:15:58', NULL);
+-- INSERT INTO `sys_dict_data` VALUES (463, 4, '消防系统', '4', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:45', '', NULL, NULL);

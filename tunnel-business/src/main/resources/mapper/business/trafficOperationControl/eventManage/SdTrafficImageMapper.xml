@@ -132,4 +132,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select img_id, img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by, update_time, update_by from sd_traffic_image
         where business_id = #{businessId}
     </select>
+
+
+
+    <insert id="brachInsertFaultIconFile" parameterType="java.util.List">
+        insert into sd_traffic_image
+        (
+        img_name, img_url, business_id, create_time, create_by
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+             #{item.imgName}, #{item.imgUrl},#{item.businessId}, #{item.createBy}, #{item.createTime}
+            )
+        </foreach>
+    </insert>
 </mapper>

@@ -2,6 +2,7 @@ package com.tunnel.business.service.electromechanicalPatrol;
 
 
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public interface ISdFaultListService
      * @param sdFaultList 故障清单
      * @return 结果
      */
-    public int insertSdFaultList(SdFaultList sdFaultList);
+    public int insertSdFaultList(MultipartFile[] file,SdFaultList sdFaultList);
 
     /**
      * 修改故障清单

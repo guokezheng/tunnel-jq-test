@@ -91,4 +91,11 @@ public interface SdTrafficImageMapper
      */
     List<SdTrafficImage> selectImageByBusinessIds(List<Long> list);
     public List<SdTrafficImage> selectImageByBusinessId(String businessId);
+
+    /**
+     * 新增设备故障清单图片上传
+     * @param list
+     * @return
+     */
+    int brachInsertFaultIconFile(List<SdTrafficImage> list);
 }

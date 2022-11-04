@@ -2,6 +2,7 @@ package com.tunnel.business.domain.electromechanicalPatrol;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -81,6 +82,31 @@ public class SdFaultList extends BaseEntity
     /** 状态（0：已发布；1：未发布） */
     @Excel(name = "状态", readConverterExp = "0=：已发布；1：未发布")
     private Integer faultStatus;
+
+    /** 创建者 */
+    @ApiModelProperty("创建者")
+    private String createBy;
+
+    /** 创建时间 */
+    @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
+
+    /** 更新者 */
+    @ApiModelProperty("更新者")
+    private String updateBy;
+
+    /** 更新时间 */
+    @ApiModelProperty("更新时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
+
+    /**故障图片ID */
+    @ApiModelProperty("故障图片ID")
+    @Excel(name = "故障图片ID")
+    private String imgFileId;
+
+
 
     public void setId(String id) 
     {
@@ -228,6 +254,54 @@ public class SdFaultList extends BaseEntity
     }
 
     @Override
+    public String getCreateBy() {
+        return this.createBy;
+    }
+
+    @Override
+    public void setCreateBy(final String createBy) {
+        this.createBy = createBy;
+    }
+
+    @Override
+    public Date getCreateTime() {
+        return this.createTime;
+    }
+
+    @Override
+    public void setCreateTime(final Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
+    public String getUpdateBy() {
+        return this.updateBy;
+    }
+
+    @Override
+    public void setUpdateBy(final String updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    @Override
+    public Date getUpdateTime() {
+        return this.updateTime;
+    }
+
+    @Override
+    public void setUpdateTime(final Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getImgFileId() {
+        return this.imgFileId;
+    }
+
+    public void setImgFileId(final String imgFileId) {
+        this.imgFileId = imgFileId;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -246,6 +320,11 @@ public class SdFaultList extends BaseEntity
             .append("falltRemoveStatue", getFalltRemoveStatue())
             .append("faultDescription", getFaultDescription())
             .append("faultStatus", getFaultStatus())
+            .append("imgFileId", getImgFileId())
+            .append("updateTime", getUpdateTime())
+            .append("updateBy", getUpdateBy())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
             .toString();
     }
 }

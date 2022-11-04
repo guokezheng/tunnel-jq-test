@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 /**
  * 读取设备、隧道基础数据
@@ -17,6 +18,7 @@ import org.springframework.kafka.annotation.KafkaListener;
  * @author zhai
  * @date 2022/11/1
  */
+@Component
 public class KafkaReadListenToBasicDataTopic {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToBasicDataTopic.class);
@@ -38,7 +40,7 @@ public class KafkaReadListenToBasicDataTopic {
      */
     @KafkaListener(topics = {"tunnelDeviceBaseData"}, containerFactory = "kafkaTwoContainerFactory")
     public void devicesAccept(ConsumerRecord<String,Object> record, Consumer<?,?> consumer){
-        if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
+        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
             String deviceData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
                 deviceData = record.value().toString();
@@ -56,7 +58,7 @@ public class KafkaReadListenToBasicDataTopic {
      */
     @KafkaListener(topics = {"tunnelBaseData"}, containerFactory = "kafkaTwoContainerFactory")
     public void tunnelsAccept(ConsumerRecord<String,Object> record, Consumer<?,?> consumer){
-        if(PlatformAuthEnum.GSY.getCode().equals(authorizeName)){
+        if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
             String tunnelData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){
                 tunnelData = record.value().toString();

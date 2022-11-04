@@ -9,9 +9,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -78,6 +80,9 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Qualifier("kafkaOneTemplate")
     private KafkaTemplate<String, String> kafkaOneTemplate;
 
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
+
 
     /**
      * 发送指令数据
@@ -95,8 +100,40 @@ public class SendMsgServiceImpl implements SendMsgService {
         jsonObject.put("event", sdEvent);
         jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-//        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
-        kafkaOneTemplate.send("matchResultData", jsonObject.toString());
+        kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+        return AjaxResult.success("1");
+    }
+
+    @Override
+    public AjaxResult devicestatus(String devId) {
+        JSONObject jsonObject = new JSONObject();
+        SdDevices sdDevices = devicesMapper.selectSdDevicesById(devId);
+        sdDevices.setEqStatus("1");
+        sdDevices.setEqStatusTime(new Date());
+        sdDevices.setUpdateTime(new Date());
+        jsonObject.put("deviceStatus", sdDevices);
+        jsonObject.put("devNo", "S00063700001980001");
+        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+        kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+        return AjaxResult.success("1");
+    }
+
+    @Override
+    public AjaxResult devicesdata(String devId) {
+        JSONObject jsonObject = new JSONObject();
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(devId);
+        List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+        if (data.size() > 0) {
+            for (int i = 0;i < data.size();i++) {
+                SdDeviceData deviceData = data.get(i);
+                deviceData.setUpdateTime(new Date());
+                jsonObject.put("deviceData", deviceData);
+                jsonObject.put("devNo", "S00063700001980001");
+                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+                kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+            }
+        }
         return AjaxResult.success("1");
     }
 

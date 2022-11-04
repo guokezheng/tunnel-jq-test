@@ -74,7 +74,7 @@ public class KafkaConfigTwo {
         props.put("session.timeout.ms", 3000000);
         props.put("security.protocol", "SASL_PLAINTEXT");
         props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='its_iot_mp' password='Sdhsg2021';");
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';");
         return props;
     }
 

@@ -28,7 +28,7 @@ public class SdTunnelSubarea extends BaseEntity
     private String tunnelName;
 
     /** 分区id */
-    @Excel(name = "方向")
+    @Excel(name = "方向", dictType = "sd_direction")
     @ApiModelProperty("分区方向")
     private String direction;
 

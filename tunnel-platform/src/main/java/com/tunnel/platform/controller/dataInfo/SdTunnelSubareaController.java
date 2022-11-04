@@ -48,15 +48,6 @@ public class SdTunnelSubareaController extends BaseController
     @GetMapping("/export")
     public AjaxResult export(SdTunnelSubarea sdTunnelSubarea) {
         List<SdTunnelSubarea> list = sdTunnelSubareaService.selectSdTunnelSubareaList(sdTunnelSubarea);
-        for(int i = 0;i<list.size();i++){
-            SdTunnelSubarea subarea = list.get(i);
-            String direction = subarea.getDirection();
-            if(StrUtil.isBlank(direction))
-                direction = "0";
-            direction = direction.equals("1")?"上行":"下行";
-            subarea.setDirection(direction);
-            list.set(i,subarea);
-        }
         ExcelUtil<SdTunnelSubarea> util = new ExcelUtil<SdTunnelSubarea>(SdTunnelSubarea.class);
         return util.exportExcel(list, "隧道分区数据");
     }

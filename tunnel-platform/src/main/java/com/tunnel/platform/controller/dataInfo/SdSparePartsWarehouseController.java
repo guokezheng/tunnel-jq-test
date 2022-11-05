@@ -45,6 +45,17 @@ public class SdSparePartsWarehouseController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping(value = "/getHsdSparePartList")
+    @ApiOperation("瑞华赢获取备件库接口")
+    public AjaxResult getHsdSparePartList() {
+        SdSparePartsWarehouse warehouse = new SdSparePartsWarehouse();
+        // TODO: 2022/11/5 杭山东隧道ID
+        warehouse.setTunnelId("JQ-WeiFang-JiuLongYu-HSD");
+        List<SdSparePartsWarehouse> list = sdSparePartsWarehouseService.selectSdSparePartsWarehouseList(warehouse);
+        return AjaxResult.success(list);
+    }
+
+
     /**
      * 导出备品备件库列表
      */

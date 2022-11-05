@@ -156,12 +156,6 @@ alter table sd_event_type add column simplify_name varchar(20) comment '类型�
 -- 设备控制记录表 sd_operation_log
 alter table sd_operation_log add column oper_ip varchar(100) comment 'IP地址';
 
--- 数据字典 设备控制方式
-insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '设备控制方式', 'sd_device_control_type', '0', 'admin', sysdate() );
-insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '预案控制', '3', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
-insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '光强控制', '2', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
-insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '时间控制', '1', 'sd_device_control_type', 'default', '0', 'admin', sysdate() );
-insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '手动控制', '0', 'sd_device_control_type', 'default','0', 'admin', sysdate() );
 -- 数据字典 设备控制结果
 insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作状态', 'sd_device_opt_state', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '失败', '0', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
@@ -177,3 +171,6 @@ alter table sd_equipment_type add column is_analog varchar(10) comment '是否�
 -- INSERT INTO `sys_dict_data` VALUES (2, '照明系统', '2', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:13', '', NULL, NULL);
 -- INSERT INTO `sys_dict_data` VALUES (3, '供配电系统', '3', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:27', 'admin', '2022-11-04 14:15:58', NULL);
 -- INSERT INTO `sys_dict_data` VALUES (463, 4, '消防系统', '4', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:45', '', NULL, NULL);
+
+-- 设备备件库 所属隧道ID
+alter table sd_spare_parts_warehouse add column tunnel_id varchar(100) comment '所属隧道ID' after id;

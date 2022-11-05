@@ -105,7 +105,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .antMatchers("/login", "/register","/system/user/getToken", "/captchaImage", "/appLogin",
                         "/wjData/eventData","/wjData/eventImage","/wjData/eventVideo","/wjData/specialCar",
                         "/zcData/baseDeviceStatus","/wjData/sendBaseDeviceStatus","/websocket","/websocket/test",
-                        "/thirdPart/login","/workspace/commonControl"
+                        "/thirdPart/login","/workspace/commonControl","/system/warehouse/getHsdSparePartList"
                 ).anonymous()
                 .antMatchers(
                         HttpMethod.GET,

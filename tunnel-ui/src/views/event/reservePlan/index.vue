@@ -67,10 +67,10 @@
       </el-form-item>
       <el-form-item>
         <el-button size="mini" type="primary" @click="handleQuery"
-        >搜索</el-button
+          >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
-        >重置</el-button
+          >重置</el-button
         >
         <el-button
           v-hasPermi="['business:plan:add']"
@@ -78,7 +78,7 @@
           type="primary"
           plain
           @click="handleAdd()"
-        >新增
+          >新增
         </el-button>
       </el-form-item>
     </el-form>
@@ -199,7 +199,7 @@
             style="cursor: pointer; color: #39adff"
             type="text"
             @click="openFileDrawer(scope.row)"
-          >点击查看
+            >点击查看
           </el-button>
           <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">无</div>
         </template>
@@ -240,28 +240,28 @@
             class="tableBlueButtton"
             size="mini"
             @click="handleUpdate(scope.row)"
-          >修改
+            >修改
           </el-button>
           <el-button
             v-hasPermi="['business:plan:remove']"
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
-          >删除
+            >删除
           </el-button>
           <el-button
             v-hasPermi="['business:plan:add']"
             size="mini"
             class="tableBlueButtton"
             @click="chooseStrategyInfo(scope.row)"
-          >配置策略
+            >配置策略
           </el-button>
           <el-button
             v-hasPermi="['business:plan:remove']"
             size="mini"
             class="tableBlueButtton"
             @click="openWorkbench(scope.row)"
-          >预览
+            >预览
           </el-button>
         </template>
       </el-table-column>
@@ -307,7 +307,7 @@
               size="mini"
               type="text"
               @click="loadFile(scope.row)"
-            >下载
+              >下载
             </el-button>
           </template>
         </el-table-column>
@@ -515,6 +515,7 @@
             v-model="reservePlanDrawForm.sId"
             placeholder="请选择所属隧道"
             style="width: 80%"
+            @change="changePartitionSelection"
           >
             <el-option
               v-for="(item, index) in eqTunnelDataList"
@@ -585,7 +586,7 @@
             style="width: 80%"
           >
             <el-button slot="trigger" size="small" type="primary"
-            >选取文件</el-button
+              >选取文件</el-button
             >
             <!-- <el-button size="small" style="margin-left: 133px;" type="success" @click="submitUpload">上传到服务器
             </el-button> -->
@@ -593,7 +594,7 @@
               slot="tip"
               class="el-upload__tip"
               style="font-style: italic; color: red; padding-left: 5%"
-            >{{ text }}</span
+              >{{ text }}</span
             >
           </el-upload>
         </el-form-item>
@@ -653,10 +654,10 @@
             </el-form-item>
             <div class="dialog-footer">
               <el-button type="text" @click.native="addStrategy(index)"
-              >添加</el-button
+                >添加</el-button
               >
               <el-button type="text" @click.native="deleteStrategy(index)"
-              >删除</el-button
+                >删除</el-button
               >
             </div>
           </el-col>
@@ -669,7 +670,7 @@
           type="primary"
           v-hasPermi="['plan:process:add']"
           @click="submitstrategy"
-        >保存</el-button
+          >保存</el-button
         >
         <el-button style="width: 10%" @click="closeStrategy">取 消</el-button>
       </div>
@@ -1074,7 +1075,6 @@ export default {
       this.reserveId = row.id;
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
-        console.log(this.options, "this.optionsthis.optionsthis.options");
       });
       getListByRId({ reserveId: this.reserveId }).then((res) => {
         this.planTypeIdList = res.data;
@@ -1143,7 +1143,6 @@ export default {
           let array = [];
           for (let i = 0; i < this.addStrategyList.length; i++) {
             for (let j = 0; j < this.multipleSelectionIds.length; j++) {
-              console.log("===" + j);
               if (this.multipleSelectionIds[j] == this.addStrategyList[i].id) {
                 array.push(this.addStrategyList[i]);
               }
@@ -1390,15 +1389,19 @@ export default {
       });
       //this.$refs["form1"].clearValidate();
     },
+    changePartitionSelection(e){
+      this.$forceUpdate()
+    },
     changeSelection(e) {
-      console.log(e, "indexindex");
+      var that = this
       this.eqTunnelData.forEach((item) => {
         if (item.tunnelId == e) {
-          this.eqTunnelDataList = item.sdTunnelSubareas;
+          this.reservePlanDrawForm.sId = null
+          that.eqTunnelDataList = item.sdTunnelSubareas;
+          that.$forceUpdate()
         }
       });
       this.getDicts("sd_reserve_plan_category").then((response) => {
-        console.log(response.data, "ssssssssssssssssssssssssssssss");
         this.planCategory = response.data;
       });
       console.log(
@@ -1409,7 +1412,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       console.log(row);
-
+      
       // this.$nextTick(() => {
       //   this.$refs["addForm1"].clearValidate();
       // });
@@ -1420,7 +1423,6 @@ export default {
       const id = row.id || this.ids;
       tunnelNames().then((res) => {
         this.eqTunnelData = res.rows;
-        console.log(res, "this.eqTunnelDatathis.eqTunnelData");
         this.eqTunnelData.forEach((item) => {
           item.sdTunnelSubareas.forEach((item, index) => {
             this.eqTunnelDataList.push(item);
@@ -1436,7 +1438,6 @@ export default {
         this.reservePlanDrawForm.tunnelId = response.data.sdTunnels.tunnelId;
         this.reservePlanDrawForm.sId = response.data.sdTunnelSubarea.sId;
         this.reservePlanDrawForm.category = response.data.category;
-
         if (
           this.reservePlanDrawForm.strategyId != -1 &&
           this.reservePlanDrawForm.strategyId != "-1" &&
@@ -1532,7 +1533,6 @@ export default {
     getPlanType() {
       listEventType().then((response) => {
         console.log(response, "事件类型下拉");
-        console.log(response, "responseresponse");
         this.planTypeData = response.rows;
       });
     },
@@ -1557,7 +1557,6 @@ export default {
       this.loading = true;
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
-        console.log(this.planList, "1231");
         this.total = response.total;
         this.loading = false;
       });
@@ -1627,11 +1626,26 @@ export default {
 };
 </script>
 <style>
-.el-cascader-panel>div:first-child .el-radio{
-    display: none !important;
+#cascader-menu-45-0 .el-radio{
+   
+   display: none !important;
+ 
 }
 </style>
 <style lang="scss" scoped>
+::v-deep .in-checked-path .el-radio{
+   
+    display: none;
+  
+}
+
+::v-deep .in-checked-path .el-radio{
+   
+   display: none;
+ 
+}
+
+
 // .in-checked-path{
 //   ::v-deep .el-radio__original{
 //     display: none;

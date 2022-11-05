@@ -2,6 +2,7 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse;
+import com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ public interface ISdSparePartsWarehouseService {
      * @return 备品备件库集合
      */
     List<SdSparePartsWarehouse> selectSdSparePartsWarehouseList(SdSparePartsWarehouse sdSparePartsWarehouse);
+
+    List<SdSparePartsWarehouseVO>getHsdSparePartList(SdSparePartsWarehouse sdSparePartsWarehouse);
 
     /**
      * 新增备品备件库

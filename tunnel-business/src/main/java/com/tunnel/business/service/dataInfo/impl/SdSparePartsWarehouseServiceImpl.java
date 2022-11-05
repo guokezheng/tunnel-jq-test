@@ -2,6 +2,7 @@ package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse;
+import com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO;
 import com.tunnel.business.mapper.dataInfo.SdSparePartsWarehouseMapper;
 import com.tunnel.business.service.dataInfo.ISdSparePartsWarehouseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,16 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
     @Override
     public List<SdSparePartsWarehouse> selectSdSparePartsWarehouseList(SdSparePartsWarehouse sdSparePartsWarehouse) {
         return sdSparePartsWarehouseMapper.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
+    }
+
+    /**
+     * 瑞华赢获取杭山东隧道备件库接口
+     * @param sdSparePartsWarehouse
+     * @return
+     */
+    @Override
+    public List<SdSparePartsWarehouseVO> getHsdSparePartList(SdSparePartsWarehouse sdSparePartsWarehouse) {
+        return sdSparePartsWarehouseMapper.getHsdSparePartList(sdSparePartsWarehouse);
     }
 
     /**

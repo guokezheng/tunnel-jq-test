@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse;
+import com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO;
 import com.tunnel.business.service.dataInfo.ISdSparePartsWarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -50,7 +51,7 @@ public class SdSparePartsWarehouseController extends BaseController
     public AjaxResult getHsdSparePartList() {
         SdSparePartsWarehouse warehouse = new SdSparePartsWarehouse();
         warehouse.setTunnelId("JQ-WeiFang-JiuLongYu-HSD");
-        List<SdSparePartsWarehouse> list = sdSparePartsWarehouseService.selectSdSparePartsWarehouseList(warehouse);
+        List<SdSparePartsWarehouseVO> list = sdSparePartsWarehouseService.getHsdSparePartList(warehouse);
         return AjaxResult.success(list);
     }
 

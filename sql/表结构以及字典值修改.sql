@@ -174,3 +174,17 @@ alter table sd_equipment_type add column is_analog varchar(10) comment '是否�
 
 -- 设备备件库 所属隧道ID
 alter table sd_spare_parts_warehouse add column tunnel_id varchar(100) comment '所属隧道ID' after id;
+
+-- 新增推送数据历史记录表
+DROP TABLE IF EXISTS `sd_push_history`;
+CREATE TABLE `sd_push_history`  (
+   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+   `data_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '推送接口 device、tunnel',
+   `push_data` varchar(3000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '推送数据',
+   `push_status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态 0：未推送 1：已推送',
+   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '推送数据历史记录表' ROW_FORMAT = DYNAMIC;
+
+SET FOREIGN_KEY_CHECKS = 1;

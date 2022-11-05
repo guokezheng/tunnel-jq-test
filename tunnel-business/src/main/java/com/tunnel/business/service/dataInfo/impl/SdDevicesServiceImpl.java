@@ -143,7 +143,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
-        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
+        List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
     }
 

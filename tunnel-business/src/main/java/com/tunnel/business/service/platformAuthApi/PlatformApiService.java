@@ -83,4 +83,9 @@ public interface PlatformApiService {
      * @return 结果
      */
     int deleteSdTunnelsByIds(List<SdTunnels> sdTunnelsList);
+
+    /**
+     * 定时任务
+     */
+    void pushTask();
 }

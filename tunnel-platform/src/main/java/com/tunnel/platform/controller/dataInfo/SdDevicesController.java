@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
@@ -290,6 +291,7 @@ public class SdDevicesController extends BaseController
             List<SdDevices> sdDevicesList = new ArrayList<>();
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqIds(Arrays.asList(eqIds));
+            sdDevices.setCreateTime(DateUtils.getNowDate());
             sdDevicesList.add(sdDevices);
             sdPlatformApiController.devicesPush(sdDevicesList,"del",null);
         }

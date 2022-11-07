@@ -308,7 +308,7 @@ export default {
     height: 100%;
     font-size: 16px;
     line-height: 72px;
-    padding-left: 40px;
+    padding-left: 26px;
   }
 }
 .workbenchNavbar {
@@ -319,6 +319,7 @@ export default {
 
   span {
     margin-left: 10px;
+    padding-right: 30px;
   }
 }
 .workbenchSidbar {

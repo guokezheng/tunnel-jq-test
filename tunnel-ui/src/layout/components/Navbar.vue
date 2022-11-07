@@ -1,7 +1,7 @@
 <template>
   <div class="navbar" :style="sideTheme == 'theme-light' || sideTheme == 'theme-dark'?'display:flex;':''">
     <!-- 缩放按钮操作  -->
-    <template v-if="sideTheme != 'theme-blue' && !topNav">
+    <template v-if="!topNav">
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" v-if="!topNav"/>
     </template>
     <!-- 面包屑 -->

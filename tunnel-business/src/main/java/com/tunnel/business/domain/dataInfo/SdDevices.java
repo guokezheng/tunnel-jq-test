@@ -101,7 +101,7 @@ public class SdDevices extends BaseEntity {
     /**
      * 所属道路方向(上行、下行)
      */
-    @Excel(name = "所属道路方向(上行、下行)")
+    @Excel(name = "所属道路方向(上行、下行)", dictType = "sd_direction")
     //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;

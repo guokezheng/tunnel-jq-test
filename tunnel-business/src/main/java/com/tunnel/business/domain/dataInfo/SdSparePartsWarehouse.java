@@ -1,13 +1,14 @@
 package com.tunnel.business.domain.dataInfo;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
 
 /**
  * 备品备件库对象 sd_spare_parts_warehouse
@@ -23,6 +24,19 @@ public class SdSparePartsWarehouse extends BaseEntity
     /** id */
     @ApiModelProperty("id")
     private Long id;
+
+    /**
+     * 所属隧道 ID
+     */
+    @ApiModelProperty("所属隧道 ID")
+    private String tunnelId;
+
+    /**
+     * tunnel对象
+     */
+    @Excel(name = "所属隧道")
+    @ApiModelProperty("tunnel对象")
+    private String tunnelName;
 
     /** 备件名称 */
     @Excel(name = "备件名称")
@@ -94,6 +108,23 @@ public class SdSparePartsWarehouse extends BaseEntity
     @Excel(name = "备注1")
     @ApiModelProperty("备注1")
     private String remake1;
+
+
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
 
     public void setId(Long id) 
     {

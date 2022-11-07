@@ -250,7 +250,7 @@
 </template>
 
 <script>
-import { listList, getList, delList, addList, updateList, exportList } from "@/api/electromechanicalPatrol/fault";
+import { listList, getList, delList, addList, updateList, exportList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 import {listType} from "@/api/equipment/type/api";
 import {listDevices} from "@/api/equipment/eqlist/api";

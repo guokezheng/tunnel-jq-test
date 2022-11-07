@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -122,6 +123,7 @@ public class SdTunnelsController extends BaseController
             List<SdTunnels> sdTunnelsList = new ArrayList<>();
             SdTunnels sdTunnels = new SdTunnels();
             sdTunnels.setTunnelIds(Arrays.asList(tunnelIds));
+            sdTunnels.setCreateTime(DateUtils.getNowDate());
             sdTunnelsList.add(sdTunnels);
             platformApiController.tunnelsPush(sdTunnelsList,"del");
         }

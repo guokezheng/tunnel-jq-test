@@ -17,6 +17,10 @@ public interface SendMsgService {
 
     AjaxResult sendEvent();
 
+    AjaxResult devicestatus(String devId);
+
+    AjaxResult devicesdata(String devId,String state);
+
     String sendDevStatus(RadarMsgTopicVo vo);
 
     AjaxResult storages(SdStateStorage sdStateStorage);

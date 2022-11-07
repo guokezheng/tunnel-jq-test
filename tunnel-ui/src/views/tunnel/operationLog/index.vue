@@ -40,7 +40,7 @@
        <el-form-item label="控制方式" prop="controlType">
         <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
           <el-option
-            v-for="dict in dict.type.sd_device_control_type"
+            v-for="dict in dict.type.sd_control_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -110,7 +110,7 @@
       />
       <el-table-column label="控制方式" align="center" prop="controlType">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.sd_device_control_type" :value="scope.row.controlType"/>
+          <dict-tag :options="dict.type.sd_control_type" :value="scope.row.controlType"/>
         </template>
       </el-table-column>
       <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
@@ -222,7 +222,7 @@ import { listDevices } from "@/api/equipment/eqlist/api";
 import { listEqTypeState } from "@/api/equipment/eqTypeState/api";
 export default {
   name: "OperationLog",
-  dicts: ['sd_device_control_type'],
+  dicts: ['sd_control_type'],
   data() {
     return {
       // 遮罩层

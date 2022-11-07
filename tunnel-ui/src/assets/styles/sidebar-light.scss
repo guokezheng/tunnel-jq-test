@@ -291,9 +291,9 @@
         overflow: hidden;
       }
 
-      .svg-icon {
-        margin-right: 16px;
-      }
+      // .svg-icon {
+      //   margin-right: 16px;
+      // }
 
       .el-menu {
         border: none;
@@ -799,6 +799,15 @@
     .el-slider__runway {
       background-color: #006784;
     }
+  }
+  .box-card{
+    color: #fff !important;
+  }
+  .box-card2{
+    .el-tabs__item,.el-card__header,.el-radio__label{
+      color: #fff;
+    }
+    
   }
   .siteClass {
     line-height: unset;

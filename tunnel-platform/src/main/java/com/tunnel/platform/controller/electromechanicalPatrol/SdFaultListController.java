@@ -4,16 +4,21 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -71,11 +76,12 @@ public class SdFaultListController extends BaseController
    /* @PreAuthorize("@ss.hasPermi('system:list:add')")*/
     @Log(title = "故障清单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SdFaultList sdFaultList)
+    /*public AjaxResult add(@RequestBody SdFaultList sdFaultList)*/
+    public AjaxResult add(@RequestParam("file") MultipartFile[] file, SdFaultList sdFaultList)
     {
-        sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
-        SysUser user = SecurityUtils.getLoginUser().getUser();
-        return toAjax(sdFaultListService.insertSdFaultList(sdFaultList));
+       /* sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());
+        SysUser user = SecurityUtils.getLoginUser().getUser();*/
+        return toAjax(sdFaultListService.insertSdFaultList(file,sdFaultList));
     }
 
     /**
@@ -99,4 +105,15 @@ public class SdFaultListController extends BaseController
     {
         return toAjax(sdFaultListService.deleteSdFaultListByIds(ids));
     }
+
+
+    /**查询故障单检修记录信息
+     */
+    /*@GetMapping(value = "/{faultId}")
+    @ApiOperation("获取设备类型详细信息")
+    public Result<SdPatrolList> getInfo(@PathVariable("faultId") String faultId)
+    {
+        return Result.success(sdEquipmentTypeService.selectSdEquipmentTypeById(typeId));
+    }*/
+
 }

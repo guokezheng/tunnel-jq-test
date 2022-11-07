@@ -21,6 +21,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="falltRemoveStatue"    column="fallt_remove_statue"    />
         <result property="faultDescription"    column="fault_description"    />
         <result property="faultStatus"    column="fault_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="imgFileId"    column="img_file_id"    />
     </resultMap>
 
     <sql id="selectSdFaultListVo">
@@ -72,6 +77,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="falltRemoveStatue != null">fallt_remove_statue,</if>
             <if test="faultDescription != null">fault_description,</if>
             <if test="faultStatus != null">fault_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="imgFileId != null">img_file_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -90,6 +98,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="falltRemoveStatue != null">#{falltRemoveStatue},</if>
             <if test="faultDescription != null">#{faultDescription},</if>
             <if test="faultStatus != null">#{faultStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="imgFileId != null">#{imgFileId},</if>
          </trim>
     </insert>
 

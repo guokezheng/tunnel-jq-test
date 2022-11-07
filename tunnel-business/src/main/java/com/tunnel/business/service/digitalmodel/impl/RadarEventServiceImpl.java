@@ -448,6 +448,9 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject jsonObject = new JSONObject();
         //设备监测状态 后转Integer
         String deviceStatus = devicesMapper.selectEqStatus(deviceId);
+        if (deviceStatus == null || deviceStatus.equals("")) {
+            deviceStatus = "2";
+        }
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
                 || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType)) {

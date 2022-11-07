@@ -2,7 +2,7 @@
   <div>
     <div class="contentTitle">
       实时报警信息
-      <!-- <i>Real time alarm</i> -->
+      <i>Real time alarm</i>
     </div>
     <div class="alarmsStatisticsBox">
       <vue-seamless-scroll
@@ -113,6 +113,7 @@ export default {
   width: 100%;
   height: 7vw;
   margin-bottom: 0.5vw;
+  background-color: #015384;
   // border: solid 1px white;
 }
 // 实时报警轮播内容
@@ -127,7 +128,7 @@ export default {
 .realLeft {
   width: 60%;
   height: 100%;
-  border: solid 1px rgba(255, 255, 255, 0.4);
+  //   border: solid 1px rgba(255, 255, 255, 0.4);
   margin-right: 0.2vw;
   overflow: hidden;
   > div {
@@ -141,7 +142,7 @@ export default {
 .realRight {
   width: 40%;
   height: 100%;
-  border: solid 1px rgba(255, 255, 255, 0.4);
+  //   border: solid 1px rgba(255, 255, 255, 0.4);
   img {
     width: auto;
     height: 100%;

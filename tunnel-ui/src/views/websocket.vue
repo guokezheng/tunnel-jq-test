@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-25 08:41:42
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-09-26 18:57:34
+ * @LastEditTime: 2022-11-07 09:11:18
  * @FilePath: \tunnel-ui\src\views\websocket.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -47,7 +47,7 @@ export default {
         const subEvent = params.subEvent;
         const content = params.content;
         var contentList = JSON.parse(content);
-   
+
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);
@@ -73,7 +73,7 @@ export default {
               contentList.deviceStatusChangeLog
             );
             break;
-            case "eventFlow":
+          case "eventFlow":
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
             break;
           default:

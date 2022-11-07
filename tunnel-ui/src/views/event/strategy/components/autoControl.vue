@@ -479,6 +479,8 @@ export default {
           this.strategyForm.id = this.id;
         });
       }
+      this.strategyForm.triggers.deviceId =
+        this.strategyForm.triggers.deviceId.toString();
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");

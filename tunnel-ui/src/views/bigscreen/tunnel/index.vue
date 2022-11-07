@@ -42,12 +42,6 @@
           <span
             v-show="isSelect == 'map'"
             style="margin-right: 1vw"
-            @click="switchingMap"
-            >切换{{ tunnelName == "山东" ? "四川" : "山东" }}</span
-          >
-          <span
-            v-show="isSelect == 'map'"
-            style="margin-right: 1vw"
             @click="changeViewMode"
             >{{ viewMode == "2D" ? "3D地图" : "2D地图" }}显示</span
           >

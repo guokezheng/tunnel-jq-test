@@ -281,7 +281,7 @@
               <el-date-picker
                     v-model="form.deliveryTime"
                     type="date"
-                    placeholder="请选择出场时间" 
+                    placeholder="请选择出场时间"
                     :picker-options="optionsDisable"
                     value-format="yyyy-MM-dd">
                   </el-date-picker>
@@ -1186,7 +1186,7 @@
       importTemplate() {
        /* exportDevicesTemplate()*/
           /*.then((response) => {*/
-            this.$download.name('设备数据.xlsx',false);
+            this.$download.name('sbsj.xlsx',false);
           /*});*/
       },
       insertEqControlPointAddress() {

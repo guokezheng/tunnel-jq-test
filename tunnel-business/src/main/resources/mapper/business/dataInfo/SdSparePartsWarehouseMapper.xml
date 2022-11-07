@@ -80,6 +80,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             resultType="com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO">
         select
             w.id,
+            w.tunnel_id,
             w.part_name as partName,
             w.brand,
             w.model,
@@ -91,10 +92,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             w.current_inventory currentInventory,
             w.keeper,
             w.phone,
-            w.location,
-            c.tunnel_name as tunnelName
+            w.location
+<!--            c.tunnel_name as tunnelName-->
         from sd_spare_parts_warehouse w
-        left join sd_tunnels c on w.tunnel_id = c.tunnel_id
+<!--        left join sd_tunnels c on w.tunnel_id = c.tunnel_id-->
         where w.tunnel_id = #{tunnelId}
     </select>
 

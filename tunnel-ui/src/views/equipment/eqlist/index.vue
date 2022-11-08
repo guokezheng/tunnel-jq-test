@@ -1100,7 +1100,7 @@
       /** 提交按钮 */
       submitForm() {
         if (this.submitFormLoading) return
-        this.submitFormLoading = true
+        /*this.submitFormLoading = true*/
         this.$refs["form"].validate(async (valid) => {
           if (valid) {
             if (this.submitMode == 0) {
@@ -1121,7 +1121,7 @@
               });
             }
           }
-          this.submitFormLoading = false
+          /*this.submitFormLoading = false*/
         });
       },
       /** 删除按钮操作 */

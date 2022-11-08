@@ -7,6 +7,7 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -71,8 +72,19 @@ public class SdOperationLog extends BaseEntity
     @Excel(name = "操作地址")
     private String operIp;
 
+    //事件ID
+    private String eventId;
+
     public String getOperIp() {
         return operIp;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
     public void setOperIp(String operIp) {

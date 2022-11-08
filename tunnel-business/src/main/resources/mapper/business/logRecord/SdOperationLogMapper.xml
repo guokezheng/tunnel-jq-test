@@ -22,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="state"    column="state"    />
         <result property="description"    column="description"    />
         <result property="operIp"    column="oper_ip"    />
+        <result property="eventId"    column="event_id"    />
         <association property="tunnelName"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
         <association property="typeName"  column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult" />
         <association property="stateName"  column="id" javaType="SdEquipmentState" resultMap="stateNameResult" />
@@ -115,7 +116,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="eqName != null">eq_name,</if> -->
             <if test="code != null">code,</if>
             <if test="createBy != null">create_by,</if>
-            create_time,
+            <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="beforeState != null">before_state,</if>
@@ -123,7 +124,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="controlType != null">control_type,</if>
             <if test="state != null">state,</if>
             <if test="description != null">description,</if>
-            <if test="operIp != null and operIp != ''">oper_ip</if>
+            <if test="operIp != null and operIp != ''">oper_ip,</if>
+            <if test="eventId != null">event_id</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqTypeId != null">#{eqTypeId},</if>
@@ -133,7 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <!-- <if test="eqName != null">#{eqName},</if> -->
             <if test="code != null">#{code},</if>
             <if test="createBy != null">#{createBy},</if>
-          	sysdate(),
+            <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="beforeState != null">#{beforeState},</if>
@@ -142,6 +144,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="state != null">#{state},</if>
             <if test="description != null">#{description},</if>
             <if test="operIp != null and operIp != ''">#{operIp},</if>
+            <if test="eventId != null">#{eventId}</if>
         </trim>
     </insert>
 
@@ -181,6 +184,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectOprationLogOver3month" resultMap="SdOperationLogResult">
         select id from sd_operation_log
         where create_time <![CDATA[ < ]]> DATE_SUB(CURDATE(),INTERVAL 3 month)
+    </select>
+
+    <select id="getEventOperationLog" parameterType="String" resultMap="SdOperationLogResult">
+        <include refid="selectSdOperationLogVo"/>
+        where event_id = #{eventId} group by eq_id
     </select>
 
     <insert id="operationLog" parameterType="SdOperationLog" >

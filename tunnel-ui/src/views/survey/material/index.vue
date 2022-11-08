@@ -383,6 +383,7 @@
       <div slot="footer" class="dialog-footer">
         <el-button
           type="primary"
+          :disabled = "disabled"
           :loading="submitBtnLoading"
           @click="submitForm"
           v-prevent-click
@@ -575,6 +576,7 @@ export default {
         2: "greenClass",
         3: "redClass",
       },
+      disabled:false,
       // 遮罩层
       loading: true,
       dloading: false,
@@ -957,6 +959,7 @@ export default {
 
     /** 应急资源提交按钮 */
     submitForm() {
+      this.disabled = true
       // if(this.submitBtnLoading) return
       // this.submitBtnLoading = true
       this.$refs["form"].validate(async valid => {
@@ -979,6 +982,7 @@ export default {
             });
           }
         }
+        this.disabled = false
         // this.submitBtnLoading = false
       });
     },

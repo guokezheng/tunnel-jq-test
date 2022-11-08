@@ -103,3 +103,20 @@ export function getSubareaByStakeNum(query) {
     params: query
   })
 }
+
+// 一键恢复
+export function performRecovery(eventId) {
+  return request({
+    url: '/event/performRecovery?eventId='+ eventId,
+    method: 'get',
+  })
+}
+
+
+// 一进页面获取已执行数据
+export function dispatchExecuted(eventId) {
+  return request({
+    url: '/log/dispatchExecuted?eventId='+ eventId,
+    method: 'get',
+  })
+}

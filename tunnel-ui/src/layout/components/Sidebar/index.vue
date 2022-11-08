@@ -27,7 +27,7 @@
         content="点击展示更多导航"
         placement="left"
       >
-        <i class="el-icon-arrow-left" @click="prevScroll"></i>
+        <i class="el-icon-arrow-left" @click="prevScroll" :style="{visibility:leftIcon?'visible':'hidden'}"></i>
       </el-tooltip>
     </template>
 
@@ -69,7 +69,7 @@
         content="点击展示更多导航"
         placement="right"
       >
-        <i class="el-icon-arrow-right" @click="nextScroll"></i>
+        <i class="el-icon-arrow-right" @click="nextScroll" :style="{visibility:rightIcon?'visible':'hidden'}"></i>
       </el-tooltip>
     </template>
   </div>
@@ -113,6 +113,8 @@ export default {
     return {
       style: null,
       path: null,
+      leftIcon:false,
+      rightIcon:true,
     };
   },
   mounted() {
@@ -130,10 +132,29 @@ export default {
     prevScroll() {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft - 150;
+      console.log(wrap.scrollLeft)
+      if(wrap.scrollLeft == 0){
+        this.leftIcon = false
+        this.rightIcon = true
+
+      }else{
+        this.leftIcon = true
+        this.rightIcon = true
+
+      }
     },
     nextScroll() {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft + 150;
+      if(wrap.scrollLeft == 468){
+        this.rightIcon = false
+        this.leftIcon = true
+
+      }else{
+        this.rightIcon = true
+        this.leftIcon = true
+
+      }
     },
     changeScroll(e) {
       let wrap = this.$refs.scroll.$refs.wrap;
@@ -262,16 +283,16 @@ export default {
   .is-active
   > .el-submenu__title,
 .theme-blue #app .topNav_head .sidebar-container .el-menu-item.is-active {
-  color: #f19f39 !important;
-  text-shadow: 1px 1px white;
-  background-image: url(../../../assets/cloudControl/navBg.png) !important;
+  color: #ffdb82 !important;
+  // text-shadow: 1px 1px white;
+  background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 70% 52%;
 }
 .theme-blue #app .topNav_head .workbenchNavbar .router-link-active {
-  color: #f19f39 !important;
+  color: #ffdb82 !important;
   text-shadow: 1px 1px white;
-  background-image: url(../../../assets/cloudControl/navBg.png) !important;
+  background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 100% 58%;
   height: 72px;

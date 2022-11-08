@@ -1138,6 +1138,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
+      this.tunnelList = []
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1213,6 +1214,7 @@ export default {
   border-radius: 10px;
   margin-bottom: 10px;
   margin-top: 20px;
+  font-size: 14px;
   // justify-content: space-between;
   div{
     padding: 6px 10px;

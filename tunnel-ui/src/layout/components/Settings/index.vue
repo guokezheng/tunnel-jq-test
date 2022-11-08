@@ -55,7 +55,7 @@
 
       <h3 class="drawer-title">系统布局配置</h3>
 
-      <template v-if="sideTheme != 'theme-blue'">
+      <template >
         <div class="drawer-item">
           <span>开启 TopNav</span>
           <el-switch v-model="topNav" class="drawer-switch" />
@@ -65,15 +65,15 @@
         <span>开启 Tags-Views</span>
         <el-switch v-model="tagsView" class="drawer-switch" />
       </div>
-      <div class="drawer-item" v-if="topNav || sideTheme == 'theme-blue'">
+      <!-- <div class="drawer-item" v-if="topNav || sideTheme == 'theme-blue'">
         <span>开启weather</span>
         <el-switch v-model="weatherView" class="drawer-switch" />
       </div>
       <div class="drawer-item">
         <span>固定 Header</span>
         <el-switch v-model="fixedHeader" class="drawer-switch" />
-      </div>
-      <template v-if="sideTheme != 'theme-blue'">
+      </div> -->
+      <template >
         <div class="drawer-item">
           <span>显示 Logo</span>
           <el-switch v-model="sidebarLogo" class="drawer-switch" />

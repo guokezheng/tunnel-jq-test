@@ -18,11 +18,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="bigType"    column="big_type"    />
         <result property="isControl"    column="is_control"    />
         <result property="isAnalog"    column="is_analog"    />
+        <result property="eqCategory"    column="eq_category"    />
+        <result property="eqSystem"    column="eq_system"    />
     </resultMap>
 
     <sql id="selectSdEquipmentTypeVo">
         select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height, is_control,
-        update_by, update_time,icon_file_id,big_type,is_analog from sd_equipment_type
+        update_by, update_time,icon_file_id,big_type,is_analog,eq_category,eq_system from sd_equipment_type
     </sql>
 
     <select id="selectSdEquipmentTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
@@ -107,6 +109,8 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconHeight != null">icon_height,</if>
             <if test="isControl != null">is_control,</if>
             <if test="isAnalog != null">is_analog,</if>
+            <if test="eqCategory != null">eq_category,</if>
+            <if test="eqSystem != null">eq_system,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -121,6 +125,8 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconHeight != null">#{iconHeight},</if>
             <if test="isControl != null">#{isControl},</if>
             <if test="isAnalog != null">#{isAnalog},</if>
+            <if test="eqCategory != null">#{eqCategory},</if>
+            <if test="eqSystem != null">#{eqSystem},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -139,6 +145,8 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconHeight != null">icon_height = #{iconHeight},</if>
             <if test="isControl != null">is_control = #{isControl},</if>
             <if test="isAnalog != null">is_analog = #{isAnalog},</if>
+            <if test="eqCategory != null">eq_category = #{eqCategory},</if>
+            <if test="eqSystem != null">eq_system = #{eqSystem},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>

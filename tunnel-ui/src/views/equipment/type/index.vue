@@ -33,7 +33,7 @@
           >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button 
+          >重置</el-button
         >
         <el-button
           type="primary"
@@ -141,7 +141,7 @@
       max-height="640"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
-      
+
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
@@ -257,7 +257,39 @@
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
-        <el-form-item label="设备大类" class="checkboxFormDialog" prop="bigType">
+        <el-form-item label="所属大类" prop="eqCategory">
+          <el-select
+            v-model="form.eqCategory"
+            placeholder="请选择所属大类"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in eqCategoryData"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属系统" prop="eqSystem">
+          <el-select
+            v-model="form.eqSystem"
+            placeholder="请选择所属系统"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in eqSystemData"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属模块" class="checkboxFormDialog" prop="bigType">
           <el-checkbox-group v-model="form.bigType">
               <el-checkbox v-for="dict in bigTypeOptions" :label="dict.dictValue">{{dict.dictLabel}}</el-checkbox>
           </el-checkbox-group>
@@ -287,7 +319,11 @@ export default {
   name: "Type",
   data() {
     return {
-		bigType:'',
+      eqSystemData: {},
+      eqCategoryData: {},
+      bigType:'',
+      eqCategory:'',
+      eqSystem:'',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -308,7 +344,9 @@ export default {
       // 是否显示弹出层
       open: false,
 	  form:{
-		  bigType:[]
+		  bigType:[],
+      eqCategory: "",
+      eqSystem:""
 	  },
       // 查询参数
       queryParams: {
@@ -342,7 +380,13 @@ export default {
               { pattern: /^[1-9]\d*$/, message: '请输入0以上正整数', trigger: 'blur' },
           ],
           bigType: [
-              { required: true, message: "设备大类不能为空", trigger: 'change' }
+              { required: true, message: "请选择所属模块", trigger: 'change' }
+          ],
+          eqSystem: [
+              { required: true, message: "请选择所属系统", trigger: 'change' }
+          ],
+          eqCategory: [
+              { required: true, message: "请选择所属大类", trigger: 'change' }
           ],
           isControl: [
               { required: true, message: "是否可控不能为空", trigger: 'change' }
@@ -357,11 +401,17 @@ export default {
       //需要移除的文件ids
       removeIds: [],
       // fIds:[]//需要移除的关联图标iconFileId
-      typeList:[],//所有设备大类
+      typeList:[],//所属分类
       isControlOptions:[]//是否可控字典值
     };
   },
   created() {
+    this.getDicts("eq_system").then(response => {
+      this.eqSystemData = response.data;
+    });
+    this.getDicts("eq_category").then(response => {
+      this.eqCategoryData = response.data;
+    });
 	  this.getDicts("sd_sys_name").then(response => {
 	    this.bigTypeOptions = response.data;
 	  });
@@ -527,6 +577,8 @@ export default {
       this.fileData.append("iconHeight", this.form.iconHeight);
       this.fileData.append("isControl", this.form.isControl);
 	    this.fileData.append("bigType", this.form.bigType.join(','));
+	    this.fileData.append("eqSystem", this.form.eqSystem);
+	    this.fileData.append("eqCategory", this.form.eqCategory);
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if(this.fileList.length <= 0) {

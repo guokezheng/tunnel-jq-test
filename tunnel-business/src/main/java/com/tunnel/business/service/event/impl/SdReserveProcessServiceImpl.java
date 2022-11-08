@@ -120,7 +120,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         }
         int result = -1;
         if(list.isEmpty()){
-            throw new RuntimeException("无效数据、策略添加失败。");
+            throw new RuntimeException("无效数据策略添加失败");
         }
         result = sdReserveProcessMapper.batchSdReserveProcess(list);
         return result;

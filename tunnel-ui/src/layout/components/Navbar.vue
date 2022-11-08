@@ -61,20 +61,20 @@
                 </div>
             </el-popover>
       </el-tooltip>
-      <!--&lt;!&ndash; 隧道运营APP下载二维码 &ndash;&gt;-->
-      <!--<el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">-->
-        <!--<el-popover-->
-              <!--placement="bottom"-->
-              <!--trigger="hover">-->
-            <!--<img :src="qrCodePath" style="width:200px;height:260px;">-->
-            <!--<div :class="topNav && sideTheme == 'theme-dark'?'avatar-wrapper white_icon':'avatar-wrapper'" slot="reference">-->
-              <!--<el-badge :value="nodealNum" :hidden="true" class="item bell_icon"-->
-                  <!--style="cursor:pointer;">-->
-                  <!--<i class="el-icon-mobile-phone white_icon" @hover="bell()"></i>-->
-              <!--</el-badge>-->
-            <!--</div>-->
-        <!--</el-popover>-->
-      <!--</el-tooltip>-->
+      <!-- 隧道运营APP下载二维码 -->
+      <!-- <el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">
+        <el-popover
+              placement="bottom"
+              trigger="hover">
+            <img :src="qrCodePath" style="width:200px;height:260px;">
+            <div :class="topNav && sideTheme == 'theme-dark'?'avatar-wrapper white_icon':'avatar-wrapper'" slot="reference">
+              <el-badge :value="nodealNum" :hidden="true" class="item bell_icon"
+                  style="cursor:pointer;">
+                  <i class="el-icon-mobile-phone white_icon" @hover="bell()"></i>
+              </el-badge>
+            </div>
+        </el-popover>
+      </el-tooltip> -->
 
 
       <!-- qrCodeShow -->
@@ -620,7 +620,7 @@ export default {
   }
 // .theme-dark .navbar{background-color:unset;}
 .navbar{
-  background: rgb(0, 67, 117);
+  background:transparent;
   position: absolute;
     top: 0;
     right: 0;
@@ -756,7 +756,7 @@ export default {
     padding:0px 0px 10px 0px !important;
   }
 .eventDiglog{
-
+  
   .title {
       padding-left: 20px;
       height: 30px;
@@ -775,7 +775,7 @@ export default {
       border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
       margin: 0 !important;
     }
-
+    
   // .el-dialog__header .el-dialog__title{
   //  font-size: 24px;
   //  font-weight: bolder;
@@ -896,7 +896,7 @@ export default {
 </style>
 
 <style lang="scss">
-
+  
     .videoDiv{
       width: 35%;
       float: left;

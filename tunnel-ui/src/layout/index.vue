@@ -297,6 +297,7 @@ export default {
     },
   },
   created() {
+    console.log(this.topNav,"this.topNav");
     console.log(this.$route.path, "路由");
     if (this.$route.path == "/tunnel") {
       if (
@@ -382,7 +383,9 @@ export default {
       this.eventValue += event.length;
       if (this.eventValue > 0) {
         this.$forceUpdate();
-        this.badgeHidden = false;
+        // this.badgeHidden = false;
+        this.eventDialogPic = true;
+
       }
     },
   },
@@ -445,7 +448,10 @@ export default {
     top: 0;
   }
 }
-.has-logo {
+.topNav_head .has-logo {
+  background: transparent !important;
+}
+ .has-logo {
   background: rgb(0, 67, 117);
 }
 .drawer-bg {

@@ -173,7 +173,7 @@ export default {
                     }
                     div a{display:block;}
                     .submenu-title-noDropdown{color: white;}
-                    .is-active span{color: #f19f39!important;}
+                    .is-active span{color: #fff;}
                 } 
             } 
         }

@@ -1,6 +1,7 @@
 package com.tunnel.platform.service;
 
 import cn.hutool.json.JSONObject;
+import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -83,11 +84,18 @@ public class SdDeviceControlService {
         sdOperationLog.setEqTypeId(sdDevices.getEqType());
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
-        sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType(controlType);
         if (null != map.get("operIp")) {
             sdOperationLog.setOperIp(map.get("operIp").toString());
+        }
+        if (null != map.get("controlTime")) {
+            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+        }else{
+            sdOperationLog.setCreateTime(new Date());
+        }
+        if (null != map.get("eventId")) {
+            sdOperationLog.setEventId(map.get("eventId").toString());
         }
 
         int controlState = 0;

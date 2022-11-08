@@ -295,3 +295,12 @@ CREATE TABLE `sd_push_history`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '推送数据历史记录表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+-- 新增菜单，机电巡查
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2339, '机电巡查', 0, 6, 'empatrol', NULL, NULL, 1, 0, 'M', '0', '0', '', '#', 'admin', '2022-11-02 16:35:31', 'admin', '2022-11-03 09:26:32', '');
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2341, '故障管理', 2339, 1, 'emFault', 'electromechanicalPatrol/faultManage/index', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-03 09:15:14', 'admin', '2022-11-04 15:07:20', '');
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2345, '巡查任务', 2339, 2, 'emTask', 'electromechanicalPatrol/taskManage/index', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-04 14:40:01', 'admin', '2022-11-04 15:25:24', '');
+
+-- 新增菜单，安全预警
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2338, '安全预警', 2250, 1, 'safeWarn', 'event/event/safeWarn', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-02 10:01:48', 'admin', '2022-11-02 16:55:52', '');

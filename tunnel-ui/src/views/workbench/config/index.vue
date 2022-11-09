@@ -2590,7 +2590,13 @@
       </div>
     </el-dialog>
     <div class="carBox" v-show="carShow">
-      <span v-for="item in realTimeList" :key="item.id" style="">●</span>
+      <span
+        v-for="item in realTimeList"
+        class="carCircle"
+        :key="item.id"
+        style=""
+        >●</span
+      >
     </div>
   </div>
 </template>
@@ -2734,9 +2740,10 @@ export default {
   },
   data() {
     return {
+      proportion: "", //px和米的比例
       carList: [],
-      tunnelKm: "",
-      tunnelLength: "",
+      tunnelKm: "", //隧道实际长度
+      tunnelLength: "", //隧道px长度
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
       // 批量选择设备图标
       iconWidth: "",
@@ -3445,23 +3452,46 @@ export default {
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
       // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
+      // for (let i = 0; i < event.length; i++) {
+      //   // 删除重复数据
+      //   event[i].left = (+event[i].distance / +1000 / +this.tunnelKm) * +1300;
+      //   // 如果速度为0 ，直接别算了
+      //   if (event[i].speed != 0) {
+      //     event[i].speed = (+this.tunnelKm / +event[i].speed) * +3600; //每秒钟移动的距离，单位px
+      //   }
+      //   event[i].lane = event[i].laneNum;
+      // }
+      // this.realTimeList = event;
+      // console.log(this.realTimeList, "处理完的数据");
+      // 横纬竖经 lng 经度；   lat：纬度
+      const data = [
+        { lng: 117.81632771, lat: 36.46771608 }, //下行入口左侧
+        { lng: 117.81710505, lat: 36.47502258 }, //下行出口左侧
+        { lng: 117.81641244, lat: 36.4677101 }, //下行入口右侧 基点
+        { lng: 117.81718759, lat: 36.47501931 }, //下行出口右侧
+      ];
+      //首先计算上下经纬度差值
+      let gao = +data[3].lat - +data[2].lat;
+      let chang = +data[2].lng - +data[0].lng; //A
+
+      // tunnelLength tunnelKm
+      // 计算比例
+      var changB = (this.tunnelKm * 1000) / chang; //B
+      // var gaoB = 20 * 1000 /  chang;
       for (let i = 0; i < event.length; i++) {
-        // 删除重复数据
-        event[i].left = (+event[i].distance / +1000 / +this.tunnelKm) * +1300;
-        // 如果速度为0 ，直接别算了
-        if (event[i].speed != 0) {
-          event[i].speed = (+this.tunnelKm / +event[i].speed) * +3600; //每秒钟移动的距离，单位px
-        }
-        event[i].lane = event[i].laneNum;
+        var lng = Number(event[i].longitude);
+        // var lat = Number(event[i].latitude);
+        // 计算实际位置
+        // var z = +lat - +data[2].lat;
+        var carKm = (+lng - +data[2].lng) * changB; //C
+        // 车辆在二维图上的实际距离
+        event[i].left = carKm * this.proportion + 300;
       }
       this.realTimeList = event;
-      console.log(this.realTimeList, "处理完的数据");
     },
     deviceStatus(event) {
-      // console.log(event, "websockt工作台接收实时设备状态数据");
       this.deviceStatusList = event;
     },
-
     // 设备类型
     "batchForm.eqType"(val) {
       console.log(val);
@@ -5854,8 +5884,9 @@ export default {
         } else if (Mileage > +2.6) {
           var length = +1300 * 2;
         }
-        this.tunnelKm = Mileage;
-        this.tunnelLength = length;
+        this.tunnelKm = Mileage; //公里数
+        this.tunnelLength = length; //px长度
+        this.proportion = length / (Mileage * 1000); //计算px和米的比例
       });
       // 首页获取隧道长度，根据隧道长度判断车辆行驶的全部距离
     },

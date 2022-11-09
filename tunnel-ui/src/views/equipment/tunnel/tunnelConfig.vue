@@ -531,9 +531,6 @@ export default {
       let list = that.selectedIconList;
       // debugger;
       for (let i = 0; i < list.length; i++) {
-        if (list[i].eqType == 12) {
-          console.log(list[i]);
-        }
         var iconWidth = 0;
         var iconHeight = 0;
         if (list[i].width != "") {
@@ -560,7 +557,7 @@ export default {
           );
           let img2 = that.svg.paper.image(
             list[i].url[1],
-            list[i].position.left + iconWidth +16,
+            list[i].position.left + iconWidth + 16,
             list[i].position.top + iconHeight,
             iconWidth,
             iconHeight
@@ -580,7 +577,12 @@ export default {
               });
 
             //桩号
-            console.log(list[i],list[i].pile.length, list[i].position.left - ( 2*list[i].pile.length - 20 ), "list[i].pile");
+            console.log(
+              list[i],
+              list[i].pile.length,
+              list[i].position.left - (2 * list[i].pile.length - 20),
+              "list[i].pile"
+            );
             let t = "";
             if (list[i].pile) {
               if (list[i].pile.length > 10) {
@@ -617,7 +619,7 @@ export default {
             });
           }
         } else {
-          console.log(iconWidth,iconWidth<20,'iconWidth')
+          console.log(iconWidth, iconWidth < 20, "iconWidth");
           // let num = iconWidth<30?(iconWidth<25?10:2):-8;
           // let num = 0;
           var img3 = that.svg.paper.image(
@@ -629,15 +631,15 @@ export default {
           );
           if (list[i].pile != "") {
             let num2 = 0;
-            if(list[i].eqType==21){
+            if (list[i].eqType == 21) {
               //紧急电话
-              num2 = 12
-            }else if(list[i].eqType==19){
+              num2 = 12;
+            } else if (list[i].eqType == 19) {
               //CO/VI检测器
-              num2 = -8
-            }else if(list[i].eqType==34){
+              num2 = -8;
+            } else if (list[i].eqType == 34) {
               //固定摄像机（枪机
-              num2 = 20
+              num2 = 20;
             }
             let r = that.svg.paper
               .rect(
@@ -661,11 +663,14 @@ export default {
                 fill: "#a2a2a3",
                 "font-size": 12,
               });
-            
+
             t.attr({
-              x: list[i].position.left - (2 * Number(list[i].pile.length) + 14 - 40) - num2,
+              x:
+                list[i].position.left -
+                (2 * Number(list[i].pile.length) + 14 - 40) -
+                num2,
             });
-            console.log(list[i],r,'list[i]')
+            console.log(list[i], r, "list[i]");
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
@@ -674,7 +679,6 @@ export default {
             //     class: "mydrags",
             //   });
             // }
-            
           } else {
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
@@ -702,6 +706,10 @@ export default {
       let eqList = [];
       //遍历设备，获取位置
       for (let i = 0; i < this.selectedIconList.length; i++) {
+        if (this.selectedIconList[i].eqType == 12) {
+          list[i].pileNum = list[i].pile.replace(/[^\d.]/g, "");
+          console.log(this.selectedIconList[i].pileNum);
+        }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
           if (img[i]) {
             this.selectedIconList[i].position = {
@@ -755,12 +763,12 @@ export default {
         tunnelId: this.selectedTunnel.id,
         storeConfigure: JSON.stringify(configData),
       };
-      console.log(param,configData,'configData')
-      configData.eqList.forEach(v=>{
-        if(v.eqType==3){
-          console.log(v,'交通信号灯')
+      console.log(param, configData, "configData");
+      configData.eqList.forEach((v) => {
+        if (v.eqType == 3) {
+          console.log(v, "交通信号灯");
         }
-      })
+      });
       updateTunnels(param).then((response) => {
         this.saveLoading = false;
         if (response.code === 200) {
@@ -964,7 +972,7 @@ export default {
           if (url.length > 1) {
             let img1 = null;
             let img2 = null;
-            if (item.eqType == 2 || item.eqType == 1){
+            if (item.eqType == 2 || item.eqType == 1) {
               img1 = this.svg.paper.image(
                 url[0],
                 8 + iconWidth,
@@ -979,21 +987,21 @@ export default {
                 iconWidth,
                 iconHeight
               );
-            }else{
+            } else {
               img1 = this.svg.paper.image(
                 url[0],
-              10 + iconWidth,
-              0,
-              iconWidth,
-              iconHeight
-            );
+                10 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
               img2 = this.svg.paper.image(
-              url[1],
-              10 + iconWidth,
-              0,
-              iconWidth,
-              iconHeight
-            );
+                url[1],
+                10 + iconWidth,
+                0,
+                iconWidth,
+                iconHeight
+              );
             }
             img.push(
               this.svg.paper.g(r, t, img2, img1).drag().attr({
@@ -1014,16 +1022,16 @@ export default {
                 .attr({
                   id: item.eqId,
                 });
-            }else if (item.eqType == 21 ) {
-              console.log(1111111111111111)
+            } else if (item.eqType == 21) {
+              console.log(1111111111111111);
               // "紧急电话"
               img3 = this.svg.paper
                 .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
                 .attr({
                   id: item.eqId,
                 });
-            }else if (item.eqType == 25 ) {
-              console.log(1111111111111111)
+            } else if (item.eqType == 25) {
+              console.log(1111111111111111);
               // "抓拍摄像机"
               img3 = this.svg.paper
                 .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
@@ -1031,9 +1039,15 @@ export default {
                   id: item.eqId,
                 });
             } else {
-              console.log(222222222222)
+              console.log(222222222222);
               img3 = this.svg.paper
-                .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
+                .image(
+                  url,
+                  25 + iconWidth + iconWidth >= 29 ? 24 : 0,
+                  0,
+                  iconWidth,
+                  iconHeight
+                )
                 .attr({
                   id: item.eqId,
                 });

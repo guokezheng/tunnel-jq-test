@@ -223,7 +223,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
         List<SdPlatformApi> sdPlatformApis = sdPlatformApiMapper.selectList();
         //通过kafka进行推送
         for(SdPlatformApi item : sdPlatformApis){
-            SendResult<String, String> sendResult = kafkaSendData(item.getPushData(), "device");
+            SendResult<String, String> sendResult = kafkaSendData(item.getPushData(), item.getDataType());
             if(StringUtils.isNotNull(sendResult) && StringUtils.isNotNull(item.getId())){
                 SdPlatformApi sdPlatformApi1 = new SdPlatformApi();
                 sdPlatformApi1.setId(item.getId());

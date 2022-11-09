@@ -149,9 +149,12 @@
       <el-table-column label="隧道名称" align="center" prop="tunnelName" />
       <el-table-column
         label="方向"
-        align="center"
-        :formatter="eqDirectionFormat"
-      />
+        align="center"  prop="direction"
+      >
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sd_direction" :value="scope.row.direction"/>
+        </template>
+      </el-table-column>
       <el-table-column label="开始桩号" align="center" prop="startPile" />
       <el-table-column label="结束桩号" align="center" prop="endPile" />
       <el-table-column
@@ -342,9 +345,6 @@ export default {
         let pileInt = endPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
         this.form.pileMax = pileInt;
       }
-    },
-    eqDirectionFormat(row, column) {
-      return row.direction == 0 ? "上行" : "下行";
     },
     // 隧道名称 下拉框
     getTunnels() {

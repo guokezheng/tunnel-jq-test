@@ -30,7 +30,17 @@ public enum WJEnum {
     /**
      * 行人进入隧道
      */
-    CAR_PEDESTRIAN(21,"16");
+    CAR_PEDESTRIAN(21,"16"),
+
+    /**
+     * 遗撒物
+     */
+    CAR_DROP_DUST(17,"3"),
+
+    /**
+     * 逆行
+     */
+    CAR_RETROGRADE(3,"1");
 
     private int code;
     private String number;

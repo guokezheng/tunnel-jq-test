@@ -122,11 +122,11 @@
               >新增</el-button
             >
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="chooseImageEvent()"
-              >选择图片</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="chooseImageEvent()"-->
+<!--              >选择图片</el-button-->
+<!--            >-->
+<!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
         <qz-dialog

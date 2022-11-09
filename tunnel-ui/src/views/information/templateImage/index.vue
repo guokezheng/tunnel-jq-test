@@ -7,10 +7,10 @@
       v-show="showSearch"
       label-width="40px"
     >
-      <el-form-item label="文本" prop="word">
+      <el-form-item label="图片名称" prop="pictureName">
         <el-input
-          v-model="queryParams.word"
-          placeholder="请输入文本"
+          v-model="queryParams.pictureName"
+          placeholder="请输入图片名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -342,6 +342,7 @@ export default {
         pageSize: 10,
         word: null,
         creatTime: null,
+        pictureName: null,
       },
       // 表单参数
       form: {},
@@ -490,7 +491,11 @@ export default {
       console.log(this.fileData);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          console.log(this.fileData.file);
+          console.log(this.fileData.file + "111111");
+          if (this.fileData.file == null || this.fileData.file == undefined) {
+            this.$modal.msgError("图片不能为空");
+            return;
+          }
           if (parseInt(this.form.imageWidth) == 0) {
             this.$modal.msgError("图片宽度不能为0");
             return;

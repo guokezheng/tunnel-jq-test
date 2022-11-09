@@ -59,14 +59,14 @@
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:templateConfig:export']"
-          >导出</el-button
-        >
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['system:templateConfig:export']"-->
+<!--          >导出</el-button-->
+<!--        >-->
       </el-form-item>
     </el-form>
     <!-- <el-row :gutter="10" class="mb8">
@@ -142,13 +142,13 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="addOrUpdateHandle(scope.row.id)"
-            v-hasPermi="['system:templateConfig:edit']"
-            >修改</el-button
-          >
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="addOrUpdateHandle(scope.row.id)"-->
+<!--            v-hasPermi="['system:templateConfig:edit']"-->
+<!--            >修改</el-button-->
+<!--          >-->
           <el-button
             size="mini"
             class="tableDelButtton"
@@ -366,7 +366,7 @@ export default {
         this.loading = false;
         this.$modal.msgError(err);
       });
-      
+
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -445,7 +445,7 @@ export default {
           this.$refs.addOrUpdate.dataForm.id = false;
         }
         console.log(this.$refs.addOrUpdate.dataForm.id)
-        // this.$refs.addOrUpdate.isAdd = 
+        // this.$refs.addOrUpdate.isAdd =
         this.$refs.addOrUpdate.init()
       })
     },

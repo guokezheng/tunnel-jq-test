@@ -142,13 +142,13 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="addOrUpdateHandle(scope.row.id)"
-            v-hasPermi="['system:templateConfig:edit']"
-            >修改</el-button
-          >
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="addOrUpdateHandle(scope.row.id)"-->
+<!--            v-hasPermi="['system:templateConfig:edit']"-->
+<!--            >修改</el-button-->
+<!--          >-->
           <el-button
             size="mini"
             class="tableDelButtton"

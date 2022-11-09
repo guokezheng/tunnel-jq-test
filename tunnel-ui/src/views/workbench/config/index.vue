@@ -289,8 +289,9 @@
                       >
                         <img
                           v-for="(url, indexs) in item.url"
-                          style="position: relative"
+                          style="position: absolute"
                           :style="{
+                            left:indexs * 14 + 'px',
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
@@ -5414,83 +5415,83 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
-              that.selectedIconList.forEach((item, indx) => {
-                // if(item.eqName=='固定摄像机（枪机）'){
-                if (item.eqType == "23") {
-                  item.position.left = item.position.left + 20;
-                  item.position.top = item.position.top;
-                } else if (item.eqType == "34") {
-                  // else if(item.eqName=='紧急电话'){
-                  item.position.left = item.position.left + 14;
-                  item.position.top = item.position.top;
-                } else if (item.eqType == "21") {
-                  // else if(item.eqName=='紧急电话'){
-                  item.position.left = item.position.left + 20;
-                  item.position.top = item.position.top;
-                } else if (item.eqType == "20") {
-                  // else if(item.eqName=='微波车辆检测器'){
-                  item.position.left = item.position.left + 16;
-                  item.position.top = item.position.top;
-                }
-                // else if(item.eqType=='紧急电话'){
-                // else if(item.eqName=='紧急电话'){
-                //   item.position.left = item.position.left + 20;
-                //   item.position.top = item.position.top;
-                // }
-                else if (item.eqType == "1") {
-                  // else if(item.eqName=='车道指示器'){
-                  item.position.left = item.position.left + 10;
-                  item.position.top = item.position.top + 16;
-                } else if (item.eqType == "7") {
-                  // else if(item.eqName=='加强照明'){
-                  item.position.left = item.position.left + 52;
-                  item.position.top = item.position.top - 6;
-                } else if (item.eqType == "9") {
-                  // else if(item.eqName=='基本照明'){
-                  item.position.left = item.position.left + 18;
-                  item.position.top = item.position.top - 4;
-                } else if (item.eqType == "19") {
-                  // else if(item.eqName[0]+item.eqName[1]=='CO'){
-                  item.position.left = item.position.left + 20;
-                  item.position.top = item.position.top - 2;
-                } else if (item.eqType == "24" || item.eqType == "35") {
-                  // else if(item.eqName[0]+item.eqName[1]=='云台'){
-                  item.position.left = item.position.left + 22;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "13" || item.eqType == "18") {
-                  // else if(item.eqName=='水泵'){
-                  item.position.left = item.position.left + 14;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "3") {
-                  // else if(item.eqName=='交通信号灯'){
-                  item.position.left = item.position.left + 26;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "8") {
-                  // else if(item.eqName=='引道照明'){
-                  item.position.left = item.position.left + 20;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "17" || item.eqType == "22") {
-                  // else if(item.eqName.substring(0,7)=='风速风向检测器'){
-                  item.position.left = item.position.left + 22;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "5") {
-                  // else if(item.eqName.substring(0,7)=='亮度检测器'){
-                  item.position.left = item.position.left + 18;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "6") {
-                  // else if(item.eqName.substring(0,7)=='应急照明'){
-                  item.position.left = item.position.left + 24;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "10") {
-                  // else if(item.eqName.substring(0,7)=='风机'){
-                  item.position.left = item.position.left + 18;
-                  // item.position.top = item.position.top - 4;
-                } else if (item.eqType == "14") {
-                  // else if(item.eqName.substring(0,7)=='PLC主机'){
-                  item.position.left = item.position.left + 16;
-                  // item.position.top = item.position.top - 4;
-                }
-              });
+              // that.selectedIconList.forEach((item, indx) => {
+              //   // if(item.eqName=='固定摄像机（枪机）'){
+              //   if (item.eqType == "23") {
+              //     item.position.left = item.position.left + 20;
+              //     item.position.top = item.position.top;
+              //   } else if (item.eqType == "34") {
+              //     // else if(item.eqName=='紧急电话'){
+              //     item.position.left = item.position.left + 14;
+              //     item.position.top = item.position.top;
+              //   } else if (item.eqType == "21") {
+              //     // else if(item.eqName=='紧急电话'){
+              //     item.position.left = item.position.left + 20;
+              //     item.position.top = item.position.top;
+              //   } else if (item.eqType == "20") {
+              //     // else if(item.eqName=='微波车辆检测器'){
+              //     item.position.left = item.position.left + 16;
+              //     item.position.top = item.position.top;
+              //   }
+              //   // else if(item.eqType=='紧急电话'){
+              //   // else if(item.eqName=='紧急电话'){
+              //   //   item.position.left = item.position.left + 20;
+              //   //   item.position.top = item.position.top;
+              //   // }
+              //   else if (item.eqType == "1") {
+              //     // else if(item.eqName=='车道指示器'){
+              //     item.position.left = item.position.left + 10;
+              //     item.position.top = item.position.top + 16;
+              //   } else if (item.eqType == "7") {
+              //     // else if(item.eqName=='加强照明'){
+              //     item.position.left = item.position.left + 52;
+              //     item.position.top = item.position.top - 6;
+              //   } else if (item.eqType == "9") {
+              //     // else if(item.eqName=='基本照明'){
+              //     item.position.left = item.position.left + 18;
+              //     item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "19") {
+              //     // else if(item.eqName[0]+item.eqName[1]=='CO'){
+              //     item.position.left = item.position.left + 20;
+              //     item.position.top = item.position.top - 2;
+              //   } else if (item.eqType == "24" || item.eqType == "35") {
+              //     // else if(item.eqName[0]+item.eqName[1]=='云台'){
+              //     item.position.left = item.position.left + 22;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "13" || item.eqType == "18") {
+              //     // else if(item.eqName=='水泵'){
+              //     item.position.left = item.position.left + 14;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "3") {
+              //     // else if(item.eqName=='交通信号灯'){
+              //     item.position.left = item.position.left + 26;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "8") {
+              //     // else if(item.eqName=='引道照明'){
+              //     item.position.left = item.position.left + 20;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "17" || item.eqType == "22") {
+              //     // else if(item.eqName.substring(0,7)=='风速风向检测器'){
+              //     item.position.left = item.position.left + 22;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "5") {
+              //     // else if(item.eqName.substring(0,7)=='亮度检测器'){
+              //     item.position.left = item.position.left + 18;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "6") {
+              //     // else if(item.eqName.substring(0,7)=='应急照明'){
+              //     item.position.left = item.position.left + 24;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "10") {
+              //     // else if(item.eqName.substring(0,7)=='风机'){
+              //     item.position.left = item.position.left + 18;
+              //     // item.position.top = item.position.top - 4;
+              //   } else if (item.eqType == "14") {
+              //     // else if(item.eqName.substring(0,7)=='PLC主机'){
+              //     item.position.left = item.position.left + 16;
+              //     // item.position.top = item.position.top - 4;
+              //   }
+              // });
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -8063,7 +8064,7 @@ export default {
   display: flex;
   flex-direction: column;
   // align-items: center;
-  width: 40px !important;
+  width: 0px !important;
 }
 
 // 鼠标经过盒子

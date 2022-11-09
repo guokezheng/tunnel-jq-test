@@ -553,15 +553,15 @@ export default {
           //设备图标
           let img1 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth - 6,
-            list[i].position.top + iconHeight,
+            list[i].position.left,
+            list[i].position.top ,
             iconWidth,
             iconHeight
           );
           let img2 = that.svg.paper.image(
             list[i].url[1],
-            list[i].position.left + iconWidth +16,
-            list[i].position.top + iconHeight,
+            list[i].position.left + 14,
+            list[i].position.top ,
             iconWidth,
             iconHeight
           );
@@ -569,8 +569,8 @@ export default {
           if (list[i].pile != "") {
             let r = that.svg.paper
               .rect(
-                list[i].position.left - 10,
-                list[i].position.top + iconHeight + 20,
+                list[i].position.left - 20,
+                list[i].position.top + iconHeight,
                 80,
                 18,
                 2
@@ -587,7 +587,7 @@ export default {
                 t = that.svg.paper
                   .text(
                     list[i].position.left - 10,
-                    list[i].position.top + iconHeight + 35,
+                    list[i].position.top + iconHeight + 14,
                     list[i].pile
                   )
                   .attr({
@@ -597,8 +597,8 @@ export default {
               } else if (list[i].pile.length <= 10) {
                 t = that.svg.paper
                   .text(
-                    list[i].position.left + 2,
-                    list[i].position.top + iconHeight + 35,
+                    list[i].position.left - 10,
+                    list[i].position.top + iconHeight + 14,
                     list[i].pile
                   )
                   .attr({
@@ -622,7 +622,7 @@ export default {
           // let num = 0;
           var img3 = that.svg.paper.image(
             list[i].url[0],
-            list[i].position.left + iconWidth, //此处增加+ iconWidth
+            list[i].position.left, //此处增加+ iconWidth
             list[i].position.top,
             iconWidth,
             iconHeight
@@ -967,14 +967,14 @@ export default {
             if (item.eqType == 2 || item.eqType == 1){
               img1 = this.svg.paper.image(
                 url[0],
-                8 + iconWidth,
+                0,
                 0,
                 iconWidth,
                 iconHeight
               );
               img2 = this.svg.paper.image(
                 url[1],
-                26 + iconWidth,
+                14,
                 0,
                 iconWidth,
                 iconHeight
@@ -982,14 +982,14 @@ export default {
             }else{
               img1 = this.svg.paper.image(
                 url[0],
-              10 + iconWidth,
+              0,
               0,
               iconWidth,
               iconHeight
             );
               img2 = this.svg.paper.image(
               url[1],
-              10 + iconWidth,
+              14,
               0,
               iconWidth,
               iconHeight
@@ -1064,14 +1064,14 @@ export default {
           if (url.length > 1) {
             let img1 = this.svg.paper.image(
               url[0],
-              10 + iconWidth,
+              0,
               0,
               iconWidth,
               iconHeight
             );
             let img2 = this.svg.paper.image(
               url[1],
-              10 + iconWidth,
+              14,
               0,
               iconWidth,
               iconHeight

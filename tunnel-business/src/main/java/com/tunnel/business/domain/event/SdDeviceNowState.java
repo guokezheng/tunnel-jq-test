@@ -33,6 +33,36 @@ public class SdDeviceNowState {
 
     private String fireMark;
 
+    private String eventId;
+
+    private String executeTime;
+
+    private String executeResult;
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getExecuteTime() {
+        return executeTime;
+    }
+
+    public void setExecuteTime(String executeTime) {
+        this.executeTime = executeTime;
+    }
+
+    public String getExecuteResult() {
+        return executeResult;
+    }
+
+    public void setExecuteResult(String executeResult) {
+        this.executeResult = executeResult;
+    }
+
     public String getFireMark() {
         return fireMark;
     }

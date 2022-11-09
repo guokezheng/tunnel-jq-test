@@ -71,7 +71,8 @@ public class SdPictureUploadServiceImpl implements ISdPictureUploadService {
                 // 新的全名
                 String fileName = extendName;
 
-                sdPictureUpload.setPictureName(fileName);
+//                sdPictureUpload.setPictureName(fileName);
+                sdPictureUpload.setPictureName(sdPictureUpload.getPictureName());
                 //sdPictureUpload.setPictureUrl(fileServerPath + "/vmsTemplatePicture/" + fileName);
                 sdPictureUpload.setPictureUrl(savePath);
                 sdPictureUpload.setDeleteflag("0");

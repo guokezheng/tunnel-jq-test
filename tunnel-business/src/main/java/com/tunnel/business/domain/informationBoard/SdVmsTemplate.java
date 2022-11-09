@@ -50,7 +50,27 @@ public class SdVmsTemplate extends BaseEntity
     @Excel(name = "情报板类型")
     private String vmsType;
 
+    private String category;
+
+    private String dictLable;
+
     private SdVmsTemplateContent tcontent;
+
+    public String getDictLable() {
+        return dictLable;
+    }
+
+    public void setDictLable(String dictLable) {
+        this.dictLable = dictLable;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public SdVmsTemplateContent getTcontent() {
         if (tcontent == null) {

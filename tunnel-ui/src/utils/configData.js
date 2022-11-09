@@ -420,7 +420,7 @@ let laneImage = [
   {
     id: "4",
     name: "马家峪隧道",
-    url: require('@/assets/image/lane/mjy.png'),
+    url: require('@/assets/image/lane/mjy.jpg'),
     width: 2200,
     num: 3,
     direction: 0

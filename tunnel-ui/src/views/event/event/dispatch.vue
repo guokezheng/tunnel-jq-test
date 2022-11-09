@@ -742,7 +742,12 @@ export default {
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
-      this.zxList.push(event[0]);
+      console.log(this.$route.query.id, "this.$route.query.id");
+      for (let item of event) {
+        if (this.$route.query.id == item.eventId) {
+          this.zxList.unshift(item);
+        }
+      }
     },
     // eventFlow(event) {
     //   // console.log(event, "websockt工作台接收感知事件数据");
@@ -789,6 +794,19 @@ export default {
     // this.getSubareaByStakeNumData();
   },
   methods: {
+    // 一进页面获取已执行数据
+    getDispatchExecuted() {
+      dispatchExecuted(this.$route.query.id).then((res) => {
+        console.log(res, "一进页面获取已执行数据");
+        this.zxList = res.data;
+      });
+    },
+    // 一键恢复
+    OneClickRecovery() {
+      performRecovery(this.$route.query.id).then((res) => {
+        this.$forceUpdate();
+      });
+    },
     //返回列表
     returnList() {
       this.$router.push({
@@ -822,8 +840,10 @@ export default {
       });
     },
     getEqType(state, eqType) {
-      for (var item of this.eqTypeList) {
+      for (let i = 0; i < this.eqTypeList.length; i++) {
+        let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
+          console.log(item);
           return item.stateName;
         }
       }
@@ -833,6 +853,13 @@ export default {
         if (item.dictValue == num) {
           return item.dictLabel;
         }
+      }
+    },
+    getExecuteResult(num) {
+      if (num == "0") {
+        return "执行失败";
+      } else {
+        return "执行成功";
       }
     },
     async getEqTypeStateIcon() {

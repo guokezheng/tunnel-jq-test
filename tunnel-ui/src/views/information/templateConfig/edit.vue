@@ -95,11 +95,11 @@
               >新增</el-button
             >
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="chooseImageEvent()"
-              >选择图片</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="chooseImageEvent()"-->
+<!--              >选择图片</el-button-->
+<!--            >-->
+<!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
         <el-dialog
@@ -624,7 +624,7 @@ export default {
             trigger: "blur",
           },
         ],
-        
+
       };
     },
     divStyle: function () {
@@ -800,7 +800,7 @@ export default {
       });
       getTemplateContent(this.dataForm.id).then((data) => {
         this.templateContent = data.rows;
-        
+
         if (this.templateContent.length == 0) {
           this.templateContent.push({
             content: "",
@@ -841,11 +841,11 @@ export default {
         console.log(params)
         // 修改
         await editTemplate(this.dataForm).then((data) => {});
-		
+
         this.templateContent.forEach((e) => {
           e.img = e.imageName;
         });
-		
+
         var params = {
           templateContent: this.templateContent,
           templateId: this.dataForm.id,
@@ -938,7 +938,7 @@ export default {
             }
             this.templateContent.splice(this.templateContent.indexOf(data), 1);
           }
-          
+
         }
       }
     },
@@ -979,7 +979,7 @@ export default {
                   data.rows.splice(j,1)
                 }
             }
-        }  
+        }
         let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;
         });

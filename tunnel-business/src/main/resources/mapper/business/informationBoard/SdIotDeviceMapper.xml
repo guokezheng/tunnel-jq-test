@@ -122,7 +122,8 @@
 		       ide.longitude, ide.latitude, ide.firm_id, ide.purchase_date, ide.warranty_years, ide.unit_price,
 		       ide.run_status,ide.device_status, ide.install_date, ide.maintain_id, ide.collar_agency_id,
 		       ide.pile_number, ide.manage_agency_id, ide.producte_date, ide.repair_date, ide.operate_date,
-		       ide.service_life, ide.storage_date, ide.is_monitor,ide.is_config, ide.local_info from iot_device ide
+		       ide.service_life, ide.storage_date, ide.is_monitor,ide.is_config, ide.local_info, ida.device_pixel, ide.tunnel_id
+		from iot_device ide
         left join iot_device_access ida on ida.device_id = ide.device_id
         left join sys_dept d on d.dept_id=ide.manage_agency_id
         left join iot_brand e on e.brand_id=ide.brand_id
@@ -158,7 +159,9 @@
             <if test="storageDate != null "> and storage_date = #{storageDate}</if>
             <if test="isMonitor != null "> and is_monitor = #{isMonitor}</if>
             <if test="isConfig != null "> and is_config = #{isConfig}</if>
-            <if test="localInfo != null "> and local_info = #{localInfo}</if>
+            <if test="localInfo != null and localInfo != ''"> and local_info = #{localInfo}</if>
+            <if test="devicePixel != null and devicePixel != ''"> and ida.device_pixel = #{devicePixel}</if>
+            <if test="tunnelId != null and tunnelId != ''"> and ide.tunnel_id = #{tunnelId}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (ide.dept_id = #{params.deptId} OR ide.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
@@ -380,5 +383,9 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
         <where>
             ida.device_type_id="202070000"
         </where>
+    </select>
+
+    <select id="getDevicesSize" resultType="hashmap">
+        SELECT device_pixel from iot_device_access GROUP BY device_pixel
     </select>
 </mapper>

@@ -224,6 +224,14 @@ public class SdDevicesController extends BaseController
     @ApiOperation("新增设备")
     public Result add(@RequestBody SdDevices sdDevices)
     {
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于维保截止时间");
+        }
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getInstallTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于设备安装时间");
+        }
         SdDevices sd = new SdDevices();
         sd.setEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
@@ -263,6 +271,14 @@ public class SdDevicesController extends BaseController
     @ApiOperation("修改设备")
     public Result edit(@RequestBody SdDevices sdDevices)
     {
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于维保截止时间");
+        }
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getInstallTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于设备安装时间");
+        }
         int i = sdDevicesService.updateSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);

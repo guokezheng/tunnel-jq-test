@@ -7,6 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
+    
       <el-form-item label="故障位置" prop="faultLocation">
         <el-input
           v-model="queryParams.faultLocation"
@@ -161,26 +162,209 @@
     />
 
     <!-- 添加或修改故障清单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1200px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-          <!--          <el-col :span="12">-->
-          <el-form-item label="所属隧道" prop="tunnelId">
-            <el-select v-model="form.eqTunnelId" placeholder="请选择所属隧道">
+          <el-col :span="24">
+            <div class="topTxt">
+              故障基本信息
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障编号" prop="id">
+              <el-input
+                v-model="form.id"
+                placeholder="请输入故障编号"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="所在路段隧道" prop="tunnelId">
+              <el-select v-model="form.eqTunnelId" placeholder="请选择所属隧道">
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障位置" prop="faultLocation">
+              <el-input
+                v-model="form.faultLocation"
+                placeholder="请输入故障位置"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障类型" prop="faultType">
+              <el-select v-model="form.faultType" placeholder="请选择所属隧道">
+                <el-option
+                  v-for="dict in dict.type.fault_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障发现源" prop="faultSource">
+              <el-input
+                v-model="form.faultSource"
+                placeholder="请输入发现源"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障发现时间" prop="faultFxtime">
+              <el-date-picker
+                clearable
+                size="small"
+                v-model="form.faultFxtime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择故障发现时间"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障持续时间" prop="faultCxtime">
+              <el-input
+                v-model="form.faultCxtime"
+                placeholder="请输入故障持续时间"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障填报人" prop="faultTbr">
+              <el-input
+                v-model="form.faultTbr"
+                placeholder="请输入故障填报人"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障填报时间" prop="faultTbtime">
+              <el-date-picker
+                clearable
+                size="small"
+                v-model="form.faultTbtime"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择故障填报时间"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <div class="topTxt">
+              故障设备情况
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="设备类型" prop="eqId">
+              <el-select v-model="form.codeDeviceId" placeholder="请选择所属隧道">
+                <el-option
+                  v-for="item in eqListData"
+                  :key="item.eqId"
+                  :label="item.eqName"
+                  :value="item.eqId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="设备名称" prop="eqId">
+              <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称">
+                <el-option
+                  v-for="item in eqListData"
+                  :key="item.eqId"
+                  :label="item.eqName"
+                  :value="item.eqId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="设备填报状态" prop="eqStatus">
+              <el-radio-group v-model="form.eqStatus">
+                <el-radio label="1">请选择字典生成</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="设备运行状态" prop="eqStatus">
+              <el-radio-group v-model="form.eqStatus">
+                <el-radio label="1">请选择字典生成</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <div class="topTxt">
+              故障描述
+            </div>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障代码" prop="faultCode">
+              <el-input
+                v-model="form.faultCode"
+                placeholder="请输入故障代码"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障等级" prop="faultLevel">
+              <el-select v-model="form.faultType" placeholder="请选择故障等级">
               <el-option
-                v-for="item in eqTunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <!--          </el-col>-->
+                  v-for="dict in dict.type.fault_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="故障消除状态" prop="falltRemoveStatue">
+              <el-select v-model="form.faultType" placeholder="请选择故障等级">
+              <el-option
+                  v-for="dict in dict.type.fault_remove_statue"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="故障描述" prop="faultDescription">
+              <el-input
+                v-model="form.faultDescription"
+                placeholder="请输入故障描述"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="故障现场照片" prop="imgFileId">
+              <el-select v-model="form.img_file_id" placeholder="请选择所属隧道">
+                <el-option
+                  v-for="item in eqTunnelData"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <!--        <el-form-item label="故障位置" prop="faultLocation">
           <el-input v-model="form.faultLocation" placeholder="请输入故障位置" />
         </el-form-item>-->
           <!--          <el-col :span="12">-->
-          <el-form-item label="故障类型" prop="faultType">
+          <!-- <el-form-item label="故障类型" prop="faultType">
             <el-select v-model="form.faultType" placeholder="请选择故障类型">
               <el-option
                 v-for="dict in dict.type.fault_type"
@@ -189,9 +373,9 @@
                 :value="dict.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <!--          </el-col>-->
-          <el-form-item label="故障发现源" prop="faultSource">
+          <!-- <el-form-item label="故障发现源" prop="faultSource">
             <el-input
               v-model="form.faultSource"
               placeholder="请输入故障发现源"
@@ -213,11 +397,11 @@
               v-model="form.faultCxtime"
               placeholder="请输入故障持续时间"
             />
-          </el-form-item>
+          </el-form-item> -->
           <!--        <el-form-item label="故障填报人" prop="faultTbr">
           <el-input v-model="form.faultTbr" placeholder="请输入故障填报人" />
         </el-form-item>-->
-          <el-form-item label="故障填报时间" prop="faultTbtime">
+          <!-- <el-form-item label="故障填报时间" prop="faultTbtime">
             <el-date-picker
               clearable
               size="small"
@@ -260,9 +444,9 @@
                 :label="dict.label"
                 :value="dict.value"
               />
-            </el-select>
+            </el-select> -->
             <!--          <el-input v-model="form.faultLevel" placeholder="请输入故障等级" />-->
-          </el-form-item>
+          <!-- </el-form-item>
           <el-form-item label="故障消除状态" prop="falltRemoveStatue">
             <el-select v-model="form.faultType" placeholder="请选择故障等级">
               <el-option
@@ -271,15 +455,15 @@
                 :label="dict.label"
                 :value="dict.value"
               />
-            </el-select>
+            </el-select> -->
             <!--          <el-input v-model="form.falltRemoveStatue" placeholder="请输入故障消除状态" />-->
-          </el-form-item>
+          <!-- </el-form-item>
           <el-form-item label="故障描述" prop="faultDescription">
             <el-input
               v-model="form.faultDescription"
               placeholder="请输入故障描述"
             />
-          </el-form-item>
+          </el-form-item> -->
           <!--        <el-form-item label="状态">
           <el-radio-group v-model="form.faultStatus">
             <el-radio label="1">请选择字典生成</el-radio>
@@ -547,4 +731,23 @@ export default {
     },
   },
 };
+
 </script>
+
+
+<style lang="scss" scoped>
+.topTxt{
+  font-size: 18px;
+  font-weight: 500;
+  height: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddcccc;
+}
+::v-deep .el-dialog__body{
+   .el-input{
+    width: 218px;
+  }
+}
+
+</style>

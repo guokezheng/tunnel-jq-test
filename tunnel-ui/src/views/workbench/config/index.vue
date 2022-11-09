@@ -2585,7 +2585,9 @@
         <el-button type="primary" size="mini" @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
-    <div class="carBox" v-show="carShow"></div>
+    <div class="carBox" v-show="carShow">
+      <span v-for="item in realTimeList" :key="item.id" style="">●</span>
+    </div>
   </div>
 </template>
 
@@ -2728,6 +2730,9 @@ export default {
   },
   data() {
     return {
+      carList: [],
+      tunnelKm: "",
+      tunnelLength: "",
       chezhiDisabled: false, //车指按钮 返回接口结果前禁用
       // 批量选择设备图标
       iconWidth: "",
@@ -3433,7 +3438,20 @@ export default {
     },
     radarDataList(event) {
       console.log(event, "websockt工作台接收车辆感知事件数据");
+      // 首先应判断推送数据和当前选择隧道是否一致
+      // if(item.tunnelId == this.tunnelId){}
+      // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
+      for (let i = 0; i < event.length; i++) {
+        // 删除重复数据
+        event[i].left = (+event[i].distance / +1000 / +this.tunnelKm) * +1300;
+        // 如果速度为0 ，直接别算了
+        if (event[i].speed != 0) {
+          event[i].speed = (+this.tunnelKm / +event[i].speed) * +3600; //每秒钟移动的距离，单位px
+        }
+        event[i].lane = event[i].laneNum;
+      }
       this.realTimeList = event;
+      console.log(this.realTimeList, "处理完的数据");
     },
     deviceStatus(event) {
       // console.log(event, "websockt工作台接收实时设备状态数据");
@@ -5828,7 +5846,8 @@ export default {
         } else if (Mileage > +2.6) {
           var length = +1300 * 2;
         }
-        console.log(length);
+        this.tunnelKm = Mileage;
+        this.tunnelLength = length;
       });
       // 首页获取隧道长度，根据隧道长度判断车辆行驶的全部距离
     },

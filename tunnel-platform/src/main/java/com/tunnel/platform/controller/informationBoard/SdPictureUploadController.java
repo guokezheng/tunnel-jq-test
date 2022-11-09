@@ -143,6 +143,15 @@ public class SdPictureUploadController extends BaseController
         if (file == null) {
             throw new RuntimeException("图片不能为空");
         }
+        if (vmsSize.length() > 60) {
+            throw new RuntimeException("图片分辨率输入过长，请重新输入");
+        }
+        if (imageRemark.length() > 60) {
+            throw new RuntimeException("图片备注输入过长，请重新输入");
+        }
+        if (speed.length() > 60) {
+            throw new RuntimeException("速度输入过长，请重新输入");
+        }
         SdPictureUpload sdPictureUpload = new SdPictureUpload();
         sdPictureUpload.setPictureName(pictureName.equals("null")?null:pictureName);
         sdPictureUpload.setImageRemark(imageRemark.equals("null")?null:imageRemark);
@@ -171,6 +180,15 @@ public class SdPictureUploadController extends BaseController
                            @RequestParam("vmsSize") String vmsSize,
                            @RequestParam("speed") String speed,
                            @RequestParam("deleteflag") String deleteflag) throws IOException {
+        if (vmsSize.length() > 60) {
+            throw new RuntimeException("图片分辨率输入过长，请重新输入");
+        }
+        if (imageRemark.length() > 60) {
+            throw new RuntimeException("图片备注输入过长，请重新输入");
+        }
+        if (speed.length() > 60) {
+            throw new RuntimeException("速度输入过长，请重新输入");
+        }
         SdPictureUpload sdPictureUpload = new SdPictureUpload();
         sdPictureUpload.setId(id);
         sdPictureUpload.setPictureName(pictureName.equals("null")?null:pictureName);

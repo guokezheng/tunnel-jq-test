@@ -104,7 +104,7 @@ public interface SdIotDeviceMapper {
      * @return
      */
     List<Map<String, String>> getVerifyWord();
-  
+
     /**
      * 查询交调设备关联信息
      * @param deviceId
@@ -126,4 +126,6 @@ public interface SdIotDeviceMapper {
      * @return 设备列表集合
      */
 	public List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice iotDevice);
+
+    public List<Map<String, Object>> getDevicesSize();
 }

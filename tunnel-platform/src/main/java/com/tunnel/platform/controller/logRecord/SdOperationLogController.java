@@ -108,4 +108,15 @@ public class SdOperationLogController extends BaseController
     {
         return AjaxResult.success(sdOperationLogService.operationLog(sdOperationLog));
     }
+
+    /**
+     * 应急调度-已执行
+     * @param eventId
+     * @return
+     */
+    @GetMapping("/dispatchExecuted")
+    public AjaxResult getDispatchExecuted(String eventId)
+    {
+        return AjaxResult.success(sdOperationLogService.getDispatchExecuted(eventId));
+    }
 }

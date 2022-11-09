@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 操作日志Service业务层处理
@@ -124,5 +125,10 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
             WebSocketService.broadcast("operationLog", sdOperationLog);
         }
         return AjaxResult.success();
+    }
+
+    @Override
+    public List<Map> getDispatchExecuted(String eventId) {
+        return sdOperationLogMapper.getDispatchExecuted(eventId);
     }
 }

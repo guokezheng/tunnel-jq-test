@@ -641,7 +641,7 @@ export default {
             }
             let r = that.svg.paper
               .rect(
-                list[i].position.left - num2,
+                list[i].position.left - 20,
                 list[i].position.top + iconHeight + 2,
                 80,
                 18,
@@ -653,7 +653,7 @@ export default {
             //桩号
             let t = that.svg.paper
               .text(
-                list[i].position.left,
+                list[i].position.left - 10,
                 list[i].position.top + iconHeight + 16,
                 list[i].pile
               )
@@ -663,7 +663,7 @@ export default {
               });
             
             t.attr({
-              x: list[i].position.left - (2 * Number(list[i].pile.length) + 14 - 40) - num2,
+              x: list[i].position.left - list[i].pile.length - 4,
             });
             console.log(list[i],r,'list[i]')
             img[i] = that.svg.paper.g(r, t, img3).attr({
@@ -953,11 +953,11 @@ export default {
         if (item.pile != "") {
           // 桩号框以及框内汉字的位置是由设备位置决定的
           // 绘制桩号框
-          let r = that.svg.paper.rect(0, iconHeight + 2, 80, 18, 2).attr({
+          let r = that.svg.paper.rect(-20, iconHeight + 2, 80, 18, 2).attr({
             fill: "rgba(84, 85, 89, 0.4)",
           });
           // 绘制桩号
-          let t = that.svg.paper.text(5, iconHeight + 16, item.pile).attr({
+          let t = that.svg.paper.text(-18, iconHeight + 16, item.pile).attr({
             fill: "#a2a2a3",
             "font-size": 12,
           });
@@ -1003,41 +1003,10 @@ export default {
           } else {
             var img3;
             t.attr({
-              x: 0,
+              x: -20,
             });
 
-            if (item.eqType == 7 || item.eqType == 117) {
-              // let num = iconWidth>=29?-24:0;
-              // 加强照明  电光标志
-              img3 = this.svg.paper
-                .image(url, 10, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            }else if (item.eqType == 21 ) {
-              console.log(1111111111111111)
-              // "紧急电话"
-              img3 = this.svg.paper
-                .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            }else if (item.eqType == 25 ) {
-              console.log(1111111111111111)
-              // "抓拍摄像机"
-              img3 = this.svg.paper
-                .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            } else {
-              console.log(222222222222)
-              img3 = this.svg.paper
-                .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            }
+            
             // if (item.eqType == 7 || item.eqType == 117) {
             //   // let num = iconWidth>=29?-24:0;
             //   // 加强照明  电光标志
@@ -1053,6 +1022,12 @@ export default {
             //       id: item.eqId,
             //     });
             // }
+
+            img3 = this.svg.paper
+              .image(url, 0, 0, iconWidth, iconHeight)
+              .attr({
+                id: item.eqId,
+            });
 
             img.push(
               this.svg.paper.g(r, t, img3).drag().attr({

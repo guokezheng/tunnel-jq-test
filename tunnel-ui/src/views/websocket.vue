@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-25 08:41:42
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-08 15:04:29
+ * @LastEditTime: 2022-11-09 09:12:00
  * @FilePath: \tunnel-ui\src\views\websocket.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -28,8 +28,7 @@ export default {
       this.socket.initialize({
         url: "ws://10.168.56.206" + ":" + port + path,
         //  url: 'ws://10.168.64.171'+ ':' + port + path,
-        //  url: 'ws://10.168.65.230'+ ':' + port + path,
-
+        //  url: 'ws://10.168.56.206'+ ':' + port + path,
         password: password,
         tokenSN: this.token,
         heartRate: interval,

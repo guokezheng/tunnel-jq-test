@@ -62,7 +62,7 @@
             </el-popover>
       </el-tooltip>
       <!-- 隧道运营APP下载二维码 -->
-      <el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">
+      <!-- <el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">
         <el-popover
               placement="bottom"
               trigger="hover">
@@ -74,7 +74,7 @@
               </el-badge>
             </div>
         </el-popover>
-      </el-tooltip>
+      </el-tooltip> -->
 
 
       <!-- qrCodeShow -->
@@ -620,7 +620,7 @@ export default {
   }
 // .theme-dark .navbar{background-color:unset;}
 .navbar{
-  background: rgb(0, 67, 117);
+  background:transparent;
   position: absolute;
     top: 0;
     right: 0;

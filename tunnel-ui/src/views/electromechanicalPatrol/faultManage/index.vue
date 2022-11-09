@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="故障位置" prop="faultLocation">
         <el-input
           v-model="queryParams.faultLocation"
@@ -11,12 +17,18 @@
         />
       </el-form-item>
       <el-form-item label="故障类型" prop="faultType">
-        <el-select v-model="queryParams.faultType"  placeholder="请选择故障类型" clearable size="small">
+        <el-select
+          v-model="queryParams.faultType"
+          placeholder="请选择故障类型"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="dict in dict.type.fault_type"
             :key="dict.value"
             :label="dict.label"
-            :value="dict.value" />
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
 
@@ -30,106 +42,118 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button type="primary" plain size="mini" @click="resetQuery"
+          >重置</el-button
+        >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:list:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >新增</el-button
+        >
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
+          
           size="mini"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:list:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >修改</el-button
+        >
         <el-button
-          type="danger"
+          type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:list:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >删除</el-button
+        >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:list:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+          >导出</el-button
+        >
+      </el-form-item>
+    </el-form>
 
-    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="listList"
+      @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="640"
+    >
       <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="故障编号" align="center" prop="id" />
+      <!--      <el-table-column label="故障编号" align="center" prop="id" />
       <el-table-column label="隧道id" align="center" prop="tunnelId" />
       <el-table-column label="故障位置" align="center" prop="faultLocation" />-->
       <el-table-column label="故障类型" align="center" prop="faultType" />
-<!--      <el-table-column label="故障发现源" align="center" prop="faultSource" />-->
-      <el-table-column label="发现时间" align="center" prop="faultFxtime" width="180">
+      <!--      <el-table-column label="故障发现源" align="center" prop="faultSource" />-->
+      <el-table-column
+        label="发现时间"
+        align="center"
+        prop="faultFxtime"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.faultFxtime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="持续时间" align="center" prop="faultCxtime" />
-<!--      <el-table-column label="故障填报人" align="center" prop="faultTbr" />-->
-<!--      <el-table-column label="故障填报时间" align="center" prop="faultTbtime" width="180">
+      <!--      <el-table-column label="故障填报人" align="center" prop="faultTbr" />-->
+      <!--      <el-table-column label="故障填报时间" align="center" prop="faultTbtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.faultTbtime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>-->
       <el-table-column label="设备id" align="center" prop="eqId" />
       <el-table-column label="设备状态" align="center" prop="eqStatus" />
-<!--      <el-table-column label="故障代码" align="center" prop="faultCode" />-->
+      <!--      <el-table-column label="故障代码" align="center" prop="faultCode" />-->
       <el-table-column label="故障等级" align="center" prop="faultLevel" />
-      <el-table-column label="消除状态" align="center" prop="falltRemoveStatue" />
-<!--      <el-table-column label="故障描述" align="center" prop="faultDescription" />-->
+      <el-table-column
+        label="消除状态"
+        align="center"
+        prop="falltRemoveStatue"
+      />
+      <!--      <el-table-column label="故障描述" align="center" prop="faultDescription" />-->
       <el-table-column label="状态" align="center" prop="faultStatus" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -140,100 +164,123 @@
     <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
-<!--          <el-col :span="12">-->
+          <!--          <el-col :span="12">-->
           <el-form-item label="所属隧道" prop="tunnelId">
-            <el-select v-model="form.eqTunnelId"  placeholder="请选择所属隧道">
-              <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
-                         :value="item.tunnelId"></el-option>
+            <el-select v-model="form.eqTunnelId" placeholder="请选择所属隧道">
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              ></el-option>
             </el-select>
           </el-form-item>
-<!--          </el-col>-->
-<!--        <el-form-item label="故障位置" prop="faultLocation">
+          <!--          </el-col>-->
+          <!--        <el-form-item label="故障位置" prop="faultLocation">
           <el-input v-model="form.faultLocation" placeholder="请输入故障位置" />
         </el-form-item>-->
-<!--          <el-col :span="12">-->
+          <!--          <el-col :span="12">-->
           <el-form-item label="故障类型" prop="faultType">
-            <el-select v-model="form.faultType" placeholder="请选择故障类型" >
+            <el-select v-model="form.faultType" placeholder="请选择故障类型">
               <el-option
                 v-for="dict in dict.type.fault_type"
                 :key="dict.value"
                 :label="dict.label"
-                :value="dict.value" />
+                :value="dict.value"
+              />
             </el-select>
-
-
           </el-form-item>
-<!--          </el-col>-->
-        <el-form-item label="故障发现源" prop="faultSource">
-          <el-input v-model="form.faultSource" placeholder="请输入故障发现源" />
-        </el-form-item>
-        <el-form-item label="故障发现时间" prop="faultFxtime">
-          <el-date-picker clearable size="small"
-            v-model="form.faultFxtime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择故障发现时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="故障持续时间" prop="faultCxtime">
-          <el-input v-model="form.faultCxtime" placeholder="请输入故障持续时间" />
-        </el-form-item>
-<!--        <el-form-item label="故障填报人" prop="faultTbr">
+          <!--          </el-col>-->
+          <el-form-item label="故障发现源" prop="faultSource">
+            <el-input
+              v-model="form.faultSource"
+              placeholder="请输入故障发现源"
+            />
+          </el-form-item>
+          <el-form-item label="故障发现时间" prop="faultFxtime">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.faultFxtime"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择故障发现时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="故障持续时间" prop="faultCxtime">
+            <el-input
+              v-model="form.faultCxtime"
+              placeholder="请输入故障持续时间"
+            />
+          </el-form-item>
+          <!--        <el-form-item label="故障填报人" prop="faultTbr">
           <el-input v-model="form.faultTbr" placeholder="请输入故障填报人" />
         </el-form-item>-->
-        <el-form-item label="故障填报时间" prop="faultTbtime">
-          <el-date-picker clearable size="small"
-            v-model="form.faultTbtime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择故障填报时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="设备名称" prop="eqId">
-          <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称">
-            <el-option
-              v-for="item in eqListData"
-              :key="item.eqId"
-              :label="item.eqName"
-              :value="item.eqId"
+          <el-form-item label="故障填报时间" prop="faultTbtime">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.faultTbtime"
+              type="date"
+              value-format="yyyy-MM-dd"
+              placeholder="选择故障填报时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="设备名称" prop="eqId">
+            <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称">
+              <el-option
+                v-for="item in eqListData"
+                :key="item.eqId"
+                :label="item.eqName"
+                :value="item.eqId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="故障位置" prop="faultLocation">
+            <el-input
+              v-model="form.faultLocation"
+              placeholder="请输入故障位置"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="故障位置" prop="faultLocation">
-          <el-input v-model="form.faultLocation" placeholder="请输入故障位置" />
-        </el-form-item>
-        <el-form-item label="设备状态">
-          <el-radio-group v-model="form.eqStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="故障代码" prop="faultCode">
-          <el-input v-model="form.faultCode" placeholder="请输入故障代码" />
-        </el-form-item>
-        <el-form-item label="故障等级" prop="faultLevel">
-          <el-select v-model="form.faultType" placeholder="请选择故障等级" >
-            <el-option
-              v-for="dict in dict.type.fault_level"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value" />
-          </el-select>
-<!--          <el-input v-model="form.faultLevel" placeholder="请输入故障等级" />-->
-        </el-form-item>
-        <el-form-item label="故障消除状态" prop="falltRemoveStatue">
-          <el-select v-model="form.faultType" placeholder="请选择故障等级" >
-            <el-option
-              v-for="dict in dict.type.fault_remove_statue"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value" />
-          </el-select>
-<!--          <el-input v-model="form.falltRemoveStatue" placeholder="请输入故障消除状态" />-->
-        </el-form-item>
-        <el-form-item label="故障描述" prop="faultDescription">
-          <el-input v-model="form.faultDescription" placeholder="请输入故障描述" />
-        </el-form-item>
-<!--        <el-form-item label="状态">
+          </el-form-item>
+          <el-form-item label="设备状态">
+            <el-radio-group v-model="form.eqStatus">
+              <el-radio label="1">请选择字典生成</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="故障代码" prop="faultCode">
+            <el-input v-model="form.faultCode" placeholder="请输入故障代码" />
+          </el-form-item>
+          <el-form-item label="故障等级" prop="faultLevel">
+            <el-select v-model="form.faultType" placeholder="请选择故障等级">
+              <el-option
+                v-for="dict in dict.type.fault_level"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+            <!--          <el-input v-model="form.faultLevel" placeholder="请输入故障等级" />-->
+          </el-form-item>
+          <el-form-item label="故障消除状态" prop="falltRemoveStatue">
+            <el-select v-model="form.faultType" placeholder="请选择故障等级">
+              <el-option
+                v-for="dict in dict.type.fault_remove_statue"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+            <!--          <el-input v-model="form.falltRemoveStatue" placeholder="请输入故障消除状态" />-->
+          </el-form-item>
+          <el-form-item label="故障描述" prop="faultDescription">
+            <el-input
+              v-model="form.faultDescription"
+              placeholder="请输入故障描述"
+            />
+          </el-form-item>
+          <!--        <el-form-item label="状态">
           <el-radio-group v-model="form.faultStatus">
             <el-radio label="1">请选择字典生成</el-radio>
           </el-radio-group>
@@ -250,17 +297,22 @@
 </template>
 
 <script>
-import { listList, getList, delList, addList, updateList, exportList } from "@/api/electromechanicalPatrol/faultManage/fault";
-import {listTunnels} from "@/api/equipment/tunnel/api";
-import {listType} from "@/api/equipment/type/api";
-import {listDevices} from "@/api/equipment/eqlist/api";
-
-
+import {
+  listList,
+  getList,
+  delList,
+  addList,
+  updateList,
+  exportList,
+} from "@/api/electromechanicalPatrol/faultManage/fault";
+import { listTunnels } from "@/api/equipment/tunnel/api";
+import { listType } from "@/api/equipment/type/api";
+import { listDevices } from "@/api/equipment/eqlist/api";
 
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
-  dicts: [ 'fault_type','fault_level','fault_remove_statue'],
+  dicts: ["fault_type", "fault_level", "fault_remove_statue"],
   data() {
     return {
       // 遮罩层
@@ -290,7 +342,7 @@ export default {
       //设备类型
       eqTypeData: {},
       //设备
-      eqListData:{},
+      eqListData: {},
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -309,13 +361,12 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
-        faultStatus: null
+        faultStatus: null,
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      }
+      rules: {},
     };
   },
   created() {
@@ -328,7 +379,7 @@ export default {
     /** 查询故障清单列表 */
     getList() {
       this.loading = true;
-      listList(this.queryParams).then(response => {
+      listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -338,7 +389,7 @@ export default {
     /** 所属隧道 */
     getTunnel() {
       listTunnels().then((response) => {
-        console.log(response.rows,"所属隧道列表")
+        console.log(response.rows, "所属隧道列表");
         this.eqTunnelData = response.rows;
       });
     },
@@ -351,11 +402,13 @@ export default {
     },
     /** 设备 */
     getDevices() {
-      listDevices({fEqId:this.form.codePlcId,eqType:this.form.deviceTypeId}).then(response => {
+      listDevices({
+        fEqId: this.form.codePlcId,
+        eqType: this.form.deviceTypeId,
+      }).then((response) => {
         this.eqListData = response.rows;
       });
     },
-
 
     // 取消按钮
     cancel() {
@@ -380,7 +433,7 @@ export default {
         faultLevel: null,
         falltRemoveStatue: null,
         faultDescription: null,
-        faultStatus: 0
+        faultStatus: 0,
       };
       this.resetForm("form");
     },
@@ -396,9 +449,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -409,8 +462,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getList(id).then(response => {
+      const id = row.id || this.ids;
+      getList(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改故障清单";
@@ -418,16 +471,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateList(this.form).then(response => {
+            updateList(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addList(this.form).then(response => {
+            addList(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -436,18 +489,25 @@ export default {
         }
       });
     },
-
-    publishForm (){
-      this.$refs["form"].validate(valid => {
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
+    },
+    publishForm() {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateList(this.form).then(response => {
+            updateList(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addList(this.form).then(response => {
+            addList(this.form).then((response) => {
               this.$modal.msgSuccess("发布成功");
               this.open = false;
               this.getList();
@@ -459,24 +519,32 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除故障清单编号为"' + ids + '"的数据项？').then(function() {
-        return delList(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除故障清单编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delList(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有故障清单数据项？').then(() => {
-        this.exportLoading = true;
-        return exportList(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
-  }
+      this.$modal
+        .confirm("是否确认导出所有故障清单数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>

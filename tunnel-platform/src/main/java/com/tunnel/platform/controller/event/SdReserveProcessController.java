@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +154,7 @@ public class SdReserveProcessController extends BaseController
      */
     @PostMapping("/implement")
     @ApiModelProperty("预案执行")
-    public AjaxResult implement(@RequestBody Map<String, String> stringObjectMap) {
+    public AjaxResult implement(@RequestBody Map<String, String> stringObjectMap) throws UnknownHostException {
         String eventId = stringObjectMap.get("eventId");
         Long reserveId = Long.parseLong(stringObjectMap.get("reserveId"));
         //预案流程节点
@@ -175,6 +177,8 @@ public class SdReserveProcessController extends BaseController
                     map.put("devId",devId);
                     map.put("state",rl.getState());
                     map.put("controlType","4");
+                    map.put("eventId",eventId);
+                    map.put("operIp", InetAddress.getLocalHost().getHostAddress());
                     result = sdDeviceControlService.controlDevices(map);
                 }
             }

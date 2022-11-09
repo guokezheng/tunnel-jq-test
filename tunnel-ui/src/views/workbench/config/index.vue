@@ -971,75 +971,79 @@
         label-width="68px"
         size="mini"
       >
-        <el-form-item
-          label="设备类型"
-          prop="eqTypeId"
-          style="display: inline-block"
-        >
-          <el-select
-            v-model="queryParams.eqTypeId"
-            placeholder="请选择设备类型"
-            clearable
-            size="small"
+        <el-row>
+          <el-form-item
+            label="设备类型"
+            prop="eqTypeId"
+            style="display: inline-block"
           >
-            <el-option
-              v-for="item in eqTypeData"
-              :key="item.typeId"
-              :label="item.typeName"
-              :value="item.typeId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="隧道名称"
-          prop="tunnelId"
-          style="display: inline-block; margin-left: 20px"
-        >
-          <el-select
-            v-model="queryParams.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            size="small"
+            <el-select
+              v-model="queryParams.eqTypeId"
+              placeholder="请选择设备类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in eqTypeData"
+                :key="item.typeId"
+                :label="item.typeName"
+                :value="item.typeId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="隧道名称"
+            prop="tunnelId"
+            style="display: inline-block; margin-left: 20px"
           >
-            <el-option
-              v-for="item in eqTunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="创建时间" style="display: inline-block">
-          <el-date-picker
-            v-model="dateRange"
-            size="small"
-            style="width: 360px"
-            value-format="yyyy-MM-dd HH-mm-ss"
-            type="datetimerange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['00:00:00', '23:59:59']"
-            class="dateRange"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item style="display: inline-block; margin-left: 20px">
-          <el-button
-            type="cyan"
-            icon="el-icon-search"
-            size="mini"
-            class="submitButton"
-            @click="handleQuery"
-            >搜索</el-button
-          >
-          <el-button
-            icon="el-icon-refresh"
-            size="mini"
-            @click="resetQuery"
-            style="color: white"
-            >重置
-          </el-button>
-        </el-form-item>
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in eqTunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="创建时间" style="display: inline-block">
+            <el-date-picker
+              v-model="dateRange"
+              size="small"
+              style="width: 360px"
+              value-format="yyyy-MM-dd HH-mm-ss"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :default-time="['00:00:00', '23:59:59']"
+              class="dateRange"
+            ></el-date-picker>
+          </el-form-item>
+          <el-form-item style="display: inline-block; margin-left: 20px">
+            <el-button
+              type="cyan"
+              icon="el-icon-search"
+              size="mini"
+              class="submitButton"
+              @click="handleQuery"
+              >搜索</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetQuery"
+              style="color: white"
+              >重置
+            </el-button>
+          </el-form-item>
+        </el-row>
       </el-form>
       <el-table
         v-loading="loading"
@@ -3811,6 +3815,7 @@ export default {
     // 关闭弹窗子组件
     dialogClose() {
       this.eqInfo.clickEqType = 0;
+      this.mouseoversImplement = true;
     },
     // 车辆监测数据
     vehicleEcharts() {
@@ -3842,6 +3847,9 @@ export default {
     },
     // 滚动条动画
     srollAuto() {
+      if (this.mouseoversImplement == false) {
+        return;
+      }
       var parent = document.getElementsByClassName("content");
       // console.log(parent,'parentparent')
       clearInterval(this.imageTimer);
@@ -6005,6 +6013,7 @@ export default {
           }
         }
       } else if (this.addBatchManage == false) {
+        this.mouseoversImplement = false;
         console.log(item, "点击的设备");
         this.eqInfo = {
           clickEqType: item.eqType,

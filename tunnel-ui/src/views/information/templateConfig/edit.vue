@@ -120,7 +120,7 @@
                   v-for="(item, index) in imgUrl"
                   :key="index"
                   style="margin-top: 12px"
-                  v-if="item.pictureUrl"
+                  v-show="item.pictureUrl"
                 >
                   <el-checkbox :label="item.pictureUrl" >
                     <div class="photo">
@@ -973,6 +973,13 @@ export default {
         if (!data) {
           return;
         }
+        for(var i=0;i<data.rows.length;i++){
+            for(var j=i+1;j<data.rows.length;j++){
+                if(data.rows[i].pictureName==data.rows[j].pictureName){
+                  data.rows.splice(j,1)
+                }
+            }
+        }  
         let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;
         });

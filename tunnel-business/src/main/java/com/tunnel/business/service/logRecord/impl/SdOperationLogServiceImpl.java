@@ -58,7 +58,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      */
     @Override
     public int insertSdOperationLog(SdOperationLog sdOperationLog) {
-        sdOperationLog.setCreateTime(DateUtils.getNowDate());
+        //sdOperationLog.setCreateTime(DateUtils.getNowDate());
         return sdOperationLogMapper.insertSdOperationLog(sdOperationLog);
     }
 

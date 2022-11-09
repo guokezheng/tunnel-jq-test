@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-logo-container" :id="topNav?'index_logo':''" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' ? '#004375' : '#004375' }">
+  <div class="sidebar-logo-container" :id="topNav?'index_logo':''" :class="{'collapse':collapse}" style=" backgroundColor:transparent">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="topNav?logo:collapse?zclogo:logo" :class="topNav?'sidebar-logo':collapse?'zcSidebar-logo':'sidebar-logo'" />

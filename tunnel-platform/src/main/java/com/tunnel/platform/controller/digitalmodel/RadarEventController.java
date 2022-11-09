@@ -84,7 +84,6 @@ public class RadarEventController {
 //    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
     @KafkaListener(topics = {RadarEventConstants.MATCHRESULTDATA}, containerFactory = "kafkaOneContainerFactory")
     public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
-        System.out.println("xxxxxx");
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         String participantNum = map.get("participantNum")+"";

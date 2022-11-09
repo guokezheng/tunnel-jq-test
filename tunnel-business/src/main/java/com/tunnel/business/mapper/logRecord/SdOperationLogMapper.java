@@ -69,4 +69,6 @@ public interface SdOperationLogMapper
      * @return
      */
     public int operationLog(SdOperationLog sdOperationLog);
+
+    public List<SdOperationLog> getEventOperationLog(String eventId);
 }

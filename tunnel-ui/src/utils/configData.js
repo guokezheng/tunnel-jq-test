@@ -417,6 +417,14 @@ let laneImage = [
     num: 2,
     direction: 0
   },
+  {
+    id: "4",
+    name: "马家峪隧道",
+    url: require('@/assets/image/lane/mjy.png'),
+    width: 2200,
+    num: 3,
+    direction: 0
+  },
 ]
 
 export {

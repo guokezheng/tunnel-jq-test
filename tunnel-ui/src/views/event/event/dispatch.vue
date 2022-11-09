@@ -532,7 +532,7 @@
           <el-col :span="13" style="height: 100%">
             <!-- 事件流程 -->
             <div class="rightBox processBox">
-              <el-steps :active="eventMsg.eventState">
+              <el-steps :active="Number(eventMsg.eventState)">
                 <el-step title="事件预警" icon="el-icon-edit"></el-step>
                 <el-step title="事故确认" icon="el-icon-upload"></el-step>
                 <el-step title="处置中" icon="el-icon-picture"></el-step>
@@ -552,7 +552,7 @@
                 </el-timeline-item>
               </el-timeline>
               <div class="endButton">
-                <el-scrollbar
+                <!-- <el-scrollbar
                   style="height: 100%; width: 100%"
                   wrap-style="overflow-x:hidden;"
                 >
@@ -567,7 +567,8 @@
                       <div @click="eventDo(item)">执行</div>
                     </div>
                   </div>
-                </el-scrollbar>
+                </el-scrollbar> -->
+                <el-button class="OneClickRecovery" type="primary" plain @click="OneClickRecovery()">一键恢复</el-button>
               </div>
             </div>
             <div class="rightBox implement">
@@ -589,6 +590,9 @@
                     </div>
                     <div class="row2">
                       {{ getEqType(item.state, item.eqType) }}
+                      <div style="padding-left:20px">{{ getExecuteResult(item.executeResult) }}</div>
+                      <div style="padding-left:20px;float: right;">{{ item.executeTime }}</div>
+
                     </div>
                   </div>
                 </div>
@@ -622,6 +626,8 @@ import {
   getEvent,
   getImplement,
   getSubareaByStakeNum,
+  performRecovery,
+  dispatchExecuted
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -646,7 +652,9 @@ export default {
       endPile: "",
       timer: null,
       eqTypeStateList: null,
-      eventMsg: null,
+      eventMsg: {
+        eventState:2
+      },
       fqIndex: null,
       hfData: null, //恢复预案列表
       planListEnd: null,
@@ -742,7 +750,13 @@ export default {
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
-      this.zxList.push(event[0]);
+      console.log(this.$route.query.id,"this.$route.query.id")
+      for(let item of event){
+        if(this.$route.query.id == item.eventId){
+          this.zxList.push(item);
+        }
+      }
+      
     },
     // eventFlow(event) {
     //   // console.log(event, "websockt工作台接收感知事件数据");
@@ -757,9 +771,11 @@ export default {
     }, 1000 * 5);
   },
   async created() {
+    await this.getDispatchExecuted();
     await this.getEventData();
     await this.getTunnelData();
     this.getEqTypeStateIcon();
+    console.log(this.$route.query.id,"this.$route.query.id")
     if (this.$route.query.id) {
       const param = {
         id: this.$route.query.id,
@@ -789,6 +805,19 @@ export default {
     // this.getSubareaByStakeNumData();
   },
   methods: {
+    // 一进页面获取已执行数据
+    getDispatchExecuted(){
+      dispatchExecuted(this.$route.query.id).then((res) =>{
+        console.log(res,"一进页面获取已执行数据");
+        this.zxList = res.data
+      })
+    },
+    // 一键恢复
+    OneClickRecovery(){
+      performRecovery(this.$route.query.id).then((res) =>{
+
+      })
+    },
     //返回列表
     returnList() {
       this.$router.push({
@@ -833,6 +862,14 @@ export default {
         if (item.dictValue == num) {
           return item.dictLabel;
         }
+      }
+    },
+    getExecuteResult(num){
+      if(num == '0'){
+        return "执行成功"
+      }else{
+        return "执行失败"
+
       }
     },
     async getEqTypeStateIcon() {
@@ -984,6 +1021,7 @@ export default {
     async getEventData() {
       await getEvent(this.$route.query.id).then((result) => {
         this.eventMsg = result.data;
+       
         console.log(this.eventMsg, "时间详情");
         // 如果为“未处理”状态，改为“处理中”状态
         if (this.eventMsg.eventState == 3) {
@@ -1781,6 +1819,13 @@ export default {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
+    .OneClickRecovery{
+      width:120px;
+      height: 40px;
+      line-height: 40px;
+      margin: 0 auto;
+      padding:0;
+    }
     .ButtonBox {
       width: 45%;
       height: 100%;

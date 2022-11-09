@@ -25,6 +25,9 @@
     background-color: #00598f;
   }
   #app {
+    .el-select .el-input .el-select__caret{
+      height: 33px;
+    }
     .deviceIcon{
       background: #1B4670 !important;
     }
@@ -472,32 +475,34 @@
   }
   .eventBox{
     .el-tabs--card > .el-tabs__header {
-      border-bottom: 1px solid rgba($color: #01aafd, $alpha: 0.6);
+      // border-bottom: 1px solid rgba($color: #01aafd, $alpha: 0.6);
+      border-bottom: 1px solid rgba($color: #6C8097, $alpha: 0.4);
+
     }
     // tab所有选项下边框为空 其余边框有颜色
     .el-tabs--card > .el-tabs__header .el-tabs__nav {
-      border: solid 1px rgba($color: #00c8fe, $alpha: 0.6);
+      border: none;
       border-bottom: none;
     }
     //tab选中项下边框
     .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-      border-bottom-color: rgba($color: #00c8fe, $alpha: 1);
+      border-bottom-color: transparent;
     }
     // tab间隔线
     .el-tabs--card > .el-tabs__header .el-tabs__item {
-      border-left: solid 1px rgba($color: #00c8fe, $alpha: 0.6);
+      border-left: solid 1px rgba($color: #6C8097, $alpha: 0.4);
     }
     // tab选中项样式
     .el-tabs__item.is-active {
       color: #fff !important;
-      background-color: #00aaf2;
+      // background-color: rgba($color: #6C8097, $alpha: 0.4);
     }
     .el-table__body-wrapper .is-scrolling-none{
       background: #071930;
     }
     // tab未选中项样式
     .el-tabs__item {
-      color: white !important;
+      color: #3CD3FE !important;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       border: 1px solid #00ADFF;
@@ -557,7 +562,7 @@
   }
   .topNav_head{
     background-image:url(../images/head_bg2.png);
-    background-size: 100% 126%;
+    background-size: 100% 100%;
     height:72px;
     // background-color: #010913;
     position: relative;

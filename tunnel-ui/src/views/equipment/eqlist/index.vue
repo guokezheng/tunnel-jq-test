@@ -281,7 +281,7 @@
               <el-date-picker
                     v-model="form.deliveryTime"
                     type="date"
-                    placeholder="请选择出场时间" 
+                    placeholder="请选择出场时间"
                     :picker-options="optionsDisable"
                     value-format="yyyy-MM-dd">
                   </el-date-picker>
@@ -1100,7 +1100,7 @@
       /** 提交按钮 */
       submitForm() {
         if (this.submitFormLoading) return
-        this.submitFormLoading = true
+        /*this.submitFormLoading = true*/
         this.$refs["form"].validate(async (valid) => {
           if (valid) {
             if (this.submitMode == 0) {
@@ -1121,7 +1121,7 @@
               });
             }
           }
-          this.submitFormLoading = false
+          /*this.submitFormLoading = false*/
         });
       },
       /** 删除按钮操作 */
@@ -1186,7 +1186,7 @@
       importTemplate() {
        /* exportDevicesTemplate()*/
           /*.then((response) => {*/
-            this.$download.name('设备数据.xlsx',false);
+            this.$download.name('sbsj.xlsx',false);
           /*});*/
       },
       insertEqControlPointAddress() {

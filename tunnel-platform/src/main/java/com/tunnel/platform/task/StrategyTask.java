@@ -1,5 +1,6 @@
 package com.tunnel.platform.task;
 
+import cn.hutool.core.date.DateUtil;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -9,19 +10,18 @@ import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.mapper.event.SdTriggerMapper;
+import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.platform.service.SdDeviceControlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component("strategyTask")
 public class StrategyTask {
@@ -42,6 +42,7 @@ public class StrategyTask {
             map.put("state",sdStrategyRl.getState());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
+            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }
@@ -50,9 +51,10 @@ public class StrategyTask {
      * 自动触发定时任务
      */
 //    @Scheduled(fixedRate = 3000)
-    public void triggerJob(){
+    public void triggerJob() throws UnknownHostException {
         //触发器数据
         Map<String,Object> map = new HashMap<>();
+        String serverIp = InetAddress.getLocalHost().getHostAddress();
         List<Map> triggerData = SpringUtils.getBean(SdTriggerMapper.class).getAllTrigger();
         triggerData.forEach(s->{
             String equipment = s.get("device_id").toString();
@@ -93,6 +95,7 @@ public class StrategyTask {
                         map.put("devId",eqId);
                         map.put("state",upState);
                         map.put("controlType",s.get("strategy_type").toString());
+                        map.put("operIp",serverIp);
                         SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
                         map.clear();
                     });

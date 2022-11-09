@@ -1009,6 +1009,13 @@ export default {
         console.log(this.imgUrl, "this.imgUrl");
       });
     },
+    handleClose(done) {
+      this.$confirm("确认关闭？")
+        .then((_) => {
+          done();
+        })
+        .catch((_) => {});
+    },
   },
 };
 </script>

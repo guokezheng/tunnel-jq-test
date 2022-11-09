@@ -80,8 +80,8 @@
                   v-for="(item, index) in selectedIconList"
                   :key="index"
                   :style="{
-                    left: item.position.left / 1.05 + 'px',
-                    top: item.position.top / 0.9 + 'px',
+                    left: item.position.left / 1.34 + 'px',
+                    top: item.position.top / 1.3 + 'px',
                     'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                   }"
                   :class="

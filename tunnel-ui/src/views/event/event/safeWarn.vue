@@ -15,7 +15,7 @@
       </div>
     </div> -->
 
-  
+
     <el-form
       :model="queryParams"
       ref="queryForm"
@@ -151,8 +151,8 @@
     </el-row> -->
 
     <div class="butBox">
-      <div :class="searchValue=='126'?'xz':''" @click="qiehuan('126')">主动安全</div>
-      <div :class="searchValue=='127'?'xz':''" @click="qiehuan('127')">交通事件</div>
+      <div :class="searchValue=='1'?'xz':''" @click="qiehuan('1')">主动安全</div>
+      <div :class="searchValue=='0'?'xz':''" @click="qiehuan('0')">交通事件</div>
       <div>设备故障</div>
     </div>
     <!-- <el-row>
@@ -374,7 +374,7 @@
           </el-col>
         </el-row>
         <el-row>
-        
+
           <el-col :span="12">
             <el-form-item label="事件类型" prop="eventTypeId">
               <el-select v-model="eventForm.eventTypeId" placeholder="请选择事件类型">
@@ -843,8 +843,8 @@ export default {
           },
         },
       ],
-      // 
-      searchValue : '126',
+      //
+      searchValue : '1',
       // 弹出层标题
       title: "",
       // 状态字典

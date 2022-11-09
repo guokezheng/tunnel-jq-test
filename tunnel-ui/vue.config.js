@@ -33,36 +33,21 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-<<<<<<< HEAD
-        // target: `http://127.0.0.1:8000`, // 服务器
-        // target: `http://10.3.16.40:8000`, // 服务器
-        // target: `http://10.168.56.206:8000`, // 服务器
-=======
-        // target: `http://10.3.16.40:8000`, // 服务器
->>>>>>> 977c51c41d38a4a113936715e9dfc3537d04d117
+        target: `http://10.3.16.40:8000`, // 服务器
         // target: `http://10.168.64.171:8000`, // 服务器
-        target: `http://10.168.56.206:8000`, // 服务器、
-        // target: `http://10.168.56.206:7070`, // 服务器、
-
+        // target: `http://10.168.56.206:8000`, // 服务器、
+        // target: `http://10.168.56.206:7080`, // 服务器、
         // target: `http://10.168.65.230:8000/`, // 展双、
-<<<<<<< HEAD
-        // target: `http://10.168.65.206:8080/`, // 服务器、
-        target: `http://10.168.78.127:8000/`,//王畅
-        // target: `http://10.168.64.171:8000/`, // 翟昌宏
-=======
         // target: `http://10.168.65.230:7075/`, // 展双、
         // target: `http://10.168.78.127:8000/`, // 王畅
         // target: `http://10.168.64.75:8000/`, // 吴昊阳
         // target: `http://10.168.64.171:8000/`, // 翟昌宏
-
-
->>>>>>> 977c51c41d38a4a113936715e9dfc3537d04d117
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       },
-      '/gdLayer':{
+      '/gdLayer': {
         target: `https://tm.amap.com/trafficengine/mapabc/traffictile`, // 服务器
         secure: true,
         changeOrigin: true,
@@ -77,7 +62,7 @@ module.exports = {
   css: {
     // 避免dart-sass将伪元素中的字符集转义
     loaderOptions: {
-       sass: {
+      sass: {
         //additionalData: `@import "@/assets/style/scss/index.scss";`,
         // 避免dart-sass在打包过程中会将伪元素content中的字符集转义
         sassOptions: {
@@ -86,7 +71,6 @@ module.exports = {
       }
     }
   },
-
   configureWebpack: {
     name: name,
     resolve: {

@@ -115,4 +115,6 @@ public interface ISdIotDeviceService {
 
     List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice iotDevice);
 
+    public List<Map<String, Object>> getDevicesSize();
+
 }

@@ -28,7 +28,7 @@
           :key="index"
         >
         
-          <!-- <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
+          <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
             <el-table-column
               label="隧道名称"
               align="center"
@@ -84,7 +84,7 @@
                 </el-button>
               </template>
             </el-table-column>
-          </el-table> -->
+          </el-table>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -320,9 +320,9 @@ export default {
     .el-table td.el-table__cell {
       border-bottom: 1px solid #00adff;
     }
-    .el-table__header-wrapper{
-      display: none;
-    }
+    // .el-table__header-wrapper{
+    //   display: none;
+    // }
     // 表头背景
     .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {

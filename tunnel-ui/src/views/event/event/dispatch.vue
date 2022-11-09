@@ -753,7 +753,7 @@ export default {
       console.log(this.$route.query.id,"this.$route.query.id")
       for(let item of event){
         if(this.$route.query.id == item.eventId){
-          this.zxList.push(item);
+          this.zxList.unshift(item);
         }
       }
       
@@ -815,7 +815,7 @@ export default {
     // 一键恢复
     OneClickRecovery(){
       performRecovery(this.$route.query.id).then((res) =>{
-
+        this.$forceUpdate()
       })
     },
     //返回列表
@@ -851,8 +851,10 @@ export default {
       });
     },
     getEqType(state, eqType) {
-      for (var item of this.eqTypeList) {
+      for(let i=0;i<this.eqTypeList.length;i++){
+        let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
+          console.log(item);
           return item.stateName;
         }
       }
@@ -866,9 +868,9 @@ export default {
     },
     getExecuteResult(num){
       if(num == '0'){
-        return "执行成功"
-      }else{
         return "执行失败"
+      }else{
+        return "执行成功"
 
       }
     },

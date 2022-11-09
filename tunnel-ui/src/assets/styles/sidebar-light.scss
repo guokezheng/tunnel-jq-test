@@ -612,7 +612,7 @@
   .el-table__body-wrapper::-webkit-scrollbar {
     background-color: #c4e8f6;
     width: 10px;
-    height: 10px;
+    height: 5px;
   }
 
   /* table滚动条的滑块*/
@@ -951,7 +951,7 @@
     scrollbar-color: #6969dd #e0e0e0;
     ::-webkit-scrollbar {
       width: 5px;
-      height: 1px;
+      height: 4px;
     }
     ::-webkit-scrollbar-track {
       background-color: #c4e8f6;
@@ -961,6 +961,16 @@
     }
    
     
+  }
+  .allTable{
+    .el-table__body-wrapper tbody{
+      tr:nth-of-type(even){
+        background-color: #2B5F96;
+      }
+      tr:nth-of-type(odd){
+        background-color: #326CA9;
+      }
+    }
   }
   .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{

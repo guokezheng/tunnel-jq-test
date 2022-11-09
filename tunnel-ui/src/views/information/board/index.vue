@@ -16,37 +16,85 @@
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="所属单位">
-            <el-select v-model="form.region" placeholder="请选择所属单位">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+            <el-select
+              v-model="form.company"
+              placeholder="请选择所属单位"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in deptList"
+                :key="item.deptId"
+                :label="item.deptName"
+                :value="item.deptId"
+                @click.native="changeCompany(item.deptId)"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="所属机构">
-            <el-select v-model="form.region" placeholder="请选择所属机构">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+            <el-select
+              v-model="form.mechanism"
+              placeholder="请选择所属机构"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in mechanismList"
+                :key="item.deptId"
+                :label="item.deptName"
+                :value="item.deptId"
+                @click.native="changeMechanism(item.deptId)"
+              />
             </el-select>
           </el-form-item>
-          <el-form-item label="所属路段">
-            <el-select v-model="form.region" placeholder="请选择所属路段">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+          <el-form-item label="所属隧道">
+            <el-select
+              v-model="form.tunnel"
+              placeholder="请选择所属隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
             </el-select>
           </el-form-item>
-          <el-form-item label="设备类型">
-            <el-select v-model="form.region" placeholder="请选择设备类型">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+          <el-form-item label="位置信息">
+            <el-select
+              v-model="form.position"
+              placeholder="请选择所属隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in positionList"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item label="分辨率">
-            <el-select v-model="form.region" placeholder="请选择分辨率">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
+            <el-select
+              v-model="form.devicessize"
+              placeholder="请选择分辨率"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in devicessizeList"
+                :key="item.dictValue"
+                :label="item.dictLabel"
+                :value="item.dictValue"
+                @click.native="changeDevicessize(item.deptId)"
+              />
             </el-select>
           </el-form-item>
-          <el-form-item label-width="0">
+          <el-form-item label-width="0" v-show="checkbox">
             <el-checkbox
               style="width: 100%"
               :indeterminate="isIndeterminate"
@@ -146,6 +194,9 @@
 </template>
 <script>
 import addinfo from "./addinfo";
+import { getUserDeptId } from "@/api/system/user";
+import { listDept } from "@/api/system/dept";
+import { listTunnels, devicessize } from "@/api/information/api.js";
 const cityOptions = ["上海", "北京", "广州", "深圳"];
 export default {
   name: "Device",
@@ -154,10 +205,28 @@ export default {
   },
   data() {
     return {
+      userQueryParams: {
+        userName: this.$store.state.user.name,
+      },
+      userDeptId:'',
+      tunnelQueryParams: {
+        deptId: this.userDeptId,
+      },
+      deptList:[],//分中心下拉框
+      mechanismList:[],//管理机构下拉框
+      tunnelData:[],//所属隧道下拉框
+      positionList:[],//位置信息下拉框
+      devicessizeList:[],//分辨率下拉框
+      checkbox:false,
+      form:{
+        company:null,
+        mechanism:null,
+        tunnel:null,
+        position:null,
+        devicessize:null,
+      },
       dialogVisible: false,
-      tunnelList: [],
       activeNames: "1",
-      form: { region: "" },
       checkAll: false,
       checkedCities: [],
       cities: cityOptions,
@@ -186,8 +255,63 @@ export default {
       ],
     };
   },
-  created() {},
+  created() {
+    this.getDeptList();
+  },
   methods: {
+    /** 查询部门列表 */
+    getDeptList() {
+      var that = this;
+      var id = this.userDeptId;
+      const params = {
+        status: 0,
+      };
+      listDept(params).then((response) => {
+        var list = that.handleTree(response.data, "deptId");
+        this.deptList = list[0].children
+      })
+    },
+    //通过分中心查机构 
+    changeCompany(val){
+      for(let item of this.deptList){
+        if(val == item.deptId){
+          console.log(item.children);
+          this.mechanismList = item.children
+          this.form.mechanism = null
+          this.form.tunnel = null
+        }
+      }
+    },
+    // 通过所属机构查隧道
+    changeMechanism(val){
+      listTunnels(val).then((response) => {
+        this.tunnelData = response.rows
+        this.form.tunnel = null
+        this.getPosition()
+      });
+    },
+    // 位置信息
+    getPosition(){
+      this.getDicts("iot_devices_type").then((response) => {
+          console.log(response,"位置信息")
+          this.positionList = response.data
+          this.getdevicessize()
+      });
+    },
+    // 查分辨率
+    getdevicessize(){
+      devicessize().then((res) =>{
+        console.log(res,"查分辨率");
+        this.devicessizeList = res.data
+      })
+    },
+    // 查设备多选框
+    changeDevicessize(){
+      this.checkbox = true
+      const param = {
+        
+      }
+    },
     // 打开添加信息弹窗
     openDialogVisible() {
       this.$refs.addinfo.init();
@@ -205,13 +329,15 @@ export default {
       this.isIndeterminate =
         checkedCount > 0 && checkedCount < this.cities.length;
     },
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
+    // handleClose(done) {
+    //   this.$confirm("确认关闭？")
+    //     .then((_) => {
+    //       done();
+    //     })
+    //     .catch((_) => {});
+    // },
+    onSubmit() {},
+    moveBottom() {},
   },
 };
 </script>

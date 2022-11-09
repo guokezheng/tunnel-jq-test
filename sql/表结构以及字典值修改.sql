@@ -355,6 +355,11 @@ INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_typ
 -- 情报板模板数据库表新增字段
 alter table sd_vms_template add column category varchar(100) comment '模板类别';
 
+-- 数据字典防空类型
+INSERT INTO `sys_dict_type`(`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (104, '防控类型', 'prev_control_type', '0', 'admin', '2022-11-09 10:37:37', '', NULL, NULL);INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (492, 0, '交通事件', '0', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:17', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (493, 1, '主动安全', '1', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:32', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (494, 2, '设备故障', '2', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:48', '', NULL, NULL);
 
 -- 新增菜单，机电巡查
 INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2339, '机电巡查', 0, 6, 'empatrol', NULL, NULL, 1, 0, 'M', '0', '0', '', '#', 'admin', '2022-11-02 16:35:31', 'admin', '2022-11-03 09:26:32', '');

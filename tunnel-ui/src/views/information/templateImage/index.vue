@@ -491,11 +491,6 @@ export default {
       console.log(this.fileData);
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          console.log(this.fileData.file + "111111");
-          if (this.fileData.file == null || this.fileData.file == undefined) {
-            this.$modal.msgError("图片不能为空");
-            return;
-          }
           if (parseInt(this.form.imageWidth) == 0) {
             this.$modal.msgError("图片宽度不能为0");
             return;

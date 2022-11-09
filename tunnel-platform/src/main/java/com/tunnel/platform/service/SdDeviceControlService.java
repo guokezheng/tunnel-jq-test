@@ -1,5 +1,6 @@
 package com.tunnel.platform.service;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -110,7 +111,7 @@ public class SdDeviceControlService {
             //通过websocket推送到前端
             String[] states = new String[4];
             states[0] = state;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"cz");
+            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"cz");
             //控制诱导灯
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
@@ -132,7 +133,7 @@ public class SdDeviceControlService {
             states[0] = state;
             states[1] = brightness;
             states[2] = frequency;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
+            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
             //控制疏散标志
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
@@ -158,13 +159,13 @@ public class SdDeviceControlService {
             states[1] = brightness;
             states[2] = frequency;
             states[3] = fireMark;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,"ydd");
+            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;
     }
 
-    public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state, String type) {
+    public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state,SdOperationLog sdOperationLog, String type) {
         List<SdDeviceNowState> dataList = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
         SdDeviceNowState sdDeviceNowState = new SdDeviceNowState();
@@ -184,6 +185,11 @@ public class SdDeviceControlService {
             sdDeviceNowState.setFrequency(state[2]);
             sdDeviceNowState.setFireMark(state[3]);
         }
+        sdDeviceNowState.setExecuteResult(sdOperationLog.getState());
+        if(null != sdOperationLog.getEventId()) {
+            sdDeviceNowState.setEventId(sdOperationLog.getEventId());
+        }
+        sdDeviceNowState.setExecuteTime(DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS,sdOperationLog.getCreateTime()));
         dataList.add(sdDeviceNowState);
         jsonObject.put("deviceStatusChangeLog", dataList);
         WebSocketService.broadcast("deviceStatusChangeLog", jsonObject.toString());

@@ -10,7 +10,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="计划完成时间" prop="endPlantime">
+<!--      <el-form-item label="计划完成时间" prop="endPlantime">
         <el-date-picker clearable size="small"
           v-model="queryParams.endPlantime"
           type="date"
@@ -96,46 +96,10 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button type="primary" plain size="mini" @click="resetQuery">重置</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:list:add']"
-        >新增</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:list:edit']"
-        >修改</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:list:remove']"
-        >删除</el-button>
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:list:export']"
-        >导出</el-button>
-      </el-form-item>
-    </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
         <el-button
           type="primary"
           plain
@@ -144,8 +108,8 @@
           @click="handleAdd"
           v-hasPermi="['system:list:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
+        <!--      </el-col>
+              <el-col :span="1.5">-->
         <el-button
           type="success"
           plain
@@ -155,8 +119,8 @@
           @click="handleUpdate"
           v-hasPermi="['system:list:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+        <!--      </el-col>
+              <el-col :span="1.5">-->
         <el-button
           type="danger"
           plain
@@ -166,8 +130,8 @@
           @click="handleDelete"
           v-hasPermi="['system:list:remove']"
         >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+        <!--      </el-col>
+              <el-col :span="1.5">-->
         <el-button
           type="warning"
           plain
@@ -177,14 +141,20 @@
           @click="handleExport"
           v-hasPermi="['system:list:export']"
         >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
+      </el-form-item>
+    </el-form>
 
-    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange" class="allTable">
+<!--    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">-->
+
+<!--      </el-col>-->
+<!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
+<!--    </el-row>-->
+
+    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务编号" align="center" prop="id" />
-      <el-table-column label="所属单位" align="center" prop="zzjgId" />
+<!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
       <el-table-column label="计划完成时间" align="center" prop="endPlantime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.endPlantime, '{y}-{m}-{d}') }}</span>
@@ -196,11 +166,11 @@
           <span>{{ parseTime(scope.row.dispatchTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="指派巡查班组id" align="center" prop="bzId" />
+      <el-table-column label="指派巡查班组" align="center" prop="bzId" />
       <el-table-column label="任务描述" align="center" prop="taskDescription" />
       <el-table-column label="发布状态" align="center" prop="publishStatus" />
       <el-table-column label="任务状态" align="center" prop="taskStatus" />
-      <el-table-column label="巡查人员id" align="center" prop="walkerId" />
+      <el-table-column label="巡查人员" align="center" prop="walkerId" />
       <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.taskEndtime, '{y}-{m}-{d}') }}</span>

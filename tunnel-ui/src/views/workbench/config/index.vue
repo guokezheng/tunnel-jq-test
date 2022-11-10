@@ -3519,7 +3519,7 @@ export default {
         // 车辆在二维图上的实际距离
         // 2.2 = 油门。数越大，跑的越快
         event[i].left =
-          math.add(math.multiply(+carKm / this.proportion) + 145) + "px";
+          math.add(math.multiply(+carKm / this.proportion) + 185) + "px";
         event[i].top = 365 + "px";
         console.log(event[i].left, "left值");
         // let lane = this.currentTunnel.lane.num;
@@ -3533,7 +3533,7 @@ export default {
       }
       console.log("end");
       console.log(event, "eventeventevent");
-      this.carList = event;
+      // this.carList = event;
       this.$forceUpdate();
     },
     deviceStatus(event) {

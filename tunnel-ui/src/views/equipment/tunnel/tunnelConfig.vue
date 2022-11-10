@@ -260,6 +260,8 @@ export default {
         require("@/assets/image/lane/3blue_duan.png"),
         require("@/assets/image/lane/3blue_chang.png"),
         require("@/assets/image/lane/fenghuangshan.png"),
+        require("@/assets/image/lane/mjy.jpg"),
+        require("@/assets/image/lane/fhs.jpg"),
       ],
       //当前隧道
       selectedTunnel: {
@@ -362,6 +364,7 @@ export default {
         that.top = e.y - 90;
         that.deleteVisible = true;
         that.deleteObj = e.target.parentElement.snap;
+        console.log(e)
       }
     };
   },
@@ -494,7 +497,6 @@ export default {
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
           this.selectedIconList = res.eqList;
-
           listType("").then((response) => {
             this.drawSvg(response.rows);
           });
@@ -529,8 +531,10 @@ export default {
     drawSvg(eqTypeList) {
       var that = this;
       let list = that.selectedIconList;
+      console.log('that.selectedIconList',that.selectedIconList)
       // debugger;
       for (let i = 0; i < list.length; i++) {
+        console.log('list.length',list.length)
         var iconWidth = 0;
         var iconHeight = 0;
         if (list[i].width != "") {
@@ -544,6 +548,7 @@ export default {
             break;
           }
         }
+        console.log('list[i]',list[i])
         //矩形框
         if (list[i].url.length > 1) {
           // console.log('矩形框')
@@ -563,7 +568,8 @@ export default {
             iconHeight
           );
           // console.log(list[i].pile, 'list[i].pile')
-          if (list[i].pile != "") {
+          if (list[i].pile != "" && list[i].pile) {
+            console.log('list[i].pile')
             let r = that.svg.paper
               .rect(
                 list[i].position.left - 20,
@@ -629,7 +635,7 @@ export default {
             iconWidth,
             iconHeight
           );
-          if (list[i].pile != "") {
+          if (list[i].pile != "" && list[i].pile) {
             let num2 = 0;
             if (list[i].eqType == 21) {
               //紧急电话
@@ -671,19 +677,24 @@ export default {
             img[i] = that.svg.paper.g(r, t, img3).attr({
               class: "mydrags",
             });
+            console.log('正常',img[i]);
             // if(list[i].eqType == 5){
             //   img[i] = that.svg.paper.g(r - 10, t, img3).attr({
             //     class: "mydrags",
             //   });
             // }
           } else {
+            
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
             });
+            console.log('错误',img[i]);
           }
         }
+        console.log('所有',img[i]);
         img[i].drag();
       }
+      
       // 添加辅助线
       that.$nextTick(() => {
         that.auxiliaryLine();
@@ -702,13 +713,17 @@ export default {
       this.saveLoading = true;
       let eqList = [];
       //遍历设备，获取位置
+      console.log(this.selectedIconList,'this.selectedIconList',img)
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
+          console.log(this.selectedIconList[i],'111111111w')
           list[i].pileNum = list[i].pile.replace(/[^\d.]/g, "");
           console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
+          console.log(2222222)
           if (img[i]) {
+            console.log(3333333333)
             this.selectedIconList[i].position = {
               left:
                 img[i].attr("transform").localMatrix.e +
@@ -717,6 +732,8 @@ export default {
                 img[i].attr("transform").localMatrix.f +
                 this.selectedIconList[i].position.top,
             };
+            eqList.push(this.selectedIconList[i]);
+          }else{
             eqList.push(this.selectedIconList[i]);
           }
         }
@@ -838,12 +855,13 @@ export default {
     },
     /* 点击删除*/
     deleteImage() {
-      console.log("我右键删除了");
+      console.log("我右键删除了",this.direction,img);
       if (this.direction == 1) {
         this.upList.splice(this.deleteIndex, 1, {});
       } else if (this.direction == 2) {
         this.downList.splice(this.deleteIndex, 1, {});
       } else {
+        
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == this.deleteObj) {
             img[i].remove();
@@ -853,6 +871,7 @@ export default {
         }
         // this.equipmentList = this.addMask(response.rows)
       }
+      console.log("我右键删除了11",img,this.selectedIconList);
       this.deleteVisible = false;
       this.direction = 0;
     },
@@ -955,7 +974,7 @@ export default {
         this.selectedIconList.push(item);
         console.log(this.selectedIconList, "this.selectedIconList");
         that.equipmentList = that.addMask(that.equipmentList);
-        if (item.pile != "") {
+        if (item.pile != "" && item.pile) {
           // 桩号框以及框内汉字的位置是由设备位置决定的
           // 绘制桩号框
           let r = that.svg.paper.rect(-20, iconHeight + 2, 80, 18, 2).attr({
@@ -999,59 +1018,45 @@ export default {
               x: -20,
             });
 
-            if (item.eqType == 7 || item.eqType == 117) {
-              // let num = iconWidth>=29?-24:0;
-              // 加强照明  电光标志
-              img3 = this.svg.paper
-                .image(url, 10, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            } else if (item.eqType == 21) {
-              console.log(1111111111111111);
-              // "紧急电话"
-              img3 = this.svg.paper
-                .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            } else if (item.eqType == 25) {
-              console.log(1111111111111111);
-              // "抓拍摄像机"
-              img3 = this.svg.paper
-                .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
-                .attr({
-                  id: item.eqId,
-                });
-            } else {
-              console.log(222222222222);
-              img3 = this.svg.paper
-                .image(
-                  url,
-                  25 + iconWidth + iconWidth >= 29 ? 24 : 0,
-                  0,
-                  iconWidth,
-                  iconHeight
-                )
-                .attr({
-                  id: item.eqId,
-                });
-            }
             // if (item.eqType == 7 || item.eqType == 117) {
             //   // let num = iconWidth>=29?-24:0;
             //   // 加强照明  电光标志
             //   img3 = this.svg.paper
-            //     .image(url, 5 + iconWidth, 0, iconWidth, iconHeight)
+            //     .image(url, 10, 0, iconWidth, iconHeight)
+            //     .attr({
+            //       id: item.eqId,
+            //     });
+            // } else if (item.eqType == 21) {
+            //   console.log(1111111111111111);
+            //   // "紧急电话"
+            //   img3 = this.svg.paper
+            //     .image(url, iconWidth + 18, 0, iconWidth, iconHeight)
+            //     .attr({
+            //       id: item.eqId,
+            //     });
+            // } else if (item.eqType == 25) {
+            //   console.log(1111111111111111);
+            //   // "抓拍摄像机"
+            //   img3 = this.svg.paper
+            //     .image(url, iconWidth + 12, 0, iconWidth, iconHeight)
             //     .attr({
             //       id: item.eqId,
             //     });
             // } else {
+            //   console.log(222222222222);
             //   img3 = this.svg.paper
-            //     .image(url, 25 + iconWidth + iconWidth>=29?24:0, 0, iconWidth, iconHeight)
+            //     .image(
+            //       url,
+            //       25 + iconWidth + iconWidth >= 29 ? 24 : 0,
+            //       0,
+            //       iconWidth,
+            //       iconHeight
+            //     )
             //     .attr({
             //       id: item.eqId,
             //     });
             // }
+
 
             img3 = this.svg.paper.image(url, 0, 0, iconWidth, iconHeight).attr({
               id: item.eqId,
@@ -1088,7 +1093,7 @@ export default {
             var img3;
 
             img3 = this.svg.paper
-              .image(url, 25, 0, iconWidth, iconHeight)
+              .image(url[0], 0, 0, iconWidth, iconHeight)
               .attr({
                 id: item.eqId,
               });

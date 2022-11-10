@@ -265,7 +265,7 @@
               故障设备情况
             </div>
           </el-col>
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="设备类型" prop="eqId">
               <el-select v-model="form.codeDeviceId" placeholder="请选择所属隧道">
                 <el-option
@@ -276,7 +276,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item label="设备名称" prop="eqId">
               <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称">
@@ -291,16 +291,21 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="设备填报状态" prop="eqStatus">
-              <el-radio-group v-model="form.eqStatus">
-                <el-radio label="1">请选择字典生成</el-radio>
-              </el-radio-group>
+              <el-select v-model="form.eqStatus" placeholder="请选择设备填报状态">
+                <el-option
+                  v-for="item in directionList"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="设备运行状态" prop="eqStatus">
-              <el-radio-group v-model="form.eqStatus">
+              <!-- <el-radio-group v-model="form.eqStatus">
                 <el-radio label="1">请选择字典生成</el-radio>
-              </el-radio-group>
+              </el-radio-group> -->
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -551,6 +556,8 @@ export default {
       form: {},
       // 表单校验
       rules: {},
+      // 
+      directionList:[],
     };
   },
   created() {
@@ -558,6 +565,11 @@ export default {
     this.getTunnel();
     this.getEqType();
     this.getDevices();
+    // 
+    this.getDicts("sd_monitor_state").then((data) => {
+      console.log('sd_monitor_state',data)
+      this.directionList = data.data;
+    });
   },
   methods: {
     /** 查询故障清单列表 */
@@ -612,7 +624,7 @@ export default {
         faultTbr: null,
         faultTbtime: null,
         eqId: null,
-        eqStatus: "0",
+        eqStatus: null,
         faultCode: null,
         faultLevel: null,
         falltRemoveStatue: null,

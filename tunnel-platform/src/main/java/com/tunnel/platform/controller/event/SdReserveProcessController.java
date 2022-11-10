@@ -178,6 +178,17 @@ public class SdReserveProcessController extends BaseController
                     map.put("state",rl.getState());
                     map.put("controlType","4");
                     map.put("eventId",eventId);
+                    //疏散标志默认值
+                    if(rl.getEqTypeId().equals("30")){
+                        map.put("brightness","50");
+                        map.put("frequency","60");
+                    }
+                    //诱导灯默认值
+                    if(rl.getEqTypeId().equals("31")){
+                        map.put("brightness","50");
+                        map.put("frequency","60");
+                        map.put("fireMark","255");
+                    }
                     map.put("operIp", InetAddress.getLocalHost().getHostAddress());
                     result = sdDeviceControlService.controlDevices(map);
                 }

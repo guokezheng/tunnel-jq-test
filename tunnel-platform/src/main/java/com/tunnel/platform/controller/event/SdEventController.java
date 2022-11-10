@@ -179,11 +179,23 @@ public class SdEventController extends BaseController
         }
         Map<String,Object> map = new HashMap<>();
         try {
+            //默认值：诱导灯、疏散标志亮度为50，频率为60，疏散标志地址标号为255
             logData.forEach(data->{
                 map.put("devId",data.getEqId());
                 map.put("state",data.getBeforeState());
                 map.put("controlType","4");
                 map.put("eventId",eventId);
+                //疏散标志默认值
+                if(data.getEqTypeId().equals("30")){
+                    map.put("brightness","50");
+                    map.put("frequency","60");
+                }
+                //诱导灯默认值
+                if(data.getEqTypeId().equals("31")){
+                    map.put("brightness","50");
+                    map.put("frequency","60");
+                    map.put("fireMark","255");
+                }
                 try {
                     map.put("operIp", InetAddress.getLocalHost().getHostAddress());
                 } catch (UnknownHostException e) {

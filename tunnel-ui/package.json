@@ -65,6 +65,7 @@
     "jsencrypt": "3.0.0-rc.1",
     "less": "^4.0.0",
     "less-loader": "^7.2.1",
+    "mathjs": "^11.3.3",
     "moment": "^2.29.1",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",

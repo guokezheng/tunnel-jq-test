@@ -946,21 +946,33 @@
     }
   }
   // 工作台车道滚动条样式
-  .vehicleLane{
-    scrollbar-width: thin;
-    scrollbar-color: #6969dd #e0e0e0;
-    ::-webkit-scrollbar {
+  .content::-webkit-scrollbar-track-piece {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0);
+    width: 1000px;
+    border-width:50px;
+  }
+  .content::-webkit-scrollbar {
       width: 5px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background-color: #c4e8f6;
-    }
-    ::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
-    }
-   
+      height: 10px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+  }
+  .content::-webkit-scrollbar-thumb {
+      background-color: rgba($color: #00c2ff, $alpha: 0.6);
+      background-clip: padding-box;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      min-height: 28px;
+  }
+  .content::-webkit-scrollbar-thumb:hover {
     
+      background-color: #00c2ff;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
   }
   .allTable{
     .el-table__body-wrapper tbody{

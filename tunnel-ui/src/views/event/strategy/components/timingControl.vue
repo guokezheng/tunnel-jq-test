@@ -235,6 +235,7 @@ export default {
         equipment_type: null, //设备类型ID
         equipments: null, //设备列表
       },
+      manualControlStateList:[],
       // 二次表单校验
       rules: {
         equipment_type: [
@@ -244,6 +245,7 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
+      viewStrategy:false,
       showCronBox: false,
       strategyForm: {
         schedulerTime: "", //cron数据

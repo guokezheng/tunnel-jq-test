@@ -161,6 +161,7 @@ export default {
       queryEqTypeParams: {
         isControl: 1,
       },
+      manualControlStateList:[],
       tunnelData: [], //隧道列表
       directionOptions: [], //方向列表
       equipmentTypeData: [], //设备类型列表

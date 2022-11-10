@@ -279,6 +279,8 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
+      viewStrategy:false,
+      manualControlStateList:[],
       showCronBox: false,
       strategyForm: {
         strategyType: "2", //策略类型

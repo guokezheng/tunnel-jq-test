@@ -144,7 +144,7 @@
       <el-table-column label="图片高度" align="center" prop="imageHeight" />
       <!-- <el-table-column label="图片类型" align="center" prop=" imageType" /> -->
       <el-table-column label="图片分辨率" align="center" prop="vmsSize" />
-      <el-table-column label="图片备注" align="center" prop="imageRemark" />
+      <el-table-column label="图片备注" align="center" prop="imageRemark" :show-overflow-tooltip="true"/>
       <el-table-column label="速度" align="center" prop="speed" />
       <!-- <el-table-column label="是否停用" align="center" prop="deleteflag" /> -->
       <el-table-column

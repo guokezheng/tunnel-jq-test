@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-07 10:16:37
+ * @LastEditTime: 2022-11-10 09:15:47
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -15,11 +15,7 @@
       title="预览"
       width="1660px"
     >
-      <img
-        alt=""
-        class="chedaoImage"
-        src="../../../assets/image/lane/fenghuangshan.png"
-      />
+      <img alt="" class="chedaoImage" :src="currentTunnel" />
       <!-- 设备图标-->
       <div
         v-for="(item, index) in selectedIconList"
@@ -120,12 +116,16 @@ import {
 } from "@/api/event/reserveProcess";
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
+import { icon, laneImage } from "../../../utils/configData.js";
 export default {
   components: {
     vueSeamlessScroll,
   },
   data() {
     return {
+      currentTunnel: {},
+      //车道列表
+      laneUrlList: laneImage,
       tunnelId: "", //隧道id
       id: "", //预案id
       workbenchOpen: false,
@@ -153,7 +153,7 @@ export default {
   methods: {
     init() {
       console.log(this.tunnelId, "隧道id");
-      this.getTunnelData();
+      this.getTunnelData(this.tunnelId);
     },
     /* 获取隧道配置信息*/
     getTunnelData(tunnelId) {
@@ -162,6 +162,7 @@ export default {
       that.downList = [];
       getTunnels(tunnelId).then((response) => {
         that.loading = false;
+        console.log(response, "===========");
         let res = response.data.storeConfigure;
 
         //存在配置内容
@@ -182,6 +183,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              this.getPreview();
               // that.getRealTimeData();
               that.selectedIconList.forEach((item, indx) => {
                 // if(item.eqName=='固定摄像机（枪机）'){
@@ -278,14 +280,13 @@ export default {
               }
             })
             .then(() => {
-              that.initEharts();
+              // that.initEharts();
               // 切换隧道配置信息时，联动大类查询
-              that.displayControl(
-                that.selectBigType.index.toString(),
-                that.selectBigType.bigType.toString()
-              );
+              // that.displayControl(
+              //   that.selectBigType.index.toString(),
+              //   that.selectBigType.bigType.toString()
+              // );
             });
-
           if (res.upList != undefined) {
             that.upList = res.upList;
           }
@@ -302,7 +303,7 @@ export default {
           let id = res.lane;
           for (let i = 0; i < that.laneUrlList.length; i++) {
             if (that.laneUrlList[i].id == id) {
-              that.currentTunnel.lane = that.laneUrlList[i];
+              that.currentTunnel = that.laneUrlList[i].url;
               // that.railingList[1].position.left = that.laneUrlList[i].width
             }
           }

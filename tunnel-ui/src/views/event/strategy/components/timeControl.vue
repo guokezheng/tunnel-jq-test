@@ -203,6 +203,7 @@ import {
 export default {
   data() {
     return {
+      selectIndex: 0,
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层
       chooseEq: false,
@@ -512,6 +513,7 @@ export default {
     },
     // 打开选择设备弹窗
     openEqDialog2(event, index) {
+      this.selectIndex = index;
       if (this.strategyForm.autoControl[index].type == "") {
         this.equipmentData = [];
       }

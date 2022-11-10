@@ -80,8 +80,8 @@
                   v-for="(item, index) in selectedIconList"
                   :key="index"
                   :style="{
-                    left: item.position.left / 1.05 + 'px',
-                    top: item.position.top / 0.9 + 'px',
+                    left: item.position.left / 1.34 + 'px',
+                    top: item.position.top / 1.3 + 'px',
                     'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                   }"
                   :class="
@@ -590,7 +590,7 @@
                     </div>
                     <div class="row2" >
                       {{ getEqType(item.state, item.eqType) }}
-                     
+
                       <div style="padding-left:20px">{{ getExecuteResult(item.executeResult) }}</div>
                       <div style="padding-left:20px;float: right;">{{ item.executeTime }}</div>
 
@@ -757,7 +757,7 @@ export default {
           this.zxList.unshift(item);
         }
       }
-      
+
     },
     // eventFlow(event) {
     //   // console.log(event, "websockt工作台接收感知事件数据");
@@ -862,7 +862,7 @@ export default {
           console.log(item.stateName);
           return item.stateName;
         }else{
-         
+
           continue
 
         }

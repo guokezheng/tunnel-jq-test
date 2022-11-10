@@ -425,6 +425,14 @@ let laneImage = [
     num: 3,
     direction: 0
   },
+  {
+    id: "5",
+    name: "凤凰山隧道",
+    url: require('@/assets/image/lane/fhs.jpg'),
+    width: 1620,
+    num: 2,
+    direction: 0
+  },
 ]
 
 export {

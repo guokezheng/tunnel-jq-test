@@ -101,7 +101,7 @@
                 AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
             <if test="searchValue != null and searchValue != ''">
-                and B.f_id = #{searchValue}
+                and B.prev_control_type = #{searchValue}
             </if>
         </where>
         order by A.start_time desc

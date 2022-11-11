@@ -122,7 +122,7 @@
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="防控类型" align="center"  >
         <template slot-scope="scope">
-           <span>{{ getPrevControlType(scope.row.fId) }}</span>
+           <span>{{ getPrevControlType(scope.row.prevControlType) }}</span>
         </template>
 
       </el-table-column>
@@ -168,9 +168,9 @@
         <el-form-item label="简称" prop="simplifyName">
           <el-input v-model="form.simplifyName" placeholder="请输入简称" />
         </el-form-item>
-        <el-form-item label="防控类型" prop="fId">
+        <el-form-item label="防控类型" prop="prevControlType">
           <el-select
-            v-model="form.fId"
+            v-model="form.prevControlType"
             placeholder="防控类型"
             clearable
             size="small"
@@ -235,7 +235,7 @@ export default {
       //事件类型
       eventTypeData: {},
       // 表单参数
-      form: {simplifyName:"",fId:""},
+      form: {simplifyName:"",prevControlType:""},
       // 表单校验
       rules: {
         eventType: [

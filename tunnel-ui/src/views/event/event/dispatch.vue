@@ -628,7 +628,7 @@ import {
   getImplement,
   getSubareaByStakeNum,
   performRecovery,
-  dispatchExecuted
+  dispatchExecuted,
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -654,7 +654,7 @@ export default {
       timer: null,
       eqTypeStateList: null,
       eventMsg: {
-        eventState:2
+        eventState: 2,
       },
       fqIndex: null,
       hfData: null, //恢复预案列表
@@ -751,13 +751,12 @@ export default {
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
-      console.log(this.$route.query.id,"this.$route.query.id")
-      for(let item of event){
-        if(this.$route.query.id == item.eventId){
+      console.log(this.$route.query.id, "this.$route.query.id");
+      for (let item of event) {
+        if (this.$route.query.id == item.eventId) {
           this.zxList.unshift(item);
         }
       }
-
     },
     // eventFlow(event) {
     //   // console.log(event, "websockt工作台接收感知事件数据");
@@ -776,7 +775,7 @@ export default {
     await this.getEventData();
     await this.getTunnelData();
     this.getEqTypeStateIcon();
-    console.log(this.$route.query.id,"this.$route.query.id")
+    console.log(this.$route.query.id, "this.$route.query.id");
     if (this.$route.query.id) {
       const param = {
         id: this.$route.query.id,
@@ -807,25 +806,24 @@ export default {
   },
   methods: {
     // 一进页面获取已执行数据
-    getDispatchExecuted(){
-      dispatchExecuted(this.$route.query.id).then((res) =>{
-        console.log(res,"一进页面获取已执行数据");
-        this.zxList = res.data
-      })
+    getDispatchExecuted() {
+      dispatchExecuted(this.$route.query.id).then((res) => {
+        console.log(res, "一进页面获取已执行数据");
+        this.zxList = res.data;
+      });
     },
     // 一键恢复
-    OneClickRecovery(){
-      performRecovery(this.$route.query.id).then((res) =>{
-        this.accidentInit()
-        this.$forceUpdate()
+    OneClickRecovery() {
+      performRecovery(this.$route.query.id).then((res) => {
+        this.accidentInit();
+        this.$forceUpdate();
         this.$modal.msgSuccess("一键恢复成功");
-
-      })
+      });
     },
     //返回列表
     returnList() {
       this.$router.push({
-        path: "/emergency/administration/event",
+        path: "/emergency/safeWarn",
       });
     },
     // 关闭事件弹窗
@@ -856,15 +854,13 @@ export default {
     },
     getEqType(state, eqType) {
       console.log(state, eqType);
-      for(let i=0;i<this.eqTypeList.length;i++){
+      for (let i = 0; i < this.eqTypeList.length; i++) {
         let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
           console.log(item.stateName);
           return item.stateName;
-        }else{
-
-          continue
-
+        } else {
+          continue;
         }
       }
     },
@@ -875,12 +871,11 @@ export default {
         }
       }
     },
-    getExecuteResult(num){
-      if(num == '0'){
-        return "执行失败"
-      }else{
-        return "执行成功"
-
+    getExecuteResult(num) {
+      if (num == "0") {
+        return "执行失败";
+      } else {
+        return "执行成功";
       }
     },
     async getEqTypeStateIcon() {
@@ -1774,12 +1769,12 @@ export default {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    .OneClickRecovery{
-      width:120px;
+    .OneClickRecovery {
+      width: 120px;
       height: 40px;
       line-height: 40px;
       margin: 0 auto;
-      padding:0;
+      padding: 0;
     }
     .ButtonBox {
       width: 45%;

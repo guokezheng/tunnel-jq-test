@@ -684,7 +684,7 @@ export default {
             //   });
             // }
           } else {
-            
+
             img[i] = that.svg.paper.g(img3).attr({
               class: "mydrags",
             });
@@ -694,7 +694,7 @@ export default {
         console.log('所有',img[i]);
         img[i].drag();
       }
-      
+
       // 添加辅助线
       that.$nextTick(() => {
         that.auxiliaryLine();
@@ -717,7 +717,7 @@ export default {
       for (let i = 0; i < this.selectedIconList.length; i++) {
         if (this.selectedIconList[i].eqType == 12) {
           console.log(this.selectedIconList[i],'111111111w')
-          list[i].pileNum = list[i].pile.replace(/[^\d.]/g, "");
+          this.selectedIconList[i].pileNum = this.selectedIconList[i].pile.replace(/[^\d.]/g, "");
           console.log(this.selectedIconList[i].pileNum);
         }
         if (JSON.stringify(this.selectedIconList[i]) != "{}") {
@@ -861,7 +861,7 @@ export default {
       } else if (this.direction == 2) {
         this.downList.splice(this.deleteIndex, 1, {});
       } else {
-        
+
         for (let i = 0; i < img.length; i++) {
           if (img[i].id == this.deleteObj) {
             img[i].remove();

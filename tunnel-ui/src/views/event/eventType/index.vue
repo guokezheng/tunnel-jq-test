@@ -120,6 +120,13 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
+      <el-table-column label="防控类型" align="center"  >
+        <template slot-scope="scope">
+           <span>{{ getPrevControlType(scope.row.fId) }}</span>
+        </template>
+
+      </el-table-column>
+      <el-table-column label="简称" align="center" prop="simplifyName" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
       <el-table-column
         label="操作"
@@ -322,7 +329,13 @@ export default {
         this.title = "修改事件类型";
       });
     },
-
+    getPrevControlType(num) {
+      for (var item of this.prevControlType) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {

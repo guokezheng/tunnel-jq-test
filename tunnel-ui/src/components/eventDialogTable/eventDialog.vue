@@ -234,7 +234,7 @@ export default {
         this.$modal.msgSuccess("开始处理事件");
       });
       this.$router.push({
-        path: "/emergency/administration/dispatch",
+        path: "/event/event/dispatch",
         query: { id: event.id },
       });
       if (this.eventMes.eventState == "3") {

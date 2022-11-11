@@ -75,7 +75,7 @@ public class StrategyTask {
                 BigDecimal realTimeData = new BigDecimal(deviceData.getData()).setScale(2, BigDecimal.ROUND_HALF_UP);
                 BigDecimal compareValue = new BigDecimal(s.get("compare_value").toString()).setScale(2, BigDecimal.ROUND_HALF_UP);
                 String upState = s.get("upstate").toString();
-                Integer comparePattern = (Integer)s.get("compare_pattern");
+                Integer comparePattern = Integer.valueOf(s.get("compare_pattern").toString());
                 //比较设备实时数据与触发值
                 int compare = realTimeData.compareTo(compareValue);
                 boolean isControl = false;

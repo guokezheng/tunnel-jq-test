@@ -95,11 +95,11 @@
               >新增</el-button
             >
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="chooseImageEvent()"
-              >选择图片</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="chooseImageEvent()"-->
+<!--              >选择图片</el-button-->
+<!--            >-->
+<!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
         <el-dialog
@@ -120,8 +120,9 @@
                   v-for="(item, index) in imgUrl"
                   :key="index"
                   style="margin-top: 12px"
+                  v-show="item.pictureUrl"
                 >
-                  <el-checkbox :label="item.pictureUrl">
+                  <el-checkbox :label="item.pictureUrl" >
                     <div class="photo">
                       <img
                         :src="item.pictureUrl"
@@ -929,10 +930,15 @@ export default {
           this.templateContent.indexOf(data) ==
           this.templateContent.indexOf(this.templateContent[i])
         ) {
-          if(data.id){
-            this.templateDelContent.push(data);
+          if(this.templateContent.length == 1){
+            this.$modal.msgError("至少保留一条数据");
+          }else{
+            if(data.id){
+              this.templateDelContent.push(data);
+            }
+            this.templateContent.splice(this.templateContent.indexOf(data), 1);
           }
-          this.templateContent.splice(this.templateContent.indexOf(data), 1);
+
         }
       }
     },
@@ -966,6 +972,13 @@ export default {
 
         if (!data) {
           return;
+        }
+        for(var i=0;i<data.rows.length;i++){
+            for(var j=i+1;j<data.rows.length;j++){
+                if(data.rows[i].pictureName==data.rows[j].pictureName){
+                  data.rows.splice(j,1)
+                }
+            }
         }
         let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;

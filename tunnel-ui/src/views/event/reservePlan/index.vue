@@ -14,6 +14,7 @@
           @change="changeSelection"
           clearable
           size="small"
+
         >
           <el-option
             v-for="(item, index) in eqTunnelData"
@@ -29,6 +30,7 @@
           placeholder="请选择预案类别"
           clearable
           size="small"
+
         >
           <el-option
             v-for="(item, index) in planCategory"
@@ -158,7 +160,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        :show-overflow-tooltip="true"
+        :show-overflow-tooltip='true'
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <!-- <template slot-scope="scope">
@@ -191,7 +193,7 @@
       >
         <template slot-scope="scope">
           <el-button
-            v-show="scope.row.planFileId != null"
+            v-show="scope.row.planFileId && scope.row.planFileId != 'null'"
             icon="el-icon-link"
             size="mini"
             style="cursor: pointer; color: #39adff"
@@ -199,7 +201,7 @@
             @click="openFileDrawer(scope.row)"
             >点击查看
           </el-button>
-          <div v-show="scope.row.planFileId == null">无</div>
+          <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">无</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -491,6 +493,7 @@
         :model="reservePlanDrawForm"
         :rules="rules"
         label-width="120px"
+
       >
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
@@ -512,6 +515,7 @@
             v-model="reservePlanDrawForm.sId"
             placeholder="请选择所属隧道"
             style="width: 80%"
+            @change="changePartitionSelection"
           >
             <el-option
               v-for="(item, index) in eqTunnelDataList"
@@ -1071,7 +1075,6 @@ export default {
       this.reserveId = row.id;
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
-        console.log(this.options, "this.optionsthis.optionsthis.options");
       });
       getListByRId({ reserveId: this.reserveId }).then((res) => {
         this.planTypeIdList = res.data;
@@ -1140,7 +1143,6 @@ export default {
           let array = [];
           for (let i = 0; i < this.addStrategyList.length; i++) {
             for (let j = 0; j < this.multipleSelectionIds.length; j++) {
-              console.log("===" + j);
               if (this.multipleSelectionIds[j] == this.addStrategyList[i].id) {
                 array.push(this.addStrategyList[i]);
               }
@@ -1387,15 +1389,19 @@ export default {
       });
       //this.$refs["form1"].clearValidate();
     },
+    changePartitionSelection(e){
+      this.$forceUpdate()
+    },
     changeSelection(e) {
-      console.log(e, "indexindex");
+      var that = this
       this.eqTunnelData.forEach((item) => {
         if (item.tunnelId == e) {
-          this.eqTunnelDataList = item.sdTunnelSubareas;
+          this.reservePlanDrawForm.sId = null
+          that.eqTunnelDataList = item.sdTunnelSubareas;
+          that.$forceUpdate()
         }
       });
       this.getDicts("sd_reserve_plan_category").then((response) => {
-        console.log(response.data, "ssssssssssssssssssssssssssssss");
         this.planCategory = response.data;
       });
       console.log(
@@ -1405,12 +1411,18 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      console.log(row);
+      
+      // this.$nextTick(() => {
+      //   this.$refs["addForm1"].clearValidate();
+      // });
+      this.resetForm("addForm1");
+
       // this.resetReservePlanDrawForm();
       this.planChangeSink = "edit";
       const id = row.id || this.ids;
       tunnelNames().then((res) => {
         this.eqTunnelData = res.rows;
-        console.log(res, "this.eqTunnelDatathis.eqTunnelData");
         this.eqTunnelData.forEach((item) => {
           item.sdTunnelSubareas.forEach((item, index) => {
             this.eqTunnelDataList.push(item);
@@ -1432,7 +1444,7 @@ export default {
           this.reservePlanDrawForm.strategyId != null
         ) {
           this.multipleSelectionIds =
-            this.reservePlanDrawForm.strategyId.split("；");
+            this.reservePlanDrawForm.strategyId.split(";");
         }
 
         let fileInfo = response.data.pFileList;
@@ -1446,12 +1458,12 @@ export default {
         //文件回显
       });
       // this.drawer = true;
-      this.$nextTick(() => {
-        this.$refs["form1"].resetFields();
-      });
-      this.$nextTick(() => {
-        this.$refs["form1"].clearValidate();
-      });
+      // this.$nextTick(() => {
+      //   this.$refs["form1"].resetFields();
+      // });
+      // this.$nextTick(() => {
+      //   this.$refs["form1"].clearValidate();
+      // });
       this.dialogFormVisible = true;
       this.title = "修改预案信息";
     },
@@ -1521,7 +1533,6 @@ export default {
     getPlanType() {
       listEventType().then((response) => {
         console.log(response, "事件类型下拉");
-        console.log(response, "responseresponse");
         this.planTypeData = response.rows;
       });
     },
@@ -1546,7 +1557,6 @@ export default {
       this.loading = true;
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
-        console.log(this.planList, "1231");
         this.total = response.total;
         this.loading = false;
       });
@@ -1615,7 +1625,32 @@ export default {
   },
 };
 </script>
+<style>
+#cascader-menu-45-0 .el-radio{
+   
+   display: none !important;
+ 
+}
+</style>
 <style lang="scss" scoped>
+::v-deep .in-checked-path .el-radio{
+   
+    display: none;
+  
+}
+
+::v-deep .in-checked-path .el-radio{
+   
+   display: none;
+ 
+}
+
+
+// .in-checked-path{
+//   ::v-deep .el-radio__original{
+//     display: none;
+//   }
+// }
 .colflex {
   display: flex;
 }

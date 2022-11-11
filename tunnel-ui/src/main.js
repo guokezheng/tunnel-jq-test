@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import CollapseTransition from 'element-ui/lib/transitions/collapse-transition';
 import Cookies from 'js-cookie'
 
 import Element from 'element-ui'
@@ -54,15 +54,15 @@ import config from '../public/config'
 
 import request from '../public/config'
 import moment from 'moment'
- //定义全局过滤器
- Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
-   if (dataStr === null || dataStr === "") {
-     return "";
-   }
-   return moment(dataStr).format(pattern)
-   //filter两个参数  第一个是函数名，第二个是时间格式化处理的函数
-   //(函数里面的参数 第一个是传递的数据，第二个是需要转换的时间格式)
- })
+//定义全局过滤器
+Vue.filter('dateformat', function (dataStr, pattern = 'YYY-MM-DD HH:mm:ss') {
+  if (dataStr === null || dataStr === "") {
+    return "";
+  }
+  return moment(dataStr).format(pattern)
+  //filter两个参数  第一个是函数名，第二个是时间格式化处理的函数
+  //(函数里面的参数 第一个是传递的数据，第二个是需要转换的时间格式)
+})
 
 
 // 全局方法挂载
@@ -91,7 +91,7 @@ Vue.component('ImageUpload', ImageUpload)
 Vue.component('VueSeamlessScroll', VueSeamlessScroll)
 Vue.component('eventDialog', eventDialog)
 Vue.component('eventDialogTable', eventDialogTable)
-
+Vue.component(CollapseTransition.name, CollapseTransition)
 // Vue.component('reproductionImage', reproductionImage)
 
 Vue.use(directive)

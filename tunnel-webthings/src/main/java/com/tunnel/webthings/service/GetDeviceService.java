@@ -13,5 +13,5 @@ public interface GetDeviceService {
 
     List<ResponseVO> getDevList(DeviceParameter dev);
 
-    void copyData();
+//    void copyData();
 }

@@ -85,6 +85,28 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道结束桩号")
     private String endPile;
 
+    @ApiModelProperty("隧道开始桩号(整形)")
+    private String startPileNum;
+
+    @ApiModelProperty("隧道结束桩号(整形)")
+    private String endPileNum;
+
+    public String getStartPileNum() {
+        return startPileNum;
+    }
+
+    public void setStartPileNum(String startPileNum) {
+        this.startPileNum = startPileNum;
+    }
+
+    public String getEndPileNum() {
+        return endPileNum;
+    }
+
+    public void setEndPileNum(String endPileNum) {
+        this.endPileNum = endPileNum;
+    }
+
     public String getStartPile() {
         return startPile;
     }

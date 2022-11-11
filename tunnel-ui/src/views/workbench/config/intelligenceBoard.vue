@@ -122,11 +122,11 @@
               >新增</el-button
             >
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="chooseImageEvent()"
-              >选择图片</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="chooseImageEvent()"-->
+<!--              >选择图片</el-button-->
+<!--            >-->
+<!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
         <qz-dialog
@@ -880,6 +880,7 @@ export default {
       });
       api.getTemplateContentById(this.dataForm.id).then((data) => {
         this.templateContent = data;
+        console.log(this.templateContent,"this.templateContent");
         if (this.templateContent.length == 0) {
           this.templateContent.push({
             content: "",
@@ -1007,6 +1008,7 @@ export default {
     },
     /*删除内容*/
     delTemplateContent(data) {
+      console.log(data,"data");
       for (let i = 0; i < this.templateContent.length; i++) {
         if (
           this.templateContent.indexOf(data) ==

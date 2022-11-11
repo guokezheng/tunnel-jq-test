@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.service.event.ISdEventService;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class KafkaReadListenToTunnelEvent {
      * @param consumer
      */
 
-    @KafkaListener(topics = {"wq_tunnelEvent"})
+    @KafkaListener(topics = {"wq_tunnelEvent"}, containerFactory = "kafkaTwoContainerFactory")
     public void tunnelEventData(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         /**
          * {"timeStamp":"2022-10-27 14:08:53.243",
@@ -66,6 +67,7 @@ public class KafkaReadListenToTunnelEvent {
                 } else {
                     sdEventMapper.insertSdEvent(sdEvent);
                 }
+                WebSocketService.broadcast("sdEventList", sdEvent.toString());
             }
         }
         consumer.commitSync();

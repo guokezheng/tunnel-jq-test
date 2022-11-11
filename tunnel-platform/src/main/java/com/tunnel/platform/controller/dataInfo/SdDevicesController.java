@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
@@ -223,6 +224,14 @@ public class SdDevicesController extends BaseController
     @ApiOperation("新增设备")
     public Result add(@RequestBody SdDevices sdDevices)
     {
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于维保截止时间");
+        }
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getInstallTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于设备安装时间");
+        }
         SdDevices sd = new SdDevices();
         sd.setEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
@@ -262,6 +271,14 @@ public class SdDevicesController extends BaseController
     @ApiOperation("修改设备")
     public Result edit(@RequestBody SdDevices sdDevices)
     {
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于维保截止时间");
+        }
+        if (sdDevices.getDeliveryTime() != null && sdDevices.getInstallTime() != null
+                && sdDevices.getDeliveryTime().getTime() > sdDevices.getInstallTime().getTime()) {
+            throw new RuntimeException("出厂时间不能晚于设备安装时间");
+        }
         int i = sdDevicesService.updateSdDevices(sdDevices);
         if (sdDevices.getEqType() != 31L) {
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
@@ -290,6 +307,7 @@ public class SdDevicesController extends BaseController
             List<SdDevices> sdDevicesList = new ArrayList<>();
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqIds(Arrays.asList(eqIds));
+            sdDevices.setCreateTime(DateUtils.getNowDate());
             sdDevicesList.add(sdDevices);
             sdPlatformApiController.devicesPush(sdDevicesList,"del",null);
         }

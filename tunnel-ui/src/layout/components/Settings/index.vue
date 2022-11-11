@@ -31,7 +31,7 @@
             </div>
           </div>
           <!-- 新增主题---科技蓝 -->
-          <!-- <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-blue')">
+          <div class="setting-drawer-block-checbox-item" @click="handleTheme('theme-blue')">
             <img src="@/assets/images/icon_layout.svg" alt="blue">
             <div v-if="sideTheme === 'theme-blue'" class="setting-drawer-block-checbox-selectIcon" style="display: block;">
               <i aria-label="图标: check" class="anticon anticon-check">
@@ -42,7 +42,7 @@
                 </svg>
               </i>
             </div>
-          </div> -->
+          </div>
         </div>
 
         <div class="drawer-item">
@@ -55,7 +55,7 @@
 
       <h3 class="drawer-title">系统布局配置</h3>
 
-      <template v-if="sideTheme != 'theme-blue'">
+      <template >
         <div class="drawer-item">
           <span>开启 TopNav</span>
           <el-switch v-model="topNav" class="drawer-switch" />
@@ -65,15 +65,15 @@
         <span>开启 Tags-Views</span>
         <el-switch v-model="tagsView" class="drawer-switch" />
       </div>
-      <div class="drawer-item" v-if="topNav || sideTheme == 'theme-blue'">
+      <!-- <div class="drawer-item" v-if="topNav || sideTheme == 'theme-blue'">
         <span>开启weather</span>
         <el-switch v-model="weatherView" class="drawer-switch" />
       </div>
       <div class="drawer-item">
         <span>固定 Header</span>
         <el-switch v-model="fixedHeader" class="drawer-switch" />
-      </div>
-      <template v-if="sideTheme != 'theme-blue'">
+      </div> -->
+      <template >
         <div class="drawer-item">
           <span>显示 Logo</span>
           <el-switch v-model="sidebarLogo" class="drawer-switch" />

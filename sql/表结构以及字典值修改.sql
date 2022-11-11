@@ -21,8 +21,8 @@ INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_typ
 
 
 -- 隧道表添加字段sd_tunnels，start_pile、end_pile
-alter table sd_tunnels add column start_pile varchar(20) comment '隧道开始桩号（整型）';
-alter table sd_tunnels add column end_pile varchar(20) comment '隧道结束桩号（整型）';
+alter table sd_tunnels add column start_pile varchar(20) comment '隧道开始桩号';
+alter table sd_tunnels add column end_pile varchar(20) comment '隧道结束桩号';
 
 -- 修改sd_equipment_state_icon_file表字段url的字段类型
 alter table sd_equipment_state_icon_file modify column url longtext comment '图标地址';
@@ -136,4 +136,235 @@ INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `componen
 INSERT INTO `sys_menu`( `menu_name`, `parent_id`, `order_num`, `path`, `component`, `query`, `is_frame`, `is_cache`, `menu_type`, `visible`, `status`, `perms`, `icon`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('应急调度', 2252, 4, '', NULL, NULL, 1, 0, 'F', '0', '0', 'system:event:remove', '#', 'admin', '2022-10-19 08:55:21', '', NULL, '');
 
 
+-- 删除sd_devices_copy表
 
+-- 自动触发定时任务
+INSERT INTO `sys_job`(job_name,job_group,invoke_target,cron_expression,misfire_policy,concurrent,status,remark,create_by,create_time)VALUES ('自动触发任务', 'DEFAULT', 'strategyTask.triggerJob()', '0 0/5 * * * ?', '1', '0', '0', '','', '2022-10-27 10:39:29');
+
+-- 隧道表桩号字段
+alter table sd_tunnels add column start_pile_num varchar(20) comment '隧道开始桩号（整型）';
+alter table sd_tunnels add column end_pile_num varchar(20) comment '隧道结束桩号（整型）';
+
+-- 隧道分区表桩号字段
+alter table sd_tunnel_subarea add column start_pile varchar(20) comment '开始桩号';
+alter table sd_tunnel_subarea add column end_pile varchar(20) comment '结束桩号';
+
+-- 事件类型sd_event_type
+alter table sd_event_type add column f_id varchar(20) comment '父类ID';
+alter table sd_event_type add column simplify_name varchar(20) comment '类型简称';
+
+-- 设备控制记录表 sd_operation_log
+alter table sd_operation_log add column oper_ip varchar(100) comment 'IP地址';
+
+-- 数据字典 设备控制结果
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作状态', 'sd_device_opt_state', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 0, '失败', '0', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '成功', '1', 'sd_device_opt_state', 'default', '0', 'admin', sysdate() );
+--数据字典  设备控制方式-预案执行添加
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) VALUES ( 8, '预案执行', '4', 'sd_control_type', 'default', '0', 'admin',  sysdate());
+--设备类型 sd_equipment_type
+alter table sd_equipment_type add column is_analog varchar(10) comment '是否模拟量设备1：是 0：否(用于触发策略筛选)';
+
+-- -- 数据字典 设备所属系统
+-- INSERT INTO `sys_dict_data` VALUES (0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (1, '通风系统', '1', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:55', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (2, '照明系统', '2', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:13', '', NULL, NULL);
+-- INSERT INTO `sys_dict_data` VALUES (3, '供配电系统', '3', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:27', 'admin', '2022-11-04 14:15:58', NULL);
+-- INSERT INTO `sys_dict_data` VALUES (463, 4, '消防系统', '4', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:45', '', NULL, NULL);
+
+--数据字典 故障类型
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '自然损坏', '0', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '腐蚀泡水', '1', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '变形或断裂', '2', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 4, '间歇性故障', '3', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 5, '机械故障', '4', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 6, '人为损坏', '5', 'fault_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 7, '其他', '6', 'fault_type', 'default', '0', 'admin', sysdate() );
+--数据字典  故障等级
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '一般故障', '0', 'fault_level', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '严重故障', '1', 'fault_level', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '重大故障', '2', 'fault_level', 'default', '0', 'admin', sysdate() );
+--数据字典  故障消除状态
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '已消除', '0', 'fault_remove_statue', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '未消除', '1', 'fault_remove_statue', 'default', '0', 'admin', sysdate() );
+--数据字典  故障状态
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '已发布', '0', 'fault_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '未发布', '1', 'fault_status', 'default', '0', 'admin', sysdate() );
+--数据字典  故障处理情况
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '无故障', '0', 'fault_clstatus', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '已消除', '1', 'fault_clstatus', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '未消除', '2', 'fault_clstatus', 'default', '0', 'admin', sysdate() );
+
+--机电巡查数据表
+--故障清单表
+CREATE TABLE `sd_fault_list`  (
+  `id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '故障编号',
+  `tunnel_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '隧道id',
+  `fault_location` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障位置（设备的“方向”、“桩号”，拼接展示）',
+  `fault_type` int(2) NULL DEFAULT NULL COMMENT '故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他)',
+  `fault_source` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障发现源',
+  `fault_fxtime` datetime(0) NULL DEFAULT NULL COMMENT '故障发现时间',
+  `fault_cxtime` varchar(0) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障持续时间（根据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间）',
+  `fault_tbr` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障填报人',
+  `fault_tbtime` datetime(0) NULL DEFAULT NULL COMMENT '故障填报时间',
+  `eq_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备id',
+  `eq_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备状态（1-在线，2-离线，3-故障）',
+  `fault_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障代码',
+  `fault_level` int(2) NULL DEFAULT NULL COMMENT '故障等级',
+  `fallt_remove_statue` int(2) NULL DEFAULT NULL COMMENT '故障消除状态（0：已消除；1：未消除）',
+  `fault_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '故障描述',
+  `fault_status` int(2) NULL DEFAULT NULL COMMENT '状态（0：已发布；1：未发布）',
+  `img_file_id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片id',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '故障清单表' ROW_FORMAT = Dynamic;
+--巡检任务表
+CREATE TABLE `sd_task_list`  (
+  `id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务编号',
+  `zzjg_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '所属单位id(新增时保存当前登录人的单位id)',
+  `end_plantime` datetime(0) NULL DEFAULT NULL COMMENT '计划完成时间',
+  `dispatcher` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '派单人员',
+  `dispatch_time` datetime(0) NULL DEFAULT NULL COMMENT '派单时间',
+  `bz_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '指派巡查班组id',
+  `task_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '任务描述',
+  `publish_status` int(2) NULL DEFAULT NULL COMMENT '发布状态(0:未发布状态;1:已废止状态;2:发布状态)',
+  `task_status` int(2) NULL DEFAULT NULL COMMENT '任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时）',
+  `walker_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '巡查人员id',
+  `task_endtime` datetime(0) NULL DEFAULT NULL COMMENT '任务完成时间',
+  `task_cxtime` datetime(0) NULL DEFAULT NULL COMMENT '任务持续时间',
+  `site_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '现场情况描述',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '巡查任务表' ROW_FORMAT = Dynamic;
+--巡检任务操作记录表
+CREATE TABLE `sd_task_opt`  (
+  `id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
+  `task_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '巡检任务id',
+  `opt_type` int(2) NULL DEFAULT NULL COMMENT '操作类型（0:派单（发布）;1:接收;2:提交）',
+  `opt_person_id` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作人',
+  `opt_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
+  `opt_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '操作说明',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '巡检任务操作记录表' ROW_FORMAT = Dynamic;
+--巡检点清单表
+CREATE TABLE `sd_patrol_list`  (
+  `id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '主键',
+  `task_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '巡检任务id',
+  `eq_fault_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备id或故障清单表id',
+  `patrol_type` int(2) NULL DEFAULT NULL COMMENT '巡检点类型（0：巡检点；1：故障点）',
+  `eq_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备或巡检点名称',
+  `position` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '安装位置',
+  `impression` int(2) NULL DEFAULT NULL COMMENT '外观情况(0:外观完整;2:外观破损)',
+  `network` int(2) NULL DEFAULT NULL COMMENT '网络通讯情况(0:通讯正常;1:通讯异常)',
+  `power` int(2) NULL DEFAULT NULL COMMENT '供配电情况(0:配电正常;1:配电异常)',
+  `eq_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备状态',
+  `run_status` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '运行状态',
+  `eq_fault_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备故障码（碰一碰检测）',
+  `eq_fault_description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '设备故障描述',
+  `fault_clstatus` int(2) NULL DEFAULT NULL COMMENT '故障处理情况（0：无故障:；1：已消除:；2：未消除）',
+  `xc_time` datetime(0) NULL DEFAULT NULL COMMENT '巡查时间',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `xc_sort` int(2) NULL DEFAULT NULL COMMENT '巡查顺序',
+  `xc_status` int(2) NULL DEFAULT NULL COMMENT '巡查状态（0：未巡检；1：已巡检）',
+  `img_file_id` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片id',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '创建者',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '巡查点清单表' ROW_FORMAT = Dynamic;
+
+-- 设备备件库 所属隧道ID
+alter table sd_spare_parts_warehouse add column tunnel_id varchar(100) comment '所属隧道ID' after id;
+
+-- 新增推送数据历史记录表
+DROP TABLE IF EXISTS `sd_push_history`;
+CREATE TABLE `sd_push_history`  (
+   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
+   `data_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '推送接口 device、tunnel',
+   `push_data` varchar(3000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '推送数据',
+   `push_status` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态 0：未推送 1：已推送',
+   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+   `update_time` datetime NULL DEFAULT NULL COMMENT '修改时间',
+   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '推送数据历史记录表' ROW_FORMAT = DYNAMIC;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- 设备类型sd_equipment_type
+alter table sd_equipment_type add column eq_category varchar(10) comment '设备大类';
+alter table sd_equipment_type add column eq_system varchar(10) comment '所属系统';
+
+-- 设备控制记录表事件ID
+alter table sd_operation_log add column event_id varchar(100) comment '事件ID';
+
+-- 数据字典设备所属系统
+INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, create_time, update_by, update_time, remark) VALUES (101, '所属系统', 'eq_system', '0', 'admin', '2022-11-04 14:12:57', '', NULL, NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 1, '通风系统', '1', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:55', '', NULL, NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 2, '照明系统', '2', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:13', '', NULL, NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 3, '供配电系统', '3', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:27', 'admin', '2022-11-04 14:15:58', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 4, '消防系统', '4', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:15:45', '', NULL, NULL);
+
+-- 数据字典设备所属大类
+INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, create_time, update_by, update_time, remark) VALUES (102, '设备大类', 'eq_category', '0', 'admin', '2022-11-07 10:04:01', '', NULL, NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '车道指示器', '0', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:04:44', 'admin', '2022-11-07 10:09:11', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 1, '交通信号灯', '1', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:04:51', 'admin', '2022-11-07 10:09:22', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 2, '亮度检测器', '2', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:00', 'admin', '2022-11-07 10:09:30', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 3, '摄像机', '3', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:10', 'admin', '2022-11-07 10:09:38', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 4, '紧急电话', '4', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:21', 'admin', '2022-11-07 10:09:45', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 5, '火灾报警', '5', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:31', 'admin', '2022-11-07 10:09:59', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 6, '巡检机器人', '6', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:40', 'admin', '2022-11-07 10:10:08', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 7, '智能消防炮', '7', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:49', 'admin', '2022-11-07 10:10:17', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 8, '可变信息标志', '8', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:05:57', 'admin', '2022-11-07 10:10:27', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 9, '雷达', '9', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:06', 'admin', '2022-11-07 10:10:35', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 10, 'PLC主机', '10', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:16', 'admin', '2022-11-07 10:10:45', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 11, '微波车辆检测器', '11', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:23', 'admin', '2022-11-07 10:10:51', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 12, 'CO/VI检测器', '12', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:30', 'admin', '2022-11-07 10:10:58', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 13, '风速风向检测器', '13', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:38', 'admin', '2022-11-07 10:11:06', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 14, '智能诱导灯', '14', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:46', 'admin', '2022-11-07 10:11:14', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 15, '智能疏散标志', '15', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:06:57', 'admin', '2022-11-07 10:11:22', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 16, '风机', '16', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:06', 'admin', '2022-11-07 10:11:30', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 17, '照明', '17', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:15', 'admin', '2022-11-07 10:11:39', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 18, '卷帘门', '18', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:24', 'admin', '2022-11-07 10:11:47', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 19, '消防栓', '19', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:32', 'admin', '2022-11-07 10:11:56', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 20, '远传压力表', '20', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:47', 'admin', '2022-11-07 10:12:18', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 21, '消防水泵', '21', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:07:56', 'admin', '2022-11-07 10:12:28', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 22, '液位传感器', '22', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:08:03', 'admin', '2022-11-07 10:12:40', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 23, '消防水池', '23', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:08:13', 'admin', '2022-11-07 10:12:48', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 24, '光伏棚洞', '24', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:08:23', 'admin', '2022-11-07 10:12:56', NULL);
+INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 25, '变电所', '25', 'eq_category', NULL, 'default', 'N', '0', 'admin', '2022-11-07 10:08:33', 'admin', '2022-11-07 10:13:05', NULL);
+
+-- 情报板设备类型字典值
+INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('情报板设备类型', 'iot_devices_type', '0', 'admin', '2022-11-09 10:34:30', '', NULL, '对应iot_device表中local_info');
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, '洞口设备', '0', 'iot_devices_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:35:34', '', NULL, '情报板设备位置信息洞口设备');
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, '洞内设备', '1', 'iot_devices_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:36:21', '', NULL, '情报板设备位置信息洞内设备');
+-- 情报板模板类别字典值增加
+INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('情报板模板分类', 'iot_template_category', '0', 'admin', '2022-11-09 14:28:44', '', NULL, '情报板管理页面模板分类');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, '日常通用', '0', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:31:19', '', NULL, '模板类别');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, '施工管控', '1', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:32:01', '', NULL, '模板类别');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (3, '恶劣天气', '2', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:32:32', '', NULL, '模板类别');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (4, '交通拥堵', '3', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:33:17', '', NULL, '模板类别');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (5, '突发事件', '4', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:34:07', '', NULL, '模板类别');
+INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (6, '警情播报', '5', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:35:05', '', NULL, '模板类别');
+-- 情报板模板数据库表新增字段
+alter table sd_vms_template add column category varchar(100) comment '模板类别';
+
+-- 数据字典防空类型
+INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( '防控类型', 'prev_control_type', '0', 'admin', '2022-11-09 10:37:37', '', NULL, NULL);INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 0, '交通事件', '0', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:17', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 1, '主动安全', '1', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:32', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( 2, '设备故障', '2', 'prev_control_type', NULL, 'default', 'N', '0', 'admin', '2022-11-09 10:38:48', '', NULL, NULL);
+
+-- 新增菜单，机电巡查
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2339, '机电巡查', 0, 6, 'empatrol', NULL, NULL, 1, 0, 'M', '0', '0', '', '#', 'admin', '2022-11-02 16:35:31', 'admin', '2022-11-03 09:26:32', '');
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2341, '故障管理', 2339, 1, 'emFault', 'electromechanicalPatrol/faultManage/index', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-03 09:15:14', 'admin', '2022-11-04 15:07:20', '');
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2345, '巡查任务', 2339, 2, 'emTask', 'electromechanicalPatrol/taskManage/index', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-04 14:40:01', 'admin', '2022-11-04 15:25:24', '');
+
+-- 新增菜单，安全预警
+INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2338, '安全预警', 2250, 1, 'safeWarn', 'event/event/safeWarn', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-02 10:01:48', 'admin', '2022-11-02 16:55:52', '');

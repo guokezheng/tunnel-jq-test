@@ -179,7 +179,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
         }
         int result = -1;
         List<SdEquipmentStateIconFile> list = new ArrayList<SdEquipmentStateIconFile>();
-        try {
+//        try {
             if ("-1".equals(sdEquipmentType.getTypeId())) {
                 sdEquipmentType.setTypeId(null);
             }
@@ -203,17 +203,17 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
                     } catch (IOException e) {
                         throw new RuntimeException("图片转换base64异常");
                     }
-                    // 从缓存中获取文件存储路径
-                    String fileServerPath = RuoYiConfig.getUploadPath();
+//                    // 从缓存中获取文件存储路径
+//                    String fileServerPath = RuoYiConfig.getUploadPath();
                     // 原图文件名
                     String filename = file[i].getOriginalFilename();
                     // 原图扩展名
                     String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                     // 新的全名
                     String fileName = extendName;
-                    // 加路径全名
-                    File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
-                    File filepath = new File(fileServerPath + "/equipmentIcon");
+//                    // 加路径全名
+//                    File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
+//                    File filepath = new File(fileServerPath + "/equipmentIcon");
 
                     SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                     iconFile.setStateIconId(guid);
@@ -223,11 +223,11 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
                     iconFile.setCreateTime(DateUtils.getNowDate());
                     list.add(iconFile);
 
-                    if (!filepath.exists()) {
-                        filepath.mkdirs();
-                    } else {
-                    }
-                    file[i].transferTo(dir);
+//                    if (!filepath.exists()) {
+//                        filepath.mkdirs();
+//                    } else {
+//                    }
+//                    file[i].transferTo(dir);
                 }
                 result = sdEquipmentIconFileMapper.brachInsertStateIconFile(list);
                 if (result > -1) {
@@ -239,10 +239,10 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
                 result = sdEquipmentTypeMapper.insertSdEquipmentType(sdEquipmentType);
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return 0;
+//        }
         return result;
     }
 
@@ -261,7 +261,7 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
     public int updateSdEquipmentType(MultipartFile[] file, SdEquipmentType sdEquipmentType, Long[] ids) {
         int result = 0;
         List<SdEquipmentStateIconFile> list = new ArrayList<SdEquipmentStateIconFile>();
-        try {
+//        try {
             if ("-1".equals(sdEquipmentType.getTypeId())) {
                 sdEquipmentType.setTypeId(null);
             }
@@ -296,9 +296,9 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
                     String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
                     // 新的全名
                     String fileName = extendName;
-                    // 加路径全名
-                    File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
-                    File filepath = new File(fileServerPath + "/equipmentIcon");
+//                    // 加路径全名
+//                    File dir = new File(fileServerPath + "/equipmentIcon/" + fileName);
+//                    File filepath = new File(fileServerPath + "/equipmentIcon");
 
                     SdEquipmentStateIconFile iconFile = new SdEquipmentStateIconFile();
                     iconFile.setStateIconId(guid);
@@ -308,11 +308,11 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
                     iconFile.setCreateTime(DateUtils.getNowDate());
                     list.add(iconFile);
 
-                    if (!filepath.exists()) {
-                        filepath.mkdirs();
-                    } else {
-                    }
-                    file[i].transferTo(dir);
+//                    if (!filepath.exists()) {
+//                        filepath.mkdirs();
+//                    } else {
+//                    }
+//                    file[i].transferTo(dir);
                 }
                 result = sdEquipmentIconFileMapper.brachInsertStateIconFile(list);
             }
@@ -324,10 +324,10 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
             }
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return 0;
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return 0;
+//        }
 
 
         return result;

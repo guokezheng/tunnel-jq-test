@@ -7,7 +7,7 @@
 
 <script>
 import * as echarts from "echarts";
-import elementResizeDetectorMaker from 'element-resize-detector'
+import elementResizeDetectorMaker from "element-resize-detector";
 export default {
   props: {
     equipmentData: {
@@ -171,8 +171,10 @@ export default {
 #Equipment {
   width: 100%;
   height: 81%;
+  background-color: #00598f;
 }
 .title {
   color: #09bdef;
+  background-color: #00598f;
 }
 </style>

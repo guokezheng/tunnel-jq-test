@@ -7,7 +7,7 @@
             <div class="tunnelMap">
               <el-image
                 class="back-img"
-                :src="laneUrlList[0].url"
+                :src="backImg"
                 :style="{ width: laneUrlList[0].width + 'px' }"
               ></el-image>
               <div class="maskClass">
@@ -17,10 +17,10 @@
                   class="mousemoveBox"
                   @contextmenu.prevent="rightClick(index)"
                   :style="{
-                    width: item.width / 1.34 + 'px',
-                    height: item.height / 1.34 + 'px',
-                    left: item.left / 1.34 + 'px',
-                    top: item.top / 1.34 + 'px',
+                    width: item.width / 1.37 + 'px',
+                    height: item.height / 1.37 + 'px',
+                    left: item.left / 1.37 + 'px',
+                    top: item.top / 1.37 + 'px',
                   }"
                 >
                 <!-- @mouseleave="mouseleave(index)" -->
@@ -552,7 +552,7 @@
                 </el-timeline-item>
               </el-timeline>
               <div class="endButton">
-                <el-scrollbar
+                <!-- <el-scrollbar
                   style="height: 100%; width: 100%"
                   wrap-style="overflow-x:hidden;"
                 >
@@ -567,7 +567,8 @@
                       <div @click="eventDo(item)">执行</div>
                     </div>
                   </div>
-                </el-scrollbar>
+                </el-scrollbar> -->
+                <el-button class="OneClickRecovery" type="primary" plain @click="OneClickRecovery()">一键恢复</el-button>
               </div>
             </div>
             <div class="rightBox implement">
@@ -587,8 +588,12 @@
                       <div>{{ item.eqName }}</div>
                       <div>{{ getDirection(item.eqDirection) }}</div>
                     </div>
-                    <div class="row2">
+                    <div class="row2" >
                       {{ getEqType(item.state, item.eqType) }}
+
+                      <div style="padding-left:20px">{{ getExecuteResult(item.executeResult) }}</div>
+                      <div style="padding-left:20px;float: right;">{{ item.executeTime }}</div>
+
                     </div>
                   </div>
                 </div>
@@ -622,6 +627,8 @@ import {
   getEvent,
   getImplement,
   getSubareaByStakeNum,
+  performRecovery,
+  dispatchExecuted,
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
@@ -638,13 +645,17 @@ export default {
   },
   data() {
     return {
+      backImg: "",
+      currentTunnel: "",
       // 隧道开始桩号
       startPile: "",
       // 隧道结束桩号
       endPile: "",
       timer: null,
       eqTypeStateList: null,
-      eventMsg: null,
+      eventMsg: {
+        eventState: 2,
+      },
       fqIndex: null,
       hfData: null, //恢复预案列表
       planListEnd: null,
@@ -740,7 +751,12 @@ export default {
     deviceStatusChangeLog(event) {
       // console.log(event, "websockt工作台接收感知事件数据");
       console.log(event, "已执行");
-      this.zxList.push(event[0]);
+      console.log(this.$route.query.id, "this.$route.query.id");
+      for (let item of event) {
+        if (this.$route.query.id == item.eventId) {
+          this.zxList.unshift(item);
+        }
+      }
     },
     // eventFlow(event) {
     //   // console.log(event, "websockt工作台接收感知事件数据");
@@ -755,9 +771,11 @@ export default {
     }, 1000 * 5);
   },
   async created() {
+    await this.getDispatchExecuted();
     await this.getEventData();
     await this.getTunnelData();
     this.getEqTypeStateIcon();
+    console.log(this.$route.query.id, "this.$route.query.id");
     if (this.$route.query.id) {
       const param = {
         id: this.$route.query.id,
@@ -787,10 +805,25 @@ export default {
     // this.getSubareaByStakeNumData();
   },
   methods: {
+    // 一进页面获取已执行数据
+    getDispatchExecuted() {
+      dispatchExecuted(this.$route.query.id).then((res) => {
+        console.log(res, "一进页面获取已执行数据");
+        this.zxList = res.data;
+      });
+    },
+    // 一键恢复
+    OneClickRecovery() {
+      performRecovery(this.$route.query.id).then((res) => {
+        this.accidentInit();
+        this.$forceUpdate();
+        this.$modal.msgSuccess("一键恢复成功");
+      });
+    },
     //返回列表
     returnList() {
       this.$router.push({
-        path: "/emergency/administration/event",
+        path: "/emergency/safeWarn",
       });
     },
     // 关闭事件弹窗
@@ -820,9 +853,14 @@ export default {
       });
     },
     getEqType(state, eqType) {
-      for (var item of this.eqTypeList) {
+      console.log(state, eqType);
+      for (let i = 0; i < this.eqTypeList.length; i++) {
+        let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
+          console.log(item.stateName);
           return item.stateName;
+        } else {
+          continue;
         }
       }
     },
@@ -831,6 +869,13 @@ export default {
         if (item.dictValue == num) {
           return item.dictLabel;
         }
+      }
+    },
+    getExecuteResult(num) {
+      if (num == "0") {
+        return "执行失败";
+      } else {
+        return "执行成功";
       }
     },
     async getEqTypeStateIcon() {
@@ -1108,13 +1153,19 @@ export default {
       that.upList = [];
       that.downList = [];
       await getTunnels(tunnelId).then((response) => {
-        this.startPile = response.data.startPile;
-        this.endPile = response.data.endPile;
-        console.log(this.startPile, this.endPile, "000000000000");
+        this.startPile = response.data.startPileNum;
+        this.endPile = response.data.endPileNum;
+        console.log(this.startPile, this.endPile, "隧道开始桩号和结束桩号");
         let res = response.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
+          let id = res.lane;
+          for (let i = 0; i < that.laneUrlList.length; i++) {
+            if (that.laneUrlList[i].id == id) {
+              that.backImg = that.laneUrlList[i].url;
+            }
+          }
           listType()
             .then((response) => {
               var arr = [];
@@ -1136,22 +1187,25 @@ export default {
                   //如果分区的最小值 == 隧道的最小值
                   if (bxx.pileMin == this.startPile) {
                     if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
-                      // console.log(axx, axx.eqName, "axx");
                       // 定义获取最大值的left
                       var leftMax = axx.position.left;
                       var leftMin = 0;
+                      // console.log(leftMax, "66666666666666");
                       var deviceWidth = Number(leftMax) - Number(leftMin);
                       var deviceHeight = axx.position.top;
                       bxx.width = deviceWidth;
                       bxx.height = deviceHeight;
                       bxx.top = deviceHeight;
                       bxx.left = leftMin;
+                      // console.log(bxx, "bxx");
                     }
                     //如果分区的最大值 == 隧道的最大值
                   } else if (bxx.pileMax == this.endPile) {
                     if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                      console.log(axx, axx.eqName, "bxx");
                       var leftMax = Number(1640);
                       var leftMin = axx.position.left;
+                      console.log(leftMax, leftMin, bxx.sName);
                       var deviceWidth = Number(leftMax) - Number(leftMin);
                       var deviceHeight = axx.position.top;
                       bxx.width = deviceWidth;
@@ -1171,13 +1225,13 @@ export default {
                 }
               }
               this.planList1.forEach((item, index) => {
-                if (item.leftMax != undefined && item.leftMin != undefined) {
-                  var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
-                  item.width = deviceWidth;
-                  item.height = item.deviceHeight;
-                  item.top = item.deviceHeight;
-                  item.left = item.leftMin;
-                }
+                // if (item.leftMax != undefined && item.leftMin != undefined) {
+                // var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
+                // item.width = deviceWidth;
+                // item.height = item.deviceHeight;
+                // item.top = item.deviceHeight;
+                // item.left = item.leftMin;
+                // }
                 if (item.direction == "1") {
                   item.top = 0;
                 }
@@ -1198,6 +1252,17 @@ export default {
           that.rightDirection = "";
         }
       });
+    },
+    /* 根据车道数获取车道图*/
+    getLanUrl(num) {
+      let lane = this.laneUrlList[0];
+      for (let i = 0; i < this.laneUrlList.length; i++) {
+        if (this.laneUrlList[i].num == num) {
+          lane = this.laneUrlList[i];
+          break;
+        }
+      }
+      return lane;
     },
     getUrl() {
       const param3 = {
@@ -1704,6 +1769,13 @@ export default {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
+    .OneClickRecovery {
+      width: 120px;
+      height: 40px;
+      line-height: 40px;
+      margin: 0 auto;
+      padding: 0;
+    }
     .ButtonBox {
       width: 45%;
       height: 100%;

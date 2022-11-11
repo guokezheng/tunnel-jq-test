@@ -14,6 +14,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.ContainerProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class KafkaConfigTwo {
     private String groupId;
     @Value("${spring.kafka.wulian.consumer.auto-offset-reset}")
     private String offset;
+    @Value("${spring.kafka.wulian.consumer.max-poll-records}")
+    private String maxPollRecordes;
 //    @Value("${spring.kafka.wulian.producer.linger-ms}")
 //    private Integer lingerMs;
 //    @Value("${spring.kafka.wulian.producer.max-request-size}")
@@ -38,6 +41,21 @@ public class KafkaConfigTwo {
 //    private Integer batchSize;
 //    @Value("${spring.kafka.wulian.producer.buffer-memory}")
 //    private Integer bufferMemory;
+
+
+    @Value("${spring.kafka.wulian.producer.security.protocol}")
+    private String producerSecurityProtocol;
+    @Value("${spring.kafka.wulian.producer.security.properties.sasl.mechanism}")
+    private String producerSecuritySaslMechanism;
+    @Value("${spring.kafka.wulian.producer.security.properties.sasl.jaas.config}")
+    private String producerSecuritySaslJaas;
+
+    @Value("${spring.kafka.wulian.consumer.security.protocol}")
+    private String consumerSecurityProtocol;
+    @Value("${spring.kafka.wulian.consumer.security.properties.sasl.mechanism}")
+    private String consumerSecuritySaslMechanism;
+    @Value("${spring.kafka.wulian.consumer.security.properties.sasl.jaas.config}")
+    private String consumerSecuritySaslJaas;
 
 
     @Bean
@@ -51,6 +69,7 @@ public class KafkaConfigTwo {
         factory.setConsumerFactory(consumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setPollTimeout(3000);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
 
@@ -68,9 +87,9 @@ public class KafkaConfigTwo {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put("session.timeout.ms", 3000000);
-        props.put("security.protocol", "SASL_PLAINTEXT");
-        props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='its_iot_mp' password='Sdhsg2021';");
+        props.put("security.protocol", producerSecurityProtocol);
+        props.put(SaslConfigs.SASL_MECHANISM, producerSecuritySaslMechanism);
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, producerSecuritySaslJaas);
         return props;
     }
 
@@ -82,10 +101,11 @@ public class KafkaConfigTwo {
         props.put(ConsumerConfig.GROUP_ID_CONFIG,groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put("session.timeout.ms", 3000000);
-        props.put("security.protocol", "SASL_PLAINTEXT");
-        props.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
-        props.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021'");
+        props.put("max.poll.records", maxPollRecordes);
+        props.put("session.timeout.ms", 30000);
+        props.put("security.protocol", consumerSecurityProtocol);
+        props.put(SaslConfigs.SASL_MECHANISM, consumerSecuritySaslMechanism);
+        props.put(SaslConfigs.SASL_JAAS_CONFIG, consumerSecuritySaslJaas);
         return props;
     }
 }

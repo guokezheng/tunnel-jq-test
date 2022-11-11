@@ -117,6 +117,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                             devices.put("state", data.getData());
                         }
                     }
+                } else if (data != null) {
+                    devices.put("state", data.getData());
                 }
             }
         }
@@ -143,7 +145,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
-        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
+        List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
     }
 
@@ -568,6 +570,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         for (SdDevices devices : sdDevicesList) {
             try {
+                /*SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());*/
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());
                 if (StringUtils.isNull(d)) {
                     Map map = checkDevices(devices);
@@ -631,6 +634,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
         Long eqType = devices.getEqType();
+        SdEquipmentType sdeq = devices.getTypeName();
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());
@@ -757,9 +761,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Override
     public String autoId(String tunnelId, Integer typeId) {
-        if (typeId == 1) {
-            return null;
-        }
         //所有隧道类型
         List<SdEquipmentType> equipmentTypes = sdDevicesMapper.selectList();
         //当前设备类型的设备id 如果为null则该设备没添加
@@ -777,9 +778,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             log.info("进来了--->当前设备类型数据库已有");
             List<Integer> integerList = list.stream().map(
                     f -> {
+                        //获取到最后标志位
                         int i = f.lastIndexOf("-");
-                        int length = f.length();
-                        String s = f.substring(i + 1, length);
+                        int k = f.lastIndexOf("+");
+                        int length = 0;
+                        if(k > 0){
+                            length = k;
+                        }else {
+                            length = f.length();
+                        }
+                        String s = f.substring(i + 1, length).trim();
                         return Integer.parseInt(s);
                     }
             ).sorted().collect(Collectors.toList());

@@ -3,10 +3,10 @@
     <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog" :modal-append-to-body='false' >
       <div class="title">
         事件详情
-        <img
+        <!-- <img
           src="../../assets/cloudControl/dialogHeader.png"
           style="height: 30px"
-        />
+        /> -->
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -27,7 +27,8 @@
           v-for="(item, index) in tabList"
           :key="index"
         >
-          <el-table :data="item.list" class="eventTable" height="492" :row-class-name="tableRowClassName">
+        
+          <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
             <el-table-column
               label="隧道名称"
               align="center"
@@ -74,13 +75,6 @@
                   @click="handleSee(scope.row.id)"
                   >查 看
                 </el-button>
-                <!-- <el-button
-                  size="mini"
-                  type="text"
-                  icon="el-icon-thumb"
-                  @click="handleDispatch(scope.row)"
-                  >处理
-                </el-button> -->
                 <el-button
                   size="mini"
                   type="text"
@@ -200,7 +194,7 @@ export default {
             }
           })
         });
-        bus.$emit("getEvtList")
+        // bus.$emit("getEvtList")
       } else {
         this.$modal.msgError("没有接收到事件id");
       }
@@ -251,7 +245,7 @@ export default {
   left: 0 !important;
   margin: 0;
   box-shadow: none;
-  background: transparent;
+  background: rgba($color: #00152B, $alpha: 0.6);
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
@@ -261,6 +255,7 @@ export default {
 }
 ::v-deep .el-dialog__body {
   padding: 0;
+  // background-color: rgba($color: #00152B, $alpha: 0.6);
 }
 .eventClass {
   position: absolute;
@@ -274,13 +269,13 @@ export default {
   // border-radius: 10px;
 }
 ::v-deep .eventBox {
-  width: 52%;
-  height: 660px;
+  width: 570px;
+  max-height: 400px;
   border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
-  top: 10%;
-  left: 25%;
-  background-color: #071930;
+  top: 0px;
+  left: calc(100% - 600px);
+  // background-color: #071930;
   .title {
     padding-left: 20px;
     height: 30px;
@@ -288,16 +283,17 @@ export default {
     color: white;
     font-size: 14px;
     font-weight: bold;
-    background: linear-gradient(
-      270deg,
-      rgba(1, 149, 251, 0) 0%,
-      rgba(1, 149, 251, 0.35) 100%
-    );
-    border-top: solid 2px white;
+    // background: linear-gradient(
+    //   270deg,
+    //   rgba(1, 149, 251, 0) 0%,
+    //   rgba(1, 149, 251, 0.35) 100%
+    // );
+    // border-top: solid 2px white;
     display: flex;
     justify-content: space-between;
-    border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
+    // border-image: linear-gradient(to right, #0083ff, #3fd7fe, #0083ff) 1 10;
     margin: 0 !important;
+    background-image: url(../../assets/cloudControl/evtDialogTitle.png);
   }
   .blueLine {
     width: 20%;
@@ -310,7 +306,10 @@ export default {
     width: 94%;
     margin: 0 auto;
   }
-
+  .el-tabs__nav-scroll{
+    background: rgba($color: #6C8097, $alpha: 0.4);
+    border-radius: 4px;
+  }
   //   表格内容文字
   .eventTable,
   .el-table {
@@ -321,6 +320,9 @@ export default {
     .el-table td.el-table__cell {
       border-bottom: 1px solid #00adff;
     }
+    // .el-table__header-wrapper{
+    //   display: none;
+    // }
     // 表头背景
     .el-table__header-wrapper th,
     .el-table .el-table__fixed-header-wrapper th {
@@ -335,7 +337,7 @@ export default {
       background-color: #0e2c53 !important;
     }
     .el-table__empty-block {
-      background-color: #071930;
+      background-color: rgba($color: #6C8097, $alpha: 0.1);
       color: white;
     }
     .el-button--text {

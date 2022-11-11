@@ -317,6 +317,7 @@
               <el-col :span="22">
                 <el-input
                   v-model="form.startPile"
+                  @blur="setPileInt('start')"
                   placeholder="请输入开始桩号"
                 />
               </el-col>
@@ -326,8 +327,28 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="开始桩号(整形)" prop="startPileNum">
+              <el-input v-model="form.startPileNum" disabled="disabled"  />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="结束桩号" prop="endPile">
-              <el-input v-model="form.endPile" placeholder="请输入结束桩号" />
+              <el-col :span="22">
+                <el-input v-model="form.endPile"
+                          @blur="setPileInt('end')"
+                          placeholder="请输入结束桩号"
+                />
+              </el-col>
+            </el-form-item>
+          </el-col>
+              <el-col :span="2">
+                <!-- <p>米</p> -->
+              </el-col>
+          <el-col :span="12">
+            <el-form-item label="结束桩号(整形)" prop="endPileNum">
+              <el-input v-model="form.endPileNum" disabled="disabled"/>
             </el-form-item>
           </el-col>
         </el-row>
@@ -527,6 +548,24 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    setPileInt(param){
+      if(param=='start'){
+        let startPile = this.form.startPile;
+        if (startPile == null) {
+          return;
+        }
+        //var reg = startPile.replace(/[\u4e00-\u9fa5]/g, "");
+        let pileInt = startPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.startPileNum = pileInt;
+      }else{
+        let endPile = this.form.endPile;
+        if (endPile == null) {
+          return;
+        }
+        let pileInt = endPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.endPileNum = pileInt;
+      }
+    },
     getTunnel() {
       listTunnels().then((response) => {
         this.tunnelData = response.rows;
@@ -601,6 +640,8 @@ export default {
         createTime: null,
         endPile: null,
         startPile: null,
+        endPileNum: null,
+        startPileNum: null,
         updateBy: null,
         updateTime: null,
       };
@@ -654,10 +695,10 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (
-            !new RegExp("^[1-9][0-9]*$").test(this.form.startPile) ||
-            !new RegExp("^[1-9][0-9]*$").test(this.form.startPile)
+            !new RegExp("^[1-9][0-9]*$").test(this.form.startPileNum) ||
+            !new RegExp("^[1-9][0-9]*$").test(this.form.endPileNum)
           ) {
-            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            this.$modal.msgWarning("桩号格式输入有误！");
             return;
           }
           if (this.oper == "edit") {

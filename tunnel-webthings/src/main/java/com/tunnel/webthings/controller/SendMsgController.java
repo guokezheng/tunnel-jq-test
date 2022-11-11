@@ -36,6 +36,19 @@ public class SendMsgController {
         return Result.success(sendMsgService.sendEvent());
     }
 
+    @PostMapping("/devicestatus")
+    @ApiOperation("发送设备数据")
+    public Result devicestatus(@RequestParam("devId") String devId){
+
+        return Result.success(sendMsgService.devicestatus(devId));
+    }
+
+    @PostMapping("/devicesdata")
+    @ApiOperation("发送设备数据")
+    public Result devicesdata(@RequestParam("devId") String devId,@RequestParam("state") String state){
+        return Result.success(sendMsgService.devicesdata(devId,state));
+    }
+
     @PutMapping("/storage")
     @ApiOperation("车道指示器测试")
     public Result storages(@RequestBody SdStateStorage sdStateStorage){

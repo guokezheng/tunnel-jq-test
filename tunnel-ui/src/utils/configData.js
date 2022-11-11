@@ -405,7 +405,7 @@ let laneImage = [
     id: "2",
     name: "3车道-长",
     url: require('@/assets/image/lane/chaochang.png'),
-    width: 2400,
+    width: 4220,
     num: 3,
     direction: 0
   },
@@ -413,6 +413,22 @@ let laneImage = [
     id: "3",
     name: "2车道-短",
     url: require('@/assets/image/lane/fenghuangshan.png'),
+    width: 1620,
+    num: 2,
+    direction: 0
+  },
+  {
+    id: "4",
+    name: "马家峪隧道",
+    url: require('@/assets/image/lane/mjy.jpg'),
+    width: 2200,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "5",
+    name: "凤凰山隧道",
+    url: require('@/assets/image/lane/fhs.jpg'),
     width: 1620,
     num: 2,
     direction: 0

@@ -281,7 +281,9 @@
               <el-date-picker
                     v-model="form.deliveryTime"
                     type="date"
-                    placeholder="请选择出场时间">
+                    placeholder="请选择出场时间"
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -290,7 +292,9 @@
               <el-date-picker
                     v-model="form.warrantyEndTime"
                     type="date"
-                    placeholder="请选择维保截至时间">
+                    placeholder="请选择维保截至时间"
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -299,7 +303,9 @@
               <el-date-picker
                     v-model="form.installTime"
                     type="date"
-                    placeholder="请选择设备安装时间">
+                    placeholder="请选择设备安装时间"
+                    :picker-options="optionsDisable"
+                    value-format="yyyy-MM-dd">
                   </el-date-picker>
             </el-form-item>
           </el-col>
@@ -393,13 +399,13 @@
               <el-input v-model="form.remark" placeholder="请输入备注" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="安装时间" prop="installTime">
               <el-date-picker clearable v-model="form.installTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请输入安装时间">
               </el-date-picker>
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
 <!--          <el-col :span="12">-->
 <!--            <el-form-item label="控制状态" prop="controlStatus">-->
@@ -489,7 +495,7 @@
         </div>
         <div class="el-upload__tip" slot="tip">
           <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的设备数据
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+          <el-link type="info" style="font-size: 12px;color:#39ADFF" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color: red" slot="tip">
           提示：仅允许导入“xls”或“xlsx”格式文件！
@@ -554,6 +560,12 @@
         }
       }
       return {
+        //不能选择当前日期
+        optionsDisable: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          },
+        },
         //巡检状态
         showOrhide: false,
         // plc主机
@@ -1088,7 +1100,7 @@
       /** 提交按钮 */
       submitForm() {
         if (this.submitFormLoading) return
-        this.submitFormLoading = true
+        /*this.submitFormLoading = true*/
         this.$refs["form"].validate(async (valid) => {
           if (valid) {
             if (this.submitMode == 0) {
@@ -1109,7 +1121,7 @@
               });
             }
           }
-          this.submitFormLoading = false
+          /*this.submitFormLoading = false*/
         });
       },
       /** 删除按钮操作 */
@@ -1172,10 +1184,10 @@
       },
       /** 下载模板操作 */
       importTemplate() {
-        exportDevicesTemplate()
-          .then((response) => {
-            this.$download.name(response.msg);
-          });
+       /* exportDevicesTemplate()*/
+          /*.then((response) => {*/
+            this.$download.name('sbsj.xlsx',false);
+          /*});*/
       },
       insertEqControlPointAddress() {
         this.$refs["instructionForm"].validate((valid) => {
@@ -1251,7 +1263,7 @@
 <style lang="scss">
 .el-message-box_style{
     .el-message-box__content{
-      height: 500px !important;
+      max-height: 500px !important;
       overflow: auto !important;
     }
   }

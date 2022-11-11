@@ -7,6 +7,7 @@ import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.utils.constant.RadarEventConstants;
 import com.zc.common.core.websocket.WebSocketService;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,8 @@ public class RadarEventController {
      * @param item
      */
 //    @KafkaListener(id = "matchResultData",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.MATCHRESULTDATA, partitions = "0")}, groupId = "TestGroup")
-    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item) throws Exception {
+    @KafkaListener(topics = {RadarEventConstants.MATCHRESULTDATA}, containerFactory = "kafkaOneContainerFactory")
+    public void topicMatchResultData(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws Exception {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         String participantNum = map.get("participantNum")+"";
@@ -95,7 +97,8 @@ public class RadarEventController {
 //            WebSocketService.broadcast("radarDataList",object.toString());
 //        }
         //手动提交
-        item.acknowledge();
+//        item.acknowledge();
+        consumer.commitSync();
     }
 
     /**
@@ -113,12 +116,14 @@ public class RadarEventController {
      * topic wjDeviceRunningInfo
      */
 //    @KafkaListener(id = "wjDeviceRunningInfo",containerFactory = "myKafkaContainerFactory", topicPartitions = {@TopicPartition(topic = RadarEventConstants.WJDEVICERUNNINGINFO, partitions = "0")}, groupId = "TestGroup")
-    public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item) throws ParseException {
+    @KafkaListener(topics = {RadarEventConstants.WJDEVICERUNNINGINFO}, containerFactory = "kafkaOneContainerFactory")
+    public void topicWjDeviceRunningInfo(ConsumerRecord<String, String> record, Acknowledgment item, Consumer<?,?> consumer) throws ParseException {
         String value = record.value();
         Map<String,Object> map = (Map<String, Object>) JSON.parse(value);
         service.saveRedis(map);
         //手动提交
-        item.acknowledge();
+//        item.acknowledge();
+        consumer.commitSync();
     }
 
     /**

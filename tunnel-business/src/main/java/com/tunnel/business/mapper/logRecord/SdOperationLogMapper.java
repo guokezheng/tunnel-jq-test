@@ -4,6 +4,7 @@ package com.tunnel.business.mapper.logRecord;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 操作日志Mapper接口
@@ -69,4 +70,8 @@ public interface SdOperationLogMapper
      * @return
      */
     public int operationLog(SdOperationLog sdOperationLog);
+
+    public List<SdOperationLog> getEventOperationLog(String eventId);
+
+    public List<Map> getDispatchExecuted(String eventId);
 }

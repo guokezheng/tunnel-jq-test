@@ -39,7 +39,7 @@
           >新增</el-button
         >
         <!-- <el-button
-          type="primary" 
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -62,7 +62,7 @@
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary" 
+          type="primary"
           plain
           icon="el-icon-plus"
           size="mini"
@@ -72,7 +72,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="primary" 
+          type="primary"
           plain
           icon="el-icon-edit"
           size="mini"
@@ -83,7 +83,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="primary" 
+          type="primary"
           plain
           icon="el-icon-delete"
           size="mini"
@@ -120,6 +120,13 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="事件类型ID" align="center" prop="id" />
+      <el-table-column label="防控类型" align="center"  >
+        <template slot-scope="scope">
+           <span>{{ getPrevControlType(scope.row.fId) }}</span>
+        </template>
+
+      </el-table-column>
+      <el-table-column label="简称" align="center" prop="simplifyName" />
       <el-table-column label="事件类型" align="center" prop="eventType" />
       <el-table-column
         label="操作"
@@ -158,6 +165,26 @@
         <el-form-item label="事件类型" prop="eventType">
           <el-input v-model="form.eventType" placeholder="请输入事件类型" />
         </el-form-item>
+        <el-form-item label="简称" prop="simplifyName">
+          <el-input v-model="form.simplifyName" placeholder="请输入简称" />
+        </el-form-item>
+        <el-form-item label="防控类型" prop="fId">
+          <el-select
+            v-model="form.fId"
+            placeholder="防控类型"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in prevControlType"
+              :key="item.dictValue"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -180,6 +207,7 @@ export default {
   name: "EventType",
   data() {
     return {
+      prevControlType: {},
       // 遮罩层
       loading: true,
       // 选中数组
@@ -207,7 +235,7 @@ export default {
       //事件类型
       eventTypeData: {},
       // 表单参数
-      form: {},
+      form: {simplifyName:"",fId:""},
       // 表单校验
       rules: {
         eventType: [
@@ -217,6 +245,9 @@ export default {
     };
   },
   created() {
+    this.getDicts("prev_control_type").then(response => {
+      this.prevControlType = response.data;
+    });
     this.getList();
     this.getEventType();
   },
@@ -298,7 +329,13 @@ export default {
         this.title = "修改事件类型";
       });
     },
-
+    getPrevControlType(num) {
+      for (var item of this.prevControlType) {
+        if (item.dictValue == num) {
+          return item.dictLabel;
+        }
+      }
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {

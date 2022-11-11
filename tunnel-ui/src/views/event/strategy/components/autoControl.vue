@@ -279,6 +279,8 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
+      viewStrategy:false,
+      manualControlStateList:[],
       showCronBox: false,
       strategyForm: {
         strategyType: "2", //策略类型
@@ -304,6 +306,10 @@ export default {
       //设备类型查询参数
       queryEqTypeParams: {
         isControl: 1,
+      },
+      //模拟量设备查询
+      queryAnalogEqParams: {
+        isAnalog: 1,
       },
       deviceName: [], //设备名称列表
       dataItem: [], //数据项
@@ -354,7 +360,7 @@ export default {
     /** 获取当前策略数据 */
     async getStrategyData(row) {
       //获取设备
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
       });
       await listType(this.queryEqTypeParams).then((response) => {
@@ -479,6 +485,8 @@ export default {
           this.strategyForm.id = this.id;
         });
       }
+      this.strategyForm.triggers.deviceId =
+        this.strategyForm.triggers.deviceId.toString();
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -710,7 +718,7 @@ export default {
     },
     // 查询触发器设备类型
     getAutoEqTypeList() {
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
         console.log(this.eqTypeList, "触发器设备类型");
       });

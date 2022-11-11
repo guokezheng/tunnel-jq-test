@@ -1,7 +1,7 @@
 <template>
   <div class="navbar" :style="sideTheme == 'theme-light' || sideTheme == 'theme-dark'?'display:flex;':''">
     <!-- 缩放按钮操作  -->
-    <template v-if="sideTheme != 'theme-blue' && !topNav">
+    <template v-if="!topNav">
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" v-if="!topNav"/>
     </template>
     <!-- 面包屑 -->
@@ -62,7 +62,7 @@
             </el-popover>
       </el-tooltip>
       <!-- 隧道运营APP下载二维码 -->
-      <el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">
+      <!-- <el-tooltip content="隧道营运APP下载" effect="dark" placement="bottom"  class="right-menu-item bell" style="display: inline-block;">
         <el-popover
               placement="bottom"
               trigger="hover">
@@ -74,7 +74,7 @@
               </el-badge>
             </div>
         </el-popover>
-      </el-tooltip>
+      </el-tooltip> -->
 
 
       <!-- qrCodeShow -->
@@ -429,8 +429,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('LogOut').then(() => {
-          // location.href = '';
-          location.href = '/#/login';
+          location.href = '';
+          // location.href = '/#/login';
         })
       }).catch(() => {});
     },
@@ -620,7 +620,7 @@ export default {
   }
 // .theme-dark .navbar{background-color:unset;}
 .navbar{
-  background: rgb(0, 67, 117);
+  background:transparent;
   position: absolute;
     top: 0;
     right: 0;
@@ -748,8 +748,8 @@ export default {
 .theme-dark .main-container .white_icon{color: #fff !important}
 .theme-dark-navbar .white_icon{color: white!important;}
 .theme-blue .white_icon{color: white!important;}
-.theme-blue .el-icon-bell{color:white;font-size:21px;}
-.theme-dark .el-icon-bell{color:white;font-size:21px;}
+/* .theme-blue .el-icon-bell{color:white;font-size:21px;} */
+/* .theme-dark .el-icon-bell{color:white;font-size:21px;} */
 .theme-dark #app .sidebar-container .theme-dark .el-submenu .el-menu-item:hover{background-color:unset;}
 .theme-light .navbar .right-menu .right-menu-item{color: white!important;}
 ::v-deep .el-dialog__body{

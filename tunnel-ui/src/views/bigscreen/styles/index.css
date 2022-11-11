@@ -2,20 +2,33 @@
   width: 99%;
   height: 1.6vw;
   margin: 0 auto;
-  background-color: rgba(255,255,255,0.2);
+  /* background-color: #00598f; */
   /* background-color: rgba(4,15,78,0.4); */
   color: white;
   font-size: 0.9vw;
   padding-left: 1vw;
   line-height: 1.6vw;
+  background-image: url(../styles/image/kuang.png);
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+  background-repeat: no-repeat;
+    background-position-y: bottom;
+}
+.UnificationBox{
+  background-image: url(../styles/image/indexBg.png);
+  background-repeat: no-repeat;
 }
 .contentTitle i{
   color: rgba(255,255,255,0.5);
   float: right;
   padding-right: 0.5vw;
-  font-size: 0.7vw;
+  font-size: 0.4vw;
   line-height: 1.8vw;
   text-transform:Uppercase;
+  font-style: unset;
+  display: block;
+  margin-left: 10px;
 }
 .alarmsStatisticsBox{
   width: 99%;
@@ -23,11 +36,11 @@
   margin: 0 auto;
   /* border: solid 1px white; */
   /* background-color: rgba(255,255,255,0.1); */
-    background-color: rgba(4,15,78,0.8);
+    background-color: #00598f;
 }
 .listHeader{
   font-size: 1.2vw;
-  background-color: #041356;
+  background-color: #226bab;
   color: #FFFFFF;
   line-height: 2vw;
   height: 2vw;
@@ -44,3 +57,12 @@
       border-bottom-color: rgba(255,255,255,0.5);
   } */
 }
+#tunnelRanking,#Equipment,.ArmamentariumClass,#echarts-Box{
+  background-color: #00598f;
+  border:1px solid #00ade3;
+  border-top: 0px;
+}
+.adminClass-right-body .echarts-box,#tunnelSafetyIndex{  border:1px solid #00ade3;
+  border-top: 0px;}
+.alarmsStatisticsBox{  border:1px solid #00ade3;
+  border-top: 0px;}

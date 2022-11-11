@@ -4,22 +4,27 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.net.InetAddress;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +43,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdTunnelSubareaMapper sdTunnelSubareaMapper;
+
+    @Autowired
+    private SdOperationLogMapper sdOperationLogMapper;
 
 
     /**
@@ -222,6 +230,7 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction) {
+        //0是下行1是上行   上行，桩号增大；下行，桩号减小
         //1.根据隧道、方向获取所有同一方向上的分区数据
         Long subareaId =0L;
         SdTunnelSubarea subarea = new SdTunnelSubarea();
@@ -235,6 +244,8 @@ public class SdEventServiceImpl implements ISdEventService {
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
             for(SdTunnelSubarea data:subareaData){
+                //Integer upLimit = direction.equals("0")?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
+                //Integer downLimit = direction.equals("0")?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
                 Integer upLimit = Integer.parseInt(data.getPileMax());
                 Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(upLimit >= compareValue && compareValue >= downLimit){
@@ -247,6 +258,10 @@ public class SdEventServiceImpl implements ISdEventService {
             String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
             String[] pileStr = s.split(",");
             int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
+//            //下行取反
+//            if(direction.equals("0")){
+//                ArrayUtils.reverse(allPile);
+//            }
             int index = Math.abs(compareValue-allPile[0]);
             int result = allPile[0];
             int mark = 0;
@@ -273,4 +288,6 @@ public class SdEventServiceImpl implements ISdEventService {
         }
         return subareaId;
     }
+
+
 }

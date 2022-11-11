@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar-logo-container" :id="topNav?'index_logo':''" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' ? '#004375' : '#004375' }">
+  <div class="sidebar-logo-container" :id="topNav?'index_logo':''" :class="{'collapse':collapse}" style=" backgroundColor:transparent">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="topNav?logo:collapse?zclogo:logo" :class="topNav?'sidebar-logo':collapse?'zcSidebar-logo':'sidebar-logo'" />
@@ -7,7 +7,7 @@
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <!-- <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1> -->
       </router-link>
     </transition>
   </div>
@@ -72,7 +72,7 @@ export default {
   line-height: 72px;
   background: #2b2f3a;
   text-align: center;
-  overflow: hidden;
+  // overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;

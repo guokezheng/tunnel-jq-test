@@ -184,7 +184,7 @@ public class RadarEventServiceImpl implements RadarEventService {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("devNo", "S00063700001980001");
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-            if (eventList.size() > 0) {
+            if (eventList != null && eventList.size() > 0) {
                 for (int i = 0;i < eventList.size();i++) {
                     jsonObject.put("event", eventList.get(i));
                     kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
@@ -448,6 +448,9 @@ public class RadarEventServiceImpl implements RadarEventService {
         JSONObject jsonObject = new JSONObject();
         //设备监测状态 后转Integer
         String deviceStatus = devicesMapper.selectEqStatus(deviceId);
+        if (deviceStatus == null || deviceStatus.equals("")) {
+            deviceStatus = "2";
+        }
         String tunnelId = devicesMapper.selecTunnelId(deviceId);
         if ("1".equals(deviceType) || "2".equals(deviceType) || "3".equals(deviceType) || "4".equals(deviceType)
                 || "10".equals(deviceType) || "12".equals(deviceType) || "13".equals(deviceType)) {

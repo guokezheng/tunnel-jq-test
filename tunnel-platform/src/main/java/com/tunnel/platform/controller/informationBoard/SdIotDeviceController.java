@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * 设备列Controller
- * 
+ *
  * @author yanghousheng
  * @date 2020-09-11
  */
@@ -36,6 +36,12 @@ public class SdIotDeviceController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping(value = "/getdevicessize")
+    public AjaxResult getDevicesSize()
+    {
+        return AjaxResult.success(sdIotDeviceService.getDevicesSize());
+    }
+
     /**
      * 导出设备列列表
      */
@@ -47,14 +53,14 @@ public class SdIotDeviceController extends BaseController
         ExcelUtil<SdIotDevice> util = new ExcelUtil<SdIotDevice>(SdIotDevice.class);
         util.exportExcel(response, list, "device");
     }*/
-    
+
     /**
      * 大屏查询事件报警列表
      */
     @GetMapping("/bigscreenBoardList")
     public String[][] bigscreenBoardList()
     {
-    	/*List<SdEvent> list = sdEventService.selectSdEventList(sdEvent); 
+    	/*List<SdEvent> list = sdEventService.selectSdEventList(sdEvent);
     	return list;*/
     	String[][] boardList={{"2020-12-23 19:25:00", "隧道限速80m/s"},{"2020-12-23 19:26:00","前方隧道，请注意保持车距"},{"2020-12-23 19:27:00", "道路千万条，安全第一条"},{"2020-12-23 19:28:00", "前方隧道正在施工，请注意车速"}};
     	for(int i=0;i<boardList.length;i++){

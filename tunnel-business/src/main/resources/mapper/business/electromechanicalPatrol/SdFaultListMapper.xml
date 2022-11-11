@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper">
+    
+    <resultMap type="SdFaultList" id="SdFaultListResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="faultLocation"    column="fault_location"    />
+        <result property="faultType"    column="fault_type"    />
+        <result property="faultSource"    column="fault_source"    />
+        <result property="faultFxtime"    column="fault_fxtime"    />
+        <result property="faultCxtime"    column="fault_cxtime"    />
+        <result property="faultTbr"    column="fault_tbr"    />
+        <result property="faultTbtime"    column="fault_tbtime"    />
+        <result property="eqId"    column="eq_id"    />
+        <result property="eqStatus"    column="eq_status"    />
+        <result property="faultCode"    column="fault_code"    />
+        <result property="faultLevel"    column="fault_level"    />
+        <result property="falltRemoveStatue"    column="fallt_remove_statue"    />
+        <result property="faultDescription"    column="fault_description"    />
+        <result property="faultStatus"    column="fault_status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="imgFileId"    column="img_file_id"    />
+    </resultMap>
+
+    <sql id="selectSdFaultListVo">
+        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status from sd_fault_list
+    </sql>
+
+    <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
+        <include refid="selectSdFaultListVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="faultLocation != null  and faultLocation != ''"> and fault_location = #{faultLocation}</if>
+            <if test="faultType != null "> and fault_type = #{faultType}</if>
+            <if test="faultSource != null  and faultSource != ''"> and fault_source = #{faultSource}</if>
+            <if test="faultFxtime != null "> and fault_fxtime = #{faultFxtime}</if>
+            <if test="faultCxtime != null  and faultCxtime != ''"> and fault_cxtime = #{faultCxtime}</if>
+            <if test="faultTbr != null  and faultTbr != ''"> and fault_tbr = #{faultTbr}</if>
+            <if test="faultTbtime != null "> and fault_tbtime = #{faultTbtime}</if>
+            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
+            <if test="eqStatus != null  and eqStatus != ''"> and eq_status = #{eqStatus}</if>
+            <if test="faultCode != null  and faultCode != ''"> and fault_code = #{faultCode}</if>
+            <if test="faultLevel != null "> and fault_level = #{faultLevel}</if>
+            <if test="falltRemoveStatue != null "> and fallt_remove_statue = #{falltRemoveStatue}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and fault_description = #{faultDescription}</if>
+            <if test="faultStatus != null "> and fault_status = #{faultStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdFaultListById" parameterType="String" resultMap="SdFaultListResult">
+        <include refid="selectSdFaultListVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdFaultList" parameterType="SdFaultList">
+        insert into sd_fault_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="faultLocation != null">fault_location,</if>
+            <if test="faultType != null">fault_type,</if>
+            <if test="faultSource != null">fault_source,</if>
+            <if test="faultFxtime != null">fault_fxtime,</if>
+            <if test="faultCxtime != null">fault_cxtime,</if>
+            <if test="faultTbr != null">fault_tbr,</if>
+            <if test="faultTbtime != null">fault_tbtime,</if>
+            <if test="eqId != null">eq_id,</if>
+            <if test="eqStatus != null">eq_status,</if>
+            <if test="faultCode != null">fault_code,</if>
+            <if test="faultLevel != null">fault_level,</if>
+            <if test="falltRemoveStatue != null">fallt_remove_statue,</if>
+            <if test="faultDescription != null">fault_description,</if>
+            <if test="faultStatus != null">fault_status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="imgFileId != null">img_file_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="faultLocation != null">#{faultLocation},</if>
+            <if test="faultType != null">#{faultType},</if>
+            <if test="faultSource != null">#{faultSource},</if>
+            <if test="faultFxtime != null">#{faultFxtime},</if>
+            <if test="faultCxtime != null">#{faultCxtime},</if>
+            <if test="faultTbr != null">#{faultTbr},</if>
+            <if test="faultTbtime != null">#{faultTbtime},</if>
+            <if test="eqId != null">#{eqId},</if>
+            <if test="eqStatus != null">#{eqStatus},</if>
+            <if test="faultCode != null">#{faultCode},</if>
+            <if test="faultLevel != null">#{faultLevel},</if>
+            <if test="falltRemoveStatue != null">#{falltRemoveStatue},</if>
+            <if test="faultDescription != null">#{faultDescription},</if>
+            <if test="faultStatus != null">#{faultStatus},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="imgFileId != null">#{imgFileId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdFaultList" parameterType="SdFaultList">
+        update sd_fault_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="faultLocation != null">fault_location = #{faultLocation},</if>
+            <if test="faultType != null">fault_type = #{faultType},</if>
+            <if test="faultSource != null">fault_source = #{faultSource},</if>
+            <if test="faultFxtime != null">fault_fxtime = #{faultFxtime},</if>
+            <if test="faultCxtime != null">fault_cxtime = #{faultCxtime},</if>
+            <if test="faultTbr != null">fault_tbr = #{faultTbr},</if>
+            <if test="faultTbtime != null">fault_tbtime = #{faultTbtime},</if>
+            <if test="eqId != null">eq_id = #{eqId},</if>
+            <if test="eqStatus != null">eq_status = #{eqStatus},</if>
+            <if test="faultCode != null">fault_code = #{faultCode},</if>
+            <if test="faultLevel != null">fault_level = #{faultLevel},</if>
+            <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>
+            <if test="faultDescription != null">fault_description = #{faultDescription},</if>
+            <if test="faultStatus != null">fault_status = #{faultStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdFaultListById" parameterType="String">
+        delete from sd_fault_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSdFaultListByIds" parameterType="String">
+        delete from sd_fault_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

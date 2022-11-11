@@ -155,6 +155,8 @@ public class SdEquipmentTypeController extends BaseController
     		@RequestParam("typeName") String typeName,
 			@RequestParam("typeAbbr") String typeAbbr,
 			@RequestParam("bigType") String bigType,
+			@RequestParam("eqCategory") String eqCategory,
+			@RequestParam("eqSystem") String eqSystem,
     		@RequestParam("removeIds") Long[] removeIds,
     		@RequestParam("isControl") String isControl
     		)
@@ -168,6 +170,8 @@ public class SdEquipmentTypeController extends BaseController
     	sdEquipmentType.setIconHeight(iconHeight);
 		sdEquipmentType.setBigType(bigType);
 		sdEquipmentType.setIsControl(isControl);
+		sdEquipmentType.setEqCategory(eqCategory);
+		sdEquipmentType.setEqSystem(eqSystem);
 
 		Integer num = sdEquipmentTypeService.selectExistSameType(sdEquipmentType);
 		if(num > 0){

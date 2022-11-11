@@ -115,29 +115,17 @@ export default {
     },
     value_() {
       console.log(this.dVal, this.weekVal);
-      // if (!this.dVal && !this.weekVal) {
-      //   return "";
-      // }
-      if (this.dVal === "?" && this.weekVal === "?") {
-        this.dVal = "*";
-        this.weekVal = "*";
-        return this.$message.error("日期与星期不可以同时为“指定”");
+      if (!this.dVal && !this.weekVal) {
+        return "";
       }
       if (this.dVal !== "?" && this.weekVal !== "?") {
-        this.dVal = "?";
-        this.weekVal = "?";
-        return this.$message.error("日期与星期不可以同时为“指定”");
+        this.dVal = "*";
+        this.weekVal = "*";
+        return this.$message.warning("日期与星期不可以同时为“指定”");
       }
-      if (!this.dVal && !this.weekVal) {
-        this.dVal = "?";
-        this.weekVal = "?";
-        return this.$message.error("日期与星期不可以同时为“指定”");
+      if (this.yearVal == "undefined") {
+        return this.$message.warning("请重新选择“年”");
       }
-      // if (this.dVal == "" && this.weekVal == "?") {
-      //   this.dVal = "?";
-      //   this.weekVal = "?";
-      //   return this.$message.error("日期与星期不可以同时为“指定”");
-      // }
       let v = `${this.sVal} ${this.mVal} ${this.hVal} ${this.dVal} ${this.monthVal} ${this.weekVal} ${this.yearVal}`;
       if (v !== this.value) {
         this.$emit("input", v);

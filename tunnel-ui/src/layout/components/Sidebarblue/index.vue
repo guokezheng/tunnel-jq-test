@@ -119,14 +119,14 @@ export default {
     .theme-blue{
         .blue_index_logo{width:22%;}
         .index_logo{width:29%;}
-        #index_logo{height:60px;background-size: 100% 100%;z-index: 999;border-bottom-right-radius:121px;}
+        #index_logo{height:72px;background-size: 100% 100%;z-index: 999;border-bottom-right-radius:121px;line-height: 72px;}
         .el-men-flex{display:flex;justify-content:left;align-items:center;}
         .index_menu{
             el-scrollbar.theme-blue{
                 .el-scrollbar__bar.is-vertical{display:none;}
             }
             .el-scrollbar__wrap{height: 100%;overflow: hidden;}
-            .el-scrollbar__view{width:100%;
+            .el-scrollbar__view{width:100%;height:100%;
                 .end_item{white-space:nowrap;display:inline-block;vertical-align:initial;}
                 .el-submenu{
                     div{width:100%;
@@ -137,14 +137,14 @@ export default {
                 }
                 span{display:block;}
             }
-            .el-icon-arrow-right,.el-icon-arrow-left{position:absolute;top: 12px;font-size:24px;color:#3acbf4;cursor: pointer;}
-            .el-icon-arrow-right{right:2%;}
-            .el-icon-arrow-left{left:30%;z-index: 999;}
+            .el-icon-arrow-right,.el-icon-arrow-left{position:absolute;top: 29px;font-size:16px;color:#fff;cursor: pointer;}
+            .el-icon-arrow-right{right:-4%;}
+            .el-icon-arrow-left{left:47%;z-index: 999;}
             .is-horizontal{display:none;}
         }
         .el-menu{background-color:unset;}
         // .el-menu-item:hover, .el-menu-item:focus{background-color:unset!important;}
-        .el-menu-item:hover, .el-menu-item:focus{background-color:red!important;}
+        .el-menu-item:hover, .el-menu-item:focus{background-color:#00588f!important;}
         .sidebar-logo-container{background-color:unset!important;background:unset;}
         .el-scrollbar{
             .el-scrollbar__view{
@@ -173,7 +173,7 @@ export default {
                     }
                     div a{display:block;}
                     .submenu-title-noDropdown{color: white;}
-                    .is-active span{color: #3acbf4!important;}
+                    .is-active span{color: #fff;}
                 } 
             } 
         }

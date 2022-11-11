@@ -31,8 +31,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-
-
     <select id="selectSdEnvironmentConfigurationList_exp" parameterType="SdEnvironmentConfiguration" resultMap="SdEnvironmentConfigurationResult">
         <!--<include refid="selectSdEnvironmentConfigurationVo"/>-->
         select conf.id, conf.sd_name, conf.url, typ.type_name as environment_type, conf.width, conf.height, dit.dict_label as direction, conf.create_by, conf.remark, conf.create_time, conf.update_time from sd_environment_configuration conf

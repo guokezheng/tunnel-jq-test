@@ -53,7 +53,7 @@ public interface TunnelIotDeviceMapper {
 
     int selectCount();
 
-    void insertDevice(List<ResponseVO> list);
+//    void insertDevice(List<ResponseVO> list);
 
     void deleteDevice();
 }

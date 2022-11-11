@@ -1,6 +1,12 @@
 <template>
   <div>
-    <template v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-light'">
+    <template
+      v-if="
+        sideTheme == 'theme-dark' ||
+        sideTheme == 'theme-light' ||
+        sideTheme == 'theme-blue'
+      "
+    >
       <!-- 左右结构 -->
       <div :class="classObj" class="app-wrapper">
         <div
@@ -19,17 +25,20 @@
               :class="{ 'fixed-header': fixedHeader }"
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
-              <navbar style="display: block;height:72px" />
+              <navbar style="display: block; height: 72px" />
               <!-- <tags-view v-if="needTagsView" /> -->
             </div>
-            <div :class="getRoute2($route.path)?'':'breadcrumbAppmainBox'" style="height:100%">
+            <div
+              :class="getRoute2($route.path) ? '' : 'breadcrumbAppmainBox'"
+              style="height: 100%"
+            >
               <breadcrumb
-              :style="'display:' + getRoute($route.path) + ';'"
-              ref="Breadcrumb"
-              id="breadcrumb-container"
-              class="breadcrumb-container"
-            />
-            <app-main />
+                :style="'display:' + getRoute($route.path) + ';'"
+                ref="Breadcrumb"
+                id="breadcrumb-container"
+                class="breadcrumb-container"
+              />
+              <app-main />
             </div>
 
             <right-panel>
@@ -59,6 +68,8 @@
                   position: relative;
                   box-shadow: unset;
                   float: left;
+                  display: flex;
+                  align-items: center;
                 "
               />
               <template v-if="weatherView">
@@ -76,7 +87,7 @@
                 :style="
                   weatherView
                     ? 'width: 15%!important;justify-content:right;'
-                    : 'width: 25%;justify-content:right;'
+                    : 'width: 25%;justify-content:right;display:flex'
                 "
               />
             </div>
@@ -90,32 +101,35 @@
                 : 'margin-left:0px;'
             "
           >
-          <!-- <div :class=""> -->
-          <div :class="getRoute2($route.path)?'noSeparate':'separate'" >
+            <!-- <div :class=""> -->
+            <div :class="getRoute2($route.path) ? 'noSeparate' : 'separate'">
+              <breadcrumb
+                :style="'display:' + getRoute($route.path) + ';'"
+                ref="Breadcrumb"
+                id="breadcrumb-container"
+                class="breadcrumb-container"
+              />
+              <app-main />
+              <right-panel>
+                <settings />
+              </right-panel>
+              <el-badge
+                :value="eventValue"
+                class="eventIcon"
+                :hidden="badgeHidden"
+              >
+                <div
+                  class="el-icon-s-order"
+                  @click="openEventTitleDialog"
+                ></div>
+              </el-badge>
 
-            <breadcrumb
-              :style="'display:' + getRoute($route.path) + ';'"
-              ref="Breadcrumb"
-              id="breadcrumb-container"
-              class="breadcrumb-container"
-            />
-            <app-main />
-            <right-panel>
-              <settings />
-            </right-panel>
-            <el-badge :value = 'eventValue' class="eventIcon" :hidden="badgeHidden">
-              <div
-                class="el-icon-s-order"
-                @click="openEventTitleDialog"
-              ></div>
-            </el-badge>
-
-            <event-dialog
-              v-show="eventDialogPic"
-              ref="picDialog"
-            ></event-dialog>
-            <event-dialogTable v-show="eventDialogTable"></event-dialogTable>
-          </div>
+              <event-dialog
+                v-show="eventDialogPic"
+                ref="picDialog"
+              ></event-dialog>
+              <event-dialogTable v-show="eventDialogTable"></event-dialogTable>
+            </div>
           </div>
         </template>
       </div>
@@ -205,8 +219,8 @@ export default {
   },
   data() {
     return {
-      badgeHidden:true,
-      eventValue:0,
+      badgeHidden: true,
+      eventValue: 0,
       mapStyle: "",
       // 天气
       weather_weather: "",
@@ -218,7 +232,13 @@ export default {
       tunnelStyle: null,
       eventDialogPic: false,
       eventDialogTable: false,
-      routePath:['/index','/map/map/index','/emergency/administration/dispatch','/map/map3d/index','/energy']
+      routePath: [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ],
     };
   },
   mixins: [ResizeMixin],
@@ -277,6 +297,7 @@ export default {
     },
   },
   created() {
+    console.log(this.topNav,"this.topNav");
     console.log(this.$route.path, "路由");
     if (this.$route.path == "/tunnel") {
       if (
@@ -294,7 +315,7 @@ export default {
   },
   methods: {
     openEventTitleDialog() {
-      if(this.eventDialogTable == false){
+      if (this.eventDialogTable == false) {
         bus.$emit("openTableDialog");
         this.eventDialogTable = true;
       }
@@ -313,7 +334,7 @@ export default {
         return "block";
       }
     },
-    getRoute2(path){
+    getRoute2(path) {
       var arr = [
         "/index",
         "/map/map/index",
@@ -359,13 +380,14 @@ export default {
       document.getElementsByTagName("body")[0].className = val;
     },
     sdEventList(event) {
-      this.eventValue += event.length
-      if(this.eventValue > 0){ 
-        this.$forceUpdate()
-        this.badgeHidden = false
+      this.eventValue += event.length;
+      if (this.eventValue > 0) {
+        this.$forceUpdate();
+        // this.badgeHidden = false;
+        this.eventDialogPic = true;
+
       }
     },
-
   },
   mounted() {
     if (this.weatherView == undefined) {
@@ -392,11 +414,10 @@ export default {
     });
     // 事件表格忽略后 右上角数字跟着改
     bus.$on("getEvtList", () => {
-      this.eventValue = this.eventValue-1
-      if(this.eventValue == 0){
-        this.badgeHidden = false
+      this.eventValue = this.eventValue - 1;
+      if (this.eventValue == 0) {
+        this.badgeHidden = false;
       }
-
     });
   },
 };
@@ -427,7 +448,10 @@ export default {
     top: 0;
   }
 }
-.has-logo{
+.topNav_head .has-logo {
+  background: transparent !important;
+}
+ .has-logo {
   background: rgb(0, 67, 117);
 }
 .drawer-bg {
@@ -518,7 +542,7 @@ export default {
 .el-icon-s-order:before {
   font-size: 24px;
 }
-.main-container>div{
+.main-container > div {
   background: rgb(0, 67, 117);
 }
 </style>

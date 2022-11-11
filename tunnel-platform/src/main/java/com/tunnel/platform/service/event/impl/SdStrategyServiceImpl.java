@@ -26,13 +26,17 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
+import org.quartz.CronExpression;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -616,6 +620,17 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             rl.setEquipments(equipments);
             rl.setState(eqState);
             rl.setStrategyId(sty.getId());
+            // corn表达式 校验是否合规
+            if(!CronUtils.isValid(sty.getSchedulerTime())){
+                throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
+            }
+            try {
+                CronExpression cronExpression = new CronExpression(sty.getSchedulerTime());
+                Date nextTime = cronExpression.getNextValidTimeAfter(new Date());
+                rl.setControlTime(DateFormat.getTimeInstance().format(nextTime));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             sdStrategyRlMapper.insertSdStrategyRl(rl);
             Long refId = rl.getId();
             //新增定时任务
@@ -624,10 +639,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             job.setJobName(model.getStrategyName());
             // 调用目标字符串
             job.setInvokeTarget("strategyTask.strategyParams('" + refId + "')");
-            // corn表达式 校验是否合规
-            if(!CronUtils.isValid(sty.getSchedulerTime())){
-                throw new RuntimeException("当前日期表达式选择有误，请重新选择！");
-            }
+
             job.setCronExpression(sty.getSchedulerTime());
             // 计划执行错误策略（1立即执行 2执行一次 3放弃执行）
             job.setMisfirePolicy("1");

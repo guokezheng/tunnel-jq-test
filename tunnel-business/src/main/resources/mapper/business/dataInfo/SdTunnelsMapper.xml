@@ -27,6 +27,8 @@
         <result property="deptName" column="dept_name" />
         <result property="startPile" column="start_pile" />
         <result property="endPile" column="end_pile" />
+        <result property="startPileNum" column="start_pile_num" />
+        <result property="endPileNum" column="end_pile_num" />
         <association property="percentage" column="tunnel_id" javaType="SdSafetyIndex" resultMap="indexResult"/>
         <collection property="sdTunnelSubareas" ofType="sdTunnelSubarea" javaType="java.util.List" select="getSubareas" column="tunnel_id">
             <result property="sId" column="s_id" />
@@ -43,13 +45,13 @@
     <sql id="selectSdTunnelsVo">
         select tunnel_id, tunnel_name, tunnel_code, tunnel_address, longitude, latitude, tunnel_station_id,
                tunnel_station_name, lane, coordinates, remake, tunnel_length, poll, store_configure, create_by,
-               create_time, update_by, update_time, dept_id,start_pile,end_pile from sd_tunnels
+               create_time, update_by, update_time, dept_id,start_pile,end_pile,start_pile_num,end_pile_num from sd_tunnels
     </sql>
 
     <select id="selectSdTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
         select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
         t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,
-        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,ifnull(i.security_percentage,'0') security_percentage
+        t.create_time, t.update_by, t.update_time, t.dept_id, d.dept_name,t.start_pile,t.end_pile,t.start_pile_num,t.end_pile_num,ifnull(i.security_percentage,'0') security_percentage
         from sd_tunnels t
         left join sys_dept d on t.dept_id = d.dept_id
         left join sd_safety_index i on i.tunnel_id = t.tunnel_id
@@ -113,6 +115,8 @@
             <if test="deptId != null">dept_id,</if>
             <if test="startPile != null">start_pile,</if>
             <if test="endPile != null">end_pile,</if>
+            <if test="startPileNum != null">start_pile_num,</if>
+            <if test="endPileNum != null">end_pile_num</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="tunnelId != null">#{tunnelId},</if>
@@ -136,6 +140,8 @@
             <if test="deptId != null">#{deptId},</if>
             <if test="startPile != null">#{startPile},</if>
             <if test="endPile != null">#{endPile},</if>
+            <if test="startPileNum != null">#{startPileNum},</if>
+            <if test="endPileNum != null">#{endPileNum}</if>
         </trim>
     </insert>
 
@@ -161,7 +167,9 @@
             <if test="tunnelLength != null">tunnel_length = #{tunnelLength},</if>
             <if test="deptId != null">dept_id = #{deptId},</if>
             <if test="startPile != null">start_pile = #{startPile},</if>
-            <if test="endPile != null">end_pile = #{endPile}</if>
+            <if test="endPile != null">end_pile = #{endPile},</if>
+            <if test="startPileNum != null">start_pile_num = #{startPileNum},</if>
+            <if test="endPileNum != null">end_pile_num = #{endPileNum}</if>
         </trim>
         where tunnel_id = #{tunnelId}
     </update>

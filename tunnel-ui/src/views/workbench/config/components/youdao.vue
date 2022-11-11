@@ -102,7 +102,7 @@
               ></el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="9" v-if="stateForm2.frequency">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ stateForm2.frequency }} m/s</span
             >
@@ -119,7 +119,7 @@
               ></el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="9" v-if="stateForm2.brightness">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ stateForm2.brightness }} lux</span
             >

@@ -228,12 +228,12 @@ export default {
         strategyName: null, //策略名称
         direction: "", //方向
         autoControl: [
-          // {
-          //   controlTime: new Date(2022, 9, 10, 18, 40), //时间
-          //   value: "", //设备
-          //   state: "", //状态
-          //   type: "", //设备分类
-          // },
+          {
+            controlTime: "", //时间
+            value: "", //设备
+            state: "", //状态
+            type: "", //设备分类
+          },
         ],
       },
       //设备类型查询参数
@@ -325,7 +325,7 @@ export default {
       this.$refs["timeControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          console.log(autoControl,"时间");
+          console.log(autoControl, "时间");
           if (autoControl[0].value.length == 0 || autoControl[0].state == "") {
             return this.$modal.msgError("请选择设备并添加执行操作");
           }
@@ -420,7 +420,7 @@ export default {
             value: "",
             state: "",
             type: "",
-            controlTime: new Date(2022, 9, 10, 18, 40),
+            controlTime: "",
           },
         ];
       }
@@ -476,7 +476,7 @@ export default {
         return this.$modal.msgError("最多添加2条数据");
       }
       this.strategyForm.autoControl.push({
-        controlTime: new Date(2022, 9, 10, 18, 40),
+        controlTime: "",
         value: "",
         state: "",
         type: "",
@@ -586,7 +586,7 @@ export default {
           value: "",
           state: "",
           type: "",
-          controlTime: new Date(2022, 9, 10, 18, 40),
+          controlTime: "",
         },
       ];
     },

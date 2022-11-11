@@ -117,6 +117,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                             devices.put("state", data.getData());
                         }
                     }
+                } else if (data != null) {
+                    devices.put("state", data.getData());
                 }
             }
         }

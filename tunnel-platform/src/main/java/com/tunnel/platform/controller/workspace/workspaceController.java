@@ -121,7 +121,7 @@ public class workspaceController extends BaseController {
         return AjaxResult.success(controlState);
     }
 
-    //诱导灯控制接口
+    //诱导灯、疏散标志控制接口
     @PostMapping("/controlGuidanceLampDevice")
     public AjaxResult controlGuidanceLampAndEvacuationSignDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
@@ -146,6 +146,8 @@ public class workspaceController extends BaseController {
         String frequency = map.get("frequency").toString();
         String fireMark = "";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //当前诱导灯和疏散标志在工作台上展示的都是从部件，需要查询主机的信息进行IP和端口的获取
+        sdDevices = sdDevicesService.selectSdDevicesById(sdDevices.getFEqId());
         //获取当前设备状态
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);

@@ -51,6 +51,7 @@ public class RadarEventServiceImpl implements RadarEventService {
      * 时间戳格式
      */
     private static final String sdf_pattern = "yyyy-MM-dd HH:mm:ss.SSS";
+
     @Autowired
     private ISdEventService sdEventService;
     @Autowired
@@ -295,7 +296,8 @@ public class RadarEventServiceImpl implements RadarEventService {
                     sdRadarDetectData.setVehicleLicense(f.getPicLicense());
                     sdRadarDetectData.setLicenseColor(f.getVehicleColor() + "");
                     sdRadarDetectData.setStakeNum(f.getStakeNum());
-                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed());
+                    sdRadarDetectData.setDistance(f.getDistanceEntry());
+                    System.out.println("ID："+sdRadarDetectData.getVehicleId()+",车牌："+sdRadarDetectData.getVehicleLicense()+",速度："+sdRadarDetectData.getSpeed()+",距离："+f.getDistanceEntry());
                     dataList.add(sdRadarDetectData);
                 });
         wjMapper.insertRadarDetect(dataList);

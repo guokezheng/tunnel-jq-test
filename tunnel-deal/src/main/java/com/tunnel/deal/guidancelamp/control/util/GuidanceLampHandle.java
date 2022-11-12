@@ -7,6 +7,7 @@ import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.deal.guidancelamp.control.NettyClient;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
@@ -30,6 +31,8 @@ public class GuidanceLampHandle {
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
 
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
+
+    private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 
     private GuidanceLampHandle() {
     }
@@ -70,10 +73,14 @@ public class GuidanceLampHandle {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;
             }
-            //存储变更后状态到数据库
+            //存储变更后控制器状态到数据库
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()), ctrState.toString());
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()), brightness);
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
+            //存储子级设备状态
+            SdDevices devices = new SdDevices();
+            devices.setFEqId(deviceId);
+            sdDevicesMapper.selectSdDevicesList(devices);
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue() && !fireMark.equals("")) {
             //发送疏散标志控制指令
             try {
@@ -87,7 +94,7 @@ public class GuidanceLampHandle {
                 System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
                 return 0;
             }
-            //存储变更后状态到数据库
+            //存储变更后控制器状态到数据库
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()), ctrState.toString());
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode()), brightness);
             updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode()), frequency);

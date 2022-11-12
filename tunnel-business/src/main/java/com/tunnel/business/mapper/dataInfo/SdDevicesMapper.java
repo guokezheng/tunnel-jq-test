@@ -183,4 +183,6 @@ public interface SdDevicesMapper
 	public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 
 	public List<Map> getReserveProcessDevices(String[] param);
+
+	public List<SdDevices> getDevicesListByFEqId(String fEqId);
 }

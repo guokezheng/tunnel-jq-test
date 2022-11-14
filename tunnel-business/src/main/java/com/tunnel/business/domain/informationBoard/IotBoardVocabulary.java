@@ -6,12 +6,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 情报板敏感字管理对象 sd_audit_vocabulary
+ * 情报板敏感字管理对象 iot_board_vocabulary
  * 
  * @author 刘方堃
  * @date 2021-11-29
  */
-public class SdAuditVocabulary extends BaseEntity
+public class IotBoardVocabulary extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

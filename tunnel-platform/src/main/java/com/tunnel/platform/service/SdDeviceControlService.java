@@ -90,11 +90,11 @@ public class SdDeviceControlService {
         if (null != map.get("operIp")) {
             sdOperationLog.setOperIp(map.get("operIp").toString());
         }
-        if (null != map.get("controlTime")) {
-            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
-        }else{
-            sdOperationLog.setCreateTime(new Date());
-        }
+//        if (null != map.get("controlTime")) {
+//            sdOperationLog.setCreateTime(DateUtils.parseDate(map.get("controlTime")));
+//        }else{
+        sdOperationLog.setCreateTime(new Date());
+        //}
         if (null != map.get("eventId")) {
             sdOperationLog.setEventId(map.get("eventId").toString());
         }

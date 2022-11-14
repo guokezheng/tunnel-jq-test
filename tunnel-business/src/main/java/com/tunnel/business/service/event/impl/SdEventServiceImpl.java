@@ -284,7 +284,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 subareaId = only.get(0).getsId();
             }
         }catch (Exception ex){
-            throw new RuntimeException("数据处理异常");
+            ex.printStackTrace();
         }
         return subareaId;
     }

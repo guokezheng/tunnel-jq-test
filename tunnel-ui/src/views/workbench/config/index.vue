@@ -190,7 +190,7 @@
                 <div
                   class="wrapper"
                   id="eq-wrapper"
-                  @mousemove="mouseoversImage"
+                  @mouseover="mouseoversImage"
                   @mouseleave="mouseleaveImage"
                 >
                   <!-- <div
@@ -298,6 +298,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
+                        v-show="item.eqType != '31'"
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -314,13 +315,38 @@
                           :width="item.iconWidth"
                           :height="item.iconHeight"
                           :key="item.eqId + indexs"
-                          :src="url"
+                          :src='url'
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
                               : ''
                           "
                         />
+                        <img 
+                         v-show="item.eqType == '31'"
+                        style="position: absolute"
+                          :style="{
+                            left: indexs * 14 + 'px',
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :key="item.eqId + indexs"
+                          :src= getTypePic(item)
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          ">
+                        </img>
+
                         <!-- 调光数值 -->
                         <label
                           style="
@@ -882,7 +908,7 @@
         <el-form-item label="配置状态:">
           <div class="wrap">
             <el-radio-group
-              v-for="(item, index) in eqTypeStateList"
+              v-for="(item, index) in eqTypeStateList2"
               :key="index"
               v-model="batchManageForm.state"
               style="display: flex; flex-direction: column"
@@ -3084,6 +3110,7 @@ export default {
       eqIcon: icon,
       //各状态对应图标列表（灵活性差，后期最好在类型状态管理中动态添加）
       eqTypeStateList: [],
+      eqTypeStateList2: [],
       itemEqTypeStateList: [],
       // 策略visible
       strategyVisible: null,
@@ -3350,6 +3377,7 @@ export default {
         "mousewheel",
 
         function (e) {
+          console.log(e);
           // 获取鼠标所在位置
 
           let { clientX, clientY } = e;
@@ -3464,7 +3492,21 @@ export default {
       }
     },
     radarDataList(event) {
-      console.log(event, "websockt工作台接收车辆感知事件数据");
+      // console.log(event, "websockt工作台接收车辆感知事件数据");
+      // 首先应判断推送数据和当前选择隧道是否一致
+      // if(item.tunnelId == this.tunnelId){}
+      // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
+      // for (let i = 0; i < event.length; i++) {
+      //   // 删除重复数据
+      //   event[i].left = (+event[i].distance / +1000 / +this.tunnelKm) * +1300;
+      //   // 如果速度为0 ，直接别算了
+      //   if (event[i].speed != 0) {
+      //     event[i].speed = (+this.tunnelKm / +event[i].speed) * +3600; //每秒钟移动的距离，单位px
+      //   }
+      //   event[i].lane = event[i].laneNum;
+      // }
+      // this.realTimeList = event;
+      // console.log(this.realTimeList, "处理完的数据");
       // 横纬竖经 lng 经度；   lat：纬度
       //       math.add(a+b)//加
       // math.subtract(a-b)//减
@@ -3719,6 +3761,14 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 获取设备图片
+    getTypePic(item) {
+      if (item.eqId.substring(item.eqId.length - 2) == "-1") {
+        return item.url[0];
+      } else if (item.eqId.substring(item.eqId.length - 2) == "-2") {
+        return item.url[1];
+      }
+    },
     // 批量操作弹窗获取方向
     getDirection(num) {
       for (var item of this.directionList) {
@@ -3744,11 +3794,42 @@ export default {
     },
     // 批量操作 执行
     implementBatchManage() {
+      var that = this;
       this.title = "批量操作";
       for (var item of this.selectedIconList) {
         if (item.click) {
+          console.log(item, "batchManageDialog");
           this.batchManageList.push(item);
           this.batchManageDialog = true;
+          let list = [];
+          const param = {
+            stateTypeId: item.eqType,
+            isControl: 1,
+          };
+          getStateByData(param).then((response) => {
+            console.log(response, "查询设备状态图标");
+            list = response.rows;
+          });
+
+          that.eqTypeStateList2 = [];
+          for (let i = 0; i < list.length; i++) {
+            let iconUrl = [];
+            if (list[i].iFileList) {
+              console.log(111111111);
+              for (let j = 0; j < list[i].iFileList.length; j++) {
+                let img = list[i].iFileList[j].url;
+                iconUrl.push(img);
+              }
+            }
+            that.eqTypeStateList2.push({
+              type: list[i].stateTypeId,
+              state: list[i].deviceState,
+              name: list[i].stateName,
+              control: list[i].isControl,
+              url: iconUrl,
+            });
+            console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
+          }
         }
       }
     },
@@ -5914,8 +5995,8 @@ export default {
     monitorWebsocket() {},
     carchange() {
       getTunnels(this.tunnelId).then((res) => {
+        console.log(res.data, "当前隧道信息");
         const tunnel = res.data;
-        // math.add(a+b)//加
         // math.subtract(a-b)//减
         // math.multiply(a*b)//乘
         // math.divide(a/b)//除
@@ -8079,7 +8160,7 @@ export default {
   // width: 90%;
   height: 650px;
 
-  // position: absolute;
+  position: absolute;
   // top: 7%;
   // -webkit-user-select: none;
   // user-select: none;
@@ -9106,6 +9187,5 @@ input {
   height: 20px;
   border-radius: 50%;
   position: absolute;
-  transition: 1.3s;
 }
 </style>

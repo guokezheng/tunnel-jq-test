@@ -130,6 +130,7 @@ export default {
   },
   methods: {
     prevScroll() {
+      console.log(111);
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft - 150;
       console.log(wrap.scrollLeft)
@@ -146,7 +147,8 @@ export default {
     nextScroll() {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft + 150;
-      if(wrap.scrollLeft == 468){
+      console.log(wrap.scrollLeft)
+      if(wrap.scrollLeft ==320){
         this.rightIcon = false
         this.leftIcon = true
 

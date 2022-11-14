@@ -326,7 +326,7 @@
                          v-show="item.eqType == '31'"
                         style="position: absolute"
                           :style="{
-                            left: indexs * 14 + 'px',
+                            
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
@@ -338,7 +338,6 @@
                           }"
                           :width="item.iconWidth"
                           :height="item.iconHeight"
-                          :key="item.eqId + indexs"
                           :src= getTypePic(item)
                           :class="
                             item.eqName == screenEqName
@@ -3806,13 +3805,12 @@ export default {
             stateTypeId: item.eqType,
             isControl: 1,
           };
+          that.eqTypeStateList2 = [];
+
           getStateByData(param).then((response) => {
             console.log(response, "查询设备状态图标");
             list = response.rows;
-          });
-
-          that.eqTypeStateList2 = [];
-          for (let i = 0; i < list.length; i++) {
+            for (let i = 0; i < list.length; i++) {
             let iconUrl = [];
             if (list[i].iFileList) {
               console.log(111111111);
@@ -3830,8 +3828,12 @@ export default {
             });
             console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
           }
+          });
+
+          
         }
       }
+      
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {

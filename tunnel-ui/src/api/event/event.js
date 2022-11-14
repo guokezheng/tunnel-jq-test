@@ -120,3 +120,11 @@ export function dispatchExecuted(eventId) {
     method: 'get',
   })
 }
+
+// 事件弹窗分类数组
+export function eventList(searchValue) {
+  return request({
+    url: searchValue == 3?'/event/list?remark=pop':'/event/list?searchValue='+searchValue+'&remark=pop',
+    method: 'get',
+  })
+}

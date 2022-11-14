@@ -142,7 +142,7 @@ export default {
   data() {
     return {
       // eventList: [],
-      eventPicDialog: false,
+      eventPicDialog: true,
       urls: [],
       videoUrl: "",
       row11: null,
@@ -157,11 +157,14 @@ export default {
     });
     this.getEventTypeList();
   },
-  mounted() {
+  beforeCreate() {
     bus.$on("getPicId", (e) => {
       this.init(e);
     });
   },
+  // beforeDestroy(){
+  //   bus.$off();
+  // },
   methods: {
     /** 查询事件类型列表 */
     getEventTypeList() {
@@ -177,6 +180,7 @@ export default {
       }
     },
     init(id) {
+      console.log(id)
       if (id) {
         const param = {
           id: id,
@@ -188,7 +192,7 @@ export default {
         });
         this.getUrl(id);
       }
-      this.eventPicDialog = true;
+      // this.eventPicDialog = true;
     },
     getUrl(id) {
       const param3 = {
@@ -218,11 +222,11 @@ export default {
           this.$modal.msgSuccess("已成功忽略");
         });
       }
-      this.$emit("closePicDialog");
-      this.$emit("closeDialog");
-      bus.$emit("closeTableDialog");
+      // this.$emit("closePicDialog");
+      bus.$emit("closePicDialog");
+      // bus.$emit("closeTableDialog");
 
-      this.eventPicDialog = false;
+      // this.eventPicDialog = false;
     },
     // 处理 跳转应急调度
     handleDispatch(event) {
@@ -240,14 +244,14 @@ export default {
       if (this.eventMes.eventState == "3") {
         userConfirm(event.id).then(() => {});
       }
+      // bus.$emit("closePicDialog");
       bus.$emit("closePicDialog");
-      bus.$emit("closeDialog");
-      bus.$emit("closeTableDialog");
-      this.eventPicDialog = false;
+      // bus.$emit("closeTableDialog");
+      // this.eventPicDialog = false;
     },
     closeDialogTable() {
-      this.$emit("closePicDialog");
-      this.eventPicDialog = false;
+      bus.$emit("closePicDialog");
+      // this.eventPicDialog = false;
     },
   },
 };

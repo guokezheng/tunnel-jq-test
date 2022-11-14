@@ -92,7 +92,6 @@
             <if test="eventDescription != null  and eventDescription != ''">and A.event_description =
                 #{eventDescription}
             </if>
-
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
                 and date_format(A.start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
@@ -104,6 +103,9 @@
             </if>
             <if test="searchValue != null and searchValue != ''">
                 and B.prev_control_type = #{searchValue}
+            </if>
+            <if test="remark != null and remark != ''">
+                and A.event_state not in ('1','2')
             </if>
         </where>
         order by A.start_time desc

@@ -183,6 +183,7 @@
                     :style="{
                       left: item.left,
                       top: item.top,
+                      background: item.background,
                     }"
                   ></span>
                 </div>
@@ -2755,6 +2756,8 @@ export default {
   },
   data() {
     return {
+      heightRatio: "",
+      lane: "",
       carList: [],
       tunnelKm: "", //隧道实际长度
       tunnelLength: "", //隧道px长度
@@ -3461,21 +3464,7 @@ export default {
       }
     },
     radarDataList(event) {
-      // console.log(event, "websockt工作台接收车辆感知事件数据");
-      // 首先应判断推送数据和当前选择隧道是否一致
-      // if(item.tunnelId == this.tunnelId){}
-      // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
-      // for (let i = 0; i < event.length; i++) {
-      //   // 删除重复数据
-      //   event[i].left = (+event[i].distance / +1000 / +this.tunnelKm) * +1300;
-      //   // 如果速度为0 ，直接别算了
-      //   if (event[i].speed != 0) {
-      //     event[i].speed = (+this.tunnelKm / +event[i].speed) * +3600; //每秒钟移动的距离，单位px
-      //   }
-      //   event[i].lane = event[i].laneNum;
-      // }
-      // this.realTimeList = event;
-      // console.log(this.realTimeList, "处理完的数据");
+      console.log(event, "websockt工作台接收车辆感知事件数据");
       // 横纬竖经 lng 经度；   lat：纬度
       //       math.add(a+b)//加
       // math.subtract(a-b)//减
@@ -3487,53 +3476,65 @@ export default {
         { lng: 117.81641244, lat: 36.4677101 }, //下行入口右侧 基点4
         { lng: 117.81718759, lat: 36.47501931 }, //下行出口右侧3
       ];
-      //首先计算上下经纬度差值
-      let gao = math.subtract(+data[3].lat - +data[2].lat);
+      // 道路实际高度 / 二维的px数 = 1米所占的px数
+      // this.heightRatio = math.divide(7 / 190);
+      // let gao = math.subtract(+data[0].lat - +data[2].lat); //隧道宽度差(纬度)
+      // console.log(gao, "gaogaogaogao");
       // 结束经度 - 开始经度 = 隧道经度的跨度 = 814 m
-      let chang = math.multiply(+data[3].lng - +data[2].lng); //A
-      console.log(chang, "chang");
-      // tunnelLength tunnelKm
+      // let chang = math.multiply(+data[3].lng - +data[2].lng); //A
       // 计算比例
-      console.log(this.tunnelKm, "this.tunnelKm");
       //1个经度代表的米数
-      let changB = math.divide(math.multiply(this.tunnelKm * 1000) / chang); //B
-      console.log(changB, "changB");
-      // var gaoB = 20 * 1000 /  chang;
+      // let changB = math.divide(math.multiply(this.tunnelKm * 1000) / chang);
+      // let gaoB = math.divide(+9 / +gao); //一个纬度代表的米数
+      // console.log(gaoB, "gaoBgaoBgaoBgaoBgaoB"); //478
       for (let i = 0; i < event.length; i++) {
+        //车辆实际经度
         var lng = Number(event[i].longitude);
-        // 117.816422;
-        console.log(lng, "lnglnglng");
-        // var lat = Number(event[i].latitude);
-        // 计算实际位置
-        // var z = +lat - +data[2].lat;
-        // console.log(data[2].lng , lng,changB,'}}}}}}}}}}}}}}}}}}}}}}}}}}')
-        var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
-        // 117.8171445  117.81641244
-        console.log(carKm, "carKmcarKmcarKmcarKm");
-        if (String(carKm).indexOf("-") != -1) {
-          console.log(String(carKm).replace("-", ""), "99999999999");
-        } else {
-          console.log(String(carKm).replace("-", ""), "66666666666");
+        //车辆实际纬度
+        // var lat = event[i].latitude;
+        if (lng <= +data[3].lat) {
+          return;
         }
-        console.log(this.proportion, "bibibibibibi");
-        // 车辆在二维图上的实际距离
-        // 2.2 = 油门。数越大，跑的越快
+        console.log(event[i].laneNum);
+        //车辆实际距离入口距离
+        var carKm = event[i].distance;
+        // var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
+        // 车当前实际的高度
+        // var carLat = math.multiply(math.subtract(+lat - +data[0].lat) * gaoB);
+        // console.log(carLat, "carLatcarLatcarLat");
+        //计算最终经度
         event[i].left =
-          math.add(math.multiply(+carKm / this.proportion) + 185) + "px";
-        event[i].top = 365 + "px";
-        console.log(event[i].left, "left值");
-        // let lane = this.currentTunnel.lane.num;
-        // console.log(lane, "lanelanelane");
-        // if (lane == 2) {\
-        //   if (event[i].laneNum == 2) {
-        //   } else if (event[i].laneNum == 1) {
-        //     event[i].top == 365;
-        //   }
-        // }
+          math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
+        //计算最终纬度
+        // event[i].top =
+        //   math.add(
+        //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
+        //   ) + "px";
+        // console.log(math.multiply(+carLat * this.proportion), "实际left值");
+        console.log(event[i].top, "event[i].topevent[i].top");
+        // 根据车道数进行判断
+        if (this.lane == 2) {
+          console.log(this.lane, "66666666666");
+          if (event[i].laneNum == 1) {
+            event[i].top = 360 + "px";
+          } else if (event[i].laneNum == 2) {
+            event[i].top = 450 + "px";
+          }
+        }
+        if (
+          event[i].vehicleType == "3" ||
+          event[i].vehicleType == "7" ||
+          event[i].vehicleType == "8"
+        ) {
+          event[i].background = "yellow";
+        } else {
+          event[i].background = "yellow";
+        }
+        if (event[i].speed > Number(90) || event[i].speed < Number(60)) {
+          event[i].background = "red";
+        }
       }
-      console.log("end");
-      console.log(event, "eventeventevent");
-      // this.carList = event;
+      this.carList = event;
       this.$forceUpdate();
     },
     deviceStatus(event) {
@@ -5930,8 +5931,9 @@ export default {
         } else if (Mileage > +2.6) {
           var length = +1300 * 2;
         }
+        this.lane = tunnel.lane;
         this.tunnelLength = length; //px长度
-        this.proportion = length / (Mileage * 1000); //计算px和米的比例
+        this.proportion = math.divide(length / (Mileage * 1000)); //计算px和米的比例
         console.log(
           this.proportion,
           "this.proportionthis.proportionthis.proportionthis.proportion"
@@ -5944,6 +5946,8 @@ export default {
       if (value == "6") {
         this.carchange();
         this.carShow = true;
+      } else {
+        this.carShow = false;
       }
       // carShow
       for (var item of this.selectedIconList) {
@@ -9098,10 +9102,10 @@ input {
 }
 .carBox span {
   display: block;
-  background-color: rgb(24, 199, 24);
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   position: absolute;
+  transition: 1.3s;
 }
 </style>

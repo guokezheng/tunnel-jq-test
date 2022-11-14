@@ -368,3 +368,12 @@ INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, 
 
 -- 新增菜单，安全预警
 INSERT INTO sys_menu(menu_id, menu_name, parent_id, order_num, path, component, query, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark) VALUES (2338, '安全预警', 2250, 1, 'safeWarn', 'event/event/safeWarn', NULL, 1, 0, 'C', '0', '0', '', '#', 'admin', '2022-11-02 10:01:48', 'admin', '2022-11-02 16:55:52', '');
+
+-- 数据字典新增设备模拟控制开关标识
+INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ('设备控制模拟值', 'sys_analog_control_isopen', '0', 'admin', '2022-11-14 11:01:31', '', NULL, NULL);
+INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (0, '是否开启设备模拟控制', '1', 'sys_analog_control_isopen', NULL, 'default', 'N', '0', 'admin', '2022-11-14 11:44:13', '', NULL, '1：开启模拟控制；0：关闭模拟控制');
+
+-- 事件类型
+alter table sd_event_type DROP COLUMN f_id;
+alter table sd_event_type add column icon_url longtext comment '图标base64';
+alter table sd_event_type add column prev_control_type varchar(20) comment '防控类型';

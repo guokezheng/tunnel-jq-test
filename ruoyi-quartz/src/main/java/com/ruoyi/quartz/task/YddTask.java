@@ -70,7 +70,12 @@ public class YddTask {
             sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "on");
             sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "on");
         }
+        //更新诱导灯控制器状态，诱导灯子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
+        SdDevices sonDevices = new SdDevices();
+        sonDevices.setFEqId(sdDevices.getEqId());
+        sonDevices.setEqStatus(sdDevices.getEqStatus());
+        sdDevicesService.updateSdDevicesByFEqId(sonDevices);
         return state;
     }
 

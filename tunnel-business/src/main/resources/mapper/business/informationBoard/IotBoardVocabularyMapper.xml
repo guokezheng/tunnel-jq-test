@@ -2,33 +2,33 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.business.mapper.informationBoard.SdAuditVocabularyMapper">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.IotBoardVocabularyMapper">
     
-    <resultMap type="SdAuditVocabulary" id="SdAuditVocabularyResult">
+    <resultMap type="IotBoardVocabulary" id="IotBoardVocabularyResult">
         <result property="id"    column="id"    />
         <result property="word"    column="word"    />
         <result property="creatTime"    column="creat_time"    />
     </resultMap>
 
-    <sql id="selectSdAuditVocabularyVo">
-        select id, word, creat_time from sd_audit_vocabulary
+    <sql id="selectIotBoardVocabularyVo">
+        select id, word, creat_time from iot_board_vocabulary
     </sql>
 
-    <select id="selectSdAuditVocabularyList" parameterType="SdAuditVocabulary" resultMap="SdAuditVocabularyResult">
-        <include refid="selectSdAuditVocabularyVo"/>
+    <select id="selectIotBoardVocabularyList" parameterType="IotBoardVocabulary" resultMap="IotBoardVocabularyResult">
+        <include refid="selectIotBoardVocabularyVo"/>
         <where>  
             <if test="word != null  and word != ''"> and word like concat('%', #{word}, '%')</if>
             <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
         </where>
     </select>
     
-    <select id="selectSdAuditVocabularyById" parameterType="Long" resultMap="SdAuditVocabularyResult">
-        <include refid="selectSdAuditVocabularyVo"/>
+    <select id="selectIotBoardVocabularyById" parameterType="Long" resultMap="IotBoardVocabularyResult">
+        <include refid="selectIotBoardVocabularyVo"/>
         where id = #{id}
     </select>
         
-    <insert id="insertSdAuditVocabulary" parameterType="SdAuditVocabulary" useGeneratedKeys="true" keyProperty="id">
-        insert into sd_audit_vocabulary
+    <insert id="insertIotBoardVocabulary" parameterType="IotBoardVocabulary" useGeneratedKeys="true" keyProperty="id">
+        insert into iot_board_vocabulary
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="word != null">word,</if>
             <if test="creatTime != null">creat_time,</if>
@@ -39,8 +39,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateSdAuditVocabulary" parameterType="SdAuditVocabulary">
-        update sd_audit_vocabulary
+    <update id="updateIotBoardVocabulary" parameterType="IotBoardVocabulary">
+        update iot_board_vocabulary
         <trim prefix="SET" suffixOverrides=",">
             <if test="word != null">word = #{word},</if>
             <if test="creatTime != null">creat_time = #{creatTime},</if>
@@ -48,12 +48,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteSdAuditVocabularyById" parameterType="Long">
-        delete from sd_audit_vocabulary where id = #{id}
+    <delete id="deleteIotBoardVocabularyById" parameterType="Long">
+        delete from iot_board_vocabulary where id = #{id}
     </delete>
 
-    <delete id="deleteSdAuditVocabularyByIds" parameterType="String">
-        delete from sd_audit_vocabulary where id in 
+    <delete id="deleteIotBoardVocabularyByIds" parameterType="String">
+        delete from iot_board_vocabulary where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

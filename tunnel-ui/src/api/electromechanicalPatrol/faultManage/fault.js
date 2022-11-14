@@ -51,3 +51,13 @@ export function exportList(query) {
     params: query
   })
 }
+
+
+// 故障运行状态
+export function getEquipmentInfo(query) {
+  return request({
+    url: '/fault/list/getEquipmentInfo/',
+    method: 'post',
+    data: query
+  })
+}

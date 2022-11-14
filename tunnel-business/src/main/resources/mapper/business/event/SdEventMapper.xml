@@ -50,6 +50,8 @@
     <resultMap id="eventTypeResult" type="SdEventType">
         <id property="id" column="id"/>
         <result property="eventType" column="event_type"/>
+        <result property="iconUrl" column="icon_url"/>
+        <result property="simplifyName" column="simplify_name"/>
     </resultMap>
 
     <resultMap id="tunnelResult" type="SdTunnels">
@@ -68,7 +70,7 @@
         A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.start_time, A.end_time,A.video_url,
         A.create_by, A.create_time, A.update_by, A.update_time,A.direction,A.small_car_num,A.truck_num,A.passenger_car_num,A.tanker_num,
         A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,
-        B.event_type,C.tunnel_name, C.tunnel_station_name
+        B.event_type,C.tunnel_name, C.tunnel_station_name,B.icon_url,B.simplify_name
         from sd_event A
         left join sd_event_type B
         on A.event_type_id = B.id
@@ -101,7 +103,7 @@
                 AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
             <if test="searchValue != null and searchValue != ''">
-                and B.f_id = #{searchValue}
+                and B.prev_control_type = #{searchValue}
             </if>
         </where>
         order by A.start_time desc

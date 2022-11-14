@@ -1,7 +1,7 @@
 package com.tunnel.business.service.informationBoard;
 
 
-import com.tunnel.business.domain.informationBoard.SdAuditVocabulary;
+import com.tunnel.business.domain.informationBoard.IotBoardVocabulary;
 
 import java.util.List;
 
@@ -11,38 +11,38 @@ import java.util.List;
  * @author 刘方堃
  * @date 2021-11-29
  */
-public interface ISdAuditVocabularyService {
+public interface IIotBoardVocabularyService {
     /**
      * 查询情报板敏感字管理
      *
      * @param id 情报板敏感字管理ID
      * @return 情报板敏感字管理
      */
-    SdAuditVocabulary selectSdAuditVocabularyById(Long id);
+    IotBoardVocabulary selectIotBoardVocabularyById(Long id);
 
     /**
      * 查询情报板敏感字管理列表
      *
-     * @param sdAuditVocabulary 情报板敏感字管理
+     * @param iotBoardVocabulary 情报板敏感字管理
      * @return 情报板敏感字管理集合
      */
-    List<SdAuditVocabulary> selectSdAuditVocabularyList(SdAuditVocabulary sdAuditVocabulary);
+    List<IotBoardVocabulary> selectIotBoardVocabularyList(IotBoardVocabulary iotBoardVocabulary);
 
     /**
      * 新增情报板敏感字管理
      *
-     * @param sdAuditVocabulary 情报板敏感字管理
+     * @param iotBoardVocabulary 情报板敏感字管理
      * @return 结果
      */
-    int insertSdAuditVocabulary(SdAuditVocabulary sdAuditVocabulary);
+    int insertIotBoardVocabulary(IotBoardVocabulary iotBoardVocabulary);
 
     /**
      * 修改情报板敏感字管理
      *
-     * @param sdAuditVocabulary 情报板敏感字管理
+     * @param iotBoardVocabulary 情报板敏感字管理
      * @return 结果
      */
-    int updateSdAuditVocabulary(SdAuditVocabulary sdAuditVocabulary);
+    int updateIotBoardVocabulary(IotBoardVocabulary iotBoardVocabulary);
 
     /**
      * 批量删除情报板敏感字管理
@@ -50,7 +50,7 @@ public interface ISdAuditVocabularyService {
      * @param ids 需要删除的情报板敏感字管理ID
      * @return 结果
      */
-    int deleteSdAuditVocabularyByIds(Long[] ids);
+    int deleteIotBoardVocabularyByIds(Long[] ids);
 
     /**
      * 删除情报板敏感字管理信息
@@ -58,5 +58,5 @@ public interface ISdAuditVocabularyService {
      * @param id 情报板敏感字管理ID
      * @return 结果
      */
-    int deleteSdAuditVocabularyById(Long id);
+    int deleteIotBoardVocabularyById(Long id);
 }

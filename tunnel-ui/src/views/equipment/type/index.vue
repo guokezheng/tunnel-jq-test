@@ -168,14 +168,14 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
-          <el-button
-            v-show="scope.row.typeId==31"
-            size="mini"
-            class="tableBlueButtton"
-            @click="configData(scope.row)"
-            v-hasPermi="['system:type:edit']"
-            >配置参数</el-button
-          >
+<!--          <el-button-->
+<!--            v-show="scope.row.typeId==31"-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="configData(scope.row)"-->
+<!--            v-hasPermi="['system:type:edit']"-->
+<!--            >配置参数</el-button-->
+<!--          >-->
           <el-button
             size="mini"
             class="tableBlueButtton"

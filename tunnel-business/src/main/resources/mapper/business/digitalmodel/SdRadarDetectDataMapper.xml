@@ -192,4 +192,10 @@
             AS sa
         ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H')  GROUP BY t.time
     </select>
+
+    <select id="selectList" parameterType="SdRadarDetectData" resultMap="SdRadarDetectDataResult">
+       SELECT  * FROM  sd_radar_detect_data
+        where vehicle_id = #{vehicleId}
+        order by detect_time ASC
+    </select>
 </mapper>

@@ -44,6 +44,17 @@ public class WjParticipants {
     @ApiModelProperty("桩号")
     private String stakeNum;
 
+    @ApiModelProperty("距离洞口距离")
+    private String distanceEntry;
+
+    public String getDistanceEntry() {
+        return distanceEntry;
+    }
+
+    public void setDistanceEntry(String distanceEntry) {
+        this.distanceEntry = distanceEntry;
+    }
+
     public String getRecordSerialNumber() {
         return recordSerialNumber;
     }

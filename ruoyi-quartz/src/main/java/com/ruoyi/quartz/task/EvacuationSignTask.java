@@ -76,7 +76,10 @@ public class EvacuationSignTask {
         }
         //更新疏散标志控制器状态，疏散标志子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
-        sdDevicesService.updateSdDevicesByFEqId(sdDevices);
+        SdDevices sonDevices = new SdDevices();
+        sonDevices.setFEqId(sdDevices.getEqId());
+        sonDevices.setEqStatus(sdDevices.getEqStatus());
+        sdDevicesService.updateSdDevicesByFEqId(sonDevices);
         return state;
     }
 

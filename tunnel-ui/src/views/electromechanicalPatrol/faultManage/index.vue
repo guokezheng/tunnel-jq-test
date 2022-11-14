@@ -120,14 +120,14 @@
       </el-table-column>-->
       <el-table-column label="设备id" align="center" prop="eqId" />
       <el-table-column label="设备状态" align="center" prop="eqStatus" />
-      <!--      <el-table-column label="故障代码" align="center" prop="faultCode" />-->
+      <!--<el-table-column label="故障代码" align="center" prop="faultCode" />-->
       <el-table-column label="故障等级" align="center" prop="faultLevel" />
       <el-table-column
         label="消除状态"
         align="center"
         prop="falltRemoveStatue"
       />
-      <!--      <el-table-column label="故障描述" align="center" prop="faultDescription" />-->
+      <!--<el-table-column label="故障描述" align="center" prop="faultDescription" />-->
       <el-table-column label="状态" align="center" prop="faultStatus" />
       <el-table-column
         label="操作"
@@ -279,7 +279,7 @@
           </el-col> -->
           <el-col :span="8">
             <el-form-item label="设备名称" prop="eqId">
-              <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称">
+              <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称" @change="eqStatusGet">
                 <el-option
                   v-for="item in eqListData"
                   :key="item.eqId"
@@ -323,7 +323,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="故障等级" prop="faultLevel">
-              <el-select v-model="form.faultType" placeholder="请选择故障等级">
+              <el-select v-model="form.faultLevel" placeholder="请选择故障等级">
               <el-option
                   v-for="dict in dict.type.fault_level"
                   :key="dict.value"
@@ -335,7 +335,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="故障消除状态" prop="falltRemoveStatue">
-              <el-select v-model="form.faultType" placeholder="请选择故障等级">
+              <el-select v-model="form.falltRemoveStatue" placeholder="请选择故障等级">
               <el-option
                   v-for="dict in dict.type.fault_remove_statue"
                   :key="dict.value"
@@ -354,7 +354,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="故障现场照片" prop="imgFileId">
+            <!-- <el-form-item label="故障现场照片" prop="imgFileId">
               <el-select v-model="form.img_file_id" placeholder="请选择所属隧道">
                 <el-option
                   v-for="item in eqTunnelData"
@@ -363,6 +363,28 @@
                   :value="item.tunnelId"
                 ></el-option>
               </el-select>
+            </el-form-item> -->
+            <el-form-item label="默认图标" label-width="100px">
+              <el-upload
+                ref="upload"
+                action="http://xxx.xxx.xxx/personality/uploadExcel"
+                list-type="picture-card"
+                :on-preview="handlePictureCardPreview"
+                :on-remove="handleRemove"
+                :http-request="uploadFile"
+                :file-list="fileList"
+                :on-exceed="handleExceed"
+                :on-change="handleChange"
+                :limit="2"
+                :class="fileList.length >=2 ? 'showUpload':''"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <el-dialog :visible.sync="dialogVisible"  class="modifyEqTypeDialog"
+              :append-to-body="true" style="width:600px !important;margin: 0 auto;"
+              >
+                <img width="100%" :src="dialogImageUrl" alt="" />
+              </el-dialog>
             </el-form-item>
           </el-col>
           <!--        <el-form-item label="故障位置" prop="faultLocation">
@@ -493,6 +515,7 @@ import {
   addList,
   updateList,
   exportList,
+  getEquipmentInfo,
 } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
@@ -558,6 +581,14 @@ export default {
       rules: {},
       // 
       directionList:[],
+      // 
+      direction: "",
+      dialogImageUrl: "",
+      dialogVisible: false,
+      fileData: "", // 文件上传数据（多文件合一）
+      fileList: [], // upload多文件数组
+      //需要移除的文件ids
+      removeIds: [],
     };
   },
   created() {
@@ -572,6 +603,43 @@ export default {
     });
   },
   methods: {
+    eqStatusGet(e){
+      console.log(111111,this.eqListData)
+      console.log(e)
+      getEquipmentInfo({eqId:e}).then((response) => {
+        console.log(response)
+          // this.$modal.msgSuccess("修改成功");
+          // this.open = false;
+          // this.getList();
+      });
+    },
+
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    //删除文件
+    handleRemove(file, fileList) {
+      if (file.hasOwnProperty("fId")) {
+        this.removeIds.push(file.fId);
+      }
+      this.fileList = fileList;
+    },
+    // 上传文件
+    uploadFile(file) {
+      this.fileData.append("file", file.file); // append增加数据
+    },
+    // 选取文件超过数量提示
+    handleExceed(files, fileList) {
+      // let num = this.direction == 0 ? 2 : 1;
+      this.$message.warning("限制上传图标个数不超过2个");
+    },
+    //监控上传文件列表
+    handleChange(file, fileList) {
+      this.fileList = fileList;
+    },
+
+
     /** 查询故障清单列表 */
     getList() {
       this.loading = true;

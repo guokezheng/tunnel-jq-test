@@ -105,8 +105,8 @@ public class workspaceController extends BaseController {
         sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
         List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
         //控制设备
-        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
-
+//        int controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        int controlState = 0;
         //根据字典中配置的设备模拟控制值进行模拟状态展示
         List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
         if (isopenList.size() == 0) {
@@ -139,6 +139,9 @@ public class workspaceController extends BaseController {
             sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOperationLogService.insertSdOperationLog(sdOperationLog);
             return AjaxResult.success(1);
+        } else if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
+            //控制设备
+            controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
         }
 
         //添加操作记录

@@ -187,7 +187,7 @@ public class workspaceController extends BaseController {
         String frequency = map.get("frequency").toString();
         String fireMark = "";
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
-        String fEqId = "";
+        String fEqId = devId;
         if (!sdDevices.getFEqId().equals("") || sdDevices.getFEqId() != null) {
             //当前诱导灯和疏散标志在工作台上展示的都是从部件，需要查询主机的信息进行IP和端口的获取
             fEqId = sdDevices.getFEqId();
@@ -275,7 +275,7 @@ public class workspaceController extends BaseController {
             return AjaxResult.success(1);
         }
         //控制设备
-        int controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
+        int controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
         sdOperationLog.setEqTypeId(sdDevices.getEqType());

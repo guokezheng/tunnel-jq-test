@@ -23,7 +23,8 @@
             AND sde.tunnel_id = #{tunnelId}
         </if>
         ORDER BY
-            sde.start_time ASC
+            sde.start_time DESC
+        LIMIT 50
     </select>
 
     <select id="getEventProportion" resultType="hashmap" parameterType="java.lang.String">

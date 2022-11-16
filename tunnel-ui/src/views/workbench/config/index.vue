@@ -3464,7 +3464,7 @@ export default {
       }
     },
     radarDataList(event) {
-      console.log(event, "websockt工作台接收车辆感知事件数据");
+      // console.log(event, "websockt工作台接收车辆感知事件数据");
       // 横纬竖经 lng 经度；   lat：纬度
       //       math.add(a+b)//加
       // math.subtract(a-b)//减
@@ -3491,10 +3491,10 @@ export default {
         //车辆实际经度
         var lng = Number(event[i].longitude);
         //车辆实际纬度
-        // var lat = event[i].latitude;
-        if (lng <= +data[3].lat) {
-          return;
-        }
+        var lat = event[i].latitude;
+        // if (lng <= +data[0].lng || lat < +data[3].lat) {
+        //   return;
+        // }
         console.log(event[i].laneNum);
         //车辆实际距离入口距离
         var carKm = event[i].distance;
@@ -3504,17 +3504,17 @@ export default {
         // console.log(carLat, "carLatcarLatcarLat");
         //计算最终经度
         event[i].left =
-          math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
+          math.add(math.multiply(+carKm * this.proportion) + 60) + "px";
         //计算最终纬度
         // event[i].top =
         //   math.add(
         //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
         //   ) + "px";
         // console.log(math.multiply(+carLat * this.proportion), "实际left值");
-        console.log(event[i].top, "event[i].topevent[i].top");
+        // console.log(event[i].top, "event[i].topevent[i].top");
         // 根据车道数进行判断
         if (this.lane == 2) {
-          console.log(this.lane, "66666666666");
+          console.log(this.lane, "车道");
           if (event[i].laneNum == 1) {
             event[i].top = 360 + "px";
           } else if (event[i].laneNum == 2) {
@@ -3535,7 +3535,7 @@ export default {
         }
       }
       this.carList = event;
-      this.$forceUpdate();
+      console.log(this.carList);
     },
     deviceStatus(event) {
       this.deviceStatusList = event;
@@ -5934,10 +5934,6 @@ export default {
         this.lane = tunnel.lane;
         this.tunnelLength = length; //px长度
         this.proportion = math.divide(length / (Mileage * 1000)); //计算px和米的比例
-        console.log(
-          this.proportion,
-          "this.proportionthis.proportionthis.proportionthis.proportion"
-        );
       });
       // 首页获取隧道长度，根据隧道长度判断车辆行驶的全部距离
     },

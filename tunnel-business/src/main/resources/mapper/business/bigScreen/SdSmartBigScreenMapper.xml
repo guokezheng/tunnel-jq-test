@@ -134,11 +134,11 @@
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
                 LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-                AND sdd.dict_type = 'prev_control_type'
+                AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
                     AND MONTH ( se.start_time )= MONTH (CURDATE())
-                    AND sdd.dict_value = '0'
+                    AND sdd.dict_value = #{dictValue}
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
@@ -174,11 +174,11 @@
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
                 LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-                AND sdd.dict_type = 'prev_control_type'
+                AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
                     AND MONTH ( se.start_time )= MONTH (CURDATE())
-                    AND sdd.dict_value = '1'
+                    AND sdd.dict_value = #{dictValue}
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
@@ -232,9 +232,9 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-            AND sdd.dict_type = 'prev_control_type'
+            AND sdd.dict_type = #{prevControlType}
         WHERE
-            sdd.dict_value = '0'
+            sdd.dict_value = #{dictValue}
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
@@ -247,9 +247,9 @@
             sd_event se
         LEFT JOIN sd_event_type et ON se.event_type_id = et.id
         LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-        AND sdd.dict_type = 'prev_control_type'
+        AND sdd.dict_type = #{prevControlType}
         WHERE
-            sdd.dict_value = '1'
+            sdd.dict_value = #{dictValue}
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -276,11 +276,11 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
-            AND sdd.dict_type = 'sd_event_state'
+            AND sdd.dict_type = #{sdEventState}
             LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_code
-            AND sdd1.dict_type = 'prev_control_type'
+            AND sdd1.dict_type = #{prevControlType}
         WHERE
-            sdd1.dict_value IN ( '0', '1' )
+            sdd1.dict_value IN ( #{dictValue1}, #{dictValue2} )
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -292,9 +292,9 @@
         FROM
             sd_fault_list sfl
                 LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
-                AND sdd1.dict_type = 'fault_type'
+                AND sdd1.dict_type = #{faultType}
                 LEFT JOIN sys_dict_data sdd2 ON sfl.fallt_remove_statue = sdd2.dict_value
-                AND sdd2.dict_type = 'fault_remove_statue'
+                AND sdd2.dict_type = #{faultRemoveStatue}
         WHERE 1 = 1
         <if test="tunnelId != null and tunnelId != ''">
             AND sfl.tunnel_id = #{tunnelId}
@@ -308,9 +308,9 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-            AND sdd.dict_type = 'prev_control_type'
+            AND sdd.dict_type = #{prevControlType}
         WHERE
-            sdd.dict_value = '0'
+            sdd.dict_value = #{dictValue}
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
@@ -323,9 +323,9 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
-            AND sdd.dict_type = 'prev_control_type'
+            AND sdd.dict_type = #{prevControlType}
         WHERE
-            sdd.dict_value = '1'
+            sdd.dict_value = #{dictValue}
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>

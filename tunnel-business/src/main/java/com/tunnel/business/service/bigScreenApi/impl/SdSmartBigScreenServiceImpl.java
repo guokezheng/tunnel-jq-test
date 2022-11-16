@@ -1,6 +1,8 @@
 package com.tunnel.business.service.bigScreenApi.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
@@ -53,9 +55,9 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     public AjaxResult getSameMonthEventWarning(String tunnelId) {
         Map<String, Object> map = new HashMap<>();
         //查询交通事件
-        List<Map<String, Object>> eventList = sdSmartBigScreenMapper.getEventList(tunnelId);
+        List<Map<String, Object>> eventList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode());
         //查询主动安全
-        List<Map<String, Object>> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId);
+        List<Map<String, Object>> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
         //查询设备故障
         List<Map<String, Object>> faultList = sdSmartBigScreenMapper.getFaultList(tunnelId);
         map.put("event",eventList);
@@ -67,13 +69,18 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     @Override
     public AjaxResult getCumulativeAlarm(String tunnelId) {
         //查询交通事件
-        BigDecimal cumulativeEvent = new BigDecimal(sdSmartBigScreenMapper.getCumulativeEvent(tunnelId));
+        BigDecimal cumulativeEvent = new BigDecimal(sdSmartBigScreenMapper.getCumulativeEvent(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode()));
         //查询主动安全
-        BigDecimal cumulativeWarning = new BigDecimal(sdSmartBigScreenMapper.getCumulativeWarning(tunnelId));
+        BigDecimal cumulativeWarning = new BigDecimal(sdSmartBigScreenMapper.getCumulativeWarning(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode()));
         //查询设备故障
         BigDecimal cumulativeFault = new BigDecimal(sdSmartBigScreenMapper.getCumulativeFault(tunnelId));
         //查询累计分析列表
-        List<Map<String, Object>> cumulativeAlarmList = sdSmartBigScreenMapper.getCumulativeAlarmList(tunnelId);
+        List<Map<String, Object>> cumulativeAlarmList = sdSmartBigScreenMapper.getCumulativeAlarmList(tunnelId, DictTypeEnum.prev_control_type.getCode(),
+                                                                                                        DictTypeEnum.sd_event_state.getCode(),
+                                                                                                        DictTypeEnum.fault_type.getCode(),
+                                                                                                        DictTypeEnum.fault_remove_statue.getCode(),
+                                                                                                        PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode(),
+                                                                                                        PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
         List<Map<String, Object>> list = new ArrayList<>();
         //预警事件数量总和
         BigDecimal dataCount = cumulativeEvent.add(cumulativeWarning).add(cumulativeFault);
@@ -92,12 +99,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Override
     public AjaxResult getTrafficIncident(String tunnelId) {
-        return AjaxResult.success(sdSmartBigScreenMapper.getTrafficIncident(tunnelId));
+        return AjaxResult.success(sdSmartBigScreenMapper.getTrafficIncident(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode()));
     }
 
     @Override
     public AjaxResult getActiveSafety(String tunnelId) {
-        return AjaxResult.success(sdSmartBigScreenMapper.getActiveSafety(tunnelId));
+        return AjaxResult.success(sdSmartBigScreenMapper.getActiveSafety(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode()));
     }
 
     @Override

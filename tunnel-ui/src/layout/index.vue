@@ -409,6 +409,7 @@ export default {
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
       this.eventDialogTable = false;
+      this.evtDialogOneThing = false
     });
     // 打开三图一视弹窗
     bus.$on("openPicDialog", () => {

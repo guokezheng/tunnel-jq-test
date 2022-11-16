@@ -492,6 +492,8 @@ import videoPlayer from "@/views/event/vedioRecord/myVideo";
 import earlyWarning from "@/components/earlyWarning"; // 路侧设备
 import { checkPermi } from "@/utils/permission.js";
 import { getUserProfile } from "@/api/system/user";
+import { getEventUntreatedNum } from "@/api/event/event";
+
 export default {
   data() {
     return {
@@ -601,7 +603,7 @@ export default {
       ],
       // 小弹层的数据 start
       alarmTitle: "您有0条未读消息",
-      nodealNum: "0",
+      nodealNum: '',
       warningInfoList: [],
       total: 0, // 总条数
       queryParams: {
@@ -668,6 +670,18 @@ export default {
       },
     },
   },
+  watch: {
+    sdEventList(event) {
+      
+    this.nodealNum += event.length;
+      // if (this.eventValue > 0) {
+      //   this.$forceUpdate();
+      //   // this.badgeHidden = false;
+      //   this.eventDialogPic = true;
+
+      // }
+    },
+  },
   created() {
     this.getUser();
     this.getAlarmInfo();
@@ -676,12 +690,26 @@ export default {
     }, 5000 * 1);
   },
   mounted() {
+    this.getNodealNum()
+
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
       this.clickSure = false
     });
+     bus.$on("getEvtList", () => {
+      this.nodealNum = this.nodealNum - 1;
+      // if (this.nodealNum == 0) {
+      //   this.badgeHidden = false;
+      // }
+    });
   },
   methods: {
+    getNodealNum() {
+      getEventUntreatedNum().then((res) => {
+        console.log(res, "事件总数");
+        this.nodealNum = res.data;
+      });
+    },
     getRoute(path) {
       var arr = [
         "/index",
@@ -734,16 +762,17 @@ export default {
         })
         .catch(() => {});
     },
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
+    // handleClick(tab, event) {
+    //   console.log(tab, event);
+    // },
+    
     // 鼠标经过铃铛提示信息
     getAlarmInfo() {
       listWarning(this.queryParams).then((response) => {
         this.warningInfoList = response.rows;
         this.total = response.total;
         this.alarmTitle = "您有" + response.total + "个未处理预警";
-        this.nodealNum = response.total;
+        // this.nodealNum = response.total;
       });
     },
     // 更多
@@ -1048,6 +1077,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 72px;
         span {
           font-size: 16px;
           margin-left: 10px;

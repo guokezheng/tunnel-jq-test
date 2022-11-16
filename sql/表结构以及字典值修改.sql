@@ -386,3 +386,6 @@ INSERT INTO `sys_dict_data`(`dict_sort`, `dict_label`, `dict_value`, `dict_type`
 alter table sd_event_type DROP COLUMN f_id;
 alter table sd_event_type add column icon_url longtext comment '图标base64';
 alter table sd_event_type add column prev_control_type varchar(20) comment '防控类型';
+
+-- 疏散标志设备类型数据项备注修改
+UPDATE sd_device_type_item set remark = "疏散标志控制模式(1：关灯；2：同步单闪；3：逆向流水;4:左闪;5:双闪;6:右闪)" WHERE id = 19

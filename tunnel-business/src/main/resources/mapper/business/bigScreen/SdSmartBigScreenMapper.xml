@@ -110,9 +110,8 @@
             sfl.fallt_remove_statue
     </select>
 
-    <select id="getEventList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getEventList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (
@@ -150,9 +149,8 @@
             DATE ASC;
     </select>
 
-    <select id="getWarningList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getWarningList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (
@@ -190,9 +188,8 @@
             DATE ASC;
     </select>
 
-    <select id="getFaultList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getFaultList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (

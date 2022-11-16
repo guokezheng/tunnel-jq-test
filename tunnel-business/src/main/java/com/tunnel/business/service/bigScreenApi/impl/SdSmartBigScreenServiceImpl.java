@@ -55,11 +55,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     public AjaxResult getSameMonthEventWarning(String tunnelId) {
         Map<String, Object> map = new HashMap<>();
         //查询交通事件
-        List<Map<String, Object>> eventList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode());
+        List<Integer> eventList = sdSmartBigScreenMapper.getEventList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.TRAFFIC_NCIDENT.getCode());
         //查询主动安全
-        List<Map<String, Object>> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
+        List<Integer> warningList = sdSmartBigScreenMapper.getWarningList(tunnelId, DictTypeEnum.prev_control_type.getCode(), PrevControlTypeEnum.ACTIVE_SAFETY.getCode());
         //查询设备故障
-        List<Map<String, Object>> faultList = sdSmartBigScreenMapper.getFaultList(tunnelId);
+        List<Integer> faultList = sdSmartBigScreenMapper.getFaultList(tunnelId);
         map.put("event",eventList);
         map.put("warning",warningList);
         map.put("fault",faultList);

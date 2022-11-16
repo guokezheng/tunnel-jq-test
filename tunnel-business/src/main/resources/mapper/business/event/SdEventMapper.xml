@@ -64,6 +64,19 @@
         from sd_event
     </sql>
 
+    <select id ="eventPopAll" resultType="Map">
+        select id,event_type_id as eventTypeId,event_title as eventTitle,icon_url as iconUrl,simplify_name as simplifyName,start_time as startTime from
+            ((select A.id, A.event_type_id, A.event_title,B.icon_url,B.simplify_name,A.start_time
+              from sd_event A
+                       left join sd_event_type B on A.event_type_id = B.id
+              where A.event_state not in ('1','2') and B.prev_control_type = '0' order by A.start_time desc limit 20)a)
+        union all  select id,event_type_id,event_title,icon_url,simplify_name,start_time from
+            ((select A.id, A.event_type_id, A.event_title,B.icon_url,B.simplify_name,A.start_time
+              from sd_event A
+                       left join sd_event_type B on A.event_type_id = B.id
+              where A.event_state not in ('1','2') and B.prev_control_type = '1' order by A.start_time desc limit 20)b)
+    </select>
+
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">
         select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
         A.event_location, A.event_death, A.event_injured,A.slight_injured, A.event_description, A.reserve_plan_id,

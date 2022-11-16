@@ -3,7 +3,9 @@ package com.tunnel.business.mapper.event;
 
 import com.tunnel.business.domain.event.SdEvent;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Select;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +86,14 @@ public interface SdEventMapper
 
     Map getTodayEventCount();
 
+    List<Map> eventPopAll();
 
+    /**
+     * 事件当日未处理总条数
+     * @return
+     */
+    @Select("select count(id) from sd_event where event_state = '3' and \n" +
+            "TO_DAYS(start_time) = TO_DAYS(NOW())")
+    int getEventUntreatedNum();
 
 }

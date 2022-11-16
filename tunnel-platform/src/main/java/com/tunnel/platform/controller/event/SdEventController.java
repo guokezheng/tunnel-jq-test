@@ -15,6 +15,7 @@ import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.json.JSONObject;
@@ -168,6 +169,18 @@ public class SdEventController extends BaseController
                                        @RequestParam("stakeNum") String stakeNum,
                                        @RequestParam("direction")String direction){
         return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
+    }
+
+    @GetMapping("/getEventUntreatedNum")
+    @ApiOperation("当日未处理事件数量")
+    public Result getEventUntreatedNum() {
+        return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum());
+    }
+
+    @GetMapping("/eventPopAll")
+    @ApiOperation("事件弹窗当日事件")
+    public Result eventPopAll() {
+        return  Result.success(sdEventService.eventPopAll());
     }
 
     @GetMapping("/performRecovery")

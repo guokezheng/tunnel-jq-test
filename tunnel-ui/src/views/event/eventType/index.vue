@@ -8,18 +8,41 @@
       label-width="68px"
     >
       <el-form-item label="事件类型" prop="eventType">
+          <el-input
+            v-model="queryParams.eventType"
+            placeholder="请输入事件类型"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+<!--        <el-select-->
+<!--          v-model="queryParams.eventType"-->
+<!--          placeholder="请选择事件类型"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          style="width: 180px"-->
+<!--        >-->
+<!--          <el-option-->
+<!--            v-for="item in eventTypeData"-->
+<!--            :key="item.id"-->
+<!--            :label="item.eventType"-->
+<!--            :value="item.eventType"-->
+<!--          />-->
+<!--        </el-select>-->
+      </el-form-item>
+      <el-form-item label="防控类型" prop="prevControlType">
         <el-select
-          v-model="queryParams.eventType"
-          placeholder="请选择事件类型"
+          v-model="queryParams.prevControlType"
+          placeholder="请选择防控类型"
           clearable
           size="small"
           style="width: 180px"
         >
           <el-option
-            v-for="item in eventTypeData"
-            :key="item.id"
-            :label="item.eventType"
-            :value="item.eventType"
+            v-for="item in prevControlType"
+            :key="item.dictValue"
+            :label="item.dictLabel"
+            :value="item.dictValue"
           />
         </el-select>
       </el-form-item>
@@ -196,7 +219,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="默认图标" label-width="100px" prop="iconUrl"> 
+        <el-form-item label="默认图标" label-width="100px" prop="iconUrl">
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -271,6 +294,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         eventType: null,
+        prevControlType: null
       },
       //事件类型
       eventTypeData: {},

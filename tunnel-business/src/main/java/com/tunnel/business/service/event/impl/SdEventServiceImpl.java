@@ -289,5 +289,10 @@ public class SdEventServiceImpl implements ISdEventService {
         return subareaId;
     }
 
+    @Override
+    public List<Map> eventPopAll() {
+        return sdEventMapper.eventPopAll();
+    }
+
 
 }

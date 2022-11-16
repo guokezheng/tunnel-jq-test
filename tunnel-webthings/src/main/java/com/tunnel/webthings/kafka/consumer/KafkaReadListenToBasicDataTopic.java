@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,7 +40,7 @@ public class KafkaReadListenToBasicDataTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"tunnelDeviceBaseData"}, containerFactory = "kafkaTwoContainerFactory")
-    public void devicesAccept(ConsumerRecord<String,Object> record, Consumer<?,?> consumer){
+    public void devicesAccept(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         if(PlatformAuthEnum.GLZ.getCode().equals(authorizeName)){
             String deviceData = "";
             if(StringUtils.isNotNull(record.value()) && StringUtils.isNotEmpty(record.value().toString())){

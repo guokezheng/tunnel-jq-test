@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * 基础数据同步定时任务
+ *
  * @author zhai
  * @date 2022/11/4
  */

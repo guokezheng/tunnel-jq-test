@@ -23,6 +23,10 @@ public class SdTunnelWarningController extends BaseController {
     @Autowired
     private ISdTunnelWarningService iSdTunnelWarningService;
 
+    /**
+     * 查询近30日隧道预警
+     * @return
+     */
     @GetMapping("/warningnum")
     public AjaxResult getTunnelWarningNumber(){
         List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber();

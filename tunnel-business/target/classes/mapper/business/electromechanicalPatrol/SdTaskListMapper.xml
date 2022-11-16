@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.electromechanicalPatrol.SdTaskListMapper">
+
+    <resultMap type="SdTaskList" id="SdTaskListResult">
+        <result property="id"    column="id"    />
+        <result property="zzjgId"    column="zzjg_id"    />
+        <result property="endPlantime"    column="end_plantime"    />
+        <result property="dispatcher"    column="dispatcher"    />
+        <result property="dispatchTime"    column="dispatch_time"    />
+        <result property="bzId"    column="bz_id"    />
+        <result property="taskDescription"    column="task_description"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="walkerId"    column="walker_id"    />
+        <result property="taskEndtime"    column="task_endtime"    />
+        <result property="taskCxtime"    column="task_cxtime"    />
+        <result property="siteDescription"    column="site_description"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdTaskListVo">
+        select id, zzjg_id, end_plantime, dispatcher, dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time from sd_task_list
+    </sql>
+
+    <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
+        <include refid="selectSdTaskListVo"/>
+        <where>  
+            <if test="zzjgId != null  and zzjgId != ''"> and zzjg_id = #{zzjgId}</if>
+            <if test="endPlantime != null "> and end_plantime = #{endPlantime}</if>
+            <if test="dispatcher != null  and dispatcher != ''"> and dispatcher = #{dispatcher}</if>
+            <if test="dispatchTime != null "> and dispatch_time = #{dispatchTime}</if>
+            <if test="bzId != null  and bzId != ''"> and bz_id = #{bzId}</if>
+            <if test="taskDescription != null  and taskDescription != ''"> and task_description = #{taskDescription}</if>
+            <if test="publishStatus != null "> and publish_status = #{publishStatus}</if>
+            <if test="taskStatus != null "> and task_status = #{taskStatus}</if>
+            <if test="walkerId != null  and walkerId != ''"> and walker_id = #{walkerId}</if>
+            <if test="taskEndtime != null "> and task_endtime = #{taskEndtime}</if>
+            <if test="taskCxtime != null "> and task_cxtime = #{taskCxtime}</if>
+            <if test="siteDescription != null  and siteDescription != ''"> and site_description = #{siteDescription}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
+        <include refid="selectSdTaskListVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdTaskList" parameterType="SdTaskList">
+        insert into sd_task_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="zzjgId != null">zzjg_id,</if>
+            <if test="endPlantime != null">end_plantime,</if>
+            <if test="dispatcher != null">dispatcher,</if>
+            <if test="dispatchTime != null">dispatch_time,</if>
+            <if test="bzId != null">bz_id,</if>
+            <if test="taskDescription != null">task_description,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="walkerId != null">walker_id,</if>
+            <if test="taskEndtime != null">task_endtime,</if>
+            <if test="taskCxtime != null">task_cxtime,</if>
+            <if test="siteDescription != null">site_description,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="zzjgId != null">#{zzjgId},</if>
+            <if test="endPlantime != null">#{endPlantime},</if>
+            <if test="dispatcher != null">#{dispatcher},</if>
+            <if test="dispatchTime != null">#{dispatchTime},</if>
+            <if test="bzId != null">#{bzId},</if>
+            <if test="taskDescription != null">#{taskDescription},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="walkerId != null">#{walkerId},</if>
+            <if test="taskEndtime != null">#{taskEndtime},</if>
+            <if test="taskCxtime != null">#{taskCxtime},</if>
+            <if test="siteDescription != null">#{siteDescription},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTaskList" parameterType="SdTaskList">
+        update sd_task_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="zzjgId != null">zzjg_id = #{zzjgId},</if>
+            <if test="endPlantime != null">end_plantime = #{endPlantime},</if>
+            <if test="dispatcher != null">dispatcher = #{dispatcher},</if>
+            <if test="dispatchTime != null">dispatch_time = #{dispatchTime},</if>
+            <if test="bzId != null">bz_id = #{bzId},</if>
+            <if test="taskDescription != null">task_description = #{taskDescription},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="walkerId != null">walker_id = #{walkerId},</if>
+            <if test="taskEndtime != null">task_endtime = #{taskEndtime},</if>
+            <if test="taskCxtime != null">task_cxtime = #{taskCxtime},</if>
+            <if test="siteDescription != null">site_description = #{siteDescription},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTaskListById" parameterType="String">
+        delete from sd_task_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTaskListByIds" parameterType="String">
+        delete from sd_task_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
+        select s.*,u.user_name dispatcher
+        from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
+        where id = #{task_id}
+    </select>
+
+</mapper>

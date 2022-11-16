@@ -9,36 +9,45 @@
 </template>
 
 <script>
+import { getEquipmentStatus } from "@/api/business/new";
 import * as echarts from "echarts";
-import elementResizeDetectorMaker from 'element-resize-detector'
+import elementResizeDetectorMaker from "element-resize-detector";
 export default {
   props: {
     equipmentData: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {};
   },
   watch: {
     equipmentData() {
-    //   this.initecharts()
-    }
+      //   this.initecharts()
+    },
   },
   mounted() {
-    this.initecharts()
-    this.watchSize()
+    this.initecharts();
+    this.watchSize();
+  },
+  created() {
+    this.getEquipmentStatus();
   },
   methods: {
+    getEquipmentStatus() {
+      getEquipmentStatus().then((res) => {
+        console.log(res, "000000000");
+      });
+    },
     watchSize() {
       let that = this;
-      let erd = elementResizeDetectorMaker()
-      let Dom = that.$refs.echartsBox;//拿dom元素
+      let erd = elementResizeDetectorMaker();
+      let Dom = that.$refs.echartsBox; //拿dom元素
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
-          let myChart = echarts.init(Dom);
-          myChart.resize();//echarts自带的方法可以使图表重新加载
-      })
+        let myChart = echarts.init(Dom);
+        myChart.resize(); //echarts自带的方法可以使图表重新加载
+      });
     },
     initecharts() {
       var Equipment = echarts.init(document.getElementById("Equipment"));
@@ -48,16 +57,16 @@ export default {
       var trafficWay = [
         {
           name: "正常",
-          value: 1000
+          value: 1000,
         },
         {
           name: "离线",
-          value: 113
+          value: 113,
         },
         {
           name: "故障",
-          value: 213
-        }
+          value: 213,
+        },
       ];
 
       var data = [];
@@ -68,7 +77,7 @@ export default {
         "#ffe000",
         "#ffa800",
         "#ff5b00",
-        "#ff3000"
+        "#ff3000",
       ];
       for (var i = 0; i < trafficWay.length; i++) {
         data.push(
@@ -80,9 +89,9 @@ export default {
                 borderWidth: 5,
                 shadowBlur: 20,
                 borderColor: color[i],
-                shadowColor: color[i]
-              }
-            }
+                shadowColor: color[i],
+              },
+            },
           },
           {
             value: 2,
@@ -90,16 +99,16 @@ export default {
             itemStyle: {
               normal: {
                 label: {
-                  show: false
+                  show: false,
                 },
                 labelLine: {
-                  show: false
+                  show: false,
                 },
                 color: "rgba(0, 0, 0, 0)",
                 borderColor: "rgba(0, 0, 0, 0)",
-                borderWidth: 0
-              }
-            }
+                borderWidth: 0,
+              },
+            },
           }
         );
       }
@@ -109,7 +118,7 @@ export default {
           name: "",
           type: "pie",
           clockWise: false,
-          radius: ['50%', '51%'],
+          radius: ["50%", "51%"],
           hoverAnimation: false,
           itemStyle: {
             normal: {
@@ -117,13 +126,13 @@ export default {
                 show: true,
                 position: "outside",
                 color: "#fff",
-                formatter: function(params) {
+                formatter: function (params) {
                   var percent = 0;
                   var total = 0;
                   for (var i = 0; i < trafficWay.length; i++) {
                     total += trafficWay[i].value;
                   }
-                  totalNum = total
+                  totalNum = total;
                   percent = ((params.value / total) * 100).toFixed(2);
                   if (params.name !== "") {
                     return (
@@ -138,18 +147,18 @@ export default {
                   } else {
                     return "";
                   }
-                }
+                },
               },
               labelLine: {
                 length: 10,
                 length2: 20,
                 show: true,
-                color: "#00ffff"
-              }
-            }
+                color: "#00ffff",
+              },
+            },
           },
-          data: data
-        }
+          data: data,
+        },
       ];
       var option = {
         // backgroundColor: "#0A2E5D",
@@ -162,8 +171,8 @@ export default {
           textStyle: {
             color: "#fff",
             fontSize: 14,
-            fontWeight: "400"
-          }
+            fontWeight: "400",
+          },
         },
         graphic: {
           elements: [
@@ -173,48 +182,48 @@ export default {
               style: {
                 image: img,
                 width: 80,
-                height: 80
+                height: 80,
               },
               left: "center",
               top: "center",
-              position: [100, 100]
-            }
-          ]
+              position: [100, 100],
+            },
+          ],
         },
         tooltip: {
           show: true,
           formatter: "{b}: {c} ({d}%)",
-          formatter: function(params) {
-            console.log(params)
-            var str = ''
-            str += params.marker
-            str += params.name + " : "
-            str += params.value
-            str += " ( "+(params.value/totalNum*100).toFixed(2) + '%)'
-            return str
-          }
+          formatter: function (params) {
+            console.log(params);
+            var str = "";
+            str += params.marker;
+            str += params.name + " : ";
+            str += params.value;
+            str += " ( " + ((params.value / totalNum) * 100).toFixed(2) + "%)";
+            return str;
+          },
         },
         legend: {
           icon: "circle",
           orient: "horizontal",
           // x: 'left',
           data: ["正常", "离线", "故障"],
-          left: 'center',
-          bottom: '0',
+          left: "center",
+          bottom: "0",
           align: "left",
           textStyle: {
-            color: "#fff"
+            color: "#fff",
           },
-          itemGap: 10
+          itemGap: 10,
         },
         toolbox: {
-          show: false
+          show: false,
         },
-        series: seriesOption
+        series: seriesOption,
       };
       option && Equipment.setOption(option);
-    }
-  }
+    },
+  },
 };
 </script>
 

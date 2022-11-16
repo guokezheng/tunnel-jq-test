@@ -27,8 +27,8 @@ export default {
       // 建立 websocket 连接
       this.socket.initialize({
         // url: "ws://10.168.65.230" + ":" + port + path,
-        url: "ws://10.168.64.171" + ":" + port + path,
-        //  url: 'ws://10.168.78.127'+ ':' + port + path,
+        // url: "ws://10.168.64.171" + ":" + port + path,
+         url: 'ws://10.168.78.127'+ ':' + port + path,
 
         password: password,
         tokenSN: this.token,
@@ -47,7 +47,9 @@ export default {
         const subEvent = params.subEvent;
         const content = params.content;
         var contentList = JSON.parse(content);
+        console.log(subEvent,"subEvent")
 
+        console.log(contentList,"contentList")
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);

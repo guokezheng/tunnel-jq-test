@@ -1,10 +1,10 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
 /**
- * 设备类型
+ * 防控类型
  *
- * @author yangqichao
- * @date 2019/9/18 14:45
+ * @author zhai
+ * @date 2022/11/16 10:05
  */
 public enum PrevControlTypeEnum {
 

@@ -351,6 +351,16 @@ public class SysDeptServiceImpl implements ISysDeptService
         return  deptMapper.tollById();
     }
 
+    /**
+     * 新增巡检点---隧道树结构
+     * @param deptId
+     * @return
+     */
+    @Override
+    public List<SysDept> selectTunnelDeptList(String deptId) {
+        return deptMapper.selectTunnelDeptList(deptId);
+    }
+
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {
         for (SysDeptUserTreeVO sysDeptUserTreeVO : list) {
             if(sysDeptUserTreeVO.getIsUser() != 1) {

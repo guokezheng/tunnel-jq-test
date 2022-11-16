@@ -1,6 +1,7 @@
 package com.tunnel.business.service.electromechanicalPatrol;
 
 
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public interface ISdTaskListService
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int insertSdTaskList(SdTaskList sdTaskList);
+    public int insertSdTaskList(SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList);
 
     /**
      * 修改巡查任务
@@ -43,7 +44,7 @@ public interface ISdTaskListService
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int updateSdTaskList(SdTaskList sdTaskList);
+    public int updateSdTaskList(SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList);
 
     /**
      * 批量删除巡查任务
@@ -60,4 +61,18 @@ public interface ISdTaskListService
      * @return 结果
      */
     public int deleteSdTaskListById(String id);
+
+    /**
+     * 查询巡查任务详情
+     * @param task_id
+     * @return
+     */
+    List<SdTaskList> getTaskInfoList(String task_id);
+
+    /**
+     * 根据任务id查询关联巡检点详细信息
+     * @param task_id
+     * @return
+     */
+    List<SdPatrolList> getPatrolListsInfo(String task_id);
 }

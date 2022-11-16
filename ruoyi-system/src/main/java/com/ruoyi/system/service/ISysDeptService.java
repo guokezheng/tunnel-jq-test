@@ -125,4 +125,10 @@ public interface ISysDeptService
 
     public List<Object> tollById();
 
+    /**
+     * 新增巡检点--隧道树结构
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectTunnelDeptList(String deptId);
 }

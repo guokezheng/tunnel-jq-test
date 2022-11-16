@@ -68,6 +68,17 @@
             ${params.dataScope}
         </where>
     </select>
+
+    <select id="selectTunnelsList" parameterType="SdTunnels" resultMap="SdTunnelsResult">
+        select * from sd_tunnels t
+        <where>
+            <if test="deptId != null and deptId != ''">
+                AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+
     <select id="verifyTunnelOnly" parameterType="SdTunnels" resultMap="SdTunnelsResult">
         select t.tunnel_id, t.tunnel_name, t.tunnel_code, t.tunnel_address, t.longitude, t.latitude, t.tunnel_station_id,
         t.tunnel_station_name, t.lane, t.coordinates, t.remake, t.tunnel_length, t.poll, t.store_configure, t.create_by,

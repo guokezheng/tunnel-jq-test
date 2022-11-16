@@ -59,4 +59,11 @@ public interface SdTaskListMapper
      * @return 结果
      */
     public int deleteSdTaskListByIds(String[] ids);
+
+    /**
+     * 查询任务详情
+     * @param task_id
+     * @return
+     */
+    List<SdTaskList> getTaskInfoList(String task_id);
 }

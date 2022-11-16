@@ -138,7 +138,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="brachInsertFaultIconFile" parameterType="java.util.List">
         insert into sd_traffic_image
         (
-        img_name, img_url, business_id, create_time, create_by
+        img_name, img_url, business_id,create_by, create_time
         )
         values
         <foreach collection="list" index="index" item="item" separator=",">
@@ -147,4 +147,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             )
         </foreach>
     </insert>
+
+    <select id="selectFaultImgFileList" parameterType="SdTrafficImage" resultMap="SdTrafficImageResult">
+        <include refid="selectSdTrafficImageVo"/>
+        <where>
+            <if test="businessId != null  and businessId != ''"> and business_id = #{businessId}</if>
+        </where>
+    </select>
+
+    <delete id="deleteFaultIconFileByIds" parameterType="String">
+        delete from sd_traffic_image where img_id in
+        <foreach item="removeIds" collection="array" open="(" separator="," close=")">
+            #{removeIds}
+        </foreach>
+    </delete>
+
+
+
+
 </mapper>

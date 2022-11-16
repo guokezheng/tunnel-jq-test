@@ -33,23 +33,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
-        <include refid="selectSdFaultListVo"/>
-        <where>  
-            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
-            <if test="faultLocation != null  and faultLocation != ''"> and fault_location = #{faultLocation}</if>
-            <if test="faultType != null "> and fault_type = #{faultType}</if>
-            <if test="faultSource != null  and faultSource != ''"> and fault_source = #{faultSource}</if>
-            <if test="faultFxtime != null "> and fault_fxtime = #{faultFxtime}</if>
-            <if test="faultCxtime != null  and faultCxtime != ''"> and fault_cxtime = #{faultCxtime}</if>
-            <if test="faultTbr != null  and faultTbr != ''"> and fault_tbr = #{faultTbr}</if>
-            <if test="faultTbtime != null "> and fault_tbtime = #{faultTbtime}</if>
-            <if test="eqId != null  and eqId != ''"> and eq_id = #{eqId}</if>
-            <if test="eqStatus != null  and eqStatus != ''"> and eq_status = #{eqStatus}</if>
-            <if test="faultCode != null  and faultCode != ''"> and fault_code = #{faultCode}</if>
-            <if test="faultLevel != null "> and fault_level = #{faultLevel}</if>
-            <if test="falltRemoveStatue != null "> and fallt_remove_statue = #{falltRemoveStatue}</if>
-            <if test="faultDescription != null  and faultDescription != ''"> and fault_description = #{faultDescription}</if>
-            <if test="faultStatus != null "> and fault_status = #{faultStatus}</if>
+        select s.id, s.tunnel_id, s.fault_location, s.fault_type, s.fault_source, s.fault_fxtime, s.fault_cxtime, s.fault_tbr, s.fault_tbtime, a.eq_name, s.eq_id, s.eq_status, s.fault_code, s.fault_level, s.fallt_remove_statue, s.fault_description, fault_status
+        from sd_fault_list s left join sd_devices a on a.eq_id = s.eq_id
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and s.tunnel_id = #{tunnelId}</if>
+            <if test="faultLocation != null  and faultLocation != ''"> and s.fault_location = #{faultLocation}</if>
+            <if test="faultType != null "> and s.fault_type = #{faultType}</if>
+            <if test="faultSource != null  and faultSource != ''"> and s.fault_source = #{faultSource}</if>
+            <if test="faultFxtime != null "> and s.fault_fxtime = #{faultFxtime}</if>
+            <if test="faultCxtime != null  and faultCxtime != ''"> and s.fault_cxtime = #{faultCxtime}</if>
+            <if test="faultTbr != null  and faultTbr != ''"> and s.fault_tbr = #{faultTbr}</if>
+            <if test="faultTbtime != null "> and s.fault_tbtime = #{faultTbtime}</if>
+            <if test="eqId != null  and eqId != ''"> and s.eq_id = #{eqId}</if>
+            <if test="eqStatus != null  and eqStatus != ''"> and s.eq_status = #{eqStatus}</if>
+            <if test="faultCode != null  and faultCode != ''"> and s.fault_code = #{faultCode}</if>
+            <if test="faultLevel != null "> and s.fault_level = #{faultLevel}</if>
+            <if test="falltRemoveStatue != null "> and s.fallt_remove_statue = #{falltRemoveStatue}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and s.fault_description = #{faultDescription}</if>
+            <if test="faultStatus != null "> and s.fault_status = #{faultStatus}</if>
         </where>
     </select>
     
@@ -136,4 +137,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+
+    <select id="getFaultRepairInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+    select p.*,f.fallt_remove_statue,t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
+    from sd_patrol_list p
+    left join sd_fault_list f on f.id = p.eq_fault_id
+    left join sd_task_list t on t.id = p.task_id
+    left join sd_devices d on d.eq_id = p.eq_fault_id
+    left join sd_equipment_state s on s.device_state = p.run_status  and
+    d.eq_type = s.state_type_id and  s.state_type = '2'
+    left join sd_equipment_state a on a.device_state = p.eq_status  and
+    d.eq_type = a.state_type_id and  a.state_type = '1'
+    where p.eq_fault_id = #{faultId}
+    </select>
+
+
+    <select id="getFaultList" parameterType="String" resultType="hashmap">
+    select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description
+    from sd_fault_list f left join sd_devices d on f.eq_id = d.eq_id
+    <where>
+        <if test="tunnelId != null ">and f.tunnel_id = #{tunnelId}</if>
+        <if test="faultLevel != null ">and f.fault_level = #{faultLevel}</if>
+    </where>
+    </select>
+
+
 </mapper>

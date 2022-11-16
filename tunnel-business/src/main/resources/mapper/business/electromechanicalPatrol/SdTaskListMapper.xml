@@ -126,4 +126,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
+        select s.*,u.user_name dispatcher
+        from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
+        where id = #{task_id}
+    </select>
+
 </mapper>

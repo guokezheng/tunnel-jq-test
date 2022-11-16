@@ -98,4 +98,18 @@ public interface SdTrafficImageMapper
      * @return
      */
     int brachInsertFaultIconFile(List<SdTrafficImage> list);
+
+    /**
+     * 查询检修记录图片
+     * @param sdTrafficImage
+     * @return
+     */
+    public List<SdTrafficImage> selectFaultImgFileList(SdTrafficImage sdTrafficImage);
+
+    /**
+     * 修改故障信息---删除原来存储的故障图片信息
+     * @param removeIds
+     * @return
+     */
+    int deleteFaultIconFileByIds(Long[] removeIds);
 }

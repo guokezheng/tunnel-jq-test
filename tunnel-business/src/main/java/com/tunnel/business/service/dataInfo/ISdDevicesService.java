@@ -2,6 +2,8 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Map;
  * @date 2020-08-27
  */
 public interface ISdDevicesService {
+
     /**
      * 查询设备
      *
@@ -185,4 +188,26 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
+
+    /**
+     * 故障管理页面--根据设备id获取设备详情
+     * @param eqId
+     * @return
+     */
+    public List<SdDevices> getEquipmentInfo(String eqId);
+
+    /**
+     * 根据隧道查询设备类型
+     * @param tunnelId
+     * @return
+     */
+    List<SdDevices> selectDevicesTypeList(String tunnelId);
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    List<SdDevices> getDevicesList(String tunnelId, String deviceType);
 }

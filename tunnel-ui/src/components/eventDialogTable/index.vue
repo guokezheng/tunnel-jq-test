@@ -1,12 +1,17 @@
 <template>
   <div>
-    <el-dialog class="eventBox" v-dialogDrag :visible.sync="eventTableDialog" :modal-append-to-body='false' >
+    <el-dialog
+      class="eventBox"
+      v-dialogDrag
+      :visible.sync="eventTableDialog"
+      :modal-append-to-body="false"
+    >
       <div class="title">
         事件详情
         <!-- <img
-          src="../../assets/cloudControl/dialogHeader.png"
-          style="height: 30px"
-        /> -->
+            src="../../assets/cloudControl/dialogHeader.png"
+            style="height: 30px"
+          /> -->
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -20,86 +25,142 @@
         />
       </div>
       <div class="blueLine"></div>
-      <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <div class="contentBox">
+        <div class="butBox">
+          <div :class="searchValue == 3 ? 'xz' : ''" @click="handleClick(3)">
+            全部
+          </div>
+          <div :class="searchValue == 1 ? 'xz' : ''" @click="handleClick(1)">
+            主动安全
+          </div>
+          <div :class="searchValue == 0 ? 'xz' : ''" @click="handleClick(0)">
+            交通事件
+          </div>
+          <div :class="searchValue == 2 ? 'xz' : ''" @click="handleClick(2)">
+            设备故障
+          </div>
+        </div>
+        <div class="listContent">
+          <div v-for="(item, index) of list" :key="index">
+            <el-row style="color: white">
+              <el-col :span="2">
+                <img
+                  :src="item.iconUrl"
+                  style="width: 20px; height: 20px; transform: translateY(5px)"
+                />
+              </el-col>
+              <el-col :span="2">
+                <div>{{ item.eventType.simplifyName }}</div>
+              </el-col>
+              <el-col :span="16">
+                <div class="overflowText">{{ item.eventTitle }}</div>
+                <div style="float: right; margin-right: 16px">
+                  {{ item.startTime }}
+                </div>
+              </el-col>
+              <el-col :span="2">
+                <el-button size="mini" type="text" @click="handleSee(item.id)"
+                  >查看
+                </el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleIgnore(item.id)"
+                  >忽略
+                </el-button>
+              </el-col>
+            </el-row>
+            <div class="lineBT">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane
           :label="item.dictLabel"
           :name="item.dictValue"
           v-for="(item, index) in tabList"
           :key="index"
-        >
-        
-          <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
-            <el-table-column
-              label="隧道名称"
-              align="center"
-              prop="tunnels.tunnelName"
-            />
-            <el-table-column label="事件桩号" align="center" prop="stakeNum" />
+        > -->
 
-            <el-table-column
-              label="事件类型"
-              align="center"
-              prop="eventType.eventType"
-            />
-            <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
-            <el-table-column
-              label="事件经度"
-              align="center"
-              prop="eventLongitude"
-            />
-            <el-table-column
-              label="事件纬度"
-              align="center"
-              prop="eventLatitude"
-            />
-            <el-table-column label="开始时间" align="center" prop="startTime">
-              <template slot-scope="scope">
-                <span>{{ parseTime(scope.row.startTime, '{h}:{i}:{s}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="结束时间" align="center" prop="endTime" >
-              <template slot-scope="scope">
-                <span>{{ parseTime(scope.row.endTime, '{h}:{i}:{s}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="操作"
-              align="center"
-              class-name="small-padding fixed-width"
-            >
-              <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="text"
-                  icon="el-icon-thumb"
-                  @click="handleSee(scope.row.id)"
-                  >查 看
-                </el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  icon="el-icon-delete"
-                  @click="handleIgnore(scope.row)"
-                  >忽略
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-      </el-tabs>
+      <!-- <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
+              <el-table-column
+                label="隧道名称"
+                align="center"
+                prop="tunnels.tunnelName"
+              />
+              <el-table-column label="事件桩号" align="center" prop="stakeNum" />
+  
+              <el-table-column
+                label="事件类型"
+                align="center"
+                prop="eventType.eventType"
+              />
+              <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
+              <el-table-column
+                label="事件经度"
+                align="center"
+                prop="eventLongitude"
+              />
+              <el-table-column
+                label="事件纬度"
+                align="center"
+                prop="eventLatitude"
+              />
+              <el-table-column label="开始时间" align="center" prop="startTime">
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.startTime, '{h}:{i}:{s}') }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="结束时间" align="center" prop="endTime" >
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.endTime, '{h}:{i}:{s}') }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                align="center"
+                class-name="small-padding fixed-width"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-thumb"
+                    @click="handleSee(scope.row.id)"
+                    >查 看
+                  </el-button>
+                  <el-button
+                    size="mini"
+                    type="text"
+                    icon="el-icon-delete"
+                    @click="handleIgnore(scope.row)"
+                    >忽略
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table> -->
+      <!-- </el-tab-pane> -->
+      <!-- </el-tabs> -->
     </el-dialog>
     <!-- <evtdialog
-      ref="evtdialog"
-      class="eventClass"
-      @fMethod="fatherMethod"
-    ></evtdialog> -->
+        ref="evtdialog"
+        class="eventClass"
+        @fMethod="fatherMethod"
+      ></evtdialog> -->
   </div>
 </template>
-  
-  <script>
+    
+    <script>
 import { mapState } from "vuex";
 import bus from "@/utils/bus";
-import { updateEvent } from "@/api/event/event";
+import { updateEvent, eventList } from "@/api/event/event";
 import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
 
 export default {
@@ -109,10 +170,11 @@ export default {
   },
   data() {
     return {
+      searchValue: 3,
       // showTable:false,
-      eventTableDialog: false,
+      eventTableDialog: true,
       activeName: "0",
-      tabList: [
+      list: [
         // {
         //   dictLabel:'雷达',
         //   dictValue:'1',
@@ -133,111 +195,122 @@ export default {
       videoUrl: require("@/assets/Example/v1.mp4"),
     };
   },
-  computed: {
-    ...mapState({
-      sdEventList: (state) => state.websocket.sdEventList,
-    }),
-  },
-  watch: {
-    sdEventList(event) {
-      console.log(event, "websockt事件表格弹窗");
-      for (let i = 0; i < event.length; i++) {
-        for (let z = 0; z < this.tabList.length; z++) {
-          if (event[i].eventSource == this.tabList[z].dictValue) {
-            this.tabList[z].list.unshift(event[i]);
-          }
-        }
-      }
-      console.log(this.tabList);
-      // this.eventTableDialog = true;
-      // this.showTable = true
-    },
-    deep: true,
-  },
+  // computed: {
+  //   ...mapState({
+  //     sdEventList: (state) => state.websocket.sdEventList,
+  //   }),
+  // },
+  // watch: {
+  //   sdEventList(event) {
+  //     console.log(event, "websockt事件表格弹窗");
+  //     for (let i = 0; i < event.length; i++) {
+  //       for (let z = 0; z < this.tabList.length; z++) {
+  //         if (event[i].eventSource == this.tabList[z].dictValue) {
+  //           this.tabList[z].list.unshift(event[i]);
+  //         }
+  //       }
+  //     }
+  //     console.log(this.tabList);
+  //     // this.eventTableDialog = true;
+  //     // this.showTable = true
+  //   },
+  //   deep: true,
+  // },
   created() {
-    this.getDicts("sd_event_source").then((data) => {
-      console.log(data, "事件来源");
-      this.tabList = data.data;
-      this.tabList.forEach((item) => {
-        item.list = [];
-      });
+    // this.getDicts("sd_event_source").then((data) => {
+    //   console.log(data, "事件来源");
+    //   this.tabList = data.data;
+    //   this.tabList.forEach((item) => {
+    //     item.list = [];
+    //   });
+    // });
+    var tab = this.searchValue;
+    eventList(tab).then((res) => {
+      console.log(res, "事件弹窗分类数组");
+      this.list = res.rows;
     });
   },
-  mounted(){
-    bus.$on('closeTableDialog', () => {
-       this.eventTableDialog = false
-    })
-    bus.$on('openTableDialog', () => {
-       this.eventTableDialog = true
-    })
+  mounted() {
+    // bus.$on('closeTableDialog', () => {
+    //  this.eventTableDialog = false
+    // })
+    // bus.$on('openTableDialog', () => {
+    //  this.eventTableDialog = true
+    // })
   },
   methods: {
     handleSee(id) {
-      bus.$emit("openPicDialog", id);
-      bus.$emit("getPicId",id)
+      setTimeout(() =>{
+        bus.$emit("getPicId", id);
+      },200)
+      bus.$emit("openPicDialog");
+      
     },
 
     // 忽略事件
-    handleIgnore(event) {
-      if (event) {
+    handleIgnore(id) {
+      if (id) {
         const param = {
-          id: event.id,
-          eventState: "2",
+          id: id,
+          eventState: "2"
         };
         updateEvent(param).then((response) => {
           this.$modal.msgSuccess("已成功忽略");
         });
-        this.tabList.forEach((item) => {
-          item.list.forEach((its) =>{
-            if(its.id == event.id){
-              item.list.splice(its,1)
+        let index = this.list.findIndex(item => {
+            if (item.id == id) {
+              return true
             }
           })
-        });
-        // bus.$emit("getEvtList")
+          this.list.splice(index, 1)
+        this.$forceUpdate()
       } else {
         this.$modal.msgError("没有接收到事件id");
       }
     },
 
     // 处理 跳转应急调度
-    handleDispatch(event) {
-      const param = {
-        id: event.id,
-        eventState: "0",
-      };
-      updateEvent(param).then((response) => {
-        console.log(response, "修改状态");
-        this.$modal.msgSuccess("开始处理事件");
-      });
-      this.$router.push({
-        path: "/emergency/administration/dispatch",
-        query: { id: event.id },
-      });
-      bus.$emit("closeDialog", false);
-      this.eventTableDialog = false
-    },
+    // handleDispatch(event) {
+    //   const param = {
+    //     id: event.id,
+    //     eventState: "0",
+    //   };
+    //   updateEvent(param).then((response) => {
+    //     console.log(response, "修改状态");
+    //     this.$modal.msgSuccess("开始处理事件");
+    //   });
+    //   this.$router.push({
+    //     path: "/emergency/administration/dispatch",
+    //     query: { id: event.id },
+    //   });
+    //   bus.$emit("closeDialog");
+    //   // this.eventTableDialog = false
+    // },
     closeDialogTable() {
-      bus.$emit("closeDialog", false);
-      this.eventTableDialog = false
+      // this.eventTableDialog = false
+      bus.$emit("closeDialog");
     },
-   
-    handleClick(tab, event) {
-      console.log(tab, event);
+
+    handleClick(searchValue) {
+      this.searchValue = searchValue;
+      eventList(searchValue).then((res) => {
+        console.log(res, "事件弹窗分类数组");
+        this.list = res.rows;
+      });
     },
     // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
-      } else {
-      return "tableOddRow";
-      }
-    },
+    // tableRowClassName({ row, rowIndex }) {
+    //   if (rowIndex % 2 == 0) {
+    //     return "tableEvenRow";
+    //   } else {
+    //     return "tableOddRow";
+    //   }
+    // },
   },
 };
 </script>
-  
-  <style lang="scss" scoped>
+    
+    <style lang="scss" scoped>
 ::v-deep .el-dialog {
   width: 100% !important;
   height: 100%;
@@ -245,7 +318,7 @@ export default {
   left: 0 !important;
   margin: 0;
   box-shadow: none;
-  background: rgba($color: #00152B, $alpha: 0.6);
+  background: rgba($color: #00152b, $alpha: 0.6);
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
@@ -257,6 +330,71 @@ export default {
   padding: 0;
   // background-color: rgba($color: #00152B, $alpha: 0.6);
 }
+.lineBT {
+  width: 100%;
+  margin: 5px 0px auto;
+  // border-bottom: solid 1px white;
+  // transform: translateY(-30px);
+  display: flex;
+  > div:nth-of-type(1) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+  > div:nth-of-type(2) {
+    width: 90%;
+    border-bottom: 1px solid rgba($color: #00b0ff, $alpha: 0.2);
+  }
+  > div:nth-of-type(3) {
+    width: 5%;
+    border-bottom: #2dbaf5 solid 1px;
+  }
+}
+.contentBox {
+  width: 100%;
+  // height: 100%;
+  padding: 0 15px;
+  .butBox {
+    width: 100%;
+    display: flex;
+    padding: 4px 4px;
+    background: #6c8097;
+    border-radius: 4px;
+    // margin-bottom: 10px;
+    margin-top: 20px;
+    font-size: 14px;
+    // justify-content: space-between;
+    div {
+      padding: 6px 10px;
+      color: #3cd3fe;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+    .xz {
+      color: #ffffff !important;
+    }
+  }
+  .listContent {
+    max-height: 290px;
+    overflow: auto;
+    background: rgba($color: #6C8097, $alpha: 0.3);
+    >div{
+      // margin-bottom: 6px;
+      padding: 10px;
+      padding-bottom: 0px;
+    }
+  }
+  /*table滚动条背景色 */
+  ::-webkit-scrollbar {
+      width:4px;
+      background-color: #c4e8f6;
+    }
+
+    /* table滚动条的滑块*/
+   ::-webkit-scrollbar-thumb {
+      background-color: #00c2ff;
+    }
+}
+
 .eventClass {
   position: absolute;
   top: 0;
@@ -306,8 +444,8 @@ export default {
     width: 94%;
     margin: 0 auto;
   }
-  .el-tabs__nav-scroll{
-    background: rgba($color: #6C8097, $alpha: 0.4);
+  .el-tabs__nav-scroll {
+    background: rgba($color: #6c8097, $alpha: 0.4);
     border-radius: 4px;
   }
   //   表格内容文字
@@ -337,7 +475,7 @@ export default {
       background-color: #0e2c53 !important;
     }
     .el-table__empty-block {
-      background-color: rgba($color: #6C8097, $alpha: 0.1);
+      background-color: rgba($color: #6c8097, $alpha: 0.1);
       color: white;
     }
     .el-button--text {
@@ -347,10 +485,10 @@ export default {
       // border: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
       border-bottom: 1px solid rgba($color: #00c8fe, $alpha: 0.4);
     }
-    .el-table__body-wrapper{
-      overflow-y:auto;
+    .el-table__body-wrapper {
+      overflow-y: auto;
     }
   }
 }
 </style>
-  
+    

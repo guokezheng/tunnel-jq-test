@@ -1,5 +1,6 @@
 package com.tunnel.business.service.bigScreenApi.impl;
 
+import com.tunnel.business.domain.bigScreenApi.SdProportionOfEquipment;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.mapper.bigScreenApi.SdProportionOfEquipmentMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
@@ -31,5 +32,10 @@ public class SdProportionOfEquipmentServcieImpl implements ISdProportionOfEquipm
             tunnelId = sdTunnelsList.get(0).getTunnelId();
         }
         return sdProportionOfEquipmentMapper.getProportionOfEquipment(tunnelId);
+    }
+
+    @Override
+    public List<SdProportionOfEquipment> getEquipmentOperationStatus(String tunnelId) {
+        return sdProportionOfEquipmentMapper.getEquipmentOperationStatus(tunnelId);
     }
 }

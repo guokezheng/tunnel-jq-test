@@ -133,7 +133,7 @@
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
@@ -172,7 +172,7 @@
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
@@ -229,7 +229,7 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -244,7 +244,7 @@
         FROM
             sd_event se
         LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
         AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -274,8 +274,8 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
-            AND sdd.dict_type = #{sdEventState}
-            LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_code
+            AND sdd.dict_type = 'sd_event_state'
+            LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_value
             AND sdd1.dict_type = #{prevControlType}
         WHERE
             sdd1.dict_value IN ( #{dictValue1}, #{dictValue2} )
@@ -305,7 +305,7 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -320,7 +320,7 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}

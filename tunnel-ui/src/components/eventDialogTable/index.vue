@@ -40,7 +40,9 @@
             设备故障
           </div>
         </div>
-        <ul class="listContent" v-infinite-scroll="load">
+        <ul class="listContent" 
+            v-infinite-scroll="load"
+            infinite-scroll-disabled="disabled">
           <li v-for="(item, index) of list" :key="index">
             <el-row style="color: white">
               <el-col :span="2">
@@ -80,13 +82,14 @@
               <div></div>
             </div>
           </li>
+          <p v-if="noMore" style="margin-top: 10px; font-size: 13px; color: #ccc; text-align: center;">
+          没有更多了
+        </p>
         </ul>
         <p v-if="loading"  class="loading">
           <span></span>
         </p>
-        <p v-if="noMore" style="margin-top: 10px; font-size: 13px; color: #ccc; text-align: center;">
-          没有更多了
-        </p>
+        
         <!-- <div class="listContent">
           <div v-for="(item, index) of list" :key="index" >
             <el-row style="color: white">
@@ -237,8 +240,13 @@ export default {
   computed: {
     noMore() {
       //当起始页数大于总页数时停止加载
-      console.log(this.pageNum, this.total);
-      return this.pageNum >= this.total / 10 - 1;
+      console.log(this.pageNum, parseInt(this.total/10));
+      if(this.total%10==0){
+        return this.pageNum >= parseInt(this.total/10);
+      }else{
+        return this.pageNum >= parseInt(this.total/10)+1;
+
+      }
     },
     disabled() {
       return this.loading || this.noMore;

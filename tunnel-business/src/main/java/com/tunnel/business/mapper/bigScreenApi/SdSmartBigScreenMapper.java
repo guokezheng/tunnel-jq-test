@@ -53,14 +53,18 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getEventList(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getEventList(@Param("tunnelId") String tunnelId,
+                                           @Param("prevControlType") String prevControlType,
+                                           @Param("dictValue") String dictValue);
 
     /**
      * 查询本月报警趋势(主动安全)
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getWarningList(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getWarningList(@Param("tunnelId") String tunnelId,
+                                             @Param("prevControlType") String prevControlType,
+                                             @Param("dictValue") String dictValue);
 
     /**
      * 查询本月报警趋势(设备故障)
@@ -74,14 +78,18 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    int getCumulativeEvent(@Param("tunnelId") String tunnelId);
+    int getCumulativeEvent(@Param("tunnelId") String tunnelId,
+                           @Param("prevControlType") String prevControlType,
+                           @Param("dictValue") String dictValue);
 
     /**
      * 查询累计报警分析(主动安全)
      * @param tunnelId
      * @return
      */
-    int getCumulativeWarning(@Param("tunnelId") String tunnelId);
+    int getCumulativeWarning(@Param("tunnelId") String tunnelId,
+                             @Param("prevControlType") String prevControlType,
+                             @Param("dictValue") String dictValue);
 
     /**
      * 查询累计报警分析(设备故障)
@@ -95,21 +103,31 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getCumulativeAlarmList(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getCumulativeAlarmList(@Param("tunnelId") String tunnelId,
+                                                     @Param("prevControlType") String prevControlType,
+                                                     @Param("sdEventState") String sdEventState,
+                                                     @Param("faultType") String faultType,
+                                                     @Param("faultRemoveStatue") String faultRemoveStatue,
+                                                     @Param("dictValue1") String dictValue1,
+                                                     @Param("dictValue2") String dictValue2);
 
     /**
      * 查询交通事件信息列表
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getTrafficIncident(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getTrafficIncident(@Param("tunnelId") String tunnelId,
+                                                 @Param("prevControlType") String prevControlType,
+                                                 @Param("dictValue") String dictValue);
 
     /**
      * 查询主动安全信息列表
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getActiveSafety(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getActiveSafety(@Param("tunnelId") String tunnelId,
+                                              @Param("prevControlType") String prevControlType,
+                                              @Param("dictValue") String dictValue);
 
     /**
      * 查询设备故障信息列表

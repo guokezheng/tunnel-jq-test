@@ -290,8 +290,8 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
     @Override
-    public List<Map> eventPopAll() {
-        return sdEventMapper.eventPopAll();
+    public List<Map> eventPopAll(String subIndex) {
+        return sdEventMapper.eventPopAll(subIndex);
     }
 
 

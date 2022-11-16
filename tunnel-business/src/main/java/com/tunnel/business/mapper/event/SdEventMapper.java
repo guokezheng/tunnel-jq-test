@@ -86,14 +86,18 @@ public interface SdEventMapper
 
     Map getTodayEventCount();
 
-    List<Map> eventPopAll();
+    List<Map> eventPopAll(String subIndex);
 
     /**
      * 事件当日未处理总条数
      * @return
      */
-    @Select("select count(id) from sd_event where event_state = '3' and \n" +
-            "TO_DAYS(start_time) = TO_DAYS(NOW())")
     int getEventUntreatedNum();
+
+    /**
+     * 事件弹窗设备故障
+     * @return
+     */
+    List<Map> eventPopFault(String subIndex);
 
 }

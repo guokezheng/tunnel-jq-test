@@ -64,17 +64,97 @@
         from sd_event
     </sql>
 
-    <select id ="eventPopAll" resultType="Map">
-        select id,event_type_id as eventTypeId,event_title as eventTitle,icon_url as iconUrl,simplify_name as simplifyName,start_time as startTime from
-            ((select A.id, A.event_type_id, A.event_title,B.icon_url,B.simplify_name,A.start_time
-              from sd_event A
-                       left join sd_event_type B on A.event_type_id = B.id
-              where A.event_state not in ('1','2') and B.prev_control_type = '0' order by A.start_time desc limit 20)a)
-        union all  select id,event_type_id,event_title,icon_url,simplify_name,start_time from
-            ((select A.id, A.event_type_id, A.event_title,B.icon_url,B.simplify_name,A.start_time
-              from sd_event A
-                       left join sd_event_type B on A.event_type_id = B.id
-              where A.event_state not in ('1','2') and B.prev_control_type = '1' order by A.start_time desc limit 20)b)
+    <select id ="eventPopAll" resultType="Map" parameterType="string">
+        SELECT
+            id,
+            eventTitle,
+            iconUrl,
+            simplifyName,
+            startTime
+        FROM
+            (
+                SELECT
+                    id,
+                    event_title AS eventTitle,
+                    icon_url AS iconUrl,
+                    simplify_name AS simplifyName,
+                    DATE_FORMAT( start_time, '%Y-%m-%d %H:%i:%s' ) AS startTime
+                FROM
+                    ((
+                         SELECT
+                             A.id,
+                             A.event_title,
+                             B.icon_url,
+                             B.simplify_name,
+                             A.start_time
+                         FROM
+                             sd_event A
+                                 LEFT JOIN sd_event_type B ON A.event_type_id = B.id
+                         WHERE
+                             A.event_state = '3'
+                           AND TO_DAYS( A.start_time ) = TO_DAYS(
+                                 NOW())
+                     ) a
+                        ) UNION
+                SELECT
+                    id,
+                    eventTitle,
+                    iconUrl,
+                    simplifyName,
+                    DATE_FORMAT( startTime, '%Y-%m-%d %H:%i:%s' )
+                FROM
+                    ((
+                         SELECT
+                             fault.id,
+                             concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS eventTitle,
+                             fault.create_time AS startTime,
+                             '故障' AS simplifyName,
+                             ( SELECT icon_url FROM sd_event_type WHERE id = '200' ) AS iconUrl
+                         FROM
+                             sd_fault_list fault
+                                 LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
+                                 LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
+                                 LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
+                                 AND DATA.dict_type = 'sd_direction'
+                                 LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
+                                 AND type.dict_type = 'fault_type'
+                         WHERE
+                             fault.fault_status = '0'
+                           AND TO_DAYS( fault.create_time ) = TO_DAYS(
+                                 NOW())) b
+                        )) AS merge
+        ORDER BY
+            merge.startTime DESC limit ${subIndex}
+    </select>
+
+    <select id="eventPopFault" resultType="hashmap" parameterType="string">
+        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as eventTitle,fault.create_time as startTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200') as iconUrl from sd_fault_list fault
+            left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
+            left join sd_devices devices on devices.eq_id = fault.eq_id
+            left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
+            left join sys_dict_data type on type.dict_value = fault.fault_type and type.dict_type='fault_type'
+        where fault.fault_status = '0' and TO_DAYS(fault.create_time) = TO_DAYS(NOW())
+        ORDER BY
+            fault.create_time DESC limit ${subIndex}
+    </select>
+
+    <select id = "getEventUntreatedNum" resultType="int">
+        SELECT
+                count( id )+(
+                SELECT
+                    count( id )
+                FROM
+                    sd_fault_list
+                WHERE
+                    fault_status = '0'
+                  AND TO_DAYS( create_time ) = TO_DAYS(
+                        NOW()) ) as num
+        FROM
+            sd_event
+        WHERE
+            event_state = '3'
+          AND TO_DAYS( start_time ) = TO_DAYS(
+                NOW())
     </select>
 
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">
@@ -118,7 +198,7 @@
                 and B.prev_control_type = #{searchValue}
             </if>
             <if test="remark != null and remark != ''">
-                and A.event_state not in ('1','2')
+                and A.event_state = '3'
             </if>
         </where>
         order by A.start_time desc

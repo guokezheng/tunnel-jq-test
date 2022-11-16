@@ -179,8 +179,14 @@ public class SdEventController extends BaseController
 
     @GetMapping("/eventPopAll")
     @ApiOperation("事件弹窗当日事件")
-    public Result eventPopAll() {
-        return  Result.success(sdEventService.eventPopAll());
+    public Result eventPopAll(String subIndex) {
+        return  Result.success(sdEventService.eventPopAll(subIndex));
+    }
+
+    @GetMapping("/eventPopFault")
+    @ApiOperation("事件弹窗设备故障")
+    public Result eventPopFault(String subIndex) {
+        return  Result.success(SpringUtils.getBean(SdEventMapper.class).eventPopFault(subIndex));
     }
 
     @GetMapping("/performRecovery")

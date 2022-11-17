@@ -53,7 +53,7 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getEventList(@Param("tunnelId") String tunnelId,
+    List<Integer> getEventList(@Param("tunnelId") String tunnelId,
                                            @Param("prevControlType") String prevControlType,
                                            @Param("dictValue") String dictValue);
 
@@ -62,7 +62,7 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getWarningList(@Param("tunnelId") String tunnelId,
+    List<Integer> getWarningList(@Param("tunnelId") String tunnelId,
                                              @Param("prevControlType") String prevControlType,
                                              @Param("dictValue") String dictValue);
 
@@ -71,7 +71,7 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getFaultList(@Param("tunnelId") String tunnelId);
+    List<Integer> getFaultList(@Param("tunnelId") String tunnelId);
 
     /**
      * 查询累计报警分析(交通事件)
@@ -134,7 +134,9 @@ public interface SdSmartBigScreenMapper {
      * @param tunnelId
      * @return
      */
-    List<Map<String, Object>> getequipmentFailure(@Param("tunnelId") String tunnelId);
+    List<Map<String, Object>> getequipmentFailure(@Param("tunnelId") String tunnelId,
+                                                  @Param("sdDirection") String sdDirection,
+                                                  @Param("faultType") String faultType);
 
     /**
      * 查询预案列表

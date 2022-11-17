@@ -1246,7 +1246,7 @@ export default {
       console.log(row, "事件详情row");
     },
     handleDispatch(row) {
-      console.log(row);
+      console.log(row); 
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: {

@@ -180,12 +180,14 @@ export default {
       }
     },
     init(id) {
-      console.log(id)
+      console.log(id,"iddddddd")
       if (id) {
         const param = {
           id: id,
         };
         listEvent(param).then((response) => {
+          console.log(response,"response");
+
           if (response.rows.length > 0) {
             this.eventMes = response.rows[0];
           }
@@ -240,7 +242,7 @@ export default {
         this.$modal.msgSuccess("开始处理事件");
       });
       this.$router.push({
-        path: "/event/event/dispatch",
+        path: "/emergency/administration/dispatch",
         query: { id: event.id },
       });
       if (this.eventMes.eventState == "3") {
@@ -248,7 +250,7 @@ export default {
       }
       // bus.$emit("closePicDialog");
       bus.$emit("closePicDialog");
-      // bus.$emit("closeTableDialog");
+      bus.$emit("closeDialog");
       // this.eventPicDialog = false;
     },
     closeDialogTable() {

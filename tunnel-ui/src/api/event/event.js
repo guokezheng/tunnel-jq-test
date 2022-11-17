@@ -124,15 +124,16 @@ export function dispatchExecuted(eventId) {
 // 事件弹窗分类数组
 export function eventList(searchValue,pageNum,startTime) {
   return request({
-    url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
+    // url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
+    url: '/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime,
     method: 'get',
   })
 }
 
 // 事件弹窗分类数组 全部
-export function eventPopAll() {
+export function eventPopAll(pageNum) {
   return request({
-    url: '/event/eventPopAll',
+    url: '/event/eventPopAll?subIndex='+pageNum +',10',
     method: 'get',
   })
 }
@@ -140,6 +141,14 @@ export function eventPopAll() {
 export function getEventUntreatedNum() {
   return request({
     url: '/event/getEventUntreatedNum',
+    method: 'get',
+  })
+}
+
+// 设备故障
+export function eventPopFault(pageNum) {
+  return request({
+    url: '/event/eventPopFault?subIndex='+pageNum +',10',
     method: 'get',
   })
 }

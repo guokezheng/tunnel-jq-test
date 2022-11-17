@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-07 22:06:50
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-10-20 11:05:43
+ * @LastEditTime: 2022-11-17 14:32:00
  * @FilePath: \tunnel-ui\src\api\event\event.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -107,7 +107,7 @@ export function getSubareaByStakeNum(query) {
 // 一键恢复
 export function performRecovery(eventId) {
   return request({
-    url: '/event/performRecovery?eventId='+ eventId,
+    url: '/event/performRecovery?eventId=' + eventId,
     method: 'get',
   })
 }
@@ -116,15 +116,15 @@ export function performRecovery(eventId) {
 // 一进页面获取已执行数据
 export function dispatchExecuted(eventId) {
   return request({
-    url: '/log/dispatchExecuted?eventId='+ eventId,
+    url: '/log/dispatchExecuted?eventId=' + eventId,
     method: 'get',
   })
 }
 
 // 事件弹窗分类数组
-export function eventList(searchValue,pageNum,startTime) {
+export function eventList(searchValue, pageNum, startTime) {
   return request({
-    url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
+    url: searchValue == 3 ? '/event/list?remark=pop&pageNum=' + pageNum + '&pageSize=10&startTime=' + startTime : '/event/list?searchValue=' + searchValue + '&remark=pop&pageNum=' + pageNum + '&pageSize=10$startTime=' + startTime,
     method: 'get',
   })
 }

@@ -88,7 +88,8 @@ module.exports = {
           outputStyle: 'expanded'
         }
       }
-    }
+    },
+    extract: false
   },
   configureWebpack: {
     name: name,

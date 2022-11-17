@@ -110,7 +110,7 @@
         >新增</el-button>
         <!--      </el-col>
               <el-col :span="1.5">-->
-        <el-button
+<!--        <el-button
           type="success"
           plain
           icon="el-icon-edit"
@@ -118,10 +118,10 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:list:edit']"
-        >修改</el-button>
+        >修改</el-button>-->
         <!--      </el-col>
               <el-col :span="1.5">-->
-        <el-button
+<!--        <el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -129,10 +129,10 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:list:remove']"
-        >删除</el-button>
+        >删除</el-button>-->
         <!--      </el-col>
               <el-col :span="1.5">-->
-        <el-button
+<!--        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -140,7 +140,7 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:list:export']"
-        >导出</el-button>
+        >导出</el-button>-->
       </el-form-item>
     </el-form>
 
@@ -151,39 +151,46 @@
 <!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
 <!--    </el-row>-->
 
-    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="listList"
+    @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务编号" align="center" prop="id" />
 <!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
-      <el-table-column label="计划完成时间" align="center" prop="endPlantime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endPlantime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column label="派单时间" align="center" prop="dispatchTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.dispatchTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="指派巡查班组" align="center" prop="bzId" />
-      <el-table-column label="任务描述" align="center" prop="taskDescription" />
+      <el-table-column label="承巡班组" align="center" prop="bzId" />
+<!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
+      <el-table-column label="计划完成时间" align="center" prop="endPlantime" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.endPlantime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="发布状态" align="center" prop="publishStatus" />
       <el-table-column label="任务状态" align="center" prop="taskStatus" />
-      <el-table-column label="巡查人员" align="center" prop="walkerId" />
-      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
+<!--      <el-table-column label="巡查人员" align="center" prop="walkerId" />-->
+<!--      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.taskEndtime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="任务持续时间" align="center" prop="taskCxtime" width="180">
+      </el-table-column>-->
+<!--      <el-table-column label="任务持续时间" align="center" prop="taskCxtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.taskCxtime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="现场情况描述" align="center" prop="siteDescription" />
+      </el-table-column>-->
+<!--      <el-table-column label="现场情况描述" align="center" prop="siteDescription" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleRecordy(scope.row)"
+          >任务详情</el-button>
           <el-button
             size="mini"
             type="text"
@@ -279,16 +286,229 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      :visible.sync="record"
+      width="70%"
+    >
+      <div style="text-align: center;font-size: 20px;">巡检任务及执行记录单</div>
+      <div class="col-1">
+        发布状态/执行状态：
+        <div class="col-card">已发布</div>
+        <div class="col-card">已完结</div>
+      </div>
+      <div class="card"  v-for="item in taskNews">
+        <div class="card-col">
+          <div>
+            任务编号：
+            <span>{{item.id}}</span>
+          </div>
+          <div>
+            所属单位：
+            <span>{{item.zzjgId}}</span>
+          </div>
+          <div>
+            指派巡查班组：
+            <span>{{item.bzId}}</span>
+          </div>
+        </div>
+        <div class="card-col">
+          <div>
+            计划完成日期：
+            <span>{{item.endPlantime}}</span>
+          </div>
+          <div>
+            派单人员：
+            <span>{{item.dispatcher}}</span>
+          </div>
+          <div>
+            派单时间：
+            <span>{{item.dispatchTime}}</span>
+          </div>
+        </div>
+        <div class="card-cols">
+          <div>
+            任务描述：
+            <span>{{item.taskDescription}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-col1">
+          <div class="row">
+            <div class="row-card1">1</div>
+            <div class="row-card1">设备巡检点</div>
+            <div class="row-card2" style="margin-left:10px">济潍高速济青线/杭山东隧道</div>
+            <div class="row-card2">K120+200  车道指示器(名称车道指示器#2名称)</div>
+            <div class="row-card2" style="text-align:right">2022/09/23 12:23:34</div>
+          </div>
+          <div style="background-color: white;padding: 10px;">
+            <div class="test">设备描述：<span>巡检点设定时，巡检点设备或故障描述信息。巡检点设定时，巡检点设备或故障描述信息。</span></div>
+            <div style="display:flex;margin-top: 10px;">
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div>
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div>
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div>
+            </div>
+            <div class="card-cols">
+              <div style="width:80%">
+                设备运行状态:
+                <span>设备状态:在线</span>
+              </div>
+              <div class="col-test">
+                (抢修时检测情况)
+              </div>
+            </div>
+            <div class="card-cols">
+              <div style="width:80%">
+                现场故障情况:
+                <span>
+                  故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码
+                </span>
+              </div>
+              <div class="col-test">
+                (抢修时检测情况)
+              </div>
+            </div>
+            <div class="card-cols">
+              现场照片：
+               <div>
+                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
+                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
+                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-col1">
+          <div class="row">
+            <div class="row-card1">2</div>
+            <div class="row-card1">设备巡检点</div>
+            <div class="row-card2" style="margin-left:10px">济潍高速济青线/杭山东隧道</div>
+            <div class="row-card2">K120+200  车道指示器(名称车道指示器#2名称)</div>
+            <div class="row-card2" style="text-align:right">2022/09/23 12:23:34</div>
+          </div>
+          <div style="background-color: white;padding: 10px;">
+            <div class="test">设备描述：<span>巡检点设定时，巡检点设备或故障描述信息。巡检点设定时，巡检点设备或故障描述信息。</span></div>
+            <div style="display:flex;margin-top: 10px;">
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div >
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div>
+              <div class="test" style="width:30%">外观情况：
+                <span>外观正常</span>
+              </div>
+            </div>
+            <div class="card-cols">
+              <div style="width:80%"  class="test">
+                设备运行状态:
+                <span>设备状态:在线</span>
+              </div>
+              <div class="col-test">
+                (抢修时检测情况)
+              </div>
+            </div>
+            <div class="card-cols">
+              <div style="width:80%"  class="test">
+                现场故障情况:
+                <span>
+                  故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码
+                </span>
+              </div>
+              <div class="col-test">
+                (抢修时检测情况)
+              </div>
+            </div>
+            <div class="card-cols" >
+              现场照片：
+              <div style="border: 1px solid #f0f0f0;padding:20px">
+              未上传图片
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-col">
+          <div class="test">任务执行状态：
+            <span>已完结</span>
+          </div>
+          <div class="test">
+            执行巡查班组：
+            <span>济青中线养护二站</span>
+          </div>
+          <div class="test">
+            执行巡查人：
+            <span>郑费腾</span>
+          </div>
+        </div>
+        <div class="card-col">
+          <div class="test">
+            任务完成时间：
+            <span>2022/09/25</span>
+          </div>
+          <div class="test">
+            任务持续时长：
+            <span>1天23小时42分</span>
+            <div class="chaoshi">超时</div>
+          </div>
+        </div>
+        <div class="card-cols">
+          <div class="test">
+            任务描述：
+            <span>请按照机电设备养护技术规范执行巡检任务，并按时回传巡检记录。如遇巡检设备问题，优先现场记录并处理，无法处理的机电故障需要及时填报故障上报单。巡检点需要如实签到，并记录巡检点现场情况。</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-row">
+          <div style="width:10%">操作记录</div>
+          <div style="width:10%">派单</div>
+          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width:30%">2022/09/18 21:13:35</div>
+          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+        </div>
+        <div class="table-row">
+          <div style="width:10%">操作记录</div>
+          <div style="width:10%">派单</div>
+          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width:30%">2022/09/18 21:13:35</div>
+          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+        </div>
+        <div class="table-row">
+          <div style="width:10%">操作记录</div>
+          <div style="width:10%">派单</div>
+          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width:30%">2022/09/18 21:13:35</div>
+          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+        </div>
+        <div class="table-row">
+          <div style="width:10%">操作记录</div>
+          <div style="width:10%">派单</div>
+          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width:30%">2022/09/18 21:13:35</div>
+          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listList, getList, delList, addList, updateList, exportList } from "@/api/electromechanicalPatrol/taskManage/task";
+import { listList, getList, delList, addList, updateList, exportList,getTaskInfoList } from "@/api/electromechanicalPatrol/taskManage/task";
+import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 
 export default {
   name: "List",
   data() {
     return {
+      record:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -326,6 +546,28 @@ export default {
         taskCxtime: null,
         siteDescription: null,
       },
+      // 任务详情参数
+      taskNews:{
+        id:"",
+        zzjgId:"",
+        bzId:"",
+        endPlantime:"",
+        dispatcher:"",
+        dispatchTime:"",
+        taskDescription:"",
+      },
+      //巡查点参数
+      patrolNews:{
+        xcTime:"",
+        bzId:"",
+        walkerId:"",
+        impression:0,
+        network:0,
+        power:0,
+        eqStatus:"",
+        runStatus:"",
+        eqFaultDescription:"",
+      },
       // 表单参数
       form: {},
       // 表单校验
@@ -337,6 +579,18 @@ export default {
     this.getList();
   },
   methods: {
+    handleRecordy(row) {
+      console.log(row);
+      this.record = true
+      this.taskId = row.id;
+      getTaskInfoList(this.taskId).then((response) => {
+        debugger
+        this.taskNews = response.data.task;
+        this.patrolNews =  response.data.patrol;
+        console.log(this.taskNews);
+console.log(this.patrolNews);
+      });
+    },
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;
@@ -450,3 +704,112 @@ export default {
   }
 };
 </script>
+<style>
+.el-table tr{
+  background-color: transparent;
+}</style>
+<style lang="scss" scoped>
+.card{
+  font-size: 15px;
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  .card-col{
+    margin-top: 10px;
+    display: flex;
+    color: #79949c;
+    .chaoshi{
+      padding: 5px;
+      color: #FFD69A;
+      display: inline;
+      margin-left: 10px;
+      border: 1px solid #FFD69A;
+    }
+    div{
+      width: 33%;
+      span{
+        color: black;
+        margin-left: 10px;
+      }
+    }
+  }
+  .card-cols{
+    margin-top: 10px;
+    display: flex;
+    .col-test{
+      text-align: right;
+      color: #79949c;
+    }
+    img{
+      width:100px;
+      margin-left: 20px;
+    }
+  }
+  .card-col1{
+    font-size: 17px;
+    .row{
+      margin-top: 5px;
+      display: flex;
+      background-color: white;
+      padding: 10px;
+      // justify-content: center;
+      align-items: center;
+      .row-card1{
+        padding: 5px;
+        background-color:#f0f0f0;
+        margin-left: 5px;
+      }
+      .row-card2{
+        width: 29%;
+      }
+    }
+  }
+}
+.col-1{
+  font-size: 20px;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  text-align: right;
+  .col-card{
+    padding: 10px;
+    margin-left: 5px;
+    color: #3E9E70;
+    background-color: rgba(230, 243, 235, 1);
+  }
+}
+  .card-cols{
+    margin-top: 10px;
+    display: flex;
+    .col-test{
+      width: 20%;
+      text-align: right;
+      color: #79949c;
+    }
+    img{
+      width:100px;
+      margin-left: 20px;
+    }
+  }
+  .table-row{
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    div{
+      text-align: center;
+      margin-left: 15px;
+      border-bottom:1px solid black
+    }
+  }
+  .test{
+    color: #79949c;
+    span{
+      color: black;
+      margin-left: 5px;
+    }
+  }
+</style>

@@ -122,9 +122,24 @@ export function dispatchExecuted(eventId) {
 }
 
 // 事件弹窗分类数组
-export function eventList(searchValue) {
+export function eventList(searchValue,pageNum,startTime) {
   return request({
-    url: searchValue == 3?'/event/list?remark=pop':'/event/list?searchValue='+searchValue+'&remark=pop',
+    url: searchValue == 3?'/event/list?remark=pop&pageNum='+pageNum +'&pageSize=10&startTime='+startTime:'/event/list?searchValue='+searchValue+'&remark=pop&pageNum='+pageNum +'&pageSize=10$startTime='+startTime,
+    method: 'get',
+  })
+}
+
+// 事件弹窗分类数组 全部
+export function eventPopAll() {
+  return request({
+    url: '/event/eventPopAll',
+    method: 'get',
+  })
+}
+// 事件 获取总条数
+export function getEventUntreatedNum() {
+  return request({
+    url: '/event/getEventUntreatedNum',
     method: 'get',
   })
 }

@@ -40,8 +40,10 @@
             设备故障
           </div>
         </div>
-        <div class="listContent">
-          <div v-for="(item, index) of list" :key="index">
+        <ul class="listContent" 
+            v-infinite-scroll="load"
+            infinite-scroll-disabled="disabled">
+          <li v-for="(item, index) of list" :key="index">
             <el-row style="color: white">
               <el-col :span="2">
                 <img
@@ -50,7 +52,58 @@
                 />
               </el-col>
               <el-col :span="2">
-                <div>{{ item.eventType.simplifyName }}</div>
+                <div>
+                  {{ item.eventType.simplifyName }}
+                </div>
+              </el-col>
+              <el-col :span="16">
+                <div class="overflowText">{{ item.eventTitle }}</div>
+                <div style="float: right; margin-right: 16px">
+                  {{ item.startTime }}
+                </div>
+              </el-col>
+              <el-col :span="2">
+                <el-button size="mini" type="text" @click="handleSee(item.id)"
+                  >查看
+                </el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-button
+                  size="mini"
+                  type="text"
+                  @click="handleIgnore(item.id)"
+                  >忽略
+                </el-button>
+              </el-col>
+            </el-row>
+            <div class="lineBT">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          </li>
+          <p v-if="noMore" style="margin-top: 10px; font-size: 13px; color: #ccc; text-align: center;">
+          没有更多了
+        </p>
+        </ul>
+        <p v-if="loading"  class="loading">
+          <span></span>
+        </p>
+        
+        <!-- <div class="listContent">
+          <div v-for="(item, index) of list" :key="index" >
+            <el-row style="color: white">
+              <el-col :span="2">
+                <img
+                  :src="item.iconUrl"
+                  style="width: 20px; height: 20px; transform: translateY(5px)"
+                />
+              </el-col>
+              <el-col :span="2">
+                <div v-if="searchValue != 3">
+                  {{ item.eventType.simplifyName }}
+                </div>
+                <div v-else-if="searchValue == 3">{{ item.simplifyName }}</div>
               </el-col>
               <el-col :span="16">
                 <div class="overflowText">{{ item.eventTitle }}</div>
@@ -78,7 +131,7 @@
               <div></div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
@@ -159,8 +212,9 @@
     
     <script>
 import { mapState } from "vuex";
+import moment from 'moment'
 import bus from "@/utils/bus";
-import { updateEvent, eventList } from "@/api/event/event";
+import { updateEvent, eventList, eventPopAll } from "@/api/event/event";
 import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
 
 export default {
@@ -171,66 +225,56 @@ export default {
   data() {
     return {
       searchValue: 3,
+      loading: false,
       // showTable:false,
       eventTableDialog: true,
       activeName: "0",
-      list: [
-        // {
-        //   dictLabel:'雷达',
-        //   dictValue:'1',
-        //   list:[
-        //     {
-        //       tunnels:{
-        //         tunnelName:'666'
-        //       },
-        //       eventType:{
-        //         eventType:'222'
-        //       },
-        //       stakeNum:1,
-        //     }
-        //   ]
-        // }
-      ],
+      pageNum: 1,
+      total: 0,
+      list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
+      startTime:''
     };
   },
-  // computed: {
-  //   ...mapState({
-  //     sdEventList: (state) => state.websocket.sdEventList,
-  //   }),
-  // },
-  // watch: {
-  //   sdEventList(event) {
-  //     console.log(event, "websockt事件表格弹窗");
-  //     for (let i = 0; i < event.length; i++) {
-  //       for (let z = 0; z < this.tabList.length; z++) {
-  //         if (event[i].eventSource == this.tabList[z].dictValue) {
-  //           this.tabList[z].list.unshift(event[i]);
-  //         }
-  //       }
-  //     }
-  //     console.log(this.tabList);
-  //     // this.eventTableDialog = true;
-  //     // this.showTable = true
-  //   },
-  //   deep: true,
-  // },
+  computed: {
+    noMore() {
+      //当起始页数大于总页数时停止加载
+      console.log(this.pageNum, parseInt(this.total/10));
+      if(this.total%10==0){
+        return this.pageNum >= parseInt(this.total/10);
+      }else{
+        return this.pageNum >= parseInt(this.total/10)+1;
+
+      }
+    },
+    disabled() {
+      return this.loading || this.noMore;
+    },
+  },
   created() {
-    // this.getDicts("sd_event_source").then((data) => {
-    //   console.log(data, "事件来源");
-    //   this.tabList = data.data;
-    //   this.tabList.forEach((item) => {
-    //     item.list = [];
-    //   });
-    // });
-    var tab = this.searchValue;
-    eventList(tab).then((res) => {
+    this.startTime = moment().format('YYYY-MM-DD')
+    console.log(this.startTime)
+    eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
       console.log(res, "事件弹窗分类数组");
       this.list = res.rows;
+      this.total = res.total;
+      this.loading = false;
     });
+    
   },
   mounted() {
+    bus.$on('forceUpdateTable', (id) => {
+      let index = this.list.findIndex((item) => {
+          if (item.id == id) {
+            return true;
+          }
+        });
+        this.list.splice(index, 1);
+        if(this.list.length == 0){
+          bus.$emit("closeDialog");
+        }
+    })
     // bus.$on('closeTableDialog', () => {
     //  this.eventTableDialog = false
     // })
@@ -239,12 +283,25 @@ export default {
     // })
   },
   methods: {
+    load() {
+      this.loading = true;
+      setTimeout(() => {
+        this.pageNum += 1;
+
+        eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
+          console.log(res, "事件弹窗分类数组");
+          // this.list.push(res.rows);
+          this.list = this.list.concat(res.rows);
+          this.$forceUpdate();
+          this.loading = false
+        });
+      }, 2000);
+    },
     handleSee(id) {
-      setTimeout(() =>{
+      setTimeout(() => {
         bus.$emit("getPicId", id);
-      },200)
+      }, 200);
       bus.$emit("openPicDialog");
-      
     },
 
     // 忽略事件
@@ -252,18 +309,20 @@ export default {
       if (id) {
         const param = {
           id: id,
-          eventState: "2"
+          eventState: "2",
         };
         updateEvent(param).then((response) => {
           this.$modal.msgSuccess("已成功忽略");
         });
-        let index = this.list.findIndex(item => {
-            if (item.id == id) {
-              return true
-            }
-          })
-          this.list.splice(index, 1)
-        this.$forceUpdate()
+        let index = this.list.findIndex((item) => {
+          if (item.id == id) {
+            return true;
+          }
+        });
+        this.list.splice(index, 1);
+        bus.$emit("getEvtList");
+
+        this.$forceUpdate();
       } else {
         this.$modal.msgError("没有接收到事件id");
       }
@@ -293,10 +352,21 @@ export default {
 
     handleClick(searchValue) {
       this.searchValue = searchValue;
-      eventList(searchValue).then((res) => {
+
+      // if (searchValue == 3) {
+      //   eventPopAll().then((res) => {
+      //     console.log(res, "全部事件");
+      //     this.list = res.data;
+      //   });
+      // } else {
+      const pageNum = 1;
+      eventList(searchValue, pageNum,this.startTime).then((res) => {
         console.log(res, "事件弹窗分类数组");
         this.list = res.rows;
+        this.total = res.total;
+        this.loading = false;
       });
+      // }
     },
     // 表格的行样式
     // tableRowClassName({ row, rowIndex }) {
@@ -376,25 +446,48 @@ export default {
   .listContent {
     max-height: 290px;
     overflow: auto;
-    background: rgba($color: #6C8097, $alpha: 0.3);
-    >div{
+    background: rgba($color: #6c8097, $alpha: 0.3);
+    padding-left: 0;
+    > li {
       // margin-bottom: 6px;
+      list-style: none;
       padding: 10px;
       padding-bottom: 0px;
     }
   }
   /*table滚动条背景色 */
   ::-webkit-scrollbar {
-      width:4px;
-      background-color: #c4e8f6;
-    }
+    width: 4px;
+    background-color: #c4e8f6;
+  }
 
-    /* table滚动条的滑块*/
-   ::-webkit-scrollbar-thumb {
-      background-color: #00c2ff;
-    }
+  /* table滚动条的滑块*/
+  ::-webkit-scrollbar-thumb {
+    background-color: #00c2ff;
+  }
 }
-
+.loading {
+  position: absolute;
+  top: 230px;
+  left: 284px;
+  span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #409eff;
+    border-left: transparent;
+    animation: zhuan 0.5s linear infinite;
+    border-radius: 50%;
+  }
+}
+@keyframes zhuan {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 .eventClass {
   position: absolute;
   top: 0;
@@ -408,7 +501,7 @@ export default {
 }
 ::v-deep .eventBox {
   width: 570px;
-  max-height: 400px;
+  max-height: 430px;
   border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
   top: 0px;

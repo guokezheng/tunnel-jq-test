@@ -3811,29 +3811,27 @@ export default {
             console.log(response, "查询设备状态图标");
             list = response.rows;
             for (let i = 0; i < list.length; i++) {
-            let iconUrl = [];
-            if (list[i].iFileList) {
-              console.log(111111111);
-              for (let j = 0; j < list[i].iFileList.length; j++) {
-                let img = list[i].iFileList[j].url;
-                iconUrl.push(img);
+              let iconUrl = [];
+              if (list[i].iFileList != null) {
+                for (let j = 0; j < list[i].iFileList.length; j++) {
+                  // let img = await that.picture(list[i].iFileList[j].url);
+                  let img = list[i].iFileList[j].url;
+                  iconUrl.push(img);
+                }
               }
+              that.eqTypeStateList2.push({
+                stateType: list[i].stateType,
+                type: list[i].stateTypeId,
+                state: list[i].deviceState,
+                name: list[i].stateName,
+                control: list[i].isControl,
+                url: iconUrl,
+              });
             }
-            that.eqTypeStateList2.push({
-              type: list[i].stateTypeId,
-              state: list[i].deviceState,
-              name: list[i].stateName,
-              control: list[i].isControl,
-              url: iconUrl,
-            });
-            console.log(that.eqTypeStateList2, "that.eqTypeStateList2");
-          }
           });
-
-          
+          console.log(that.eqTypeStateList2,"that.eqTypeStateList");
         }
       }
-      
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {

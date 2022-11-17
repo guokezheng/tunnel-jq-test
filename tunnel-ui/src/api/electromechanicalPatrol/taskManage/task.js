@@ -51,3 +51,12 @@ export function exportList(query) {
     params: query
   })
 }
+
+// 任务详情
+export function getTaskInfoList(data) {
+  return request({
+    url: '/task/list/getTaskInfoList',
+    method: 'post',
+    data: data
+  })
+}

@@ -152,9 +152,9 @@ export default {
     };
   },
   created() {
-    this.getDicts("sd_event_source").then((data) => {
-      this.tabList = data.data;
-    });
+    // this.getDicts("sd_event_source").then((data) => {
+    //   this.tabList = data.data;
+    // });
     this.getEventTypeList();
   },
   beforeCreate() {
@@ -224,6 +224,8 @@ export default {
       }
       // this.$emit("closePicDialog");
       bus.$emit("closePicDialog");
+      bus.$emit("forceUpdateTable",event.id);
+
       // bus.$emit("closeTableDialog");
 
       // this.eventPicDialog = false;

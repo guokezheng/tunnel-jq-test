@@ -23,7 +23,8 @@
             AND sde.tunnel_id = #{tunnelId}
         </if>
         ORDER BY
-            sde.start_time ASC
+            sde.start_time DESC
+        LIMIT 50
     </select>
 
     <select id="getEventProportion" resultType="hashmap" parameterType="java.lang.String">
@@ -109,9 +110,8 @@
             sfl.fallt_remove_statue
     </select>
 
-    <select id="getEventList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getEventList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (
@@ -133,7 +133,7 @@
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
@@ -149,9 +149,8 @@
             DATE ASC;
     </select>
 
-    <select id="getWarningList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getWarningList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (
@@ -173,7 +172,7 @@
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
                     YEAR ( se.start_time )= YEAR (CURDATE())
@@ -189,9 +188,8 @@
             DATE ASC;
     </select>
 
-    <select id="getFaultList" resultType="hashmap" parameterType="java.lang.String">
-        SELECT DATE AS
-            everyDay,
+    <select id="getFaultList" resultType="int" parameterType="java.lang.String">
+        SELECT
             IFNULL( tab.num, 0 ) AS eventNumber
         FROM
             (
@@ -231,7 +229,7 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -246,7 +244,7 @@
         FROM
             sd_event se
         LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
         AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -276,8 +274,8 @@
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
             LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
-            AND sdd.dict_type = #{sdEventState}
-            LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_code
+            AND sdd.dict_type = 'sd_event_state'
+            LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_value
             AND sdd1.dict_type = #{prevControlType}
         WHERE
             sdd1.dict_value IN ( #{dictValue1}, #{dictValue2} )
@@ -307,7 +305,7 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
@@ -322,13 +320,31 @@
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
-            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_code
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
+    </select>
+
+    <select id="getequipmentFailure" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            CONCAT( st.tunnel_name, '-', sdd.dict_label, '-', d.eq_name, '-', sdd1.dict_label ) AS faultInformation
+        FROM
+            sd_fault_list sfl
+                LEFT JOIN sd_tunnels st ON sfl.tunnel_id = st.tunnel_id
+                LEFT JOIN sd_devices d ON sfl.eq_id = d.eq_id
+                LEFT JOIN sys_dict_data sdd ON d.eq_direction = sdd.dict_value
+                AND sdd.dict_type = #{sdDirection}
+                LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
+                AND sdd1.dict_type = #{faultType}
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
     </select>
 
     <select id="getReservePlan" resultType="hashmap">

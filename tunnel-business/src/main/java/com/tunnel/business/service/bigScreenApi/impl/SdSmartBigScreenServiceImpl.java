@@ -115,14 +115,14 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     }
 
     @Override
-    public AjaxResult getReservePlan() {
-        List<Map<String, Object>> reservePlan = sdSmartBigScreenMapper.getReservePlan();
+    public AjaxResult getReservePlan(String tunnelId) {
+        List<Map<String, Object>> reservePlan = sdSmartBigScreenMapper.getReservePlan(tunnelId);
         return AjaxResult.success(reservePlan);
     }
 
     @Override
-    public AjaxResult getEmergencyMaterials() {
-        List<Map<String, Object>> emergencyMaterials = sdSmartBigScreenMapper.getEmergencyMaterials();
+    public AjaxResult getEmergencyMaterials(String tunnelId) {
+        List<Map<String, Object>> emergencyMaterials = sdSmartBigScreenMapper.getEmergencyMaterials(tunnelId);
         return AjaxResult.success(emergencyMaterials);
     }
 

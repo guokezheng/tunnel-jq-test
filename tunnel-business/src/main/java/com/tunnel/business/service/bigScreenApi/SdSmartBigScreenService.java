@@ -69,13 +69,13 @@ public interface SdSmartBigScreenService {
      * 查询预案列表
      * @return
      */
-    AjaxResult getReservePlan();
+    AjaxResult getReservePlan(String tunnelId);
 
     /**
      * 查询周边物资
      * @return
      */
-    AjaxResult getEmergencyMaterials();
+    AjaxResult getEmergencyMaterials(String tunnelId);
 
     /**
      * 查询值班人员

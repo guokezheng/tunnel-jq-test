@@ -142,13 +142,13 @@ public interface SdSmartBigScreenMapper {
      * 查询预案列表
      * @return
      */
-    List<Map<String, Object>> getReservePlan();
+    List<Map<String, Object>> getReservePlan(@Param("tunnelId") String tunnelId);
 
     /**
      * 查询周边物资
      * @return
      */
-    List<Map<String, Object>> getEmergencyMaterials();
+    List<Map<String, Object>> getEmergencyMaterials(@Param("tunnelId") String tunnelId);
 
     /**
      * 查询值班人员

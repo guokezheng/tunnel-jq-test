@@ -352,11 +352,15 @@
 	        rp.plan_name AS planName
         FROM
             sd_reserve_plan rp
+            LEFT JOIN sd_tunnel_subarea sts ON rp.subarea_id = sts.s_id
         WHERE
             1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sts.tunnel_id = #{tunnelId}
+        </if>
     </select>
     
-    <select id="getEmergencyMaterials" resultType="hashmap">
+    <select id="getEmergencyMaterials" resultType="hashmap" parameterType="java.lang.String">
         SELECT
             m.material_name AS materialName,
             m.number,
@@ -365,6 +369,9 @@
             sd_material m
         WHERE
             1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND m.tunnel_id = #{tunnelId}
+        </if>
     </select>
 
     <select id="getEmergencyPer" parameterType="java.lang.String" resultType="hashmap">

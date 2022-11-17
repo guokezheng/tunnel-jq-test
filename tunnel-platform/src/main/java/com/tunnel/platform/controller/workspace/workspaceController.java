@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -235,11 +236,13 @@ public class workspaceController extends BaseController {
                 SdDevices dev = new SdDevices();
                 dev.setFEqId(fEqId);
                 List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
-                for (int i = 0;i < list.size();i++) {
-                    SdDevices devo = list.get(i);
-                    updateDeviceData(devo, state, DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
-                    updateDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
-                    updateDeviceData(devo, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+                if (!list.isEmpty()) {
+                    for (int i = 0; i < list.size(); i++) {
+                        SdDevices devo = list.get(i);
+                        updateDeviceData(devo, state, DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                        updateDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
+                        updateDeviceData(devo, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+                    }
                 }
             } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
                 //父级设备变更
@@ -251,11 +254,45 @@ public class workspaceController extends BaseController {
                 SdDevices dev = new SdDevices();
                 dev.setFEqId(fEqId);
                 List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
-                for (int i = 0;i < list.size();i++) {
-                    SdDevices devo = list.get(i);
-                    updateDeviceData(devo, state, DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
-                    updateDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
-                    updateDeviceData(devo, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+                if (!list.isEmpty()) {
+                    //疏散标志关灯
+                    if (fireMark.equals("0") && !fireMark.equals("255")) {
+                        state = "1";
+                        for (int i = 0;i < list.size();i++) {
+                            SdDevices devo = list.get(i);
+                            updateDeviceData(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                            updateDeviceData(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                            updateDeviceData(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                            updateDeviceData(devo, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        }
+                    //疏散标志报警点更新
+                    } else if (!fireMark.equals("0") && !fireMark.equals("255")) {
+                        BigDecimal fMark = new BigDecimal(fireMark);
+                        for (int i = 0;i < list.size();i++) {
+                            SdDevices devices = list.get(i);
+                            BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                            if (fMark.compareTo(addressMark) < 0) {
+                                state = "6";
+                            } else if (fMark.compareTo(addressMark) == 0) {
+                                state = "5";
+                            } else if (fMark.compareTo(addressMark) > 0) {
+                                state = "4";
+                            }
+                            updateDeviceData(devices, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                            updateDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                            updateDeviceData(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                            updateDeviceData(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                        }
+                    } else {
+                        //疏散标志开灯无报警点
+                        for (int i = 0;i < list.size();i++) {
+                            SdDevices devo = list.get(i);
+                            updateDeviceData(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+                            updateDeviceData(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                            updateDeviceData(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                            updateDeviceData(devo, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                        }
+                    }
                 }
             }
             //添加操作记录

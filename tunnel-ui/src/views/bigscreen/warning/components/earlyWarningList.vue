@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-02 10:45:52
+ * @LastEditTime: 2022-11-16 17:20:11
  * @FilePath: \tunnel-ui\src\views\bigscreen\warning\components\earlyWarningList.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { getActiveSafety } from "@/api/business/new";
 import vueSeamlessScroll from "vue-seamless-scroll";
 export default {
   data() {
@@ -66,7 +67,17 @@ export default {
       };
     },
   },
-  methods: {},
+  created() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
+      getActiveSafety(tunnelId).then((res) => {
+        this.faultList = res.data;
+      });
+    },
+  },
 };
 </script>
 

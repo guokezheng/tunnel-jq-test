@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { getSameMonthEventWarning } from "@/api/business/new";
 import * as echarts from "echarts";
 export default {
   data() {
@@ -25,14 +26,20 @@ export default {
       var month = new Date().getMonth() + 1;
       var date = new Date().getDate();
       var dateArr = [];
+      getSameMonthEventWarning().then((res) => {
+        // let dateValArr1 =
+      });
+      // 故障
       var dateValArr1 = [
         23, 25, 27, 24, 23, 17, 24, 20, 18, 16, 20, 25, 26, 28, 24, 24, 26, 28,
         25, 29, 27, 26, 25, 26, 25, 24, 28, 26, 24, 20, 21,
       ];
+      // 事件
       var dateValArr2 = [
         26, 25, 26, 25, 24, 28, 26, 17, 24, 20, 23, 25, 27, 24, 23, 29, 27, 18,
         16, 20, 25, 26, 28, 24, 24, 26, 28, 25, 24, 20, 21,
       ];
+      //预警
       var dateValArr3 = [
         26, 25, 24, 28, 26, 17, 24, 20, 18, 16, 20, 25, 26, 28, 24, 24, 23, 25,
         27, 24, 23, 29, 27, 26, 25, 26, 28, 25, 24, 20, 21,

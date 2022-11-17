@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-01 10:43:49
+ * @LastEditTime: 2022-11-16 15:32:34
  * @FilePath: \tunnel-ui\src\views\bigscreen\tunnel\components\tunnelEvent.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { getWarningnum } from "@/api/business/new";
 import * as echarts from "echarts";
 import elementResizeDetectorMaker from "element-resize-detector";
 
@@ -45,7 +46,10 @@ export default {
       });
     },
     initChart() {
-      var warningData = this.warningData;
+      getWarningnum().then((res) => {
+        this.warningData = res.data;
+      });
+
       var chartDom = document.getElementById("echarts-Box");
       var myChart = echarts.init(chartDom);
       var option;
@@ -66,7 +70,7 @@ export default {
         },
         xAxis: {
           type: "category",
-          data: ["5日", "10日", "15日", "20日", "25日", "30日"],
+          data: this.getNearMounth(),
 
           axisLabel: {
             //y轴文字的配置
@@ -120,13 +124,42 @@ export default {
             lineStyle: {
               color: "#4db6eb",
             },
-            data: [150, 230, 224, 218, 135, 147, 260],
+            data: this.warningData,
             type: "line",
           },
         ],
       };
 
       option && myChart.setOption(option);
+    },
+    getNearMounth() {
+      var timeArr = [];
+      var time = new Date();
+      var year = time.getFullYear();
+      var lastMonth = time.getMonth();
+      var nowMonth = time.getMonth() + 1;
+
+      function getDaysInOneMonth(year, lastMonth) {
+        //获取某年某月的天数函数
+        lastMonth = parseInt(lastMonth, 10);
+        var newTime = new Date(year, lastMonth, 0);
+        return newTime.getDate();
+      }
+      var lastDays = getDaysInOneMonth(year, lastMonth); //上个月天数
+      var nowDays = getDaysInOneMonth(year, nowMonth); //本月天数
+
+      var day = time.getDate() + 1;
+      for (let i = 0; i < nowDays; i++) {
+        day = day - 1;
+        if (day <= 0) {
+          day = day + lastDays;
+        }
+        timeArr.push(day);
+      }
+      timeArr = timeArr.reverse();
+      timeArr = timeArr.splice(1, nowDays);
+      console.log(timeArr);
+      return timeArr;
     },
   },
 };

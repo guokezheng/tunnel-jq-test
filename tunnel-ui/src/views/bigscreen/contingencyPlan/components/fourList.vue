@@ -32,7 +32,7 @@
                 <el-col style="width: 3vw; text-align: center">{{
                   index + 1
                 }}</el-col>
-                <el-col style="width: 9vw">{{ item.content }}</el-col>
+                <el-col style="width: 12vw">{{ item.planName }}</el-col>
               </el-row>
             </vue-seamless-scroll>
           </div>
@@ -73,9 +73,9 @@
                 <el-col style="width: 3vw; text-align: center">{{
                   index + 1
                 }}</el-col>
-                <el-col style="width: 7vw">{{ item.resourcesName }}</el-col>
-                <el-col style="width: 3vw">{{ item.resourcesNum }}</el-col>
-                <el-col style="width: 5vw">{{ item.resourcesAddress }}</el-col>
+                <el-col style="width: 7vw">{{ item.materialName }}</el-col>
+                <el-col style="width: 3vw">{{ item.number }}</el-col>
+                <el-col style="width: 5vw">{{ item.station }}</el-col>
               </el-row>
             </vue-seamless-scroll>
           </div>
@@ -113,8 +113,8 @@
                 <el-col style="width: 4vw; text-align: center">{{
                   index + 1
                 }}</el-col>
-                <el-col style="width: 5vw">{{ item.PersonnelName }}</el-col>
-                <el-col style="width: 6vw">{{ item.PersonnelTel }}</el-col>
+                <el-col style="width: 5vw">{{ item.userName }}</el-col>
+                <el-col style="width: 6vw">{{ item.phone }}</el-col>
               </el-row>
             </vue-seamless-scroll>
           </div>
@@ -156,6 +156,11 @@
 </template>
 
 <script>
+import {
+  getReservePlan,
+  getEmergencyMaterials,
+  getEmergencyPer,
+} from "@/api/business/new";
 import vueSeamlessScroll from "vue-seamless-scroll";
 export default {
   data() {
@@ -245,7 +250,23 @@ export default {
       };
     },
   },
-  methods: {},
+  created() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      // let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
+      getReservePlan().then((res) => {
+        this.faultList = res.data;
+      });
+      getEmergencyMaterials().then((res) => {
+        this.resourcesList = res.data;
+      });
+      getEmergencyPer().then((res) => {
+        this.PersonnelList = res.data;
+      });
+    },
+  },
 };
 </script>
 

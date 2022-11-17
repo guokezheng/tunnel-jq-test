@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { getCumulativeAlarm } from "@/api/business/new";
 import * as echarts from "echarts";
 export default {
   data() {
@@ -111,171 +112,176 @@ export default {
   methods: {
     alarmsCharts() {
       var Cumulative = echarts.init(document.getElementById("cumulative"));
-      var option = {
-        legend: {
-          orient: "vertical",
-          show: true,
-          right: "10%",
-          y: "center",
-          itemWidth: 3,
-          itemHeight: 30,
-          itemGap: 20,
-          textStyle: {
-            color: "#7a8c9f",
-            fontSize: 14,
-            lineHeight: 20,
-            rich: {
-              percent: {
-                color: "#03c8de",
-                fontSize: 16,
-              },
-            },
-          },
-          formatter: (name) => {
-            switch (name) {
-              case "故障":
-                return "故障\r{percent|40%} ";
-              case "事件":
-                return "事件\r{percent|30%} ";
-              case "预警":
-                return "预警\r{percent|30%} ";
-              default:
-                break;
-            }
-          },
-        },
-        tooltip: {
-          show: true,
-        },
-        series: [
-          {
-            type: "pie",
-            radius: ["45%", "55%"],
-            center: ["35%", "50%"],
-            hoverAnimation: false,
-            z: 10,
-            label: {
-              position: "center",
-              formatter: () => {
-                return "总数\r\n{total|100} 个";
-              },
-              rich: {
-                total: {
-                  fontSize: 30,
-                  color: "#fff",
-                },
-              },
+      getCumulativeAlarm().then((res) => {
+        this.faultList = res.data.cumulativeAlarmList;
+        const data = res.data.eventPercentage;
+        var option = {
+          legend: {
+            orient: "vertical",
+            show: true,
+            right: "10%",
+            y: "center",
+            itemWidth: 3,
+            itemHeight: 30,
+            itemGap: 20,
+            textStyle: {
               color: "#7a8c9f",
-              fontSize: 16,
-              lineHeight: 30,
+              fontSize: 14,
+              lineHeight: 20,
+              rich: {
+                percent: {
+                  color: "#03c8de",
+                  fontSize: 16,
+                },
+              },
             },
-            data: [
-              {
-                value: 40,
-                name: "故障",
-                itemStyle: {
-                  color: "#0286ff",
-                },
-              },
-              {
-                value: 30,
-                name: "事件",
-                itemStyle: {
-                  color: "#ffd302",
-                },
-              },
-              {
-                value: 30,
-                name: "预警",
-                itemStyle: {
-                  color: "#fb5274",
-                },
-              },
-            ],
-            labelLine: {
-              show: false,
+            formatter: (name) => {
+              switch (name) {
+                case "故障":
+                  return "故障\r" + data[2].percentage + "%";
+                case "事件":
+                  return "事件\r" + data[2].eventCount + "%";
+                case "预警":
+                  return "预警\r" + data[2].warningCount + "%";
+                default:
+                  break;
+              }
             },
           },
-          {
-            type: "pie",
-            radius: ["34%", "44%"],
-            center: ["35%", "50%"],
-            hoverAnimation: false,
-            label: {
-              show: false,
-            },
-            data: [
-              {
-                value: 40,
-                name: "故障",
-                itemStyle: {
-                  color: "#0286ff",
-                  opacity: 0.4,
-                },
-              },
-              {
-                value: 30,
-                name: "事件",
-                itemStyle: {
-                  color: "#ffd302",
-                  opacity: 0.4,
-                },
-              },
-              {
-                value: 40,
-                name: "预警",
-                itemStyle: {
-                  color: "#fb5274",
-                  opacity: 0.4,
-                },
-              },
-            ],
-            labelLine: {
-              show: false,
-            },
+          tooltip: {
+            show: true,
           },
-          {
-            type: "pie",
-            radius: ["23%", "33%"],
-            center: ["35%", "50%"],
-            hoverAnimation: false,
-            label: {
-              show: false,
+          series: [
+            {
+              type: "pie",
+              radius: ["45%", "55%"],
+              center: ["35%", "50%"],
+              hoverAnimation: false,
+              z: 10,
+              label: {
+                position: "center",
+                formatter: () => {
+                  return "总数\r\n{total|100} 个";
+                },
+                rich: {
+                  total: {
+                    fontSize: 30,
+                    color: "#fff",
+                  },
+                },
+                color: "#7a8c9f",
+                fontSize: 16,
+                lineHeight: 30,
+              },
+              data: [
+                {
+                  value: 40,
+                  name: "故障",
+                  itemStyle: {
+                    color: "#0286ff",
+                  },
+                },
+                {
+                  value: 30,
+                  name: "事件",
+                  itemStyle: {
+                    color: "#ffd302",
+                  },
+                },
+                {
+                  value: 30,
+                  name: "预警",
+                  itemStyle: {
+                    color: "#fb5274",
+                  },
+                },
+              ],
+              labelLine: {
+                show: false,
+              },
             },
-            data: [
-              {
-                value: 40,
-                name: "故障",
-                itemStyle: {
-                  color: "#0286ff",
-                  opacity: 0.1,
-                },
+            {
+              type: "pie",
+              radius: ["34%", "44%"],
+              center: ["35%", "50%"],
+              hoverAnimation: false,
+              label: {
+                show: false,
               },
-              {
-                value: 30,
-                name: "事件",
-                itemStyle: {
-                  color: "#ffd302",
-                  opacity: 0.1,
+              data: [
+                {
+                  value: 40,
+                  name: "故障",
+                  itemStyle: {
+                    color: "#0286ff",
+                    opacity: 0.4,
+                  },
                 },
-              },
-              {
-                value: 40,
-                name: "预警",
-                itemStyle: {
-                  color: "#fb5274",
-                  opacity: 0.1,
+                {
+                  value: 30,
+                  name: "事件",
+                  itemStyle: {
+                    color: "#ffd302",
+                    opacity: 0.4,
+                  },
                 },
+                {
+                  value: 40,
+                  name: "预警",
+                  itemStyle: {
+                    color: "#fb5274",
+                    opacity: 0.4,
+                  },
+                },
+              ],
+              labelLine: {
+                show: false,
               },
-            ],
-            labelLine: {
-              show: false,
             },
-          },
-        ],
-      };
-      // 使用刚指定的配置项和数据显示图表。
-      Cumulative.setOption(option);
+            {
+              type: "pie",
+              radius: ["23%", "33%"],
+              center: ["35%", "50%"],
+              hoverAnimation: false,
+              label: {
+                show: false,
+              },
+              data: [
+                {
+                  value: 40,
+                  name: "故障",
+                  itemStyle: {
+                    color: "#0286ff",
+                    opacity: 0.1,
+                  },
+                },
+                {
+                  value: 30,
+                  name: "事件",
+                  itemStyle: {
+                    color: "#ffd302",
+                    opacity: 0.1,
+                  },
+                },
+                {
+                  value: 40,
+                  name: "预警",
+                  itemStyle: {
+                    color: "#fb5274",
+                    opacity: 0.1,
+                  },
+                },
+              ],
+              labelLine: {
+                show: false,
+              },
+            },
+          ],
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        Cumulative.setOption(option);
+      });
+
       // 设置默认突出区域
       // alarmsStatistics.dispatchAction({
       //   type: 'highlight', //突出高亮显示;

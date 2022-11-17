@@ -408,7 +408,12 @@
 
     <el-dialog :visible.sync="record" width="70%" id="jxjlInfo">
       <div style="text-align: center">故障检修记录</div>
-      <div class="card" id="jxjlCard" v-for="item in news">
+      <div
+        class="card"
+        id="jxjlCard"
+        v-for="(item, index) in news"
+        :key="index"
+      >
         <div class="card-col" id="firstRow">
           <div>
             巡检时间:
@@ -457,7 +462,7 @@
         </div>
         <div class="card-cols">
           现场图片:
-          <div v-for="pic in item.iFileList">
+          <div v-for="(pic, index) in item.iFileList" :key="index">
             <img :src="pic.imgUrl" :title="pic.imgName" />
           </div>
         </div>

@@ -44,6 +44,7 @@
             v-infinite-scroll="load"
             infinite-scroll-disabled="disabled">
           <li v-for="(item, index) of list" :key="index">
+
             <el-row style="color: white">
               <el-col :span="2">
                 <img
@@ -53,8 +54,14 @@
               </el-col>
               <el-col :span="2">
                 <div>
-                  {{ item.eventType.simplifyName }}
+                  {{ item.simplifyName }}
                 </div>
+                <!-- <div v-if="searchValue == 2 || searchValue == 3">
+                  {{ item.simplifyName }}
+                </div> -->
+                <!-- <div v-else>
+                  {{ item.eventType.simplifyName }}
+                </div> -->
               </el-col>
               <el-col :span="16">
                 <div class="overflowText">{{ item.eventTitle }}</div>
@@ -214,7 +221,7 @@
 import { mapState } from "vuex";
 import moment from 'moment'
 import bus from "@/utils/bus";
-import { updateEvent, eventList, eventPopAll } from "@/api/event/event";
+import { updateEvent, eventList, eventPopFault,eventPopAll } from "@/api/event/event";
 import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
 
 export default {
@@ -240,10 +247,11 @@ export default {
   computed: {
     noMore() {
       //当起始页数大于总页数时停止加载
-      console.log(this.pageNum, parseInt(this.total/10));
+      // console.log(this.pageNum, parseInt(this.total/10));
       if(this.total%10==0){
         return this.pageNum >= parseInt(this.total/10);
       }else{
+        console.log(this.pageNum,parseInt(this.total/10)+1)
         return this.pageNum >= parseInt(this.total/10)+1;
 
       }
@@ -254,13 +262,20 @@ export default {
   },
   created() {
     this.startTime = moment().format('YYYY-MM-DD')
-    console.log(this.startTime)
-    eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
-      console.log(res, "事件弹窗分类数组");
-      this.list = res.rows;
+    // console.log(this.startTime)
+    // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
+    //   console.log(res, "事件弹窗分类数组");
+    //   this.list = res.rows;
+    //   this.total = res.total;
+    //   this.loading = false;
+    // });
+    var pageNum2 = 0
+    eventPopAll(pageNum2).then((res) =>{
+      console.log(res, "全部设备");
+      this.list = res.data;
       this.total = res.total;
       this.loading = false;
-    });
+    })
     
   },
   mounted() {
@@ -287,14 +302,31 @@ export default {
       this.loading = true;
       setTimeout(() => {
         this.pageNum += 1;
-
-        eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
+        var pageNum2 =(this.pageNum-1)*10
+        console.log(pageNum2,"pageNum2");
+        console.log(this.searchValue,"this.searchValue");
+        if(this.searchValue == 3){
+            // 全部设备
+          eventPopAll(pageNum2).then((res) =>{
+            console.log(res, "全部设备滚动");
+            this.list = this.list.concat(res.data);
+          })
+        }else if(this.searchValue == 2){
+          // 设备故障
+          eventPopFault(pageNum2).then((res) => {
+            console.log(res, "设备故障");
+            this.list = this.list.concat(res.data);
+          });
+        }else{
+          eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
           console.log(res, "事件弹窗分类数组");
           // this.list.push(res.rows);
           this.list = this.list.concat(res.rows);
           this.$forceUpdate();
-          this.loading = false
         });
+        }
+        this.loading = false
+        
       }, 2000);
     },
     handleSee(id) {
@@ -352,21 +384,31 @@ export default {
 
     handleClick(searchValue) {
       this.searchValue = searchValue;
-
-      // if (searchValue == 3) {
-      //   eventPopAll().then((res) => {
-      //     console.log(res, "全部事件");
-      //     this.list = res.data;
-      //   });
-      // } else {
       const pageNum = 1;
+      const pageNum2 = 0;
+
+      if (searchValue == 2) {
+        // 设备故障
+        eventPopFault(pageNum2).then((res) => {
+          console.log(res, "设备故障");
+          this.list = res.data;
+        });
+      } else if(searchValue == 3){
+        // 全部设备
+        eventPopAll(pageNum2).then((res) =>{
+          console.log(res, "全部设备");
+          this.list = res.data;
+        })
+      }
+      else {
+        // 主动安全 交通事件
       eventList(searchValue, pageNum,this.startTime).then((res) => {
         console.log(res, "事件弹窗分类数组");
         this.list = res.rows;
         this.total = res.total;
         this.loading = false;
       });
-      // }
+      }
     },
     // 表格的行样式
     // tableRowClassName({ row, rowIndex }) {

@@ -1270,7 +1270,8 @@ export default {
 </style>
 <style>
 .bell_icon .el-badge__content {
-  top: 13px !important;
+  top: 22px !important;
+  right:18px !important;
 }
 </style>
 

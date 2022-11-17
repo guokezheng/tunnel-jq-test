@@ -134,4 +134,24 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
         Map<String,String> map = list.stream().collect(Collectors.toMap(s-> s.get("tunnelId"),s -> s.get("tunnelName") ));
         return map;
     }
+
+    /**
+     * 查询隧道list根据权限
+     * @param deptId
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectTunnelsList(String deptId) {
+        return sdTunnelsMapper.selectTunnelsList(deptId);
+    }
+
+    /**
+     * 查询隧道列表
+     * @param deptId
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectTunnelList(String deptId) {
+        return sdTunnelsMapper.selectTunnelList(deptId);
+    }
 }

@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 
 import java.util.List;
 
@@ -60,4 +61,19 @@ public interface SdFaultListMapper
      * @return 结果
      */
     public int deleteSdFaultListByIds(String[] ids);
+
+    /**
+     * 查询故障检修记录
+     * @param faultId
+     * @return
+     */
+    public List<SdPatrolList> getFaultRepairInfo(String faultId);
+
+    /**
+     * 根据隧道、故障类型获取故障列表
+     * @param tunnelId
+     * @param faultLevel
+     * @return
+     */
+    List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
 }

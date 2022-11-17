@@ -185,4 +185,26 @@ public interface SdDevicesMapper
 	public List<Map> getReserveProcessDevices(String[] param);
 
 	public List<SdDevices> getDevicesListByFEqId(String fEqId);
+
+	/**
+	 * 故障管理页面--根据设备名称获取设备详情
+	 * @param eqId
+	 * @return
+	 */
+    List<SdDevices> getEquipmentInfo(String eqId);
+
+	/**
+	 * 根据隧道查询设备类型
+	 * @param tunnelId
+	 * @return
+	 */
+    List<SdDevices> selectDevicesTypeList(String tunnelId);
+
+	/**
+	 * 查询设备列表--新增巡查点
+	 * @param tunnelId
+	 * @param deviceType
+	 * @return
+	 */
+	List<SdDevices> getDevicesList(String tunnelId, String deviceType);
 }

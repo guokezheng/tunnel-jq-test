@@ -64,9 +64,8 @@ public class SdTaskList extends BaseEntity
     private Date taskEndtime;
 
     /** 任务持续时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date taskCxtime;
+    private String  taskCxtime;
 
     /** 现场情况描述 */
     @Excel(name = "现场情况描述")
@@ -167,16 +166,16 @@ public class SdTaskList extends BaseEntity
         this.taskEndtime = taskEndtime;
     }
 
-    public Date getTaskEndtime() 
+    public Date getTaskEndtime()
     {
         return taskEndtime;
     }
-    public void setTaskCxtime(Date taskCxtime) 
+    public void setTaskCxtime(String taskCxtime)
     {
         this.taskCxtime = taskCxtime;
     }
 
-    public Date getTaskCxtime() 
+    public String getTaskCxtime()
     {
         return taskCxtime;
     }

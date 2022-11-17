@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import {listTunnels} from "@/api/equipment/tunnel/api";
 
 // 查询巡查任务列表
 export function listList(query) {
@@ -58,5 +59,24 @@ export function getTaskInfoList(data) {
     url: '/task/list/getTaskInfoList',
     method: 'post',
     data: data
+  })
+}
+
+// 巡查班组
+export function listBz(query) {
+  return request({
+    url: '/task/list/getListBz',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 部门隧道树
+export function treeselect(query) {
+  return request({
+    url: '/task/list/treeselect',
+    method: 'get',
+    params: query
   })
 }

@@ -106,7 +106,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
                         devices.put("fireMark", data.getData());
                     }
-                //车指
+                    //车指
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
                         devices.put("state", data.getData());
@@ -926,5 +926,24 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    @Override
+    public List<String> fireMarkList(String eqId) {
+        SdDevices devices = sdDevicesMapper.selectSdDevicesById(eqId);
+        if (devices == null) {
+            throw new RuntimeException("当前设备信息为空，请到设备管理中进行核对");
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(devices.getEqTunnelId());
+        sdDevices.setEqType(devices.getEqType());
+        sdDevices.setEqDirection(devices.getEqDirection());
+        List<String> devicesFireMarkList = sdDevicesMapper.getDevicesFireMarkList(sdDevices);
+        if (devicesFireMarkList.isEmpty()) {
+            devicesFireMarkList = new ArrayList<>();
+        }
+        devicesFireMarkList.add("0");
+        devicesFireMarkList.add("255");
+        return devicesFireMarkList;
     }
 }

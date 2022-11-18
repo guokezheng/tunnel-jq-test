@@ -200,6 +200,12 @@ public class SdDevicesController extends BaseController
         return Result.success(sd);
     }
 
+    @GetMapping("/fireMarkList/{eqId}")
+    public Result<List<String>> fireMarkList(@PathVariable("eqId") String eqId)
+    {
+        List<String> list = sdDevicesService.fireMarkList(eqId);
+        return Result.success(list);
+    }
 
     /**
      * 通过隧道id查询设备类型名称

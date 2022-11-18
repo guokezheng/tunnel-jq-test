@@ -729,7 +729,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-
+    <select id="getDevicesFireMarkList" parameterType="SdDevices" resultType="java.lang.String">
+        select a.eq_feedback_address1 from sd_devices a
+        where a.eq_type = #{eqType} and a.eq_direction = #{eqDirection} and a.eq_tunnel_id = #{eqTunnelId}
+          and a.eq_feedback_address1 is not null
+        GROUP BY a.eq_feedback_address1
+    </select>
 
 
 </mapper>

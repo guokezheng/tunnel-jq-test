@@ -207,4 +207,6 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> getDevicesList(String tunnelId, String deviceType);
+
+    List<String> fireMarkList(String eqId);
 }

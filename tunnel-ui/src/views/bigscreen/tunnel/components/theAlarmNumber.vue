@@ -16,15 +16,15 @@
       > -->
     </div>
     <div class="box">
-      <div ref="echartsBox" class="box-left" id="TheAlarmNumber"></div>
+      <div ref="echartsBox" class="box-left" id="theAlarmNumber"></div>
       <div class="box-center UnificationBox">
         <div class="progressBar progress">
           <p>已处置：</p>
-          <span>{{ currentData.hasDisposal }}</span>
+          <span>{{ hasDisposal }}%</span>
         </div>
         <div class="progressBarNot progress">
           <p>未处置：</p>
-          <span>{{ currentData.notDDisposedOf }}</span>
+          <span>{{ notDDisposedOf }}%</span>
         </div>
       </div>
       <div class="box-right">
@@ -101,10 +101,12 @@ export default {
     },
   },
   created() {
-    this.setData();
+    this.$nextTick(() => {
+      this.setData();
+    });
   },
   mounted() {
-    this.initEchart();
+    // this.setData();
     this.watchSize();
   },
   methods: {
@@ -112,6 +114,7 @@ export default {
       let that = this;
       let erd = elementResizeDetectorMaker();
       let Dom = that.$refs.echartsBox; //拿dom元素
+      console.log(Dom);
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
         let myChart = echarts.init(Dom);
@@ -121,24 +124,30 @@ export default {
     setData(val) {
       this.fullscreenLoading = true;
       this.currentData = {};
-      getEventWarning().then((res) => {
-        console.log(res.data);
-        this.currentData.listData = res.data.list;
-        this.currentData.hasDisposal = res.data.eventProportion[1].percentage;
-        this.currentData.notDDisposedOf =
-          res.data.eventProportion[3].percentage;
-      });
+      getEventWarning()
+        .then((res) => {
+          console.log(res.data);
+          this.currentData.listData = res.data.list;
+          this.hasDisposal = res.data.eventProportion[1].percentage;
+          this.notDDisposedOf = res.data.eventProportion[3].percentage;
+        })
+        .then((res) => {
+          this.$nextTick(() => {
+            this.initEchart();
+          });
+        });
+
       setTimeout(() => {
         this.fullscreenLoading = false;
       }, 500);
     },
     initEchart() {
       // var object = { ...this.currentData };
-      var myChart = echarts.init(document.getElementById("TheAlarmNumber"));
+      var myChart = echarts.init(document.getElementById("theAlarmNumber"));
       // var fontColor = "#fff";
       // let noramlSize = 16;
       var datas = {
-        value: this.currentData.hasDisposal,
+        value: this.hasDisposal,
         company: "%",
         ringColor: [
           {
@@ -233,11 +242,11 @@ export default {
             data: [
               {
                 name: "已处置",
-                value: this.currentData.hasDisposal,
+                value: this.hasDisposal,
               },
               {
                 name: "未处置",
-                value: this.currentData.notDDisposedOf,
+                value: this.notDDisposedOf,
               },
             ],
           },

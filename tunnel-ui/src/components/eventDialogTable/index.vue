@@ -5,6 +5,7 @@
       v-dialogDrag
       :visible.sync="eventTableDialog"
       :modal-append-to-body="false"
+      :close-on-click-modal="true"
     >
       <div class="title">
         事件详情
@@ -53,15 +54,15 @@
                 />
               </el-col>
               <el-col :span="2">
-                <div>
+                <!-- <div>
+                  {{ item.simplifyName }}
+                </div> -->
+                <div v-if="searchValue == 2 || searchValue == 3">
                   {{ item.simplifyName }}
                 </div>
-                <!-- <div v-if="searchValue == 2 || searchValue == 3">
-                  {{ item.simplifyName }}
-                </div> -->
-                <!-- <div v-else>
+                <div v-else>
                   {{ item.eventType.simplifyName }}
-                </div> -->
+                </div>
               </el-col>
               <el-col :span="16">
                 <div class="overflowText">{{ item.eventTitle }}</div>
@@ -272,8 +273,8 @@ export default {
     var pageNum2 = 0
     eventPopAll(pageNum2).then((res) =>{
       console.log(res, "全部设备");
-      this.list = res.data;
-      this.total = res.total;
+      this.list = res.data.data;
+      this.total = res.data.total;
       this.loading = false;
     })
     
@@ -309,13 +310,13 @@ export default {
             // 全部设备
           eventPopAll(pageNum2).then((res) =>{
             console.log(res, "全部设备滚动");
-            this.list = this.list.concat(res.data);
+            this.list = this.list.concat(res.data.data);
           })
         }else if(this.searchValue == 2){
           // 设备故障
           eventPopFault(pageNum2).then((res) => {
             console.log(res, "设备故障");
-            this.list = this.list.concat(res.data);
+            this.list = this.list.concat(res.data.data);
           });
         }else{
           eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
@@ -391,13 +392,16 @@ export default {
         // 设备故障
         eventPopFault(pageNum2).then((res) => {
           console.log(res, "设备故障");
-          this.list = res.data;
+          this.list = res.data.data;
+          this.total = res.data.total
         });
       } else if(searchValue == 3){
         // 全部设备
         eventPopAll(pageNum2).then((res) =>{
           console.log(res, "全部设备");
-          this.list = res.data;
+          this.list = res.data.data;
+          this.total = res.data.total
+
         })
       }
       else {

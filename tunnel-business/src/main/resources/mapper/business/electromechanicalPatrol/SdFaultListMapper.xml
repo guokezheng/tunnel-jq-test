@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="faultTbtime"    column="fault_tbtime"    />
         <result property="eqId"    column="eq_id"    />
         <result property="eqStatus"    column="eq_status"    />
+        <result property="eqRunStatus"    column="eq_run_status"    />
         <result property="faultCode"    column="fault_code"    />
         <result property="faultLevel"    column="fault_level"    />
         <result property="falltRemoveStatue"    column="fallt_remove_statue"    />
@@ -29,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdFaultListVo">
-        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id from sd_fault_list
+        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id from sd_fault_list
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
@@ -73,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultTbtime != null">fault_tbtime,</if>
             <if test="eqId != null">eq_id,</if>
             <if test="eqStatus != null">eq_status,</if>
+            <if test="eqRunStatus != null">eq_run_status,</if>
             <if test="faultCode != null">fault_code,</if>
             <if test="faultLevel != null">fault_level,</if>
             <if test="falltRemoveStatue != null">fallt_remove_statue,</if>
@@ -94,6 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultTbtime != null">#{faultTbtime},</if>
             <if test="eqId != null">#{eqId},</if>
             <if test="eqStatus != null">#{eqStatus},</if>
+            <if test="eqRunStatus != null">#{eqRunStatus},</if>
             <if test="faultCode != null">#{faultCode},</if>
             <if test="faultLevel != null">#{faultLevel},</if>
             <if test="falltRemoveStatue != null">#{falltRemoveStatue},</if>
@@ -118,6 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultTbtime != null">fault_tbtime = #{faultTbtime},</if>
             <if test="eqId != null">eq_id = #{eqId},</if>
             <if test="eqStatus != null">eq_status = #{eqStatus},</if>
+            <if test="eqRunStatus != null">eq_run_status = #{eqRunStatus},</if>
             <if test="faultCode != null">fault_code = #{faultCode},</if>
             <if test="faultLevel != null">fault_level = #{faultLevel},</if>
             <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>

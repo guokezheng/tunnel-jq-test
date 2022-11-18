@@ -34,7 +34,7 @@ public class SdFaultList extends BaseEntity
 
     /** 故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他) */
     @Excel(name = "故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他)")
-    private Integer faultType;
+    private String faultType;
 
     /** 故障发现源 */
     @Excel(name = "故障发现源")
@@ -70,17 +70,22 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "设备状态", readConverterExp = "1=-在线，2-离线，3-故障")
     private String eqStatus;
 
+
+    /** 设备运行状态 */
+    @Excel(name = "设备运行状态")
+    private String eqRunStatus;
+
     /** 故障代码 */
     @Excel(name = "故障代码")
     private String faultCode;
 
     /** 故障等级 */
     @Excel(name = "故障等级")
-    private Integer faultLevel;
+    private String faultLevel;
 
     /** 故障消除状态（0：已消除；1：未消除） */
     @Excel(name = "故障消除状态", readConverterExp = "0=：已消除；1：未消除")
-    private Integer falltRemoveStatue;
+    private String falltRemoveStatue;
 
     /** 故障描述 */
     @Excel(name = "故障描述")
@@ -88,7 +93,7 @@ public class SdFaultList extends BaseEntity
 
     /** 状态（0：已发布；1：未发布） */
     @Excel(name = "状态", readConverterExp = "0=：已发布；1：未发布")
-    private Integer faultStatus;
+    private String faultStatus;
 
     /** 创建者 */
     @ApiModelProperty("创建者")
@@ -152,12 +157,12 @@ public class SdFaultList extends BaseEntity
     {
         return faultLocation;
     }
-    public void setFaultType(Integer faultType) 
+    public void setFaultType(String faultType)
     {
         this.faultType = faultType;
     }
 
-    public Integer getFaultType() 
+    public String getFaultType()
     {
         return faultType;
     }
@@ -211,7 +216,15 @@ public class SdFaultList extends BaseEntity
         this.eqId = eqId;
     }
 
-    public String getEqId() 
+    public String getEqRunStatus() {
+        return this.eqRunStatus;
+    }
+
+    public void setEqRunStatus(final String eqRunStatus) {
+        this.eqRunStatus = eqRunStatus;
+    }
+
+    public String getEqId()
     {
         return eqId;
     }
@@ -233,21 +246,21 @@ public class SdFaultList extends BaseEntity
     {
         return faultCode;
     }
-    public void setFaultLevel(Integer faultLevel) 
+    public void setFaultLevel(String faultLevel)
     {
         this.faultLevel = faultLevel;
     }
 
-    public Integer getFaultLevel() 
+    public String getFaultLevel()
     {
         return faultLevel;
     }
-    public void setFalltRemoveStatue(Integer falltRemoveStatue) 
+    public void setFalltRemoveStatue(String falltRemoveStatue)
     {
         this.falltRemoveStatue = falltRemoveStatue;
     }
 
-    public Integer getFalltRemoveStatue() 
+    public String getFalltRemoveStatue()
     {
         return falltRemoveStatue;
     }
@@ -260,12 +273,12 @@ public class SdFaultList extends BaseEntity
     {
         return faultDescription;
     }
-    public void setFaultStatus(Integer faultStatus) 
+    public void setFaultStatus(String faultStatus)
     {
         this.faultStatus = faultStatus;
     }
 
-    public Integer getFaultStatus() 
+    public String getFaultStatus()
     {
         return faultStatus;
     }

@@ -169,8 +169,16 @@
           <span>{{ parseTime(scope.row.endPlantime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发布状态" align="center" prop="publishStatus" />
-      <el-table-column label="任务状态" align="center" prop="taskStatus" />
+      <el-table-column label="发布状态" align="center" prop="publishStatus" >
+      <template slot-scope="scope">
+        <dict-tag :options="dict.type.publish_status" :value="scope.row.publishStatus"/>
+      </template>
+      </el-table-column>
+      <el-table-column label="任务状态" align="center" prop="taskStatus" >
+      <template slot-scope="scope">
+        <dict-tag :options="dict.type.task_status" :value="scope.row.taskStatus"/>
+      </template>
+      </el-table-column>
 <!--      <el-table-column label="巡查人员" align="center" prop="walkerId" />-->
 <!--      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
         <template slot-scope="scope">
@@ -630,13 +638,14 @@ import {
   exportList,
   getTaskInfoList,
   listBz, treeselect,
-  getDevicesTypeList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "List",
+  //字典值：任务发布状态,任务状态
+  dicts: ["publish_status","task_status","network","power"],
   props:{
     //开启过滤
     filter:{
@@ -756,13 +765,28 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      impressionOptions:[],//外观情况
+      networkOptions:[],//网络情况
+      powerOptions:[],//配电情况
     };
   },
   created() {
     this.getList();
     this.getBz();
     this.getTreeSelect();
+    //外观情况
+    this.getDicts("impression").then(response => {
+      this.impressionOptions = response.data;
+    })
+    //网络情况
+    this.getDicts("network").then(response => {
+      this.networkOptions = response.data;
+    });
+    //外观情况
+    this.getDicts("power").then(response => {
+      this.powerOptions = response.data;
+    });
   },
   methods: {
     //节点单击事件
@@ -781,13 +805,56 @@ export default {
       if (!value) return true;
       return data.loopName.indexOf(value) !== -1;
     },
+
     handleRecordy(row) {
-      console.log(row);
+
       this.record = true
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
         this.taskNews = response.data.task;
         this.patrolNews =  response.data.patrol;
+        this.impressionOptions.forEach((opt) =>{
+          if(opt.dictValue=="0"){
+              this.patrolNews.forEach((taskitem) =>{
+              taskitem.impression = opt.dictLabel;
+            })
+          }
+          if(opt.dictValue=="1"){
+            this.patrolNews.forEach((taskitem) =>{
+              taskitem.impression = opt.dictLabel;
+            })
+          }
+
+        })
+
+        this.networkOptions.forEach((opt) =>{
+          if(opt.dictValue=="0"){
+            this.patrolNews.forEach((taskitem) =>{
+              taskitem.network = opt.dictLabel;
+            })
+          }
+          if(opt.dictValue=="1"){
+            this.patrolNews.forEach((taskitem) =>{
+              taskitem.network = opt.dictLabel;
+            })
+          }
+
+        })
+
+        this.powerOptions.forEach((opt) =>{
+          if(opt.dictValue=="0"){
+            this.patrolNews.forEach((taskitem) =>{
+              taskitem.power = opt.dictLabel;
+            })
+          }
+          if(opt.dictValue=="1"){
+            this.patrolNews.forEach((taskitem) =>{
+              taskitem.power = opt.dictLabel;
+            })
+          }
+
+        })
+
       });
     },
     /** 查询巡查任务列表 */

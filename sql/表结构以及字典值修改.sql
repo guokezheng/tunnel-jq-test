@@ -409,5 +409,62 @@ alter table sd_task_list modify column task_cxtime varchar(25) comment '任务�
 -- 修改sd_fault_list表字段fault_cxtime的字段类型
 alter table sd_fault_list modify column fault_cxtime varchar(25) comment '故障持续时间（根据当前时间与故障发现时间计算时间差，单位：天、小时；计算时间差，不保存只展示；记录变为“已消除”状态时，保存持续时间）';
 
+-- 数据字典 任务发布状态
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '任务发布状态', 'publish_status', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '未发布状态', '0', 'publish_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '已废止状态', '1', 'publish_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '发布状态', '2', 'publish_status', 'default', '0', 'admin', sysdate() );
 
+-- 数据字典 任务状态
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '任务状态', 'task_status', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '待巡检', '0', 'task_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '巡检中', '1', 'task_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '已完结', '2', 'task_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 4, '待回传', '3', 'task_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 5, '已超时', '4', 'task_status', 'default', '0', 'admin', sysdate() );
 
+-- 数据字典 外观情况
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '外观情况', 'impression', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '外观完整', '0', 'impression', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '外观破损', '1', 'impression', 'default', '0', 'admin', sysdate() );
+
+-- 数据字典 网络通讯情况
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '网络通讯情况', 'network', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '通讯正常', '0', 'network', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '通讯异常', '1', 'network', 'default', '0', 'admin', sysdate() );
+
+-- 数据字典 供配电情况
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '供配电情况', 'power', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '配电正常', '0', 'power', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '配电异常', '1', 'power', 'default', '0', 'admin', sysdate() );
+
+-- 数据字典 巡查状态
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '巡查状态', 'xc_status', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '未巡检', '0', 'xc_status', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '已巡检', '1', 'xc_status', 'default', '0', 'admin', sysdate() );
+
+-- 故障清单表  sd_fault_list 添加字段
+alter table sd_fault_list  add column eq_run_status varchar(10) comment '设备运行状态';
+
+-- 修改sd_fault_list表字段fault_type的字段类型
+alter table sd_fault_list modify column fault_type  varchar(10)  comment '故障类型';
+-- 修改sd_fault_list表字段fault_level的字段类型
+alter table sd_fault_list modify column fault_level  varchar(10)  comment '故障等级';
+-- 修改sd_fault_list表字段fallt_remove_statue的字段类型
+alter table sd_fault_list modify column fallt_remove_statue  varchar(10)  comment '故障消除状态';
+-- 修改sd_fault_list表字段fault_status的字段类型
+alter table sd_fault_list modify column fault_status  varchar(10)  comment '故障状态';
+
+-- 修改sd_task_list表字段publish_status的字段类型
+alter table sd_task_list modify column publish_status  varchar(10)  comment '任务发布状态';
+-- 修改sd_task_list表字段task_status的字段类型
+alter table sd_task_list modify column task_status  varchar(10)  comment '任务状态';
+
+-- 修改sd_patrol_list表字段impression的字段类型
+alter table sd_patrol_list modify column impression  varchar(10)  comment '外观情况';
+-- 修改sd_patrol_list表字段network的字段类型
+alter table sd_patrol_list modify column network  varchar(10)  comment '网络通讯情况';
+-- 修改sd_patrol_list表字段power的字段类型
+alter table sd_patrol_list modify column power  varchar(10)  comment '供配电情况';
+-- 修改sd_patrol_list表字段xc_status的字段类型
+alter table sd_patrol_list modify column xc_status  varchar(10)  comment '巡查状态';

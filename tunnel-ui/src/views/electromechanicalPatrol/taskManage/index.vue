@@ -638,6 +638,7 @@ import {
   exportList,
   getTaskInfoList,
   listBz, treeselect,
+  getDevicesTypeList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import {listTunnels} from "@/api/equipment/tunnel/api";

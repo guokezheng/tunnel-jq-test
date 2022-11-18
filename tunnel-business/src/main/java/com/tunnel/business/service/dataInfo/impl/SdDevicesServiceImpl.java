@@ -81,7 +81,11 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             devices.put("eqStatus","2");
         }
         SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(eqId);
+        if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+            sdDeviceData.setDeviceId(devices.get("fEqId"));
+        } else {
+            sdDeviceData.setDeviceId(eqId);
+        }
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         if (!deviceDataList.isEmpty()) {
             for (int i = 0;i < deviceDataList.size();i++) {

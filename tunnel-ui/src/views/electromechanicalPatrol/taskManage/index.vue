@@ -388,14 +388,34 @@
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
       <div class="show-left">
         <div class="show-title">设备位置</div>
-<!--        <el-tree
-          :data="leftList"
-        ></el-tree>-->
+        <!-- <el-tree
+          class="tree"
+          :data="treeData"
+          :props="defaultProps"
+          accordion
+          @node-click="handleNodeClick"
+          node-key="id"
+         /> -->
+         <el-tree
+          class="tree"
+          :data="treeData"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          :check-on-click-node="true"
+          :show-checkbox="show_checkbox"
+          :check-strictly="check_strictly"
+          :filter-node-method="filterNode"
+          ref="tree"
+          accordion
+          default-expand-all
+          @node-click="handleNodeClick"
+          node-key="id"
+         />
       </div>
       <div class="show-right">
         <div class="show-title">设备清单</div>
         <div class="right-button">
-          <el-select v-model="value">
+          <el-select v-model="options1value">
             <el-option
               v-for="item in options1"
               :key="item.value"
@@ -446,7 +466,7 @@
         <div class="col-card">已发布</div>
         <div class="col-card">已完结</div>
       </div>
-      <div class="card"  v-for="item in taskNews">
+      <div class="card"  v-for="(item,index) in taskNews" :key="index">
         <div class="card-col">
           <div>
             任务编号：
@@ -483,7 +503,7 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-col1" v-for="pat in patrolNews">
+        <div class="card-col1" v-for="(pat,index) in patrolNews" :key="index">
           <div class="row">
             <div class="row-card1">设备巡检点</div>
             <div class="row-card2" style="margin-left:10px">{{pat.tunnelName}}</div>
@@ -526,7 +546,7 @@
             <div class="card-cols">
               现场照片：
                <div>
-                 <div  v-for="pic in pat.iFileList">
+                 <div  v-for="(pic,index) in pat.iFileList" :key="index">
                    <img :src="pic.imgUrl" :title="pic.imgName">
                  </div>
               </div>
@@ -534,7 +554,7 @@
           </div>
         </div>
       </div>
-      <div class="card"  v-for="tas in taskNews">
+      <div class="card"  v-for="(tas,index) in taskNews" :key="index">
         <div class="card-col">
           <div class="test">任务执行状态：
             <span>{{ tas.taskStatus }}</span>
@@ -610,14 +630,61 @@ import {
   exportList,
   getTaskInfoList,
   listBz, treeselect,
+  getDevicesTypeList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "List",
+  props:{
+    //开启过滤
+    filter:{
+      type:Boolean,
+      default:true,
+    },
+    //节点是否可被选择
+    show_checkbox:{
+      type:Boolean,
+      default:false,
+    },
+    //是否级联
+    check_strictly:{
+      type:Boolean,
+      default:false,
+    },
+    //开启默认全选
+    default_check_all:{
+      type:Boolean,
+      default:false,
+    },
+    //开启默认选中第一个子节点
+    default_check_first:{
+      type:Boolean,
+      default:false,
+    },
+    //默认第一个子节点高亮选中
+    default_select_first:{
+      type:Boolean,
+      default:false,
+    },
+    // powerCode:{
+    //   type:String,
+    //   default:''
+    // },
+  },
   data() {
     return {
+      defaultProps: {
+        value:'id',
+        label:'label',
+        children: 'children'
+      },
+      treeData:[],
+      tableData1:[],
+      options1value:'',//设备清单绑定
+      boxList:[],
+      options1:[],//设备清单
       record:false,
       // 遮罩层
       loading: true,
@@ -698,6 +765,22 @@ export default {
     this.getTreeSelect();
   },
   methods: {
+    //节点单击事件
+    handleNodeClick(data) {
+      console.log(data,"节点单击事件")
+      const param ={
+        tunnelId :data.id
+      }
+      getDevicesTypeList(param).then((res) =>{
+        console.log(res,"获取设备类型下拉");
+      })
+    },
+    // 筛选节点
+    filterNode(value, data) {
+      console.log(value, data,"筛选节点")
+      if (!value) return true;
+      return data.loopName.indexOf(value) !== -1;
+    },
     handleRecordy(row) {
       console.log(row);
       this.record = true
@@ -731,7 +814,8 @@ export default {
     /** 隧道部门树 */
     getTreeSelect() {
       treeselect().then((response) => {
-        console.log(response.rows)
+        this.treeData = response.data
+        console.log(response.data,"隧道部门树")
       });
     },
 
@@ -843,6 +927,9 @@ export default {
         this.$download.name(response.msg);
         this.exportLoading = false;
       }).catch(() => {});
+    },
+    release(){
+
     }
   }
 };
@@ -1141,5 +1228,8 @@ h1 {
     }
   }
 }
-
+.tree{
+  height: 445px;
+  overflow: auto;
+}
 </style>

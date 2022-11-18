@@ -80,3 +80,12 @@ export function treeselect(query) {
     params: query
   })
 }
+
+// 获取设备类型下拉
+export function getDevicesTypeList(data) {
+  return request({
+    url: '/task/list/getDevicesTypeList',
+    method: 'post',
+    data: data
+  })
+}

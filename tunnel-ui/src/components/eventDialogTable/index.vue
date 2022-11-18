@@ -5,7 +5,7 @@
       v-dialogDrag
       :visible.sync="eventTableDialog"
       :modal-append-to-body="false"
-      :close-on-click-modal="true"
+      :close-on-click-modal="false"
     >
       <div class="title">
         事件详情

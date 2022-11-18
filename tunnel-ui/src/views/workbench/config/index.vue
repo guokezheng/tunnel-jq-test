@@ -1933,7 +1933,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 16, 30, 35].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 16, 35].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -1993,7 +1993,7 @@
     ></com-bright>
     <com-youdao
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 31"
+      v-if="this.eqInfo.clickEqType == 31 || this.eqInfo.clickEqType == 30"
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"

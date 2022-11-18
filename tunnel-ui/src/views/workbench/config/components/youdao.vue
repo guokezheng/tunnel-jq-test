@@ -91,7 +91,6 @@
               </el-select>
             </el-form-item>
           </el-col>
-       
         </el-row>
         <el-row>
           <el-col :span="15">
@@ -125,6 +124,21 @@
             >
           </el-col>
         </el-row>
+        <el-row style="margin-top: 10px">
+          <el-col :span="13">
+            <el-form-item label="报警点位智能推荐:" label-width="130px">
+              <el-select v-model="stateForm2.address">
+                <el-option
+                  v-for="(item,index) in fireMarkData"
+                  :key="index"
+                  
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div
         slot="footer"
@@ -146,20 +160,19 @@
           >取 消</el-button
         >
       </div>
-    
     </el-dialog>
   </div>
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
 import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
-import { getDevice } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
-
+import { getDevice, fireMarkList } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
+      fireMarkData:[],
       stateForm: {},
       title: "",
       visible: true,
@@ -171,19 +184,20 @@ export default {
         frequency: null,
         brightness: null,
         state: null,
+        fireMark:null,
       },
-    
+
       openState: [
         {
-          value: '1',
+          value: "1",
           label: "关灯",
         },
         {
-          value: '2',
+          value: "2",
           label: "同步单闪",
         },
         {
-          value: '3',
+          value: "3",
           label: "逆向流水",
         },
       ],
@@ -201,19 +215,27 @@ export default {
         var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-          console.log(res, "查询单选框弹窗信息");
-          this.stateForm = res.data;
-          this.title = this.stateForm.eqName;
-        });
-        await getDevice(this.eqInfo.equipmentId).then((response) => {
-          console.log(response,"诱导灯频率、亮度等")
-          // this.stateForm2 = response.data
-          this.stateForm2 = {
-            frequency:Number(response.data.frequency),
-            brightness:Number(response.data.brightness),
-            state:response.data.state
-          }
-        })
+            console.log(res, "查询单选框弹窗信息");
+            this.stateForm = res.data;
+            this.title = this.stateForm.eqName;
+          });
+        
+          await getDevice(this.eqInfo.equipmentId).then((response) => {
+            console.log(response, "诱导灯频率、亮度等");
+            // this.stateForm2 = response.data
+            this.stateForm2 = {
+              frequency: Number(response.data.frequency),
+              brightness: Number(response.data.brightness),
+              state: response.data.state,
+              address: response.data.eq_feedback_address1
+            };
+          });
+        if(this.eqInfo.clickEqType == 30){
+          fireMarkList(this.eqInfo.equipmentId).then((res) =>{
+            this.fireMarkData = res.data
+           
+          })
+        }
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -240,7 +262,7 @@ export default {
         }
       }
     },
-    
+
     // 提交修改
     handleOK() {
       const param = {
@@ -249,6 +271,7 @@ export default {
         // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
         frequency: this.stateForm2.frequency, //诱导灯频率
+        fireMark:this.stateForm2.address
         // tunnelId: this.stateForm.tunnelId,
       };
 

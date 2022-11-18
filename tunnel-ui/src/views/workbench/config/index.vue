@@ -828,15 +828,29 @@
               v-for="(item, index) in trafficList"
               :key="index"
               class="listRow"
+              style="margin-top:4px"
             >
-              <el-col style="width: 3vw; text-align: center">{{
-                index + 1
-              }}</el-col>
-              <el-col style="width: 18vw" @click.native="jumpYingJi(item.id)"
-                >{{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+              <el-col style="text-align: center" :span="2">
+                <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
+              </el-col>
+              <el-col style="text-align: center" :span="3"
+              :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'blue':'yellow'}">
+                {{item.eventType.simplifyName}}
+              </el-col>
+              <el-col @click.native="jumpYingJi(item.id)" :span="19" >
+                <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
-                }}事件</el-col
-              >
+                }}事件 -->
+                <div 
+                  style="width:320px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  ">
+                  {{item.eventTitle}}</div>
+                <div >{{item.startTime}}</div>
+                
+              </el-col>
             </el-row>
           </vue-seamless-scroll>
         </div>
@@ -3760,6 +3774,12 @@ export default {
     // this.srollAuto()
   },
   methods: {
+//     getWarnTime(time){
+// // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+//       // console.log(times,"times")
+//       var now = new Date(time)
+//       console.log(now,"8888888888888888888888888")
+//     },
     // 获取设备图片
     getTypePic(item) {
       if (item.eqId.substring(item.eqId.length - 2) == "-1") {
@@ -4202,7 +4222,7 @@ export default {
       // })
 
       getWarnEvent(param).then((response) => {
-        // console.log(response.data,"预警事件")
+        console.log(response.data,"预警事件")
         this.trafficList = response.data;
       });
     },

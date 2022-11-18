@@ -198,7 +198,7 @@ public interface SdDevicesMapper
 	 * @param tunnelId
 	 * @return
 	 */
-    List<SdDevices> selectDevicesTypeList(String tunnelId);
+    List<SdDevices> selectDevicesTypeList(@Param("tunnelId")String tunnelId);
 
 	/**
 	 * 查询设备列表--新增巡查点
@@ -206,5 +206,5 @@ public interface SdDevicesMapper
 	 * @param deviceType
 	 * @return
 	 */
-	List<SdDevices> getDevicesList(String tunnelId, String deviceType);
+	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
 }

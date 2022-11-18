@@ -125,9 +125,7 @@ public class SdFaultListController extends BaseController
     @PostMapping(value ="/getEquipmentInfo")
     public Result getEquipmentInfo(@RequestBody String eqId)
     {
-        /*List<SdFaultList> faultList = sdFaultListService.getFaultList(tunnelId,faultLevel);
-        return Result.success(faultList);*/
-        eqId = "JQ-JiNan-WenZuBei-CAM-RSU-012";//模拟数据
+        //eqId = "JQ-JiNan-WenZuBei-CAM-RSU-012";//模拟数据
         return Result.success(isdDevicesService.getEquipmentInfo(eqId));
     }
 

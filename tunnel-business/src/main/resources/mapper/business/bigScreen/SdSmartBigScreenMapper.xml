@@ -297,6 +297,7 @@
         <if test="tunnelId != null and tunnelId != ''">
             AND sfl.tunnel_id = #{tunnelId}
         </if>
+        LIMIT 50
     </select>
 
     <select id="getTrafficIncident" resultType="hashmap" parameterType="java.lang.String">

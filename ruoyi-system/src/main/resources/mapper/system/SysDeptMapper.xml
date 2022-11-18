@@ -187,4 +187,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from sys_dept a where parent_id in
 									 (select dept_id from sys_dept  where parent_id in (SELECT dept_id FROM `sys_dept` where parent_id = '0') )
 	</select>
-</mapper> 
+
+
+	<select id="selectTunnelDeptList" resultMap="SysDeptResult">
+		select * from sys_dept t
+	<where>
+		<if test="deptId != null and deptId != ''">
+			AND (t.dept_id = #{deptId} OR t.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+		</if>
+	</where>
+	</select>
+
+</mapper>

@@ -102,6 +102,10 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     private String walkerId;
 
+    private String tunnelId;
+
+    private String tunnelName;
+
 
     public void setId(String id) 
     {
@@ -296,6 +300,22 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     public void setWalkerId(final String walkerId) {
         this.walkerId = walkerId;
+    }
+
+    public String getTunnelId() {
+        return this.tunnelId;
+    }
+
+    public void setTunnelId(final String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getTunnelName() {
+        return this.tunnelName;
+    }
+
+    public void setTunnelName(final String tunnelName) {
+        this.tunnelName = tunnelName;
     }
 
     @Override

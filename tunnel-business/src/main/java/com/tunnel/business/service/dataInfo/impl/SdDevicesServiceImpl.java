@@ -8,6 +8,8 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -147,6 +149,37 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
+    }
+
+    /**
+     * 故障管理页面----根据设备名称获取设备详情
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getEquipmentInfo(String eqId) {
+        return sdDevicesMapper.getEquipmentInfo(eqId);
+    }
+
+    /**
+     * 根据隧道查询设备类型
+     * @param tunnelId
+     * @return
+     */
+    @Override
+    public List<SdDevices> selectDevicesTypeList(String tunnelId) {
+        return sdDevicesMapper.selectDevicesTypeList(tunnelId);
+    }
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    @Override
+    public List<SdDevices> getDevicesList(String tunnelId, String deviceType) {
+        return sdDevicesMapper.getDevicesList(tunnelId,deviceType);
     }
 
     /**

@@ -107,4 +107,6 @@ public interface ISdEventService {
      * @return
      */
     Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction);
+
+    List<Map> eventPopAll(String subIndex);
 }

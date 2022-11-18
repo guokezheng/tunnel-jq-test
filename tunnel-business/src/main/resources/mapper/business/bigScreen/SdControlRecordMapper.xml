@@ -5,7 +5,9 @@
 <mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdControlRecordMapper">
 
     <select id="getRecentControlRecordMsg" resultType="hashmap" parameterType="java.lang.String">
-        SELECT sol.id,st.tunnel_name name,sol.create_time time,concat(devc.eq_name,e.state_name) operation
+        SELECT sol.id,st.tunnel_name name,
+               DATE_FORMAT(sol.create_time,'%Y-%m-%d %H:%i:%S') time,
+               concat(devc.eq_name,e.state_name) operation
         from sd_operation_log sol
             left join sd_tunnels st on st.tunnel_id = sol.tunnel_id
             left join sd_equipment_state e on sol.operation_state = e.id

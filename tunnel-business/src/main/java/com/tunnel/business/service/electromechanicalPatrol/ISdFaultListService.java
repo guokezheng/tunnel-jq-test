@@ -2,6 +2,7 @@ package com.tunnel.business.service.electromechanicalPatrol;
 
 
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public interface ISdFaultListService
      * @param sdFaultList 故障清单
      * @return 结果
      */
-    public int updateSdFaultList(SdFaultList sdFaultList);
+    public int updateSdFaultList(MultipartFile[] file,SdFaultList sdFaultList,Long[] removeIds);
 
     /**
      * 批量删除故障清单
@@ -61,4 +62,19 @@ public interface ISdFaultListService
      * @return 结果
      */
     public int deleteSdFaultListById(String id);
+
+    /**
+     * 查询故障检修记录
+     * @param faultId
+     * @return
+     */
+    public List<SdPatrolList> getFaultRepairInfo(String faultId);
+
+    /**
+     * 根据隧道、故障类型获取故障列表
+     * @param tunnelId
+     * @param faultLevel
+     * @return
+     */
+    List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
 }

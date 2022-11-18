@@ -1,7 +1,10 @@
 package com.tunnel.business.domain.electromechanicalPatrol;
 
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -59,6 +62,10 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "设备id")
     private String eqId;
 
+    /** 设备id */
+    @Excel(name = "设备名称")
+    private String eqName;
+
     /** 设备状态（1-在线，2-离线，3-故障） */
     @Excel(name = "设备状态", readConverterExp = "1=-在线，2-离线，3-故障")
     private String eqStatus;
@@ -106,9 +113,19 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "故障图片ID")
     private String imgFileId;
 
+    @ApiModelProperty("默认图标")
+    private List<SdTrafficImage> iFileList;
 
 
-    public void setId(String id) 
+    public List<SdTrafficImage> getiFileList() {
+        return this.iFileList;
+    }
+
+    public void setiFileList(final List<SdTrafficImage> iFileList) {
+        this.iFileList = iFileList;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }
@@ -301,7 +318,15 @@ public class SdFaultList extends BaseEntity
         this.imgFileId = imgFileId;
     }
 
-    @Override
+    public String getEqName() {
+        return this.eqName;
+    }
+
+    public void setEqName(final String eqName) {
+        this.eqName = eqName;
+    }
+
+/*    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -326,5 +351,5 @@ public class SdFaultList extends BaseEntity
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .toString();
-    }
+    }*/
 }

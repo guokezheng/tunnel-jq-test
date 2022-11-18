@@ -108,8 +108,8 @@ public class SdSmartBigScreenController extends BaseController {
      * @return
      */
     @GetMapping("/getReservePlan")
-    public AjaxResult getReservePlan(){
-        return sdSmartBigScreenService.getReservePlan();
+    public AjaxResult getReservePlan(String tunnelId){
+        return sdSmartBigScreenService.getReservePlan(tunnelId);
     }
 
     /**
@@ -117,8 +117,8 @@ public class SdSmartBigScreenController extends BaseController {
      * @return
      */
     @GetMapping("/getEmergencyMaterials")
-    public AjaxResult getEmergencyMaterials(){
-        return sdSmartBigScreenService.getEmergencyMaterials();
+    public AjaxResult getEmergencyMaterials(String tunnelId){
+        return sdSmartBigScreenService.getEmergencyMaterials(tunnelId);
     }
 
     /**

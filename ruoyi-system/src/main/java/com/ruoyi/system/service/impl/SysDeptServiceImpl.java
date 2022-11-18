@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -349,6 +350,11 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public List<Object> tollById() {
         return  deptMapper.tollById();
+    }
+
+    @Override
+    public List<SysDept> selectTunnelDeptList(String deptId) {
+        return deptMapper.selectTunnelDeptList(deptId);
     }
 
     private void childrenDeptUser(List<SysDeptUserTreeVO> list) {

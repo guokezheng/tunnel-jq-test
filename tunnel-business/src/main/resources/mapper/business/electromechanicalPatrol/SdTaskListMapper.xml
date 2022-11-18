@@ -126,4 +126,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
+        select s.*,u.user_name dispatcher
+        from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
+        where id = #{task_id}
+    </select>
+
+    <select id="selectTableBzDataInfo" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.SysDept">
+        select *
+        from sys_dept
+        <where>
+            1=1
+            <if test="deptId != null and deptId != ''">
+                AND (dept_id = #{deptId} OR dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

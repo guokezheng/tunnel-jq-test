@@ -218,7 +218,7 @@
     />
 
     <!-- 添加或修改巡查任务对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+<!--    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="所属单位" prop="zzjgId">
           <el-input v-model="form.zzjgId" placeholder="请输入所属单位" />
@@ -285,7 +285,157 @@
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
+    </el-dialog>-->
+
+    <el-dialog :title="title" :visible.sync="open" width="70%">
+<!--      <h1>新增巡检任务</h1>-->
+      <div class="task">
+        <div>巡查任务基本信息</div>
+        <hr />
+
+        <div class="form-one">
+          <div>
+            <span>派单人员</span>
+            <div>
+              <el-input
+                v-model="form.dispatcher"
+                placeholder="（默认当前登录人）"
+              ></el-input>
+            </div>
+          </div>
+          <div>
+            <span>派单时间</span>
+            <div>
+              <el-date-picker clearable size="small"
+                              v-model="form.dispatchTime"
+                              type="date"
+                              style = "width:89%"
+                              value-format="yyyy-MM-dd"
+                              placeholder="选择派单时间">
+              </el-date-picker>
+            </div>
+          </div>
+          <div>
+            <span>指派巡查班组</span>
+            <div>
+              <el-select v-model="form.bzId" placeholder="请选择班组">
+                <el-option
+                  v-for="item in bzData"
+                  :key="item.deptId"
+                  :label="item.deptName"
+                  :value="item.deptId"
+                ></el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-two">
+          <div>
+            <span>需完成日期</span>
+            <el-date-picker clearable size="small"
+                            v-model="form.endPlantime"
+                            type="date"
+                            style = "width:63%"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择完成时间">
+            </el-date-picker>
+          </div>
+        </div>
+        <div class="describe">
+          <span>任务描述</span>
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            v-model="form.taskDescription"
+          >
+          </el-input>
+        </div>
+      </div>
+      <div class="patrol">
+        <div>巡查点信息</div>
+        <hr />
+        <div class="button-father">
+          <el-button type="primary" style = "height:15%" @click="show1">选择巡检点</el-button>
+          <el-button type="primary" style = "height:15%" @click="show2">选择故障点</el-button>
+          <el-button type="primary" style = "height:15%" disabled>导入巡查计划</el-button>
+        </div>
+        <div class="box-father">
+          <div class="box" :key="index" v-for="(item, index) in boxList">
+            <div class="number">{{ item.number }}</div>
+            <div class="text">{{ item.text }}</div>
+            <template @slot="scop">
+              <div class="top" @click="clickUP(index)">
+                <i class="el-icon-top"></i>
+              </div>
+            </template>
+            <div class="bottom" @click="clickDown(index)">
+              <i class="el-icon-bottom"></i>
+            </div>
+            <div class="delete" @click="clickDelete(index)">
+              <i class="el-icon-delete-solid"></i>
+            </div>
+          </div>
+        </div>
+        <div class="release-father">
+          <el-button style = "height:20%">暂存</el-button>
+          <el-button style = "height:20%" type="warning">废止</el-button>
+          <el-button style = "height:20%" type="primary" @click="release">发布</el-button>
+        </div>
+      </div>
     </el-dialog>
+    <el-dialog :visible.sync="isShow1" width="50%" class="show">
+      <div class="show-left">
+        <div class="show-title">设备位置</div>
+<!--        <el-tree
+          :data="leftList"
+        ></el-tree>-->
+      </div>
+      <div class="show-right">
+        <div class="show-title">设备清单</div>
+        <div class="right-button">
+          <el-select v-model="value">
+            <el-option
+              v-for="item in options1"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <div class="cancel-determine">
+            <el-button @click="determine1">取消</el-button>
+            <el-button type="primary" @click="determine1">确定</el-button>
+          </div>
+        </div>
+        <div class="table-father">
+          <el-table
+            ref="multipleTable"
+            :data="tableData1"
+            tooltip-effect="dark"
+            :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
+            :cell-style="{ 'text-align': 'center', padding: '0px' }"
+            :header-row-style="{ height: '30px' }"
+            :row-style="{ height: '30px' }"
+            style="width: 100%"
+            border
+          >
+            <el-table-column type="selection" width="39"></el-table-column>
+            <el-table-column prop="type" label="设备类型" width="90">
+            </el-table-column>
+            <el-table-column prop="name" label="设备名称" width="135">
+            </el-table-column>
+            <el-table-column prop="address" label="安装位置"> </el-table-column>
+            <el-table-column prop="describe" label="设备描述" width="135">
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </el-dialog>
+
+
+   <!--巡查任务及执行记录单-->
     <el-dialog
       :visible.sync="record"
       width="70%"
@@ -333,136 +483,86 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-col1">
+        <div class="card-col1" v-for="pat in patrolNews">
           <div class="row">
-            <div class="row-card1">1</div>
             <div class="row-card1">设备巡检点</div>
-            <div class="row-card2" style="margin-left:10px">济潍高速济青线/杭山东隧道</div>
-            <div class="row-card2">K120+200  车道指示器(名称车道指示器#2名称)</div>
-            <div class="row-card2" style="text-align:right">2022/09/23 12:23:34</div>
+            <div class="row-card2" style="margin-left:10px">{{pat.tunnelName}}</div>
+            <div class="row-card2">{{pat.eqName}}</div>
+            <div class="row-card2" style="text-align:right">{{pat.xcTime}}</div>
           </div>
           <div style="background-color: white;padding: 10px;">
-            <div class="test">设备描述：<span>巡检点设定时，巡检点设备或故障描述信息。巡检点设定时，巡检点设备或故障描述信息。</span></div>
+            <div class="test">设备描述：<span>{{pat.eqFaultDescription}}</span></div>
             <div style="display:flex;margin-top: 10px;">
               <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
+                <span>{{pat.impression}}</span>
               </div>
-              <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
+              <div class="test" style="width:30%">网络情况：
+                <span>{{pat.network}}</span>
               </div>
-              <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
+              <div class="test" style="width:30%">配电情况：
+                <span>{{pat.power}}</span>
               </div>
             </div>
             <div class="card-cols">
               <div style="width:80%">
                 设备运行状态:
-                <span>设备状态:在线</span>
+                <span>设备状态:{{pat.eqStatus}}设备运行状态:{{pat.runStatus}}</span>
               </div>
               <div class="col-test">
-                (抢修时检测情况)
+                (检修时检测情况)
               </div>
             </div>
             <div class="card-cols">
               <div style="width:80%">
                 现场故障情况:
                 <span>
-                  故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码
+                  {{pat.eqFaultCode}}
                 </span>
               </div>
               <div class="col-test">
-                (抢修时检测情况)
+                (检修时检测情况)
               </div>
             </div>
             <div class="card-cols">
               现场照片：
                <div>
-                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
-                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
-                <img src="https://image.cn.made-in-china.com/prod/698-23255915.jpg" >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card-col1">
-          <div class="row">
-            <div class="row-card1">2</div>
-            <div class="row-card1">设备巡检点</div>
-            <div class="row-card2" style="margin-left:10px">济潍高速济青线/杭山东隧道</div>
-            <div class="row-card2">K120+200  车道指示器(名称车道指示器#2名称)</div>
-            <div class="row-card2" style="text-align:right">2022/09/23 12:23:34</div>
-          </div>
-          <div style="background-color: white;padding: 10px;">
-            <div class="test">设备描述：<span>巡检点设定时，巡检点设备或故障描述信息。巡检点设定时，巡检点设备或故障描述信息。</span></div>
-            <div style="display:flex;margin-top: 10px;">
-              <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
-              </div >
-              <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
-              </div>
-              <div class="test" style="width:30%">外观情况：
-                <span>外观正常</span>
-              </div>
-            </div>
-            <div class="card-cols">
-              <div style="width:80%"  class="test">
-                设备运行状态:
-                <span>设备状态:在线</span>
-              </div>
-              <div class="col-test">
-                (抢修时检测情况)
-              </div>
-            </div>
-            <div class="card-cols">
-              <div style="width:80%"  class="test">
-                现场故障情况:
-                <span>
-                  故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码、故障描述故障代码
-                </span>
-              </div>
-              <div class="col-test">
-                (抢修时检测情况)
-              </div>
-            </div>
-            <div class="card-cols" >
-              现场照片：
-              <div style="border: 1px solid #f0f0f0;padding:20px">
-              未上传图片
+                 <div  v-for="pic in pat.iFileList">
+                   <img :src="pic.imgUrl" :title="pic.imgName">
+                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="card">
+      <div class="card"  v-for="tas in taskNews">
         <div class="card-col">
           <div class="test">任务执行状态：
-            <span>已完结</span>
+            <span>{{ tas.taskStatus }}</span>
           </div>
           <div class="test">
             执行巡查班组：
-            <span>济青中线养护二站</span>
+            <span>{{tas.bzId}}</span>
           </div>
           <div class="test">
             执行巡查人：
-            <span>郑费腾</span>
+            <span>{{ tas.dispatcher }}</span>
           </div>
         </div>
         <div class="card-col">
           <div class="test">
             任务完成时间：
-            <span>2022/09/25</span>
+            <span>{{tas.taskEndtime}}</span>
           </div>
           <div class="test">
             任务持续时长：
-            <span>1天23小时42分</span>
+            <span>{{ tas.taskCxtime }}</span>
             <div class="chaoshi">超时</div>
           </div>
         </div>
         <div class="card-cols">
           <div class="test">
             任务描述：
-            <span>请按照机电设备养护技术规范执行巡检任务，并按时回传巡检记录。如遇巡检设备问题，优先现场记录并处理，无法处理的机电故障需要及时填报故障上报单。巡检点需要如实签到，并记录巡检点现场情况。</span>
+            <span>{{tas.taskDescription}}</span>
           </div>
         </div>
       </div>
@@ -501,8 +601,18 @@
 </template>
 
 <script>
-import { listList, getList, delList, addList, updateList, exportList,getTaskInfoList } from "@/api/electromechanicalPatrol/taskManage/task";
+import {
+  listList,
+  getList,
+  delList,
+  addList,
+  updateList,
+  exportList,
+  getTaskInfoList,
+  listBz, treeselect,
+} from "@/api/electromechanicalPatrol/taskManage/task";
 import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 
 export default {
   name: "List",
@@ -525,10 +635,16 @@ export default {
       total: 0,
       // 巡查任务表格数据
       listList: [],
+      //巡查班组
+      bzData: {},
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
+      //新增巡查点弹窗
+      isShow1: false,
+      //新增故障点弹窗
+      isShow2: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -558,6 +674,7 @@ export default {
       },
       //巡查点参数
       patrolNews:{
+        tunnelName:"",
         xcTime:"",
         bzId:"",
         walkerId:"",
@@ -577,6 +694,8 @@ export default {
   },
   created() {
     this.getList();
+    this.getBz();
+    this.getTreeSelect();
   },
   methods: {
     handleRecordy(row) {
@@ -584,11 +703,8 @@ export default {
       this.record = true
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
         this.taskNews = response.data.task;
         this.patrolNews =  response.data.patrol;
-        console.log(this.taskNews);
-console.log(this.patrolNews);
       });
     },
     /** 查询巡查任务列表 */
@@ -605,6 +721,20 @@ console.log(this.patrolNews);
       this.open = false;
       this.reset();
     },
+
+    /** 巡查班组 */
+    getBz() {
+      listBz().then((response) => {
+        this.bzData = response.rows;
+      });
+    },
+    /** 隧道部门树 */
+    getTreeSelect() {
+      treeselect().then((response) => {
+        console.log(response.rows)
+      });
+    },
+
     // 表单重置
     reset() {
       this.form = {
@@ -638,6 +768,19 @@ console.log(this.patrolNews);
       this.resetForm("queryForm");
       this.handleQuery();
     },
+    show1() {
+      this.isShow1 = true;
+    },
+    show2() {
+      this.isShow2 = true;
+    },
+
+    determine1() {
+      this.isShow1 = false;
+    },
+    determine2() {
+      this.isShow2 = false;
+    },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
@@ -648,7 +791,7 @@ console.log(this.patrolNews);
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加巡查任务";
+      this.title = "新增巡查任务";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -812,4 +955,191 @@ console.log(this.patrolNews);
       margin-left: 5px;
     }
   }
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+::v-deep .el-dialog {
+  margin-top: 7vh !important;
+  .el-dialog__body {
+    padding: 15px 20px;
+  }
+}
+.task {
+  margin-bottom: 30px;
+  .form-one,
+  .form-two {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    div {
+      display: flex;
+      align-items: center;
+      width: 33%;
+      &:nth-child(3) {
+        ::v-deep .el-input {
+          width: 100%;
+        }
+      }
+      span {
+        display: inline-block;
+        width: 30%;
+      }
+      div {
+        width: 70%;
+        ::v-deep .el-input {
+          width: 90%;
+        }
+        ::v-deep .el-select {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .describe {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+    span {
+      display: inline-block;
+      width: 11%;
+    }
+  }
+}
+.patrol {
+  .button-father {
+    display: flex;
+    justify-content: end;
+    .el-button {
+      height: 14px;
+      display: flex;
+      align-items: center;
+    }
+  }
+  .box-father {
+    padding: 0 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    .box {
+      display: flex;
+      margin-top: 5px;
+      .number {
+        width: 30px;
+        height: 25px;
+        border: 1px solid rgba(215, 215, 215, 1);
+        border-radius: 3px;
+        font-weight: 400;
+        color: #333;
+        /*vertical-align: none;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+      }
+      .text {
+        width: 850px;
+        height: 25px;
+        line-height: 25px;
+        padding-left: 10px;
+        background: inherit;
+        border: 1px solid rgba(215, 215, 215, 1);
+        border-radius: 3px;
+        font-weight: 400;
+        font-size: 14px;
+        margin-right: 20px;
+      }
+      .top,
+      .bottom,
+      .delete {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: skyblue;
+        border: 1px solid skyblue;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .top,
+      .bottom {
+        margin-right: 10px;
+      }
+    }
+  }
+  .release-father {
+    display: flex;
+    justify-content: center;
+    .el-button {
+      width: 100px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+.show {
+  ::v-deep .el-dialog__body {
+    display: flex;
+    .show-left,
+    .show-right {
+      height: 478px;
+      border: 1px solid black;
+      border-radius: 3px;
+      .show-title {
+        font-weight: 400;
+        font-style: normal;
+        background-color: rgba(242, 242, 242, 1);
+        color: #5e7f89;
+        border-radius: 3px;
+        line-height: 30px;
+        border-bottom: 1px solid rgb(204, 204, 204);
+        padding-left: 10px;
+      }
+    }
+    .show-left {
+      width: 25%;
+      margin-right: 10px;
+    }
+    .show-right {
+      width: 75%;
+      .right-button {
+        background-color: rgba(248, 248, 248, 1);
+        padding: 5px 10px;
+        display: flex;
+        justify-content: space-between;
+        .el-input__inner {
+          height: 26px;
+        }
+        .el-input__suffix {
+          top: 5px;
+        }
+        .el-input__icon {
+          line-height: inherit;
+        }
+        .el-input__suffix-inner {
+          display: inline-block;
+        }
+        .cancel-determine {
+          display: flex;
+          .el-button {
+            height: 14px;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+      .table-father {
+        padding: 10px 10px;
+        .el-table {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
+
 </style>

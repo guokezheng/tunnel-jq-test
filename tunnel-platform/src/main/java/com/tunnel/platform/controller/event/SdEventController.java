@@ -15,6 +15,7 @@ import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.json.JSONObject;
@@ -64,8 +65,8 @@ public class SdEventController extends BaseController
     @ApiOperation("大屏查询事件报警列表")
     public Result bigscreenEventList(SdEvent sdEvent)
     {
-    	List<SdEvent> list = sdEventService.selectSdEventList(sdEvent);
-    	return Result.success("成功", list);
+        List<SdEvent> list = sdEventService.selectSdEventList(sdEvent);
+        return Result.success("成功", list);
     }
 
     /**
@@ -117,7 +118,7 @@ public class SdEventController extends BaseController
      * 删除事件管理
      */
     @Log(title = "事件管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     @ApiOperation("删除事件管理")
     @ApiImplicitParam(name = "ids", value = "需要删除的事件管理ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
     public Result remove(@PathVariable Long[] ids)
@@ -168,6 +169,33 @@ public class SdEventController extends BaseController
                                        @RequestParam("stakeNum") String stakeNum,
                                        @RequestParam("direction")String direction){
         return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
+    }
+
+    @GetMapping("/getEventUntreatedNum")
+    @ApiOperation("当日未处理事件数量")
+    public Result getEventUntreatedNum() {
+        return  Result.success(SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum());
+    }
+
+    @GetMapping("/eventPopAll")
+    @ApiOperation("事件弹窗当日事件")
+    public Result eventPopAll(String subIndex) {
+        Integer allNum = SpringUtils.getBean(SdEventMapper.class).getEventUntreatedNum();
+        Map<String,Object> map = new HashMap<>();
+        map.put("total",allNum);
+        map.put("data",sdEventService.eventPopAll(subIndex));
+        return Result.success(map);
+    }
+
+    @GetMapping("/eventPopFault")
+    @ApiOperation("事件弹窗设备故障")
+    public Result eventPopFault(String subIndex) {
+        SdEventMapper mapper = SpringUtils.getBean(SdEventMapper.class);
+        Integer allNum = mapper.eventPopFaultCount();
+        Map<String,Object> map = new HashMap<>();
+        map.put("total",allNum);
+        map.put("data",mapper.eventPopFault(subIndex));
+        return Result.success(map);
     }
 
     @GetMapping("/performRecovery")

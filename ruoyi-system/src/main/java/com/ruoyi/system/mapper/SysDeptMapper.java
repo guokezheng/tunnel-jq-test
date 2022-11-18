@@ -5,6 +5,7 @@ import com.ruoyi.system.domain.vo.SysDeptUserTreeVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 部门管理 数据层
@@ -133,4 +134,11 @@ public interface SysDeptMapper
     public List<SysDeptUserTreeVO> childrenDeptUser(Long id);
 
     public List<Object> tollById();
+
+    /**
+     * 新增巡检点--隧道树结构
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectTunnelDeptList(String deptId);
 }

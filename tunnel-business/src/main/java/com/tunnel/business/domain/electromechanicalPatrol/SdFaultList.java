@@ -326,7 +326,7 @@ public class SdFaultList extends BaseEntity
         this.eqName = eqName;
     }
 
-/*    @Override
+    @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
@@ -351,5 +351,5 @@ public class SdFaultList extends BaseEntity
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .toString();
-    }*/
+    }
 }

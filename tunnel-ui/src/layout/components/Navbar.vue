@@ -463,6 +463,8 @@
 </template>
 <script>
 import bus from "@/utils/bus";
+import { mapState } from "vuex";
+
 import { mapGetters } from "vuex";
 import qrCodeImg from "@/assets/images/qbqlogo.png";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -647,6 +649,9 @@ export default {
     earlyWarning,
   },
   computed: {
+    ...mapState({
+      sdEventList: (state) => state.websocket.sdEventList,
+    }),
     ...mapGetters(["sidebar", "device"]),
     setting: {
       get() {
@@ -672,14 +677,8 @@ export default {
   },
   watch: {
     sdEventList(event) {
-      
     this.nodealNum += event.length;
-      // if (this.eventValue > 0) {
-      //   this.$forceUpdate();
-      //   // this.badgeHidden = false;
-      //   this.eventDialogPic = true;
-
-      // }
+    this.$forceUpdate()
     },
   },
   created() {

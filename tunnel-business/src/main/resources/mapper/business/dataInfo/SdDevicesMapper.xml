@@ -711,16 +711,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="selectDevicesTypeList" parameterType="String" >
+    <select id="selectDevicesTypeList" resultType="hashmap" >
     select d.eq_type type_id , t.type_name from sd_devices d
     left join sd_equipment_type t on t.type_id = d.eq_type
     where  d.eq_tunnel_id = #{tunnelId} group by d.eq_type
     </select>
 
-    <select id="getDevicesList" parameterType="String" >
-        select d.eq_type,t.type_name,d.eq_name,d.eq_direction,concat(s.dict_label,d.pile) pile,s.dict_label from  sd_devices d
+    <select id="getDevicesList" resultType="hashmap">
+        select d.eq_type,t.type_name,d.eq_name,d.eq_direction,concat(s.dict_label,d.pile) pile,s.dict_label,u.tunnel_id,u.tunnel_name from  sd_devices d
         left join sd_equipment_type t on t.type_id = d.eq_type
         left join sys_dict_data s on d.eq_direction = s.dict_value
+        left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
         <where>
         and s.dict_type= 'sd_direction'
             <if test="tunnelId != null ">and d.eq_tunnel_id = #{tunnelId}</if>

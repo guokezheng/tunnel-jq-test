@@ -49,8 +49,17 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public SdFaultList selectSdFaultListById(String id)
     {
-        return sdFaultListMapper.selectSdFaultListById(id);
+        SdFaultList sdFaultList = sdFaultListMapper.selectSdFaultListById(id);
+        if(sdFaultList!=null){
+            if(sdFaultList.getImgFileId()!=null&&!"".equals(sdFaultList.getImgFileId())){
+                SdTrafficImage sdTrafficImage = new SdTrafficImage();
+                sdTrafficImage.setBusinessId(sdFaultList.getImgFileId());
+                sdFaultList.setiFileList(sdTrafficImageMapper.selectFaultImgFileList(sdTrafficImage));
+            }
+        }
+        return sdFaultList;
     }
+
 
     /**
      * 查询故障清单列表

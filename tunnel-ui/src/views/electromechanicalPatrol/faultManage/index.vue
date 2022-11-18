@@ -203,7 +203,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="所在路段隧道" prop="tunnelId">
-              <el-select v-model="form.eqTunnelId" placeholder="请选择所属隧道">
+              <el-select v-model="form.tunnelId" placeholder="请选择所属隧道">
                 <el-option
                   v-for="item in eqTunnelData"
                   :key="item.tunnelId"
@@ -276,7 +276,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="设备名称" prop="eqId">
-              <el-select v-model="form.codeDeviceId" placeholder="请选择设备名称" @change="eqStatusGet">
+              <el-select v-model="form.eqId" placeholder="请选择设备名称" @change="eqStatusGet">
                 <el-option
                   v-for="item in eqListData"
                   :key="item.eqId"
@@ -440,7 +440,7 @@
             <span>设备状态:{{item.eqStatus}} 设备运行状态:{{item.runStatus}}</span>
           </div>
           <div class="col-test">
-            (抢修时检测情况)
+            (检修时检测情况)
           </div>
         </div>
         <div class="card-cols">
@@ -449,7 +449,7 @@
             <span>{{item.eqFaultDescription}}</span>
           </div>
           <div class="col-test">
-            (抢修时检测情况)
+            (检修时检测情况)
           </div>
         </div>
         <div class="card-cols">
@@ -475,10 +475,9 @@ import {
   getRepairRecordList,
 } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import {addType, listType, updateType} from "@/api/equipment/type/api";
+import {addType, listType, loadPicture, updateType} from "@/api/equipment/type/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import {editForm} from "@/api/equipment/yingJiGou/emergencyVehicles";
-
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -608,7 +607,36 @@ export default {
         // this.getList();
       });
     },
-
+    // 取消按钮
+    cancel() {
+      this.open = false;
+      this.reset();
+    },
+    // 表单重置
+    reset() {
+      this.form = {
+        id: null,
+        tunnelId: null,
+        faultLocation: null,
+        faultType: null,
+        faultSource: null,
+        faultFxtime: null,
+        faultCxtime: null,
+        eqTunnelId:null,
+        faultTbr: null,
+        faultTbtime: null,
+        eqId: null,
+        eqStatus: null,
+        faultCode: null,
+        faultLevel: null,
+        falltRemoveStatue: null,
+        faultDescription: null,
+        faultStatus: 0,
+      };
+      this.fileList = [];
+      this.removeIds = [];
+      this.resetForm("form");
+    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
@@ -640,13 +668,11 @@ export default {
         let iconName = iFileList[i].stateIconName;
         // let iconUrl = await that.picture(iFileList[i].url);
         let iconUrl = iFileList[i].url
-
         that.fileList.push({
           name: iconName,
           url: iconUrl,
           fId: iFileList[i].id,
         });
-        // fileList.push(this.form.iFileList[i].url)
       }
     },
     /* 请求图片base64地址*/
@@ -663,8 +689,10 @@ export default {
       });
       return resolve(base64);
     },
-
-
+    openImg(url) {
+      this.img = url;
+      this.yn = !this.yn;
+    },
     /** 查询故障清单列表 */
     getList() {
       this.loading = true;
@@ -699,36 +727,6 @@ export default {
       });
     },
 
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        tunnelId: null,
-        faultLocation: null,
-        faultType: null,
-        faultSource: null,
-        faultFxtime: null,
-        faultCxtime: null,
-        eqTunnelId:null,
-        faultTbr: null,
-        faultTbtime: null,
-        eqId: null,
-        eqStatus: null,
-        faultCode: null,
-        faultLevel: null,
-        falltRemoveStatue: null,
-        faultDescription: null,
-        faultStatus: 0,
-      };
-      this.fileList = [];
-      this.removeIds = [];
-      this.resetForm("form");
-    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -758,7 +756,7 @@ export default {
       const id = row.id|| that.ids;
       getList(id).then((response) => {
         this.form = response.data;
-        this.planRoadmapUrl(this.form.iFileList);
+        that.planRoadmapUrl(that.form.iFileList);
         this.open = true;
         this.title = "修改故障清单";
       });

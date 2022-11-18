@@ -59,7 +59,9 @@
               item.tunnelName
             }}</el-col>
             <el-col>{{ item.startTime }}</el-col>
-            <el-col style="padding-right: 1vw">{{ item.content }}</el-col>
+            <el-col style="padding-right: 1vw">{{
+              item.eventDescription
+            }}</el-col>
             <el-col style="width: 20vw">{{ item.eventType }}</el-col>
           </el-row>
         </vue-seamless-scroll>
@@ -69,6 +71,7 @@
 </template>
 
 <script>
+import vueSeamlessScroll from "vue-seamless-scroll";
 import { getEventWarning } from "@/api/business/new";
 import * as echarts from "echarts";
 import "echarts-liquidfill";

@@ -113,6 +113,7 @@ export default {
     alarmsCharts() {
       var Cumulative = echarts.init(document.getElementById("cumulative"));
       getCumulativeAlarm().then((res) => {
+        console.log("累计报警分析", res);
         this.faultList = res.data.cumulativeAlarmList;
         const data = res.data.eventPercentage;
         var option = {
@@ -140,9 +141,9 @@ export default {
                 case "故障":
                   return "故障\r" + data[2].percentage + "%";
                 case "事件":
-                  return "事件\r" + data[2].eventCount + "%";
+                  return "事件\r" + data[0].percentage + "%";
                 case "预警":
-                  return "预警\r" + data[2].warningCount + "%";
+                  return "预警\r" + data[1].percentage + "%";
                 default:
                   break;
               }

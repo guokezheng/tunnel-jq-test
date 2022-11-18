@@ -1,6 +1,6 @@
 <template>
   <div class="controlRecord-container">
-    <div class="title">近12h控制记录</div>
+    <div class="title">近12小时控制记录</div>
     <div class="scrollBox">
       <div class="listHeader">
         <el-row
@@ -66,8 +66,8 @@ export default {
   },
   methods: {
     getRecordlistData() {
-      let tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
-      getRecordlist(tunnelId).then((res) => {
+      // let tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
+      getRecordlist().then((res) => {
         this.listData = res.data;
       });
     },

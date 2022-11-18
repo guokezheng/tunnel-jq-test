@@ -34,7 +34,7 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     /** 巡检点类型（0：巡检点；1：故障点） */
     @Excel(name = "巡检点类型", readConverterExp = "0=：巡检点；1：故障点")
-    private Integer patrolType;
+    private String patrolType;
 
     /** 设备或巡检点名称 */
     @Excel(name = "设备或巡检点名称")
@@ -46,15 +46,15 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     /** 外观情况(0:外观完整;2:外观破损) */
     @Excel(name = "外观情况(0:外观完整;2:外观破损)")
-    private Integer impression;
+    private String impression;
 
     /** 网络通讯情况(0:通讯正常;1:通讯异常) */
     @Excel(name = "网络通讯情况(0:通讯正常;1:通讯异常)")
-    private Integer network;
+    private String network;
 
     /** 供配电情况(0:配电正常;1:配电异常) */
     @Excel(name = "供配电情况(0:配电正常;1:配电异常)")
-    private Integer power;
+    private String power;
 
     /** 设备状态 */
     @Excel(name = "设备状态")
@@ -74,7 +74,7 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     /** 故障处理情况（0：无故障:；1：已消除:；2：未消除） */
     @Excel(name = "故障处理情况", readConverterExp = "0=：无故障:；1：已消除:；2：未消除")
-    private Integer faultClstatus;
+    private String faultClstatus;
 
     /** 巡查时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -87,7 +87,7 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
 
     /** 巡查状态（0：未巡检；1：已巡检） */
     @Excel(name = "巡查状态", readConverterExp = "0=：未巡检；1：已巡检")
-    private Integer xcStatus;
+    private String xcStatus;
 
     /** 图片id */
     @Excel(name = "图片id")
@@ -96,7 +96,7 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     @ApiModelProperty("故障图片")
     private List<SdTrafficImage> iFileList;
 
-    private Integer falltRemoveStatue;
+    private String falltRemoveStatue;
 
     private String bzId;
 
@@ -134,12 +134,12 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     {
         return eqFaultId;
     }
-    public void setPatrolType(Integer patrolType) 
+    public void setPatrolType(String patrolType)
     {
         this.patrolType = patrolType;
     }
 
-    public Integer getPatrolType() 
+    public String getPatrolType()
     {
         return patrolType;
     }
@@ -161,30 +161,30 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     {
         return position;
     }
-    public void setImpression(Integer impression) 
+    public void setImpression(String impression)
     {
         this.impression = impression;
     }
 
-    public Integer getImpression() 
+    public String getImpression()
     {
         return impression;
     }
-    public void setNetwork(Integer network) 
+    public void setNetwork(String network)
     {
         this.network = network;
     }
 
-    public Integer getNetwork() 
+    public String getNetwork()
     {
         return network;
     }
-    public void setPower(Integer power) 
+    public void setPower(String power)
     {
         this.power = power;
     }
 
-    public Integer getPower() 
+    public String getPower()
     {
         return power;
     }
@@ -224,12 +224,12 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     {
         return eqFaultDescription;
     }
-    public void setFaultClstatus(Integer faultClstatus) 
+    public void setFaultClstatus(String faultClstatus)
     {
         this.faultClstatus = faultClstatus;
     }
 
-    public Integer getFaultClstatus() 
+    public String getFaultClstatus()
     {
         return faultClstatus;
     }
@@ -251,12 +251,12 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     {
         return xcSort;
     }
-    public void setXcStatus(Integer xcStatus) 
+    public void setXcStatus(String xcStatus)
     {
         this.xcStatus = xcStatus;
     }
 
-    public Integer getXcStatus() 
+    public String getXcStatus()
     {
         return xcStatus;
     }
@@ -278,11 +278,11 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
         this.iFileList = iFileList;
     }
 
-    public Integer getFalltRemoveStatue() {
+    public String getFalltRemoveStatue() {
         return this.falltRemoveStatue;
     }
 
-    public void setFalltRemoveStatue(final Integer falltRemoveStatue) {
+    public void setFalltRemoveStatue(final String falltRemoveStatue) {
         this.falltRemoveStatue = falltRemoveStatue;
     }
 

@@ -48,11 +48,11 @@ public class SdTaskList extends BaseEntity
 
     /** 发布状态(0:未发布状态;1:已废止状态;2:发布状态) */
     @Excel(name = "发布状态(0:未发布状态;1:已废止状态;2:发布状态)")
-    private Integer publishStatus;
+    private String publishStatus;
 
     /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
     @Excel(name = "任务状态", readConverterExp = "0=::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时")
-    private Integer taskStatus;
+    private String taskStatus;
 
     /** 巡查人员id */
     @Excel(name = "巡查人员id")
@@ -134,21 +134,21 @@ public class SdTaskList extends BaseEntity
     {
         return taskDescription;
     }
-    public void setPublishStatus(Integer publishStatus) 
+    public void setPublishStatus(String publishStatus)
     {
         this.publishStatus = publishStatus;
     }
 
-    public Integer getPublishStatus() 
+    public String getPublishStatus()
     {
         return publishStatus;
     }
-    public void setTaskStatus(Integer taskStatus) 
+    public void setTaskStatus(String taskStatus)
     {
         this.taskStatus = taskStatus;
     }
 
-    public Integer getTaskStatus() 
+    public String getTaskStatus()
     {
         return taskStatus;
     }

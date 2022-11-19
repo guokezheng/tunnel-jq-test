@@ -724,8 +724,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
         <where>
         and s.dict_type= 'sd_direction'
-            <if test="tunnelId != null ">and d.eq_tunnel_id = #{tunnelId}</if>
-            <if test="deviceType != null ">and d.eq_type = #{deviceType}</if>
+            <if test="tunnelId != null and tunnelId != ''">and d.eq_tunnel_id = #{tunnelId}</if>
+            <if test="deviceType != null and deviceType != ''">and d.eq_type = #{deviceType}</if>
         </where>
     </select>
 

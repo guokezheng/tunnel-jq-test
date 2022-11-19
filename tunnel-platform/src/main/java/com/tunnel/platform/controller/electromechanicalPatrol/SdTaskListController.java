@@ -62,8 +62,6 @@ public class SdTaskListController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SdTaskList sdTaskList)
     {
-       /* String tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
-        getDevicesTypeList(tunnelId);*/
 
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
@@ -180,13 +178,13 @@ public class SdTaskListController extends BaseController
 
 
     /**
-     * 根据隧道查询设备类型
-     * @param tunnelId
+     * 查询所属系统
+     * @param
      * @return
      */
     @PostMapping("/getDevicesTypeList")
-    public Result getDevicesTypeList(@RequestBody String tunnelId){
-        List<SdDevices> devicesType = devicesService.selectDevicesTypeList(tunnelId);
+    public Result getDevicesTypeList(){
+        List<SdDevices> devicesType = devicesService.selectDevicesTypeList();
         return Result.success(devicesType);
     }
 
@@ -197,9 +195,10 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/getDevicesList")
-    public Result getDevicesList(String tunnelId, String deviceType){
+    public TableDataInfo getDevicesList(String tunnelId, String deviceType){
+        startPage();
         List<SdDevices> devices = devicesService.getDevicesList(tunnelId,deviceType);
-        return Result.success(devices);
+        return getDataTable(devices);
     }
 
     /**
@@ -208,8 +207,8 @@ public class SdTaskListController extends BaseController
      * @param faultLevel
      * @return
      */
-    @PostMapping("/getFaultList")
-    public Result getFaultList(@RequestBody String tunnelId,String faultLevel){
+    @GetMapping("/getFaultList")
+    public Result getFaultList(String tunnelId,String faultLevel){
         List<SdFaultList> faultList = sdFaultListService.getFaultList(tunnelId,faultLevel);
         return Result.success(faultList);
     }
@@ -236,6 +235,8 @@ public class SdTaskListController extends BaseController
         List<SysDept> list = sdTaskListService.selectTableBzDataInfo(deptId);
         return getDataTable(list);
     }
+
+
 
 
 

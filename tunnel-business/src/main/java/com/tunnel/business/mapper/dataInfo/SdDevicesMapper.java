@@ -195,10 +195,10 @@ public interface SdDevicesMapper
 
 	/**
 	 * 根据隧道查询设备类型
-	 * @param tunnelId
+	 * @param
 	 * @return
 	 */
-    List<SdDevices> selectDevicesTypeList(@Param("tunnelId")String tunnelId);
+    List<SdDevices> selectDevicesTypeList();
 
 	/**
 	 * 查询设备列表--新增巡查点

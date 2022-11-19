@@ -167,12 +167,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     /**
      * 根据隧道查询设备类型
-     * @param tunnelId
+     * @param
      * @return
      */
     @Override
-    public List<SdDevices> selectDevicesTypeList(String tunnelId) {
-        return sdDevicesMapper.selectDevicesTypeList(tunnelId);
+    public List<SdDevices> selectDevicesTypeList() {
+        return sdDevicesMapper.selectDevicesTypeList();
     }
 
     /**

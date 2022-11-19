@@ -158,11 +158,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultList" parameterType="String" resultType="hashmap">
-    select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description
-    from sd_fault_list f left join sd_devices d on f.eq_id = d.eq_id
+        select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
+        from sd_fault_list f
+        left join sd_devices d on f.eq_id = d.eq_id
+        left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
+        left join sys_dict_data s on f.fault_type = s.dict_value
     <where>
-        <if test="tunnelId != null ">and f.tunnel_id = #{tunnelId}</if>
-        <if test="faultLevel != null ">and f.fault_level = #{faultLevel}</if>
+        1=1 and  s.dict_type= 'fault_type'
+        <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
+        <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>
     </select>
 

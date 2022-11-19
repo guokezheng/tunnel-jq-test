@@ -62,9 +62,9 @@ public class SdTaskListController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SdTaskList sdTaskList)
     {
-     /*String tunnelId = "WLJD-JiNan-YaniuYuan-FHS";
-        getDevicesTypeList(tunnelId);
-*/
+       /* String tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
+        getDevicesTypeList(tunnelId);*/
+
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);
@@ -196,8 +196,8 @@ public class SdTaskListController extends BaseController
      * @param tunnelId
      * @return
      */
-    @PostMapping("/getDevicesList")
-    public Result getDevicesList(@RequestBody String tunnelId,String deviceType){
+    @GetMapping("/getDevicesList")
+    public Result getDevicesList(String tunnelId, String deviceType){
         List<SdDevices> devices = devicesService.getDevicesList(tunnelId,deviceType);
         return Result.success(devices);
     }

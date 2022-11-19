@@ -73,28 +73,31 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         List<SdFaultList> list =  sdFaultListMapper.selectSdFaultListList(sdFaultList);
         if(list!=null&&list.size()>0){
             for(int i = 0;i<list.size();i++){
-                int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
-                if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    String  fxtime = sdf.format(list.get(0).getFaultFxtime());
-                    long time = sdf.parse(fxtime, new ParsePosition(0)).getTime();
-                    long nd = 1000 * 24 * 60 * 60;
-                    long nh = 1000 * 60 * 60;
-                    long nm = 1000 * 60;
-                    long ns = 1000;
-//        // 获得两个时间的毫秒时间差异
-                    long diff = System.currentTimeMillis() - time + 1000;
-//        // 计算差多少天
-                    long day = diff / nd;
-//        // 计算差多少小时
-                    long hour = diff % nd / nh;
-//        // 计算差多少分钟
-                    long min = diff % nd % nh / nm;
-                    // 计算差多少秒//输出结果
-                    long sec = diff % nd % nh % nm / ns;
-                    System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
-                    list.get(i).setFaultCxtime(day + "天" + hour + "小时");
+                if(list.get(i).getFalltRemoveStatue()!=null){
+                    int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
+                    if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String  fxtime = sdf.format(list.get(0).getFaultFxtime());
+                        long time = sdf.parse(fxtime, new ParsePosition(0)).getTime();
+                        long nd = 1000 * 24 * 60 * 60;
+                        long nh = 1000 * 60 * 60;
+                        long nm = 1000 * 60;
+                        long ns = 1000;
+                        // 获得两个时间的毫秒时间差异
+                        long diff = System.currentTimeMillis() - time + 1000;
+                        // 计算差多少天
+                        long day = diff / nd;
+                        // 计算差多少小时
+                        long hour = diff % nd / nh;
+                        // 计算差多少分钟
+                        long min = diff % nd % nh / nm;
+                        // 计算差多少秒//输出结果
+                        long sec = diff % nd % nh % nm / ns;
+                        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
+                        list.get(i).setFaultCxtime(day + "天" + hour + "小时");
+                    }
                 }
+
             }
 
         }

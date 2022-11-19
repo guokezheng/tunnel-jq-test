@@ -127,15 +127,15 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
             <el-form-item label="报警点位智能推荐:" label-width="130px">
-              <el-select v-model="stateForm2.address">
-                <el-option
-                  v-for="(item,index) in fireMarkData"
-                  :key="index"
-                  
-                  :value="item"
+              <el-radio-group v-model="stateForm2.address">
+                <el-radio
+                  :label="item.label"
+                  v-for="(item, index) in fireMarkData"
+                  :key="item.value"
+                  :value="item.value"
                 >
-                </el-option>
-              </el-select>
+                </el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -172,7 +172,7 @@ export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
-      fireMarkData:[],
+      fireMarkData: [],
       stateForm: {},
       title: "",
       visible: true,
@@ -184,7 +184,7 @@ export default {
         frequency: null,
         brightness: null,
         state: null,
-        fireMark:null,
+        fireMark: null,
       },
 
       openState: [
@@ -215,26 +215,37 @@ export default {
         var state = "";
         // 查询单选框弹窗信息 -----------------------
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-            console.log(res, "查询单选框弹窗信息");
-            this.stateForm = res.data;
-            this.title = this.stateForm.eqName;
-          });
-        
-          await getDevice(this.eqInfo.equipmentId).then((response) => {
-            console.log(response, "诱导灯频率、亮度等");
-            // this.stateForm2 = response.data
-            this.stateForm2 = {
-              frequency: Number(response.data.frequency),
-              brightness: Number(response.data.brightness),
-              state: response.data.state,
-              address: response.data.eq_feedback_address1
-            };
-          });
-        if(this.eqInfo.clickEqType == 30){
-          fireMarkList(this.eqInfo.equipmentId).then((res) =>{
-            this.fireMarkData = res.data
-           
-          })
+          console.log(res, "查询单选框弹窗信息");
+          this.stateForm = res.data;
+          this.title = this.stateForm.eqName;
+        });
+
+        await getDevice(this.eqInfo.equipmentId).then((response) => {
+          console.log(response, "诱导灯频率、亮度等");
+          // this.stateForm2 = response.data
+          this.stateForm2 = {
+            frequency: Number(response.data.frequency),
+            brightness: Number(response.data.brightness),
+            state: response.data.state,
+            address: response.data.eq_feedback_address1,
+          };
+        });
+        if (this.eqInfo.clickEqType == 30) {
+          this.fireMarkData = [
+            {
+              label: "设置为报警点位",
+              value: this.stateForm.eq_feedback_address1,
+            },
+          ];
+          if (this.stateForm.eq_feedback_address1 == this.stateForm.fireMark) {
+            this.fireMarkData.push({ label: "清除报警点位", value: "255" });
+          }
+          // fireMarkList(this.eqInfo.equipmentId).then((res) => {
+          //   let data = res.data;
+          //   this.fireMarkData = data;
+          //   //
+          //   console.log(this.fireMarkData, "000");
+          // });
         }
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -271,7 +282,7 @@ export default {
         // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
         frequency: this.stateForm2.frequency, //诱导灯频率
-        fireMark:this.stateForm2.address
+        fireMark: this.stateForm2.address,
         // tunnelId: this.stateForm.tunnelId,
       };
 

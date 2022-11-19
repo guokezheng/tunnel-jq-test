@@ -129,12 +129,10 @@
             <el-form-item label="报警点位智能推荐:" label-width="130px">
               <el-radio-group v-model="stateForm2.address">
                 <el-radio
-                  :label="item.label"
-                  v-for="(item, index) in fireMarkData"
+                  v-for="item in fireMarkData"
                   :key="item.value"
-                  :value="item.value"
-                >
-                </el-radio>
+                  :label="item.value"
+                >{{item.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -392,4 +390,3 @@ export default {
 //   color:white;
 // }
 </style>
-  

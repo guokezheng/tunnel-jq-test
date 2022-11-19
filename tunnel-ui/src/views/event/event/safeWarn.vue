@@ -1364,7 +1364,6 @@ export default {
   background: #9ecced;
   border-radius: 10px;
   margin-bottom: 10px;
-  margin-top: 20px;
   font-size: 14px;
   // justify-content: space-between;
   div{

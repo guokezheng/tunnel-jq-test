@@ -834,10 +834,10 @@
                 <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
               </el-col>
               <el-col style="text-align: center" :span="3"
-              :style="{color:item.eventType.prevControlType == '0'?'red':item.eventType.prevControlType=='1'?'blue':'yellow'}">
+              :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
                 {{item.eventType.simplifyName}}
               </el-col>
-              <el-col @click.native="jumpYingJi(item.id)" :span="19" >
+              <el-col @click.native="jumpYingJi(item.id)" :span="19" style="display: flex;">
                 <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
                 }}事件 -->
@@ -846,9 +846,10 @@
                   overflow: hidden;
                   white-space: nowrap;
                   text-overflow: ellipsis;
+                  color:white;
                   ">
                   {{item.eventTitle}}</div>
-                <div >{{item.startTime}}</div>
+                <div style="color:#D0CECE;font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
                 
               </el-col>
             </el-row>
@@ -3774,6 +3775,9 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    getStartTime(time){
+      moment(time).format("HH:mm:ss")
+    },
 //     getWarnTime(time){
 // // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
 //       // console.log(times,"times")

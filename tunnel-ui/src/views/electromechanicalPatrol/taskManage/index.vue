@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+    >
       <el-form-item label="所属单位" prop="zzjgId">
         <el-input
           v-model="queryParams.zzjgId"
@@ -10,7 +16,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="计划完成时间" prop="endPlantime">
+      <!--      <el-form-item label="计划完成时间" prop="endPlantime">
         <el-date-picker clearable size="small"
           v-model="queryParams.endPlantime"
           type="date"
@@ -98,19 +104,23 @@
         />
       </el-form-item>-->
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button size="mini" type="primary" plain @click="resetQuery"
+          >重置</el-button
+        >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:list:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
         <!--      </el-col>
               <el-col :span="1.5">-->
-<!--        <el-button
+        <!--        <el-button
           type="success"
           plain
           icon="el-icon-edit"
@@ -121,7 +131,7 @@
         >修改</el-button>-->
         <!--      </el-col>
               <el-col :span="1.5">-->
-<!--        <el-button
+        <!--        <el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -132,7 +142,7 @@
         >删除</el-button>-->
         <!--      </el-col>
               <el-col :span="1.5">-->
-<!--        <el-button
+        <!--        <el-button
           type="warning"
           plain
           icon="el-icon-download"
@@ -144,81 +154,105 @@
       </el-form-item>
     </el-form>
 
-<!--    <el-row :gutter="10" class="mb8">
+    <!--    <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">-->
 
-<!--      </el-col>-->
-<!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-<!--    </el-row>-->
+    <!--      </el-col>-->
+    <!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
+    <!--    </el-row>-->
 
-    <el-table v-loading="loading" :data="listList"
-    @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="listList"
+      @selection-change="handleSelectionChange"
+      class="allTable"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="任务编号" align="center" prop="id" />
-<!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
+      <!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
-      <el-table-column label="派单时间" align="center" prop="dispatchTime" width="180">
+      <el-table-column
+        label="派单时间"
+        align="center"
+        prop="dispatchTime"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.dispatchTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="承巡班组" align="center" prop="bzId" />
-<!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
-      <el-table-column label="计划完成时间" align="center" prop="endPlantime" width="180">
+      <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
+      <el-table-column
+        label="计划完成时间"
+        align="center"
+        prop="endPlantime"
+        width="180"
+      >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endPlantime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endPlantime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发布状态" align="center" prop="publishStatus" >
-      <template slot-scope="scope">
-        <dict-tag :options="dict.type.publish_status" :value="scope.row.publishStatus"/>
-      </template>
+      <el-table-column label="发布状态" align="center" prop="publishStatus">
+        <template slot-scope="scope">
+          <dict-tag
+            :options="dict.type.publish_status"
+            :value="scope.row.publishStatus"
+          />
+        </template>
       </el-table-column>
-      <el-table-column label="任务状态" align="center" prop="taskStatus" >
-      <template slot-scope="scope">
-        <dict-tag :options="dict.type.task_status" :value="scope.row.taskStatus"/>
-      </template>
+      <el-table-column label="任务状态" align="center" prop="taskStatus">
+        <template slot-scope="scope">
+          <dict-tag
+            :options="dict.type.task_status"
+            :value="scope.row.taskStatus"
+          />
+        </template>
       </el-table-column>
-<!--      <el-table-column label="巡查人员" align="center" prop="walkerId" />-->
-<!--      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
+      <!--      <el-table-column label="巡查人员" align="center" prop="walkerId" />-->
+      <!--      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.taskEndtime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>-->
-<!--      <el-table-column label="任务持续时间" align="center" prop="taskCxtime" width="180">
+      <!--      <el-table-column label="任务持续时间" align="center" prop="taskCxtime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.taskCxtime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>-->
-<!--      <el-table-column label="现场情况描述" align="center" prop="siteDescription" />-->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <!--      <el-table-column label="现场情况描述" align="center" prop="siteDescription" />-->
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
-          >任务详情</el-button>
+            >任务详情</el-button
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -226,7 +260,7 @@
     />
 
     <!-- 添加或修改巡查任务对话框 -->
-<!--    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <!--    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="所属单位" prop="zzjgId">
           <el-input v-model="form.zzjgId" placeholder="请输入所属单位" />
@@ -296,7 +330,7 @@
     </el-dialog>-->
 
     <el-dialog :title="title" :visible.sync="open" width="70%">
-<!--      <h1>新增巡检任务</h1>-->
+      <!--      <h1>新增巡检任务</h1>-->
       <div class="task">
         <div>巡查任务基本信息</div>
         <hr />
@@ -314,12 +348,15 @@
           <div>
             <span>派单时间</span>
             <div>
-              <el-date-picker clearable size="small"
-                              v-model="form.dispatchTime"
-                              type="date"
-                              style = "width:89%"
-                              value-format="yyyy-MM-dd"
-                              placeholder="选择派单时间">
+              <el-date-picker
+                clearable
+                size="small"
+                v-model="form.dispatchTime"
+                type="date"
+                style="width: 89%"
+                value-format="yyyy-MM-dd"
+                placeholder="选择派单时间"
+              >
               </el-date-picker>
             </div>
           </div>
@@ -341,12 +378,15 @@
         <div class="form-two">
           <div>
             <span>需完成日期</span>
-            <el-date-picker clearable size="small"
-                            v-model="form.endPlantime"
-                            type="date"
-                            style = "width:63%"
-                            value-format="yyyy-MM-dd"
-                            placeholder="选择完成时间">
+            <el-date-picker
+              clearable
+              size="small"
+              v-model="form.endPlantime"
+              type="date"
+              style="width: 63%"
+              value-format="yyyy-MM-dd"
+              placeholder="选择完成时间"
+            >
             </el-date-picker>
           </div>
         </div>
@@ -365,20 +405,40 @@
         <div>巡查点信息</div>
         <hr />
         <div class="button-father">
-          <el-button type="primary" style = "height:15%" @click="show1">选择巡检点</el-button>
-          <el-button type="primary" style = "height:15%" @click="show2">选择故障点</el-button>
-          <el-button type="primary" style = "height:15%" disabled>导入巡查计划</el-button>
+          <el-button type="primary" style="height: 15%" @click="show1"
+            >选择巡检点</el-button
+          >
+          <el-button type="primary" style="height: 15%" @click="show2"
+            >选择故障点</el-button
+          >
+          <el-button type="primary" style="height: 15%" disabled
+            >导入巡查计划</el-button
+          >
         </div>
         <div class="box-father">
           <div class="box" :key="index" v-for="(item, index) in boxList">
-            <div class="number">{{ item.number }}</div>
-            <div class="text">{{ item.text }}</div>
+            <div class="contentTextRow">
+              <div class="number">{{ index + 1 }}</div>
+              <div class="text">
+                <div>{{ item.tunnel_name }}</div>
+                <div>{{ item.type_name }}</div>
+                <div>{{ item.eq_name }}</div>
+                <div>{{ item.pile }}</div>
+              </div>
+            </div>
+
             <template @slot="scop">
-              <div class="top" @click="clickUP(index)">
+              <div
+                :class="index == 0 ? 'disabledClass' : 'top'"
+                @click="clickUP(index, item)"
+              >
                 <i class="el-icon-top"></i>
               </div>
             </template>
-            <div class="bottom" @click="clickDown(index)">
+            <div
+              :class="boxList.length == index + 1 ? 'disabledClass' : 'bottom'"
+              @click="clickDown(index, item)"
+            >
               <i class="el-icon-bottom"></i>
             </div>
             <div class="delete" @click="clickDelete(index)">
@@ -387,24 +447,18 @@
           </div>
         </div>
         <div class="release-father">
-          <el-button style = "height:20%">暂存</el-button>
-          <el-button style = "height:20%" type="warning">废止</el-button>
-          <el-button style = "height:20%" type="primary" @click="release">发布</el-button>
+          <el-button style="height: 20%">暂存</el-button>
+          <el-button style="height: 20%" type="warning">废止</el-button>
+          <el-button style="height: 20%" type="primary" @click="release"
+            >发布</el-button
+          >
         </div>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="isShow1" width="50%" class="show">
       <div class="show-left">
         <div class="show-title">设备位置</div>
-        <!-- <el-tree
-          class="tree"
-          :data="treeData"
-          :props="defaultProps"
-          accordion
-          @node-click="handleNodeClick"
-          node-key="id"
-         /> -->
-         <el-tree
+        <el-tree
           class="tree"
           :data="treeData"
           :props="defaultProps"
@@ -418,17 +472,18 @@
           default-expand-all
           @node-click="handleNodeClick"
           node-key="id"
-         />
+          highlight-current
+        />
       </div>
       <div class="show-right">
         <div class="show-title">设备清单</div>
         <div class="right-button">
-          <el-select v-model="options1value">
+          <el-select v-model="options1value" @change="getTable">
             <el-option
               v-for="item in options1"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item.type_id"
+              :label="item.type_name"
+              :value="item.type_id"
             >
             </el-option>
           </el-select>
@@ -444,132 +499,157 @@
             tooltip-effect="dark"
             :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
-            :header-row-style="{ height: '30px' }"
-            :row-style="{ height: '30px' }"
-            style="width: 100%"
+            :header-row-style="{
+              height: '30px',
+              background: '#F2F2F2',
+              color: '#606266',
+            }"
+            :row-style="{
+              height: '30px',
+              background: '#fff',
+              color: '#606266',
+            }"
+            style="width: 100%; background: #fff"
             border
+            height="358px"
+            class="dialogTable"
+            @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
-            <el-table-column prop="type" label="设备类型" width="90">
+            <el-table-column prop="type_name" label="设备类型">
             </el-table-column>
-            <el-table-column prop="name" label="设备名称" width="135">
-            </el-table-column>
-            <el-table-column prop="address" label="安装位置"> </el-table-column>
-            <el-table-column prop="describe" label="设备描述" width="135">
-            </el-table-column>
+            <el-table-column prop="eq_name" label="设备名称"> </el-table-column>
+            <el-table-column prop="pile" label="安装位置"> </el-table-column>
+            <el-table-column prop="dict_label" label="方向"> </el-table-column>
           </el-table>
+          <pagination
+            v-show="dialogTotal > 0"
+            :total="dialogTotal"
+            :page.sync="pageNum"
+            :limit.sync="pageSize"
+            @pagination="getDialogList"
+            small
+          />
         </div>
       </div>
     </el-dialog>
 
-
-   <!--巡查任务及执行记录单-->
-    <el-dialog
-      :visible.sync="record"
-      width="70%"
-    >
-      <div style="text-align: center;font-size: 20px;">巡检任务及执行记录单</div>
+    <!--巡查任务及执行记录单-->
+    <el-dialog :visible.sync="record" width="70%">
+      <div style="text-align: center; font-size: 20px">
+        巡检任务及执行记录单
+      </div>
       <div class="col-1">
         发布状态/执行状态：
         <div class="col-card">已发布</div>
         <div class="col-card">已完结</div>
       </div>
-      <div class="card"  v-for="(item,index) in taskNews" :key="index">
+      <div class="card" v-for="(item, index) in taskNews" :key="index">
         <div class="card-col">
           <div>
             任务编号：
-            <span>{{item.id}}</span>
+            <span>{{ item.id }}</span>
           </div>
           <div>
             所属单位：
-            <span>{{item.zzjgId}}</span>
+            <span>{{ item.zzjgId }}</span>
           </div>
           <div>
             指派巡查班组：
-            <span>{{item.bzId}}</span>
+            <span>{{ item.bzId }}</span>
           </div>
         </div>
         <div class="card-col">
           <div>
             计划完成日期：
-            <span>{{item.endPlantime}}</span>
+            <span>{{ item.endPlantime }}</span>
           </div>
           <div>
             派单人员：
-            <span>{{item.dispatcher}}</span>
+            <span>{{ item.dispatcher }}</span>
           </div>
           <div>
             派单时间：
-            <span>{{item.dispatchTime}}</span>
+            <span>{{ item.dispatchTime }}</span>
           </div>
         </div>
         <div class="card-cols">
           <div>
             任务描述：
-            <span>{{item.taskDescription}}</span>
+            <span>{{ item.taskDescription }}</span>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-col1" v-for="(pat,index) in patrolNews" :key="index">
+        <div class="card-col1" v-for="(pat, index) in patrolNews" :key="index">
           <div class="row">
             <div class="row-card1">设备巡检点</div>
-            <div class="row-card2" style="margin-left:10px">{{pat.tunnelName}}</div>
-            <div class="row-card2">{{pat.eqName}}</div>
-            <div class="row-card2" style="text-align:right">{{pat.xcTime}}</div>
+            <div class="row-card2" style="margin-left: 10px">
+              {{ pat.tunnelName }}
+            </div>
+            <div class="row-card2">{{ pat.eqName }}</div>
+            <div class="row-card2" style="text-align: right">
+              {{ pat.xcTime }}
+            </div>
           </div>
-          <div style="background-color: white;padding: 10px;">
-            <div class="test">设备描述：<span>{{pat.eqFaultDescription}}</span></div>
-            <div style="display:flex;margin-top: 10px;">
-              <div class="test" style="width:30%">外观情况：
-                <span>{{pat.impression}}</span>
+          <div style="background-color: white; padding: 10px">
+            <div class="test">
+              设备描述：<span>{{ pat.eqFaultDescription }}</span>
+            </div>
+            <div style="display: flex; margin-top: 10px">
+              <div class="test" style="width: 30%">
+                外观情况：
+                <span>{{ pat.impression }}</span>
               </div>
-              <div class="test" style="width:30%">网络情况：
-                <span>{{pat.network}}</span>
+              <div class="test" style="width: 30%">
+                网络情况：
+                <span>{{ pat.network }}</span>
               </div>
-              <div class="test" style="width:30%">配电情况：
-                <span>{{pat.power}}</span>
+              <div class="test" style="width: 30%">
+                配电情况：
+                <span>{{ pat.power }}</span>
               </div>
             </div>
             <div class="card-cols">
-              <div style="width:80%">
+              <div style="width: 80%">
                 设备运行状态:
-                <span>设备状态:{{pat.eqStatus}}设备运行状态:{{pat.runStatus}}</span>
+                <span
+                  >设备状态:{{ pat.eqStatus }}设备运行状态:{{
+                    pat.runStatus
+                  }}</span
+                >
               </div>
-              <div class="col-test">
-                (检修时检测情况)
-              </div>
+              <div class="col-test">(检修时检测情况)</div>
             </div>
             <div class="card-cols">
-              <div style="width:80%">
+              <div style="width: 80%">
                 现场故障情况:
                 <span>
-                  {{pat.eqFaultCode}}
+                  {{ pat.eqFaultCode }}
                 </span>
               </div>
-              <div class="col-test">
-                (检修时检测情况)
-              </div>
+              <div class="col-test">(检修时检测情况)</div>
             </div>
             <div class="card-cols">
               现场照片：
-               <div>
-                 <div  v-for="(pic,index) in pat.iFileList" :key="index">
-                   <img :src="pic.imgUrl" :title="pic.imgName">
-                 </div>
+              <div>
+                <div v-for="(pic, index) in pat.iFileList" :key="index">
+                  <img :src="pic.imgUrl" :title="pic.imgName" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="card"  v-for="(tas,index) in taskNews" :key="index">
+      <div class="card" v-for="(tas, index) in taskNews" :key="index">
         <div class="card-col">
-          <div class="test">任务执行状态：
+          <div class="test">
+            任务执行状态：
             <span>{{ tas.taskStatus }}</span>
           </div>
           <div class="test">
             执行巡查班组：
-            <span>{{tas.bzId}}</span>
+            <span>{{ tas.bzId }}</span>
           </div>
           <div class="test">
             执行巡查人：
@@ -579,7 +659,7 @@
         <div class="card-col">
           <div class="test">
             任务完成时间：
-            <span>{{tas.taskEndtime}}</span>
+            <span>{{ tas.taskEndtime }}</span>
           </div>
           <div class="test">
             任务持续时长：
@@ -590,38 +670,38 @@
         <div class="card-cols">
           <div class="test">
             任务描述：
-            <span>{{tas.taskDescription}}</span>
+            <span>{{ tas.taskDescription }}</span>
           </div>
         </div>
       </div>
       <div class="card">
         <div class="table-row">
-          <div style="width:10%">操作记录</div>
-          <div style="width:10%">派单</div>
-          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width:30%">2022/09/18 21:13:35</div>
-          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+          <div style="width: 10%">操作记录</div>
+          <div style="width: 10%">派单</div>
+          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width: 30%">2022/09/18 21:13:35</div>
+          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
         </div>
         <div class="table-row">
-          <div style="width:10%">操作记录</div>
-          <div style="width:10%">派单</div>
-          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width:30%">2022/09/18 21:13:35</div>
-          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+          <div style="width: 10%">操作记录</div>
+          <div style="width: 10%">派单</div>
+          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width: 30%">2022/09/18 21:13:35</div>
+          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
         </div>
         <div class="table-row">
-          <div style="width:10%">操作记录</div>
-          <div style="width:10%">派单</div>
-          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width:30%">2022/09/18 21:13:35</div>
-          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+          <div style="width: 10%">操作记录</div>
+          <div style="width: 10%">派单</div>
+          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width: 30%">2022/09/18 21:13:35</div>
+          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
         </div>
         <div class="table-row">
-          <div style="width:10%">操作记录</div>
-          <div style="width:10%">派单</div>
-          <div style="width:20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width:30%">2022/09/18 21:13:35</div>
-          <div style="width:30%">平台制定巡检任务时，派单人员和派单时间。</div>
+          <div style="width: 10%">操作记录</div>
+          <div style="width: 10%">派单</div>
+          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width: 30%">2022/09/18 21:13:35</div>
+          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
         </div>
       </div>
     </el-dialog>
@@ -629,6 +709,8 @@
 </template>
 
 <script>
+import $ from "jquery";
+
 import {
   listList,
   getList,
@@ -637,46 +719,49 @@ import {
   updateList,
   exportList,
   getTaskInfoList,
-  listBz, treeselect,
+  listBz,
+  treeselect,
   getDevicesTypeList,
+  getDevicesList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
-import {getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
-import {listTunnels} from "@/api/equipment/tunnel/api";
+import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
+import { listTunnels } from "@/api/equipment/tunnel/api";
+import { color } from "echarts";
 
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
-  dicts: ["publish_status","task_status","network","power"],
-  props:{
+  dicts: ["publish_status", "task_status", "network", "power"],
+  props: {
     //开启过滤
-    filter:{
-      type:Boolean,
-      default:true,
+    filter: {
+      type: Boolean,
+      default: true,
     },
     //节点是否可被选择
-    show_checkbox:{
-      type:Boolean,
-      default:false,
+    show_checkbox: {
+      type: Boolean,
+      default: false,
     },
     //是否级联
-    check_strictly:{
-      type:Boolean,
-      default:false,
+    check_strictly: {
+      type: Boolean,
+      default: false,
     },
     //开启默认全选
-    default_check_all:{
-      type:Boolean,
-      default:false,
+    default_check_all: {
+      type: Boolean,
+      default: false,
     },
     //开启默认选中第一个子节点
-    default_check_first:{
-      type:Boolean,
-      default:false,
+    default_check_first: {
+      type: Boolean,
+      default: false,
     },
     //默认第一个子节点高亮选中
-    default_select_first:{
-      type:Boolean,
-      default:false,
+    default_select_first: {
+      type: Boolean,
+      default: false,
     },
     // powerCode:{
     //   type:String,
@@ -685,17 +770,24 @@ export default {
   },
   data() {
     return {
+      // 获取巡检点 表格选中项
+      dialogSelection: [],
+      dialogTotal: 0,
+      pageNum: 1,
+      pageSize: 10,
+
+      tunnelId: "",
       defaultProps: {
-        value:'id',
-        label:'label',
-        children: 'children'
+        value: "id",
+        label: "label",
+        children: "children",
       },
-      treeData:[],
-      tableData1:[],
-      options1value:'',//设备清单绑定
-      boxList:[],
-      options1:[],//设备清单
-      record:false,
+      treeData: [],
+      tableData1: [],
+      options1value: "", //设备清单绑定
+      boxList: [],
+      options1: [], //设备清单
+      record: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -740,36 +832,35 @@ export default {
         siteDescription: null,
       },
       // 任务详情参数
-      taskNews:{
-        id:"",
-        zzjgId:"",
-        bzId:"",
-        endPlantime:"",
-        dispatcher:"",
-        dispatchTime:"",
-        taskDescription:"",
+      taskNews: {
+        id: "",
+        zzjgId: "",
+        bzId: "",
+        endPlantime: "",
+        dispatcher: "",
+        dispatchTime: "",
+        taskDescription: "",
       },
       //巡查点参数
-      patrolNews:{
-        tunnelName:"",
-        xcTime:"",
-        bzId:"",
-        walkerId:"",
-        impression:0,
-        network:0,
-        power:0,
-        eqStatus:"",
-        runStatus:"",
-        eqFaultDescription:"",
+      patrolNews: {
+        tunnelName: "",
+        xcTime: "",
+        bzId: "",
+        walkerId: "",
+        impression: 0,
+        network: 0,
+        power: 0,
+        eqStatus: "",
+        runStatus: "",
+        eqFaultDescription: "",
       },
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
-      impressionOptions:[],//外观情况
-      networkOptions:[],//网络情况
-      powerOptions:[],//配电情况
+      rules: {},
+      impressionOptions: [], //外观情况
+      networkOptions: [], //网络情况
+      powerOptions: [], //配电情况
     };
   },
   created() {
@@ -777,91 +868,136 @@ export default {
     this.getBz();
     this.getTreeSelect();
     //外观情况
-    this.getDicts("impression").then(response => {
+    this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
-    })
+    });
     //网络情况
-    this.getDicts("network").then(response => {
+    this.getDicts("network").then((response) => {
       this.networkOptions = response.data;
     });
     //外观情况
-    this.getDicts("power").then(response => {
+    this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
   },
   methods: {
+    //  上移
+    clickUP(i, item) {
+      if (item && i) {
+        let obj = { ...this.boxList[i - 1] };
+        this.boxList.splice(i - 1, 1, item);
+        this.boxList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
+    // 下移
+    clickDown(i, item) {
+      if (item && typeof i === "number") {
+        let obj = { ...this.boxList[i + 1] };
+        this.boxList.splice(i + 1, 1, item);
+        this.boxList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
+    clickDelete() {},
+    // 弹窗表格翻页
+    getDialogList() {},
+    // 获取巡检点弹窗表格选中项
+    onSiteInspectionSelection(selection) {
+      this.dialogSelection = selection;
+      console.log(this.dialogSelection, "this.dialogSelection");
+    },
+    // 获取设备table
+    getTable(deviceType) {
+      getDevicesList(this.tunnelId, deviceType).then((res) => {
+        console.log(res, "获取设备table");
+        console.log(this.boxList, "boxList");
+
+        this.tableData1 = res.data;
+        this.dialogTotal = res.data.length;
+        if (this.boxList != []) {
+          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          if (this.boxList[0].eq_type == deviceType) {
+            this.boxList.forEach((row) => {
+              this.$nextTick( ()=>{
+                this.$refs.multipleTable.toggleRowSelection(row,true);
+
+              })
+            });
+          }
+        }else{
+          this.$refs.multipleTable.clearSelection();
+        }
+      });
+    },
     //节点单击事件
     handleNodeClick(data) {
-      console.log(data,"节点单击事件")
-      const param ={
-        tunnelId :data.id
-      }
-      getDevicesTypeList(param).then((res) =>{
-        console.log(res,"获取设备类型下拉");
-      })
+      console.log(data, "节点单击事件");
+      this.options1value = "";
+      this.tableData1 = [];
+      this.tunnelId = data.id;
+      getDevicesTypeList(data.id).then((res) => {
+        console.log(res, "获取设备类型下拉");
+        this.options1 = res.data;
+      });
     },
     // 筛选节点
     filterNode(value, data) {
-      console.log(value, data,"筛选节点")
+      console.log(value, data, "筛选节点");
       if (!value) return true;
       return data.loopName.indexOf(value) !== -1;
     },
 
     handleRecordy(row) {
-
-      this.record = true
+      this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
         this.taskNews = response.data.task;
-        this.patrolNews =  response.data.patrol;
-        this.impressionOptions.forEach((opt) =>{
-          if(opt.dictValue=="0"){
-              this.patrolNews.forEach((taskitem) =>{
+        this.patrolNews = response.data.patrol;
+        this.impressionOptions.forEach((opt) => {
+          if (opt.dictValue == "0") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.impression = opt.dictLabel;
-            })
+            });
           }
-          if(opt.dictValue=="1"){
-            this.patrolNews.forEach((taskitem) =>{
+          if (opt.dictValue == "1") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.impression = opt.dictLabel;
-            })
+            });
           }
+        });
 
-        })
-
-        this.networkOptions.forEach((opt) =>{
-          if(opt.dictValue=="0"){
-            this.patrolNews.forEach((taskitem) =>{
+        this.networkOptions.forEach((opt) => {
+          if (opt.dictValue == "0") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.network = opt.dictLabel;
-            })
+            });
           }
-          if(opt.dictValue=="1"){
-            this.patrolNews.forEach((taskitem) =>{
+          if (opt.dictValue == "1") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.network = opt.dictLabel;
-            })
+            });
           }
+        });
 
-        })
-
-        this.powerOptions.forEach((opt) =>{
-          if(opt.dictValue=="0"){
-            this.patrolNews.forEach((taskitem) =>{
+        this.powerOptions.forEach((opt) => {
+          if (opt.dictValue == "0") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.power = opt.dictLabel;
-            })
+            });
           }
-          if(opt.dictValue=="1"){
-            this.patrolNews.forEach((taskitem) =>{
+          if (opt.dictValue == "1") {
+            this.patrolNews.forEach((taskitem) => {
               taskitem.power = opt.dictLabel;
-            })
+            });
           }
-
-        })
-
+        });
       });
     },
     /** 查询巡查任务列表 */
     getList() {
       this.loading = true;
-      listList(this.queryParams).then(response => {
+      listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -882,8 +1018,8 @@ export default {
     /** 隧道部门树 */
     getTreeSelect() {
       treeselect().then((response) => {
-        this.treeData = response.data
-        console.log(response.data,"隧道部门树")
+        this.treeData = response.data;
+        console.log(response.data, "隧道部门树");
       });
     },
 
@@ -906,7 +1042,7 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
       };
       this.resetForm("form");
     },
@@ -929,15 +1065,16 @@ export default {
 
     determine1() {
       this.isShow1 = false;
+      this.boxList = this.dialogSelection;
     },
     determine2() {
       this.isShow2 = false;
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -948,8 +1085,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getList(id).then(response => {
+      const id = row.id || this.ids;
+      getList(id).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改巡查任务";
@@ -957,16 +1094,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateList(this.form).then(response => {
+            updateList(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addList(this.form).then(response => {
+            addList(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -978,36 +1115,43 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除巡查任务编号为"' + ids + '"的数据项？').then(function() {
-        return delList(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除巡查任务编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delList(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有巡查任务数据项？').then(() => {
-        this.exportLoading = true;
-        return exportList(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认导出所有巡查任务数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportList(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
-    release(){
-
-    }
-  }
+    release() {},
+  },
 };
 </script>
-<style>
-.el-table tr{
+<style lang="scss">
+.el-table tr {
   background-color: transparent;
-}</style>
+}
+</style>
 <style lang="scss" scoped>
-.card{
+.card {
   font-size: 15px;
   position: relative;
   width: 100%;
@@ -1015,101 +1159,101 @@ export default {
   margin-top: 20px;
   border-radius: 10px;
   background-color: #f0f0f0;
-  .card-col{
+  .card-col {
     margin-top: 10px;
     display: flex;
     color: #79949c;
-    .chaoshi{
+    .chaoshi {
       padding: 5px;
-      color: #FFD69A;
+      color: #ffd69a;
       display: inline;
       margin-left: 10px;
-      border: 1px solid #FFD69A;
+      border: 1px solid #ffd69a;
     }
-    div{
+    div {
       width: 33%;
-      span{
+      span {
         color: black;
         margin-left: 10px;
       }
     }
   }
-  .card-cols{
+  .card-cols {
     margin-top: 10px;
     display: flex;
-    .col-test{
+    .col-test {
       text-align: right;
       color: #79949c;
     }
-    img{
-      width:100px;
+    img {
+      width: 100px;
       margin-left: 20px;
     }
   }
-  .card-col1{
+  .card-col1 {
     font-size: 17px;
-    .row{
+    .row {
       margin-top: 5px;
       display: flex;
       background-color: white;
       padding: 10px;
       // justify-content: center;
       align-items: center;
-      .row-card1{
+      .row-card1 {
         padding: 5px;
-        background-color:#f0f0f0;
+        background-color: #f0f0f0;
         margin-left: 5px;
       }
-      .row-card2{
+      .row-card2 {
         width: 29%;
       }
     }
   }
 }
-.col-1{
+.col-1 {
   font-size: 20px;
   display: flex;
   justify-content: right;
   align-items: center;
   text-align: right;
-  .col-card{
+  .col-card {
     padding: 10px;
     margin-left: 5px;
-    color: #3E9E70;
+    color: #3e9e70;
     background-color: rgba(230, 243, 235, 1);
   }
 }
-  .card-cols{
-    margin-top: 10px;
-    display: flex;
-    .col-test{
-      width: 20%;
-      text-align: right;
-      color: #79949c;
-    }
-    img{
-      width:100px;
-      margin-left: 20px;
-    }
-  }
-  .table-row{
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    div{
-      text-align: center;
-      margin-left: 15px;
-      border-bottom:1px solid black
-    }
-  }
-  .test{
+.card-cols {
+  margin-top: 10px;
+  display: flex;
+  .col-test {
+    width: 20%;
+    text-align: right;
     color: #79949c;
-    span{
-      color: black;
-      margin-left: 5px;
-    }
   }
+  img {
+    width: 100px;
+    margin-left: 20px;
+  }
+}
+.table-row {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  div {
+    text-align: center;
+    margin-left: 15px;
+    border-bottom: 1px solid black;
+  }
+}
+.test {
+  color: #79949c;
+  span {
+    color: black;
+    margin-left: 5px;
+  }
+}
 
 h1 {
   text-align: center;
@@ -1180,9 +1324,15 @@ h1 {
     .box {
       display: flex;
       margin-top: 5px;
+      align-items: center;
+
+      .contentTextRow {
+        display: flex;
+        width: calc(100% - 100px);
+      }
       .number {
         width: 30px;
-        height: 25px;
+        height: 32px;
         border: 1px solid rgba(215, 215, 215, 1);
         border-radius: 3px;
         font-weight: 400;
@@ -1194,9 +1344,8 @@ h1 {
         margin-right: 10px;
       }
       .text {
-        width: 850px;
-        height: 25px;
-        line-height: 25px;
+        width: calc(100% - 50px);
+        height: 32px;
         padding-left: 10px;
         background: inherit;
         border: 1px solid rgba(215, 215, 215, 1);
@@ -1204,6 +1353,27 @@ h1 {
         font-weight: 400;
         font-size: 14px;
         margin-right: 20px;
+        display: flex;
+        align-items: center;
+        > div:nth-of-type(1) {
+          width: 120px;
+        }
+        > div:nth-of-type(2) {
+          width: 100px;
+          margin-left: 20px;
+        }
+        > div:nth-of-type(3) {
+          margin-left: 20px;
+          width: 150px;
+        }
+        > div:nth-of-type(4) {
+          margin-left: 20px;
+          width: 150px;
+        }
+        > div:nth-of-type(5) {
+          margin-left: 20px;
+          width: 150px;
+        }
       }
       .top,
       .bottom,
@@ -1217,6 +1387,17 @@ h1 {
         border: 1px solid skyblue;
         border-radius: 50%;
         cursor: pointer;
+      }
+      .disabledClass {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #ccc;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+        margin-right: 10px;
       }
       .top,
       .bottom {
@@ -1292,12 +1473,43 @@ h1 {
         .el-table {
           font-size: 12px;
         }
+        .el-table--enable-row-hover .el-table__body tr:hover > td {
+          background: #fff !important;
+        }
+        .pagination-container {
+          position: static !important;
+          margin-top: 0px !important;
+          .el-pagination__total,
+          .el-pagination__jump {
+            color: #606266 !important;
+          }
+          .el-input__inner {
+            background: #fff !important;
+            color: #606266 !important;
+          }
+          .el-pagination.is-background .btn-prev,
+          .el-pagination.is-background .btn-next,
+          .el-pagination.is-background .el-pager li {
+            background: #fff !important;
+            color: #606266 !important;
+          }
+        }
       }
     }
   }
 }
-.tree{
+::v-deep .tree {
   height: 445px;
   overflow: auto;
+  .el-tree-node:focus > .el-tree-node__content {
+    background-color: #89c2f7;
+    color: #fff;
+  }
+  .el-tree--highlight-current
+    .el-tree-node.is-current
+    > .el-tree-node__content {
+    background-color: #89c2f7;
+    color: #fff;
+  }
 }
 </style>

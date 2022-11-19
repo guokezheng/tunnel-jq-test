@@ -44,9 +44,9 @@
         <ul class="listContent" 
             v-infinite-scroll="load"
             infinite-scroll-disabled="disabled">
-          <li v-for="(item, index) of list" :key="index">
+          <li v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)">
 
-            <el-row style="color: white">
+            <el-row style="color: white" >
               <el-col :span="2">
                 <img
                   :src="item.iconUrl"
@@ -64,13 +64,13 @@
                   {{ item.eventType.simplifyName }}
                 </div>
               </el-col>
-              <el-col :span="16">
+              <el-col :span="20" style="display:flex;">
                 <div class="overflowText">{{ item.eventTitle }}</div>
                 <div style="float: right; margin-right: 16px">
-                  {{ item.startTime }}
+                  {{ getStartTime(item.startTime) }}
                 </div>
               </el-col>
-              <el-col :span="2">
+              <!-- <el-col :span="2">
                 <el-button size="mini" type="text" @click="handleSee(item.id)"
                   >查看
                 </el-button>
@@ -82,7 +82,7 @@
                   @click="handleIgnore(item.id)"
                   >忽略
                 </el-button>
-              </el-col>
+              </el-col> -->
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -299,6 +299,9 @@ export default {
     // })
   },
   methods: {
+    getStartTime(time){
+      moment(time).format("HH:mm:ss")
+    },
     load() {
       this.loading = true;
       setTimeout(() => {

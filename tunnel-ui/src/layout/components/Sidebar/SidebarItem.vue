@@ -2,7 +2,7 @@
   <div v-if="!item.hidden">
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link style="height:100%;" v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, onlyOneChild.query)">
-        <el-menu-item style="height:52px;line-height:50px;overflow-y: auto;" :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
+        <el-menu-item class="menuitem" :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
           <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="onlyOneChild.meta.title" />
         </el-menu-item>
       </app-link>
@@ -114,4 +114,18 @@ export default {
   //     }
   //   }
   // } 
+  .nest-menu{
+    padding: 4px 10px;
+    // background: #165BA2;
+  }
+  // .menuitem{
+  //   height:52px;line-height:50px;overflow-y: auto;
+  //   margin: 0px auto;
+  //   background: #165BA2 !important;
+
+  // }
+  // .menuitem:hover{
+  //   background: #2971CC !important;
+  //   border-radius: 10px !important;
+  // }
 </style>

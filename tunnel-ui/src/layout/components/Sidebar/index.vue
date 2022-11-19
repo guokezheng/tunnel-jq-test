@@ -50,7 +50,7 @@
         :active-text-color="settings.theme"
         :collapse-transition="true"
         :mode="topNav ? 'horizontal' : 'vertical'"
-        :style="topNav ? '' : 'white-space:unset;'"
+        :style="topNav ? 'background:transparent !important' : 'white-space:unset;'"
       >
         <sidebar-item
           v-for="(route, index) in sidebarRouters"

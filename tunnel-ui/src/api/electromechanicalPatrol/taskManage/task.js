@@ -89,3 +89,11 @@ export function getDevicesTypeList(data) {
     data: data
   })
 }
+
+// 获取设备table
+export function getDevicesList(tunnelId,deviceType) {
+  return request({
+    url: '/task/list/getDevicesList?tunnelId='+tunnelId +'&deviceType=' + deviceType,
+    method: 'get',
+  })
+}

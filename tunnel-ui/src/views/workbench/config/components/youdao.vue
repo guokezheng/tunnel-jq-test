@@ -126,7 +126,8 @@
         </el-row>
         <el-row style="margin-top: 10px">
           <el-col :span="13">
-            <el-form-item label="报警点位智能推荐:" label-width="130px">
+<!--            <el-form-item label="报警点位:" label-width="130px">-->
+            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">
               <el-radio-group v-model="stateForm2.address">
                 <el-radio
                   v-for="item in fireMarkData"
@@ -190,14 +191,6 @@ export default {
           value: "1",
           label: "关灯",
         },
-        {
-          value: "2",
-          label: "同步单闪",
-        },
-        {
-          value: "3",
-          label: "逆向流水",
-        },
       ],
     };
   },
@@ -225,7 +218,8 @@ export default {
             frequency: Number(response.data.frequency),
             brightness: Number(response.data.brightness),
             state: response.data.state,
-            address: response.data.eq_feedback_address1,
+            address: "0",
+            eqType: this.stateForm.eqType,
           };
         });
         if (this.eqInfo.clickEqType == 30) {
@@ -238,12 +232,29 @@ export default {
           if (this.stateForm.eq_feedback_address1 == this.stateForm.fireMark) {
             this.fireMarkData.push({ label: "清除报警点位", value: "255" });
           }
+          this.openState.push(
+            {
+              value: "2",
+              label: "开灯",
+            },
+          )
           // fireMarkList(this.eqInfo.equipmentId).then((res) => {
           //   let data = res.data;
           //   this.fireMarkData = data;
           //   //
           //   console.log(this.fireMarkData, "000");
           // });
+        } else if (this.eqInfo.clickEqType == 31) {
+          this.openState.push(
+            {
+              value: "2",
+              label: "同步单闪",
+            },
+            {
+              value: "3",
+              label: "逆向流水",
+            },
+          )
         }
       } else {
         this.$modal.msgWarning("没有设备Id");

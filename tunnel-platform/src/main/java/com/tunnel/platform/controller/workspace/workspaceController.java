@@ -199,6 +199,9 @@ public class workspaceController extends BaseController {
         sdDeviceData.setDeviceId(sdDevices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
         if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+            if (state.equals("2") && map.get("fireMark").toString().equals("0") && map.get("fireMark") != null) {
+                map.put("fireMark", "255");
+            }
             if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
                 throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
             } else {

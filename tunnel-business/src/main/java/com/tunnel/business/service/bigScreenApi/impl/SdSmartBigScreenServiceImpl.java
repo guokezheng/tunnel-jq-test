@@ -157,12 +157,21 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         //0：已完成 1：未完成
         map.put("eventState", "0");
         map.put("eventNumber", completed);
-        map.put("percentage", completed.divide(completed.add(noCompleted),2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN));
+        if(eventWarning.size() == 0 && faultWarning.size() == 0){
+            map.put("percentage", 0);
+        }else {
+            map.put("percentage", completed.divide(completed.add(noCompleted),2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN));
+        }
+
         list.add(map);
         map = new HashMap<>();
         map.put("eventState", "1");
         map.put("eventNumber", noCompleted);
-        map.put("percentage", noCompleted.divide(completed.add(noCompleted),2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN));
+        if(eventWarning.size() == 0 && faultWarning.size() == 0){
+            map.put("percentage", 0);
+        }else {
+            map.put("percentage", noCompleted.divide(completed.add(noCompleted),2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_DOWN));
+        }
         list.add(map);
         return list;
     }

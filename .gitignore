@@ -31,3 +31,4 @@ hs_err_pid*
 tunnel-ui/vue.config.js
 tunnel-ui/vue.config.js
 tunnel-ui/vue.config.js
+ruoyi-admin/src/main/resources/application-druid.yml

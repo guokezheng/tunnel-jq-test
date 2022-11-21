@@ -54,8 +54,29 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
+
         <div class="flex-row" style="z-index: 8">
+            <div class="display-box">
+              <p class="zoom-title" style="font-size: 14px;margin-right:10px;">
+                {{ carShow ? "实时车辆开" : "实时车辆关" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="switchStyle"
+                @change="carShowChange"
+              ></el-switch>
+            </div>
           <div class="display-box zoomClass">
+            <!-- <div class="display-box">
+              <p class="zoom-title" style="font-size: 14px">
+                {{ carShow ? "实时车辆开" : "实时车辆关" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="carShow"
+                @change="carShowChange"
+              ></el-switch>
+            </div> -->
             <el-input
               placeholder="请输入内容"
               v-model="screenEqName"
@@ -176,7 +197,7 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div class="carBox" v-show="carShow">
+                <div class="carBox">
                   <span
                     v-for="item in carList"
                     :key="item.id"
@@ -2659,7 +2680,7 @@
 <script>
 import flvjs from "flv.js";
 import { math } from "@/utils/math.js";
-import moment from 'moment'
+import moment from "moment";
 
 import vueSeamlessScroll from "vue-seamless-scroll";
 import $ from "jquery";
@@ -2774,7 +2795,7 @@ let wrapperClientY = 0;
 let boxEqList = [];
 let mode = "";
 export default {
-  carShow: false, //车辆实时状态
+  carShow: false, //车辆是否
   name: "Workbench",
   dicts: ["sd_sys_name"],
   components: {
@@ -3496,6 +3517,7 @@ export default {
       this.vehicleTypeList = data.data;
     });
     this.getTunnelState();
+    this.carchange();
     //调取滚动条
     this.srollAuto();
   },
@@ -3777,15 +3799,18 @@ export default {
     // this.srollAuto()
   },
   methods: {
-    getStartTime(time){
-     return moment(time).format("HH:mm:ss")
+    carShowChange(val) {
+      this.carShow = val;
     },
-//     getWarnTime(time){
-// // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-//       // console.log(times,"times")
-//       var now = new Date(time)
-//       console.log(now,"8888888888888888888888888")
-//     },
+    getStartTime(time) {
+      return moment(time).format("HH:mm:ss");
+    },
+    //     getWarnTime(time){
+    // // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+    //       // console.log(times,"times")
+    //       var now = new Date(time)
+    //       console.log(now,"8888888888888888888888888")
+    //     },
     // 获取设备图片
     getTypePic(item) {
       if (item.eqId.substring(item.eqId.length - 2) == "-1") {
@@ -3855,7 +3880,7 @@ export default {
               });
             }
           });
-          console.log(that.eqTypeStateList2,"that.eqTypeStateList");
+          console.log(that.eqTypeStateList2, "that.eqTypeStateList");
         }
       }
     },
@@ -4228,7 +4253,7 @@ export default {
       // })
 
       getWarnEvent(param).then((response) => {
-        console.log(response.data,"预警事件")
+        console.log(response.data, "预警事件");
         this.trafficList = response.data;
       });
     },
@@ -6050,12 +6075,6 @@ export default {
     },
     /*点击设备类型*/
     displayControl(value, lable) {
-      if (value == "6") {
-        this.carchange();
-        this.carShow = true;
-      } else {
-        this.carShow = false;
-      }
       // carShow
       for (var item of this.selectedIconList) {
         if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {

@@ -260,7 +260,7 @@ export default {
   data() {
     return {
       expression: "",
-      openCron: "",
+      openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层

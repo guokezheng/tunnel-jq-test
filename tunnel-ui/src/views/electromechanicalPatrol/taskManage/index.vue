@@ -918,14 +918,17 @@ export default {
         if (this.boxList != []) {
           console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           if (this.boxList[0].eq_type == deviceType) {
-            this.boxList.forEach((row) => {
-              this.$nextTick( ()=>{
-                this.$refs.multipleTable.toggleRowSelection(row,true);
-
-              })
+            this.tableData1.forEach((item) => {
+              this.boxList.forEach((row) => {
+                if (item.eq_name == row.eq_name) {
+                  this.$nextTick(() => {
+                    this.$refs.multipleTable.toggleRowSelection(item, true);
+                  });
+                }
+              });
             });
           }
-        }else{
+        } else {
           this.$refs.multipleTable.clearSelection();
         }
       });

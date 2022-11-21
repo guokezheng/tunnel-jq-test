@@ -157,6 +157,21 @@ public class SdEventController extends BaseController
     }
 
     /**
+     * 获取事件附近枪机
+     * @param tunnelId
+     * @param stakeNum
+     * @param direction
+     * @return
+     */
+    @GetMapping("/getEventCamera")
+    @ApiOperation("获取事件附近枪机")
+    public Result getEventCamera(@RequestParam("tunnelId") String tunnelId,
+                                       @RequestParam("stakeNum") String stakeNum,
+                                       @RequestParam("direction")String direction){
+        return Result.success(sdEventService.getEventCamera(tunnelId,stakeNum,direction));
+    }
+
+    /**
      * 根据事件属性获取所在分区ID
      * @param tunnelId
      * @param stakeNum
@@ -170,6 +185,8 @@ public class SdEventController extends BaseController
                                        @RequestParam("direction")String direction){
         return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
     }
+
+
 
     @GetMapping("/getEventUntreatedNum")
     @ApiOperation("当日未处理事件数量")

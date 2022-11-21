@@ -842,7 +842,7 @@
                   item.eventType.eventType
                 }}事件 -->
                 <div 
-                  style="width:320px;
+                  style="width:300px;
                   overflow: hidden;
                   white-space: nowrap;
                   text-overflow: ellipsis;
@@ -2659,6 +2659,8 @@
 <script>
 import flvjs from "flv.js";
 import { math } from "@/utils/math.js";
+import moment from 'moment'
+
 import vueSeamlessScroll from "vue-seamless-scroll";
 import $ from "jquery";
 import "jquery-ui-dist/jquery-ui";
@@ -3776,7 +3778,7 @@ export default {
   },
   methods: {
     getStartTime(time){
-      moment(time).format("HH:mm:ss")
+     return moment(time).format("HH:mm:ss")
     },
 //     getWarnTime(time){
 // // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")

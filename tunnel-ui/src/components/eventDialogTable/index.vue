@@ -44,7 +44,7 @@
         <ul class="listContent" 
             v-infinite-scroll="load"
             infinite-scroll-disabled="disabled">
-          <li v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)">
+          <li v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)" style="cursor: pointer;">
 
             <el-row style="color: white" >
               <el-col :span="2">
@@ -64,9 +64,9 @@
                   {{ item.eventType.simplifyName }}
                 </div>
               </el-col>
-              <el-col :span="20" style="display:flex;">
+              <el-col :span="20" style="display:flex;justify-content: space-between;">
                 <div class="overflowText">{{ item.eventTitle }}</div>
-                <div style="float: right; margin-right: 16px">
+                <div style="float: right; margin-right: 10px">
                   {{ getStartTime(item.startTime) }}
                 </div>
               </el-col>
@@ -300,7 +300,9 @@ export default {
   },
   methods: {
     getStartTime(time){
-      moment(time).format("HH:mm:ss")
+      console.log(time);
+      console.log(moment(time).format("HH:mm:ss"),"moment(time).format('HH:mm:ss')");
+      return moment(time).format("HH:mm:ss")
     },
     load() {
       this.loading = true;

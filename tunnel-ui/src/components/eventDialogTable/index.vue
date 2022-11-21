@@ -8,7 +8,7 @@
       :close-on-click-modal="false"
     >
       <div class="title">
-        事件详情
+        事件预警
         <!-- <img
             src="../../assets/cloudControl/dialogHeader.png"
             style="height: 30px"
@@ -51,6 +51,12 @@
                 <img
                   :src="item.iconUrl"
                   style="width: 20px; height: 20px; transform: translateY(5px)"
+                  v-if="searchValue == 2 || searchValue == 3"
+                />
+                <img
+                  :src="item.eventType.iconUrl"
+                  style="width: 20px; height: 20px; transform: translateY(5px)"
+                  v-else
                 />
               </el-col>
               <el-col :span="2">
@@ -300,8 +306,6 @@ export default {
   },
   methods: {
     getStartTime(time){
-      console.log(time);
-      console.log(moment(time).format("HH:mm:ss"),"moment(time).format('HH:mm:ss')");
       return moment(time).format("HH:mm:ss")
     },
     load() {

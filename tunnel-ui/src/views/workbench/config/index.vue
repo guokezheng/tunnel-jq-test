@@ -56,9 +56,9 @@
         </el-row>
 
         <div class="flex-row" style="z-index: 8">
-            <div class="display-box">
+            <div class="display-box zoomClass">
               <p class="zoom-title" style="font-size: 14px;margin-right:10px;">
-                {{ carShow ? "实时车辆开" : "实时车辆关" }}
+                {{ carShow ? "实时车辆关" : "实时车辆开" }}
               </p>
               <el-switch
                 v-model="carShow"
@@ -108,7 +108,7 @@
             </p>
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
           </div> -->
-          <div class="display-box">
+          <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">
               {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
             </p>
@@ -497,7 +497,7 @@
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>车道控制模块
+            <i class="el-icon-caret-left"></i>一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
@@ -771,7 +771,7 @@
                 style="width: 17px; margin-right: 5px"
                 v-show="sideTheme != 'theme-blue'"
               />
-              <p>实时车辆</p>
+              <p>重点车辆</p>
               <p>Key vehicles</p>
             </div>
           </div>
@@ -850,6 +850,7 @@
               :key="index"
               class="listRow"
               style="margin-top:4px"
+              @click.native="jumpYingJi(item.id)"
             >
               <el-col style="text-align: center" :span="2">
                 <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
@@ -858,7 +859,7 @@
               :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
                 {{item.eventType.simplifyName}}
               </el-col>
-              <el-col @click.native="jumpYingJi(item.id)" :span="19" style="display: flex;">
+              <el-col :span="19" style="display: flex;">
                 <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
                 }}事件 -->
@@ -4001,10 +4002,11 @@ export default {
     // },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
+      console.log(num,"num预警事件点击跳转应急调度工作台页面")
+      setTimeout(() => {
+        bus.$emit("getPicId", num);
+      }, 200);
       bus.$emit("openPicDialog");
-      bus.$emit("getPicId", num);
-
-      console.log(num, "num");
     },
     // 车型通过字典表获取值
     getCheXing(num) {

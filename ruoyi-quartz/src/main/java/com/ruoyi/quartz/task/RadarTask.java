@@ -3,9 +3,13 @@ package com.ruoyi.quartz.task;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.api.R;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.domain.digitalmodel.SdSpecialVehicles;
 import com.tunnel.business.domain.event.SdRadarDetectData;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
+import com.tunnel.business.mapper.digitalmodel.SdSpecialVehiclesMapper;
 import com.zc.common.core.websocket.WebSocketService;
 import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 小车跑数据
@@ -42,7 +47,7 @@ public class RadarTask {
     @Autowired
     private RadarEventMapper radarEventMapper;
 
-//    @Scheduled(fixedRate = 180000)
+    //@Scheduled(fixedRate = 180000)
     public void radarTask1() {
         int count1 = 0;
         SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
@@ -56,7 +61,7 @@ public class RadarTask {
         System.out.println(",,,,,,,,,,,,,,,,,,");
     }
 
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void radarTask() {
         int count = redisCache.getCacheObject("count");
         SdRadarDetectData cacheObject = redisCache.getCacheObject("radar:" + count);

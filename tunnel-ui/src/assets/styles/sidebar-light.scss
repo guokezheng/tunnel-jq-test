@@ -1135,13 +1135,13 @@
       background: #0a88bd;
     }
     .is-checked .el-switch__core:after{
-      background: #e2f3fa !important;
+      background: #00C8FF !important;
     }
-    .el-switch__core{
+    .switchStyle .el-switch__core{
       background: linear-gradient(2deg, #00070D, #005AA8);
       border: solid 1px #0a88bd !important;
     }
-    .el-switch.is-checked .el-switch__core{
+    .switchStyle .el-switch.is-checked .el-switch__core{
       background-color: #0a88bd !important;
       border: solid 1px #0a88bd !important;
     }

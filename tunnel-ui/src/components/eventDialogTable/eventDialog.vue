@@ -157,10 +157,14 @@ export default {
     // });
     this.getEventTypeList();
   },
-  beforeCreate() {
+  mounted(){
     bus.$on("getPicId", (e) => {
       this.init(e);
+      console.log(e,"000000000000");
     });
+  },
+  beforeCreate() {
+    
   },
   // beforeDestroy(){
   //   bus.$off();
@@ -190,6 +194,8 @@ export default {
 
           if (response.rows.length > 0) {
             this.eventMes = response.rows[0];
+            this.$forceUpdate()
+            console.log(this.eventMes,"this.eventMes");
           }
         });
         this.getUrl(id);

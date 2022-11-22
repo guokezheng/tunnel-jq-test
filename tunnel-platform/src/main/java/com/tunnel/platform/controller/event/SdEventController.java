@@ -157,6 +157,21 @@ public class SdEventController extends BaseController
     }
 
     /**
+     * 获取事件附近枪机
+     * @param tunnelId
+     * @param stakeNum
+     * @param direction
+     * @return
+     */
+    @GetMapping("/getEventCamera")
+    @ApiOperation("获取事件附近枪机")
+    public Result getEventCamera(@RequestParam("tunnelId") String tunnelId,
+                                       @RequestParam("stakeNum") String stakeNum,
+                                       @RequestParam("direction")String direction){
+        return Result.success(sdEventService.getEventCamera(tunnelId,stakeNum,direction));
+    }
+
+    /**
      * 根据事件属性获取所在分区ID
      * @param tunnelId
      * @param stakeNum
@@ -170,6 +185,8 @@ public class SdEventController extends BaseController
                                        @RequestParam("direction")String direction){
         return Result.success(sdEventService.getSubareaByStakeNum(tunnelId,stakeNum,direction));
     }
+
+
 
     @GetMapping("/getEventUntreatedNum")
     @ApiOperation("当日未处理事件数量")
@@ -208,18 +225,21 @@ public class SdEventController extends BaseController
         Map<String,Object> map = new HashMap<>();
         try {
             //默认值：诱导灯、疏散标志亮度为50，频率为60，疏散标志地址标号为255
-            logData.forEach(data->{
+            for(SdOperationLog data:logData){
                 map.put("devId",data.getEqId());
+                if(data.getBeforeState()==null){
+                    continue;
+                }
                 map.put("state",data.getBeforeState());
                 map.put("controlType","4");
                 map.put("eventId",eventId);
                 //疏散标志默认值
-                if(data.getEqTypeId().equals("30")){
+                if(data.getEqTypeId()==30L){
                     map.put("brightness","50");
                     map.put("frequency","60");
                 }
                 //诱导灯默认值
-                if(data.getEqTypeId().equals("31")){
+                if(data.getEqTypeId()==31L){
                     map.put("brightness","50");
                     map.put("frequency","60");
                     map.put("fireMark","255");
@@ -231,7 +251,7 @@ public class SdEventController extends BaseController
                 }
                 SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
                 map.clear();
-            });
+            }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
             flow.setFlowDescription("执行一键恢复操作");

@@ -156,8 +156,8 @@
           　　　　
           <img
             :src="scope.row.iconUrl"
-            width="50px"
-            height="35px"
+            width="25px"
+            height="25px"
             class="pictureUrl"
           />
           　　

@@ -197,7 +197,7 @@
                   :src="currentTunnel.lane.url"
                   :style="{ width: currentTunnel.lane.width + 'px' }"
                 ></el-image>
-                <div class="carBox">
+                <div class="carBox" v-show="carShow">
                   <span
                     v-for="item in carList"
                     :key="item.id"
@@ -4002,7 +4002,7 @@ export default {
     // },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
-      console.log(num,"num预警事件点击跳转应急调度工作台页面")
+      console.log(num, "num预警事件点击跳转应急调度工作台页面");
       setTimeout(() => {
         bus.$emit("getPicId", num);
       }, 200);

@@ -632,7 +632,11 @@ import {
 } from "@/api/event/event";
 import { image, video } from "@/api/eventDialog/api.js";
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
+import {
+  listEventFlow,
+  getListBySId,
+  userEventEnded,
+} from "@/api/event/eventFlow";
 import { getDeviceData } from "@/api/workbench/config.js";
 import {
   previewDisplay,
@@ -1122,9 +1126,10 @@ export default {
         })
         .then(() => {
           this.planListEnd = null;
+          userEventEnded(this.$route.query.id).then((response) => {});
           this.$modal.msgSuccess("事件处理成功");
           this.$router.push({
-            path: "/emergency/administration/event",
+            path: "/emergency/safeWarn",
           });
         })
         .catch(() => {});

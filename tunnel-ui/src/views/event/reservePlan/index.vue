@@ -1556,6 +1556,7 @@ export default {
       this.loading = true;
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
+        console.log(this.planList, "========");
         this.planList.forEach((item) => {
           console.log(item.strategyName);
         });

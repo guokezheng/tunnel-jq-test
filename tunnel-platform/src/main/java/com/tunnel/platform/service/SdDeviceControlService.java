@@ -251,13 +251,6 @@ public class SdDeviceControlService {
                 SdDevices dev = new SdDevices();
                 dev.setFEqId(devId);
                 List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
-//                for (int i = 0;i < list.size();i++) {
-//                    SdDevices devo = list.get(i);
-//                    updateDeviceData(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
-//                    updateDeviceData(devo, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-//                    updateDeviceData(devo, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
-//                    updateDeviceData(devo, fireMark, DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
-//                }
                 if (!list.isEmpty()) {
                     //疏散标志关灯
                     if (fireMark.equals("0") && !fireMark.equals("255")) {
@@ -289,6 +282,7 @@ public class SdDeviceControlService {
                         }
                     } else {
                         //疏散标志开灯无报警点
+                        state = "3";
                         for (int i = 0;i < list.size();i++) {
                             SdDevices devo = list.get(i);
                             updateDeviceData(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());

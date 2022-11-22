@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-22 19:43:32
+ * @LastEditTime: 2022-11-22 22:52:55
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -27,6 +27,7 @@
           top: item.position.top + 'px',
           'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
         }"
+        id="33333"
         :class="
           item.eqType == 7 || item.eqType == 8 || item.eqType == 9
             ? 'light-' + item.position.left
@@ -56,6 +57,7 @@
           :disabled="sensorDisabledTwo(item)"
           style="position: relative; top: 0px; left: 0px"
           popper-class="tipCase"
+          id="2222"
         >
           <!-- 巡检机器人 -->
           <!-- v-show="
@@ -74,6 +76,7 @@
             " -->
           <div
             :class="{ focus: item.focus }"
+            id="1111"
           >
             <img
             v-show="item.eqType != '31'"

@@ -90,8 +90,7 @@
                       : ''
                   "
                 >
-                  <div
-                    v-show="
+                <!-- v-show="
                       (item.eqType != 7 &&
                         item.eqType != 16 &&
                         item.eqType != 15 &&
@@ -103,7 +102,8 @@
                         item.eqType == 21) &&
                         item.display == true &&
                         lightSwitch == 1)
-                    "
+                    " -->
+                  <div
                     :class="{ focus: item.focus }"
                   >
                     <img

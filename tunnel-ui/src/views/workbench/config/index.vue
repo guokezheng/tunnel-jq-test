@@ -3517,7 +3517,7 @@ export default {
       this.vehicleTypeList = data.data;
     });
     this.getTunnelState();
-    this.carchange();
+    // this.carchange();
     //调取滚动条
     this.srollAuto();
   },
@@ -5594,10 +5594,10 @@ export default {
       const params = {
         tunnelId: tunnelId,
       };
+      this.carchange(tunnelId);
       getTunnels(tunnelId).then((response) => {
         that.loading = false;
         let res = response.data.storeConfigure;
-
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
@@ -6044,8 +6044,8 @@ export default {
     onDragging(key) {},
     onDropped(key) {},
     monitorWebsocket() {},
-    carchange() {
-      getTunnels(this.tunnelId).then((res) => {
+    carchange(tunnelId) {
+      getTunnels(tunnelId).then((res) => {
         console.log(res.data, "当前隧道信息");
         const tunnel = res.data;
         // math.subtract(a-b)//减

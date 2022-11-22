@@ -213,7 +213,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 SdEquipmentState state = new SdEquipmentState();
                 state.setStateTypeId(Long.parseLong(rlList.get(j).getEqTypeId()));
                 state.setDeviceState(rlList.get(j).getState());
-
+                state.setIsControl(1);
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                 if(stateObject.size()<1){

@@ -42,31 +42,14 @@ public class RadarTask {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private SdRadarDetectDataMapper sdRadarDetectDataMapper;
-
-    @Autowired
     private RadarEventMapper radarEventMapper;
-
-    //@Scheduled(fixedRate = 180000)
-    public void radarTask1() {
-        int count1 = 0;
-        SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
-        sdRadarDetectData.setVehicleId("772");
-        List<SdRadarDetectData> radarDetectData = sdRadarDetectDataMapper.selectList(sdRadarDetectData);
-        for (SdRadarDetectData item : radarDetectData) {
-            redisCache.setCacheObject("radar:" + count1, item);
-            count1++;
-        }
-        redisCache.setCacheObject("count", 0);
-        System.out.println(",,,,,,,,,,,,,,,,,,");
-    }
 
     @Scheduled(fixedRate = 100)
     public void radarTask() {
         int count = redisCache.getCacheObject("count");
         SdRadarDetectData cacheObject = redisCache.getCacheObject("radar:" + count);
         redisCache.setCacheObject("count", count + 1);
-        if (809 == count) {
+        if (809 <= count) {
             redisCache.setCacheObject("count", 0);
         }
         log.info("第" + count + "条   " + cacheObject);
@@ -75,8 +58,6 @@ public class RadarTask {
         JSONObject object = new JSONObject();
         object.put("radarDataList", list);
         WebSocketService.broadcast("radarDataList", object.toString());
-
-
     }
 
 }

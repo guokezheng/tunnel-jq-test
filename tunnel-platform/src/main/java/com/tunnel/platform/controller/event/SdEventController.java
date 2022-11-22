@@ -225,18 +225,21 @@ public class SdEventController extends BaseController
         Map<String,Object> map = new HashMap<>();
         try {
             //默认值：诱导灯、疏散标志亮度为50，频率为60，疏散标志地址标号为255
-            logData.forEach(data->{
+            for(SdOperationLog data:logData){
                 map.put("devId",data.getEqId());
+                if(data.getBeforeState()==null){
+                    continue;
+                }
                 map.put("state",data.getBeforeState());
                 map.put("controlType","4");
                 map.put("eventId",eventId);
                 //疏散标志默认值
-                if(data.getEqTypeId().equals("30")){
+                if(data.getEqTypeId()==30L){
                     map.put("brightness","50");
                     map.put("frequency","60");
                 }
                 //诱导灯默认值
-                if(data.getEqTypeId().equals("31")){
+                if(data.getEqTypeId()==31L){
                     map.put("brightness","50");
                     map.put("frequency","60");
                     map.put("fireMark","255");
@@ -248,7 +251,7 @@ public class SdEventController extends BaseController
                 }
                 SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
                 map.clear();
-            });
+            }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
             flow.setFlowDescription("执行一键恢复操作");

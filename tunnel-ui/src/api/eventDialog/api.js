@@ -26,3 +26,11 @@ export function userConfirm(query) {
     params: query
   })
 }
+
+// 上行下行摄像机
+export function getEventCamera(tunnelId,stakeNum,direction) {
+  return request({
+    url: "/event/getEventCamera?tunnelId="+tunnelId+"&stakeNum="+stakeNum+"&direction="+direction,
+    method: 'get',
+  })
+}

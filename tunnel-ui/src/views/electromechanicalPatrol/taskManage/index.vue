@@ -770,6 +770,7 @@ export default {
   },
   data() {
     return {
+      deviceType:'',
       // 获取巡检点 表格选中项
       dialogSelection: [],
       dialogTotal: 0,
@@ -901,7 +902,9 @@ export default {
     },
     clickDelete() {},
     // 弹窗表格翻页
-    getDialogList() {},
+    getDialogList() {
+      this.getTable()
+    },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
       this.dialogSelection = selection;
@@ -909,12 +912,15 @@ export default {
     },
     // 获取设备table
     getTable(deviceType) {
-      getDevicesList(this.tunnelId, deviceType).then((res) => {
+      if(deviceType){
+        this.deviceType = deviceType
+      }
+      getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
         console.log(res, "获取设备table");
         console.log(this.boxList, "boxList");
 
-        this.tableData1 = res.data;
-        this.dialogTotal = res.data.length;
+        this.tableData1 = res.rows;
+        this.dialogTotal = res.total;
         if (this.boxList != []) {
           console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           if (this.boxList[0].eq_type == deviceType) {

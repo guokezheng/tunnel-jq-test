@@ -129,6 +129,7 @@
                 ref="picDialog"
               ></event-dialog>
               <event-dialogTable v-if="eventDialogTable"></event-dialogTable>
+              <evtDialogVideo v-if="evtDialogVideo" ></evtDialogVideo>
             </div>
           </div>
         </template>
@@ -233,6 +234,7 @@ export default {
       tunnelStyle: null,
       eventDialogPic: false,
       eventDialogTable: false,
+      evtDialogVideo:false,
       routePath: [
         "/index",
         "/map/map/index",
@@ -419,6 +421,14 @@ export default {
     bus.$on("closePicDialog", () => {
       this.eventDialogPic = false;
     });
+    // 打开视频弹窗
+    bus.$on('openVideoDialog', () => {
+      this.evtDialogVideo = true;
+    })
+    // 关闭视频弹窗
+    bus.$on('closeVideoDialog', () => {
+      this.evtDialogVideo = false;
+    })
     // 事件表格忽略后 右上角数字跟着改
     // bus.$on("getEvtList", () => {
     //   this.eventValue = this.eventValue - 1;

@@ -113,8 +113,23 @@
             <div>事件结束时间:</div>
             <div>{{ eventMes.endTime }}</div>
           </div>
-
-          <div style="width: 90%; display: flex; margin-top: 80px">
+          <div class="eventRow">
+            <div>上游相机:</div>
+            <!-- <div>{{'1000米'}}</div> -->
+            <img
+              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              class="icon"
+              @click="openVideoDialog(video1)"
+             v-show="video1"
+            />
+            <img
+              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              class="icon" style="margin-left:10px"
+              @click="openVideoDialog(video2)"
+              v-show="video2"
+            />
+          </div>
+          <div style="width: 90%; display: flex; margin-top: 10px">
             <div class="handle button" @click="handleDispatch(eventMes)">
               应急调度
             </div>
@@ -132,13 +147,18 @@
 // import { mapState } from 'vuex';
 import bus from "@/utils/bus";
 import { loadPicture } from "@/api/equipment/type/api.js";
-import { image, video, userConfirm } from "@/api/eventDialog/api.js";
+import {
+  image,
+  video,
+  userConfirm,
+  getEventCamera,
+} from "@/api/eventDialog/api.js";
 import { listEventType } from "@/api/event/eventType";
 import { updateEvent, listEvent } from "@/api/event/event";
 
 export default {
   name: "eventDialog",
-  props: ["eventId"],
+  // props: ["eventId"],
   data() {
     return {
       // eventList: [],
@@ -149,6 +169,9 @@ export default {
       // event: [{}],
       eventMes: {},
       eventTypeData: [],
+      eventId: "",
+      video1:'',
+      video2:''
     };
   },
   created() {
@@ -157,15 +180,13 @@ export default {
     // });
     this.getEventTypeList();
   },
-  mounted(){
+  mounted() {
     bus.$on("getPicId", (e) => {
+      this.eventId = e;
       this.init(e);
-      console.log(e,"000000000000");
     });
   },
-  beforeCreate() {
-    
-  },
+  beforeCreate() {},
   // beforeDestroy(){
   //   bus.$off();
   // },
@@ -184,18 +205,25 @@ export default {
       }
     },
     init(id) {
-      console.log(id,"iddddddd")
       if (id) {
         const param = {
           id: id,
         };
         listEvent(param).then((response) => {
-          console.log(response,"response");
+          console.log(response, "response");
 
           if (response.rows.length > 0) {
             this.eventMes = response.rows[0];
-            this.$forceUpdate()
-            console.log(this.eventMes,"this.eventMes");
+            this.$forceUpdate();
+            getEventCamera(
+              response.rows[0].tunnelId,
+              response.rows[0].stakeNum,
+              response.rows[0].direction
+            ).then((response) => {
+              this.video1 = response.data[0].eqId
+              this.video2 = response.data[1].eqId
+
+            });
           }
         });
         this.getUrl(id);
@@ -232,7 +260,7 @@ export default {
       }
       // this.$emit("closePicDialog");
       bus.$emit("closePicDialog");
-      bus.$emit("forceUpdateTable",event.id);
+      bus.$emit("forceUpdateTable", event.id);
 
       // bus.$emit("closeTableDialog");
 
@@ -258,6 +286,16 @@ export default {
       bus.$emit("closePicDialog");
       bus.$emit("closeDialog");
       // this.eventPicDialog = false;
+    },
+    // 弹摄像机弹窗
+    openVideoDialog(id) {
+      setTimeout(()=>{
+        bus.$emit("getVideoDialog",id)
+
+      },200)
+      bus.$emit("openVideoDialog")
+
+      bus.$emit("closePicDialog")
     },
     closeDialogTable() {
       bus.$emit("closePicDialog");
@@ -347,7 +385,7 @@ export default {
   font-size: 16px;
   .eventRow {
     display: flex;
-    height: 50px;
+    height: 45px;
     > div:nth-of-type(1) {
       width: 140px;
       color: #0198ff;
@@ -414,6 +452,11 @@ export default {
   text-align: center;
   line-height: 35px;
   cursor: pointer;
+}
+.icon {
+  width: 20px;
+  height: 22px;
+  margin-left: 5px;
 }
 ::v-deep .el-icon-close {
   font-size: 24px !important;

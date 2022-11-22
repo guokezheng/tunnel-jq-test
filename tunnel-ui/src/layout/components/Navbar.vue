@@ -675,12 +675,13 @@ export default {
       },
     },
   },
-  watch: {
-    sdEventList(event) {
-    this.nodealNum += event.length;
-    this.$forceUpdate()
-    },
-  },
+  // watch: {
+  //   sdEventList(event) {
+  //     console.log(event,"事件弹窗");
+  //   this.nodealNum += event.length;
+  //   this.$forceUpdate()
+  //   },
+  // },
   created() {
     this.getUser();
     this.getAlarmInfo();
@@ -689,23 +690,23 @@ export default {
     }, 5000 * 1);
   },
   mounted() {
-    this.getNodealNum()
+    setInterval(()=>{
+      this.getNodealNum()
+
+    },1000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
       this.clickSure = false
     });
-     bus.$on("getEvtList", () => {
-      this.nodealNum = this.nodealNum - 1;
-      // if (this.nodealNum == 0) {
-      //   this.badgeHidden = false;
-      // }
-    });
+    //  bus.$on("getEvtList", () => {
+    //   this.nodealNum = this.nodealNum - 1;
+    // });
   },
   methods: {
     getNodealNum() {
       getEventUntreatedNum().then((res) => {
-        console.log(res, "事件总数");
+        // console.log(res, "事件总数");
         this.nodealNum = res.data;
       });
     },

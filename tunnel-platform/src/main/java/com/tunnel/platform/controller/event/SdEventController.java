@@ -237,12 +237,12 @@ public class SdEventController extends BaseController
                 if(data.getEqTypeId()==30L){
                     map.put("brightness","50");
                     map.put("frequency","60");
+                    map.put("fireMark","255");
                 }
                 //诱导灯默认值
                 if(data.getEqTypeId()==31L){
                     map.put("brightness","50");
                     map.put("frequency","60");
-                    map.put("fireMark","255");
                 }
                 try {
                     map.put("operIp", InetAddress.getLocalHost().getHostAddress());
@@ -267,5 +267,4 @@ public class SdEventController extends BaseController
         }
         return Result.success("操作成功!");
     }
-
 }

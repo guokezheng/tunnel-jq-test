@@ -294,7 +294,7 @@ export default {
         fireMark: this.stateForm2.address,
         // tunnelId: this.stateForm.tunnelId,
       };
-
+      this.$modal.msgSuccess("指令下发中，请稍后。");
       controlGuidanceLampDevice(param).then((response) => {
         console.log(response, "提交控制");
         this.$modal.msgSuccess("操作成功");

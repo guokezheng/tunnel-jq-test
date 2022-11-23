@@ -10,7 +10,7 @@
             sdt.tunnel_name AS tunnelName,
             sde.start_time AS startTime,
             sde.event_description AS eventDescription,
-            sde.event_state AS eventState
+            sde.event_title AS eventState
         FROM
             sd_event sde
         LEFT JOIN sd_event_type sdet ON sde.event_type_id = sdet.id
@@ -313,6 +313,7 @@
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
+            LIMIT 50
     </select>
 
     <select id="getActiveSafety" resultType="hashmap" parameterType="java.lang.String">
@@ -328,6 +329,7 @@
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
+            LIMIT 50
     </select>
 
     <select id="getequipmentFailure" parameterType="java.lang.String" resultType="hashmap">
@@ -346,6 +348,7 @@
         <if test="tunnelId != null and tunnelId != ''">
             AND sfl.tunnel_id = #{tunnelId}
         </if>
+            LIMIT 50
     </select>
 
     <select id="getReservePlan" resultType="hashmap">

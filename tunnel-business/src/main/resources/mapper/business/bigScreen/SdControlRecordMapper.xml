@@ -10,7 +10,7 @@
                concat(devc.eq_name,e.state_name) operation
         from sd_operation_log sol
             left join sd_tunnels st on st.tunnel_id = sol.tunnel_id
-            left join sd_equipment_state e on sol.operation_state = e.id
+            left join sd_equipment_state e on sol.operation_state = e.device_state
             left join sd_devices devc on devc.eq_id = sol.eq_id
         WHERE sol.create_time >= (NOW() - interval 12 hour)
         <if test="tunnelId != null and tunnelId != ''">

@@ -80,8 +80,8 @@
                   v-for="(item, index) in selectedIconList"
                   :key="index"
                   :style="{
-                    left: item.position.left / 1.34 + 'px',
-                    top: item.position.top / 1.3 + 'px',
+                    left: item.position.left / 1.37 + 'px',
+                    top: item.position.top / 1.37 + 'px',
                     'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                   }"
                   :class="
@@ -104,9 +104,23 @@
                         lightSwitch == 1)
                     " -->
                   <div
+                  v-show="
+                          (item.eqType != 7 &&
+                            item.eqType != 16 &&
+                            item.eqType != 15 &&
+                            item.eqType != 8 &&
+                            item.eqType != 9 &&
+                            item.display == true) ||
+                          ((item.eqType == 7 ||
+                            item.eqType == 8 ||
+                            item.eqType == 9 ||
+                            item.eqType == 21) &&
+                            item.display == true &&
+                            lightSwitch == 1)
+                        "
                     :class="{ focus: item.focus }"
                   >
-                    <img
+                    <!-- <img
                       v-for="(url, indexs) in item.url"
                       style="position: relative"
                       :style="
@@ -118,7 +132,55 @@
                       :height="item.iconHeight / 1.26"
                       :key="item.eqId + indexs"
                       :src="url"
-                    />
+                    /> -->
+                    <img
+                        v-show="item.eqType != '31'"
+                          v-for="(url, indexs) in item.url"
+                          style="position: absolute"
+                          :style="{
+                            left: indexs * 14 + 'px',
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :key="item.eqId + indexs"
+                          :src='url'
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+                        />
+                        <img 
+                         v-show="item.eqType == '31'"
+                        style="position: absolute"
+                          :style="{
+                            
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :src= getTypePic(item)
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          ">
+                        </img>
                   </div>
                 </div>
               </div>
@@ -649,6 +711,7 @@ export default {
   },
   data() {
     return {
+      screenEqName: "", //筛选设备名称
       backImg: "",
       currentTunnel: "",
       // 隧道开始桩号
@@ -775,6 +838,13 @@ export default {
     }, 1000 * 5);
   },
   async created() {
+    const param = {
+      isControl: 1,
+    };
+    getStateByData(param).then((res) => {
+      console.log(res.rows, "查设备状态 正红泛绿...");
+      this.eqTypeList = res.rows;
+    });
     await this.getDispatchExecuted();
     await this.getEventData();
     await this.getTunnelData();
@@ -799,13 +869,7 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
-    const param = {
-      isControl: 1,
-    };
-    getStateByData(param).then((res) => {
-      console.log(res.rows, "查设备状态 正红泛绿...");
-      this.eqTypeList = res.rows;
-    });
+
     // this.getSubareaByStakeNumData();
   },
   methods: {
@@ -858,6 +922,7 @@ export default {
     },
     getEqType(state, eqType) {
       console.log(state, eqType);
+
       for (let i = 0; i < this.eqTypeList.length; i++) {
         let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
@@ -894,6 +959,14 @@ export default {
         let list = response.rows;
         that.getEqUrl(list);
       });
+    },
+    // 获取设备图片
+    getTypePic(item) {
+      if (item.eqId.substring(item.eqId.length - 2) == "-1") {
+        return item.url[0];
+      } else if (item.eqId.substring(item.eqId.length - 2) == "-2") {
+        return item.url[1];
+      }
     },
     getEqUrl(list) {
       let that = this;

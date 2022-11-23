@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-22 22:52:55
+ * @LastEditTime: 2022-11-23 10:00:53
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -236,30 +236,20 @@
           <vue-seamless-scroll
             :class-option="defaultOption"
             class="listContent"
-            :data="item.equipmentData"
+            :data="item.policyInformation"
           >
             <div
-              v-for="(items, index) in item.equipmentData"
+              v-for="(items, index) in item.policyInformation"
               :key="index"
               class="listRow"
             >
-              <div>
-                {{ index + 1 }}:{{ items.eq_name }}状态:
-                {{ items.eq_status }}
+              <div style="color: #000;">
+                {{ index + 1 }}:{{ items }}
               </div>
             </div>
           </vue-seamless-scroll>
         </div>
       </div>
-      <!-- <el-steps :active="1" simple>
-        <el-step
-          v-for="item in previewList"
-          :key="item.strategyId"
-          :title="item.strategyName"
-          status="success"
-        >
-        </el-step>
-      </el-steps> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="workbenchOpenEvent">取 消</el-button>
         <el-button type="primary" @click="workbenchOpenEvent">确 定</el-button>
@@ -278,6 +268,7 @@ import {
 import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
 import { icon, laneImage } from "../../../utils/configData.js";
+import { getDeviceData } from "@/api/workbench/config.js";
 import {
   getLiPowerDevices,
   //initLipowerDevice
@@ -370,39 +361,223 @@ export default {
         return item.url[1];
       }
     },
-    /* 获取照明设备数据*/
-    // getLiPowerDevice() {
-    //   getLiPowerDevices().then((response) => {
-    //     let res = response.data;
-    //     if (res.state == 0) {
-    //       this.lightState = "正常";
-    //     } else if (res.state == -2) {
-    //       this.lightState = "异常";
-    //     }
-    //     // 照明设备
-    //     for (let i = 0; i < res.list.length; i++) {
-    //       // 图标
-    //       for (let j = 0; j < this.selectedIconList.length; j++) {
-    //         // 设备id如果相等
-    //         if (res.list[i].eqId == this.selectedIconList[j].eqId) {
-    //           // 设备状态
-    //           for (let k = 0; k < this.eqTypeStateList.length; k++) {
-    //             // 设备状态相同且设备类型相同
-    //             if (
-    //               this.selectedIconList[j].eqType ==
-    //                 this.eqTypeStateList[k].type &&
-    //               res.list[i].switchStatus == this.eqTypeStateList[k].state
-    //             ) {
-    //               // 改变图标
-    //               this.selectedIconList[j].url = this.eqTypeStateList[k].url;
-    //               this.selectedIconList[j].lightValue = res.list[i].lightValue;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   });
-    // },
+    /* 获取实时数据PLC*/
+    getRealTimeData(tunnelId) {
+      // 真实
+      //getConfigData(this.currentTunnel.id)
+      // 模拟
+      // getStorageData({
+      //     tunnelId: this.currentTunnel.id
+      //   })
+      //   .then((response) => {
+      //     for (let i = 0; i < response.length; i++) {
+      //       // 实时状态
+      //       let type = response[i].devType;
+      //       if (type != "" && type != undefined) {
+      //         for (let j = 0; j < this.selectedIconList.length; j++) {
+      //           if (response[i].devId == this.selectedIconList[j].eqId) {
+      //             // 需要换光标的
+      //             for (let k = 0; k < this.eqTypeStateList.length; k++) {
+      //               if (
+      //                 this.selectedIconList[j].eqType ==
+      //                 this.eqTypeStateList[k].type &&
+      //                 response[i].state == this.eqTypeStateList[k].state
+      //               ) {
+      //                 let url = this.eqTypeStateList[k].url;
+      //                 this.selectedIconList[j].eqDirection =
+      //                   response[i].direction;
+      //                 if (response[i].direction == "1") {
+      //                   //上行车道
+      //                   if (url.length > 1) {
+      //                     this.selectedIconList[j].url = [url[1], url[0]];
+      //                   } else {
+      //                     this.selectedIconList[j].url = url;
+      //                   }
+      //                 } else {
+      //                   this.selectedIconList[j].url =
+      //                     this.eqTypeStateList[k].url;
+      //                 }
+      //                 this.selectedIconList[j].state = response[i].state;
+      //               }
+      //               // 微波车检
+      //               else if (
+      //                 this.selectedIconList[j].eqType ==
+      //                 this.eqTypeStateList[k].type &&
+      //                 this.selectedIconList[j].eqType == "108" &&
+      //                 type == "108"
+      //               ) {
+      //                 this.selectedIconList[j].wbList = response[i].state;
+      //               }
+      //               // 路面状态
+      //               else if (
+      //                 // this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
+      //                 this.selectedIconList[j].eqType == "120" && type == "120"
+      //               ) {
+      //                 this.selectedIconList[j].lmList = response[i].state;
+      //               }
+      //               // 道路结冰
+      //               else if (
+      //                 this.selectedIconList[j].eqType == "110" &&
+      //                 type == "110"
+      //               ) {
+      //                 this.selectedIconList[j].dljb = response[i].state;
+      //               }
+      //               /* // 水泵
+      //           else if (this.selectedIconList[j].eqType == '18' && type == '18') {
+      //             this.selectedIconList[j].shuibeng = response[i].state
+      //             if (response[i].state) {
+      //               let devState = JSON.parse(response[i].state).devState
+      //               if (this.selectedIconList[j].eqType == this.eqTypeStateList[k].type &&
+      //                 devState == this.eqTypeStateList[k].state) {
+      //                 this.selectedIconList[j].url = this.eqTypeStateList[k].url
+      //               }
+      //             }
+      //           } */
+      //             }
+      //             // 不需要换光标的
+      //             let paramType = [5, 6, 13, 14, 15, 16, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
+      //             if (paramType.includes(parseInt(type))) {
+      //               if (response[i].state == "null" || !response[i].state) {
+      //                 this.selectedIconList[j].value = "0";
+      //               } else {
+      //                 this.selectedIconList[j].value = response[i].state;
+      //               }
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     // this.systemState = "较差";
+      //   });
+      getDeviceData({
+        tunnelId: tunnelId,
+      }).then((response) => {
+        // for (let i = 0; i < response.data.length; i++) {
+        // debugger;
+        // 实时状态
+        // let type = response.data[i].eqType;
+        // if (type != "" && type != undefined) {
+        for (let j = 0; j < this.selectedIconList.length; j++) {
+          var eqId = this.selectedIconList[j].eqId;
+          var deviceData = response.data[eqId];
+          // console.log(deviceData,'deviceDatadeviceData')
+          if (deviceData) {
+            // let type = deviceData.eqType;
+
+            // 需要换光标的
+            for (let k = 0; k < this.eqTypeStateList.length; k++) {
+              if (
+                this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
+              ) {
+                //无法控制设备状态的设备类型，比如PLC、摄像机
+                let arr = [
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                ];
+                if (arr.includes(deviceData.eqType)) {
+                  if (
+                    // 摄像机之类的只有在线 离线 故障图标
+                    this.eqTypeStateList[k].stateType == "1" &&
+                    this.eqTypeStateList[k].state == deviceData.eqStatus
+                  ) {
+                    //取设备监测状态图标
+                    this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    if (deviceData.eqStatus == 1) {
+                      if (deviceData.eqType == 19) {
+                        this.selectedIconList[j].num =
+                          "CO:" +
+                          parseFloat(deviceData.CO).toFixed(2) +
+                          "/PPM  VI:" +
+                          parseFloat(deviceData.VI).toFixed(2) +
+                          "KM";
+                      } else if (deviceData.eqType == 17) {
+                        this.selectedIconList[j].num =
+                          parseFloat(deviceData.FS).toFixed(2) +
+                          "m/s " +
+                          deviceData.FX;
+                      } else if (deviceData.eqType == 5) {
+                        if (deviceData.DWLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                        }
+                      } else if (deviceData.eqType == 18) {
+                        if (deviceData.DNLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  //可以控制设备状态的设备类型，比如车指
+                  if (deviceData.eqStatus == "1") {
+                    // 在线
+                    if (
+                      // 车指之类的包括正红反绿之类的图标 == 2
+                      this.eqTypeStateList[k].stateType == "2"
+                    ) {
+                      if (this.eqTypeStateList[k].state == deviceData.state) {
+                        //取设备运行状态图标
+                        let url = this.eqTypeStateList[k].url;
+                        this.selectedIconList[j].eqDirection =
+                          deviceData.eqDirection;
+                        if (deviceData.eqDirection == "1") {
+                          //上行车道
+                          if (url.length > 1) {
+                            this.selectedIconList[j].url = [url[1], url[0]];
+                          } else {
+                            this.selectedIconList[j].url = url;
+                          }
+                        } else {
+                          this.selectedIconList[j].url =
+                            this.eqTypeStateList[k].url;
+                        }
+                      }
+                    }
+                  } else {
+                    //如果是离线、故障等状态
+                    if (
+                      this.eqTypeStateList[k].stateType == "1" &&
+                      this.eqTypeStateList[k].state == deviceData.eqStatus
+                    ) {
+                      //取设备监测状态图标
+                      this.selectedIconList[j].url =
+                        this.eqTypeStateList[k].url;
+                    }
+                  }
+                }
+
+                // let url = this.eqTypeStateList[k].url;
+                // this.selectedIconList[j].eqDirection =
+                // deviceData.eqDirection;
+                // if (deviceData.eqDirection == "1") {
+                //   //上行车道
+                //   if (url.length > 1) {
+                //     this.selectedIconList[j].url = [url[1], url[0]];
+                //   } else {
+                //     this.selectedIconList[j].url = url;
+                //   }
+                // } else {
+                //   this.selectedIconList[j].url =
+                //     this.eqTypeStateList[k].url;
+                // }
+                // this.selectedIconList[j].state = deviceData.eqStatus;
+              }
+            }
+            // 不需要换光标的
+            // let paramType = [5,17, 18, 19, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
+            // if (paramType.includes(parseInt(type))) {
+            //   if (deviceData.eqStatus == "null" || !deviceData.eqStatus) {
+            //     this.selectedIconList[j].value = "0";
+            //   } else {
+            //     this.selectedIconList[j].value = deviceData.eqStatus;
+            //   }
+            // }
+          }
+        }
+      });
+    },
     /* 获取隧道配置信息*/
     getTunnelData(tunnelId) {
       let that = this;
@@ -437,13 +612,10 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              this.getRealTimeData(tunnelId);
               // this.getLiPowerDevice();
               this.workbenchOpen = true;
               this.getPreview();
-              console.log(
-                that.selectedIconList,
-                "所有设备图标selectedIconList"
-              );
               for (var item of that.selectedIconList) {
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
@@ -502,7 +674,7 @@ export default {
     getPreview() {
       previewDisplay(this.id).then((res) => {
         this.previewList = res;
-        console.log(this.previewList, "this.previewListthis.previewList");
+        console.log(this.previewList, ";;;;;;;;;");
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl;

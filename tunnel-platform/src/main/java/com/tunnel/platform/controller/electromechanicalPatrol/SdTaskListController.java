@@ -114,12 +114,24 @@ public class SdTaskListController extends BaseController
     }
 
     /**
+     * 废止巡查任务
+     *
+     * @return
+     */
+    @GetMapping("/abolish")
+    public AjaxResult abolish(String id)
+    {
+        System.out.println("jdhasdihjsoaidhjosaidjoas======="+id);
+        return toAjax(sdTaskListService.abolishSdTaskList(id));
+    }
+
+    /**
      * 删除巡查任务
      */
     /*@PreAuthorize("@ss.hasPermi('system:list:remove')")*/
     @Log(title = "巡查任务", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable String[] ids)
+    public AjaxResult remove(@PathVariable String ids)
     {
         return toAjax(sdTaskListService.deleteSdTaskListByIds(ids));
     }
@@ -178,18 +190,6 @@ public class SdTaskListController extends BaseController
 
 
     /**
-     * 查询所属系统
-     * @param
-     * @return
-     */
-    @PostMapping("/getDevicesTypeList")
-    public Result getDevicesTypeList(){
-        List<SdDevices> devicesType = devicesService.selectDevicesTypeList();
-        return Result.success(devicesType);
-    }
-
-
-    /**
      * 查询设备列表
      * @param tunnelId
      * @return
@@ -235,6 +235,74 @@ public class SdTaskListController extends BaseController
         List<SysDept> list = sdTaskListService.selectTableBzDataInfo(deptId);
         return getDataTable(list);
     }
+
+    /**
+     * app  巡查任务列表
+     * @param tunnelName
+     * @param sdTaskList
+     * @return
+     */
+    @GetMapping("/app/getTaskList")
+    public Result getTaskList(String tunnelName,SdTaskList sdTaskList){
+        List<SdTaskList> taskList = sdTaskListService.getTaskList(tunnelName,sdTaskList);
+        if(taskList!=null&&taskList.size()>0){
+            for(int i=0;i<taskList.size();i++){
+                if(taskList.get(i).getId()!=null){
+                    int num = sdTaskListService.countPatrolNum(taskList.get(i).getId());
+                    taskList.get(i).setTotalNum(num);
+                }
+            }
+
+        }
+        return Result.success(taskList);
+    }
+
+    /**
+     *  app 巡检任务基本信息
+     * @param taskId
+     * @return
+     */
+    @PostMapping("/app/getTaskInfo")
+    public Result getTaskInfo(@RequestBody String taskId){
+        List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
+        return Result.success(taskList);
+    }
+
+    /**
+     * app 端接收任务  task_status变为1（巡检中）
+     * @param id
+     * @return
+     */
+    @GetMapping("/app/accept")
+    public AjaxResult accept(String id)
+    {
+        System.out.println("jdhasdihjsoaidhjosaidjoas======="+id);
+        return toAjax(sdTaskListService.acceptSdTaskList(id));
+    }
+
+    /**
+     * app端  巡查点清单
+     * @param taskId
+     * @return
+     */
+    @PostMapping("/app/getPatrolInfo")
+    public Result getPatrolInfo(@RequestBody String taskId){
+        List<SdPatrolList> patrolList = sdTaskListService.getPatrolInfo(taskId);
+        return Result.success(patrolList);
+    }
+
+    /**
+     * app端  获取任务现场情况
+     * @param taskId
+     * @return
+     */
+    public Result getTaskSiteCondition(@RequestBody String taskId){
+        List<SdTaskList> patrolList = sdTaskListService.getTaskSiteCondition(taskId);
+        return Result.success(patrolList);
+    }
+
+
+
 
 
 

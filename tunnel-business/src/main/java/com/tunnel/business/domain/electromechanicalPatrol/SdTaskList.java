@@ -71,7 +71,18 @@ public class SdTaskList extends BaseEntity
     @Excel(name = "现场情况描述")
     private String siteDescription;
 
-    public void setId(String id) 
+    /*巡检点数量*/
+    private Integer totalNum;
+
+    public Integer getTotalNum() {
+        return this.totalNum;
+    }
+
+    public void setTotalNum(final Integer totalNum) {
+        this.totalNum = totalNum;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }

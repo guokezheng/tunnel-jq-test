@@ -30,7 +30,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
         <include refid="selectSdTaskListVo"/>
-        <where>  
+        <where>
+          1=1 and task_status != 3
             <if test="zzjgId != null  and zzjgId != ''"> and zzjg_id = #{zzjgId}</if>
             <if test="endPlantime != null "> and end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and dispatcher = #{dispatcher}</if>
@@ -44,6 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskCxtime != null "> and task_cxtime = #{taskCxtime}</if>
             <if test="siteDescription != null  and siteDescription != ''"> and site_description = #{siteDescription}</if>
         </where>
+        order  by  create_time desc
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
@@ -121,16 +123,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSdTaskListByIds" parameterType="String">
-        delete from sd_task_list where id in 
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        delete from sd_task_list where id  =  #{id}
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select s.*,u.user_name dispatcher
+        select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
-        where id = #{task_id}
+        left join sys_dept d on s.zzjg_id = d.dept_id
+        left join sys_dict_data t on t.dict_value = s.publish_status and t.dict_type = 'task_status'
+        left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'
+        where s.id = #{task_id}
     </select>
 
     <select id="selectTableBzDataInfo" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.SysDept">
@@ -143,6 +145,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
         </where>
     </select>
+
+
+    <update id="abolishSdTaskList" parameterType="SdTaskList">
+        update sd_task_list publish_status = '2' where id = #{id}
+    </update>
+
+
+
+    <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
+        select t.zzjg_id,t.end_plantime,t.dispatcher,t.task_description,t.task_status from sd_task_list t
+        where t.publish_status = '2'
+        <if test="endPlantime != null and endPlantime != ''"> and t.end_plantime = #{endPlantime}</if>
+        <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
+        order by t.create_time desc
+    </select>
+
+
+    <update id="acceptSdTaskList" parameterType="SdTaskList">
+        update sd_task_list task_status = '1' where id = #{id}
+    </update>
+
 
 
 </mapper>

@@ -80,7 +80,7 @@ public interface SdPatrolListMapper
      * @param ids
      * @return
      */
-    int batchDeletePatrolListByTaskIds(String[] ids);
+    int batchDeletePatrolListByTaskIds(String ids);
 
     /**
      * 根据任务id查询关联巡检点详细信息
@@ -88,4 +88,24 @@ public interface SdPatrolListMapper
      * @return
      */
     List<SdPatrolList> getPatrolListsInfo(String task_id);
+    /**
+     *
+     * @param id
+     * @return
+     */
+    int countPatrolNum(String id);
+
+    /**
+     * app 获取巡检点清单
+     * @param taskId
+     * @return
+     */
+    List<SdPatrolList> getPatrolInfo(String taskId);
+
+    /**
+     * 获取任务关联的巡查点处理状态
+     * @param taskId
+     * @return
+     */
+    List<SdPatrolList> isFaultEnd(String taskId);
 }

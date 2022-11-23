@@ -194,13 +194,6 @@ public interface ISdDevicesService {
     public List<SdDevices> getEquipmentInfo(String eqId);
 
     /**
-     * 根据隧道查询设备类型
-     * @param
-     * @return
-     */
-    List<SdDevices> selectDevicesTypeList();
-
-    /**
      * 查询设备列表--新增巡查点
      * @param tunnelId
      * @param deviceType

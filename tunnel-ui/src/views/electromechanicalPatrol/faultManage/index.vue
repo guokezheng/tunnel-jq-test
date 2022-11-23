@@ -193,7 +193,7 @@
 
     <!-- 添加或修改故障清单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1200px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="24">
             <div class="topTxt">
@@ -359,7 +359,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="故障消除状态" prop="falltRemoveStatue">
-              <el-select v-model="form.falltRemoveStatue" :disabled="disstate" placeholder="请选择故障等级">
+              <el-select v-model="form.falltRemoveStatue" :disabled="disstate" placeholder="请选择消除状态">
                 <el-option
                   v-for="item in faultRemoveStateOptions"
                   :key="item.dictValue"
@@ -382,7 +382,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="默认图标" label-width="100px">
+            <el-form-item label="现场图片" label-width="120px">
               <el-upload
                 ref="upload"
                 action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -394,8 +394,7 @@
                 :disabled="disstate"
                 :on-exceed="handleExceed"
                 :on-change="handleChange"
-                :limit="2"
-                :class="fileList.length >=2 ? 'showUpload':''"
+
               >
                 <i class="el-icon-plus"></i>
               </el-upload>
@@ -451,7 +450,7 @@
         <div class="card-cols">
           <div>
             设备运行状态:
-            <span>设备状态:{{item.eqStatus}} 设备运行状态:{{item.runStatus}}</span>
+            <span style="margin:6%;">设备状态:{{item.eqStatus}}</span><span> 设备运行状态:{{item.runStatus}}</span>
           </div>
           <div class="col-test">
             (检修时检测情况)
@@ -573,7 +572,34 @@ export default {
       // 表单校验
       rules: {
         faultLevel: [
-          { required: true, message: '请选择', trigger: 'faultLevel' }
+          { required: true, message: '请选择故障等级', trigger: 'faultLevel' }
+        ],
+        faultLocation: [
+          { required: true, message: '请填写故障位置', trigger: 'faultLocation' }
+        ],
+        faultType: [
+          { required: true, message: '请选中故障类型', trigger: 'faultLocation' }
+        ],
+        faultFxtime: [
+          { required: true, message: '请填写发现时间', trigger: 'faultFxtime' }
+        ],
+        faultCxtime: [
+          { required: true, message: '请填写持续时间', trigger: 'faultCxtime' }
+        ],
+        eqId: [
+          { required: true, message: '请填写设备名称', trigger: 'eqId' }
+        ],
+        eqStatus: [
+          { required: true, message: '请选中设备填报状态', trigger: 'eqStatus' }
+        ],
+        falltRemoveStatue: [
+          { required: true, message: '请选中消除状态', trigger: 'falltRemoveStatue' }
+        ],
+        falltRemoveStatu: [
+          { required: true, message: '请选中消除状态', trigger: 'falltRemoveStatue' }
+        ],
+        tunnelId: [
+          { required: true, message: '请选中所在路段隧道', trigger: 'tunnelId' }
         ]
       },
       direction: "",
@@ -637,6 +663,8 @@ export default {
         this.$refs.faultLocation.value = "";
         if(response.data.length!=0){
           this.$refs.faultLocation.value = response.data[0].pile;
+          this.form.eqStatus = response.data[0].eqStatus;
+          //this.$refs(this.form, "eqStatus", 1);
         }
         // this.$modal.msgSuccess("修改成功");
         // this.open = false;
@@ -689,10 +717,10 @@ export default {
       this.fileData.append("file", file.file); // append增加数据
     },
     // 选取文件超过数量提示
-    handleExceed(files, fileList) {
+   /* handleExceed(files, fileList) {
       // let num = this.direction == 0 ? 2 : 1;
       this.$message.warning("限制上传图标个数不超过2个");
-    },
+    },*/
     //监控上传文件列表
     handleChange(file, fileList) {
       this.fileList = fileList;
@@ -734,6 +762,17 @@ export default {
       this.loading = true;
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
+        this.listList.forEach((item) =>{
+          if(item.faultLocation=="null"){
+            item.faultLocation = "";
+          }
+          if(item.faultCxtime=="null"){
+            item.faultCxtime = "";
+          }
+          if(item.faultCode=="null"){
+            item.faultCode = "";
+          }
+        })
         this.total = response.total;
         this.loading = false;
       });
@@ -782,6 +821,8 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.isWritable = true;
+      this.disstate = false;
       this.open = true;
       this.title = "添加故障清单";
     },
@@ -793,6 +834,19 @@ export default {
       const id = row.id|| that.ids;
       getList(id).then((response) => {
         this.form = response.data;
+        this.form.faultSource
+        if(this.form.faultSource=="null"){
+          this.form.faultSource=""
+        }
+        if(this.form.eqRunStatus=="undefined"){
+          this.form.eqRunStatus=""
+        }
+        if(this.form.faultCode=="null"){
+          this.form.faultCode=""
+        }
+        if(this.form.faultDescription=="null"){
+          this.form.faultDescription=""
+        }
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
         this.open = true;
@@ -806,6 +860,18 @@ export default {
       const id = row.id|| that.ids;
       getList(id).then((response) => {
         this.form = response.data;
+        if(this.form.faultSource=="null"){
+          this.form.faultSource=""
+        }
+        if(this.form.eqRunStatus=="undefined"){
+          this.form.eqRunStatus=""
+        }
+        if(this.form.faultCode=="null"){
+          this.form.faultCode=""
+        }
+        if(this.form.faultDescription=="null"){
+          this.form.faultDescription=""
+        }
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = true;
         this.open = true;

@@ -16,7 +16,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <!--      <el-form-item label="计划完成时间" prop="endPlantime">
+<!--      <el-form-item label="计划完成时间" prop="endPlantime">
         <el-date-picker clearable size="small"
           v-model="queryParams.endPlantime"
           type="date"
@@ -231,7 +231,11 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
-            >任务详情</el-button
+          >任务详情</el-button>
+          <el-button
+            size="mini"
+            @click="handleAbolish(scope.row)"
+          >废止任务</el-button
           >
           <el-button
             size="mini"
@@ -355,8 +359,7 @@
                 type="date"
                 style="width: 89%"
                 value-format="yyyy-MM-dd"
-                placeholder="选择派单时间"
-              >
+                placeholder="选择派单时间">
               </el-date-picker>
             </div>
           </div>
@@ -480,12 +483,11 @@
         <div class="right-button">
           <el-select v-model="options1value" @change="getTable">
             <el-option
-              v-for="item in options1"
-              :key="item.type_id"
-              :label="item.type_name"
-              :value="item.type_id"
-            >
-            </el-option>
+              v-for="dict in dict.type.eq_system"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
           </el-select>
           <div class="cancel-determine">
             <el-button @click="determine1">取消</el-button>
@@ -539,10 +541,10 @@
       <div style="text-align: center; font-size: 20px">
         巡检任务及执行记录单
       </div>
-      <div class="col-1">
+      <div class="col-1" v-for="(ite, index) in taskNews" :key="index">
         发布状态/执行状态：
-        <div class="col-card">已发布</div>
-        <div class="col-card">已完结</div>
+        <div class="col-card">{{ ite.publishStatus }}</div>
+        <div class="col-card">{{ ite.taskStatus }}</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews" :key="index">
         <div class="card-col">
@@ -614,7 +616,7 @@
               <div style="width: 80%">
                 设备运行状态:
                 <span
-                  >设备状态:{{ pat.eqStatus }}设备运行状态:{{
+                  >设备状态:{{ pat.eqStatus }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;设备运行状态:{{
                     pat.runStatus
                   }}</span
                 >
@@ -723,6 +725,7 @@ import {
   treeselect,
   getDevicesTypeList,
   getDevicesList,
+  abolishList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -731,7 +734,7 @@ import { color } from "echarts";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
-  dicts: ["publish_status", "task_status", "network", "power"],
+  dicts: ["publish_status", "task_status", "network", "power","eq_system"],
   props: {
     //开启过滤
     filter: {
@@ -841,6 +844,8 @@ export default {
         dispatcher: "",
         dispatchTime: "",
         taskDescription: "",
+        taskStatus:"",
+        publishStatus:"",
       },
       //巡查点参数
       patrolNews: {
@@ -942,13 +947,7 @@ export default {
     //节点单击事件
     handleNodeClick(data) {
       console.log(data, "节点单击事件");
-      this.options1value = "";
-      this.tableData1 = [];
       this.tunnelId = data.id;
-      getDevicesTypeList(data.id).then((res) => {
-        console.log(res, "获取设备类型下拉");
-        this.options1 = res.data;
-      });
     },
     // 筛选节点
     filterNode(value, data) {
@@ -1100,6 +1099,19 @@ export default {
         this.open = true;
         this.title = "修改巡查任务";
       });
+    },
+
+    /** 废止按钮操作 */
+    handleAbolish(row) {
+      const id = row.id || this.ids
+      if (id != null) {
+        debugger
+        abolishList(id).then(response => {
+          debugger
+          this.$modal.msgSuccess("废止成功");
+          this.getList();
+        });
+      }
     },
     /** 提交按钮 */
     submitForm() {

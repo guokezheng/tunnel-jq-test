@@ -57,7 +57,7 @@ public interface ISdTaskListService
      * @param ids 需要删除的巡查任务主键集合
      * @return 结果
      */
-    public int deleteSdTaskListByIds(String[] ids);
+    public int deleteSdTaskListByIds(String ids);
 
     /**
      * 删除巡查任务信息
@@ -95,4 +95,44 @@ public interface ISdTaskListService
      * @return 下拉树结构列表
      */
     public List<DeptTunnelTreeSelect> buildDeptTunnelTreeSelect(List<SysDeptTunnel> deptTunnels);
+    /**
+     * 废止巡查任务
+     */
+    public int abolishSdTaskList(String  id);
+
+    /**
+     * app  查询巡查任务列表
+     * @param tunnelName
+     * @param sdTaskList
+     * @return
+     */
+    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+
+    /**
+     * 查询任务关联的巡查点数量
+     * @param id
+     * @return
+     */
+    int countPatrolNum(String id);
+
+    /**
+     * app端接收任务
+     * @param id
+     * @return
+     */
+    int acceptSdTaskList(String id);
+
+    /**
+     * app端  巡查点清单
+     * @param taskId
+     * @return
+     */
+    List<SdPatrolList> getPatrolInfo(String taskId);
+
+    /**
+     * app端  获取任务现场情况
+     * @param taskId
+     * @return
+     */
+    List<SdTaskList> getTaskSiteCondition(String taskId);
 }

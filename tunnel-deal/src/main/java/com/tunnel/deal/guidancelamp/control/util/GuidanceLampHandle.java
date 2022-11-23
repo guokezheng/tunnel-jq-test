@@ -145,7 +145,7 @@ public class GuidanceLampHandle {
                     }
                 } else {
                     //疏散标志开灯无报警点
-                    state = "3";
+                    state = "2";
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devo = devicesListByFEqId.get(i);
                         updateDeviceDatas(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());

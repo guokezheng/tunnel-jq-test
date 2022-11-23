@@ -282,7 +282,7 @@ public class SdDeviceControlService {
                         }
                     } else {
                         //疏散标志开灯无报警点
-                        state = "3";
+                        state = "2";
                         for (int i = 0;i < list.size();i++) {
                             SdDevices devo = list.get(i);
                             updateDeviceData(devo, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());

@@ -1,15 +1,53 @@
 .theme-dark {
   .el-menu--horizontal .el-menu .el-menu-item, .el-menu--horizontal .el-menu .el-submenu__title{
-    background-color: #00588f;
-    height: 56px;
-    line-height: 55px;
-    color: white !important;
+    background-color: #165BA2;
+    height: 52px !important;
+    line-height: 50px !important;
+    border-radius: 8px;
+
     i{
       color: white;
     }
   }
+  .el-menu--horizontal .el-menu .el-menu-item:hover, .el-menu--horizontal .el-menu .el-submenu__title:hover{
+    background-color: #2971CC;
+    border-radius: 8px;
+    
+  }
+  .el-menu--collapse .el-menu .el-submenu, .el-menu--popup{
+    min-width: 190px !important;
+  }
   .el-menu {
-    background: transparent;
+    background: #165BA2;
+    border-radius: 14px;
+  }
+  .has-logo .el-menu {
+    background: #004375;
+    border-radius: 14px;
+
+  }
+  .has-logo {
+    .menuitem{
+      background: transparent !important;
+      color: #fff !important;
+  
+    }
+    .menuitem:hover{
+      background: #2971CC !important;
+    }
+    // .el-submenu{
+    //   padding: 0 10px;
+    // }
+  }
+  .menuitem{
+    height:52px;line-height:50px;overflow-y: auto;
+    margin: 0px auto;
+    background: #165BA2 !important;
+
+  }
+  .menuitem:hover{
+    background: #2971CC !important;
+    border-radius: 10px !important;
   }
   .el-select-dropdown {
     .el-scrollbar__wrap::-webkit-scrollbar-track {
@@ -202,7 +240,7 @@
       box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
 
       .el-submenu__title:hover{
-        background-color: #004375 ;
+        background-color: #2971CC ;
       }
 
       // reset element-ui css
@@ -256,6 +294,7 @@
         height: 72px;
         line-height: 72px;
         font-size: 16px;
+        border-radius: 10px;
       }
 
       // menu hover
@@ -278,10 +317,11 @@
 
       & .nest-menu .el-submenu > .el-submenu__title,
       & .el-submenu .el-menu-item {
-        min-width: $base-sidebar-width !important;
+        min-width: 190px !important;
 
         &:hover {
-          background-color: rgba(0, 0, 0, 0.06) !important;
+          background-color: #2971CC !important;
+
         }
       }
 
@@ -291,7 +331,7 @@
         // background-color: $base-sub-menu-background;
 
         &:hover {
-          background-color: $base-sub-menu-hover !important;
+          background-color: #2971CC !important;
           border-radius: 8px;
           -webkit-border-radius: 8px;
           -moz-border-radius: 8px;

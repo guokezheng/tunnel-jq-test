@@ -14,7 +14,6 @@
           @change="changeSelection"
           clearable
           size="small"
-
         >
           <el-option
             v-for="(item, index) in eqTunnelData"
@@ -30,7 +29,6 @@
           placeholder="请选择预案类别"
           clearable
           size="small"
-
         >
           <el-option
             v-for="(item, index) in planCategory"
@@ -160,7 +158,7 @@
         label="预案描述"
         prop="planDescription"
         width="200"
-        :show-overflow-tooltip='true'
+        :show-overflow-tooltip="true"
       >
         <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
         <!-- <template slot-scope="scope">
@@ -201,7 +199,9 @@
             @click="openFileDrawer(scope.row)"
             >点击查看
           </el-button>
-          <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">无</div>
+          <div v-show="!scope.row.planFileId || scope.row.planFileId == 'null'">
+            无
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -226,7 +226,7 @@
           >
             {{ tag }}
           </el-tag>
-          <div v-show="scope.row.strategyNames == null">无</div>
+          <div v-show="scope.row.strategyNames == ''">无</div>
         </template>
       </el-table-column>
       <el-table-column
@@ -493,7 +493,6 @@
         :model="reservePlanDrawForm"
         :rules="rules"
         label-width="120px"
-
       >
         <el-form-item label="所属隧道" prop="tunnelId">
           <el-select
@@ -1389,16 +1388,16 @@ export default {
       });
       //this.$refs["form1"].clearValidate();
     },
-    changePartitionSelection(e){
-      this.$forceUpdate()
+    changePartitionSelection(e) {
+      this.$forceUpdate();
     },
     changeSelection(e) {
-      var that = this
+      var that = this;
       this.eqTunnelData.forEach((item) => {
         if (item.tunnelId == e) {
-          this.reservePlanDrawForm.sId = null
+          this.reservePlanDrawForm.sId = null;
           that.eqTunnelDataList = item.sdTunnelSubareas;
-          that.$forceUpdate()
+          that.$forceUpdate();
         }
       });
       this.getDicts("sd_reserve_plan_category").then((response) => {
@@ -1412,7 +1411,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       console.log(row);
-      
+
       // this.$nextTick(() => {
       //   this.$refs["addForm1"].clearValidate();
       // });
@@ -1557,6 +1556,10 @@ export default {
       this.loading = true;
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
+        console.log(this.planList, "========");
+        this.planList.forEach((item) => {
+          console.log(item.strategyName);
+        });
         this.total = response.total;
         this.loading = false;
       });
@@ -1626,25 +1629,18 @@ export default {
 };
 </script>
 <style>
-#cascader-menu-45-0 .el-radio{
-   
-   display: none !important;
- 
+#cascader-menu-45-0 .el-radio {
+  display: none !important;
 }
 </style>
 <style lang="scss" scoped>
-::v-deep .in-checked-path .el-radio{
-   
-    display: none;
-  
+::v-deep .in-checked-path .el-radio {
+  display: none;
 }
 
-::v-deep .in-checked-path .el-radio{
-   
-   display: none;
- 
+::v-deep .in-checked-path .el-radio {
+  display: none;
 }
-
 
 // .in-checked-path{
 //   ::v-deep .el-radio__original{

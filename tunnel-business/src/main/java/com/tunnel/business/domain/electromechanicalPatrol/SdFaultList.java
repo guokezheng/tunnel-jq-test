@@ -1,7 +1,10 @@
 package com.tunnel.business.domain.electromechanicalPatrol;
 
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -31,7 +34,7 @@ public class SdFaultList extends BaseEntity
 
     /** 故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他) */
     @Excel(name = "故障类型(0:自然损坏；1：腐蚀泡水；2：变形或断裂；3：间歇性故障；4：机械故障；5：人为损坏；6：其他)")
-    private Integer faultType;
+    private String faultType;
 
     /** 故障发现源 */
     @Excel(name = "故障发现源")
@@ -59,9 +62,18 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "设备id")
     private String eqId;
 
+    /** 设备id */
+    @Excel(name = "设备名称")
+    private String eqName;
+
     /** 设备状态（1-在线，2-离线，3-故障） */
     @Excel(name = "设备状态", readConverterExp = "1=-在线，2-离线，3-故障")
     private String eqStatus;
+
+
+    /** 设备运行状态 */
+    @Excel(name = "设备运行状态")
+    private String eqRunStatus;
 
     /** 故障代码 */
     @Excel(name = "故障代码")
@@ -69,11 +81,11 @@ public class SdFaultList extends BaseEntity
 
     /** 故障等级 */
     @Excel(name = "故障等级")
-    private Integer faultLevel;
+    private String faultLevel;
 
     /** 故障消除状态（0：已消除；1：未消除） */
     @Excel(name = "故障消除状态", readConverterExp = "0=：已消除；1：未消除")
-    private Integer falltRemoveStatue;
+    private String falltRemoveStatue;
 
     /** 故障描述 */
     @Excel(name = "故障描述")
@@ -81,7 +93,7 @@ public class SdFaultList extends BaseEntity
 
     /** 状态（0：已发布；1：未发布） */
     @Excel(name = "状态", readConverterExp = "0=：已发布；1：未发布")
-    private Integer faultStatus;
+    private String faultStatus;
 
     /** 创建者 */
     @ApiModelProperty("创建者")
@@ -106,9 +118,19 @@ public class SdFaultList extends BaseEntity
     @Excel(name = "故障图片ID")
     private String imgFileId;
 
+    @ApiModelProperty("默认图标")
+    private List<SdTrafficImage> iFileList;
 
 
-    public void setId(String id) 
+    public List<SdTrafficImage> getiFileList() {
+        return this.iFileList;
+    }
+
+    public void setiFileList(final List<SdTrafficImage> iFileList) {
+        this.iFileList = iFileList;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }
@@ -135,12 +157,12 @@ public class SdFaultList extends BaseEntity
     {
         return faultLocation;
     }
-    public void setFaultType(Integer faultType) 
+    public void setFaultType(String faultType)
     {
         this.faultType = faultType;
     }
 
-    public Integer getFaultType() 
+    public String getFaultType()
     {
         return faultType;
     }
@@ -194,7 +216,15 @@ public class SdFaultList extends BaseEntity
         this.eqId = eqId;
     }
 
-    public String getEqId() 
+    public String getEqRunStatus() {
+        return this.eqRunStatus;
+    }
+
+    public void setEqRunStatus(final String eqRunStatus) {
+        this.eqRunStatus = eqRunStatus;
+    }
+
+    public String getEqId()
     {
         return eqId;
     }
@@ -216,21 +246,21 @@ public class SdFaultList extends BaseEntity
     {
         return faultCode;
     }
-    public void setFaultLevel(Integer faultLevel) 
+    public void setFaultLevel(String faultLevel)
     {
         this.faultLevel = faultLevel;
     }
 
-    public Integer getFaultLevel() 
+    public String getFaultLevel()
     {
         return faultLevel;
     }
-    public void setFalltRemoveStatue(Integer falltRemoveStatue) 
+    public void setFalltRemoveStatue(String falltRemoveStatue)
     {
         this.falltRemoveStatue = falltRemoveStatue;
     }
 
-    public Integer getFalltRemoveStatue() 
+    public String getFalltRemoveStatue()
     {
         return falltRemoveStatue;
     }
@@ -243,12 +273,12 @@ public class SdFaultList extends BaseEntity
     {
         return faultDescription;
     }
-    public void setFaultStatus(Integer faultStatus) 
+    public void setFaultStatus(String faultStatus)
     {
         this.faultStatus = faultStatus;
     }
 
-    public Integer getFaultStatus() 
+    public String getFaultStatus()
     {
         return faultStatus;
     }
@@ -299,6 +329,14 @@ public class SdFaultList extends BaseEntity
 
     public void setImgFileId(final String imgFileId) {
         this.imgFileId = imgFileId;
+    }
+
+    public String getEqName() {
+        return this.eqName;
+    }
+
+    public void setEqName(final String eqName) {
+        this.eqName = eqName;
     }
 
     @Override

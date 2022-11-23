@@ -161,7 +161,7 @@ export default {
       queryEqTypeParams: {
         isControl: 1,
       },
-      manualControlStateList:[],
+      manualControlStateList: [],
       tunnelData: [], //隧道列表
       directionOptions: [], //方向列表
       equipmentTypeData: [], //设备类型列表
@@ -354,6 +354,9 @@ export default {
     },
     removeItem(index) {
       console.log(index);
+      if (this.strategyForm.manualControl.length == 1) {
+        return this.$modal.msgError("至少添加一条执行操作");
+      }
       this.strategyForm.manualControl.splice(index, 1);
     },
 

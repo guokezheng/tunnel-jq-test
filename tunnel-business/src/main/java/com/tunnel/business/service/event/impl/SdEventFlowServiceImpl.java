@@ -97,10 +97,30 @@ public class SdEventFlowServiceImpl implements ISdEventFlowService {
      */
     @Override
     public int saveUserConfirmFlow(String eventId) {
-//        StringBuffer buffer = new StringBuffer();
-//        buffer.append("用户").append(SecurityUtils.getUsername()).append("确认了该事件");
+        StringBuffer buffer = new StringBuffer();
         SdEventFlow flow = new SdEventFlow();
-        flow.setFlowDescription("用户确认了该事件");
+        buffer.append("用户").append(SecurityUtils.getUsername()).append("确认了该事件");
+        flow.setFlowDescription(buffer.toString());
+        flow.setEventId(eventId);
+        flow.setFlowTime(DateUtils.getNowDate());
+        flow.setFlowHandler(SecurityUtils.getUsername());
+        JSONObject json = new JSONObject();
+        json.put("eventFlow",flow);
+        WebSocketService.broadcast("eventFlow",json);
+        return sdEventFlowMapper.insertSdEventFlow(flow);
+    }
+
+    /**
+     * 结束事件
+     * @param eventId
+     * @return
+     */
+    @Override
+    public int saveUserEventEndedFlow(String eventId) {
+        StringBuffer buffer = new StringBuffer();
+        SdEventFlow flow = new SdEventFlow();
+        buffer.append("用户").append(SecurityUtils.getUsername()).append("结束了该事件");
+        flow.setFlowDescription(buffer.toString());
         flow.setEventId(eventId);
         flow.setFlowTime(DateUtils.getNowDate());
         flow.setFlowHandler(SecurityUtils.getUsername());

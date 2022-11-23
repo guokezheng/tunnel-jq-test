@@ -124,3 +124,10 @@ export function getDeviceDataAndState(tunnelId) {
   })
 }
 
+// 疏散标志弹窗信息
+export function fireMarkList(eqId) {
+  return request({
+    url: '/devices/fireMarkList/' + eqId,
+    method: 'get'
+  })
+}

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-09-05 09:35:35
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-09-25 16:08:16
+ * @LastEditTime: 2022-11-22 21:37:00
  * @FilePath: \tunnel-ui\src\api\event\eventFlow.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -56,5 +56,12 @@ export function getListBySId(query) {
     url: '/plan/getListBySId',
     method: 'get',
     params: query
+  })
+}
+// 结束事件增加记录
+export function userEventEnded(id) {
+  return request({
+    url: '/eventFlow/userEventEnded/' + id,
+    method: 'get',
   })
 }

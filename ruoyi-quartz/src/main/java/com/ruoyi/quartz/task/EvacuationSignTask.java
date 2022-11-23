@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -27,12 +28,10 @@ import java.util.*;
 public class EvacuationSignTask {
     private static final Logger log = LoggerFactory.getLogger(EvacuationSignTask.class);
 
-    @Autowired
-    private ISdDevicesService sdDevicesService;
-
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
+    private static ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
 
     public void handle() {
         //定时获取疏散当前状态
@@ -76,7 +75,10 @@ public class EvacuationSignTask {
         }
         //更新疏散标志控制器状态，疏散标志子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
-        sdDevicesService.updateSdDevicesByFEqId(sdDevices);
+        SdDevices sonDevices = new SdDevices();
+        sonDevices.setFEqId(sdDevices.getEqId());
+        sonDevices.setEqStatus(sdDevices.getEqStatus());
+        sdDevicesService.updateSdDevicesByFEqId(sonDevices);
         return state;
     }
 
@@ -116,16 +118,6 @@ public class EvacuationSignTask {
     }
 
     private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
-        if ((codeMap != null && !codeMap.isEmpty()) && codeMap.get("fireMark") != null
-                && sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
-            if (codeMap.get("fireMark").toString().equals("255") || codeMap.get("fireMark").toString().equals("0")) {
-                //如果当前是开灯或关灯状态，所有的疏散标志子设备实时状态应该是一致的总共是两种状态，要不就都是开灯，要不就都是关灯
-            } else {
-                //此处表示标号处于0和255之前，疏散标志子设备包含三种状态，入口方向闪烁、闪烁、出口方向闪烁
-            }
-            return;
-        }
         if (codeMap == null || codeMap.isEmpty() || codeMap.get("mode") == null) {
             return;
         }
@@ -134,12 +126,58 @@ public class EvacuationSignTask {
             mode = "2";
         } else if (mode.equals("4")) {
             mode = "3";
+        } else if (mode.equals("0")) {
+            mode = "1";
+        }
+        String brightness = codeMap.get("brightness").toString();
+        String frequency = codeMap.get("frequency").toString();
+        if ((codeMap != null && !codeMap.isEmpty()) && codeMap.get("fireMark") != null
+                && sdDevices.getEqType().longValue() == Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()).longValue()) {
+            //控制器报警点存储
+            saveDataIntoSdDeviceData(sdDevices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+            //根据控制器的设备ID查询所有子设备保存状态数据
+            SdDevices dev = new SdDevices();
+            dev.setFEqId(sdDevices.getEqId());
+            List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
+            if (codeMap.get("fireMark").toString().equals("255") || codeMap.get("fireMark").toString().equals("0")) {
+                //如果当前是开灯或关灯状态，所有的疏散标志子设备实时状态应该是一致的总共是两种状态，要不就都是开灯，要不就都是关灯
+                if (codeMap.get("fireMark").toString().equals("0")) {
+                    mode = "1";
+                }
+                for (int i = 0;i < list.size();i++) {
+                    SdDevices devices = list.get(i);
+                    saveDataIntoSdDeviceData(devices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                    saveDataIntoSdDeviceData(devices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+//                    sendDataToWanJi(sdDevices, "lightOn", mode);
+                    saveDataIntoSdDeviceData(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                    saveDataIntoSdDeviceData(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                }
+            } else {
+                //此处表示标号处于0和255之前，疏散标志子设备包含三种状态，入口方向闪烁、闪烁、出口方向闪烁，对应标号处设备与控制器相同
+                //其他标号处状态对应可控三种状态外的三种状态
+                BigDecimal fireMark = new BigDecimal(codeMap.get("fireMark").toString());
+                for (int i = 0;i < list.size();i++) {
+                    SdDevices devices = list.get(i);
+                    BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                    if (fireMark.compareTo(addressMark) < 0) {
+                        mode = "6";
+                    } else if (fireMark.compareTo(addressMark) == 0) {
+                        mode = "5";
+                    } else if (fireMark.compareTo(addressMark) > 0) {
+                        mode = "4";
+                    }
+                    saveDataIntoSdDeviceData(devices, codeMap.get("fireMark").toString(), DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode());
+                    saveDataIntoSdDeviceData(devices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+//                    sendDataToWanJi(sdDevices, "lightOn", mode);
+                    saveDataIntoSdDeviceData(devices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
+                    saveDataIntoSdDeviceData(devices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
+                }
+            }
+            return;
         }
         saveDataIntoSdDeviceData(sdDevices, mode, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
         sendDataToWanJi(sdDevices, "lightOn", mode);
-        String brightness = codeMap.get("brightness").toString();
         saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
-        String frequency = codeMap.get("frequency").toString();
         saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.EVACUATION_SIGN_FREQUENCY.getCode());
         log.info("存储设备实时数据到sd_device_data完成");
         String[] states = new String[3];
@@ -173,11 +211,22 @@ public class EvacuationSignTask {
             return;
         }
         Integer port = Integer.valueOf(portAddress);
+        //查询子设备集合
+        SdDevices dev = new SdDevices();
+        dev.setFEqId(sdDevices.getEqId());
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
         try {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);
             if (state != "" && state.equals("1")) {
                 saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                //更新子设备的状态
+                if (!list.isEmpty()) {
+                    for (int i = 0;i < list.size();i++) {
+                        SdDevices devices = list.get(i);
+                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                    }
+                }
                 codeMap = InductionlampUtil.getNowRunMode(ip, port);
                 state = handleDeviceStatus(sdDevices, codeMap);
                 String code = "";
@@ -206,6 +255,15 @@ public class EvacuationSignTask {
                 saveDataIntoSdDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
                 saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 sendDataToWanJi(sdDevices, "lightOff", "0");
+                //更新子设备的状态
+                if (!list.isEmpty()) {
+                    for (int i = 0;i < list.size();i++) {
+                        SdDevices devices = list.get(i);
+                        saveDataIntoSdDeviceData(devices, state, DevicesTypeItemEnum.EVACUATION_SIGN_IS_OPEN.getCode());
+                        saveDataIntoSdDeviceData(devices, "1", DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
+//                        sendDataToWanJi(devices, "lightOff", "0");
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

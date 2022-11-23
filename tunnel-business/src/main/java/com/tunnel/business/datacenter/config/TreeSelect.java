@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 /**
  * Treeselect树结构实体类
- * 
+ *
  * @author ruoyi
  */
 public class TreeSelect implements Serializable
@@ -22,9 +22,9 @@ public class TreeSelect implements Serializable
 
     /** 节点名称 */
     private String label;
-    
+
     private Long level;
-    
+
     /** 子节点 */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<TreeSelect> children;
@@ -62,16 +62,16 @@ public class TreeSelect implements Serializable
     {
         return label;
     }
-    
+
     public Long getLevel() {
-		return level;
-	}
+        return level;
+    }
 
-	public void setLevel(Long level) {
-		this.level = level;
-	}
+    public void setLevel(Long level) {
+        this.level = level;
+    }
 
-	public void setLabel(String label)
+    public void setLabel(String label)
     {
         this.label = label;
     }

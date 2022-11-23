@@ -90,6 +90,8 @@ public class SysDeptController extends BaseController
     public Result treeselect(SysDept dept)
     {
         List<SysDept> depts = deptService.selectDeptList(dept);
+
+        System.out.println("22222222222222222222222222222"+deptService.buildDeptTreeSelect(depts).size());
         return Result.success(deptService.buildDeptTreeSelect(depts));
     }
 

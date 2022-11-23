@@ -1,12 +1,18 @@
 package com.tunnel.business.service.event.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.event.ISdEventTypeService;
+import com.tunnel.business.utils.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,7 +57,32 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
      * @return 结果
      */
     @Override
-    public int insertSdEventType(SdEventType sdEventType) {
+    public int insertSdEventType(MultipartFile[] file, SdEventType sdEventType) {
+        if (file.length > 0) {
+            for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+//                // 原图文件名
+//                String filename = file[i].getOriginalFilename();
+//                // 原图扩展名
+//                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+//                // 新的全名
+//                String fileName = extendName;
+                sdEventType.setIconUrl(imageBaseStr);
+            }
+        }
         //sdEventType.setCreateTime(DateUtils.getNowDate());
         return sdEventTypeMapper.insertSdEventType(sdEventType);
     }
@@ -63,7 +94,34 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
      * @return 结果
      */
     @Override
-    public int updateSdEventType(SdEventType sdEventType) {
+    public int updateSdEventType(MultipartFile[] file,SdEventType sdEventType) {
+        if (file.length > 0) {
+            for (int i = 0; i < file.length; i++) {
+                // 图片Base64
+                String imageBaseStr = null;
+                try {
+                    String contentType = file[i].getContentType();
+                    if (!contentType.contains("image")) {
+                        throw new RuntimeException("文件类型不正确!");
+                    }
+                    byte[] imageBytes = file[i].getBytes();
+                    BASE64Encoder base64Encoder = new BASE64Encoder();
+                    imageBaseStr = "data:" + contentType + ";base64," + base64Encoder.encode(imageBytes);
+                    imageBaseStr = imageBaseStr.replaceAll("[\\s*\t\n\r]", "");
+                } catch (IOException e) {
+                    throw new RuntimeException("图片转换base64异常");
+                }
+//                // 原图文件名
+//                String filename = file[i].getOriginalFilename();
+//                // 原图扩展名
+//                String extendName = filename.substring(filename.lastIndexOf("\\") + 1);
+//                // 新的全名
+//                String fileName = extendName;
+                sdEventType.setIconUrl(imageBaseStr);
+            }
+        }else{
+            sdEventType.setIconUrl("");
+        }
         sdEventType.setUpdateTime(DateUtils.getNowDate());
         return sdEventTypeMapper.updateSdEventType(sdEventType);
     }

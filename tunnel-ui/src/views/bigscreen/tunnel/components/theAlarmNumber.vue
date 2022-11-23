@@ -16,15 +16,15 @@
       > -->
     </div>
     <div class="box">
-      <div ref="echartsBox" class="box-left" id="TheAlarmNumber"></div>
+      <div ref="echartsBox" class="box-left" id="theAlarmNumber"></div>
       <div class="box-center UnificationBox">
         <div class="progressBar progress">
           <p>已处置：</p>
-          <span>{{ hasDisposal }}</span>
+          <span>{{ hasDisposal }}%</span>
         </div>
         <div class="progressBarNot progress">
           <p>未处置：</p>
-          <span>{{ notDDisposedOf }}</span>
+          <span>{{ notDDisposedOf }}%</span>
         </div>
       </div>
       <div class="box-right">
@@ -56,11 +56,13 @@
             }"
           >
             <el-col style="width: 20vw; padding-left: 0.4vw">{{
-              item.name
+              item.tunnelName
             }}</el-col>
-            <el-col>{{ item.time }}</el-col>
-            <el-col style="padding-right: 1vw">{{ item.content }}</el-col>
-            <el-col style="width: 20vw">{{ item.type }}</el-col>
+            <el-col>{{ item.startTime }}</el-col>
+            <el-col style="padding-right: 1vw">{{
+              item.eventDescription
+            }}</el-col>
+            <el-col style="width: 20vw">{{ item.eventType }}</el-col>
           </el-row>
         </vue-seamless-scroll>
       </div>
@@ -69,6 +71,8 @@
 </template>
 
 <script>
+import vueSeamlessScroll from "vue-seamless-scroll";
+import { getEventWarning } from "@/api/business/new";
 import * as echarts from "echarts";
 import "echarts-liquidfill";
 import elementResizeDetectorMaker from "element-resize-detector";
@@ -77,94 +81,9 @@ export default {
   data() {
     return {
       fullscreenLoading: false,
-      currentData: {},
-      chartData: {
-        name: "事件事故",
-        all: 22,
-        hasDisposal: 21,
-        notDDisposedOf: 1,
-        listData: [
-          {
-            id: 0,
-            name: "姚家峪隧道",
-            time: "2021-11-3 14:30:30",
-            content: "交通拥堵导致的车祸事件，有1人轻伤",
-            type: "未处置",
-          },
-          {
-            id: 1,
-            name: "毓秀山隧道",
-            time: "2021-11-12 14:30:30",
-            content: "行人闯红灯导致的车祸事件，有1人轻伤",
-            type: "已处置",
-          },
-          {
-            id: 2,
-            name: "洪山隧道",
-            time: "2021-11-23 14:30:30",
-            content: "交通拥堵导致的车祸事件，无人受伤",
-            type: "已处置",
-          },
-          {
-            id: 3,
-            name: "望海石隧道",
-            time: "2021-11-26 14:30:30",
-            content: "行人车辆闯红灯事件",
-            type: "未处置",
-          },
-        ],
-      },
-      malfunctionData: {
-        name: "故障信息",
-        all: 40,
-        hasDisposal: 38,
-        notDDisposedOf: 2,
-        listData: [
-          {
-            id: 0,
-            name: "望海石隧道",
-            time: "2021/11/10 12:30:25",
-            content: "风机故障",
-            type: "未处置",
-          },
-          {
-            id: 1,
-            name: "毓秀山隧道",
-            time: "2021/11/15 12:30:25",
-            content: "COVI仪器故障",
-            type: "已处置",
-          },
-          {
-            id: 3,
-            name: "中庄",
-            time: "2021/11/20 12:30:25",
-            content: "监控故障",
-            type: "未处置",
-          },
-        ],
-      },
-      warningData: {
-        name: "预警信息",
-        all: 66,
-        hasDisposal: 60,
-        notDDisposedOf: 6,
-        listData: [
-          {
-            id: 0,
-            name: "毓秀山隧道",
-            time: "2021/11/13 12:30:25",
-            content: "CO浓度超标",
-            type: "未处置",
-          },
-          {
-            id: 1,
-            name: "姚家峪隧道",
-            time: "2021/11/21 17:30:25",
-            content: "用电能耗超标",
-            type: "已处置",
-          },
-        ],
-      },
+      currentData: { all: 100 },
+      hasDisposal: "",
+      notDDisposedOf: "",
     };
   },
   computed: {
@@ -180,27 +99,14 @@ export default {
         waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
       };
     },
-    hasDisposal() {
-      var num =
-        ((this.currentData.hasDisposal / this.currentData.all) * 100).toFixed(
-          2
-        ) - 0;
-      return num;
-    },
-    notDDisposedOf() {
-      var num =
-        (
-          (this.currentData.notDDisposedOf / this.currentData.all) *
-          100
-        ).toFixed(2) - 0;
-      return num;
-    },
   },
   created() {
-    this.setData();
+    this.$nextTick(() => {
+      this.setData();
+    });
   },
   mounted() {
-    this.initEchart();
+    // this.setData();
     this.watchSize();
   },
   methods: {
@@ -208,6 +114,7 @@ export default {
       let that = this;
       let erd = elementResizeDetectorMaker();
       let Dom = that.$refs.echartsBox; //拿dom元素
+      console.log(Dom);
       //监听盒子的变化
       erd.listenTo(Dom, function (element) {
         let myChart = echarts.init(Dom);
@@ -217,22 +124,30 @@ export default {
     setData(val) {
       this.fullscreenLoading = true;
       this.currentData = {};
-      if (val) {
-        this.currentData = { ...val };
-      } else {
-        this.currentData = { ...this.chartData };
-      }
+      getEventWarning()
+        .then((res) => {
+          console.log(res.data);
+          this.currentData.listData = res.data.list;
+          this.hasDisposal = res.data.eventProportion[1].percentage;
+          this.notDDisposedOf = res.data.eventProportion[3].percentage;
+        })
+        .then((res) => {
+          this.$nextTick(() => {
+            this.initEchart();
+          });
+        });
+
       setTimeout(() => {
         this.fullscreenLoading = false;
       }, 500);
     },
     initEchart() {
-      var object = { ...this.currentData };
-      var myChart = echarts.init(document.getElementById("TheAlarmNumber"));
-      var fontColor = "#fff";
-      let noramlSize = 16;
+      // var object = { ...this.currentData };
+      var myChart = echarts.init(document.getElementById("theAlarmNumber"));
+      // var fontColor = "#fff";
+      // let noramlSize = 16;
       var datas = {
-        value: 98,
+        value: this.hasDisposal,
         company: "%",
         ringColor: [
           {
@@ -327,11 +242,11 @@ export default {
             data: [
               {
                 name: "已处置",
-                value: "98",
+                value: this.hasDisposal,
               },
               {
                 name: "未处置",
-                value: "2",
+                value: this.notDDisposedOf,
               },
             ],
           },
@@ -349,19 +264,6 @@ export default {
       };
 
       option && myChart.setOption(option);
-    },
-    SwitchingEvents() {
-      var name = this.currentData.name;
-      if (name == "事件事故") {
-        this.setData(this.malfunctionData);
-      } else if (name == "故障信息") {
-        this.setData(this.warningData);
-      } else if (name == "预警信息") {
-        this.setData(this.chartData);
-      } else {
-        this.setData(this.chartData);
-      }
-      this.initEchart();
     },
   },
 };

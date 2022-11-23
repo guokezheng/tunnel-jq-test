@@ -185,4 +185,21 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
+
+    /**
+     * 故障管理页面--根据设备id获取设备详情
+     * @param eqId
+     * @return
+     */
+    public List<SdDevices> getEquipmentInfo(String eqId);
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    List<SdDevices> getDevicesList(String tunnelId, String deviceType);
+
+    List<String> fireMarkList(String eqId);
 }

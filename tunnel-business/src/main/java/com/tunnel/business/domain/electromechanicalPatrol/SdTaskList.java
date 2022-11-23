@@ -48,11 +48,11 @@ public class SdTaskList extends BaseEntity
 
     /** 发布状态(0:未发布状态;1:已废止状态;2:发布状态) */
     @Excel(name = "发布状态(0:未发布状态;1:已废止状态;2:发布状态)")
-    private Integer publishStatus;
+    private String publishStatus;
 
     /** 任务状态（0::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时） */
     @Excel(name = "任务状态", readConverterExp = "0=::待巡检、1:巡检中、2:已完结、3:待回传、4:已超时")
-    private Integer taskStatus;
+    private String taskStatus;
 
     /** 巡查人员id */
     @Excel(name = "巡查人员id")
@@ -64,15 +64,25 @@ public class SdTaskList extends BaseEntity
     private Date taskEndtime;
 
     /** 任务持续时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "任务持续时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date taskCxtime;
+    private String  taskCxtime;
 
     /** 现场情况描述 */
     @Excel(name = "现场情况描述")
     private String siteDescription;
 
-    public void setId(String id) 
+    /*巡检点数量*/
+    private Integer totalNum;
+
+    public Integer getTotalNum() {
+        return this.totalNum;
+    }
+
+    public void setTotalNum(final Integer totalNum) {
+        this.totalNum = totalNum;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }
@@ -135,21 +145,21 @@ public class SdTaskList extends BaseEntity
     {
         return taskDescription;
     }
-    public void setPublishStatus(Integer publishStatus) 
+    public void setPublishStatus(String publishStatus)
     {
         this.publishStatus = publishStatus;
     }
 
-    public Integer getPublishStatus() 
+    public String getPublishStatus()
     {
         return publishStatus;
     }
-    public void setTaskStatus(Integer taskStatus) 
+    public void setTaskStatus(String taskStatus)
     {
         this.taskStatus = taskStatus;
     }
 
-    public Integer getTaskStatus() 
+    public String getTaskStatus()
     {
         return taskStatus;
     }
@@ -167,16 +177,16 @@ public class SdTaskList extends BaseEntity
         this.taskEndtime = taskEndtime;
     }
 
-    public Date getTaskEndtime() 
+    public Date getTaskEndtime()
     {
         return taskEndtime;
     }
-    public void setTaskCxtime(Date taskCxtime) 
+    public void setTaskCxtime(String taskCxtime)
     {
         this.taskCxtime = taskCxtime;
     }
 
-    public Date getTaskCxtime() 
+    public String getTaskCxtime()
     {
         return taskCxtime;
     }

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper">
+    
+    <select id="seleteEventWarning" resultType="com.tunnel.business.domain.bigScreenApi.SdEventWarning" parameterType="java.lang.String">
+        SELECT
+            sdet.event_type AS eventType,
+            sdt.tunnel_name AS tunnelName,
+            sde.start_time AS startTime,
+            sde.event_description AS eventDescription,
+            sde.event_title AS eventState
+        FROM
+            sd_event sde
+        LEFT JOIN sd_event_type sdet ON sde.event_type_id = sdet.id
+        LEFT JOIN sd_tunnels sdt ON sde.tunnel_id = sdt.tunnel_id
+        WHERE
+            sde.start_time <![CDATA[ > ]]> DATE_ADD( curdate(), INTERVAL - DAY ( curdate())+ 1 DAY )
+        AND sde.start_time <![CDATA[ < ]]> last_day(
+        curdate())
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sde.tunnel_id = #{tunnelId}
+        </if>
+        ORDER BY
+            sde.start_time DESC
+        LIMIT 50
+    </select>
+
+    <select id="getEventProportion" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            event_state AS eventState,
+            ROUND(
+                    ROUND(( count(*)/ ( SELECT Count(*) FROM sd_event sde WHERE 1 = 1 ) * 100 ),
+                          3
+                        ),
+                    2
+                ) AS percentage
+        FROM
+            sd_event sde
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND tunnel_id = #{tunnelId}
+        </if>
+        GROUP BY
+            event_state
+    </select>
+
+    <select id="getToDayEventWarning" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            se.event_state AS eventState,
+            count(*) AS eventNumber
+        FROM
+            sd_event se
+        WHERE
+            1 = 1
+          AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2022-11-08', '%Y-%m-%d' )
+        <if test="tunnelId != null and tunnelId != ''">
+            AND se.tunnel_id = #{tunnelId}
+        </if>
+        GROUP BY
+            se.event_state
+    </select>
+
+    <select id="getToDayFaultWarning" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            sfl.fallt_remove_statue AS falltRemoveStatue,
+            count(*) eventNumber
+        FROM
+            sd_fault_list sfl
+        WHERE
+            1 = 1
+          AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) = DATE_FORMAT( '2022-11-08', '%Y-%m-%d' )
+          <if test="tunnelId != null and tunnelId != ''">
+              AND sfl.tunnel_id = #{tunnelId}
+          </if>
+        GROUP BY
+            sfl.fallt_remove_statue
+    </select>
+
+    <select id="getToWeekEventWarning" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            se.event_state AS eventState,
+            count(*) eventNumber
+        FROM
+            sd_event se
+        WHERE
+        1 = 1
+        AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ >= ]]>  DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
+        AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
+        <if test="tunnelId != null and tunnelId != ''">
+            se.tunnel_id = #{tunnelId}
+        </if>
+        GROUP BY
+        se.event_state
+    </select>
+
+    <select id="getToWeekFaultWarning" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            sfl.fallt_remove_statue AS falltRemoveStatue,
+            count(*) eventNumber
+        FROM
+            sd_fault_list sfl
+        WHERE
+            1 = 1
+        AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
+        AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
+        GROUP BY
+            sfl.fallt_remove_statue
+    </select>
+
+    <select id="getEventList" resultType="int" parameterType="java.lang.String">
+        SELECT
+            IFNULL( tab.num, 0 ) AS eventNumber
+        FROM
+            (
+            SELECT
+                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
+            FROM
+                ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
+            WHERE
+                YEAR ( @cdate )= YEAR (CURDATE())
+                AND MONTH ( @cdate )= MONTH (CURDATE())
+                AND DAY ( @cdate ) > 1
+            ORDER BY
+                DATE
+            ) date_c
+            LEFT JOIN (
+                SELECT
+                    COUNT(*) AS num,
+                    DATE ( se.start_time ) AS t
+                FROM
+                    sd_event se
+                LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+                AND sdd.dict_type = #{prevControlType}
+                WHERE
+                    YEAR ( se.start_time )= YEAR (CURDATE())
+                    AND MONTH ( se.start_time )= MONTH (CURDATE())
+                    AND sdd.dict_value = #{dictValue}
+                    <if test="tunnelId != null and tunnelId != ''">
+                        AND se.tunnel_id = #{tunnelId}
+                    </if>
+                GROUP BY
+                DATE ( se.start_time )
+            ) tab ON DATE ( t )= DATE
+        ORDER BY
+            DATE ASC;
+    </select>
+
+    <select id="getWarningList" resultType="int" parameterType="java.lang.String">
+        SELECT
+            IFNULL( tab.num, 0 ) AS eventNumber
+        FROM
+            (
+            SELECT
+                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
+            FROM
+                ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
+            WHERE
+                YEAR ( @cdate )= YEAR (CURDATE())
+                AND MONTH ( @cdate )= MONTH (CURDATE())
+                AND DAY ( @cdate ) > 1
+            ORDER BY
+                DATE
+            ) date_c
+            LEFT JOIN (
+                SELECT
+                    COUNT(*) AS num,
+                    DATE ( se.start_time ) AS t
+                FROM
+                    sd_event se
+                LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+                LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+                AND sdd.dict_type = #{prevControlType}
+                WHERE
+                    YEAR ( se.start_time )= YEAR (CURDATE())
+                    AND MONTH ( se.start_time )= MONTH (CURDATE())
+                    AND sdd.dict_value = #{dictValue}
+                    <if test="tunnelId != null and tunnelId != ''">
+                        AND se.tunnel_id = #{tunnelId}
+                    </if>
+                GROUP BY
+                    DATE ( se.start_time )
+            ) tab ON DATE ( t )= DATE
+        ORDER BY
+            DATE ASC;
+    </select>
+
+    <select id="getFaultList" resultType="int" parameterType="java.lang.String">
+        SELECT
+            IFNULL( tab.num, 0 ) AS eventNumber
+        FROM
+            (
+            SELECT
+                @cdate := date_add( @cdate, INTERVAL - 1 DAY ) AS DATE
+            FROM
+                ( SELECT @cdate := date_add( CURDATE(), INTERVAL + 1 DAY ) FROM sd_event ) d1
+            WHERE
+                YEAR ( @cdate )= YEAR (CURDATE())
+                AND MONTH ( @cdate )= MONTH (CURDATE())
+                AND DAY ( @cdate ) > 1
+            ORDER BY
+                DATE
+            ) date_c
+            LEFT JOIN (
+                SELECT
+                    COUNT(*) AS num,
+                    DATE ( sfl.fault_fxtime ) AS t
+                FROM
+                    sd_fault_list sfl
+                WHERE
+                    YEAR ( sfl.fault_fxtime )= YEAR (CURDATE())
+                    AND MONTH ( sfl.fault_fxtime )= MONTH (CURDATE())
+                    <if test="tunnelId != null and tunnelId != ''">
+                        AND sfl.tunnel_id = #{tunnelId}
+                    </if>
+                GROUP BY
+                    DATE ( sfl.fault_fxtime )
+            ) tab ON DATE ( t )= DATE
+        ORDER BY
+            DATE ASC;
+    </select>
+
+    <select id="getCumulativeEvent" resultType="int" parameterType="java.lang.String">
+        SELECT
+            COUNT(*) AS eventNum
+        FROM
+            sd_event se
+            LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+            AND sdd.dict_type = #{prevControlType}
+        WHERE
+            sdd.dict_value = #{dictValue}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND se.tunnel_id = #{tunnelId}
+            </if>
+    </select>
+
+    <select id="getCumulativeWarning" resultType="int" parameterType="java.lang.String">
+        SELECT
+            COUNT(*) AS eventNum
+        FROM
+            sd_event se
+        LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+        AND sdd.dict_type = #{prevControlType}
+        WHERE
+            sdd.dict_value = #{dictValue}
+        <if test="tunnelId != null and tunnelId != ''">
+            AND se.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+
+    <select id="getCumulativeFault" resultType="int" parameterType="java.lang.String">
+        SELECT
+            COUNT(*) AS eventNum
+        FROM
+            sd_fault_list sfl
+        WHERE
+           1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+
+    <select id="getCumulativeAlarmList" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            DATE_FORMAT(se.start_time,'%Y-%m-%d %H:%i:%S') AS eventTime,
+            et.event_type AS eventType,
+            sdd.dict_label AS eventState
+        FROM
+            sd_event se
+            LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
+            AND sdd.dict_type = 'sd_event_state'
+            LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_value
+            AND sdd1.dict_type = #{prevControlType}
+        WHERE
+            sdd1.dict_value IN ( #{dictValue1}, #{dictValue2} )
+        <if test="tunnelId != null and tunnelId != ''">
+            AND se.tunnel_id = #{tunnelId}
+        </if>
+        UNION ALL
+        SELECT
+            sfl.fault_fxtime AS eventTime,
+            sdd1.dict_label AS eventType,
+            sdd2.dict_label AS eventState
+        FROM
+            sd_fault_list sfl
+                LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
+                AND sdd1.dict_type = #{faultType}
+                LEFT JOIN sys_dict_data sdd2 ON sfl.fallt_remove_statue = sdd2.dict_value
+                AND sdd2.dict_type = #{faultRemoveStatue}
+        WHERE 1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
+        LIMIT 50
+    </select>
+
+    <select id="getTrafficIncident" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            event_title AS eventTitle
+        FROM
+            sd_event se
+            LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+            AND sdd.dict_type = #{prevControlType}
+        WHERE
+            sdd.dict_value = #{dictValue}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND se.tunnel_id = #{tunnelId}
+            </if>
+            LIMIT 50
+    </select>
+
+    <select id="getActiveSafety" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            event_title AS eventTitle
+        FROM
+            sd_event se
+            LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+            AND sdd.dict_type = #{prevControlType}
+        WHERE
+            sdd.dict_value = #{dictValue}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND se.tunnel_id = #{tunnelId}
+            </if>
+            LIMIT 50
+    </select>
+
+    <select id="getequipmentFailure" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            CONCAT( st.tunnel_name, '-', sdd.dict_label, '-', d.eq_name, '-', sdd1.dict_label ) AS faultInformation
+        FROM
+            sd_fault_list sfl
+                LEFT JOIN sd_tunnels st ON sfl.tunnel_id = st.tunnel_id
+                LEFT JOIN sd_devices d ON sfl.eq_id = d.eq_id
+                LEFT JOIN sys_dict_data sdd ON d.eq_direction = sdd.dict_value
+                AND sdd.dict_type = #{sdDirection}
+                LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
+                AND sdd1.dict_type = #{faultType}
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
+            LIMIT 50
+    </select>
+
+    <select id="getReservePlan" resultType="hashmap">
+        SELECT
+	        rp.plan_name AS planName
+        FROM
+            sd_reserve_plan rp
+            LEFT JOIN sd_tunnel_subarea sts ON rp.subarea_id = sts.s_id
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sts.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+    
+    <select id="getEmergencyMaterials" resultType="hashmap" parameterType="java.lang.String">
+        SELECT
+            m.material_name AS materialName,
+            m.number,
+            m.station
+        FROM
+            sd_material m
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND m.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+
+    <select id="getEmergencyPer" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            sep.user_name AS userName,
+            sep.phone
+        FROM
+            sd_emergency_per sep
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sep.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+</mapper>

@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.system.domain.vo.SysDeptUserTreeVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 部门管理 服务层
@@ -125,4 +126,10 @@ public interface ISysDeptService
 
     public List<Object> tollById();
 
+    /**
+     * 新增巡检点--隧道树结构
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectTunnelDeptList(String deptId);
 }

@@ -182,7 +182,7 @@ export default {
             .nest-menu{
                 a{
                     .is-active{
-                        span{color: #3acbf4!important;}
+                        span{color: #fff!important;}
                     }
                 }
             }

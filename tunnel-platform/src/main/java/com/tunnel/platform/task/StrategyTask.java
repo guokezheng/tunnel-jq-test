@@ -42,7 +42,7 @@ public class StrategyTask {
             map.put("state",sdStrategyRl.getState());
             map.put("controlType",sdStrategy.getStrategyType());
             map.put("operIp",InetAddress.getLocalHost().getHostAddress());
-            map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
+            //map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
             SpringUtils.getBean(SdDeviceControlService.class).controlDevices(map);
         }
     }

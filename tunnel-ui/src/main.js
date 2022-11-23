@@ -41,6 +41,9 @@ import VueSeamlessScroll from 'vue-seamless-scroll'
 // 事件弹窗组件
 import eventDialog from '@/components/eventDialogTable/eventDialog.vue'
 import eventDialogTable from '@/components/eventDialogTable'
+import evtDialogOneThing from '@/components/eventDialogTable/evtDialogOneThing.vue'
+import evtDialogVideo from '@/components/eventDialogTable/video.vue'
+
 
 // 字典标签组件
 // import reproductionImage from '@/components/reproductionImage'
@@ -91,6 +94,11 @@ Vue.component('ImageUpload', ImageUpload)
 Vue.component('VueSeamlessScroll', VueSeamlessScroll)
 Vue.component('eventDialog', eventDialog)
 Vue.component('eventDialogTable', eventDialogTable)
+Vue.component('evtDialogOneThing', evtDialogOneThing)
+Vue.component('evtDialogVideo', evtDialogVideo)
+
+
+
 Vue.component(CollapseTransition.name, CollapseTransition)
 // Vue.component('reproductionImage', reproductionImage)
 

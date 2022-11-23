@@ -1,5 +1,6 @@
 package com.tunnel.business.mapper.electromechanicalPatrol;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 
 import java.util.List;
@@ -58,5 +59,43 @@ public interface SdTaskListMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteSdTaskListByIds(String[] ids);
+    public int deleteSdTaskListByIds(String ids);
+
+    /**
+     * 查询任务详情
+     * @param task_id
+     * @return
+     */
+    List<SdTaskList> getTaskInfoList(String task_id);
+
+    /**
+     * 查询班组信息
+     * @param deptId
+     * @return
+     */
+    List<SysDept> selectTableBzDataInfo(Long deptId);
+
+    /**
+     * 废纸巡查任务
+     * @param id
+     * @return
+     */
+    public int abolishSdTaskList(String id);
+
+    /**
+     * app 端接收任务
+     * @param id
+     * @return
+     */
+    int acceptSdTaskList(String id);
+
+    /**
+     * app  查询巡查列表
+     * @param tunnelName
+     * @param sdTaskList
+     * @return
+     */
+    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+
+
 }

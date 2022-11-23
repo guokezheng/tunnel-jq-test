@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.event.SdStrategy;
@@ -16,6 +17,7 @@ import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
@@ -47,6 +49,8 @@ public class SdEventServiceImpl implements ISdEventService {
     @Autowired
     private SdOperationLogMapper sdOperationLogMapper;
 
+    @Autowired
+    private ISdDevicesService sdDevicesService;
 
     /**
      * 查询事件管理
@@ -284,9 +288,41 @@ public class SdEventServiceImpl implements ISdEventService {
                 subareaId = only.get(0).getsId();
             }
         }catch (Exception ex){
-            throw new RuntimeException("数据处理异常");
+            ex.printStackTrace();
         }
         return subareaId;
+    }
+
+    @Override
+    public List<SdDevices> getEventCamera(String tunnelId, String stakeNum, String direction) {
+        SdDevices devices = new SdDevices();
+        devices.setEqTunnelId(tunnelId);
+        devices.setEqDirection(direction);
+        devices.setEqType(23L);
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
+        try {
+            int param = Integer.valueOf(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());
+            pileNum.add(param);
+            pileNum = pileNum.stream().sorted().collect(Collectors.toList());
+            for(int i = 0;i < pileNum.size(); i++){
+                if(pileNum.get(i)==param){
+                    param = pileNum.get(i+1);
+                    break;
+                }
+            }
+            devices.setPileNum(new Long((long)param));
+            List<SdDevices> result = sdDevicesService.selectSdDevicesList(devices);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Map> eventPopAll(String subIndex) {
+        return sdEventMapper.eventPopAll(subIndex);
     }
 
 

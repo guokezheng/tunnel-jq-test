@@ -1,6 +1,6 @@
 <template>
   <div class="controlRecord-container">
-    <div class="title">近12h控制记录</div>
+    <div class="title">近12小时控制记录</div>
     <div class="scrollBox">
       <div class="listHeader">
         <el-row
@@ -40,35 +40,11 @@
 </template>
 
 <script>
+import { getRecordlist } from "@/api/business/new";
 export default {
   data() {
     return {
-      listData: [
-        {
-          id: 0,
-          name: "姚家裕隧道",
-          time: "2021/12/1 17:30:25",
-          operation: "1号风机控制正转",
-        },
-        {
-          id: 1,
-          name: "毓秀山隧道",
-          time: "2021/12/1 18:34:27",
-          operation: "左洞车指1-1-YK247+881车道指示器控制正红反红",
-        },
-        {
-          id: 2,
-          name: "中庄隧道",
-          time: "2021/12/2 08:30:25",
-          operation: "2号机摄像头转正",
-        },
-        {
-          id: 3,
-          name: "海望石隧道",
-          time: "2021/12/2 09:34:27",
-          operation: "右洞车指3-2-YK247+892车道指示器控制正绿反红",
-        },
-      ],
+      listData: [],
     };
   },
   computed: {
@@ -85,7 +61,17 @@ export default {
       };
     },
   },
-  methods: {},
+  created() {
+    this.getRecordlistData();
+  },
+  methods: {
+    getRecordlistData() {
+      // let tunnelId = "WLJD-JiNan-YanJiuYuan-FHS";
+      getRecordlist().then((res) => {
+        this.listData = res.data;
+      });
+    },
+  },
 };
 </script>
 

@@ -47,7 +47,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item style="margin-top: -10px; margin-bottom: 0px">
+          <!-- <el-form-item style="margin-top: -10px; margin-bottom: 0px">
             <cron
               v-show="showCronBox"
               v-model.trim="strategyForm.schedulerTime"
@@ -58,9 +58,22 @@
               >corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份
               星期中的日期 年份</span
             >
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item style="width: 90%">
-            <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
+            <el-form-item label="cron表达式" prop="schedulerTime">
+              <el-input
+                v-model="strategyForm.schedulerTime"
+                placeholder="请输入cron执行表达式"
+              >
+                <template slot="append">
+                  <el-button type="primary" @click="handleShowCron">
+                    生成表达式
+                    <i class="el-icon-time el-icon--right"></i>
+                  </el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+            <!-- <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
               <el-button
                 slot="append"
                 v-if="!showCronBox"
@@ -75,7 +88,7 @@
                 @click="showCronBox = false"
                 title="关闭图形配置"
               ></el-button>
-            </el-input>
+            </el-input> -->
           </el-form-item>
         </el-col>
       </el-row>
@@ -190,13 +203,34 @@
         <el-button @click="cancelChooseEq">取消</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="Cron表达式生成器"
+      :visible.sync="openCron"
+      append-to-body
+      destroy-on-close
+      class="scrollbar"
+    >
+      <crontab
+        @hide="openCron = false"
+        @fill="crontabFill"
+        :expression="expression"
+      ></crontab>
+    </el-dialog>
   </div>
 </template>
   
   <script>
-import cron from "@/components/cron/cron.vue";
-import EasyCron from "@/components/easy-cron/index";
-import InputCron from "@/components/easy-cron/input-cron";
+import {
+  listJob,
+  getJob,
+  delJob,
+  addJob,
+  updateJob,
+  exportJob,
+  runJob,
+  changeJobStatus,
+} from "@/api/monitor/job";
+import Crontab from "@/components/Crontab";
 
 import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -220,12 +254,13 @@ export default {
     event: "change",
   },
   components: {
-    cron,
-    EasyCron,
-    InputCron,
+    Crontab,
   },
+  dicts: ["sys_job_group", "sys_job_status"],
   data() {
     return {
+      expression: "",
+      openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层
@@ -235,7 +270,7 @@ export default {
         equipment_type: null, //设备类型ID
         equipments: null, //设备列表
       },
-      manualControlStateList:[],
+      manualControlStateList: [],
       // 二次表单校验
       rules: {
         equipment_type: [
@@ -245,7 +280,7 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
-      viewStrategy:false,
+      viewStrategy: false,
       showCronBox: false,
       strategyForm: {
         schedulerTime: "", //cron数据
@@ -611,6 +646,15 @@ export default {
     },
     strategyFormClose() {
       this.$emit("dialogVisibleClose");
+    },
+    /** cron表达式按钮操作 */
+    handleShowCron() {
+      this.expression = this.strategyForm.schedulerTime;
+      this.openCron = true;
+    },
+    /** 确定后回传值 */
+    crontabFill(value) {
+      this.strategyForm.schedulerTime = value;
     },
   },
 };

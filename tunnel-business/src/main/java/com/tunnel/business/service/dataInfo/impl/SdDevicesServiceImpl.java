@@ -8,6 +8,8 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -79,7 +81,11 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             devices.put("eqStatus","2");
         }
         SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(eqId);
+        if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+            sdDeviceData.setDeviceId(devices.get("fEqId"));
+        } else {
+            sdDeviceData.setDeviceId(eqId);
+        }
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         if (!deviceDataList.isEmpty()) {
             for (int i = 0;i < deviceDataList.size();i++) {
@@ -104,7 +110,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
                         devices.put("fireMark", data.getData());
                     }
-                //车指
+                    //车指
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
                         devices.put("state", data.getData());
@@ -147,6 +153,27 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
         List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
+    }
+
+    /**
+     * 故障管理页面----根据设备名称获取设备详情
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getEquipmentInfo(String eqId) {
+        return sdDevicesMapper.getEquipmentInfo(eqId);
+    }
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    @Override
+    public List<SdDevices> getDevicesList(String tunnelId, String deviceType) {
+        return sdDevicesMapper.getDevicesList(tunnelId,deviceType);
     }
 
     /**
@@ -893,5 +920,24 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    @Override
+    public List<String> fireMarkList(String eqId) {
+        SdDevices devices = sdDevicesMapper.selectSdDevicesById(eqId);
+        if (devices == null) {
+            throw new RuntimeException("当前设备信息为空，请到设备管理中进行核对");
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(devices.getEqTunnelId());
+        sdDevices.setEqType(devices.getEqType());
+        sdDevices.setEqDirection(devices.getEqDirection());
+        List<String> devicesFireMarkList = sdDevicesMapper.getDevicesFireMarkList(sdDevices);
+        if (devicesFireMarkList.isEmpty()) {
+            devicesFireMarkList = new ArrayList<>();
+        }
+        devicesFireMarkList.add("0");
+        devicesFireMarkList.add("255");
+        return devicesFireMarkList;
     }
 }

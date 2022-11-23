@@ -183,4 +183,24 @@ public interface SdDevicesMapper
 	public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
 
 	public List<Map> getReserveProcessDevices(String[] param);
+
+	public List<SdDevices> getDevicesListByFEqId(String fEqId);
+
+	/**
+	 * 故障管理页面--根据设备名称获取设备详情
+	 * @param eqId
+	 * @return
+	 */
+    List<SdDevices> getEquipmentInfo(String eqId);
+
+
+	/**
+	 * 查询设备列表--新增巡查点
+	 * @param tunnelId
+	 * @param deviceType
+	 * @return
+	 */
+	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
+
+	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
 }

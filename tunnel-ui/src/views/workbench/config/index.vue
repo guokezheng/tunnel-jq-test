@@ -54,8 +54,29 @@
             </el-tooltip>
           </el-button-group>
         </el-row>
+
         <div class="flex-row" style="z-index: 8">
+            <div class="display-box zoomClass">
+              <p class="zoom-title" style="font-size: 14px;margin-right:10px;">
+                {{ carShow ? "实时车辆关" : "实时车辆开" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="switchStyle"
+                @change="carShowChange"
+              ></el-switch>
+            </div>
           <div class="display-box zoomClass">
+            <!-- <div class="display-box">
+              <p class="zoom-title" style="font-size: 14px">
+                {{ carShow ? "实时车辆开" : "实时车辆关" }}
+              </p>
+              <el-switch
+                v-model="carShow"
+                class="carShow"
+                @change="carShowChange"
+              ></el-switch>
+            </div> -->
             <el-input
               placeholder="请输入内容"
               v-model="screenEqName"
@@ -87,7 +108,7 @@
             </p>
             <el-switch v-model="displayNumb" class="switchStyle"></el-switch>
           </div> -->
-          <div class="display-box">
+          <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">
               {{ zoomSwitch == 0 ? "缩放开" : "缩放关" }}
             </p>
@@ -183,13 +204,14 @@
                     :style="{
                       left: item.left,
                       top: item.top,
+                      background: item.background,
                     }"
                   ></span>
                 </div>
                 <div
                   class="wrapper"
                   id="eq-wrapper"
-                  @mousemove="mouseoversImage"
+                  @mouseover="mouseoversImage"
                   @mouseleave="mouseleaveImage"
                 >
                   <!-- <div
@@ -297,6 +319,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
+                        v-show="item.eqType != '31'"
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -313,13 +336,37 @@
                           :width="item.iconWidth"
                           :height="item.iconHeight"
                           :key="item.eqId + indexs"
-                          :src="url"
+                          :src='url'
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
                               : ''
                           "
                         />
+                        <img 
+                         v-show="item.eqType == '31'"
+                        style="position: absolute"
+                          :style="{
+                            
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth"
+                          :height="item.iconHeight"
+                          :src= getTypePic(item)
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          ">
+                        </img>
+
                         <!-- 调光数值 -->
                         <label
                           style="
@@ -450,7 +497,7 @@
           :class="topNav ? 'topNavRightDeawer' : 'leftNavRightDeawer'"
         >
           <div class="indicatorLight" @click="isDrawerA()">
-            <i class="el-icon-caret-left"></i>车道控制模块
+            <i class="el-icon-caret-left"></i>一键控制模块
           </div>
           <!-- 定时控制模块 -->
           <div class="brightnessControl" @click="isDrawerB()">
@@ -724,7 +771,7 @@
                 style="width: 17px; margin-right: 5px"
                 v-show="sideTheme != 'theme-blue'"
               />
-              <p>实时车辆</p>
+              <p>重点车辆</p>
               <p>Key vehicles</p>
             </div>
           </div>
@@ -802,15 +849,31 @@
               v-for="(item, index) in trafficList"
               :key="index"
               class="listRow"
+              style="margin-top:4px"
+              @click.native="jumpYingJi(item.id)"
             >
-              <el-col style="width: 3vw; text-align: center">{{
-                index + 1
-              }}</el-col>
-              <el-col style="width: 18vw" @click.native="jumpYingJi(item.id)"
-                >{{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+              <el-col style="text-align: center" :span="2">
+                <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
+              </el-col>
+              <el-col style="text-align: center" :span="3"
+              :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
+                {{item.eventType.simplifyName}}
+              </el-col>
+              <el-col :span="19" style="display: flex;">
+                <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
-                }}事件</el-col
-              >
+                }}事件 -->
+                <div 
+                  style="width:300px;
+                  overflow: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  color:white;
+                  ">
+                  {{item.eventTitle}}</div>
+                <div style="color:#D0CECE;font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+                
+              </el-col>
             </el-row>
           </vue-seamless-scroll>
         </div>
@@ -881,7 +944,7 @@
         <el-form-item label="配置状态:">
           <div class="wrap">
             <el-radio-group
-              v-for="(item, index) in eqTypeStateList"
+              v-for="(item, index) in eqTypeStateList2"
               :key="index"
               v-model="batchManageForm.state"
               style="display: flex; flex-direction: column"
@@ -1907,7 +1970,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 16, 30, 35].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 16, 35].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -1967,7 +2030,7 @@
     ></com-bright>
     <com-youdao
       class="comClass"
-      v-if="this.eqInfo.clickEqType == 31"
+      v-if="this.eqInfo.clickEqType == 31 || this.eqInfo.clickEqType == 30"
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
@@ -2618,6 +2681,8 @@
 <script>
 import flvjs from "flv.js";
 import { math } from "@/utils/math.js";
+import moment from "moment";
+
 import vueSeamlessScroll from "vue-seamless-scroll";
 import $ from "jquery";
 import "jquery-ui-dist/jquery-ui";
@@ -2731,7 +2796,7 @@ let wrapperClientY = 0;
 let boxEqList = [];
 let mode = "";
 export default {
-  carShow: false, //车辆实时状态
+  carShow: false, //车辆是否
   name: "Workbench",
   dicts: ["sd_sys_name"],
   components: {
@@ -2755,6 +2820,8 @@ export default {
   },
   data() {
     return {
+      heightRatio: "",
+      lane: "",
       carList: [],
       tunnelKm: "", //隧道实际长度
       tunnelLength: "", //隧道px长度
@@ -3081,6 +3148,7 @@ export default {
       eqIcon: icon,
       //各状态对应图标列表（灵活性差，后期最好在类型状态管理中动态添加）
       eqTypeStateList: [],
+      eqTypeStateList2: [],
       itemEqTypeStateList: [],
       // 策略visible
       strategyVisible: null,
@@ -3347,6 +3415,7 @@ export default {
         "mousewheel",
 
         function (e) {
+          console.log(e);
           // 获取鼠标所在位置
 
           let { clientX, clientY } = e;
@@ -3449,6 +3518,7 @@ export default {
       this.vehicleTypeList = data.data;
     });
     this.getTunnelState();
+    // this.carchange();
     //调取滚动条
     this.srollAuto();
   },
@@ -3487,53 +3557,65 @@ export default {
         { lng: 117.81641244, lat: 36.4677101 }, //下行入口右侧 基点4
         { lng: 117.81718759, lat: 36.47501931 }, //下行出口右侧3
       ];
-      //首先计算上下经纬度差值
-      let gao = math.subtract(+data[3].lat - +data[2].lat);
+      // 道路实际高度 / 二维的px数 = 1米所占的px数
+      // this.heightRatio = math.divide(7 / 190);
+      // let gao = math.subtract(+data[0].lat - +data[2].lat); //隧道宽度差(纬度)
+      // console.log(gao, "gaogaogaogao");
       // 结束经度 - 开始经度 = 隧道经度的跨度 = 814 m
-      let chang = math.multiply(+data[3].lng - +data[2].lng); //A
-      console.log(chang, "chang");
-      // tunnelLength tunnelKm
+      // let chang = math.multiply(+data[3].lng - +data[2].lng); //A
       // 计算比例
-      console.log(this.tunnelKm, "this.tunnelKm");
       //1个经度代表的米数
-      let changB = math.divide(math.multiply(this.tunnelKm * 1000) / chang); //B
-      console.log(changB, "changB");
-      // var gaoB = 20 * 1000 /  chang;
+      // let changB = math.divide(math.multiply(this.tunnelKm * 1000) / chang);
+      // let gaoB = math.divide(+9 / +gao); //一个纬度代表的米数
+      // console.log(gaoB, "gaoBgaoBgaoBgaoBgaoB"); //478
       for (let i = 0; i < event.length; i++) {
+        //车辆实际经度
         var lng = Number(event[i].longitude);
-        // 117.816422;
-        console.log(lng, "lnglnglng");
-        // var lat = Number(event[i].latitude);
-        // 计算实际位置
-        // var z = +lat - +data[2].lat;
-        // console.log(data[2].lng , lng,changB,'}}}}}}}}}}}}}}}}}}}}}}}}}}')
-        var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
-        // 117.8171445  117.81641244
-        console.log(carKm, "carKmcarKmcarKmcarKm");
-        if (String(carKm).indexOf("-") != -1) {
-          console.log(String(carKm).replace("-", ""), "99999999999");
-        } else {
-          console.log(String(carKm).replace("-", ""), "66666666666");
+        //车辆实际纬度
+        // var lat = event[i].latitude;
+        if (lng <= +data[3].lat) {
+          return;
         }
-        console.log(this.proportion, "bibibibibibi");
-        // 车辆在二维图上的实际距离
-        // 2.2 = 油门。数越大，跑的越快
+        console.log(event[i].laneNum);
+        //车辆实际距离入口距离
+        var carKm = event[i].distance;
+        // var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
+        // 车当前实际的高度
+        // var carLat = math.multiply(math.subtract(+lat - +data[0].lat) * gaoB);
+        // console.log(carLat, "carLatcarLatcarLat");
+        //计算最终经度
         event[i].left =
-          math.add(math.multiply(+carKm / this.proportion) + 185) + "px";
-        event[i].top = 365 + "px";
-        console.log(event[i].left, "left值");
-        // let lane = this.currentTunnel.lane.num;
-        // console.log(lane, "lanelanelane");
-        // if (lane == 2) {\
-        //   if (event[i].laneNum == 2) {
-        //   } else if (event[i].laneNum == 1) {
-        //     event[i].top == 365;
-        //   }
-        // }
+          math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
+        //计算最终纬度
+        // event[i].top =
+        //   math.add(
+        //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
+        //   ) + "px";
+        // console.log(math.multiply(+carLat * this.proportion), "实际left值");
+        console.log(event[i].top, "event[i].topevent[i].top");
+        // 根据车道数进行判断
+        if (this.lane == 2) {
+          console.log(this.lane, "66666666666");
+          if (event[i].laneNum == 1) {
+            event[i].top = 360 + "px";
+          } else if (event[i].laneNum == 2) {
+            event[i].top = 450 + "px";
+          }
+        }
+        if (
+          event[i].vehicleType == "3" ||
+          event[i].vehicleType == "7" ||
+          event[i].vehicleType == "8"
+        ) {
+          event[i].background = "yellow";
+        } else {
+          event[i].background = "yellow";
+        }
+        if (event[i].speed > Number(90) || event[i].speed < Number(60)) {
+          event[i].background = "red";
+        }
       }
-      console.log("end");
-      console.log(event, "eventeventevent");
-      // this.carList = event;
+      this.carList = event;
       this.$forceUpdate();
     },
     deviceStatus(event) {
@@ -3718,6 +3800,26 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    carShowChange(val) {
+      this.carShow = val;
+    },
+    getStartTime(time) {
+      return moment(time).format("HH:mm:ss");
+    },
+    //     getWarnTime(time){
+    // // let times = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+    //       // console.log(times,"times")
+    //       var now = new Date(time)
+    //       console.log(now,"8888888888888888888888888")
+    //     },
+    // 获取设备图片
+    getTypePic(item) {
+      if (item.eqId.substring(item.eqId.length - 2) == "-1") {
+        return item.url[0];
+      } else if (item.eqId.substring(item.eqId.length - 2) == "-2") {
+        return item.url[1];
+      }
+    },
     // 批量操作弹窗获取方向
     getDirection(num) {
       for (var item of this.directionList) {
@@ -3743,11 +3845,43 @@ export default {
     },
     // 批量操作 执行
     implementBatchManage() {
+      var that = this;
       this.title = "批量操作";
       for (var item of this.selectedIconList) {
         if (item.click) {
+          console.log(item, "batchManageDialog");
           this.batchManageList.push(item);
           this.batchManageDialog = true;
+          let list = [];
+          const param = {
+            stateTypeId: item.eqType,
+            isControl: 1,
+          };
+          that.eqTypeStateList2 = [];
+
+          getStateByData(param).then((response) => {
+            console.log(response, "查询设备状态图标");
+            list = response.rows;
+            for (let i = 0; i < list.length; i++) {
+              let iconUrl = [];
+              if (list[i].iFileList != null) {
+                for (let j = 0; j < list[i].iFileList.length; j++) {
+                  // let img = await that.picture(list[i].iFileList[j].url);
+                  let img = list[i].iFileList[j].url;
+                  iconUrl.push(img);
+                }
+              }
+              that.eqTypeStateList2.push({
+                stateType: list[i].stateType,
+                type: list[i].stateTypeId,
+                state: list[i].deviceState,
+                name: list[i].stateName,
+                control: list[i].isControl,
+                url: iconUrl,
+              });
+            }
+          });
+          console.log(that.eqTypeStateList2, "that.eqTypeStateList");
         }
       }
     },
@@ -3868,10 +4002,11 @@ export default {
     // },
     // 预警事件点击跳转应急调度
     jumpYingJi(num) {
+      console.log(num, "num预警事件点击跳转应急调度工作台页面");
+      setTimeout(() => {
+        bus.$emit("getPicId", num);
+      }, 200);
       bus.$emit("openPicDialog");
-      bus.$emit("getPicId", num);
-
-      console.log(num, "num");
     },
     // 车型通过字典表获取值
     getCheXing(num) {
@@ -4120,7 +4255,7 @@ export default {
       // })
 
       getWarnEvent(param).then((response) => {
-        // console.log(response.data,"预警事件")
+        console.log(response.data, "预警事件");
         this.trafficList = response.data;
       });
     },
@@ -5461,10 +5596,10 @@ export default {
       const params = {
         tunnelId: tunnelId,
       };
+      this.carchange(tunnelId);
       getTunnels(tunnelId).then((response) => {
         that.loading = false;
         let res = response.data.storeConfigure;
-
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
@@ -5911,10 +6046,10 @@ export default {
     onDragging(key) {},
     onDropped(key) {},
     monitorWebsocket() {},
-    carchange() {
-      getTunnels(this.tunnelId).then((res) => {
+    carchange(tunnelId) {
+      getTunnels(tunnelId).then((res) => {
+        console.log(res.data, "当前隧道信息");
         const tunnel = res.data;
-        // math.add(a+b)//加
         // math.subtract(a-b)//减
         // math.multiply(a*b)//乘
         // math.divide(a/b)//除
@@ -5930,8 +6065,9 @@ export default {
         } else if (Mileage > +2.6) {
           var length = +1300 * 2;
         }
+        this.lane = tunnel.lane;
         this.tunnelLength = length; //px长度
-        this.proportion = length / (Mileage * 1000); //计算px和米的比例
+        this.proportion = math.divide(length / (Mileage * 1000)); //计算px和米的比例
         console.log(
           this.proportion,
           "this.proportionthis.proportionthis.proportionthis.proportion"
@@ -5941,10 +6077,6 @@ export default {
     },
     /*点击设备类型*/
     displayControl(value, lable) {
-      if (value == "6") {
-        this.carchange();
-        this.carShow = true;
-      }
       // carShow
       for (var item of this.selectedIconList) {
         if (this.tunnelId == "JQ-JiNan-WenZuBei-MJY" && item.eqType == 29) {
@@ -8075,7 +8207,7 @@ export default {
   // width: 90%;
   height: 650px;
 
-  // position: absolute;
+  position: absolute;
   // top: 7%;
   // -webkit-user-select: none;
   // user-select: none;
@@ -9098,9 +9230,8 @@ input {
 }
 .carBox span {
   display: block;
-  background-color: rgb(24, 199, 24);
-  width: 10px;
-  height: 10px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   position: absolute;
 }

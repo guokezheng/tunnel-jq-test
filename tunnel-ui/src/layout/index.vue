@@ -113,7 +113,7 @@
               <right-panel>
                 <settings />
               </right-panel>
-              <el-badge
+              <!-- <el-badge
                 :value="eventValue"
                 class="eventIcon"
                 :hidden="badgeHidden"
@@ -122,13 +122,14 @@
                   class="el-icon-s-order"
                   @click="openEventTitleDialog"
                 ></div>
-              </el-badge>
-
+              </el-badge> -->
+              <evtDialogOneThing v-if="evtDialogOneThing"></evtDialogOneThing>
               <event-dialog
-                v-show="eventDialogPic"
+                v-if="eventDialogPic"
                 ref="picDialog"
               ></event-dialog>
-              <event-dialogTable v-show="eventDialogTable"></event-dialogTable>
+              <event-dialogTable v-if="eventDialogTable"></event-dialogTable>
+              <evtDialogVideo v-if="evtDialogVideo" ></evtDialogVideo>
             </div>
           </div>
         </template>
@@ -219,6 +220,7 @@ export default {
   },
   data() {
     return {
+      evtDialogOneThing:false,
       badgeHidden: true,
       eventValue: 0,
       mapStyle: "",
@@ -232,6 +234,7 @@ export default {
       tunnelStyle: null,
       eventDialogPic: false,
       eventDialogTable: false,
+      evtDialogVideo:false,
       routePath: [
         "/index",
         "/map/map/index",
@@ -314,12 +317,12 @@ export default {
     }
   },
   methods: {
-    openEventTitleDialog() {
-      if (this.eventDialogTable == false) {
-        bus.$emit("openTableDialog");
-        this.eventDialogTable = true;
-      }
-    },
+    // openEventTitleDialog() {
+    //   if (this.eventDialogTable == false) {
+    //     bus.$emit("openTableDialog");
+    //     this.eventDialogTable = true;
+    //   }
+    // },
     getRoute(path) {
       var arr = [
         "/index",
@@ -380,13 +383,16 @@ export default {
       document.getElementsByTagName("body")[0].className = val;
     },
     sdEventList(event) {
-      this.eventValue += event.length;
-      if (this.eventValue > 0) {
-        this.$forceUpdate();
-        // this.badgeHidden = false;
-        this.eventDialogPic = true;
-
+      if(event.length>0){
+        this.evtDialogOneThing = true
       }
+      // this.eventValue += event.length;
+      // if (this.eventValue > 0) {
+      //   this.$forceUpdate();
+      //   // this.badgeHidden = false;
+      //   this.eventDialogPic = true;
+
+      // }
     },
   },
   mounted() {
@@ -398,11 +404,14 @@ export default {
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)[
       "breadcrumb"
     ];
+    // 打开列表弹窗
+    bus.$on('openTableDialog', () => {
+      this.eventDialogTable = true;
+    })
     // 关闭列表弹窗
-    bus.$on("closeDialog", (e) => {
-      if (e == false) {
-        this.eventDialogTable = false;
-      }
+    bus.$on("closeDialog", () => {
+      this.eventDialogTable = false;
+      this.evtDialogOneThing = false
     });
     // 打开三图一视弹窗
     bus.$on("openPicDialog", () => {
@@ -412,13 +421,21 @@ export default {
     bus.$on("closePicDialog", () => {
       this.eventDialogPic = false;
     });
+    // 打开视频弹窗
+    bus.$on('openVideoDialog', () => {
+      this.evtDialogVideo = true;
+    })
+    // 关闭视频弹窗
+    bus.$on('closeVideoDialog', () => {
+      this.evtDialogVideo = false;
+    })
     // 事件表格忽略后 右上角数字跟着改
-    bus.$on("getEvtList", () => {
-      this.eventValue = this.eventValue - 1;
-      if (this.eventValue == 0) {
-        this.badgeHidden = false;
-      }
-    });
+    // bus.$on("getEvtList", () => {
+    //   this.eventValue = this.eventValue - 1;
+    //   if (this.eventValue == 0) {
+    //     this.badgeHidden = false;
+    //   }
+    // });
   },
 };
 </script>

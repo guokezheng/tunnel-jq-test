@@ -2,6 +2,7 @@ package com.tunnel.business.service.event;
 
 
 import com.tunnel.business.domain.event.SdEventType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public interface ISdEventTypeService {
      * @param sdEventType 事件类型
      * @return 结果
      */
-    int insertSdEventType(SdEventType sdEventType);
+    int insertSdEventType(MultipartFile[] file, SdEventType sdEventType);
 
     /**
      * 修改事件类型
@@ -43,7 +44,7 @@ public interface ISdEventTypeService {
      * @param sdEventType 事件类型
      * @return 结果
      */
-    int updateSdEventType(SdEventType sdEventType);
+    int updateSdEventType(MultipartFile[] file,SdEventType sdEventType);
 
     /**
      * 批量删除事件类型

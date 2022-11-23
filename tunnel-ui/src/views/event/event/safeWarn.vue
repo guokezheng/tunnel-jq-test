@@ -16,11 +16,54 @@
     </div> -->
 
 
+    
+
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:event:add']"
+        >新增事件</el-button>
+      </el-col>
+
+      <div class="top-right-btn">
+        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+          <el-button
+            size="mini"
+            circle
+            icon="el-icon-refresh"
+            @click="handleQuery"
+          />
+        </el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="showSearch ? '隐藏搜索' : '显示搜索'"
+          placement="top"
+        >
+          <el-button
+            size="mini"
+            circle
+            icon="el-icon-search"
+            @click="showSearch = !showSearch"
+          />
+        </el-tooltip>
+      </div>
+    </el-row> -->
+
+    <div class="butBox">
+      <div :class="searchValue=='1'?'xz':''" @click="qiehuan('1')">主动安全</div>
+      <div :class="searchValue=='0'?'xz':''" @click="qiehuan('0')">交通事件</div>
+      <div :class="searchValue=='2'?'xz':''" @click="qiehuan('2')">设备故障</div>
+    </div>
     <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
-      v-show="showSearch"
+      v-show="searchValue == '1' || searchValue == '0'"
       label-width="68px"
       style="margin-top: 10px"
     >
@@ -113,53 +156,95 @@
         >
       </el-form-item>
     </el-form>
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      label-width="68px"
+      v-show="searchValue == '2'"
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+    >
+    
+      <el-form-item label="故障位置" prop="faultLocation">
+        <el-input
+          v-model="queryParams.faultLocation"
+          placeholder="请输入故障位置"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="故障类型" prop="faultType">
+        <el-select
+          v-model="queryParams.faultType"
+          placeholder="请选择故障类型"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="dict in dict.type.fault_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="故障描述" prop="faultDescription">
+        <el-input
+          v-model="queryParams.faultDescription"
+          placeholder="请输入故障描述"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button type="primary" plain size="mini" @click="resetQuery"
+          >重置</el-button
+        >
         <el-button
           type="primary"
-          icon="el-icon-plus"
+          plain
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:event:add']"
-        >新增事件</el-button>
-      </el-col>
-
-      <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button
-            size="mini"
-            circle
-            icon="el-icon-refresh"
-            @click="handleQuery"
-          />
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="showSearch ? '隐藏搜索' : '显示搜索'"
-          placement="top"
+          v-hasPermi="['system:list:add']"
+          >新增</el-button
         >
-          <el-button
-            size="mini"
-            circle
-            icon="el-icon-search"
-            @click="showSearch = !showSearch"
-          />
-        </el-tooltip>
-      </div>
-    </el-row> -->
-
-    <div class="butBox">
-      <div :class="searchValue=='1'?'xz':''" @click="qiehuan('1')">主动安全</div>
-      <div :class="searchValue=='0'?'xz':''" @click="qiehuan('0')">交通事件</div>
-      <div>设备故障</div>
-    </div>
-    <!-- <el-row>
-      <el-button type="primary" plain>主动安全</el-button>
-      <el-button type="primary" plain>交通事件</el-button>
-      <el-button type="primary" plain>设备故障</el-button>
-    </el-row> -->
+        <el-button
+          type="primary"
+          plain
+          
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['system:list:edit']"
+          >修改</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['system:list:remove']"
+          >删除</el-button
+        >
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['system:list:export']"
+          >导出</el-button
+        >
+      </el-form-item>
+    </el-form>
+  
     <el-table
       v-loading="loading"
       :data="eventList"
@@ -167,6 +252,7 @@
       max-height="600"
       ref="tableRef"
       :row-class-name="tableRowClassName"
+      v-show="searchValue == '1' || searchValue == '0'"
     >
       <el-table-column
         label="隧道名称"
@@ -308,7 +394,59 @@
         </template>
       </el-table-column>
     </el-table>
-
+    <el-table
+      v-loading="loading"
+      :data="eventList"
+      @selection-change="handleSelectionChange"
+      :row-class-name="tableRowClassName"
+      max-height="600"
+      v-show="searchValue == '2'"
+    >
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="故障类型" align="center" prop="faultType" />
+      <el-table-column
+        label="发现时间"
+        align="center"
+        prop="faultFxtime"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="持续时间" align="center" prop="faultCxtime" />
+      <el-table-column label="设备id" align="center" prop="eqId" />
+      <el-table-column label="设备状态" align="center" prop="eqStatus" />
+      <el-table-column label="故障等级" align="center" prop="faultLevel" />
+      <el-table-column
+        label="消除状态"
+        align="center"
+        prop="falltRemoveStatue"
+      />
+      <el-table-column label="状态" align="center" prop="faultStatus" />
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['system:list:edit']"
+            >修改</el-button
+          >
+          <el-button
+            size="mini"
+            class="tableDelButtton"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['system:list:remove']"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
     <pagination
       v-show="total > 0"
       :total="total"
@@ -797,6 +935,9 @@ import {
   toll,
   getTunnelList,
 } from "@/api/event/event";
+import {
+  listList,
+} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listEventType, getTodayEventCount } from "@/api/event/eventType";
 import { listPlan } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -1002,26 +1143,36 @@ export default {
     qiehuan(inx){
       this.searchValue=inx;
       this.getList();
+
     },
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
-      if(!this.dateRange){
-        this.dateRange = []
-      }
-      this.queryParams.startTime = this.dateRange[0];
-      this.queryParams.endTime = this.dateRange[1];
-      this.queryParams.searchValue = this.searchValue;
-      console.log(this.queryParams,this.addDateRange(this.queryParams))
-      listEvent(this.addDateRange(this.queryParams)).then((response) => {
-        console.log(response.rows, "查询事件管理列表");
-        this.eventList = response.rows;
-        this.$nextTick(() => {
-          this.$refs.tableRef.doLayout();
+      if(this.searchValue == '2'){
+        listList(this.queryParams).then((response) => {
+          this.eventList = response.rows;
+          this.total = response.total;
+          this.loading = false;
         });
-        this.total = response.total;
-        this.loading = false;
-      });
+      }else{
+        if(!this.dateRange){
+          this.dateRange = []
+        }
+        this.queryParams.startTime = this.dateRange[0];
+        this.queryParams.endTime = this.dateRange[1];
+        this.queryParams.searchValue = this.searchValue;
+        console.log(this.queryParams,this.addDateRange(this.queryParams))
+        listEvent(this.addDateRange(this.queryParams)).then((response) => {
+          console.log(response.rows, "查询事件管理列表");
+          this.eventList = response.rows;
+          this.$nextTick(() => {
+            this.$refs.tableRef.doLayout();
+          });
+          this.total = response.total;
+          this.loading = false;
+        });
+      }
+      
     },
     // getList() {
     //   this.loading = true;
@@ -1095,7 +1246,7 @@ export default {
       console.log(row, "事件详情row");
     },
     handleDispatch(row) {
-      console.log(row);
+      console.log(row); 
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: {
@@ -1213,7 +1364,6 @@ export default {
   background: #9ecced;
   border-radius: 10px;
   margin-bottom: 10px;
-  margin-top: 20px;
   font-size: 14px;
   // justify-content: space-between;
   div{

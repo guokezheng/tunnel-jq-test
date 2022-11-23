@@ -182,12 +182,12 @@ public class SdReserveProcessController extends BaseController
                     if(rl.getEqTypeId().equals("30")){
                         map.put("brightness","50");
                         map.put("frequency","60");
+                        map.put("fireMark","255");
                     }
                     //诱导灯默认值
                     if(rl.getEqTypeId().equals("31")){
                         map.put("brightness","50");
                         map.put("frequency","60");
-                        map.put("fireMark","255");
                     }
                     map.put("operIp", InetAddress.getLocalHost().getHostAddress());
                     result = sdDeviceControlService.controlDevices(map);

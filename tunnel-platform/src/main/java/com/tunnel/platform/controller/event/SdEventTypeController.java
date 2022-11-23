@@ -9,6 +9,7 @@ import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -63,9 +64,9 @@ public class SdEventTypeController extends BaseController
      */
     @Log(title = "事件类型", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody SdEventType sdEventType)
+    public AjaxResult add(@RequestParam("file") MultipartFile[] file,SdEventType sdEventType)
     {
-        return toAjax(sdEventTypeService.insertSdEventType(sdEventType));
+        return toAjax(sdEventTypeService.insertSdEventType(file,sdEventType));
     }
 
     /**
@@ -73,9 +74,9 @@ public class SdEventTypeController extends BaseController
      */
     @Log(title = "事件类型", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SdEventType sdEventType)
+    public AjaxResult edit(MultipartFile[] file,SdEventType sdEventType)
     {
-        return toAjax(sdEventTypeService.updateSdEventType(sdEventType));
+        return toAjax(sdEventTypeService.updateSdEventType(file,sdEventType));
     }
 
     /**

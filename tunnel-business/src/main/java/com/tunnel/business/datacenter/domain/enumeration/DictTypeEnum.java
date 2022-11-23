@@ -56,7 +56,27 @@ public enum DictTypeEnum {
 
     incident_type("incident_type","事件类型"),
 
-    sd_incident_level("sd_incident_level","事件级别");
+    sd_incident_level("sd_incident_level","事件级别"),
+
+    /**
+     * 防控类型
+     */
+    prev_control_type("prev_control_type", "防空类型"),
+
+    /**
+     * 事件状态
+     */
+    sd_event_state("sd_event_state","事件状态"),
+
+    /**
+     * 故障类型
+     */
+    fault_type("fault_type","故障类型"),
+
+    /**
+     * 故障消除状态
+     */
+    fault_remove_statue("fault_remove_statue","故障消除状态");
 
     DictTypeEnum(String code,String name){
         this.code = code;

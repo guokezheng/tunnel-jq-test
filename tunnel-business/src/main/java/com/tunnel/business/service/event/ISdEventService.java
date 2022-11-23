@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event;
 
 
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 
 import java.util.List;
@@ -107,4 +108,8 @@ public interface ISdEventService {
      * @return
      */
     Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction);
+
+    List<SdDevices> getEventCamera(String tunnelId,String stakeNum,String direction);
+
+    List<Map> eventPopAll(String subIndex);
 }

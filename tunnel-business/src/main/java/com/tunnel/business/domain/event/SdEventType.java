@@ -25,9 +25,26 @@ public class SdEventType extends BaseEntity
     /** 简称 */
     private String simplifyName;
 
-    /** 父Id */
-    private Long fId;
+    /** 防控类型 */
+    private String prevControlType;
 
+    private String iconUrl;
+
+    public String getIconUrl() {
+        return iconUrl;
+    }
+
+    public void setIconUrl(String iconUrl) {
+        this.iconUrl = iconUrl;
+    }
+
+    public String getPrevControlType() {
+        return prevControlType;
+    }
+
+    public void setPrevControlType(String prevControlType) {
+        this.prevControlType = prevControlType;
+    }
 
     public String getSimplifyName() {
         return simplifyName;
@@ -56,13 +73,6 @@ public class SdEventType extends BaseEntity
         return eventType;
     }
 
-    public Long getfId() {
-        return fId;
-    }
-
-    public void setfId(Long fId) {
-        this.fId = fId;
-    }
 
     @Override
     public String toString() {

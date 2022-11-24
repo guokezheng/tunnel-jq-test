@@ -91,6 +91,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         sdVmsTemplate.setRollSpeed(Long.parseLong(templatesMap.get("rollSpeed").toString()));
         sdVmsTemplate.setStopTime(Long.parseLong(templatesMap.get("stopTime").toString()));
         sdVmsTemplate.setApplyType(templatesMap.get("applyType").toString());
+        sdVmsTemplate.setCategory(templatesMap.get("category").toString());
       /*  sdVmsTemplate.setIsCurrency(Integer.parseInt(templatesMap.get("isCurrency").toString()));
         sdVmsTemplate.setTemplateType(Integer.parseInt(templatesMap.get("templateType").toString()));*/
         sdVmsTemplate.setVmsType(templatesMap.get("vmsType").toString());

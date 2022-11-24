@@ -182,6 +182,7 @@ export default {
   data () {
     return {
       screenSizeList:[],//屏幕尺寸列表
+      iotTemplateCategoryList:[],
         // 显示搜索条件
         showSearch: true,
         dataForm: {},
@@ -334,6 +335,10 @@ export default {
     this.getDicts("screenSize").then((res) => {
       this.screenSizeList = res.data;
       console.log(this.screenSizeList,'this.screenSizeList')
+    });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
     });
   },
   methods: {

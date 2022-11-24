@@ -97,7 +97,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stopTime != null">stop_time = #{stopTime},</if>
             <if test="applyType != null">apply_type = #{applyType},</if>
             <if test="isCurrency != null">is_currency = #{isCurrency},</if>
-            <if test="templateType != null">template_type = #{templateType},</if>
             <if test="vmsType != null">vms_type = #{vmsType},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="category != null">category = #{category},</if>

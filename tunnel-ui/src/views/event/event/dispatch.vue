@@ -91,20 +91,6 @@
                   "
                 >
                 <!-- v-show="
-                      (item.eqType != 7 &&
-                        item.eqType != 16 &&
-                        item.eqType != 15 &&
-                        item.eqType != 9 &&
-                        item.display == true) ||
-                      ((item.eqType == 7 ||
-                        item.eqType == 8 ||
-                        item.eqType == 9 ||
-                        item.eqType == 21) &&
-                        item.display == true &&
-                        lightSwitch == 1)
-                    " -->
-                  <div
-                  v-show="
                           (item.eqType != 7 &&
                             item.eqType != 16 &&
                             item.eqType != 15 &&
@@ -117,7 +103,9 @@
                             item.eqType == 21) &&
                             item.display == true &&
                             lightSwitch == 1)
-                        "
+                        " -->
+                  <div
+
                     :class="{ focus: item.focus }"
                   >
                     <!-- <img
@@ -172,7 +160,7 @@
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
-                          :width="item.iconWidth"
+                          :width="item.iconWidth / 1.3"
                           :height="item.iconHeight"
                           :src= getTypePic(item)
                           :class="

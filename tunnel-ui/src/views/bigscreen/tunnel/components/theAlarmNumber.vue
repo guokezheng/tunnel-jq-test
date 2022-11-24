@@ -171,6 +171,7 @@ export default {
       // let noramlSize = 16;
       var datas = {
         value: this.eventProportion[1].percentage,
+        name: "已处理",
         company: "%",
         ringColor: [
           {
@@ -224,8 +225,8 @@ export default {
             hoverAnimation: false,
             data: [
               {
-                value: datas.value,
-                name: "",
+                value: this.eventProportion[1].percentage,
+                name: "已处理",
                 itemStyle: {
                   normal: {
                     color: {
@@ -242,8 +243,58 @@ export default {
                 },
               },
               {
-                name: "",
-                value: 100 - datas.value,
+                value: this.eventProportion[3].percentage,
+                name: "未处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[2].percentage,
+                name: "忽略",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[0].percentage,
+                name: "处理中",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
               },
             ],
           },
@@ -262,7 +313,116 @@ export default {
               // length: 6,
               // length2: 15
             },
-            data: this.eventProportion,
+            data: [
+              {
+                value: this.eventProportion[1].percentage,
+                name: "已处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#7afcbc", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#1dcc78", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[3].percentage,
+                name: "未处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#f9bf1e", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#f74001", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[2].percentage,
+                name: "忽略",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#12cff6", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#80f7aa", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[0].percentage,
+                name: "处理中",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#8af7ea", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#2acfbe", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+            ],
           },
           // {
           //     type: 'pie',

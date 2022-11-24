@@ -61,12 +61,12 @@ export default {
             {
               name: "今日报警统计",
               type: "pie",
-              radius: ["47%", "80%"],
-              center: ["50%", "50%"],
+              radius: ["50%", "63%"],
+              center: ["45%", "50%"],
               data: [
                 {
                   value: wwc,
-                  name: "未完成",
+                  name: "已完成",
                   itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                       {
@@ -82,7 +82,7 @@ export default {
                   label: {
                     color: "rgba(255,255,255,.45)",
                     fontSize: 16,
-                    formatter: "未完成\n{a|" + wwc + "}个",
+                    formatter: "已完成\n{a|" + wwc + "}个",
                     rich: {
                       a: {
                         color: "#fff",
@@ -94,14 +94,14 @@ export default {
                 },
                 {
                   value: ywc,
-                  name: "已完成",
+                  name: "未完成",
                   itemStyle: {
                     color: "transparent",
                   },
                   label: {
                     color: "rgba(255,255,255,.45)",
                     fontSize: 16,
-                    formatter: "已完成\n{a|" + ywc + "}个",
+                    formatter: "未完成\n{a|" + ywc + "}个",
                     rich: {
                       a: {
                         color: "#fff",
@@ -116,8 +116,8 @@ export default {
             {
               name: "今日报警统计",
               type: "pie",
-              radius: ["55%", "75%"],
-              center: ["50%", "50%"],
+              radius: ["50%", "63%"],
+              center: ["50%", "55%"],
               data: [
                 {
                   value: wwc,
@@ -135,7 +135,6 @@ export default {
                       color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
                         {
                           //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-
                           offset: 0,
                           color: "#0095ea",
                         },
@@ -153,7 +152,7 @@ export default {
                   label: {
                     color: "rgba(255,255,255,.45)",
                     fontSize: 14,
-                    formatter: "部门总量\n{a|52}个",
+                    formatter: "未完成\n{a|52}个",
                     rich: {
                       a: {
                         color: "#fff",

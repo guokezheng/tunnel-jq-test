@@ -19,12 +19,20 @@
       <div ref="echartsBox" class="box-left" id="theAlarmNumber"></div>
       <div class="box-center UnificationBox">
         <div class="progressBar progress">
-          <p>已处置：</p>
-          <span>{{ hasDisposal }}%</span>
+          <p>处理中：</p>
+          <span>{{ eventProportion[0].percentage }}%</span>
         </div>
         <div class="progressBarNot progress">
-          <p>未处置：</p>
-          <span>{{ notDDisposedOf }}%</span>
+          <p>已处理：</p>
+          <span>{{ eventProportion[1].percentage }}%</span>
+        </div>
+        <div class="progressBarNot progress">
+          <p>忽略：</p>
+          <span>{{ eventProportion[2].percentage }}%</span>
+        </div>
+        <div class="progressBarNot progress">
+          <p>未处理：</p>
+          <span>{{ eventProportion[3].percentage }}%</span>
         </div>
       </div>
       <div class="box-right">
@@ -62,7 +70,15 @@
             <el-col style="padding-right: 1vw">{{
               item.eventDescription
             }}</el-col>
-            <el-col style="width: 20vw">{{ item.eventType }}</el-col>
+            <el-col style="width: 20vw">{{
+              item.eventState == 0
+                ? "处理中"
+                : item.eventState == 1
+                ? "已处理"
+                : item.eventState == 2
+                ? 忽略
+                : "未处理"
+            }}</el-col>
           </el-row>
         </vue-seamless-scroll>
       </div>
@@ -80,6 +96,7 @@ export default {
   props: {},
   data() {
     return {
+      eventProportion: "",
       fullscreenLoading: false,
       currentData: { all: 100 },
       hasDisposal: "",
@@ -128,8 +145,14 @@ export default {
         .then((res) => {
           console.log(res.data);
           this.currentData.listData = res.data.list;
-          this.hasDisposal = res.data.eventProportion[1].percentage;
-          this.notDDisposedOf = res.data.eventProportion[3].percentage;
+          this.eventProportion = res.data.eventProportion;
+          let data = ["处理中", "已处理", "忽略", "未处理"];
+          data.forEach((items) => {
+            this.eventProportion.forEach((element) => {
+              element.name = items;
+              element.value = element.percentage;
+            });
+          });
         })
         .then((res) => {
           this.$nextTick(() => {
@@ -147,7 +170,7 @@ export default {
       // var fontColor = "#fff";
       // let noramlSize = 16;
       var datas = {
-        value: this.hasDisposal,
+        value: this.eventProportion[1].percentage,
         company: "%",
         ringColor: [
           {
@@ -239,16 +262,7 @@ export default {
               // length: 6,
               // length2: 15
             },
-            data: [
-              {
-                name: "已处置",
-                value: this.hasDisposal,
-              },
-              {
-                name: "未处置",
-                value: this.notDDisposedOf,
-              },
-            ],
+            data: this.eventProportion,
           },
           // {
           //     type: 'pie',
@@ -297,9 +311,10 @@ export default {
       justify-content: space-between;
       padding-right: 0.5vw;
       align-items: center;
-      height: 114px;
+      height: 205px;
       position: relative;
-      top: 33%;
+      top: 4%;
+      flex-flow: wrap;
       .title {
         margin-bottom: 0.5vw;
       }

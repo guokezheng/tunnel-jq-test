@@ -13,6 +13,7 @@
           <div class="listHeader">
             <div style="list-style-type: none">
               <span class="number">序号</span>
+              <span class="name">隧道名称</span>
               <span class="time">报警时间</span>
               <span class="type">报警类型</span>
               <span class="situation">处理情况</span>
@@ -35,13 +36,16 @@
                 {{ index + 1 }}</el-col
               >
               <el-col style="width: 8vw; text-align: center">
-                {{ item.time }}</el-col
+                {{ item.tunnelName }}</el-col
+              >
+              <el-col style="width: 8vw; text-align: center">
+                {{ item.eventTime }}</el-col
               >
               <el-col style="width: 14vw; text-align: center">
-                {{ item.type }}</el-col
+                {{ item.eventType }}</el-col
               >
               <el-col style="width: 3vw; text-align: center">
-                {{ item.Treatment }}</el-col
+                {{ item.eventState }}</el-col
               >
             </el-row>
             <!-- </ul> -->
@@ -161,9 +165,10 @@ export default {
               z: 10,
               label: {
                 position: "center",
-                formatter: () => {
-                  return "总数\r\n{total|100} 个";
-                },
+                // formatter: () => {
+                //   return "已处理\r\n{$data[0].eventCount} 个";
+                // },
+                formatter: "事件:" + data[0].eventCount,
                 rich: {
                   total: {
                     fontSize: 30,
@@ -176,21 +181,21 @@ export default {
               },
               data: [
                 {
-                  value: 40,
+                  value: data[2].faultCount,
                   name: "故障",
                   itemStyle: {
                     color: "#0286ff",
                   },
                 },
                 {
-                  value: 30,
+                  value: data[0].eventCount,
                   name: "事件",
                   itemStyle: {
                     color: "#ffd302",
                   },
                 },
                 {
-                  value: 30,
+                  value: data[1].warningCount,
                   name: "预警",
                   itemStyle: {
                     color: "#fb5274",
@@ -211,7 +216,7 @@ export default {
               },
               data: [
                 {
-                  value: 40,
+                  value: data[2].faultCount,
                   name: "故障",
                   itemStyle: {
                     color: "#0286ff",
@@ -219,7 +224,7 @@ export default {
                   },
                 },
                 {
-                  value: 30,
+                  value: data[0].eventCount,
                   name: "事件",
                   itemStyle: {
                     color: "#ffd302",
@@ -227,7 +232,7 @@ export default {
                   },
                 },
                 {
-                  value: 40,
+                  value: data[1].warningCount,
                   name: "预警",
                   itemStyle: {
                     color: "#fb5274",
@@ -249,7 +254,7 @@ export default {
               },
               data: [
                 {
-                  value: 40,
+                  value: data[2].faultCount,
                   name: "故障",
                   itemStyle: {
                     color: "#0286ff",
@@ -257,7 +262,7 @@ export default {
                   },
                 },
                 {
-                  value: 30,
+                  value: data[0].eventCount,
                   name: "事件",
                   itemStyle: {
                     color: "#ffd302",
@@ -265,7 +270,7 @@ export default {
                   },
                 },
                 {
-                  value: 40,
+                  value: data[1].warningCount,
                   name: "预警",
                   itemStyle: {
                     color: "#fb5274",

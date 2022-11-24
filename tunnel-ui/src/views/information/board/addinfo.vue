@@ -74,29 +74,28 @@
         >
           <el-row :gutter="24">
             <el-col :span="6">
-              <el-form-item prop="screenSize" label="屏幕尺寸">
+              <el-form-item prop="category" label="所属类别">
                 <el-select
-                  @change="resolvingPowerType"
-                  v-model="dataForm.screenSize"
-                  filterable
-                  placeholder="请选择"
-                  disabled="true"
+                  v-model="queryParams.category"
+                  placeholder="请选择所属类别"
+                  clearable
+                  size="small"
                 >
                   <el-option
-                    v-for="item in screenSizeOptions"
-                    :key="item.type"
-                    :label="item.type"
-                    :value="item.type"
+                    v-for="item in iotTemplateCategoryList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
                   >
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="2">
-              <el-button type="primary" @click="addTemplateContent">
-                新增
-              </el-button>
-            </el-col>
+<!--            <el-col :span="2">-->
+<!--              <el-button type="primary" @click="addTemplateContent">-->
+<!--                新增111-->
+<!--              </el-button>-->
+<!--            </el-col>-->
             <!-- <el-col :span="2">
               <el-button type="primary" @click="chooseImageEvent()"
                 >选择图片</el-button
@@ -271,6 +270,24 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
+              <el-form-item prop="screenSize" label="所属类别">
+                <el-select
+                  @change="resolvingPowerType"
+                  v-model="dataForm.screenSize"
+                  filterable
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in screenSizeOptions"
+                    :key="item.type"
+                    :label="item.type"
+                    :value="item.type"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item prop="remark" label="备注">
                 <el-input v-model="dataForm.remark" style="width: 100%" />
               </el-form-item>
@@ -352,6 +369,7 @@ export default {
         height: "",
         width: "",
         coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        category: "",
       },
       templateContent: [],
       templateDelContent: [],
@@ -557,6 +575,7 @@ export default {
           name: "18",
         },
       ],
+      iotTemplateCategoryList:[],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -655,6 +674,13 @@ export default {
             trigger: "blur",
           },
         ],
+        category: [
+          {
+            required: true,
+            message: "请选择所属类别",
+            trigger: "blur",
+          },
+        ],
       };
     },
     divStyle: function () {
@@ -686,6 +712,17 @@ export default {
   //     },
   //   },
   // },
+  mounted(){
+    // 屏幕尺寸字典数据
+    this.getDicts("screenSize").then((res) => {
+      this.screenSizeOptions = res.data;
+      console.log(this.screenSizeOptions,'this.screenSizeOptions')
+    });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+    });
+  },
   methods: {
     init() {
       this.title = !this.dataForm.id ? "新增" : "修改";

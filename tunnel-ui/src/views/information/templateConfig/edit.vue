@@ -90,11 +90,11 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="addTemplateContent"
-              >新增</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="addTemplateContent"-->
+<!--              >新增222</el-button-->
+<!--            >-->
+<!--          </el-col>-->
 <!--          <el-col :span="2">-->
 <!--            <el-button type="primary" @click="chooseImageEvent()"-->
 <!--              >选择图片</el-button-->
@@ -102,47 +102,47 @@
 <!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
-        <el-dialog
-          title="选择图片"
-          :visible.sync="dialogVisible"
-          :before-close="close"
-          top="6vh"
-          width="1100px"
-          :modal="false"
-          append-to-body
-        >
-          <!-- 选择图片内容区域开始 -->
-          <div class="changeImage">
-            <el-row style="padding-left: 60px">
-              <el-checkbox-group v-model="checkList">
-                <el-col
-                  :span="8"
-                  v-for="(item, index) in imgUrl"
-                  :key="index"
-                  style="margin-top: 12px"
-                  v-show="item.pictureUrl"
-                >
-                  <el-checkbox :label="item.pictureUrl" >
-                    <div class="photo">
-                      <img
-                        :src="item.pictureUrl"
-                        @dblclick="dblEvent(item.pictureUrl)"
-                        draggable="true"
-                        v-on:dragstart="faceImagedragg($event, item)"
-                      />
-                    </div>
-                  </el-checkbox>
-                </el-col>
-              </el-checkbox-group>
-            </el-row>
-            <span slot="footer" class="dialog-footer">
-              <el-button size="small" @click="close">取消</el-button>
-              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>
-            </span>
-          </div>
+<!--        <el-dialog-->
+<!--          title="选择图片"-->
+<!--          :visible.sync="dialogVisible"-->
+<!--          :before-close="close"-->
+<!--          top="6vh"-->
+<!--          width="1100px"-->
+<!--          :modal="false"-->
+<!--          append-to-body-->
+<!--        >-->
+<!--          &lt;!&ndash; 选择图片内容区域开始 &ndash;&gt;-->
+<!--          <div class="changeImage">-->
+<!--            <el-row style="padding-left: 60px">-->
+<!--              <el-checkbox-group v-model="checkList">-->
+<!--                <el-col-->
+<!--                  :span="8"-->
+<!--                  v-for="(item, index) in imgUrl"-->
+<!--                  :key="index"-->
+<!--                  style="margin-top: 12px"-->
+<!--                  v-show="item.pictureUrl"-->
+<!--                >-->
+<!--                  <el-checkbox :label="item.pictureUrl" >-->
+<!--                    <div class="photo">-->
+<!--                      <img-->
+<!--                        :src="item.pictureUrl"-->
+<!--                        @dblclick="dblEvent(item.pictureUrl)"-->
+<!--                        draggable="true"-->
+<!--                        v-on:dragstart="faceImagedragg($event, item)"-->
+<!--                      />-->
+<!--                    </div>-->
+<!--                  </el-checkbox>-->
+<!--                </el-col>-->
+<!--              </el-checkbox-group>-->
+<!--            </el-row>-->
+<!--            <span slot="footer" class="dialog-footer">-->
+<!--              <el-button size="small" @click="close">取消</el-button>-->
+<!--              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>-->
+<!--            </span>-->
+<!--          </div>-->
 
-          <!-- 选择图片内容区域结束 -->
-        </el-dialog>
+<!--          &lt;!&ndash; 选择图片内容区域结束 &ndash;&gt;-->
+<!--        </el-dialog>-->
         <!-- 选择图片弹出框结束 -->
         <!--        <el-scrollbar style="height:15vh;width: 1130px">-->
         <el-row
@@ -263,6 +263,24 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item prop="category" label="所属类别">
+              <el-select
+                v-model="dataForm.category"
+                placeholder="请选择所属类别"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in iotTemplateCategoryList"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item prop="remark" label="备注">
               <el-input
                 v-model="dataForm.remark"
@@ -342,10 +360,11 @@ export default {
         vmsType: "",//情报板类型
         remark: "",//备注
         imgSizeFrom: "", //尺寸大小
-        imageUrl:'',
-        height:'',
-        width:'',
-        coordinate:'',//起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        imageUrl: "",
+        height: "",
+        width: "",
+        coordinate: "",//起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        category: "",
       },
       templateContent: [],
       templateDelContent: [],
@@ -551,6 +570,7 @@ export default {
           name: "18",
         }
       ],
+      iotTemplateCategoryList:[],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -624,7 +644,13 @@ export default {
             trigger: "blur",
           },
         ],
-
+        category: [
+          {
+            required: true,
+            message: "请选择所属类别",
+            trigger: "blur",
+          },
+        ],
       };
     },
     divStyle: function () {
@@ -656,6 +682,17 @@ export default {
   //     },
   //   },
   // },
+  mounted(){
+    // 屏幕尺寸字典数据
+    this.getDicts("screenSize").then((res) => {
+      this.screenSizeOptions = res.data;
+      console.log(this.screenSizeOptions,'this.screenSizeOptions')
+    });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+    });
+  },
   methods: {
     init() {
       this.title = !this.dataForm.id ? '新增' : '修改';

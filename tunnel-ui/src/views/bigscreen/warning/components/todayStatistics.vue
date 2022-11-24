@@ -121,14 +121,14 @@ export default {
               data: [
                 {
                   value: wwc,
-                  name: "",
+                  name: "已完成",
                   itemStyle: {
                     color: "transparent",
                   },
                 },
                 {
                   value: ywc,
-                  name: "rose2",
+                  name: "未完成",
                   //
                   itemStyle: {
                     normal: {
@@ -149,18 +149,18 @@ export default {
                       ]),
                     },
                   },
-                  label: {
-                    color: "rgba(255,255,255,.45)",
-                    fontSize: 14,
-                    formatter: "未完成\n{a|52}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
-                    },
-                  },
+                  // label: {
+                  //   color: "rgba(255,255,255,.45)",
+                  //   fontSize: 14,
+                  //   // formatter: "未完成\n{a|52}个",
+                  //   rich: {
+                  //     a: {
+                  //       color: "#fff",
+                  //       fontSize: 20,
+                  //       lineHeight: 30,
+                  //     },
+                  //   },
+                  // },
                 },
               ],
             },

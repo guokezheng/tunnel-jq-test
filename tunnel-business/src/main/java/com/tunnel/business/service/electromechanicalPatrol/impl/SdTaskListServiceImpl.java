@@ -114,7 +114,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return 结果
      */
     @Override
-    public int deleteSdTaskListByIds(String[] ids)
+    public int deleteSdTaskListByIds(String ids)
     {
         int result = 0;
         result = sdTaskListMapper.deleteSdTaskListByIds(ids);
@@ -225,6 +225,73 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     }
 
 
+    /**
+     * 废止巡查任务
+     * @return
+     */
+    @Override
+    public int abolishSdTaskList(String id) {
+        return sdTaskListMapper.abolishSdTaskList(id);
+    }
+
+
+    /**
+     * 查询巡查列表
+     * @param tunnelName
+     * @param sdTaskList
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList) {
+        return sdTaskListMapper.getTaskList(tunnelName,sdTaskList);
+    }
+
+    /**
+     * 查询任务关联的巡查点数量
+     * @param id
+     * @return
+     */
+    @Override
+    public int countPatrolNum(String id) {
+        return sdPatrolListMapper.countPatrolNum(id);
+    }
+
+    /**
+     * app端 接收任务
+     * @param id
+     * @return
+     */
+    @Override
+    public int acceptSdTaskList(String id) {
+        return sdTaskListMapper.acceptSdTaskList(id);
+    }
+
+    /**
+     * app巡查点清单
+     * @param taskId
+     * @return
+     */
+    @Override
+    public List<SdPatrolList> getPatrolInfo(String taskId) {
+        return sdPatrolListMapper.getPatrolInfo(taskId);
+    }
+
+    /**
+     * app端  获取任务现场情况
+     * @param taskId
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskSiteCondition(String taskId) {
+        List<SdPatrolList> SdPatrolList = sdPatrolListMapper.isFaultEnd(taskId);//所有巡查点的巡查状态
+        if(SdPatrolList!=null&&SdPatrolList.size()>0){
+
+        }
+        //List<SdTaskList>taskList = sdTaskListMapper.getTaskSiteCondition(taskId);
+
+
+        return null;
+    }
 
 
     /**

@@ -105,9 +105,29 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     private String tunnelId;
 
     private String tunnelName;
+    /*设备类型名称*/
+    private String typeName;
 
+    /*设备桩号*/
+    private String pile;
 
-    public void setId(String id) 
+    public String getTypeName() {
+        return this.typeName;
+    }
+
+    public void setTypeName(final String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getPile() {
+        return this.pile;
+    }
+
+    public void setPile(final String pile) {
+        this.pile = pile;
+    }
+
+    public void setId(String id)
     {
         this.id = id;
     }

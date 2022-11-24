@@ -177,16 +177,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="batchDeletePatrolListByTaskIds" parameterType="String">
-        delete from sd_patrol_list where task_id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
-            #{ids}
-        </foreach>
+        delete from sd_patrol_list where task_id  = #{ids}
     </delete>
 
 
 
     <select id="getPatrolListsInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-    select p.*,f.fallt_remove_statue,f.tunnel_id,u.tunnel_name, t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
+    p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,f.tunnel_id,u.tunnel_name, t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
     from sd_patrol_list p
     left join sd_task_list t on t.id = p.task_id
     left join sd_fault_list f on f.id = p.eq_fault_id
@@ -198,6 +196,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     d.eq_type = a.state_type_id and  a.state_type = '1'
     where p.task_id = #{task_id}
     </select>
+
+
+
+    <select id="countPatrolNum" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">
+        select count(id) from sd_patrol_list where task_id = #{id}
+    </select>
+
+    <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+        select p.eq_name,p.position,p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,f.fallt_remove_statue,u.tunnel_name, d.pile,y.type_name
+        from sd_patrol_list p
+        left join sd_task_list t on t.id = p.task_id
+        left join sd_fault_list f on f.id = p.eq_fault_id
+        left join sd_tunnels u on u.tunnel_id = f.tunnel_id
+        left join sd_devices d on d.eq_id = p.eq_fault_id
+        left join sd_equipment_type y  on y.type_id = d.eq_type
+        where p.task_id = #{task_id}
+    </select>
+
+
+
+    <select id="isFaultEnd" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+        select xc_status from sd_patrol_list
+        where task_id = #{taskId}
+    </select>
+
 
 
 </mapper>

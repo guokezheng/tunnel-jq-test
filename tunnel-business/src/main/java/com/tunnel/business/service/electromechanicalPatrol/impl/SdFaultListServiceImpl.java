@@ -73,10 +73,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         List<SdFaultList> list =  sdFaultListMapper.selectSdFaultListList(sdFaultList);
         if(list!=null&&list.size()>0){
             for(int i = 0;i<list.size();i++){
-                if(list.get(i).getFalltRemoveStatue()!=null){
+                if(list.get(i).getFalltRemoveStatue()!=null&&!"null".equals(list.get(i).getFalltRemoveStatue())&&!"".equals(list.get(i).getFalltRemoveStatue())){
                     int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
                     if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    if(list.get(0).getFaultFxtime()!=null){
                         String  fxtime = sdf.format(list.get(0).getFaultFxtime());
                         long time = sdf.parse(fxtime, new ParsePosition(0)).getTime();
                         long nd = 1000 * 24 * 60 * 60;
@@ -95,6 +96,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                         long sec = diff % nd % nh % nm / ns;
                         System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
                         list.get(i).setFaultCxtime(day + "天" + hour + "小时");
+                    }
                     }
                 }
 

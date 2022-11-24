@@ -53,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultDescription != null  and faultDescription != ''"> and s.fault_description = #{faultDescription}</if>
             <if test="faultStatus != null "> and s.fault_status = #{faultStatus}</if>
         </where>
+        order by s.create_time desc
     </select>
     
     <select id="selectSdFaultListById" parameterType="String" resultMap="SdFaultListResult">
@@ -144,7 +145,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getFaultRepairInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-    select p.*,f.fallt_remove_statue,t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
+    p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,t.walker_id,
+    s.state_name as run_status,a.state_name as eq_status
     from sd_patrol_list p
     left join sd_fault_list f on f.id = p.eq_fault_id
     left join sd_task_list t on t.id = p.task_id

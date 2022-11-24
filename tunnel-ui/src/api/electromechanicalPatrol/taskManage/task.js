@@ -81,11 +81,12 @@ export function treeselect(query) {
   })
 }
 
-// 获取设备类型下拉
-export function getDevicesTypeList(data) {
+// 废除巡查任务
+export function abolishList(data) {
+  debugger
   return request({
-    url: '/task/list/getDevicesTypeList',
-    method: 'post',
+    url: '/task/list/abolishSdTaskList',
+    method: 'get',
     data: data
   })
 }

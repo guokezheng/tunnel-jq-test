@@ -18,6 +18,7 @@
 .UnificationBox{
   background-image: url(../styles/image/indexBg.png);
   background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 .contentTitle i{
   color: rgba(255,255,255,0.5);

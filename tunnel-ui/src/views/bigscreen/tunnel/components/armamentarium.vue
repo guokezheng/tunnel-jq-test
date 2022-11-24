@@ -45,6 +45,16 @@ export default {
           color.forEach((items) => {
             item.value = item.number;
             item.label = { color: items };
+            // item.itemStyle = {
+            //   normal: {
+            //     borderRadius: ["50", "0", "50", "0"],
+            //     //颜色渐变
+            //     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            //       { offset: 0, color: "#0168af" },
+            //       { offset: 1, color: "transparent" },
+            //     ]),
+            //   },
+            // };
           });
         });
         this.list = data;
@@ -82,19 +92,19 @@ export default {
           },
         };
         option = {
-          title: {
-            text: "设备占比",
-            textStyle: {
-              color: "#f2f2f2",
-              fontSize: 18,
-              align: "center",
-            },
-            x: "center",
-            y: "center",
-          },
+          // title: {
+          //   text: "设备占比",
+          //   textStyle: {
+          //     color: "#f2f2f2",
+          //     fontSize: 18,
+          //     align: "center",
+          //   },
+          //   x: "center",
+          //   y: "center",
+          // },
           tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b}: {c} ({d}%)",
+            // trigger: "item",
+            // formatter: "{b}: {c} ({d}%)",
           },
           legend: {
             left: "center",
@@ -107,26 +117,26 @@ export default {
               radius: [120, 160],
               selectedMode: "single",
               startAngle: 60,
-              name: "设备占比",
+              // name: "设备占比",
               type: "pie",
               center: ["50%", "50%"],
-              itemStyle: {
-                normal: {
-                  shadowColor: "rgba(0, 0, 0, 0.2)",
-                  shadowBlur: 10,
-                },
-              },
+              // itemStyle: {
+              //   normal: {
+              //     shadowColor: "rgba(0, 0, 0, 0.2)",
+              //     shadowBlur: 10,
+              //   },
+              // },
               radius: ["50%", "35%"],
-              label: {
-                position: "inner",
-                fontSize: 14,
-              },
+              // label: {
+              //   position: "inner",
+              //   fontSize: 0,
+              // },
               labelLine: {
-                show: true,
+                show: false,
               },
               data: [
                 {
-                  value: 30,
+                  value: 20,
                   itemStyle: {
                     normal: {
                       borderRadius: ["50", "0", "50", "0"],
@@ -139,7 +149,7 @@ export default {
                   },
                 },
                 {
-                  value: 28,
+                  value: 20,
                   itemStyle: {
                     normal: {
                       borderRadius: ["50", "0", "50", "0"],
@@ -152,7 +162,7 @@ export default {
                   },
                 },
                 {
-                  value: 26,
+                  value: 20,
                   itemStyle: {
                     normal: {
                       borderRadius: ["50", "0", "50", "0"],
@@ -165,7 +175,7 @@ export default {
                   },
                 },
                 {
-                  value: 24,
+                  value: 20,
                   itemStyle: {
                     normal: {
                       borderRadius: ["50", "0", "50", "0"],
@@ -178,7 +188,7 @@ export default {
                   },
                 },
                 {
-                  value: 22,
+                  value: 20,
                   itemStyle: {
                     normal: {
                       borderRadius: ["50", "0", "50", "0"],
@@ -194,7 +204,7 @@ export default {
             },
             {
               color: color,
-              name: "Access From",
+              // name: "Access From",
               type: "pie",
               radius: ["55%", "60%"],
               labelLine: {
@@ -204,7 +214,7 @@ export default {
                 borderRadius: 55,
               },
               label: {
-                formatter: "{name|{b}}\n{d}% {c} ",
+                // formatter: "{name|{b}}\n{d}% {c} ",
                 fontSize: 17,
                 borderWidth: 2,
                 borderRadius: 10,
@@ -216,9 +226,7 @@ export default {
                       total += value.value;
                     });
                     percent = ((params.value / total) * 100).toFixed(1);
-                    return (
-                      "{yellow|" + params.name + "}\n{blue|" + percent + "%}"
-                    );
+                    return "{" + params.name + "}\n{blue|" + percent + "%}";
                   },
                   rich: rich,
                 },

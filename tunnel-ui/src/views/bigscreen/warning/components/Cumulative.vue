@@ -11,12 +11,22 @@
       <div class="CumulativeContent" style="width: 55%">
         <div class="CumulativeList">
           <div class="listHeader">
-            <div style="list-style-type: none">
-              <span class="number">序号</span>
-              <span class="name">隧道名称</span>
-              <span class="time">报警时间</span>
-              <span class="type">报警类型</span>
-              <span class="situation">处理情况</span>
+            <div style="list-style-type: none; display: flex">
+              <span class="number" style="width: 2vw; text-align: center"
+                >序号</span
+              >
+              <span class="name" style="width: 6vw; text-align: center"
+                >隧道名称</span
+              >
+              <span class="time" style="width: 10vw; text-align: center"
+                >报警时间</span
+              >
+              <span class="type" style="width: 6vw; text-align: center"
+                >报警类型</span
+              >
+              <span class="situation" style="width: 6vw; text-align: center"
+                >处理情况</span
+              >
             </div>
           </div>
           <vue-seamless-scroll
@@ -32,19 +42,19 @@
                 backgroundColor: (index + 1) % 2 == 0 ? '#0a5e97' : '#11629d',
               }"
             >
-              <el-col style="width: 4vw; text-align: center">
+              <el-col style="width: 2vw; text-align: center">
                 {{ index + 1 }}</el-col
               >
-              <el-col style="width: 8vw; text-align: center">
+              <el-col style="width: 6vw; text-align: center">
                 {{ item.tunnelName }}</el-col
               >
-              <el-col style="width: 8vw; text-align: center">
+              <el-col style="width: 10vw; text-align: center">
                 {{ item.eventTime }}</el-col
               >
-              <el-col style="width: 14vw; text-align: center">
+              <el-col style="width: 6vw; text-align: center">
                 {{ item.eventType }}</el-col
               >
-              <el-col style="width: 3vw; text-align: center">
+              <el-col style="width: 6vw; text-align: center">
                 {{ item.eventState }}</el-col
               >
             </el-row>

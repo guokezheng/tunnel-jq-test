@@ -9,8 +9,8 @@
             sdet.event_type AS eventType,
             sdt.tunnel_name AS tunnelName,
             sde.start_time AS startTime,
-            sde.event_description AS eventDescription,
-            sde.event_title AS eventState
+            sde.event_title AS eventDescription,
+            sde.event_state AS eventState
         FROM
             sd_event sde
         LEFT JOIN sd_event_type sdet ON sde.event_type_id = sdet.id

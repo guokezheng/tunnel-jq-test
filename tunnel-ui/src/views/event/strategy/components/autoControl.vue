@@ -7,37 +7,41 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
         <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="16">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item label="方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
+              placeholder="请选择方向"
               @change="changeEvent()"
+              style="width: 95%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -49,7 +53,7 @@
           </el-form-item>
         </el-col>
         <el-col class="triggers">
-          <div class="box">
+          <div class="box" style="width: 91%">
             <el-form-item
               label="触发器"
               prop="triggers.deviceTypeId"
@@ -69,7 +73,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" label-width="300">
+              <el-form-item prop="triggers.deviceId">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
@@ -100,7 +104,10 @@
                 </el-select>
               </el-form-item>
               <el-form-item prop="triggers.comparePattern" label-width="0">
-                <el-select v-model="strategyForm.triggers.comparePattern">
+                <el-select
+                  v-model="strategyForm.triggers.comparePattern"
+                  style="width: 85%"
+                >
                   <el-option
                     v-for="item in symbol"
                     :key="item.dictValue"
@@ -126,10 +133,10 @@
           :key="index"
         >
           <div>
-            <el-form-item style="width: 100%; margin-top: 20px">
+            <el-form-item style="width: 100%">
               <el-input
                 @click.native="openEqDialog2($event, index)"
-                style="width: 40%; margin-top: 20px"
+                style="width: 40%"
                 v-model="dain.typeName"
                 placeholder="请点击选择控制类型"
               />
@@ -279,8 +286,8 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
-      viewStrategy:false,
-      manualControlStateList:[],
+      viewStrategy: false,
+      manualControlStateList: [],
       showCronBox: false,
       strategyForm: {
         strategyType: "2", //策略类型

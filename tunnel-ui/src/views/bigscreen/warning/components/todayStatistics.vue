@@ -27,11 +27,12 @@ export default {
       getToDayEventWarning().then((res) => {
         const wwc = res.data[0].eventNumber;
         const ywc = res.data[1].eventNumber;
+        const percentage = res.data[1].percentage;
         var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
         var option = {
           // backgroundColor: "#03141c",
           title: {
-            text: proportion + "%",
+            text: percentage + "%",
             subtext: "未完成",
             x: "center",
             y: "center",

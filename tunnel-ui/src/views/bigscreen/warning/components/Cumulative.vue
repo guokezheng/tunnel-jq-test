@@ -113,8 +113,8 @@ export default {
     alarmsCharts() {
       var Cumulative = echarts.init(document.getElementById("cumulative"));
       getCumulativeAlarm().then((res) => {
-        console.log("累计报警分析", res);
         this.faultList = res.data.cumulativeAlarmList;
+        console.log(this.faultList, "累计报警分析");
         const data = res.data.eventPercentage;
         var option = {
           legend: {
@@ -315,7 +315,7 @@ export default {
       width: 8vw;
     }
     .situation {
-      width: 3vw;
+      width: 4vw;
     }
   }
 }

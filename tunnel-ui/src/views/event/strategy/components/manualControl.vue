@@ -8,30 +8,51 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+        <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
             />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
+          </el-form-item>
+        </el-col>
+        <el-col :span="16">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="方向" prop="direction">
+            <el-select
+              clearable
+              v-model="strategyForm.direction"
+              placeholder="请选择方向"
+              @change="changeEvent"
+              style="width: 95%"
+            >
+              <el-option
+                v-for="dict in directionOptions"
+                :key="dict.value"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="8">
           <el-form-item label="设备类型" prop="equipmentTypeId">
             <el-select
@@ -46,23 +67,6 @@
                 :key="item.typeId"
                 :label="item.typeName"
                 :value="item.typeId"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="方向" prop="direction">
-            <el-select
-              clearable
-              v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
-              @change="changeEvent"
-            >
-              <el-option
-                v-for="dict in directionOptions"
-                :key="dict.value"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
               />
             </el-select>
           </el-form-item>

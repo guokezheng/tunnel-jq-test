@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-16 17:17:28
+ * @LastEditTime: 2022-11-23 15:42:48
  * @FilePath: \tunnel-ui\src\views\bigscreen\warning\components\eventList.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -86,8 +86,8 @@ export default {
   },
   methods: {
     getList() {
-      let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
-      getTrafficIncident(tunnelId).then((res) => {
+      // let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
+      getTrafficIncident().then((res) => {
         this.faultList = res.data;
       });
     },

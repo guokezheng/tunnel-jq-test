@@ -269,12 +269,14 @@
         SELECT
             DATE_FORMAT(se.start_time,'%Y-%m-%d %H:%i:%S') AS eventTime,
             et.event_type AS eventType,
-            sdd.dict_label AS eventState
+            sdd.dict_label AS eventState,
+            t.tunnel_name AS tunnelName
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sd_tunnels t ON se.tunnel_id = t.tunnel_id
             LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
-            AND sdd.dict_type = 'sd_event_state'
+            AND sdd.dict_type = #{sdEventState}
             LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_value
             AND sdd1.dict_type = #{prevControlType}
         WHERE
@@ -286,9 +288,11 @@
         SELECT
             sfl.fault_fxtime AS eventTime,
             sdd1.dict_label AS eventType,
-            sdd2.dict_label AS eventState
+            sdd2.dict_label AS eventState,
+            t.tunnel_name AS tunnelName
         FROM
             sd_fault_list sfl
+                LEFT JOIN sd_tunnels t ON sfl.tunnel_id = t.tunnel_id
                 LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
                 AND sdd1.dict_type = #{faultType}
                 LEFT JOIN sys_dict_data sdd2 ON sfl.fallt_remove_statue = sdd2.dict_value

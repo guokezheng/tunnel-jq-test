@@ -248,10 +248,10 @@ public class SdEventServiceImpl implements ISdEventService {
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
             for(SdTunnelSubarea data:subareaData){
-                //Integer upLimit = direction.equals("0")?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
-                //Integer downLimit = direction.equals("0")?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
-                Integer upLimit = Integer.parseInt(data.getPileMax());
-                Integer downLimit = Integer.parseInt(data.getPileMin());
+                Integer upLimit = direction.equals("0")?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
+                Integer downLimit = direction.equals("0")?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
+//                Integer upLimit = Integer.parseInt(data.getPileMax());
+//                Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(upLimit >= compareValue && compareValue >= downLimit){
                     subareaId = data.getsId();
                     return subareaId;
@@ -262,10 +262,10 @@ public class SdEventServiceImpl implements ISdEventService {
             String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
             String[] pileStr = s.split(",");
             int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
-//            //下行取反
-//            if(direction.equals("0")){
-//                ArrayUtils.reverse(allPile);
-//            }
+            //下行取反
+            if(direction.equals("0")){
+                ArrayUtils.reverse(allPile);
+            }
             int index = Math.abs(compareValue-allPile[0]);
             int result = allPile[0];
             int mark = 0;

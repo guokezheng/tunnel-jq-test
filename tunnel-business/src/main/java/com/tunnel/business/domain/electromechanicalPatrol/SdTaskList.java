@@ -1,6 +1,9 @@
 package com.tunnel.business.domain.electromechanicalPatrol;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -80,6 +83,16 @@ public class SdTaskList extends BaseEntity
 
     public void setTotalNum(final Integer totalNum) {
         this.totalNum = totalNum;
+    }
+
+    private List<String> devicesList;
+
+    public List<String> getDevicesList() {
+        return this.devicesList;
+    }
+
+    public void setDevicesList(final List<String> devicesList) {
+        this.devicesList = devicesList;
     }
 
     public void setId(String id)

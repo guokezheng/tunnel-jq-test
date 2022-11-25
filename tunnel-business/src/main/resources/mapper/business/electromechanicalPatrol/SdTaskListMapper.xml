@@ -31,7 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
         <include refid="selectSdTaskListVo"/>
         <where>
-          1=1 and task_status != 3
+          1=1
             <if test="zzjgId != null  and zzjgId != ''"> and zzjg_id = #{zzjgId}</if>
             <if test="endPlantime != null "> and end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and dispatcher = #{dispatcher}</if>
@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="zzjgId != null">zzjg_id,</if>
             <if test="endPlantime != null">end_plantime,</if>
             <if test="dispatcher != null">dispatcher,</if>
-            <if test="dispatchTime != null">dispatch_time,</if>
+            dispatch_time,
             <if test="bzId != null">bz_id,</if>
             <if test="taskDescription != null">task_description,</if>
             <if test="publishStatus != null">publish_status,</if>
@@ -70,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskCxtime != null">task_cxtime,</if>
             <if test="siteDescription != null">site_description,</if>
             <if test="createBy != null">create_by,</if>
-            <if test="createTime != null">create_time,</if>
+            create_time,
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -79,7 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="zzjgId != null">#{zzjgId},</if>
             <if test="endPlantime != null">#{endPlantime},</if>
             <if test="dispatcher != null">#{dispatcher},</if>
-            <if test="dispatchTime != null">#{dispatchTime},</if>
+            SYSDATE(),
             <if test="bzId != null">#{bzId},</if>
             <if test="taskDescription != null">#{taskDescription},</if>
             <if test="publishStatus != null">#{publishStatus},</if>
@@ -89,7 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskCxtime != null">#{taskCxtime},</if>
             <if test="siteDescription != null">#{siteDescription},</if>
             <if test="createBy != null">#{createBy},</if>
-            <if test="createTime != null">#{createTime},</if>
+            SYSDATE(),
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -127,7 +127,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status
+        select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,s.dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sys_dept d on s.zzjg_id = d.dept_id
         left join sys_dict_data t on t.dict_value = s.publish_status and t.dict_type = 'task_status'

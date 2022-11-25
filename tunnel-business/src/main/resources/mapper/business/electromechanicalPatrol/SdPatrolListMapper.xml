@@ -172,6 +172,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+    <insert id="batchInsertPatrol" parameterType="sdPatrolList">
+        insert into sd_patrol_list(id,task_id,eq_fault_id,patrol_type,eq_name,position,create_time,xc_sort,xc_status)
+        values
+        <foreach collection="list"  separator="," item="patrol" index="index">
+            (
+            #{patrol.id},
+            #{patrol.taskId},
+            #{patrol.eqFaultId},
+            #{patrol.patrolType},
+            #{patrol.eqName},
+            #{patrol.position},
+            SYSDATE(),
+            #{patrol.xcSort},
+            #{patrol.xcStatus}
+            )
+        </foreach>
+    </insert>
+
     <delete id="batchDeletePatrolListByTaskId" parameterType="String">
         delete from sd_patrol_list where task_id = #{id}
     </delete>
@@ -197,6 +215,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     where p.task_id = #{task_id}
     </select>
 
+
+
+
+
+    <select id="getDevicesPatrolLists" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.xc_sort,p.xc_status,t.tunnel_name,q.type_name
+    from sd_patrol_list p
+    left join sd_devices d on p.eq_fault_id = d.eq_id
+    left join sd_tunnels t on d.eq_tunnel_id = t.tunnel_id
+    left join sd_equipment_type q on q.type_id = d.eq_type
+    where p.task_id = #{task_id}  and p.patrol_type = '0'
+    </select>
+
+
+
+    <select id="getFaultPatrolLists" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,xc_sort,xc_status,t.tunnel_name,y.dict_label type_name
+    from sd_patrol_list p
+    left join sd_fault_list f on p.eq_fault_id = f.id
+    left join sd_tunnels t on f.tunnel_id = t.tunnel_id
+    left join sys_dict_data y on y.dict_value = f.fault_type
+    where p.task_id = #{task_id} and p.patrol_type = '1' and y.dict_type = 'fault_type'
+    </select>
 
 
     <select id="countPatrolNum" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">

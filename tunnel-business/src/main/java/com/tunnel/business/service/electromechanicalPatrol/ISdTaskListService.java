@@ -41,7 +41,7 @@ public interface ISdTaskListService
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int insertSdTaskList(SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList);
+    public int insertSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 修改巡查任务
@@ -135,4 +135,11 @@ public interface ISdTaskListService
      * @return
      */
     List<SdTaskList> getTaskSiteCondition(String taskId);
+
+    /**
+     * 获取任务关联巡检点信息
+     * @param id
+     * @return
+     */
+    List<SdPatrolList> getUpdatePatrolLists(String id);
 }

@@ -203,4 +203,11 @@ public interface SdDevicesMapper
 	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
 
 	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
+
+	/**
+	 * 批量获取设备信息
+	 * @param eqIds
+	 * @return
+	 */
+    List<SdDevices> batchGetDevicesList(String[] eqIds);
 }

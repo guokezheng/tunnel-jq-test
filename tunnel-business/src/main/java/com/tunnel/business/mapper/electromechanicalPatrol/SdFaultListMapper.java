@@ -3,6 +3,8 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import org.apache.ibatis.annotations.Param;
+
 
 import java.util.List;
 
@@ -75,5 +77,12 @@ public interface SdFaultListMapper
      * @param faultLevel
      * @return
      */
-    List<SdFaultList> getFaultList(String tunnelId, String faultLevel);
+    List<SdFaultList> getFaultList1(@Param("tunnelId")String tunnelId, @Param("faultLevel")String faultLevel);
+
+    /**
+     * 批量查询故障信息
+     * @param faultIds
+     * @return
+     */
+    List<SdFaultList> batchGetFaultList(String[] faultIds);
 }

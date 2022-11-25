@@ -67,6 +67,15 @@ public interface SdPatrolListMapper
      */
     int batchInsertPatrolList(List<SdPatrolList> sdPatrolList, String id);
 
+
+    /**
+     * 批量添加巡查点信息
+     * @param sdPatrolList
+     * @param
+     * @return
+     */
+    int batchInsertPatrol(List<SdPatrolList> sdPatrolList);
+
     /**
      * 根据任务id删除巡查点
      * @param id
@@ -108,4 +117,18 @@ public interface SdPatrolListMapper
      * @return
      */
     List<SdPatrolList> isFaultEnd(String taskId);
+
+    /**
+     * 修改，，获取巡检点信息
+     * @param id
+     * @return
+     */
+    List<SdPatrolList> getDevicesPatrolLists(String id);
+
+    /**
+     * 修改，，获取故障点信息
+     * @param id
+     * @return
+     */
+    List<SdPatrolList> getFaultPatrolLists(String id);
 }

@@ -160,8 +160,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="getFaultList" parameterType="String" resultType="hashmap">
-        select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
+    <select id="getFaultList1"  resultType="hashmap">
+        select f.fault_type eq_type,f.fault_location,f.id eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
@@ -171,6 +171,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="tunnelId != null and tunnelId != '' ">and f.tunnel_id = #{tunnelId}</if>
         <if test="faultLevel != null and faultLevel != '' ">and f.fault_level = #{faultLevel}</if>
     </where>
+    </select>
+
+
+
+
+    <select id="batchGetFaultList" parameterType="SdFaultList" resultMap="SdFaultListResult">
+        select d.id,d.fault_location,v.eq_name,s.dict_label eq_direction,t.tunnel_name,d.fault_description from  sd_fault_list d
+        left join sd_devices v on d.eq_id = v.eq_id
+        left join sys_dict_data s on d.fault_type = s.dict_value
+        left join sd_tunnels t on t.tunnel_id = v.eq_tunnel_id
+        <where>
+            and s.dict_type= 'fault_type'
+            and d.id in
+            <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
     </select>
 
 

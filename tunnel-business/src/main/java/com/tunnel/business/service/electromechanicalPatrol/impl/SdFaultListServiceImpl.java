@@ -12,6 +12,7 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -315,6 +316,6 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      */
     @Override
     public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
-        return sdFaultListMapper.getFaultList(tunnelId,faultLevel);
+        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
     }
 }

@@ -713,7 +713,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getDevicesList" resultType="hashmap">
-        select d.eq_type,t.type_name,d.eq_name,d.eq_direction,d.pile,s.dict_label,u.tunnel_id,u.tunnel_name from  sd_devices d
+        select d.eq_id,d.eq_type,t.type_name,d.eq_name,d.eq_direction,d.pile,s.dict_label,u.tunnel_id,u.tunnel_name from  sd_devices d
         left join sd_equipment_type t on t.type_id = d.eq_type
         left join sys_dict_data s on d.eq_direction = s.dict_value
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
@@ -729,6 +729,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where a.eq_type = #{eqType} and a.eq_direction = #{eqDirection} and a.eq_tunnel_id = #{eqTunnelId}
           and a.eq_feedback_address1 is not null
         GROUP BY a.eq_feedback_address1
+    </select>
+
+    <select id="batchGetDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select d.eq_id,d.eq_name,d.pile,s.dict_label eq_direction from  sd_devices d
+        left join sys_dict_data s on d.eq_direction = s.dict_value
+        <where>
+            and s.dict_type= 'sd_direction'
+            and d.eq_id in
+            <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
     </select>
 
 

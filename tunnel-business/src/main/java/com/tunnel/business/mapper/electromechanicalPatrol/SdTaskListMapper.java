@@ -33,6 +33,7 @@ public interface SdTaskListMapper
      * 新增巡查任务
      * 
      * @param sdTaskList 巡查任务
+     * @param
      * @return 结果
      */
     public int insertSdTaskList(SdTaskList sdTaskList);

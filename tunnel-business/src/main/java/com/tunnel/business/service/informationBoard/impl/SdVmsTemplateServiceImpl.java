@@ -65,6 +65,10 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         sdVmsTemplate.setRollSpeed(Long.parseLong(jsonObject.get("rollSpeed").toString()));
         sdVmsTemplate.setStopTime(Long.parseLong(jsonObject.get("stopTime").toString()));
         sdVmsTemplate.setApplyType(jsonObject.get("applyType").toString());
+        if (jsonObject.get("category") == null || jsonObject.get("category").toString().equals("")) {
+            throw new RuntimeException("情报板所属类别不能为空");
+        }
+        sdVmsTemplate.setCategory(jsonObject.get("category").toString());
     /*    sdVmsTemplate.setIsCurrency(Integer.parseInt(jsonObject.get("isCurrency").toString()));
         sdVmsTemplate.setTemplateType(Integer.parseInt(jsonObject.get("templateType").toString()));*/
         sdVmsTemplate.setVmsType(jsonObject.get("vmsType").toString());
@@ -91,6 +95,9 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         sdVmsTemplate.setRollSpeed(Long.parseLong(templatesMap.get("rollSpeed").toString()));
         sdVmsTemplate.setStopTime(Long.parseLong(templatesMap.get("stopTime").toString()));
         sdVmsTemplate.setApplyType(templatesMap.get("applyType").toString());
+        if (templatesMap.get("category") == null || templatesMap.get("category").toString().equals("")) {
+            throw new RuntimeException("情报板所属类别不能为空");
+        }
         sdVmsTemplate.setCategory(templatesMap.get("category").toString());
       /*  sdVmsTemplate.setIsCurrency(Integer.parseInt(templatesMap.get("isCurrency").toString()));
         sdVmsTemplate.setTemplateType(Integer.parseInt(templatesMap.get("templateType").toString()));*/

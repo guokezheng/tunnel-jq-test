@@ -108,67 +108,52 @@
 
                     :class="{ focus: item.focus }"
                   >
-                    <!-- <img
-                      v-for="(url, indexs) in item.url"
-                      style="position: relative"
-                      :style="
-                        item.eqType || item.eqType == 0
-                          ? 'cursor: pointer;'
-                          : ''
-                      "
-                      :width="item.iconWidth / 1.26"
-                      :height="item.iconHeight / 1.26"
-                      :key="item.eqId + indexs"
-                      :src="url"
-                    /> -->
                     <img
-                        v-show="item.eqType != '31'"
-                          v-for="(url, indexs) in item.url"
-                          style="position: absolute"
-                          :style="{
-                            left: indexs * 14 + 'px',
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                          :width="item.iconWidth"
-                          :height="item.iconHeight"
-                          :key="item.eqId + indexs"
-                          :src='url'
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
-                        />
-                        <img 
-                         v-show="item.eqType == '31'"
+                      v-show="item.eqType != '31'"
+                        v-for="(url, indexs) in item.url"
                         style="position: absolute"
-                          :style="{
-                            
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                          :width="item.iconWidth / 1.3"
-                          :height="item.iconHeight"
-                          :src= getTypePic(item)
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          ">
-                        </img>
+                        :style="{
+                          left: indexs * 14 + 'px',
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth"
+                        :height="item.iconHeight"
+                        :key="item.eqId + indexs"
+                        :src='url'
+                        :class="
+                          item.eqName == screenEqName
+                            ? 'screenEqNameClass'
+                            : ''
+                        "
+                      />
+                      <img 
+                      v-show="item.eqType == '31'"
+                      style="position: absolute"
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth / 1.3"
+                        :height="item.iconHeight"
+                        :src= getTypePic(item)
+                        :class="
+                          item.eqName == screenEqName
+                            ? 'screenEqNameClass'
+                            : ''
+                        " />
                   </div>
                 </div>
               </div>
@@ -957,9 +942,9 @@ export default {
       }
     },
     getEqUrl(list) {
-      let that = this;
+      // let that = this;
       // that.eqTypeStateList = [];
-      that.eqTypeStateList = [];
+      this.eqTypeStateList = [];
       for (let i = 0; i < list.length; i++) {
         let iconUrl = [];
         if (list[i].iFileList != null) {
@@ -969,7 +954,7 @@ export default {
             iconUrl.push(img);
           }
         }
-        that.eqTypeStateList.push({
+        this.eqTypeStateList.push({
           stateType: list[i].stateType,
           type: list[i].stateTypeId,
           state: list[i].deviceState,
@@ -978,7 +963,7 @@ export default {
           url: iconUrl,
         });
       }
-      for (var item of that.eqTypeStateList) {
+      for (var item of this.eqTypeStateList) {
         if (item.type == 18) {
           console.log(item, "引道照明");
         }
@@ -1001,7 +986,9 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  5,
+                  14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -1234,18 +1221,21 @@ export default {
           }
           listType()
             .then((response) => {
-              var arr = [];
-              for (let item1 of response.rows) {
-                for (let item of res.eqList) {
-                  item.focus = false;
-                  if (item1.typeId == item.eqType) {
-                    item.iconWidth = Number(item1.iconWidth);
-                    item.iconHeight = Number(item1.iconHeight);
-                    arr.push(item);
+              // var arr = [];
+              for (let i = 0; i < res.eqList.length; i++) {
+                res.eqList[i].focus = false;
+                for (let j = 0; j < response.rows.length; j++) {
+                  if (response.rows[j].typeId == res.eqList[i].eqType) {
+                    let iconWidth = Number(response.rows[j].iconWidth);
+                    let iconHeight = Number(response.rows[j].iconHeight);
+                    res.eqList[i].iconWidth = iconWidth;
+                    res.eqList[i].iconHeight = iconHeight;
+                    break;
                   }
                 }
               }
-              this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+              this.selectedIconList = res.eqList; //这是最终需要挂载到页面上的值
+              that.getRealTimeData();
               for (let p = 0; p < this.selectedIconList.length; p++) {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
@@ -2039,5 +2029,9 @@ export default {
 }
 .handle {
   cursor: pointer;
+}
+.screenEqNameClass {
+  border: solid 2px #09c3fc;
+  border-radius: 4px;
 }
 </style>

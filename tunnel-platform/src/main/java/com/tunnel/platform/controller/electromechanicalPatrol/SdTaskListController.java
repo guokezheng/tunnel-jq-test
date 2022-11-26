@@ -107,19 +107,9 @@ public class SdTaskListController extends BaseController
         return Result.success(map);
     }
 
-    /**
-     * 新增巡查任务
-     */
-   /* @PreAuthorize("@ss.hasPermi('system:list:add')")*/
-   /* @Log(title = "巡查任务", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList)
-    {
-        return toAjax(sdTaskListService.insertSdTaskList(sdTaskList,sdPatrolList));
-    }*/
 
     /**
-     *
+     *新增巡查任务
      * @param sdTaskList
      * @param
      * @return
@@ -131,16 +121,17 @@ public class SdTaskListController extends BaseController
         return toAjax(sdTaskListService.insertSdTaskList(sdTaskList));
     }
 
-
     /**
-     * 修改巡查任务
+     *修改巡查任务
+     * @param sdTaskList
+     * @param
+     * @return
      */
-    /*@PreAuthorize("@ss.hasPermi('system:list:edit')")*/
-    @Log(title = "巡查任务", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList)
+
+    @PostMapping("/updateTask")
+    public AjaxResult updateTask(SdTaskList sdTaskList)
     {
-        return toAjax(sdTaskListService.updateSdTaskList(sdTaskList,sdPatrolList));
+        return toAjax(sdTaskListService.updateSdTaskList(sdTaskList));
     }
 
     /**
@@ -148,10 +139,9 @@ public class SdTaskListController extends BaseController
      *
      * @return
      */
-    @GetMapping("/abolish")
-    public AjaxResult abolish(String id)
+    @PostMapping("/abolishSdTaskList")
+    public AjaxResult abolishSdTaskList(@RequestBody String id)
     {
-        System.out.println("jdhasdihjsoaidhjosaidjoas======="+id);
         return toAjax(sdTaskListService.abolishSdTaskList(id));
     }
 

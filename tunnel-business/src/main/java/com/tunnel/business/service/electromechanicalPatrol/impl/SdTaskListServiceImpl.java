@@ -25,6 +25,7 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdTaskListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdTaskListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,75 +96,85 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         sdTaskList.setTaskStatus("0");//待巡查
         result = sdTaskListMapper.insertSdTaskList(sdTaskList);
         if(result>0){
-            List<String> list = sdTaskList.getDevicesList();
-            list.remove(list.size() - 1);
-            List<String> devicesList = new ArrayList<>();
-            List<String> faultList = new ArrayList<>();
-            if(list!=null&&list.size()>0){
-                for(int k=0;k<list.size();k++){
-                    String str = list.get(k);
-                    String flag = str.substring(str.length() -2,str.length());
-                    String strm = str.substring(0,str.length()-2);
-                    if("_1".equals(flag)){//巡查点
-                        devicesList.add(strm);
-                    }else if("_2".equals(flag)){
-                        faultList.add(strm);
-                    }
-                }
-
-            }
-            /*新增巡查点*/
-            List<SdPatrolList>patrolList = new ArrayList<>();
-            if(devicesList!=null&&devicesList.size()>0){
-                String[] eqIds = devicesList.toArray(new String[devicesList.size()]);
-                List<SdDevices> devices = sdDevicesMapper.batchGetDevicesList(eqIds);
-                if(devices!=null&&devices.size()>0){
-                    for(int i = 0;i<devicesList.size();i++){
-                        SdPatrolList sdPatrolList = new SdPatrolList();
-                        sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
-                        sdPatrolList.setTaskId(taskId);//task_id
-                        for(int j=0;j<devices.size();j++){
-                            if(devices.get(j).getEqId().equals(devicesList.get(i))){
-                                sdPatrolList.setEqFaultId(devicesList.get(i));//eq_fault_id
-                                sdPatrolList.setPatrolType("0");//巡检点类型
-                                sdPatrolList.setEqName(devices.get(j).getEqName());//eq_name
-                                sdPatrolList.setPosition(devices.get(j).getEqDirection()+devices.get(j).getPile());//position
-                                sdPatrolList.setXcSort(i);
-                                sdPatrolList.setXcStatus("0");//未巡查
-                                patrolList.add(sdPatrolList);
-                            }
-                        }
-                    }
-                    result = sdPatrolListMapper.batchInsertPatrol(patrolList);
-                }
-            }
-            /*新增故障点*/
-            List<SdPatrolList>patrolList1 = new ArrayList<>();
-            if(faultList!=null&&faultList.size()>0){
-                String[] faultIds = faultList.toArray(new String[faultList.size()]);
-                List<SdFaultList> fault = sdFaultListMapper.batchGetFaultList(faultIds);
-                if(fault!=null&&fault.size()>0){
-                    for(int i = 0;i<faultList.size();i++){
-                        SdPatrolList sdPatrolList = new SdPatrolList();
-                        sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
-                        sdPatrolList.setTaskId(taskId);//task_id
-                        for(int j=0;j<fault.size();j++){
-                            if(fault.get(j).getId().equals(faultList.get(i))){
-                                sdPatrolList.setEqFaultId(faultList.get(i));//eq_fault_id
-                                sdPatrolList.setPatrolType("1");//巡检点类型
-                                sdPatrolList.setEqName(fault.get(j).getEqName());//eq_name
-                                sdPatrolList.setPosition(fault.get(j).getFaultLocation());//position
-                                sdPatrolList.setXcSort(i);
-                                sdPatrolList.setXcStatus("0");//未巡查
-                                patrolList1.add(sdPatrolList);
-                            }
-                        }
-                    }
-                    result = sdPatrolListMapper.batchInsertPatrol(patrolList1);
-                }
-            }
+            result = insertPatrol(sdTaskList,taskId);
         }
         return result;
+    }
+
+    private int insertPatrol(SdTaskList sdTaskList,String taskId){
+        int result = -1;
+        List<String> list = sdTaskList.getDevicesList();
+        list.remove(list.size() - 1);
+        Map<String,String>map = new HashMap();//定义map用于对应巡查点的顺序
+        List<String> devicesList = new ArrayList<>();
+        List<String> faultList = new ArrayList<>();
+        if(list!=null&&list.size()>0){
+            for(int k=0;k<list.size();k++){
+                String str = list.get(k);
+                String flag = str.substring(str.length() -2,str.length());
+                String strm = str.substring(0,str.length()-2);
+                if("_1".equals(flag)){//巡查点
+                    devicesList.add(strm);
+                }else if("_2".equals(flag)){
+                    faultList.add(strm);
+                }
+            }
+
+        }
+        /*新增巡查点*/
+        List<SdPatrolList>patrolList = new ArrayList<>();
+        if(devicesList!=null&&devicesList.size()>0){
+            String[] eqIds = devicesList.toArray(new String[devicesList.size()]);
+            List<SdDevices> devices = sdDevicesMapper.batchGetDevicesList(eqIds);
+            if(devices!=null&&devices.size()>0){
+                for(int i = 0;i<devicesList.size();i++){
+                    SdPatrolList sdPatrolList = new SdPatrolList();
+                    sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
+                    sdPatrolList.setTaskId(taskId);//task_id
+                    for(int j=0;j<devices.size();j++){
+                        if(devices.get(j).getEqId().equals(devicesList.get(i))){
+                            sdPatrolList.setEqFaultId(devicesList.get(i));//eq_fault_id
+                            sdPatrolList.setPatrolType("0");//巡检点类型
+                            sdPatrolList.setEqName(devices.get(j).getEqName());//eq_name
+                            sdPatrolList.setPosition(devices.get(j).getEqDirection()+devices.get(j).getPile());//position
+                            sdPatrolList.setXcSort(i);
+                            sdPatrolList.setXcStatus("0");//未巡查
+                            patrolList.add(sdPatrolList);
+                        }
+                    }
+                }
+                result = sdPatrolListMapper.batchInsertPatrol(patrolList);
+            }
+        }
+        /*新增故障点*/
+        List<SdPatrolList>patrolList1 = new ArrayList<>();
+        if(faultList!=null&&faultList.size()>0){
+            String[] faultIds = faultList.toArray(new String[faultList.size()]);
+            List<SdFaultList> fault = sdFaultListMapper.batchGetFaultList(faultIds);
+            if(fault!=null&&fault.size()>0){
+                for(int i = 0;i<faultList.size();i++){
+                    SdPatrolList sdPatrolList = new SdPatrolList();
+                    sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
+                    sdPatrolList.setTaskId(taskId);//task_id
+                    for(int j=0;j<fault.size();j++){
+                        if(fault.get(j).getId().equals(faultList.get(i))){
+                            sdPatrolList.setEqFaultId(faultList.get(i));//eq_fault_id
+                            sdPatrolList.setPatrolType("1");//巡检点类型
+                            sdPatrolList.setEqName(fault.get(j).getEqName());//eq_name
+                            sdPatrolList.setPosition(fault.get(j).getFaultLocation());//position
+                            sdPatrolList.setXcSort(i);
+                            sdPatrolList.setXcStatus("0");//未巡查
+                            patrolList1.add(sdPatrolList);
+                        }
+                    }
+                }
+                result = sdPatrolListMapper.batchInsertPatrol(patrolList1);
+            }
+        }
+
+
+        return result;
+
     }
 
     /**
@@ -173,16 +184,18 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return 结果
      */
     @Override
-    public int updateSdTaskList(SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList)
+    public int updateSdTaskList(SdTaskList sdTaskList)
     {
-        int result = 0;
+        int result = -1;
+        sdTaskList.setUpdateBy(SecurityUtils.getLoginUser().getUsername());
         sdTaskList.setUpdateTime(DateUtils.getNowDate());
         result = sdTaskListMapper.updateSdTaskList(sdTaskList);
         if(result>0){
             result = sdPatrolListMapper.batchDeletePatrolListByTaskId(sdTaskList.getId());
         }
         if(result>0){
-            result =  sdPatrolListMapper.batchInsertPatrolList(sdPatrolList,sdTaskList.getId());
+            String taskId = sdTaskList.getId();
+            result = insertPatrol(sdTaskList,taskId);
         }
         return result;
     }
@@ -310,7 +323,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public int abolishSdTaskList(String id) {
+    public int abolishSdTaskList(@Param("id") String id) {
         return sdTaskListMapper.abolishSdTaskList(id);
     }
 

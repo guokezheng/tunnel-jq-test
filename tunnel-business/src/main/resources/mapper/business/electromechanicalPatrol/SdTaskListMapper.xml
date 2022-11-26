@@ -130,7 +130,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,s.dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sys_dept d on s.zzjg_id = d.dept_id
-        left join sys_dict_data t on t.dict_value = s.publish_status and t.dict_type = 'task_status'
+        left join sys_dict_data t on t.dict_value = s.task_status and t.dict_type = 'task_status'
         left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'
         where s.id = #{task_id}
     </select>
@@ -148,7 +148,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <update id="abolishSdTaskList" parameterType="SdTaskList">
-        update sd_task_list publish_status = '2' where id = #{id}
+        update sd_task_list set publish_status = '1' where id = #{id}
     </update>
 
 
@@ -163,7 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <update id="acceptSdTaskList" parameterType="SdTaskList">
-        update sd_task_list task_status = '1' where id = #{id}
+        update sd_task_list set task_status = '1' where id = #{id}
     </update>
 
 

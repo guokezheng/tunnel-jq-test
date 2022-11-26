@@ -16,93 +16,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-<!--      <el-form-item label="计划完成时间" prop="endPlantime">
-        <el-date-picker clearable size="small"
-          v-model="queryParams.endPlantime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择计划完成时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="派单人员" prop="dispatcher">
-        <el-input
-          v-model="queryParams.dispatcher"
-          placeholder="请输入派单人员"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="派单时间" prop="dispatchTime">
-        <el-date-picker clearable size="small"
-          v-model="queryParams.dispatchTime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择派单时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="指派巡查班组" prop="bzId">
-        <el-input
-          v-model="queryParams.bzId"
-          placeholder="请输入指派巡查班组id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="任务描述" prop="taskDescription">
-        <el-input
-          v-model="queryParams.taskDescription"
-          placeholder="请输入任务描述"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="发布状态" prop="publishStatus">
-        <el-select v-model="queryParams.publishStatus" placeholder="请选择发布状态" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="任务状态" prop="taskStatus">
-        <el-select v-model="queryParams.taskStatus" placeholder="请选择任务状态" clearable size="small">
-          <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="巡查人员" prop="walkerId">
-        <el-input
-          v-model="queryParams.walkerId"
-          placeholder="请输入巡查人员"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="任务完成时间" prop="taskEndtime">
-        <el-date-picker clearable size="small"
-          v-model="queryParams.taskEndtime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择任务完成时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="任务持续时间" prop="taskCxtime">
-        <el-date-picker clearable size="small"
-          v-model="queryParams.taskCxtime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择任务持续时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="现场情况描述" prop="siteDescription">
-        <el-input
-          v-model="queryParams.siteDescription"
-          placeholder="请输入现场情况描述"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -118,48 +31,9 @@
           v-hasPermi="['system:list:add']"
           >新增</el-button
         >
-        <!--      </el-col>
-              <el-col :span="1.5">-->
-        <!--        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:list:edit']"
-        >修改</el-button>-->
-        <!--      </el-col>
-              <el-col :span="1.5">-->
-        <!--        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:list:remove']"
-        >删除</el-button>-->
-        <!--      </el-col>
-              <el-col :span="1.5">-->
-        <!--        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:list:export']"
-        >导出</el-button>-->
+
       </el-form-item>
     </el-form>
-
-    <!--    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">-->
-
-    <!--      </el-col>-->
-    <!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
-    <!--    </el-row>-->
 
     <el-table
       v-loading="loading"
@@ -209,18 +83,6 @@
           />
         </template>
       </el-table-column>
-      <!--      <el-table-column label="巡查人员" align="center" prop="walkerId" />-->
-      <!--      <el-table-column label="任务完成时间" align="center" prop="taskEndtime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.taskEndtime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>-->
-      <!--      <el-table-column label="任务持续时间" align="center" prop="taskCxtime" width="180">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.taskCxtime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>-->
-      <!--      <el-table-column label="现场情况描述" align="center" prop="siteDescription" />-->
       <el-table-column
         label="操作"
         align="center"
@@ -232,11 +94,12 @@
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
           >任务详情</el-button>
-<!--          <el-button
+          <el-button
             size="mini"
+            class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
           >废止任务</el-button
-          >-->
+          >
           <el-button
             size="mini"
             class="tableBlueButtton"
@@ -263,75 +126,6 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改巡查任务对话框 -->
-    <!--    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="所属单位" prop="zzjgId">
-          <el-input v-model="form.zzjgId" placeholder="请输入所属单位" />
-        </el-form-item>
-        <el-form-item label="计划完成时间" prop="endPlantime">
-          <el-date-picker clearable size="small"
-            v-model="form.endPlantime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择计划完成时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="派单人员" prop="dispatcher">
-          <el-input v-model="form.dispatcher" placeholder="请输入派单人员" />
-        </el-form-item>
-        <el-form-item label="派单时间" prop="dispatchTime">
-          <el-date-picker clearable size="small"
-            v-model="form.dispatchTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择派单时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="指派巡查班组id" prop="bzId">
-          <el-input v-model="form.bzId" placeholder="请输入指派巡查班组id" />
-        </el-form-item>
-        <el-form-item label="任务描述" prop="taskDescription">
-          <el-input v-model="form.taskDescription" placeholder="请输入任务描述" />
-        </el-form-item>
-        <el-form-item label="发布状态">
-          <el-radio-group v-model="form.publishStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="任务状态">
-          <el-radio-group v-model="form.taskStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="巡查人员id" prop="walkerId">
-          <el-input v-model="form.walkerId" placeholder="请输入巡查人员id" />
-        </el-form-item>
-        <el-form-item label="任务完成时间" prop="taskEndtime">
-          <el-date-picker clearable size="small"
-            v-model="form.taskEndtime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择任务完成时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="任务持续时间" prop="taskCxtime">
-          <el-date-picker clearable size="small"
-            v-model="form.taskCxtime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择任务持续时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="现场情况描述" prop="siteDescription">
-          <el-input v-model="form.siteDescription" placeholder="请输入现场情况描述" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>-->
 
     <el-dialog :title="title" :visible.sync="open" width="70%">
       <!--      <h1>新增巡检任务</h1>-->
@@ -350,14 +144,6 @@
               ></el-input>
             </div>
           </div>
-
-<!--          <el-form-item label="故障位置" prop="faultLocation">
-            <el-input ref="faultLocation" :disabled="disstate"
-                      v-model="form.faultLocation"
-                      placeholder="请输入故障位置"
-            />
-          </el-form-item>-->
-
 
           <div>
             <span>派单时间</span>
@@ -460,8 +246,8 @@
           </div>
         </div>
         <div class="release-father">
-          <el-button style="height: 20%">暂存</el-button>
-          <el-button style="height: 20%" type="warning">废止</el-button>
+          <el-button style="height: 20%" @click="save">暂存</el-button>
+          <el-button style="height: 20%" type="warning" @click="abolish">废止</el-button>
           <el-button style="height: 20%" type="primary" @click="release"
             >发布</el-button
           >
@@ -815,7 +601,7 @@ import {
   treeselect,
   getDevicesTypeList,
   getDevicesList,
-  abolishList, addTask, getFaultList,
+  abolishList, addTask, getFaultList, updateTask,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -1067,7 +853,6 @@ export default {
       getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
         console.log(res, "获取故障table");
         console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
-debugger
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
@@ -1231,7 +1016,6 @@ debugger
       this.boxList = this.boxList.concat(this.dialogSelection);
     },
     determine2() {
-      debugger
       this.isShow2 = false;
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_2";
@@ -1246,6 +1030,7 @@ debugger
     },
     /** 新增按钮操作 */
     handleAdd() {
+      this.boxList = "";
       this.reset();
       this.open = true;
       this.title = "新增巡查任务";
@@ -1258,8 +1043,9 @@ debugger
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
+      let that = this
       getList(id).then((response) => {
-        this.form = response.data;
+        that.form = response.data.task[0];
         this.boxList = response.data.list;
         this.tableData1 = response.data.devicesPatrolList;//巡检点
         this.tableData2 = response.data.faultPatrolList;//故障点
@@ -1307,7 +1093,6 @@ debugger
           return delList(ids);
         })
         .then(() => {
-          debugger
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
@@ -1328,8 +1113,10 @@ debugger
         })
         .catch(() => {});
     },
+    //发布
     release() {
       this.fileData = new FormData(); // new formData对象
+      this.fileData.append("id", this.form.id);
       this.fileData.append("endPlantime", this.form.endPlantime);
       this.fileData.append("bzId", this.form.bzId);
       this.fileData.append("taskDescription",this.form.taskDescription);
@@ -1344,12 +1131,83 @@ debugger
         this.boxIds = this.boxIds+(item.eq_id+",");
       })
       this.fileData.append("devicesList",this.boxIds);
+      if (this.form.id != null) {
+        updateTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("发布成功");
+          this.open = false;
+          this.getList();
+        });
+      }else{
+        addTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("发布成功");
+          this.open = false;
+          this.getList();
+        });
+      }
+    },
+//废止
+    abolish() {
+      this.fileData = new FormData(); // new formData对象
+      this.fileData.append("id", this.form.id);
+      this.fileData.append("endPlantime", this.form.endPlantime);
+      this.fileData.append("bzId", this.form.bzId);
+      this.fileData.append("taskDescription",this.form.taskDescription);
+      this.fileData.append("publishStatus","1");
+      //判断是否选择点
+      if(this.boxList==[]||this.boxList==""){
+        this.$modal.msgWarning("请选择巡检点或故障点");
+        return
+      }
+      this.boxList.forEach((item) =>{
+        this.boxIds = this.boxIds+(item.eq_id+",");
+      })
+      this.fileData.append("devicesList",this.boxIds);
 
-      addTask(this.fileData).then((response) => {
-        this.$modal.msgSuccess("发布成功");
-        this.open = false;
-        this.getList();
-      });
+      if (this.form.id != null) {
+        updateTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("废止成功");
+          this.open = false;
+          this.getList();
+        });
+      }else{
+        addTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("废止成功");
+          this.open = false;
+          this.getList();
+        });
+      }
+    },
+//暂存
+    save() {
+      this.fileData = new FormData(); // new formData对象
+      this.fileData.append("id", this.form.id);
+      this.fileData.append("endPlantime", this.form.endPlantime);
+      this.fileData.append("bzId", this.form.bzId);
+      this.fileData.append("taskDescription",this.form.taskDescription);
+      this.fileData.append("publishStatus","0");
+      //判断是否选择点
+      if(this.boxList==[]||this.boxList==""){
+        this.$modal.msgWarning("请选择巡检点或故障点");
+        return
+      }
+      this.boxList.forEach((item) =>{
+        this.boxIds = this.boxIds+(item.eq_id+",");
+      })
+      this.fileData.append("devicesList",this.boxIds);
+
+      if (this.form.id != null) {
+        updateTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("暂存成功");
+          this.open = false;
+          this.getList();
+        });
+      }else{
+        addTask(this.fileData).then((response) => {
+          this.$modal.msgSuccess("暂存成功");
+          this.open = false;
+          this.getList();
+        });
+      }
     },
   },
 };

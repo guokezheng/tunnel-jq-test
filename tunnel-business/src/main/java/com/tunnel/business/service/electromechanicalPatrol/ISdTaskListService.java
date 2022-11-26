@@ -49,7 +49,7 @@ public interface ISdTaskListService
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int updateSdTaskList(SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList);
+    public int updateSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 批量删除巡查任务

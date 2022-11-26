@@ -85,22 +85,51 @@ public class SdTaskListController extends BaseController
      * 获取巡查任务详细信息
      */
    /* @PreAuthorize("@ss.hasPermi('system:list:query')")*/
-    @GetMapping(value = "/{id}")
+    /*@GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
         return AjaxResult.success(sdTaskListService.selectSdTaskListById(id));
+    }*/
+
+    /**
+     * 获取修改任务信息
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "/{id}")
+    public Result getInfo(@PathVariable("id") String id){
+        List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(id);
+        List<SdPatrolList> patrolLists = sdTaskListService.getUpdatePatrolLists(id);
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put("task",taskList);
+        map.put("patrol", patrolLists);
+        return Result.success(map);
     }
 
     /**
      * 新增巡查任务
      */
    /* @PreAuthorize("@ss.hasPermi('system:list:add')")*/
-    @Log(title = "巡查任务", businessType = BusinessType.INSERT)
+   /* @Log(title = "巡查任务", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList)
     {
         return toAjax(sdTaskListService.insertSdTaskList(sdTaskList,sdPatrolList));
+    }*/
+
+    /**
+     *
+     * @param sdTaskList
+     * @param
+     * @return
+     */
+
+    @PostMapping("/addTask")
+    public AjaxResult addTask(SdTaskList sdTaskList)
+    {
+        return toAjax(sdTaskListService.insertSdTaskList(sdTaskList));
     }
+
 
     /**
      * 修改巡查任务
@@ -208,11 +237,17 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @GetMapping("/getFaultList")
-    public Result getFaultList(String tunnelId,String faultLevel){
+    public TableDataInfo getFaultList(String tunnelId,String faultLevel){
+        startPage();
         List<SdFaultList> faultList = sdFaultListService.getFaultList(tunnelId,faultLevel);
-        return Result.success(faultList);
+        return getDataTable(faultList);
     }
 
+    /**
+     * 任务详情
+     * @param taskId
+     * @return
+     */
     @PostMapping("/getTaskInfoList")
     public Result getTaskInfoList(@RequestBody String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);

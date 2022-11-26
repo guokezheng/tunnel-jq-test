@@ -98,3 +98,22 @@ export function getDevicesList(tunnelId,deviceType,pageNum,pageSize) {
     method: 'get',
   })
 }
+
+
+// 获取故障table
+export function getFaultList(tunnelId,faultLevel,pageNum,pageSize) {
+  return request({
+    url: '/task/list/getFaultList?tunnelId='+tunnelId +'&faultLevel=' + faultLevel +'&pageNum=' + pageNum +'&pageSize=' +pageSize,
+    method: 'get',
+  })
+}
+
+//发布任务
+export function addTask(data) {
+  return request({
+    url: '/task/list/addTask',
+    method: 'post',
+    data: data
+  })
+}
+

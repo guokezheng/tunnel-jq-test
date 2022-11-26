@@ -111,6 +111,80 @@ public class SdPatrolList<SdTrafficImage> extends BaseEntity
     /*设备桩号*/
     private String pile;
 
+
+    /*设备id  故障id */
+    private String eq_id;
+    /*设备类型名称  故障类型名称*/
+    private String type_name;
+    /*设备名称*/
+    private String eq_name;
+    /*隧道名称*/
+    private Integer sort;
+
+    private String tunnel_id;
+
+    private String tunnel_name;
+
+    public String getTunnel_id() {
+        return this.tunnel_id;
+    }
+
+    public void setTunnel_id(final String tunnel_id) {
+        this.tunnel_id = tunnel_id;
+    }
+
+    public String getTunnel_name() {
+        return this.tunnel_name;
+    }
+
+    public void setTunnel_name(final String tunnel_name) {
+        this.tunnel_name = tunnel_name;
+    }
+
+    public String getEq_type() {
+        return this.eq_type;
+    }
+
+    public void setEq_type(final String eq_type) {
+        this.eq_type = eq_type;
+    }
+
+    /*设备类型    故障等级*/
+    private String eq_type;
+
+    public Integer getSort() {
+        return this.sort;
+    }
+
+    public void setSort(final Integer sort) {
+        this.sort = sort;
+    }
+
+    public String getEq_id() {
+        return this.eq_id;
+    }
+
+    public void setEq_id(final String eq_id) {
+        this.eq_id = eq_id;
+    }
+
+    public String getType_name() {
+        return this.type_name;
+    }
+
+    public void setType_name(final String type_name) {
+        this.type_name = type_name;
+    }
+
+    public String getEq_name() {
+        return this.eq_name;
+    }
+
+    public void setEq_name(final String eq_name) {
+        this.eq_name = eq_name;
+    }
+
+
     public String getTypeName() {
         return this.typeName;
     }

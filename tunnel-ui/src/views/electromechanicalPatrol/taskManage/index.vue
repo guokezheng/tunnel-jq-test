@@ -536,6 +536,87 @@
       </div>
     </el-dialog>
 
+    <!-- -->
+
+
+    <el-dialog :visible.sync="isShow2" width="50%" class="show">
+      <div class="show-left">
+        <div class="show-title">故障位置</div>
+        <el-tree
+          class="tree"
+          :data="treeData"
+          :props="defaultProps"
+          :expand-on-click-node="false"
+          :check-on-click-node="true"
+          :show-checkbox="show_checkbox"
+          :check-strictly="check_strictly"
+          :filter-node-method="filterNode"
+          ref="tree"
+          accordion
+          default-expand-all
+          @node-click="handleNodeClick"
+          node-key="id"
+          highlight-current
+        />
+      </div>
+      <div class="show-right">
+        <div class="show-title">故障清单</div>
+        <div class="right-button">
+          <el-select v-model="options2value" @change="getGzTable">
+            <el-option
+              v-for="dict in dict.type.fault_level"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+          <div class="cancel-determine">
+            <el-button @click="determine2">取消</el-button>
+            <el-button type="primary" @click="determine2">确定</el-button>
+          </div>
+        </div>
+        <div class="table-father">
+          <el-table
+            ref="multipleTable"
+            :data="tableData1"
+            tooltip-effect="dark"
+            :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
+            :cell-style="{ 'text-align': 'center', padding: '0px' }"
+            :header-row-style="{
+              height: '30px',
+              background: '#F2F2F2',
+              color: '#606266',
+            }"
+            :row-style="{
+              height: '30px',
+              background: '#fff',
+              color: '#606266',
+            }"
+            style="width: 100%; background: #fff"
+            border
+            height="358px"
+            class="dialogTable"
+            @selection-change="onSiteInspectionSelection"
+          >
+            <el-table-column type="selection" width="39"></el-table-column>
+            <el-table-column prop="type_name" label="故障类型">
+            </el-table-column>
+            <el-table-column prop="eq_name" label="故障设备名称"> </el-table-column>
+            <el-table-column prop="pile" label="故障位置"> </el-table-column>
+            <el-table-column prop="dict_label" label="故障描述"> </el-table-column>
+          </el-table>
+          <pagination
+            v-show="dialogTotal > 0"
+            :total="dialogTotal"
+            :page.sync="pageNum"
+            :limit.sync="pageSize"
+            @pagination="getDialogGzList"
+            small
+          />
+        </div>
+      </div>
+    </el-dialog>
+
     <!--巡查任务及执行记录单-->
     <el-dialog :visible.sync="record" width="70%">
       <div style="text-align: center; font-size: 20px">
@@ -725,7 +806,7 @@ import {
   treeselect,
   getDevicesTypeList,
   getDevicesList,
-  abolishList,
+  abolishList, addTask, getFaultList,
 } from "@/api/electromechanicalPatrol/taskManage/task";
 import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -734,7 +815,7 @@ import { color } from "echarts";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
-  dicts: ["publish_status", "task_status", "network", "power","eq_system"],
+  dicts: ["publish_status", "task_status", "network", "power","eq_system","fault_level"],
   props: {
     //开启过滤
     filter: {
@@ -774,6 +855,7 @@ export default {
   data() {
     return {
       deviceType:'',
+      faultLevel:'',
       // 获取巡检点 表格选中项
       dialogSelection: [],
       dialogTotal: 0,
@@ -789,7 +871,12 @@ export default {
       treeData: [],
       tableData1: [],
       options1value: "", //设备清单绑定
-      boxList: [],
+      options2value: "", //故障清单绑定
+      boxList: [],//巡检点list
+      thatboxList: [],//that巡检点list
+      boxTolList: [],//巡检点故障点总list
+      boxIds: "",//巡检点ids
+      faultList: [],//故障点list
       options1: [], //设备清单
       record: false,
       // 遮罩层
@@ -863,7 +950,14 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        bzId: [
+          { required: true, message: '请选择指派巡查班组', trigger: 'bzId' }
+        ],
+        taskDescription: [
+          { required: true, message: '请填写任务描述', trigger: 'taskDescription' }
+        ],
+      },
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
@@ -910,10 +1004,14 @@ export default {
     getDialogList() {
       this.getTable()
     },
+    // 弹窗表格翻页
+    getDialogGzList() {
+      this.getGzTable()
+    },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
       this.dialogSelection = selection;
-      console.log(this.dialogSelection, "this.dialogSelection");
+      console.log("=============="+this.dialogSelection, "this.dialogSelection");
     },
     // 获取设备table
     getTable(deviceType) {
@@ -923,6 +1021,35 @@ export default {
       getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
         console.log(res, "获取设备table");
         console.log(this.boxList, "boxList");
+
+        this.tableData1 = res.rows;
+        this.dialogTotal = res.total;
+        if (this.boxList != []) {
+          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          if (this.boxList[0].eq_type == deviceType) {
+            this.tableData1.forEach((item) => {
+              this.boxList.forEach((row) => {
+                if (item.eq_name == row.eq_name) {
+                  this.$nextTick(() => {
+                    this.$refs.multipleTable.toggleRowSelection(item, true);
+                  });
+                }
+              });
+            });
+          }
+        } else {
+          this.$refs.multipleTable.clearSelection();
+        }
+      });
+    },
+    // 获取设备table
+    getGzTable(deviceType) {
+      if(deviceType){
+        this.faultLevel = deviceType
+      }
+      getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
+        console.log(res, "获取故障table");
+        console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
 
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
@@ -1008,6 +1135,11 @@ export default {
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.total = response.total;
+        this.listList.forEach((item) =>{
+          if(item.bzId=="null"){
+            item.bzId = "";
+          }
+        })
         this.loading = false;
       });
     },
@@ -1052,6 +1184,7 @@ export default {
         updateBy: null,
         updateTime: null,
       };
+      this.boxList=[]
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -1065,18 +1198,30 @@ export default {
       this.handleQuery();
     },
     show1() {
+      this.tableData1 = null
       this.isShow1 = true;
     },
     show2() {
+      this.tableData1 = null
       this.isShow2 = true;
     },
 
     determine1() {
       this.isShow1 = false;
-      this.boxList = this.dialogSelection;
+      this.dialogSelection.forEach((item) =>{
+        item.eq_id= item.eq_id+"_1";
+      })
+      debugger
+      this.boxList = this.boxList.concat(this.dialogSelection);
+      console.log("determine1==================="+this.boxList)
     },
     determine2() {
+      debugger
       this.isShow2 = false;
+      this.dialogSelection.forEach((item) =>{
+        item.eq_id= item.eq_id+"_2";
+      })
+      this.boxList = this.boxList.concat(this.dialogSelection);
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1095,7 +1240,10 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       getList(id).then((response) => {
+        debugger
         this.form = response.data;
+        this.boxList = response.data.patrol;
+        console.log("=========================="+this.boxList)
         this.open = true;
         this.title = "修改巡查任务";
       });
@@ -1105,9 +1253,7 @@ export default {
     handleAbolish(row) {
       const id = row.id || this.ids
       if (id != null) {
-        debugger
         abolishList(id).then(response => {
-          debugger
           this.$modal.msgSuccess("废止成功");
           this.getList();
         });
@@ -1162,7 +1308,28 @@ export default {
         })
         .catch(() => {});
     },
-    release() {},
+    release() {
+      this.fileData = new FormData(); // new formData对象
+      this.fileData.append("endPlantime", this.form.endPlantime);
+      this.fileData.append("bzId", this.form.bzId);
+      this.fileData.append("taskDescription",this.form.taskDescription);
+      this.fileData.append("publishStatus","2");
+      //判断是否选择点
+      if(this.boxList=[]){
+        this.$modal.msgWarning("请选择巡检点或故障点");
+        return
+      }
+      this.boxList.forEach((item) =>{
+        this.boxIds = this.boxIds+(item.eq_id+",");
+      })
+      this.fileData.append("devicesList",this.boxIds);
+
+      addTask(this.fileData).then((response) => {
+        this.$modal.msgSuccess("发布成功");
+        this.open = false;
+        this.getList();
+      });
+    },
   },
 };
 </script>

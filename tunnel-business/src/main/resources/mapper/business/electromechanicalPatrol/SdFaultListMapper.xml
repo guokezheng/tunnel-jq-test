@@ -160,8 +160,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="getFaultList" parameterType="String" resultType="hashmap">
-        select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
+    <select id="getFaultList1"  resultType="hashmap">
+        select f.fault_type eq_type,f.fault_location,f.id eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
@@ -174,4 +174,87 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+
+
+    <select id="batchGetFaultList" parameterType="SdFaultList" resultMap="SdFaultListResult">
+        select d.id,d.fault_location,v.eq_name,s.dict_label eq_direction,t.tunnel_name,d.fault_description from  sd_fault_list d
+        left join sd_devices v on d.eq_id = v.eq_id
+        left join sys_dict_data s on d.fault_type = s.dict_value
+        left join sd_tunnels t on t.tunnel_id = v.eq_tunnel_id
+        <where>
+            and s.dict_type= 'fault_type'
+            and d.id in
+            <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="getEquipmentFault" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            yemont.DATE as months,
+            fl.eqFaultName AS eqSystemName,
+            IFNULL( fl.eqFaultNum, 0 ) AS eqFaultNum
+        FROM
+            (
+                SELECT
+                    DATE_FORMAT( adddate( DATE_SUB( CURDATE(), INTERVAL dayofyear( now()) - 1 DAY ), INTERVAL numlist.id - 1 MONTH ), '%Y-%m' ) AS 'date'
+                FROM
+                (
+                    SELECT
+                        @xi := @xi + 1 AS id
+                    FROM
+                        ( SELECT 1 UNION SELECT 2 UNION SELECT 3 ) xc1,
+                        ( SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 ) xc2,
+                        ( SELECT @xi := 0 ) xc0
+                ) AS numlist
+            ) yemont
+        LEFT JOIN (
+            SELECT
+                sdd.dict_label AS eqFaultName,
+                count(*) AS eqFaultNum,
+                sfl.fault_fxtime
+            FROM
+                sd_fault_list sfl
+            LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id
+            LEFT JOIN sd_equipment_type et ON sd.eq_type = et.type_id
+            LEFT JOIN sys_dict_data sdd ON et.eq_system = sdd.dict_value
+            AND sdd.dict_type = #{eqSystem}
+            WHERE
+                1 = 1
+            AND et.eq_system = #{eqSystemType}
+            AND sfl.fault_status = #{faultStatus}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND sfl.tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY
+            et.eq_system
+        ) fl ON yemont.DATE = DATE_FORMAT( fl.fault_fxtime, '%Y-%m' )
+        WHERE
+        1 = 1
+        ORDER BY
+        yemont.DATE ASC
+    </select>
+
+    <select id="getEquipmentFaultStatistics" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            sdd.dict_label AS eqSystemName,
+            count(*) AS eqFaultNum,
+            sdd.dict_value AS eqSystemCode
+        FROM
+            sd_fault_list sfl
+        LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id
+        LEFT JOIN sd_equipment_type et ON sd.eq_type = et.type_id
+        LEFT JOIN sys_dict_data sdd ON et.eq_system = sdd.dict_value
+        AND sdd.dict_type = #{eqSystem}
+        WHERE
+            1 = 1
+        AND sfl.fault_status = #{faultStatus}
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
+        AND sfl.fallt_remove_statue = #{falltRemoveStatue}
+        GROUP BY
+        et.eq_system
+    </select>
 </mapper>

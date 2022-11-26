@@ -728,6 +728,9 @@ export default {
     // },
     onSubmit() {
       var that = this
+      if (this.checkboxValue[0] == 'undefined' || this.checkboxValue[0] == null) {
+        return;
+      }
       getBoardInfo(this.checkboxValue[0]).then((res) => {
         console.log(res, "getBoardInfo");
         this.deviceId = res.data.deviceId
@@ -854,7 +857,7 @@ export default {
       console.log(font,"font");
       console.log(font.substring(0,2),"fontfont");
       return font.substring(0,2)+'px'
-       
+
     },
     getFontStyle(){
       if (font == '宋体'){}

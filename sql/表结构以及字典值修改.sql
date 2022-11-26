@@ -468,3 +468,6 @@ alter table sd_patrol_list modify column network  varchar(10)  comment '网络�
 alter table sd_patrol_list modify column power  varchar(10)  comment '供配电情况';
 -- 修改sd_patrol_list表字段xc_status的字段类型
 alter table sd_patrol_list modify column xc_status  varchar(10)  comment '巡查状态';
+-- 修改sd_push_history表字段push_data的字段类型
+ALTER TABLE `tunnel-jq`.`sd_push_history`
+    MODIFY COLUMN `push_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '推送数据' AFTER `data_type`;

@@ -210,4 +210,17 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> batchGetDevicesList(String[] eqIds);
+
+	/**
+	 * 设备类型
+	 * @param tunnelId
+	 * @param eqStatus
+	 * @param faultStatus
+	 * @param falltRemoveStatue
+	 * @return
+	 */
+	List<Map<String, Object>> getEquipmentType(@Param("tunnelId") String tunnelId,
+											   @Param("eqStatus") String eqStatus,
+											   @Param("faultStatus") String faultStatus,
+											   @Param("falltRemoveStatue") String falltRemoveStatue);
 }

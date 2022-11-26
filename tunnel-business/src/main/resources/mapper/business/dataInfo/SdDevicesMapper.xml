@@ -743,5 +743,57 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="getEquipmentType" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            et.type_id AS eqTypeCode,
+            et.type_name AS eqTypeName,
+            COUNT(*) AS eqCount,
+            IFNULL( onli.onlines, 0 ) AS eqOnlineNum,
+            (
+            IFNULL( onli.onlines, 0 )/ count(*)) AS eqOnlineRate,
+            IFNULL(( 1- ( faul.eqFaultDay / ( count(*) * 365 ))), 1 ) AS eqUsability
+        FROM
+            sd_devices d
+        LEFT JOIN sd_equipment_type et ON d.eq_type = et.type_id
+        LEFT JOIN (
+            SELECT
+                eq_type, count(*) AS onlines
+            FROM sd_devices
+            WHERE
+                eq_status = #{eqStatus}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND eq_tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY eq_type
+        ) onli ON d.eq_type = onli.eq_type
+        LEFT JOIN (
+            SELECT
+                d.eq_type AS eqType,
+                (
+                count(*) * DATEDIFF(
+                DATE_FORMAT( NOW(), '%Y-%m-%d' ),
+                DATE_FORMAT( MIN( sfl.fault_fxtime ), '%Y-%m-%d' ))) AS eqFaultDay
+            FROM
+                sd_fault_list sfl
+            LEFT JOIN sd_devices d ON sfl.eq_id = d.eq_id
+            WHERE
+                1 = 1
+            AND sfl.fault_status = #{faultStatus}
+            AND sfl.fallt_remove_statue = #{falltRemoveStatue}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND sfl.tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY
+            sfl.eq_id,
+            d.eq_type
+        ) faul ON d.eq_type = faul.eqType
+        WHERE
+        1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND d.eq_tunnel_id = #{tunnelId}
+        </if>
+        GROUP BY
+        et.type_id
+    </select>
 
 </mapper>

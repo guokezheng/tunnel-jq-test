@@ -16,3 +16,28 @@ export function devicessize() {
       method: 'get',
     })
   }
+
+    // 查设备多选框
+export function information(query) {
+  return request({
+    url: '/information/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 左侧多选框
+export function getBoardInfo(deviceId) {
+  return request({
+    url: '/parser/board/getBoardInfo?deviceId='+deviceId,
+    method: 'get',
+  })
+}
+
+// 左侧多选框
+export function getBoardEditInfo(deviceId) {
+  return request({
+    url: '/parser/board/getBoardEditInfo?deviceId='+deviceId,
+    method: 'get',
+  })
+}

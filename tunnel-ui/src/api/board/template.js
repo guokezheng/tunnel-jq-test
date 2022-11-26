@@ -104,6 +104,13 @@ export function getInformationBoardRelease(data) {
   })
 }
 
+//情报板修改弹窗
+export function uploadBoardEditInfo(deviceld,protocolType,parameters) {
+  return request({
+    url: '/parser/board/uploadBoardEditInfo?deviceld='+ deviceld + '&protocolType=' + protocolType +'&parameters=' +parameters,
+    method: 'get',
+  })
+}
 
 
 

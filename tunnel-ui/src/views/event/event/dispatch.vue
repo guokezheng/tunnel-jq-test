@@ -25,9 +25,10 @@
                 >
                 <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
+                  <!-- v-show="fqIndex == index" -->
                   <div
                     class="rightClickClass"
-                    v-show="fqIndex == index"
+                    
                     :style="item.style"
                   >
                     <div class="row1">{{ item.sName }}</div>
@@ -219,6 +220,24 @@
                         :key="item.tunnelId"
                         :label="item.tunnelName"
                         :value="item.tunnelId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="方向" prop="direction">
+                    <el-select
+                      v-model="eventForm.direction"
+                      placeholder="请选择方向"
+                      clearable
+                      size="small"
+                      disabled
+                    >
+                      <el-option
+                        v-for="item in directionList"
+                        :key="item.dictValue"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
                       />
                     </el-select>
                   </el-form-item>
@@ -883,13 +902,13 @@ export default {
         let subareaByStakeNum = res.data;
         this.planListEnd.forEach((item, index) => {
           console.log("事故点分区id:", subareaByStakeNum);
-          if (item.sId == subareaByStakeNum) {
-            this.fqIndex = index;
-            item.style =
-              "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-            item.show = true;
-            this.getListBySIdData(item.id);
-          }
+          // if (item.sId == subareaByStakeNum) {
+          this.fqIndex = index;
+          // item.style =
+          //   "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+          item.show = true;
+          this.getListBySIdData(item.id);
+          // }
         });
       });
     },
@@ -901,9 +920,10 @@ export default {
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
           console.log(item.stateName);
           return item.stateName;
-        } else {
-          continue;
         }
+        //  else {
+        //   continue;
+        // }
       }
     },
     getDirection(num) {
@@ -1208,6 +1228,8 @@ export default {
       await getTunnels(tunnelId).then((response) => {
         this.startPile = response.data.startPileNum;
         this.endPile = response.data.endPileNum;
+        const rightStartPile = response.data.endPileNum;
+        const rightEndPile = response.data.startPileNum;
         console.log(this.startPile, this.endPile, "隧道开始桩号和结束桩号");
         let res = response.data.storeConfigure;
         //存在配置内容
@@ -1240,56 +1262,131 @@ export default {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  //如果分区的最小值 == 隧道的最小值
-                  if (bxx.pileMin == this.startPile) {
-                    if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
-                      // 定义获取最大值的left
-                      var leftMax = axx.position.left;
-                      var leftMin = 0;
-                      // console.log(leftMax, "66666666666666");
-                      var deviceWidth = Number(leftMax) - Number(leftMin);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.top = deviceHeight;
-                      bxx.left = leftMin;
-                      // console.log(bxx, "bxx");
+                  // 1济南 上行
+                  if (bxx.direction == "1") {
+                    // console.log(bxx.sName);
+                    if (bxx.pileMin == rightEndPile) {
+                      console.log(bxx.pileMin, "------i-----");
+                      if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                        var leftMax = Number(1640);
+                        var leftMin = axx.position.left;
+                        console.log(leftMax, leftMin, bxx.sName);
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
+                      //如果分区的最大值 == 隧道的最大值
+                    } else if (bxx.pileMax == rightStartPile) {
+                      if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                        var leftMax = axx.position.left;
+                        var leftMin = 0;
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
                     }
-                    //如果分区的最大值 == 隧道的最大值
-                  } else if (bxx.pileMax == this.endPile) {
-                    if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
-                      console.log(axx, axx.eqName, "bxx");
-                      var leftMax = Number(1640);
-                      var leftMin = axx.position.left;
-                      console.log(leftMax, leftMin, bxx.sName);
-                      var deviceWidth = Number(leftMax) - Number(leftMin);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.top = deviceHeight;
-                      bxx.left = leftMin;
-                    }
+                    // else {
+                    //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMin = axx.position.left;
+                    //     bxx.deviceHeight = axx.position.top;
+                    //   }
+                    //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMax = axx.position.left;
+                    //   }
+                    // }
                   } else {
-                    if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
-                      bxx.leftMin = axx.position.left;
-                      bxx.deviceHeight = axx.position.top;
+                    // 0博山 下行
+                    if (bxx.pileMin == this.endPile) {
+                      if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                        // 定义获取最大值的left
+                        var leftMax = axx.position.left;
+                        var leftMin = 0;
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = Number(deviceHeight);
+                        bxx.left = leftMin;
+                      }
+                      //如果分区的最大值 == 隧道的开始值
+                    } else if (bxx.pileMax == this.startPile) {
+                      // 如果设备桩号相等
+                      if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                        // console.log(axx, axx.eqName, "bxx");
+                        // var leftMax = Number(1640);
+                        var leftMin = Number(axx.position.left);
+                        var deviceWidth = leftMin;
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
                     }
-                    if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
-                      bxx.leftMax = axx.position.left;
-                    }
+                    // else {
+                    //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMin = axx.position.left;
+                    //     bxx.deviceHeight = axx.position.top;
+                    //   }
+                    //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMax = axx.position.left;
+                    //   }
+                    // }
                   }
+
+                  // end
+                  //如果分区的最小值 == 隧道的最小值
+                  // if (bxx.pileMin == this.startPile) {
+                  //   if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                  //     // 定义获取最大值的left
+                  //     var leftMax = axx.position.left;
+                  //     var leftMin = 0;
+                  //     var deviceWidth = Number(leftMax) - Number(leftMin);
+                  //     var deviceHeight = axx.position.top;
+                  //     bxx.width = deviceWidth;
+                  //     bxx.height = deviceHeight;
+                  //     bxx.top = deviceHeight;
+                  //     bxx.left = leftMin;
+                  //   }
+                  //   //如果分区的最大值 == 隧道的最大值
+                  // } else if (bxx.pileMax == this.endPile) {
+                  //   if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                  //     console.log(axx, axx.eqName, "bxx");
+                  //     var leftMax = Number(1640);
+                  //     var leftMin = axx.position.left;
+                  //     console.log(leftMax, leftMin, bxx.sName);
+                  //     var deviceWidth = Number(leftMax) - Number(leftMin);
+                  //     var deviceHeight = axx.position.top;
+                  //     bxx.width = deviceWidth;
+                  //     bxx.height = deviceHeight;
+                  //     bxx.top = deviceHeight;
+                  //     bxx.left = leftMin;
+                  //   }
+                  // } else {
+                  //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                  //     bxx.leftMin = axx.position.left;
+                  //     bxx.deviceHeight = axx.position.top;
+                  //   }
+                  //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                  //     bxx.leftMax = axx.position.left;
+                  //   }
+                  // }
                 }
               }
               this.planList1.forEach((item, index) => {
-                // if (item.leftMax != undefined && item.leftMin != undefined) {
-                // var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
-                // item.width = deviceWidth;
-                // item.height = item.deviceHeight;
-                // item.top = item.deviceHeight;
-                // item.left = item.leftMin;
-                // }
                 if (item.direction == "1") {
                   item.top = 0;
+                  // item.height = 200;
+                  item.show = true;
+                } else {
+                  item.top = item.top + 60;
+                  // item.height = 200;
                 }
               });
               this.planListEnd = this.planList1;

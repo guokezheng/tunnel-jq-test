@@ -15,6 +15,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPointList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -378,26 +379,17 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdPatrolList> getUpdatePatrolLists(String id) {
-        List<SdPatrolList> devicesPatrolList = sdPatrolListMapper.getDevicesPatrolLists(id);
-        List<SdPatrolList> faultPatrolList = sdPatrolListMapper.getFaultPatrolLists(id);
-        List<SdPatrolList>list = new ArrayList<>();
+    public Map getUpdatePatrolLists(String id) {
+        Map map = new HashMap();
+        List<SdPointList> devicesPatrolList = sdPatrolListMapper.getDevicesPatrolLists(id);
+        List<SdPointList> faultPatrolList = sdPatrolListMapper.getFaultPatrolLists(id);
+        List<SdPointList>list = new ArrayList<>();
         list.addAll(devicesPatrolList);
         list.addAll(faultPatrolList);
-        List<SdPatrolList> pointList = new ArrayList();
-        if(list!=null&&list.size()>0){
-            for(int i = 0;i<list.size();i++){
-                SdPatrolList sp = new SdPatrolList();
-                sp.setTunnel_id(list.get(i).getTunnelId());
-                sp.setTunnel_name(list.get(i).getTunnelName());
-                sp.setEq_id(list.get(i).getEqFaultId());
-                sp.setPile(list.get(i).getPosition());
-                sp.setType_name(list.get(i).getTypeName());
-                pointList.add(sp);
-            }
-        }
-
-        return pointList;
+        map.put("devicesPatrolList",devicesPatrolList);
+        map.put("faultPatrolList",faultPatrolList);
+        map.put("list",list);
+        return map;
     }
 
 

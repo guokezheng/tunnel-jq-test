@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import java.util.List;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPointList;
 
 /**
  * 巡查点清单Mapper接口
@@ -123,12 +124,12 @@ public interface SdPatrolListMapper
      * @param id
      * @return
      */
-    List<SdPatrolList> getDevicesPatrolLists(String id);
+    List<SdPointList> getDevicesPatrolLists(String id);
 
     /**
      * 修改，，获取故障点信息
      * @param id
      * @return
      */
-    List<SdPatrolList> getFaultPatrolLists(String id);
+    List<SdPointList> getFaultPatrolLists(String id);
 }

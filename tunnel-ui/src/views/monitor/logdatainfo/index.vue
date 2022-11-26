@@ -64,7 +64,6 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['monitor:logininfor:export']"
         >导出</el-button>
       </el-form-item>
     </el-form>

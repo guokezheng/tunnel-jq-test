@@ -1,54 +1,28 @@
-package com.tunnel.platform.controller.sso;
+package com.tunnel.platform.task;
 
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.system.mapper.SysDeptMapper;
-import com.tunnel.platform.service.sso.ThirdPartLoginService;
+import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.platform.util.AuthUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 第三方登录控制器
- */
-@Api(tags = "单点登录")
-@RestController
-@RequestMapping("/thirdPart")
-public class ThirdPartLoginController {
+@Component("userDeptTask")
+public class UserDeptTask {
 
     @Autowired
-    private ThirdPartLoginService thirdPartLoginService;
-
-    @Autowired
-    private AuthUtil authUtil;
-
-
-    /**
-     * 单点登录方法
-     *
-     * @param username 第三方用户名
-     * @return 结果
-     */
-    @GetMapping("/login")
-    @ApiOperation(value = "单点登录方法")
-    public AjaxResult login(@RequestParam String username) {
-        return thirdPartLoginService.login(username);
-    }
-
+    private ISysDeptService sysDeptService;
     @Autowired
     private SysDeptMapper deptMapper;
 
-    @PostMapping(value = "/getTreeAll")
-    public AjaxResult getDeptTree(String id) {
-        // List<Map<String, Object>> deptTree = thirdPartLoginService.getDeptTree("5b7a963a-6363-4ca9-b691-b534835c4bcb", id);
-        // thirdPartLoginService.metho();
-
+    /**
+     * 同步部门
+     */
+    public void syncDept() {
         // 获取授权码
         String authCode = AuthUtil.getAuthCode("admin");
         // 获取token
@@ -74,20 +48,22 @@ public class ThirdPartLoginController {
 
                 SysDept dept = deptMapper.selectJtDeptById(jtDeptId);
                 if (null!= dept) {
+                    // 如果存在就更新
                     deptMapper.updateDept(sysDept);
                 }else {
+                    // 如果不存在就新增
                     deptMapper.insertDept(sysDept);
                 }
             }
         }
-
-        return AjaxResult.success();
     }
 
-    @PostMapping(value = "/getUserListByCompanyAndDept")
-    public AjaxResult getUserListByCompanyAndDept(String companyName, String deptName) {
-        List<Map<String, Object>> userList = thirdPartLoginService.getUsersByDept(null, companyName, deptName);
-        return AjaxResult.success(userList);
+    /**
+     * 同步用户
+     */
+    public void syncUser() {
+
     }
 
 }
+

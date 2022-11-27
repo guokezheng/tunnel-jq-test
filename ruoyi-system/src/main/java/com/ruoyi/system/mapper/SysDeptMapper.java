@@ -5,7 +5,6 @@ import com.ruoyi.system.domain.vo.SysDeptUserTreeVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 部门管理 数据层
@@ -37,6 +36,16 @@ public interface SysDeptMapper
      * @return 部门信息
      */
     public SysDept selectDeptById(Long deptId);
+
+    /**
+     * 根据集团部门ID查询信息
+     *
+     * @param jtDeptId 集团部门ID
+     * @return 部门信息
+     */
+    public SysDept selectJtDeptById(String jtDeptId);
+
+
 
     /**
      * 根据ID查询所有子部门

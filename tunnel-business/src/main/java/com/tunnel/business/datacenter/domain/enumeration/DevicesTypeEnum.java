@@ -17,13 +17,13 @@ public enum DevicesTypeEnum {
     JIA_QIANG_ZHAO_MING(7L, "加强照明"),
     YIN_DAO_ZHAO_MING(8L, "引道照明"),
     JI_BEN_ZHAO_MING(9L, "基本照明"),
-    FENG_JI(10L, "风机"),
+    FENG_JI(10L, "射流风机"),
     PENG_DONG_ZHAO_MING(11L, "光伏棚洞"),
     JUAN_LIAN_MEN(12L, "卷帘门"),
     SHUI_BENG(13L, "消防水泵"),
     PLC(14L, "PLC主机"),
     SHUI_BENG_YE_WEI(15L, "消防水池液位传感器"),
-    VMS(16L, "可变信息标志"),
+    VMS(16L, "隧道内可变信息标志"),
     FENG_SU_FENG_XIANG(17L, "风速风向检测器"),
     LIANG_DU_JIAN_CE_INSIDE(18L, "亮度检测器(洞内)"),
     CO_VI(19L, "CO/VI检测器"),
@@ -43,11 +43,16 @@ public enum DevicesTypeEnum {
     XIAO_FANG_PAO(33L, "智能消防炮"),
     FIRE_ALARM_HOST(34L, "火灾报警主机"),
     BIAN_SIAN_SUO(35L, "变电所"),
-    REN_XING_HENG_DONG(40L, "人行横洞指示标志"),
+    MEN_JIA_VMS(36L, "门架式可变信息标志"),
+    ZHOU_LIU_FENG_JI(37L, "门架式可变信息标志"),
+    XIAO_FANG_SHUAN(38L, "消防栓"),
+    SHOU_BAO(39L, "智能手动报警按钮"),
+    HUO_YAN_TAN_CE_QI(40L, "火焰探测器"),
     CHE_XING_HENG_DONG(41L, "车行横洞指示标志"),
     RSU(42L, "路侧单元RSU"),
     TING_CHE_DAI(43L, "紧急停车带标志"),
-    XIAO_FANG_SHUAN(44L, "消防栓");
+    SHU_SAN_BIAO_ZHI_CONTROL(1030L, "智能疏散标志控制器"),
+    YOU_DAO_DENG_CONTROL(1031L, "智能诱导灯控制器");
 
 
     private Long code;

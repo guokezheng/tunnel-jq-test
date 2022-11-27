@@ -902,13 +902,13 @@ export default {
         let subareaByStakeNum = res.data;
         this.planListEnd.forEach((item, index) => {
           console.log("事故点分区id:", subareaByStakeNum);
-          // if (item.sId == subareaByStakeNum) {
-          this.fqIndex = index;
-          // item.style =
-          //   "border:1px solid red;background-color: rgba(255,0,0,0.6);";
-          item.show = true;
-          this.getListBySIdData(item.id);
-          // }
+          if (item.sId == subareaByStakeNum) {
+            this.fqIndex = index;
+            item.style =
+              "border:1px solid red;background-color: rgba(255,0,0,0.6);";
+            item.show = true;
+            this.getListBySIdData(item.id);
+          }
         });
       });
     },

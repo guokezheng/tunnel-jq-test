@@ -184,6 +184,7 @@ public class workspaceController extends BaseController {
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
+        String fDeviceState = state;
         String brightness = map.get("brightness").toString();
         String frequency = map.get("frequency").toString();
         String fireMark = "";
@@ -308,7 +309,7 @@ public class workspaceController extends BaseController {
             if (data.size() > 0 && data.get(0) != null) {
                 sdOperationLog.setBeforeState(data.get(0).getData());
             }
-            sdOperationLog.setOperationState(state);
+            sdOperationLog.setOperationState(fDeviceState);
             sdOperationLog.setControlType("0");
             sdOperationLog.setState("1");
             sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
@@ -326,7 +327,7 @@ public class workspaceController extends BaseController {
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
-        sdOperationLog.setOperationState(state);
+        sdOperationLog.setOperationState(fDeviceState);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

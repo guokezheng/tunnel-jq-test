@@ -15,9 +15,6 @@
       </div>
     </div> -->
 
-
-    
-
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -55,9 +52,15 @@
     </el-row> -->
 
     <div class="butBox">
-      <div :class="searchValue=='1'?'xz':''" @click="qiehuan('1')">主动安全</div>
-      <div :class="searchValue=='0'?'xz':''" @click="qiehuan('0')">交通事件</div>
-      <div :class="searchValue=='2'?'xz':''" @click="qiehuan('2')">设备故障</div>
+      <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
+        主动安全
+      </div>
+      <div :class="searchValue == '0' ? 'xz' : ''" @click="qiehuan('0')">
+        交通事件
+      </div>
+      <div :class="searchValue == '2' ? 'xz' : ''" @click="qiehuan('2')">
+        设备故障
+      </div>
     </div>
     <el-form
       :model="queryParams"
@@ -162,9 +165,7 @@
       :inline="true"
       label-width="68px"
       v-show="searchValue == '2'"
-
     >
-    
       <el-form-item label="故障位置" prop="faultLocation">
         <el-input
           v-model="queryParams.faultLocation"
@@ -217,7 +218,6 @@
         <el-button
           type="primary"
           plain
-          
           size="mini"
           :disabled="single"
           @click="handleUpdate"
@@ -244,7 +244,7 @@
         >
       </el-form-item>
     </el-form>
-  
+
     <el-table
       v-loading="loading"
       :data="eventList"
@@ -935,9 +935,7 @@ import {
   toll,
   getTunnelList,
 } from "@/api/event/event";
-import {
-  listList,
-} from "@/api/electromechanicalPatrol/faultManage/fault";
+import { listList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listEventType, getTodayEventCount } from "@/api/event/eventType";
 import { listPlan } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -985,7 +983,7 @@ export default {
         },
       ],
       //
-      searchValue : '1',
+      searchValue: "1",
       // 弹出层标题
       title: "",
       // 状态字典
@@ -1009,7 +1007,8 @@ export default {
         startTime: null,
         endTime: null,
         deptId: null,
-        searchValue:null,
+        searchValue: null,
+        searchValue: 1,
       },
       allmsg: "",
       process: "",
@@ -1140,28 +1139,29 @@ export default {
       });
     },
     // 切换按钮
-    qiehuan(inx){
-      this.searchValue=inx;
+    qiehuan(inx) {
+      this.queryParams.searchValue = inx;
+      this.searchValue = inx;
+      this.getEventType();
       this.getList();
-
     },
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
-      if(this.searchValue == '2'){
+      if (this.searchValue == "2") {
         listList(this.queryParams).then((response) => {
           this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
         });
-      }else{
-        if(!this.dateRange){
-          this.dateRange = []
+      } else {
+        if (!this.dateRange) {
+          this.dateRange = [];
         }
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.searchValue;
-        console.log(this.queryParams,this.addDateRange(this.queryParams))
+        console.log(this.queryParams, this.addDateRange(this.queryParams));
         listEvent(this.addDateRange(this.queryParams)).then((response) => {
           console.log(response.rows, "查询事件管理列表");
           this.eventList = response.rows;
@@ -1172,7 +1172,6 @@ export default {
           this.loading = false;
         });
       }
-      
     },
     // getList() {
     //   this.loading = true;
@@ -1202,7 +1201,8 @@ export default {
     },
     /** 查询事件类型列表 */
     getEventType() {
-      listEventType().then((response) => {
+      let prevControlType = { prevControlType: this.searchValue };
+      listEventType(prevControlType).then((response) => {
         console.log(response, "responseresponse");
         this.eventTypeData = response.rows;
       });
@@ -1246,7 +1246,7 @@ export default {
       console.log(row, "事件详情row");
     },
     handleDispatch(row) {
-      console.log(row); 
+      console.log(row);
       this.$router.push({
         path: "/emergency/administration/dispatch",
         query: {
@@ -1288,8 +1288,9 @@ export default {
     },
     /** 重置按钮操作 */
     resetQuery() {
+      this.queryParams = { pageNum: 1, pageSize: 10 };
       this.dateRange = [];
-      this.tunnelList = []
+      this.tunnelList = [];
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -1357,7 +1358,7 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.butBox{
+.butBox {
   width: 280px;
   display: flex;
   padding: 4px 4px;
@@ -1366,13 +1367,13 @@ export default {
   margin-bottom: 10px;
   font-size: 14px;
   // justify-content: space-between;
-  div{
+  div {
     padding: 6px 10px;
     color: #fff;
     letter-spacing: 1px;
     cursor: pointer;
   }
-  .xz{
+  .xz {
     background: #285b8d;
     border-radius: 10px;
   }

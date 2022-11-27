@@ -16,7 +16,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="16">
+        <el-col :span="14">
           <el-form-item label="隧道名称" prop="tunnelId">
             <el-select
               style="width: 100%"
@@ -34,7 +34,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <el-form-item label="方向" prop="direction">
             <el-select
               clearable

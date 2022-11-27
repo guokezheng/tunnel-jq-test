@@ -1,13 +1,18 @@
 package com.tunnel.business.service.informationBoard.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,9 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
 
     @Autowired
     private SdVmsTemplateContentMapper sdVmsTemplateContentMapper;
+
+    @Autowired
+    private ISysDictDataService sysDictDataService;
 
     /**
      * 查询情报板模板
@@ -84,7 +92,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     /**
      * 修改情报板模板
      *
-     * @param jsonObject 情报板模板
+     * @param templatesMap 情报板模板
      * @return 结果
      */
     @Override
@@ -142,5 +150,42 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     @Override
     public List<Map<String, Object>> informationBoardAcquisition(JSONObject jsonObject) {
         return null;
+    }
+
+    @Override
+    public Map<String, List<SdVmsTemplate>> getAllVmsTemplate() {
+        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
+        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectSdVmsTemplateList(null);
+        List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
+        List<SdVmsTemplateContent> contents = new ArrayList<>();
+        List<SdVmsTemplate> template = new ArrayList<>();
+        if (!categorys.isEmpty()) {
+            for (int i = 0;i < categorys.size();i++) {
+                template = new ArrayList<>();
+                String dictValue = categorys.get(i).getDictValue();
+                for (int j = 0;j < sdVmsTemplates.size();j++) {
+                    contents = new ArrayList<>();
+                    SdVmsTemplate sdVmsTemplate = sdVmsTemplates.get(j);
+                    if (!dictValue.equals(sdVmsTemplate.getCategory())) {
+                        continue;
+                    }
+                    Long id = sdVmsTemplate.getId();
+                    for (int z = 0;z < sdVmsTemplateContents.size();z++) {
+                        SdVmsTemplateContent sdVmsTemplateContent = sdVmsTemplateContents.get(z);
+                        if (sdVmsTemplateContent.getTemplateId().equals("") || sdVmsTemplateContent.getTemplateId() == null) {
+                            continue;
+                        }
+                        Long templateId = Long.parseLong(sdVmsTemplateContent.getTemplateId());
+                        if (id.longValue() == templateId.longValue()) {
+                            contents.add(sdVmsTemplateContent);
+                        }
+                    }
+                    template.add(sdVmsTemplate);
+                }
+                map.put(dictValue, template);
+            }
+        }
+        return map;
     }
 }

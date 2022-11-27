@@ -156,31 +156,32 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     public Map<String, List<SdVmsTemplate>> getAllVmsTemplate() {
         Map<String, List<SdVmsTemplate>> map = new HashMap<>();
         List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectSdVmsTemplateList(null);
-//        List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
-//        List<SdVmsTemplateContent> contents = new ArrayList<>();
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList();
+        List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
+        List<SdVmsTemplateContent> contents = new ArrayList<>();
         List<SdVmsTemplate> template = new ArrayList<>();
         if (!categorys.isEmpty()) {
             for (int i = 0;i < categorys.size();i++) {
                 template = new ArrayList<>();
                 String dictValue = categorys.get(i).getDictValue();
                 for (int j = 0;j < sdVmsTemplates.size();j++) {
-//                    contents = new ArrayList<>();
+                    contents = new ArrayList<>();
                     SdVmsTemplate sdVmsTemplate = sdVmsTemplates.get(j);
                     if (!dictValue.equals(sdVmsTemplate.getCategory())) {
                         continue;
                     }
-//                    Long id = sdVmsTemplate.getId();
-//                    for (int z = 0;z < sdVmsTemplateContents.size();z++) {
-//                        SdVmsTemplateContent sdVmsTemplateContent = sdVmsTemplateContents.get(z);
-//                        if (sdVmsTemplateContent.getTemplateId().equals("") || sdVmsTemplateContent.getTemplateId() == null) {
-//                            continue;
-//                        }
-//                        Long templateId = Long.parseLong(sdVmsTemplateContent.getTemplateId());
-//                        if (id.longValue() == templateId.longValue()) {
-//                            contents.add(sdVmsTemplateContent);
-//                        }
-//                    }
+                    Long id = sdVmsTemplate.getId();
+                    for (int z = 0;z < sdVmsTemplateContents.size();z++) {
+                        SdVmsTemplateContent sdVmsTemplateContent = sdVmsTemplateContents.get(z);
+                        if (sdVmsTemplateContent.getTemplateId().equals("") || sdVmsTemplateContent.getTemplateId() == null) {
+                            continue;
+                        }
+                        Long templateId = Long.parseLong(sdVmsTemplateContent.getTemplateId());
+                        if (id.longValue() == templateId.longValue()) {
+                            contents.add(sdVmsTemplateContent);
+                        }
+                    }
+                    sdVmsTemplate.setTcontents(contents);
                     template.add(sdVmsTemplate);
                 }
                 map.put(dictValue, template);

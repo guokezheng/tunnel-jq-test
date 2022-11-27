@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 读取设备、隧道基础数据
+ * 两级平台设备、隧道数据同步
  *
  * @author zhai
  * @date 2022/11/1

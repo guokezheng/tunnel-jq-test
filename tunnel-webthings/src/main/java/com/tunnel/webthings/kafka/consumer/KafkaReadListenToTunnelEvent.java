@@ -20,6 +20,7 @@ import java.util.Date;
 
 /**
  * 读取隧道wq_tunnelEvent主题信息
+ * 物联中台事件推送
  */
 @Component
 public class KafkaReadListenToTunnelEvent {

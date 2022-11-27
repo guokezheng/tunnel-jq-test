@@ -5,11 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataRecordService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.webthings.service.TunnelIotDeviceService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -25,14 +23,13 @@ import java.util.Date;
 
 /**
  * 读取DevStatus主题内容
+ * 物联中台设备状态
  */
 @Component
 public class KafkaReadListenToDevStatusTopic {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToDevStatusTopic.class);
 
-    @Autowired
-    private TunnelIotDeviceService service;
 
     @Value("${authorize.name}")
     private String authorizeName;
@@ -94,11 +91,4 @@ public class KafkaReadListenToDevStatusTopic {
         consumer.commitSync();
     }
 
-    /**
-     * 图片存储路径修改数据库
-     */
-    @PostMapping("/aaa")
-    public void method(){
-        service.method();
-    }
 }

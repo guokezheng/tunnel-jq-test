@@ -189,7 +189,7 @@ export default {
       openState: [
         {
           value: "1",
-          label: "关灯",
+          label: "关闭",
         },
       ],
     };
@@ -235,7 +235,7 @@ export default {
           this.openState.push(
             {
               value: "2",
-              label: "开灯",
+              label: "常亮",
             },
           )
           // fireMarkList(this.eqInfo.equipmentId).then((res) => {

@@ -52,7 +52,17 @@ public class SdTrigger extends BaseEntity
     @Excel(name = "比较数值", readConverterExp = "如=果是in，则数值是一个数组，例如[1,2,3,4],如果是between，也是一个数组，例如[-10,10],其他情况都是数字")
     private String compareValue;
 
-    public void setId(Long id) 
+    private String warningType;
+
+    public String getWarningType() {
+        return warningType;
+    }
+
+    public void setWarningType(String warningType) {
+        this.warningType = warningType;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

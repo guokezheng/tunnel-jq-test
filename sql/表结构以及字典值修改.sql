@@ -471,3 +471,6 @@ alter table sd_patrol_list modify column xc_status  varchar(10)  comment '巡查
 -- 修改sd_push_history表字段push_data的字段类型
 ALTER TABLE `tunnel-jq`.`sd_push_history`
     MODIFY COLUMN `push_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '推送数据' AFTER `data_type`;
+
+-- 触发器表添加预警类型字段
+alter table sd_trigger  add column warning_type varchar(10) comment '预警类型0：仅预警；1：预警联动';

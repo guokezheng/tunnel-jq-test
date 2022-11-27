@@ -1074,6 +1074,14 @@ export default {
     });
   },
   methods: {
+    // 切换按钮
+    qiehuan(inx) {
+      this.queryParams.eventTypeId = "";
+      this.queryParams.searchValue = inx;
+      this.searchValue = inx;
+      this.getEventType();
+      this.getList();
+    },
     accidentInit(eventId) {
       var eventId = { eventId: eventId };
       listEventFlow(eventId).then((result) => {
@@ -1138,13 +1146,7 @@ export default {
         this.tunnelList = res.data;
       });
     },
-    // 切换按钮
-    qiehuan(inx) {
-      this.queryParams.searchValue = inx;
-      this.searchValue = inx;
-      this.getEventType();
-      this.getList();
-    },
+
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;

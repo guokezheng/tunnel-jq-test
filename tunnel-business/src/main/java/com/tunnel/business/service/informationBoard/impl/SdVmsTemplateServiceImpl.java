@@ -153,21 +153,21 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     }
 
     @Override
-    public Map<String, List<SdVmsTemplate>> getAllVmsTemplate() {
-        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
-        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList();
+    public List<SdVmsTemplate> getAllVmsTemplate(String category) {
+//        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
+//        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList(category);
         List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
         List<SdVmsTemplateContent> contents = new ArrayList<>();
         List<SdVmsTemplate> template = new ArrayList<>();
-        if (!categorys.isEmpty()) {
-            for (int i = 0;i < categorys.size();i++) {
-                template = new ArrayList<>();
-                String dictValue = categorys.get(i).getDictValue();
+//        if (!categorys.isEmpty()) {
+//            for (int i = 0;i < categorys.size();i++) {
+//                template = new ArrayList<>();
+//                String dictValue = categorys.get(i).getDictValue();
                 for (int j = 0;j < sdVmsTemplates.size();j++) {
                     contents = new ArrayList<>();
                     SdVmsTemplate sdVmsTemplate = sdVmsTemplates.get(j);
-                    if (!dictValue.equals(sdVmsTemplate.getCategory())) {
+                    if (!category.equals(sdVmsTemplate.getCategory())) {
                         continue;
                     }
                     Long id = sdVmsTemplate.getId();
@@ -184,9 +184,9 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
                     sdVmsTemplate.setTcontents(contents);
                     template.add(sdVmsTemplate);
                 }
-                map.put(dictValue, template);
-            }
-        }
-        return map;
+//                map.put(category, template);
+//            }
+//        }
+        return template;
     }
 }

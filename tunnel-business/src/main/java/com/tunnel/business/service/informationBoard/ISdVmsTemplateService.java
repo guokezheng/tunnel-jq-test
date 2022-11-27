@@ -65,5 +65,5 @@ public interface ISdVmsTemplateService {
 
     List<Map<String, Object>> informationBoardAcquisition(JSONObject jsonObject);
 
-    Map<String, List<SdVmsTemplate>> getAllVmsTemplate();
+    List<SdVmsTemplate> getAllVmsTemplate(String category);
 }

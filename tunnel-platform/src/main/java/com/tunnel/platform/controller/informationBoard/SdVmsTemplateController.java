@@ -40,9 +40,9 @@ public class SdVmsTemplateController extends BaseController
         return getDataTable(list);
     }
 
-    @GetMapping("/getAllVmsTemplate")
-    public AjaxResult getAllVmsTemplate() {
-        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate());
+    @GetMapping("/getAllVmsTemplate/{category}")
+    public AjaxResult getAllVmsTemplate(@PathVariable("category") String category) {
+        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category));
     }
 
     /**

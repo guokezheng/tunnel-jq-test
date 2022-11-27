@@ -63,5 +63,5 @@ public interface SdVmsTemplateMapper
 
     public Long selectSdVmsTemplateId();
 
-    public List<SdVmsTemplate> selectTemplateList();
+    public List<SdVmsTemplate> selectTemplateList(String category);
 }

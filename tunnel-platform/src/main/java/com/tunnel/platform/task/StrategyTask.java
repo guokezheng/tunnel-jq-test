@@ -29,7 +29,7 @@ public class StrategyTask {
     @Resource
     private RedisCache redisCache;
     /**
-     * 定时、分时控制策略定时任务
+     * 定时、分时控制策略执行
      * @param strategyRlId
      */
     public void strategyParams(String strategyRlId) throws UnknownHostException {
@@ -48,10 +48,10 @@ public class StrategyTask {
     }
 
     /**
-     * 自动触发定时任务
+     * 自动触发执行
+     * @throws UnknownHostException
      */
-//    @Scheduled(fixedRate = 3000)
-    public void triggerJob() throws UnknownHostException {
+    public void triggerJob(String triggerId) throws UnknownHostException {
         //触发器数据
         Map<String,Object> map = new HashMap<>();
         String serverIp = InetAddress.getLocalHost().getHostAddress();

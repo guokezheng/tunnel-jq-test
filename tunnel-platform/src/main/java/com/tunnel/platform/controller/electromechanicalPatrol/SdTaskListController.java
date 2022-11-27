@@ -99,10 +99,11 @@ public class SdTaskListController extends BaseController
     @GetMapping(value = "/{id}")
     public Result getInfo(@PathVariable("id") String id){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(id);
-        List<SdPatrolList> patrolLists = sdTaskListService.getUpdatePatrolLists(id);
+        Map patrolMap = sdTaskListService.getUpdatePatrolLists(id);
+        //List<SdPatrolList> patrolLists = sdTaskListService.getUpdatePatrolLists(id);
         Map<String, Object> map=new HashMap<String, Object>();
         map.put("task",taskList);
-        map.put("patrol", patrolLists);
+        map.putAll(patrolMap);
         return Result.success(map);
     }
 

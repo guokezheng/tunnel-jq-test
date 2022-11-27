@@ -105,10 +105,16 @@ export function getInformationBoardRelease(data) {
 }
 
 //情报板修改弹窗
-export function uploadBoardEditInfo(deviceld,protocolType,parameters) {
+export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
+  var data = {
+    deviceIds:devicelds,
+    protocolType:protocolType,
+    parameters:encodeURI(parameters)
+  }
   return request({
-    url: '/parser/board/uploadBoardEditInfo?deviceld='+ deviceld + '&protocolType=' + protocolType +'&parameters=' +parameters,
+    url: '/parser/board/uploadBoardEditInfo',
     method: 'get',
+    params: data
   })
 }
 

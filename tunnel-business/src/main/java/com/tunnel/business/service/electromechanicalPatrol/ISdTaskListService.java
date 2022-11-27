@@ -141,5 +141,5 @@ public interface ISdTaskListService
      * @param id
      * @return
      */
-    List<SdPatrolList> getUpdatePatrolLists(String id);
+    Map getUpdatePatrolLists(String id);
 }

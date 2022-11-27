@@ -232,11 +232,11 @@
             class="tableBlueButtton"
             @click="handleRecordy(scope.row)"
           >任务详情</el-button>
-          <el-button
+<!--          <el-button
             size="mini"
             @click="handleAbolish(scope.row)"
           >废止任务</el-button
-          >
+          >-->
           <el-button
             size="mini"
             class="tableBlueButtton"
@@ -341,14 +341,24 @@
 
         <div class="form-one">
           <div>
-            <span>派单人员</span>
+            <span prop="dispatcher">派单人员</span>
             <div>
               <el-input
+                ref="dispatcher"
                 v-model="form.dispatcher"
                 placeholder="（默认当前登录人）"
               ></el-input>
             </div>
           </div>
+
+<!--          <el-form-item label="故障位置" prop="faultLocation">
+            <el-input ref="faultLocation" :disabled="disstate"
+                      v-model="form.faultLocation"
+                      placeholder="请输入故障位置"
+            />
+          </el-form-item>-->
+
+
           <div>
             <span>派单时间</span>
             <div>
@@ -578,7 +588,7 @@
         <div class="table-father">
           <el-table
             ref="multipleTable"
-            :data="tableData1"
+            :data="tableData2"
             tooltip-effect="dark"
             :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
             :cell-style="{ 'text-align': 'center', padding: '0px' }"
@@ -761,11 +771,10 @@
         <div class="table-row">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
+          <div style="width: 20%">凤凰山隧道 / admin</div>
           <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
         </div>
-        <div class="table-row">
+<!--        <div class="table-row">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">派单</div>
           <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
@@ -785,7 +794,7 @@
           <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
           <div style="width: 30%">2022/09/18 21:13:35</div>
           <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>
+        </div>-->
       </div>
     </el-dialog>
   </div>
@@ -854,6 +863,9 @@ export default {
   },
   data() {
     return {
+
+      userName:'',
+      currentTime:'',
       deviceType:'',
       faultLevel:'',
       // 获取巡检点 表格选中项
@@ -870,6 +882,7 @@ export default {
       },
       treeData: [],
       tableData1: [],
+      tableData2: [],
       options1value: "", //设备清单绑定
       options2value: "", //故障清单绑定
       boxList: [],//巡检点list
@@ -979,6 +992,10 @@ export default {
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
     });
+    //获取当前登录人
+    this.userName = this.$store.state.user.name;
+    const t = new Date();
+    this.currentTime = t.getFullYear()+'-'+t.getMonth()+'-'+t.getDay();
   },
   methods: {
     //  上移
@@ -1050,13 +1067,13 @@ export default {
       getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
         console.log(res, "获取故障table");
         console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
-
-        this.tableData1 = res.rows;
+debugger
+        this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
           console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           if (this.boxList[0].eq_type == deviceType) {
-            this.tableData1.forEach((item) => {
+            this.tableData2.forEach((item) => {
               this.boxList.forEach((row) => {
                 if (item.eq_name == row.eq_name) {
                   this.$nextTick(() => {
@@ -1198,11 +1215,11 @@ export default {
       this.handleQuery();
     },
     show1() {
-      this.tableData1 = null
+     //this.tableData1 = null
       this.isShow1 = true;
     },
     show2() {
-      this.tableData1 = null
+      //this.tableData1 = null
       this.isShow2 = true;
     },
 
@@ -1211,9 +1228,7 @@ export default {
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_1";
       })
-      debugger
       this.boxList = this.boxList.concat(this.dialogSelection);
-      console.log("determine1==================="+this.boxList)
     },
     determine2() {
       debugger
@@ -1234,16 +1249,20 @@ export default {
       this.reset();
       this.open = true;
       this.title = "新增巡查任务";
+      this.tableData1 = null
+      this.tableData2 = null
+      this.form.dispatcher = this.userName;
+      this.form.dispatchTime = this.currentTime;
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids;
       getList(id).then((response) => {
-        debugger
         this.form = response.data;
-        this.boxList = response.data.patrol;
-        console.log("=========================="+this.boxList)
+        this.boxList = response.data.list;
+        this.tableData1 = response.data.devicesPatrolList;//巡检点
+        this.tableData2 = response.data.faultPatrolList;//故障点
         this.open = true;
         this.title = "修改巡查任务";
       });
@@ -1288,6 +1307,7 @@ export default {
           return delList(ids);
         })
         .then(() => {
+          debugger
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
@@ -1315,7 +1335,8 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","2");
       //判断是否选择点
-      if(this.boxList=[]){
+      console.log("============="+this.boxList);
+      if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
       }

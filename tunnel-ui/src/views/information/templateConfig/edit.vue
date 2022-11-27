@@ -82,9 +82,9 @@
               >
                 <el-option
                   v-for="item in screenSizeOptions"
-                  :key="item.type"
-                  :label="item.type"
-                  :value="item.type"
+                  :key="item.dictValue"
+                  :label="item.dictValue"
+                  :value="item.dictValue"
                 >
                 </el-option>
               </el-select>
@@ -387,30 +387,30 @@ export default {
         },
       ],
       screenSizeOptions: [
-        {
-          type: "144*72",
-        },
-        {
-          type: "320*32",
-        },
-        {
-          type: "384*32",
-        },
-        {
-          type: "480*48",
-        },
-        {
-          type: "480*72",
-        },
-        {
-          type: "768*72",
-        },
-        {
-          type: "880*80",
-        },
-        {
-          type: "1024*128",
-        },
+        // {
+        //   type: "144*72",
+        // },
+        // {
+        //   type: "320*32",
+        // },
+        // {
+        //   type: "384*32",
+        // },
+        // {
+        //   type: "480*48",
+        // },
+        // {
+        //   type: "480*72",
+        // },
+        // {
+        //   type: "768*72",
+        // },
+        // {
+        //   type: "880*80",
+        // },
+        // {
+        //   type: "1024*128",
+        // },
       ],
       colorOptions: [
         {

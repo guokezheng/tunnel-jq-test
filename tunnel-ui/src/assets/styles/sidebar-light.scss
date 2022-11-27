@@ -73,9 +73,12 @@
       padding: 10px;
       // height: 100%;
     }
+    .app-container{
+      background: #004375;
+    }
     // 外边框
     .separate{
-      background: #1B4670;
+      background: #00335A;
     }
     .el-table {
       color: white;
@@ -227,7 +230,7 @@
     }
     // 面包屑
     .app-breadcrumb.el-breadcrumb {
-      background: #1B4670;
+      background: #004375;
       .no-redirect {
         color: white;
       }

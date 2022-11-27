@@ -156,7 +156,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     public Map<String, List<SdVmsTemplate>> getAllVmsTemplate() {
         Map<String, List<SdVmsTemplate>> map = new HashMap<>();
         List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectSdVmsTemplateList(null);
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList();
         List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
         List<SdVmsTemplateContent> contents = new ArrayList<>();
         List<SdVmsTemplate> template = new ArrayList<>();
@@ -181,6 +181,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
                             contents.add(sdVmsTemplateContent);
                         }
                     }
+                    sdVmsTemplate.setTcontents(contents);
                     template.add(sdVmsTemplate);
                 }
                 map.put(dictValue, template);

@@ -294,7 +294,7 @@
         </div>
         <div class="table-father">
           <el-table
-            ref="multipleTable"
+            ref="multipleTable1"
             :data="tableData1"
             tooltip-effect="dark"
             :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
@@ -375,7 +375,7 @@
         </div>
         <div class="table-father">
           <el-table
-            ref="multipleTable"
+            ref="multipleTable2"
             :data="tableData2"
             tooltip-effect="dark"
             :header-cell-style="{ 'text-align': 'center', padding: '0px' }"
@@ -853,19 +853,19 @@ export default {
         this.dialogTotal = res.total;
         if (this.boxList != []) {
           console.log(this.boxList[0].eq_type, deviceType, "0000000000");
-          if (this.boxList[0].eq_type == deviceType) {
+          // if (this.boxList[0].eq_type == deviceType) {
             this.tableData1.forEach((item) => {
               this.boxList.forEach((row) => {
                 if (item.eq_name == row.eq_name) {
                   this.$nextTick(() => {
-                    this.$refs.multipleTable.toggleRowSelection(item, true);
+                    this.$refs.multipleTable1.toggleRowSelection(item, true);
                   });
                 }
               });
             });
-          }
+          // }
         } else {
-          this.$refs.multipleTable.clearSelection();
+          this.$refs.multipleTable1.clearSelection();
         }
       });
     },
@@ -881,19 +881,19 @@ export default {
         this.dialogTotal = res.total;
         if (this.boxList != []) {
           console.log(this.boxList[0].eq_type, deviceType, "0000000000");
-          if (this.boxList[0].eq_type == deviceType) {
+          // if (this.boxList[0].eq_type == deviceType) {
             this.tableData2.forEach((item) => {
               this.boxList.forEach((row) => {
                 if (item.eq_name == row.eq_name) {
                   this.$nextTick(() => {
-                    this.$refs.multipleTable.toggleRowSelection(item, true);
+                    this.$refs.multipleTable2.toggleRowSelection(item, true);
                   });
                 }
               });
             });
-          }
+          // }
         } else {
-          this.$refs.multipleTable.clearSelection();
+          this.$refs.multipleTable2.clearSelection();
         }
       });
     },
@@ -917,7 +917,7 @@ export default {
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
         /*this.impressionOptions.forEach((opt) => {
-          this.patrolNews.forEach((taskitem) => {
+            this.patrolNews.forEach((taskitem) => {
             console.log("taskitem.impression========="+taskitem.impression)
             if (opt.dictValue == "0"&taskitem.impression == 0) {
                 taskitem.impression = opt.dictLabel;
@@ -1015,7 +1015,6 @@ export default {
     /** 巡查班组 */
     getBz() {
       listBz().then((response) => {
-        debugger
         this.bzData = response.rows;
       });
     },
@@ -1110,8 +1109,8 @@ export default {
         that.form = response.data.task[0];
         debugger
         this.boxList = response.data.list;
-        this.tableData1 = response.data.devicesPatrolList;//巡检点
-        this.tableData2 = response.data.faultPatrolList;//故障点
+        // this.tableData1 = response.data.devicesPatrolList;//巡检点
+        // this.tableData2 = response.data.faultPatrolList;//故障点
         this.boxList.forEach((item) =>{
           if(item.patrol_type==0){
               item.eq_id= item.eq_id+"_1";
@@ -1213,11 +1212,11 @@ export default {
           this.getList();
         });
       }else{
-        addTask(this.fileData).then((response) => {
-          this.$modal.msgSuccess("发布成功");
-          this.open = false;
-          this.getList();
-        });
+      addTask(this.fileData).then((response) => {
+        this.$modal.msgSuccess("发布成功");
+        this.open = false;
+        this.getList();
+      });
       }
     },
 //废止
@@ -1251,7 +1250,7 @@ export default {
           this.getList();
         });
       }
-    },
+  },
 //暂存
     save() {
       this.fileData = new FormData(); // new formData对象

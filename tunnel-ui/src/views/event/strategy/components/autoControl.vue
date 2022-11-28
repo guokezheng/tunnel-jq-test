@@ -319,10 +319,9 @@ export default {
   },
   data() {
     return {
-      warningType: "",
       definition: [
-        { warningType: 0, name: "仅预警" },
-        { warningType: 1, name: "预警联动" },
+        { warningType: "0", name: "仅预警" },
+        { warningType: "1", name: "预警联动" },
       ],
       expression: "",
       openCron: false,
@@ -423,9 +422,6 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
-    // warningTypeChange() {
-    //   this.warningType = this.strategyForm.trigger.warningType;
-    // },
     /** 获取当前策略数据 */
     async getStrategyData(row) {
       //获取设备
@@ -459,7 +455,8 @@ export default {
           this.strategyForm.triggers.compareValue = res.data.compareValue;
           this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId;
           this.strategyForm.triggers.elementId = res.data.elementId;
-          this.strategyForm.triggers.warningType = res.data.warningType;
+          // this.strategyForm.triggers.warningType = res.data.warningType;
+          this.$set(this.strategyForm.triggers,"warningType",res.data.warningType)
           listDevices({
             eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,

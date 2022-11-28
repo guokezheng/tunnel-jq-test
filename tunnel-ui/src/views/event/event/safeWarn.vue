@@ -377,7 +377,10 @@
           </el-button>
           <!-- </router-link> -->
           <el-button
-            v-show="scope.row.eventState == 0 || scope.row.eventState == 3"
+            v-show="
+              (scope.row.eventState == 0 && searchValue != '1') ||
+              (scope.row.eventState == 3 && searchValue != '1')
+            "
             size="mini"
             class="tableBlueButtton"
             v-hasPermi="['system:event:remove']"

@@ -78,8 +78,10 @@
           :key="items.state + index"
         >
           <el-select
+            v-show="strategyForm.equipmentTypeId != 30"
             v-model="items.value"
             multiple
+            collapse-tags
             placeholder="请选择设备"
             style="width: 40%"
             @change="$forceUpdate()"
@@ -96,7 +98,11 @@
           <el-select
             v-model="items.state"
             placeholder="请选择设备需要执行的操作"
-            style="width: 39%; margin-left: 6%"
+            :style="
+              strategyForm.equipmentTypeId != 30
+                ? 'width: 39%;margin-left: 6%'
+                : 'width: 50%;'
+            "
           >
             <el-option
               v-for="item in manualControlStateList"

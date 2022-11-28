@@ -35,7 +35,7 @@ public class SysUser extends BaseEntity
     /** 部门ID */
     @Excel(name = "部门编号", type = Type.IMPORT)
     @ApiModelProperty("部门id")
-    private Long deptId;
+    private String deptId;
 
     /** 用户账号 */
     @Excel(name = "登录名称")
@@ -147,12 +147,12 @@ public class SysUser extends BaseEntity
         return userId != null && 1L == userId;
     }
 
-    public Long getDeptId()
+    public String getDeptId()
     {
         return deptId;
     }
 
-    public void setDeptId(Long deptId)
+    public void setDeptId(String deptId)
     {
         this.deptId = deptId;
     }

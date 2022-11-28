@@ -336,8 +336,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList) {
-        return sdTaskListMapper.getTaskList(tunnelName,sdTaskList);
+    public List<SdTaskList> getTaskList(@Param("sdTaskList") SdTaskList sdTaskList) {
+
+        return sdTaskListMapper.getTaskList(sdTaskList);
     }
 
     /**

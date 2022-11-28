@@ -153,7 +153,6 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleCheckDetail(scope.row)"
-            :style="{ display: scope.row.faultStatus==0?'none':'' }"
             v-hasPermi="['system:list:edit']"
           >故障详情</el-button>
           <el-button
@@ -947,8 +946,6 @@ export default {
             return this.$modal.msgWarning('请选择要上传的图片')
           }
           if (this.form.id != null) {
-            /* this.fileData.append("typeId", this.form.typeId); //类型id*/
-            /* this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id*/
             this.fileData.append("removeIds", this.removeIds);
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
@@ -964,23 +961,6 @@ export default {
           }
         }
       });
-      /*this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateList(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });*/
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
@@ -991,63 +971,45 @@ export default {
       }
     },
     publishForm() {
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit(); // 提交调用uploadFile函数
-      this.fileData.append("tunnelId", this.form.tunnelId);
-      this.fileData.append("faultType",this.form.faultType);
-      this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append("faultFxtime", this.form.faultFxtime);
-      this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
-      this.fileData.append("eqId", this.form.eqId);
-      this.fileData.append("eqStatus", this.form.eqStatus);
-      this.fileData.append("faultLocation", this.form.faultLocation);
-      this.fileData.append("eqRunStatus", this.form.eqRunStatus);
-      this.fileData.append("faultCode", this.form.faultCode);
-      this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
-      this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 0);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图片')
+        this.fileData = new FormData(); // new formData对象
+        this.$refs.upload.submit(); // 提交调用uploadFile函数
+        this.fileData.append("id", this.form.id);
+        this.fileData.append("tunnelId", this.form.tunnelId);
+        this.fileData.append("faultType",this.form.faultType);
+        this.fileData.append("faultSource", this.form.faultSource);
+        this.fileData.append("faultFxtime", this.form.faultFxtime);
+        this.fileData.append("faultCxtime", this.form.faultCxtime);
+        this.fileData.append("faultTbtime", this.form.faultTbtime);
+        this.fileData.append("eqId", this.form.eqId);
+        this.fileData.append("eqStatus", this.form.eqStatus);
+        this.fileData.append("faultLocation", this.form.faultLocation);
+        this.fileData.append("eqRunStatus", this.form.eqRunStatus);
+        this.fileData.append("faultCode", this.form.faultCode);
+        this.fileData.append("faultLevel", this.form.faultLevel);
+        this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+        this.fileData.append("faultDescription", this.form.faultDescription);
+        this.fileData.append("faultStatus", 0);
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            if(this.fileList.length <= 0) {
+              return this.$modal.msgWarning('请选择要上传的图片')
+            }
+            if (this.form.id != null) {
+              this.fileData.append("removeIds", this.removeIds);
+              updateList(this.fileData).then((response) => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addList(this.fileData).then((response) => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
           }
-          if (this.form.typeId != null) {
-            /* this.fileData.append("typeId", this.form.typeId); //类型id*/
-            /* this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id*/
-            this.fileData.append("removeIds", this.removeIds);
-            updateList(this.fileData).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.fileData).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-      /*this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateList(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.form).then((response) => {
-              this.$modal.msgSuccess("发布成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });*/
+        });
     },
     /** 删除按钮操作 */
     handleDelete(row) {

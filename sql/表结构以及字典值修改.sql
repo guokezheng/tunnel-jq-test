@@ -474,3 +474,11 @@ ALTER TABLE `tunnel-jq`.`sd_push_history`
 
 -- 触发器表添加预警类型字段
 alter table sd_trigger  add column warning_type varchar(10) comment '预警类型0：仅预警；1：预警联动';
+
+
+-- 数据字典 任务发布状态
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作类型', 'opt_type', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '派单', '0', 'opt_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '接收', '1', 'opt_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '提交', '2', 'opt_type', 'default', '0', 'admin', sysdate() );
+

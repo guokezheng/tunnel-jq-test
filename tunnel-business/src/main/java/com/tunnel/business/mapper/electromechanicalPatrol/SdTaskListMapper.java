@@ -97,7 +97,7 @@ public interface SdTaskListMapper
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(SdTaskList sdTaskList );
 
     /**
      * 操作记录

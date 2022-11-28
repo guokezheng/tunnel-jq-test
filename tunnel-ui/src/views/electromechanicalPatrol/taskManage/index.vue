@@ -55,7 +55,8 @@
           <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承巡班组" align="center" prop="bzId" />
+      <el-table-column label="承巡班组" align="center" prop="bzId" >
+      </el-table-column>
       <!--      <el-table-column label="任务描述" align="center" prop="taskDescription" />-->
       <el-table-column
         label="计划完成时间"
@@ -242,7 +243,7 @@
             >
               <i class="el-icon-bottom"></i>
             </div>
-            <div class="delete" @click="clickDelete(index)">
+            <div class="delete" @click="clickDelete(index,item)">
               <i class="el-icon-delete-solid"></i>
             </div>
           </div>
@@ -773,7 +774,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getBz();
+
     this.getTreeSelect();
     //外观情况
     this.getDicts("impression").then((response) => {
@@ -795,6 +796,9 @@ export default {
     this.userName = this.$store.state.user.name;
     const t = new Date();
     this.currentTime = t.getFullYear()+'-'+t.getMonth()+'-'+t.getDay();
+  },
+  mounted() {
+    this.getBz();
   },
   methods: {
     //  上移
@@ -826,7 +830,13 @@ export default {
         return value1 - value2
       }
     },
-    clickDelete() {},
+    clickDelete(i,item) {
+      if (item && typeof i === "number") {
+        //splice 操作数组的方法
+        this.boxList.splice(i, 1);
+        this.$forceUpdate();
+      }
+    },
     // 弹窗表格翻页
     getDialogList() {
       this.getTable()
@@ -999,8 +1009,14 @@ export default {
         this.listList = response.rows;
         this.total = response.total;
         this.listList.forEach((item) =>{
-          if(item.bzId=="null"){
+          if(item.bzId=="null"||item.bzId==NaN){
             item.bzId = "";
+          }else{
+            this.bzData.forEach((sitem) =>{
+                if(sitem.deptId == parseInt(item.bzId)){
+                      item.bzId = sitem.deptName
+                }
+            })
           }
         })
         this.loading = false;
@@ -1075,6 +1091,7 @@ export default {
         item.eq_id= item.eq_id+"_1";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
+      this.dialogSelection = "";
     },
     determine2() {
       this.isShow2 = false;
@@ -1082,6 +1099,7 @@ export default {
         item.eq_id= item.eq_id+"_2";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
+      this.dialogSelection = "";
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1092,6 +1110,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.boxList = "";
+      this.boxIds = ""
       this.reset();
       this.open = true;
       this.title = "新增巡查任务";
@@ -1111,6 +1130,11 @@ export default {
         this.boxList = response.data.list;
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
+        this.boxList.forEach((item) => {
+            this.$nextTick(() => {
+              this.$refs.multipleTable2.toggleRowSelection(item, true);
+          })
+        });
         this.boxList.forEach((item) =>{
           if(item.patrol_type==0){
               item.eq_id= item.eq_id+"_1";

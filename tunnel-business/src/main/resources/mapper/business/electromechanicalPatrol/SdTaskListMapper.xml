@@ -156,7 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
         select t.zzjg_id,t.end_plantime,t.dispatcher,t.task_description,t.task_status from sd_task_list t
         where t.publish_status = '2'
-        <if test="endPlantime != null and endPlantime != ''"> and t.end_plantime = #{endPlantime}</if>
+
         <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
         order by t.create_time desc
     </select>

@@ -270,13 +270,13 @@ public class SdTaskListController extends BaseController
 
     /**
      * app  巡查任务列表
-     * @param tunnelName
+     * @param
      * @param sdTaskList
      * @return
      */
-    @GetMapping("/app/getTaskList")
-    public Result getTaskList(String tunnelName,SdTaskList sdTaskList){
-        List<SdTaskList> taskList = sdTaskListService.getTaskList(tunnelName,sdTaskList);
+    @PostMapping("/app/getTaskList")
+    public Result getTaskList(SdTaskList sdTaskList){
+        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList);
         if(taskList!=null&&taskList.size()>0){
             for(int i=0;i<taskList.size();i++){
                 if(taskList.get(i).getId()!=null){
@@ -295,7 +295,7 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @PostMapping("/app/getTaskInfo")
-    public Result getTaskInfo(@RequestBody String taskId){
+    public Result getTaskInfo(String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
         return Result.success(taskList);
     }
@@ -308,7 +308,6 @@ public class SdTaskListController extends BaseController
     @GetMapping("/app/accept")
     public AjaxResult accept(String id)
     {
-        System.out.println("jdhasdihjsoaidhjosaidjoas======="+id);
         return toAjax(sdTaskListService.acceptSdTaskList(id));
     }
 
@@ -318,7 +317,7 @@ public class SdTaskListController extends BaseController
      * @return
      */
     @PostMapping("/app/getPatrolInfo")
-    public Result getPatrolInfo(@RequestBody String taskId){
+    public Result getPatrolInfo(String taskId){
         List<SdPatrolList> patrolList = sdTaskListService.getPatrolInfo(taskId);
         return Result.success(patrolList);
     }
@@ -328,8 +327,8 @@ public class SdTaskListController extends BaseController
      * @param taskId
      * @return
      */
-    @PostMapping("/app/getTaskSiteCondition")
-    public Result getTaskSiteCondition(@RequestBody String taskId){
+    @PostMapping("/app/getTaskSiteCondition`")
+    public Result getTaskSiteCondition(String taskId){
         String result = sdTaskListService.getTaskSiteCondition(taskId);
         return Result.success(result);
     }

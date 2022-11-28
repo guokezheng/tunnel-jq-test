@@ -107,7 +107,7 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(SdTaskList sdTaskList);
 
     /**
      * 查询任务关联的巡查点数量

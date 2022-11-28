@@ -165,11 +165,11 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayLDData);
     }
 
-    @PostMapping("/dataLogInfoList")
-    public TableDataInfo dataLogInfoList(@RequestBody Map<String, Object> maps)
+    @GetMapping("/dataLogInfoList")
+    public TableDataInfo dataLogInfoList(SdDeviceData sdDeviceData)
     {
         startPage();
-        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(maps);
+        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
         return getDataTable(list);
     }
 }

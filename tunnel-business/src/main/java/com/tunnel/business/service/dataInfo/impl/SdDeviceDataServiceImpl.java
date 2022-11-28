@@ -231,32 +231,29 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
     @Override
-    public List<Map<String, String>> dataLogInfoList(Map<String, Object> map) {
-        SdDeviceData sdDeviceData = new SdDeviceData();
+    public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
         String dept = "";
-        if (map.get("deptId") == null || map.get("deptId").toString().equals("")) {
+        if (sdDeviceData.getDeptId() == null) {
             Long deptId = SecurityUtils.getDeptId();
-            map.put("deptId", deptId);
             dept = deptId.toString();
-        } else if (map.get("deptId") != null && !map.get("deptId").toString().equals("")) {
-            dept = map.get("deptId").toString();
+        } else if (sdDeviceData.getDeptId() != null) {
+            dept = sdDeviceData.getDeptId().toString();
         }
         String tunnelId = "";
-        if (map.get("tunnelId") != null && !map.get("tunnelId").toString().equals("")) {
-            tunnelId = map.get("tunnelId").toString();
+        if (sdDeviceData.getTunnelId() != null && !sdDeviceData.getTunnelId().equals("")) {
+            tunnelId = sdDeviceData.getTunnelId();
         }
         String searchValue = "1";
-        Long eqType = DevicesTypeEnum.CO_VI.getCode();
-        if (map.get("searchValue") != null && !map.get("searchValue").toString().equals("")) {
-            searchValue = map.get("searchValue").toString();
+        if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
+            searchValue = sdDeviceData.getSearchValue();
         }
         String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String beginTime = now + " 00:00:00";
         String endTime = now + " 23:59:59";
-        if (map.get("params") != null && !map.get("params").toString().equals("{}")) {
-            Map<String, String> params = (Map<String, String>)map.get("params");
-            beginTime = params.get("beginTime").toString();
-            endTime = params.get("endTime").toString();
+        if (!sdDeviceData.getParams().isEmpty()) {
+//            Map<String, String> params = (Map<String, String>)map.get("params");
+            beginTime = sdDeviceData.getParams().get("beginTime").toString();
+            endTime = sdDeviceData.getParams().get("endTime").toString();
         }
         if (searchValue.equals("1")) {
             List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime);

@@ -75,4 +75,6 @@ public interface ISdDeviceDataService {
     Map<String, Object> getTodayFSFXData(String deviceId);
 
     Map<String, Object> getTodayLDData(String deviceId);
+
+    List<Map<String, String>> dataLogInfoList(Map<String, Object> map);
 }

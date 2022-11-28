@@ -409,4 +409,21 @@
             AND t.tunnel_id = #{tunnelId}
         </if>
     </select>
+
+    <select id="getAlarmInformation" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            e.event_title AS eventTitle,
+            e.start_time AS startTime,
+            IFNULL(e.video_url,'') AS videoUrl
+        FROM
+            sd_event e
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND e.tunnel_id = #{tunnelId}
+        </if>
+        ORDER BY
+            e.start_time DESC
+            LIMIT 50
+    </select>
 </mapper>

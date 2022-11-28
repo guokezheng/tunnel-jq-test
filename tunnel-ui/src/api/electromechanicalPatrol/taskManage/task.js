@@ -125,4 +125,11 @@ export function updateTask(data) {
   })
 }
 
-
+//查询操作记录
+/*export function getTaskOpt(taskId) {
+  return request({
+    url: '/task/list/getTaskOpt',
+    method: 'post',
+    data: data
+  })
+}*/

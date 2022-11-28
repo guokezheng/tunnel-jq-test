@@ -167,5 +167,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
 
+    <select id="getTaskOpt" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt">
+        select * from sd_task_opt  where task_id = #{taskId}
+    </select>
+
+
+
+
+    <update id="saveLocal" parameterType="SdTaskList">
+        update sd_task_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="zzjgId != null">zzjg_id = #{zzjgId},</if>
+            <if test="endPlantime != null">end_plantime = #{endPlantime},</if>
+            <if test="dispatcher != null">dispatcher = #{dispatcher},</if>
+            <if test="dispatchTime != null">dispatch_time = #{dispatchTime},</if>
+            <if test="bzId != null">bz_id = #{bzId},</if>
+            <if test="taskDescription != null">task_description = #{taskDescription},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="walkerId != null">walker_id = #{walkerId},</if>
+            <if test="taskEndtime != null">task_endtime = #{taskEndtime},</if>
+            <if test="taskCxtime != null">task_cxtime = #{taskCxtime},</if>
+            <if test="siteDescription != null">site_description = #{siteDescription},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
 
 </mapper>

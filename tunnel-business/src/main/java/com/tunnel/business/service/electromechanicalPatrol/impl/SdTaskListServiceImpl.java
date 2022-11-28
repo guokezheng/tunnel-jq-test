@@ -13,10 +13,7 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
-import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
-import com.tunnel.business.domain.electromechanicalPatrol.SdPointList;
-import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
@@ -105,7 +102,8 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         int result = -1;
         List<String> list = sdTaskList.getDevicesList();
         list.remove(list.size() - 1);
-        Map<String,String>map = new HashMap();//定义map用于对应巡查点的顺序
+        Map<String,Integer>devicesMap = new HashMap();//定义devicemap用于对应巡查点的顺序
+        Map<String,Integer>faultMap = new HashMap();//定义faultmap用于对应巡查点的顺序
         List<String> devicesList = new ArrayList<>();
         List<String> faultList = new ArrayList<>();
         if(list!=null&&list.size()>0){
@@ -115,9 +113,12 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                 String strm = str.substring(0,str.length()-2);
                 if("_1".equals(flag)){//巡查点
                     devicesList.add(strm);
+                    devicesMap.put(strm,k);
                 }else if("_2".equals(flag)){
                     faultList.add(strm);
+                    faultMap.put(strm,k);
                 }
+
             }
 
         }
@@ -127,17 +128,17 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             String[] eqIds = devicesList.toArray(new String[devicesList.size()]);
             List<SdDevices> devices = sdDevicesMapper.batchGetDevicesList(eqIds);
             if(devices!=null&&devices.size()>0){
-                for(int i = 0;i<devicesList.size();i++){
+                for(Map.Entry<String, Integer> entry:devicesMap.entrySet()){
                     SdPatrolList sdPatrolList = new SdPatrolList();
                     sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
                     sdPatrolList.setTaskId(taskId);//task_id
                     for(int j=0;j<devices.size();j++){
-                        if(devices.get(j).getEqId().equals(devicesList.get(i))){
-                            sdPatrolList.setEqFaultId(devicesList.get(i));//eq_fault_id
+                        if(devices.get(j).getEqId().equals(entry.getKey())){
+                            sdPatrolList.setEqFaultId(entry.getKey());//eq_fault_id
                             sdPatrolList.setPatrolType("0");//巡检点类型
                             sdPatrolList.setEqName(devices.get(j).getEqName());//eq_name
                             sdPatrolList.setPosition(devices.get(j).getEqDirection()+devices.get(j).getPile());//position
-                            sdPatrolList.setXcSort(i);
+                            sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
                             patrolList.add(sdPatrolList);
                         }
@@ -152,17 +153,17 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             String[] faultIds = faultList.toArray(new String[faultList.size()]);
             List<SdFaultList> fault = sdFaultListMapper.batchGetFaultList(faultIds);
             if(fault!=null&&fault.size()>0){
-                for(int i = 0;i<faultList.size();i++){
+                for(Map.Entry<String, Integer> entry:faultMap.entrySet()){
                     SdPatrolList sdPatrolList = new SdPatrolList();
                     sdPatrolList.setId(UUIDUtil.getRandom32BeginTimePK());//id
                     sdPatrolList.setTaskId(taskId);//task_id
                     for(int j=0;j<fault.size();j++){
-                        if(fault.get(j).getId().equals(faultList.get(i))){
-                            sdPatrolList.setEqFaultId(faultList.get(i));//eq_fault_id
+                        if(fault.get(j).getId().equals(entry.getKey())){
+                            sdPatrolList.setEqFaultId(entry.getKey());//eq_fault_id
                             sdPatrolList.setPatrolType("1");//巡检点类型
                             sdPatrolList.setEqName(fault.get(j).getEqName());//eq_name
                             sdPatrolList.setPosition(fault.get(j).getFaultLocation());//position
-                            sdPatrolList.setXcSort(i);
+                            sdPatrolList.setXcSort(entry.getValue());
                             sdPatrolList.setXcStatus("0");//未巡查
                             patrolList1.add(sdPatrolList);
                         }
@@ -375,15 +376,21 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskSiteCondition(String taskId) {
+    public  String getTaskSiteCondition(String taskId) {
+        String result = "";
         List<SdPatrolList> SdPatrolList = sdPatrolListMapper.isFaultEnd(taskId);//所有巡查点的巡查状态
         if(SdPatrolList!=null&&SdPatrolList.size()>0){
-
+            for(int i=0;i<SdPatrolList.size();i++){
+                result = SdPatrolList.get(i).getXcStatus();
+                if(result!=null&&!"".equals(result)&&"0".equals(result)){//巡查点存在未巡查为0，即返回任务执行状态为未完结
+                    return result;
+                }
+            }
         }
         //List<SdTaskList>taskList = sdTaskListMapper.getTaskSiteCondition(taskId);
 
 
-        return null;
+        return result;
     }
 
     /**
@@ -404,6 +411,17 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         map.put("list",list);
         return map;
     }
+
+    /**
+     * 操作记录
+     * @param taskId
+     * @return
+     */
+    @Override
+    public List<SdTaskOpt> getTaskOpt(String taskId) {
+        return sdTaskListMapper.getTaskOpt(taskId);
+    }
+
 
 
     /**
@@ -450,5 +468,21 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         return getChildList(list, t).size() > 0;
     }
 
+
+    /**
+     * app端暂存本地
+     * @param sdTaskList
+     * @return
+     */
+    @Override
+    public int saveLocal(SdTaskList sdTaskList) {
+        if(sdTaskList!=null){
+           //判断任务状态，已完结时保存任务持续时间
+            if("1".equals(sdTaskList.getTaskStatus())){
+
+            }
+        }
+        return sdTaskListMapper.saveLocal(sdTaskList);
+    }
 
 }

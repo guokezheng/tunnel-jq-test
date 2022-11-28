@@ -139,6 +139,7 @@
             <div>
               <el-input
                 ref="dispatcher"
+                disabled = "disabled"
                 v-model="form.dispatcher"
                 placeholder="（默认当前登录人）"
               ></el-input>
@@ -151,6 +152,7 @@
               <el-date-picker
                 clearable
                 size="small"
+                disabled = "disabled"
                 v-model="form.dispatchTime"
                 type="date"
                 style="width: 89%"
@@ -554,11 +556,11 @@
         </div>
       </div>
       <div class="card">
-        <div class="table-row">
+        <div class="table-row"  v-for="(item, index) in taskOpt" :key="index">
           <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">凤凰山隧道 / admin</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
+          <div style="width: 10%">{{ item.optType }}</div>
+          <div style="width: 20%">凤凰山隧道 / {{item.optPersonId}}</div>
+          <div style="width: 30%">{{item.optTime}}</div>
         </div>
 <!--        <div class="table-row">
           <div style="width: 10%">操作记录</div>
@@ -599,7 +601,6 @@ import {
   getTaskInfoList,
   listBz,
   treeselect,
-  getDevicesTypeList,
   getDevicesList,
   abolishList, addTask, getFaultList, updateTask,
 } from "@/api/electromechanicalPatrol/taskManage/task";
@@ -610,7 +611,7 @@ import { color } from "echarts";
 export default {
   name: "List",
   //字典值：任务发布状态,任务状态
-  dicts: ["publish_status", "task_status", "network", "power","eq_system","fault_level"],
+  dicts: ["publish_status", "task_status", "network", "power","eq_system","fault_level","opt_type"],
   props: {
     //开启过滤
     filter: {
@@ -733,6 +734,13 @@ export default {
         taskStatus:"",
         publishStatus:"",
       },
+      //操作记录
+      taskOpt:{
+        optType:"",
+        optPersonId:"",
+        optTime:"",
+        optDescription:""
+      },
       //巡查点参数
       patrolNews: {
         tunnelName: "",
@@ -758,8 +766,9 @@ export default {
         ],
       },
       impressionOptions: [], //外观情况
-      networkOptions: [], //网络情况
+      networkOptions: [], //网络情况  opt_type
       powerOptions: [], //配电情况
+      optTypeOptions: [], //操作类型
     };
   },
   created() {
@@ -777,6 +786,10 @@ export default {
     //外观情况
     this.getDicts("power").then((response) => {
       this.powerOptions = response.data;
+    });
+    //操作类型
+    this.getDicts("opt_type").then((response) => {
+      this.optTypeOptions = response.data;
     });
     //获取当前登录人
     this.userName = this.$store.state.user.name;
@@ -800,6 +813,17 @@ export default {
         this.boxList.splice(i + 1, 1, item);
         this.boxList.splice(i, 1, obj);
         this.$forceUpdate();
+      }
+    },
+    unique(arr) {
+      const res = new Map();
+      return arr.filter((arr) => !res.has(arr.eq_id) && res.set(arr.eq_id, 1));
+    },
+    arraySort(property) {
+      return function (a, b) {
+        var value1 = a[property]
+        var value2 = b[property]
+        return value1 - value2
       }
     },
     clickDelete() {},
@@ -891,33 +915,52 @@ export default {
       getTaskInfoList(this.taskId).then((response) => {
         this.taskNews = response.data.task;
         this.patrolNews = response.data.patrol;
+        this.taskOpt = response.data.opt;
+        /*this.impressionOptions.forEach((opt) => {
+          this.patrolNews.forEach((taskitem) => {
+            console.log("taskitem.impression========="+taskitem.impression)
+            if (opt.dictValue == "0"&taskitem.impression == 0) {
+                taskitem.impression = opt.dictLabel;
+            }
+            if (opt.dictValue == "1"&taskitem.impression == 1) {
+                taskitem.impression = opt.dictLabel;
+            }
+          });
+
+        });*/
+
         this.impressionOptions.forEach((opt) => {
+          this.patrolNews.forEach((taskitem) => {
+            console.log("taskitem.impression=============="+taskitem.impression);
+            console.log("opt.dictValue===================="+opt.dictValue);
+            if (taskitem.impression == opt.dictValue) {
+              taskitem.impression = opt.dictLabel;
+            }
+          });
+        });
+
+     /*   this.networkOptions.forEach((opt) => {
           if (opt.dictValue == "0") {
             this.patrolNews.forEach((taskitem) => {
-              taskitem.impression = opt.dictLabel;
+              taskitem.network = opt.dictLabel;
             });
           }
           if (opt.dictValue == "1") {
             this.patrolNews.forEach((taskitem) => {
-              taskitem.impression = opt.dictLabel;
+              taskitem.network = opt.dictLabel;
             });
           }
-        });
+        });*/
 
         this.networkOptions.forEach((opt) => {
-          if (opt.dictValue == "0") {
-            this.patrolNews.forEach((taskitem) => {
+          this.patrolNews.forEach((taskitem) => {
+            if (taskitem.network == opt.dictValue) {
               taskitem.network = opt.dictLabel;
-            });
-          }
-          if (opt.dictValue == "1") {
-            this.patrolNews.forEach((taskitem) => {
-              taskitem.network = opt.dictLabel;
-            });
-          }
+            }
+          });
         });
 
-        this.powerOptions.forEach((opt) => {
+     /*  this.powerOptions.forEach((opt) => {
           if (opt.dictValue == "0") {
             this.patrolNews.forEach((taskitem) => {
               taskitem.power = opt.dictLabel;
@@ -928,7 +971,25 @@ export default {
               taskitem.power = opt.dictLabel;
             });
           }
+        });*/
+
+       this.powerOptions.forEach((opt) => {
+          this.patrolNews.forEach((taskitem) => {
+            if (taskitem.power == opt.dictValue) {
+              taskitem.power = opt.dictLabel;
+            }
+          });
         });
+
+
+        this.optTypeOptions.forEach((opt) => {
+            this.taskOpt.forEach((taskitem) => {
+              if (taskitem.optType == opt.dictValue) {
+                  taskitem.optType = opt.dictLabel;
+              }
+           });
+        });
+
       });
     },
     /** 查询巡查任务列表 */
@@ -954,6 +1015,7 @@ export default {
     /** 巡查班组 */
     getBz() {
       listBz().then((response) => {
+        debugger
         this.bzData = response.rows;
       });
     },
@@ -1013,14 +1075,14 @@ export default {
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_1";
       })
-      this.boxList = this.boxList.concat(this.dialogSelection);
+      this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
     },
     determine2() {
       this.isShow2 = false;
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_2";
       })
-      this.boxList = this.boxList.concat(this.dialogSelection);
+      this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1046,9 +1108,22 @@ export default {
       let that = this
       getList(id).then((response) => {
         that.form = response.data.task[0];
+        debugger
         this.boxList = response.data.list;
         this.tableData1 = response.data.devicesPatrolList;//巡检点
         this.tableData2 = response.data.faultPatrolList;//故障点
+        this.boxList.forEach((item) =>{
+          if(item.patrol_type==0){
+              item.eq_id= item.eq_id+"_1";
+          }else{
+              item.eq_id= item.eq_id+"_2";
+          }
+        })
+        if(this.form.taskDescription=="null"){
+          this.form.taskDescription=""
+        }
+        this.form.bzId=parseInt(this.form.bzId)
+        this.boxList.sort(this.arraySort('xc_sort'))
         this.open = true;
         this.title = "修改巡查任务";
       });

@@ -16,6 +16,7 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
@@ -243,11 +244,16 @@ public class SdTaskListController extends BaseController
     public Result getTaskInfoList(@RequestBody String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
         List<SdPatrolList> patrolLists = sdTaskListService.getPatrolListsInfo(taskId);
+        List<SdTaskOpt> sdTaskOpts = sdTaskListService.getTaskOpt(taskId);
         Map<String, Object> map=new HashMap<String, Object>();
         map.put("task",taskList);
         map.put("patrol", patrolLists);
+        map.put("opt", sdTaskOpts);
         return Result.success(map);
     }
+
+
+
 
     /**
      * 查询班组列表
@@ -322,16 +328,39 @@ public class SdTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @PostMapping("/app/getTaskSiteCondition")
     public Result getTaskSiteCondition(@RequestBody String taskId){
-        List<SdTaskList> patrolList = sdTaskListService.getTaskSiteCondition(taskId);
-        return Result.success(patrolList);
+        String result = sdTaskListService.getTaskSiteCondition(taskId);
+        return Result.success(result);
     }
 
 
 
+    /**
+     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
+     * @param  sdTaskList
+     * @return
+     */
+    @GetMapping("/app/saveLocal")
+    public AjaxResult saveLocal(SdTaskList sdTaskList)
+    {
+        return toAjax(sdTaskListService.saveLocal(sdTaskList));
+    }
 
 
-
-
-
+    /**
+     * app 端提交上报  task_status 变为2 已完结；PC端可见
+     * @param  sdTaskList
+     * @return
+     */
+    ///@GetMapping("/app/submit")
+    //public AjaxResult submit(SdTaskList sdTaskList)
+    ///{
+        //return toAjax(sdTaskListService.submit(sdTaskList));
+   // }
+//计算持续时间  已完结时，完成时间与
+    /*private String timeValue(){
+        return null;
+    };
+*/
 }

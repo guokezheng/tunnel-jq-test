@@ -104,7 +104,7 @@ export function getInformationBoardRelease(data) {
   })
 }
 
-//情报板修改弹窗
+//情报板发布
 export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
@@ -120,3 +120,11 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
 
 
 
+//情报板管理右侧查询接口
+export function getAllVmsTemplate(category) {
+  return request({
+    url: '/system/template/getAllVmsTemplate/' + category,
+    method: 'get',
+
+  })
+}

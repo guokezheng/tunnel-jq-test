@@ -199,7 +199,7 @@ public class workspaceController extends BaseController {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue()) {
             if (state.equals("2") && map.get("fireMark").toString().equals("0") && map.get("fireMark") != null) {
                 map.put("fireMark", "255");
             }

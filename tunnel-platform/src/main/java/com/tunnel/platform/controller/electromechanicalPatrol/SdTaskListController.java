@@ -16,6 +16,7 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
@@ -107,19 +108,9 @@ public class SdTaskListController extends BaseController
         return Result.success(map);
     }
 
-    /**
-     * 新增巡查任务
-     */
-   /* @PreAuthorize("@ss.hasPermi('system:list:add')")*/
-   /* @Log(title = "巡查任务", businessType = BusinessType.INSERT)
-    @PostMapping
-    public AjaxResult add(@RequestBody SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList)
-    {
-        return toAjax(sdTaskListService.insertSdTaskList(sdTaskList,sdPatrolList));
-    }*/
 
     /**
-     *
+     *新增巡查任务
      * @param sdTaskList
      * @param
      * @return
@@ -131,16 +122,17 @@ public class SdTaskListController extends BaseController
         return toAjax(sdTaskListService.insertSdTaskList(sdTaskList));
     }
 
-
     /**
-     * 修改巡查任务
+     *修改巡查任务
+     * @param sdTaskList
+     * @param
+     * @return
      */
-    /*@PreAuthorize("@ss.hasPermi('system:list:edit')")*/
-    @Log(title = "巡查任务", businessType = BusinessType.UPDATE)
-    @PutMapping
-    public AjaxResult edit(@RequestBody SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList)
+
+    @PostMapping("/updateTask")
+    public AjaxResult updateTask(SdTaskList sdTaskList)
     {
-        return toAjax(sdTaskListService.updateSdTaskList(sdTaskList,sdPatrolList));
+        return toAjax(sdTaskListService.updateSdTaskList(sdTaskList));
     }
 
     /**
@@ -148,10 +140,9 @@ public class SdTaskListController extends BaseController
      *
      * @return
      */
-    @GetMapping("/abolish")
-    public AjaxResult abolish(String id)
+    @PostMapping("/abolishSdTaskList")
+    public AjaxResult abolishSdTaskList(@RequestBody String id)
     {
-        System.out.println("jdhasdihjsoaidhjosaidjoas======="+id);
         return toAjax(sdTaskListService.abolishSdTaskList(id));
     }
 
@@ -253,11 +244,16 @@ public class SdTaskListController extends BaseController
     public Result getTaskInfoList(@RequestBody String taskId){
         List<SdTaskList> taskList = sdTaskListService.getTaskInfoList(taskId);
         List<SdPatrolList> patrolLists = sdTaskListService.getPatrolListsInfo(taskId);
+        List<SdTaskOpt> sdTaskOpts = sdTaskListService.getTaskOpt(taskId);
         Map<String, Object> map=new HashMap<String, Object>();
         map.put("task",taskList);
         map.put("patrol", patrolLists);
+        map.put("opt", sdTaskOpts);
         return Result.success(map);
     }
+
+
+
 
     /**
      * 查询班组列表
@@ -332,16 +328,39 @@ public class SdTaskListController extends BaseController
      * @param taskId
      * @return
      */
+    @PostMapping("/app/getTaskSiteCondition")
     public Result getTaskSiteCondition(@RequestBody String taskId){
-        List<SdTaskList> patrolList = sdTaskListService.getTaskSiteCondition(taskId);
-        return Result.success(patrolList);
+        String result = sdTaskListService.getTaskSiteCondition(taskId);
+        return Result.success(result);
     }
 
 
 
+    /**
+     * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
+     * @param  sdTaskList
+     * @return
+     */
+    @GetMapping("/app/saveLocal")
+    public AjaxResult saveLocal(SdTaskList sdTaskList)
+    {
+        return toAjax(sdTaskListService.saveLocal(sdTaskList));
+    }
 
 
-
-
-
+    /**
+     * app 端提交上报  task_status 变为2 已完结；PC端可见
+     * @param  sdTaskList
+     * @return
+     */
+    ///@GetMapping("/app/submit")
+    //public AjaxResult submit(SdTaskList sdTaskList)
+    ///{
+        //return toAjax(sdTaskListService.submit(sdTaskList));
+   // }
+//计算持续时间  已完结时，完成时间与
+    /*private String timeValue(){
+        return null;
+    };
+*/
 }

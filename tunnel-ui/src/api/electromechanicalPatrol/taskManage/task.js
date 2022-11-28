@@ -83,10 +83,9 @@ export function treeselect(query) {
 
 // 废除巡查任务
 export function abolishList(data) {
-  debugger
   return request({
     url: '/task/list/abolishSdTaskList',
-    method: 'get',
+    method: 'post',
     data: data
   })
 }
@@ -108,7 +107,7 @@ export function getFaultList(tunnelId,faultLevel,pageNum,pageSize) {
   })
 }
 
-//发布任务
+//新增    发布任务
 export function addTask(data) {
   return request({
     url: '/task/list/addTask',
@@ -117,3 +116,20 @@ export function addTask(data) {
   })
 }
 
+//修改  发布任务
+export function updateTask(data) {
+  return request({
+    url: '/task/list/updateTask',
+    method: 'post',
+    data: data
+  })
+}
+
+//查询操作记录
+/*export function getTaskOpt(taskId) {
+  return request({
+    url: '/task/list/getTaskOpt',
+    method: 'post',
+    data: data
+  })
+}*/

@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 
 import java.util.List;
 
@@ -98,5 +99,17 @@ public interface SdTaskListMapper
      */
     List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
 
+    /**
+     * 操作记录
+     * @param taskId
+     * @return
+     */
+    List<SdTaskOpt> getTaskOpt(String taskId);
 
+    /**
+     * app端  暂存本地
+     * @param sdTaskList
+     * @return
+     */
+    int saveLocal(SdTaskList sdTaskList);
 }

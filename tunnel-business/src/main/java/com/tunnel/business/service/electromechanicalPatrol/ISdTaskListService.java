@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public interface ISdTaskListService
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int updateSdTaskList(SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList);
+    public int updateSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 批量删除巡查任务
@@ -134,7 +135,7 @@ public interface ISdTaskListService
      * @param taskId
      * @return
      */
-    List<SdTaskList> getTaskSiteCondition(String taskId);
+    String  getTaskSiteCondition(String taskId);
 
     /**
      * 获取任务关联巡检点信息
@@ -142,4 +143,18 @@ public interface ISdTaskListService
      * @return
      */
     Map getUpdatePatrolLists(String id);
+
+    /**
+     * 操作记录
+     * @param taskId
+     * @return
+     */
+    List<SdTaskOpt> getTaskOpt(String taskId);
+
+    /**app 端暂存本地
+     *
+     * @param sdTaskList
+     * @return
+     */
+    int saveLocal(SdTaskList sdTaskList);
 }

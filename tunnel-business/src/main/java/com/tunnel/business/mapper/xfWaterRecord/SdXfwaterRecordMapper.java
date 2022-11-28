@@ -64,11 +64,11 @@ public interface SdXfwaterRecordMapper
 
     public List<SdXfwaterRecord> getNumberOfPressureGaugesCollectedPerDay(@Param("equipmentId") String equipmentId,@Param("tunnelId") String tunnelId);
 
-    public List<Map<String, Object>> getAllPressureGaugesCollectedPerDay(@Param("deptId") Long deptId);
+    public List<Map<String, Object>> getAllPressureGaugesCollectedPerDay(@Param("deptId") String deptId);
 
     public List<Map<String, Object>> getNumberOfPressureGaugesCollectedPerMonth(String equipmentId);
 
-    public SdXfwaterRecord getRecentRecordByEqId(@Param("equipmentId") String equipmentId, @Param("deptId") Long deptId);
+    public SdXfwaterRecord getRecentRecordByEqId(@Param("equipmentId") String equipmentId, @Param("deptId") String deptId);
 
     public List<Map<String, Object>> selectWarningInfoMsgByYear(@Param("eqId") String equipmentId, @Param("tunnelId") String tunnelId, @Param("params") Map<String, Object> params);
 

@@ -139,7 +139,7 @@ public class SdIotDevice extends BaseEntity
 
     /** 管理单位 */
     @Excel(name = "管理单位")
-    private Long manageAgencyId;
+    private String manageAgencyId;
 
     /** 生产日期 */
     @Excel(name = "生产日期", width = 30, dateFormat = "yyyy-MM-dd")
@@ -476,12 +476,12 @@ public class SdIotDevice extends BaseEntity
     {
         return pileNumber;
     }
-    public void setManageAgencyId(Long manageAgencyId)
+    public void setManageAgencyId(String manageAgencyId)
     {
         this.manageAgencyId = manageAgencyId;
     }
 
-    public Long getManageAgencyId()
+    public String getManageAgencyId()
     {
         return manageAgencyId;
     }

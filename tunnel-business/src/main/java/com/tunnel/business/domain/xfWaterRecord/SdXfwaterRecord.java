@@ -22,7 +22,7 @@ public class SdXfwaterRecord extends BaseEntity
 
     /** 部门ID */
     @Excel(name = "部门ID")
-    private Long deptId;
+    private String deptId;
 
     /** 电量 */
     @Excel(name = "电量")
@@ -148,88 +148,88 @@ public class SdXfwaterRecord extends BaseEntity
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setEquipmentId(String equipmentId) 
+    public void setEquipmentId(String equipmentId)
     {
         this.equipmentId = equipmentId;
     }
 
-    public String getEquipmentId() 
+    public String getEquipmentId()
     {
         return equipmentId;
     }
-    public void setDeptId(Long deptId) 
+    public void setDeptId(String deptId)
     {
         this.deptId = deptId;
     }
 
-    public Long getDeptId() 
+    public String getDeptId()
     {
         return deptId;
     }
-    public void setElectricity(String electricity) 
+    public void setElectricity(String electricity)
     {
         this.electricity = electricity;
     }
 
-    public String getElectricity() 
+    public String getElectricity()
     {
         return electricity;
     }
-    public void setIntervalTime(String intervalTime) 
+    public void setIntervalTime(String intervalTime)
     {
         this.intervalTime = intervalTime;
     }
 
-    public String getIntervalTime() 
+    public String getIntervalTime()
     {
         return intervalTime;
     }
-    public void setSignalInfo(String signalInfo) 
+    public void setSignalInfo(String signalInfo)
     {
         this.signalInfo = signalInfo;
     }
 
-    public String getSignalInfo() 
+    public String getSignalInfo()
     {
         return signalInfo;
     }
-    public void setAnalogQuantity(String analogQuantity) 
+    public void setAnalogQuantity(String analogQuantity)
     {
         this.analogQuantity = analogQuantity;
     }
 
-    public String getAnalogQuantity() 
+    public String getAnalogQuantity()
     {
         return analogQuantity;
     }
-    public void setState(String state) 
+    public void setState(String state)
     {
         this.state = state;
     }
 
-    public String getState() 
+    public String getState()
     {
         return state;
     }
-    public void setLow(String low) 
+    public void setLow(String low)
     {
         this.low = low;
     }
 
-    public String getLow() 
+    public String getLow()
     {
         return low;
     }
-    public void setHighest(String highest) 
+    public void setHighest(String highest)
     {
         this.highest = highest;
     }
 
-    public String getHighest() 
+    public String getHighest()
     {
         return highest;
     }

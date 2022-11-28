@@ -150,7 +150,7 @@ public class SdTunnels extends BaseEntity
      * 隧道所属部门id
      * */
     @ApiModelProperty("隧道所属部门id")
-    private Long deptId;
+    private String deptId;
 
     @ApiModelProperty("隧道所属部门名称")
     private String deptName;
@@ -163,11 +163,11 @@ public class SdTunnels extends BaseEntity
     private List<SdTunnelSubarea> list;
 
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 

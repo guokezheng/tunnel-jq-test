@@ -186,7 +186,7 @@ public class SdMaterial extends BaseEntity {
      * 部门ID
      */
     @ApiModelProperty("部门ID")
-    private Long deptId;
+    private String deptId;
 
     @ApiModelProperty("终端站")
     private String endStation;
@@ -199,11 +199,11 @@ public class SdMaterial extends BaseEntity {
         this.endStation = endStation;
     }
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 

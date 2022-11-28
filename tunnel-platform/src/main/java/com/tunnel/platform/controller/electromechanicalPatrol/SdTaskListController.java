@@ -337,29 +337,26 @@ public class SdTaskListController extends BaseController
 
     /**
      * app 端暂存本地  task_status 变为3 待回传：APP点击“暂存本地”；PC端不可见
+     *     提交上报    task_status 变为2 已完结
      * @param  sdTaskList
      * @return
      */
-    @GetMapping("/app/saveLocal")
-    public AjaxResult saveLocal(SdTaskList sdTaskList)
+    @GetMapping("/app/saveTask")
+    public AjaxResult saveTask(SdTaskList sdTaskList)
     {
         return toAjax(sdTaskListService.saveLocal(sdTaskList));
     }
 
 
     /**
-     * app 端提交上报  task_status 变为2 已完结；PC端可见
-     * @param  sdTaskList
+     * 巡查点检修情况保存
+     * @param sdPatrolList
      * @return
      */
-    ///@GetMapping("/app/submit")
-    //public AjaxResult submit(SdTaskList sdTaskList)
-    ///{
-        //return toAjax(sdTaskListService.submit(sdTaskList));
-   // }
-//计算持续时间  已完结时，完成时间与
-    /*private String timeValue(){
-        return null;
-    };
-*/
+    @GetMapping("/app/savePatrol")
+    public AjaxResult savePatrol(SdPatrolList sdPatrolList)
+    {
+        return toAjax(sdTaskListService.savePatrol(sdPatrolList));
+    }
+
 }

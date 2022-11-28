@@ -486,4 +486,14 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         return sdTaskListMapper.saveLocal(sdTaskList);
     }
 
+    /**
+     * 巡查点检修情况保存
+     * @param sdPatrolList
+     * @return
+     */
+    @Override
+    public int savePatrol(SdPatrolList sdPatrolList) {
+        return sdPatrolListMapper.savePatrol(sdPatrolList);
+    }
+
 }

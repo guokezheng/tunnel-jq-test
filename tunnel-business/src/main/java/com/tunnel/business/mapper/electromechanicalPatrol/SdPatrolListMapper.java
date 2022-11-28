@@ -132,4 +132,11 @@ public interface SdPatrolListMapper
      * @return
      */
     List<SdPointList> getFaultPatrolLists(String id);
+
+    /**
+     * 巡查点检修情况保存
+     * @param sdPatrolList
+     * @return
+     */
+    int savePatrol(SdPatrolList sdPatrolList);
 }

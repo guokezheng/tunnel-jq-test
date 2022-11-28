@@ -482,3 +482,29 @@ insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '接收', '1', 'opt_type', 'default', '0', 'admin', sysdate() );
 insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '提交', '2', 'opt_type', 'default', '0', 'admin', sysdate() );
 
+
+-- 部门表主键修改为varchar（集团部门数据对接需要）  ---------start---------------
+-- 部门表sys_dept字段修改
+alter table sys_dept DROP  column jt_dept_id ;
+alter table sys_dept DROP  column jt_pid;
+alter table sys_dept modify column dept_id varchar(50) comment '部门id';
+alter table sys_dept modify column parent_id varchar(50) comment '父部门id';
+
+-- 角色部门关联表sys_role_dept字段修改
+alter table sys_role_dept modify column dept_id varchar(50) comment '部门ID';
+
+-- 用户表sys_user字段修改
+alter table sys_user modify column dept_id varchar(50) comment '部门ID';
+
+-- sd_xfwater_record表字段修改
+ alter table sd_xfwater_record modify column dept_id varchar(50) comment '部门ID';
+
+-- 隧道表sd_tunnels字段修改
+ alter table sd_tunnels modify column dept_id varchar(50) comment '部门ID';
+
+-- iot_device字段修改
+alter table iot_device modify column manage_agency_id varchar(50) comment '管理单位/组织机构表';
+
+-- 部门表主键修改为varchar（集团部门数据对接需要）  ---------end---------------
+
+

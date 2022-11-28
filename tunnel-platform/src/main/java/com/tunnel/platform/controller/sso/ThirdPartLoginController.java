@@ -67,17 +67,16 @@ public class ThirdPartLoginController {
                 String name = (String) map.get("name");
                 String sort = (String) map.get("sort");
 
-                sysDept.setJtDeptId(jtDeptId);
-                sysDept.setJtPid(pid);
+
                 sysDept.setDeptName(name);
                 sysDept.setOrderNum(sort);
 
-                SysDept dept = deptMapper.selectJtDeptById(jtDeptId);
-                if (null!= dept) {
-                    deptMapper.updateDept(sysDept);
-                }else {
-                    deptMapper.insertDept(sysDept);
-                }
+//                SysDept dept = deptMapper.selectJtDeptById(jtDeptId);
+//                if (null!= dept) {
+//                    deptMapper.updateDept(sysDept);
+//                }else {
+//                    deptMapper.insertDept(sysDept);
+//                }
             }
         }
 

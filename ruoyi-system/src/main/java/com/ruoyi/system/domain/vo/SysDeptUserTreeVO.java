@@ -11,7 +11,7 @@ import java.util.List;
 public class SysDeptUserTreeVO {
 
     /** 主键 **/
-    private Long id;
+    private String id;
 
     /** （组织/用户）名称 **/
     private String name;
@@ -26,11 +26,11 @@ public class SysDeptUserTreeVO {
     /** 下级 **/
     private List<SysDeptUserTreeVO> children;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

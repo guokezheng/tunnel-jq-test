@@ -23,18 +23,16 @@ public class SysDept extends BaseEntity {
      * 部门ID
      */
     @ApiModelProperty("部门id")
-    private Long deptId;
+    private String deptId;
 
 
-    private String jtDeptId;
-    private String jtPid;
 
 
     /**
      * 父部门ID
      */
     @ApiModelProperty("父部门ID")
-    private Long parentId;
+    private String parentId;
 
     /**
      * 祖级列表
@@ -96,37 +94,21 @@ public class SysDept extends BaseEntity {
     @ApiModelProperty("子部门")
     private List<SysDept> children = new ArrayList<SysDept>();
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 
-    public String getJtDeptId() {
-        return jtDeptId;
-    }
-
-    public void setJtDeptId(String jtDeptId) {
-        this.jtDeptId = jtDeptId;
-    }
 
 
-    public String getJtPid() {
-        return jtPid;
-    }
-
-    public void setJtPid(String jtPid) {
-        this.jtPid = jtPid;
-    }
-
-
-    public Long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Long parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

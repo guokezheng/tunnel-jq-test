@@ -36,24 +36,24 @@ public class UserDeptTask {
         if (deptList.size() > 0) {
             SysDept sysDept = new SysDept();
             for (Map<String, Object> map : deptList) {
-                String jtDeptId = (String) map.get("id");
+//                String jtDeptId = (String) map.get("id");
                 String pid = (String) map.get("pid");
                 String name = (String) map.get("name");
                 String sort = (String) map.get("sort");
 
-                sysDept.setJtDeptId(jtDeptId);
-                sysDept.setJtPid(pid);
-                sysDept.setDeptName(name);
-                sysDept.setOrderNum(sort);
-
-                SysDept dept = deptMapper.selectJtDeptById(jtDeptId);
-                if (null!= dept) {
-                    // 如果存在就更新
-                    deptMapper.updateDept(sysDept);
-                }else {
-                    // 如果不存在就新增
-                    deptMapper.insertDept(sysDept);
-                }
+//                sysDept.setJtDeptId(jtDeptId);
+//                sysDept.setJtPid(pid);
+//                sysDept.setDeptName(name);
+//                sysDept.setOrderNum(sort);
+//
+//                SysDept dept = deptMapper.selectJtDeptById(jtDeptId);
+//                if (null!= dept) {
+//                    // 如果存在就更新
+//                    deptMapper.updateDept(sysDept);
+//                }else {
+//                    // 如果不存在就新增
+//                    deptMapper.insertDept(sysDept);
+//                }
             }
         }
     }

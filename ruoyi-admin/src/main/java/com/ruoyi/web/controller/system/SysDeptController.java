@@ -52,15 +52,15 @@ public class SysDeptController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list/exclude/{deptId}")
     @ApiOperation("查询部门列表（排除节点）")
-    @ApiImplicitParam(name = "deptId", value = "部门ID", required = false, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result excludeChild(@PathVariable(value = "deptId", required = false) Long deptId)
+    @ApiImplicitParam(name = "deptId", value = "部门ID", required = false, dataType = "String", paramType = "path", dataTypeClass = Long.class)
+    public Result excludeChild(@PathVariable(value = "deptId", required = false) String deptId)
     {
         List<SysDept> depts = deptService.selectDeptList(new SysDept());
         Iterator<SysDept> it = depts.iterator();
         while (it.hasNext())
         {
             SysDept d = (SysDept) it.next();
-            if (d.getDeptId().intValue() == deptId
+            if (d.getDeptId().equals(deptId)
                     || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""))
             {
                 it.remove();
@@ -75,8 +75,8 @@ public class SysDeptController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
     @GetMapping(value = "/{deptId}")
     @ApiOperation("根据部门编号获取详细信息")
-    @ApiImplicitParam(name = "deptId", value = "部门id", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result<SysDept> getInfo(@PathVariable Long deptId)
+    @ApiImplicitParam(name = "deptId", value = "部门id", required = true, dataType = "String", paramType = "path", dataTypeClass = Long.class)
+    public Result<SysDept> getInfo(@PathVariable String deptId)
     {
         deptService.checkDeptDataScope(deptId);
         return Result.success(deptService.selectDeptById(deptId));
@@ -160,8 +160,8 @@ public class SysDeptController extends BaseController
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
     @ApiOperation("删除部门")
-    @ApiImplicitParam(name = "deptId", value = "部门ID", required = true, dataType = "Long", paramType = "path", dataTypeClass = Long.class)
-    public Result remove(@PathVariable Long deptId)
+    @ApiImplicitParam(name = "deptId", value = "部门ID", required = true, dataType = "String", paramType = "path", dataTypeClass = Long.class)
+    public Result remove(@PathVariable String deptId)
     {
         if (deptService.hasChildByDeptId(deptId))
         {

@@ -235,9 +235,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         SdDeviceData sdDeviceData = new SdDeviceData();
         String dept = "";
         if (map.get("deptId") == null || map.get("deptId").toString().equals("")) {
-            Long deptId = SecurityUtils.getDeptId();
+            String deptId = SecurityUtils.getDeptId();
             map.put("deptId", deptId);
-            dept = deptId.toString();
+            dept = deptId;
         } else if (map.get("deptId") != null && !map.get("deptId").toString().equals("")) {
             dept = map.get("deptId").toString();
         }

@@ -64,7 +64,7 @@ public interface SdDataTrafficDayMapper
 
     public List<Map<String, Object>> getCarNumberByDay(@Param("tunnelId") String tunnelId, @Param("tunnelName") String tunnelName, @Param("lastDayOfMonth") String lastDayOfMonth, @Param("params") Map<String, Object> params);
 
-    public List<Map<String, Object>> getCarFlowNumberOfTodayGroupByTunnel(@Param("deptId") Long deptId);
+    public List<Map<String, Object>> getCarFlowNumberOfTodayGroupByTunnel(@Param("deptId") String deptId);
 
     public List<Map<String, Object>> getCarTypeOfToday(@Param("tunnelId") String tunnelId);
 

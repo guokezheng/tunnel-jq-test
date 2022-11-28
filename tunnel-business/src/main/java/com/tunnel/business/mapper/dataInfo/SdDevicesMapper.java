@@ -122,7 +122,7 @@ public interface SdDevicesMapper
 	 */
 	//public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
 
-	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") Long deptId);
+	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") String deptId);
 
 	public List<Map<String, Object>> getDevicesStatus(@Param("tunnelId") String tunnelId);
 

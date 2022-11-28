@@ -3,7 +3,6 @@ package com.tunnel.platform.controller.dataInfo;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
@@ -12,6 +11,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
@@ -38,8 +38,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/devices")
 @Api(tags = "设备管理")
-public class SdDevicesController extends BaseController
-{
+public class SdDevicesController extends BaseController {
     @Autowired
     private ISdDevicesService sdDevicesService;
     @Autowired
@@ -62,24 +61,23 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping("/list")
     @ApiOperation("查询设备列表")
-    public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices)
-    {
+    public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
             Long deptId = SecurityUtils.getDeptId();
             sdDevices.setDeptId(deptId);
         }
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         //1：代表执行校验指令SQL
-        if ("1".equals(sdDevices.getEqDirection())){
-            List<String> eqIds=new ArrayList<String>();
+        if ("1".equals(sdDevices.getEqDirection())) {
+            List<String> eqIds = new ArrayList<String>();
             List<SdDevices> checklist = sdDevicesService.getChecklist(list);
-            for (SdDevices devices: checklist) {
+            for (SdDevices devices : checklist) {
                 eqIds.add(devices.getEqId());
             }
             startPage();
             sdDevices.setEqIds(eqIds);
-            list=sdDevicesService.selectSdDevicesList(sdDevices);
-        }else {
+            list = sdDevicesService.selectSdDevicesList(sdDevices);
+        } else {
             startPage();
             list = sdDevicesService.selectSdDevicesList(sdDevices);
         }
@@ -98,9 +96,8 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping("/sensorList")
     @ApiOperation("查询传感器设备列表")
-    public Result<List<SdDevices>> sensorList(SdDevices sdDevices)
-    {
-    	List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
+    public Result<List<SdDevices>> sensorList(SdDevices sdDevices) {
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         return Result.success(list);
     }
 
@@ -108,10 +105,9 @@ public class SdDevicesController extends BaseController
      * 大屏查询设备数据
      */
     @GetMapping("/bigscreenlist")
-   // @ApiOperation("大屏查询设备数据")
-  //  @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public int[] bigscreenlist(String eqTunnelId)
-    {
+    // @ApiOperation("大屏查询设备数据")
+    //  @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public int[] bigscreenlist(String eqTunnelId) {
         SdDevices sd = new SdDevices();
         sd.setEqTunnelId(eqTunnelId);
         sd.setEqType(1L);
@@ -134,11 +130,9 @@ public class SdDevicesController extends BaseController
         int d17 = sdDevicesService.selectSdDevicesList(sd).size();//卷帘门
         SdIotDevice sdIotDevice = new SdIotDevice();
         int qbblist = sdIotDeviceService.selectIotDeviceArrayList(sdIotDevice).size();//情报板
-        int[] a = {d3+d4,d1+d2,d17,d10,d7,qbblist,d5+d6};
+        int[] a = {d3 + d4, d1 + d2, d17, d10, d7, qbblist, d5 + d6};
         return a;
     }
-
-
 
 
     /**
@@ -146,13 +140,12 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping("/alllist")
     @ApiOperation("查询设备列表+情报板")
-    public TableDataInfo<List<SdDevices>> qbblist(SdDevices sdDevices)
-    {
+    public TableDataInfo<List<SdDevices>> qbblist(SdDevices sdDevices) {
         startPage();
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         SdIotDevice iotDevice = new SdIotDevice();
         List<SdIotDevice> qbblist = sdIotDeviceService.selectIotDeviceArrayList(iotDevice);
-        for (SdIotDevice io :qbblist){
+        for (SdIotDevice io : qbblist) {
             SdDevices sd = new SdDevices();
             sd.setEqId(io.getDeviceId().toString());
             sd.setEqTunnelId(io.getTunnelId());
@@ -162,17 +155,17 @@ public class SdDevicesController extends BaseController
 
         return getDataTable(list);
     }
+
     /**
      * 导出设备列表
      */
-    @Log(title = "设备", businessType = BusinessType.EXPORT)
+    @Log(title = "设备" , businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public AjaxResult export(SdDevices sdDevices)
-    {
+    public AjaxResult export(SdDevices sdDevices) {
         List<SdDevices> list = sdDevicesService.selectSdDevicesList_exp(sdDevices);
         //List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
-        return util.exportExcel( list, "设备详情");
+        return util.exportExcel(list, "设备详情");
     }
 
     /**
@@ -180,9 +173,8 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping(value = "/{eqId}")
     @ApiOperation("获取设备详细信息")
-    @ApiImplicitParam(name = "eqId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result<SdDevices> getInfo(@PathVariable("eqId") String eqId)
-    {
+    @ApiImplicitParam(name = "eqId" , value = "设备ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
+    public Result<SdDevices> getInfo(@PathVariable("eqId") String eqId) {
         SdDevices sd = sdDevicesService.selectSdDevicesById(eqId);
         return Result.success(sd);
     }
@@ -193,16 +185,14 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping(value = "/getDevice/{eqId}")
     @ApiOperation("获取设备详细信息")
-    @ApiImplicitParam(name = "eqId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result<Map> getDevice(@PathVariable("eqId") String eqId)
-    {
-        Map<String,String> sd = sdDevicesService.queryDeviceById(eqId);
+    @ApiImplicitParam(name = "eqId" , value = "设备ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
+    public Result<Map> getDevice(@PathVariable("eqId") String eqId) {
+        Map<String, String> sd = sdDevicesService.queryDeviceById(eqId);
         return Result.success(sd);
     }
 
     @GetMapping("/fireMarkList/{eqId}")
-    public Result<List<String>> fireMarkList(@PathVariable("eqId") String eqId)
-    {
+    public Result<List<String>> fireMarkList(@PathVariable("eqId") String eqId) {
         List<String> list = sdDevicesService.fireMarkList(eqId);
         return Result.success(list);
     }
@@ -213,9 +203,8 @@ public class SdDevicesController extends BaseController
     /* @GetMapping(value = "/{tunnelId}")*/
     @GetMapping("/tunnelId")
     @ApiOperation("通过隧道id查询设备类型名称")
-    @ApiImplicitParam(name = "eqTunnelId", value = "所属隧道 ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result<List<Map<String, Object>>> getEquipmentInfo(String eqTunnelId)
-    {
+    @ApiImplicitParam(name = "eqTunnelId" , value = "所属隧道 ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
+    public Result<List<Map<String, Object>>> getEquipmentInfo(String eqTunnelId) {
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqTunnelId(eqTunnelId);
         List<Map<String, Object>> list = sdDevicesService.selectSdDevicesByTunnelId(sdDevices);
@@ -225,11 +214,10 @@ public class SdDevicesController extends BaseController
     /**
      * 新增设备
      */
-    @Log(title = "设备", businessType = BusinessType.INSERT)
+    @Log(title = "设备" , businessType = BusinessType.INSERT)
     @PostMapping
     @ApiOperation("新增设备")
-    public Result add(@RequestBody SdDevices sdDevices)
-    {
+    public Result add(@RequestBody SdDevices sdDevices) {
         if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
                 && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
             throw new RuntimeException("出厂时间不能晚于维保截止时间");
@@ -241,8 +229,8 @@ public class SdDevicesController extends BaseController
         SdDevices sd = new SdDevices();
         sd.setEqId(sdDevices.getEqId());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sd);
-        if (list.size()>0){
-           // return Result.error(1,"当前设备ID重复，请重新输入");
+        if (list.size() > 0) {
+            // return Result.error(1,"当前设备ID重复，请重新输入");
             return Result.error("当前设备ID重复，请重新输入");
         } else {
             int i = sdDevicesService.insertSdDevices(sdDevices);
@@ -250,10 +238,10 @@ public class SdDevicesController extends BaseController
                 sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
             }
             //管理站平台下推送
-            if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
                 List<SdDevices> sdDevicesList = new ArrayList<>();
                 sdDevicesList.add(sdDevices);
-                sdPlatformApiController.devicesPush(sdDevicesList,"add",null);
+                sdPlatformApiController.devicesPush(sdDevicesList, "add" , null);
             }
             return Result.toResult(i);
         }
@@ -261,22 +249,21 @@ public class SdDevicesController extends BaseController
 
     @PostMapping("/autoId")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class),
-            @ApiImplicitParam(name = "typeId", value = "类型ID", required = true, dataType = "Integer", paramType = "path",dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "tunnelId" , value = "隧道ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class),
+            @ApiImplicitParam(name = "typeId" , value = "类型ID" , required = true, dataType = "Integer" , paramType = "path" , dataTypeClass = Integer.class),
     })
 
-    public Result autoId(@RequestParam("tunnelId") String tunnelId,@RequestParam("typeId") Integer typeId){
-        return Result.success(sdDevicesService.autoId(tunnelId,typeId));
+    public Result autoId(@RequestParam("tunnelId") String tunnelId, @RequestParam("typeId") Integer typeId) {
+        return Result.success(sdDevicesService.autoId(tunnelId, typeId));
     }
 
     /**
      * 修改设备
      */
-    @Log(title = "设备", businessType = BusinessType.UPDATE)
+    @Log(title = "设备" , businessType = BusinessType.UPDATE)
     @PutMapping
     @ApiOperation("修改设备")
-    public Result edit(@RequestBody SdDevices sdDevices)
-    {
+    public Result edit(@RequestBody SdDevices sdDevices) {
         if (sdDevices.getDeliveryTime() != null && sdDevices.getWarrantyEndTime() != null
                 && sdDevices.getDeliveryTime().getTime() > sdDevices.getWarrantyEndTime().getTime()) {
             throw new RuntimeException("出厂时间不能晚于维保截止时间");
@@ -290,11 +277,11 @@ public class SdDevicesController extends BaseController
             sdDevicesService.insertOrUpdateOrDeleteSdDeviceCmd(sdDevices);
         }
         //管理站平台下推送
-        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+       /* if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
             List<SdDevices> sdDevicesList = new ArrayList<>();
             sdDevicesList.add(sdDevices);
-            sdPlatformApiController.devicesPush(sdDevicesList,"edit",null);
-        }
+            sdPlatformApiController.devicesPush(sdDevicesList, "edit" , null);
+        }*/
         return Result.toResult(i);
     }
 
@@ -302,77 +289,74 @@ public class SdDevicesController extends BaseController
      * 删除设备
      */
     @ApiOperation("删除设备")
-    @Log(title = "设备", businessType = BusinessType.DELETE)
+    @Log(title = "设备" , businessType = BusinessType.DELETE)
     @DeleteMapping("/{eqIds}")
-    @ApiImplicitParam(name = "eqIds", value = "需要删除的设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result remove(@PathVariable String[] eqIds)
-    {
+    @ApiImplicitParam(name = "eqIds" , value = "需要删除的设备ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
+    public Result remove(@PathVariable String[] eqIds) {
         int i = sdDevicesService.deleteSdDevicesByIds(eqIds);
         //管理站平台下推送
-        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+        if (PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0) {
             List<SdDevices> sdDevicesList = new ArrayList<>();
             SdDevices sdDevices = new SdDevices();
             sdDevices.setEqIds(Arrays.asList(eqIds));
             sdDevices.setCreateTime(DateUtils.getNowDate());
             sdDevicesList.add(sdDevices);
-            sdPlatformApiController.devicesPush(sdDevicesList,"del",null);
+            sdPlatformApiController.devicesPush(sdDevicesList, "del" , null);
         }
         return Result.toResult(i);
     }
 
     @PostMapping("/importTemplate")
-    public AjaxResult importTemplate(HttpServletResponse response) throws IOException
-    {
+    public AjaxResult importTemplate(HttpServletResponse response) throws IOException {
 //        util.exportExcel( list, "设备详情");
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         return util.importTemplateExcel("设备数据");
     }
 
-    @Log(title = "设备管理", businessType = BusinessType.IMPORT)
+    @Log(title = "设备管理" , businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         List<SdDevices> userList = util.importExcel(file.getInputStream());
         String operName = SecurityUtils.getUsername();
         String message = sdDevicesService.importSdDevices(userList, updateSupport, operName);
         //管理站平台下推送
-        if(PlatformAuthEnum.GLZ.getCode().equals(platformName)){
+        if (PlatformAuthEnum.GLZ.getCode().equals(platformName)) {
             userList.stream().forEach(sdDevices -> sdDevices.setUpdateSupport(updateSupport));
-            sdPlatformApiController.devicesPush(userList,"import",operName);
+            sdPlatformApiController.devicesPush(userList, "import" , operName);
         }
         return AjaxResult.success(message);
     }
+
     /**
      * 生成控制指令
      */
-   // @ApiOperation("生成控制指令")
+    // @ApiOperation("生成控制指令")
     @PostMapping(value = "/createDmcontrolSeat")
-    public Map createDmcontrolSeat( @RequestBody SdDevices sdDevices)
-    {
-        Map<String,String> map=new HashMap<>();
-        StringBuilder sb=new StringBuilder();
+    public Map createDmcontrolSeat(@RequestBody SdDevices sdDevices) {
+        Map<String, String> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
         String deviceState = sdDevices.getInstruction();//指令模式
         //CIO 查询指令
-        sb.append(sdDevicesService.getCommandCode(sdDevices,sdDevices.getSeat(),deviceState.split("_")[0],deviceState.split("_")[1]));
+        sb.append(sdDevicesService.getCommandCode(sdDevices, sdDevices.getSeat(), deviceState.split("_")[0], deviceState.split("_")[1]));
         sb.append(sdDevicesService.getIpleftPad(sdDevices.getqNumber()));//点位地址
-        map.put("instruction",sb.toString());
-        map.put("instructionAndseat", deviceState.split("_")[0]+"_"+sdDevices.getSeat());
+        map.put("instruction" , sb.toString());
+        map.put("instructionAndseat" , deviceState.split("_")[0] + "_" + sdDevices.getSeat());
         return map;
     }
+
     /**
      * 生成查询指令
      */
-  //  @ApiOperation("生成查询指令")
+    //  @ApiOperation("生成查询指令")
     @PostMapping(value = "/createInstruction")
-    public Map createInstruction( @RequestBody SdDevices sdDevices)
-    {
-        Map<String,String> map=new HashMap<>();
-        StringBuilder sb=new StringBuilder();
+    public Map createInstruction(@RequestBody SdDevices sdDevices) {
+        Map<String, String> map = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
         //CIO 查询指令
-        sb.append(sdDevicesService.getCommandCode(sdDevices,sdDevices.getInstructionSeat().split("_")[1],sdDevices.getInstructionSeat().split("_")[0],"0"));
+        sb.append(sdDevicesService.getCommandCode(sdDevices, sdDevices.getInstructionSeat().split("_")[1], sdDevices.getInstructionSeat().split("_")[0], "0"));
         sb.append(sdDevicesService.getIpleftPad(sdDevices.getqNumber()));//点位地址
-        map.put("instructionSeat",sb.toString());
+        map.put("instructionSeat" , sb.toString());
         return map;
     }
 
@@ -380,17 +364,16 @@ public class SdDevicesController extends BaseController
     /**
      * 校验指令
      */
-  //  @ApiOperation("校验指令")
+    //  @ApiOperation("校验指令")
     @GetMapping("/checkInstruction")
-    public Map checkInstruction(SdDevices sdDevices)
-    {
-        Map<String,Object> map=new HashMap<>();
-        List<SdDevices> checklist=new ArrayList<SdDevices>();
-        StringBuffer sb=new StringBuffer();
+    public Map checkInstruction(SdDevices sdDevices) {
+        Map<String, Object> map = new HashMap<>();
+        List<SdDevices> checklist = new ArrayList<SdDevices>();
+        StringBuffer sb = new StringBuffer();
         //循环列表数据
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
-        map.put("sumDate",list.size());
-        map.put("errorDate",sdDevicesService.getChecklist(list));
+        map.put("sumDate" , list.size());
+        map.put("errorDate" , sdDevicesService.getChecklist(list));
         return map;
     }
 
@@ -399,44 +382,42 @@ public class SdDevicesController extends BaseController
      */
     @ApiOperation("获取所有压力表信息")
     @GetMapping("/getAllPressureGaugesMsg")
-    public Result< List<SdDevices>> getAllPressureGaugesMsg()
-    {
+    public Result<List<SdDevices>> getAllPressureGaugesMsg() {
         return Result.success(sdDevicesService.getAllPressureGaugesMsg());
     }
 
     /**
      * 获取运营APP首页需要的设备信息
      */
-  //  @ApiOperation("获取运营APP首页需要的设备信息")
+    //  @ApiOperation("获取运营APP首页需要的设备信息")
     @PostMapping("/getDevicesMsgToApp")
-  //  @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
-    public Result getDevicesMsgToApp(String tunnelId)
-    {
+    //  @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result getDevicesMsgToApp(String tunnelId) {
 //        if(tunnelId.equals("") || tunnelId.isEmpty()){
 //            throw new RuntimeException("当前获取查询参数为空，无法进行后续操作!");
 //        }
         Map<String, Object> details = new HashMap<>();
         //正常设备数
-        details.put("normalEquipment","89");
+        details.put("normalEquipment" , "89");
         //故障设备数
-        details.put("faultyEquipment","9");
+        details.put("faultyEquipment" , "9");
         //设备完好率
-        details.put("equipmentIntactRate","6");
+        details.put("equipmentIntactRate" , "6");
         //今日修复
-        details.put("repairToday","0");
+        details.put("repairToday" , "0");
         //暂未修复
-        details.put("notRepairedYet","0");
+        details.put("notRepairedYet" , "0");
         return Result.success(details);
     }
 
     @PostMapping("/getDevicesStatus")
-    @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    @ApiImplicitParam(name = "tunnelId" , value = "隧道ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
     public AjaxResult getDevicesStatus(String tunnelId) {
         return AjaxResult.success(sdDevicesService.getDevicesStatus(tunnelId));
     }
 
     @PostMapping("/obtainEquipmentEnergyConsumption")
-    @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    @ApiImplicitParam(name = "tunnelId" , value = "隧道ID" , required = true, dataType = "String" , paramType = "path" , dataTypeClass = String.class)
     public AjaxResult obtainEquipmentEnergyConsumption(String tunnelId) {
         return AjaxResult.success(sdDevicesService.obtainEquipmentEnergyConsumption(tunnelId));
     }
@@ -446,27 +427,37 @@ public class SdDevicesController extends BaseController
      */
     @GetMapping("/isControl")
     @ApiOperation("查询设备列表")
-    public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices)
-    {
+    public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
             Long deptId = SecurityUtils.getDeptId();
             sdDevices.setDeptId(deptId);
         }
         List<SdDevices> list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);
         //1：代表执行校验指令SQL
-        if ("1".equals(sdDevices.getEqDirection())){
-            List<String> eqIds=new ArrayList<String>();
+        if ("1".equals(sdDevices.getEqDirection())) {
+            List<String> eqIds = new ArrayList<String>();
             List<SdDevices> checklist = sdDevicesService.getChecklist(list);
-            for (SdDevices devices: checklist) {
+            for (SdDevices devices : checklist) {
                 eqIds.add(devices.getEqId());
             }
             startPage();
             sdDevices.setEqIds(eqIds);
-            list=sdDevicesService.selectIsControlSdDevicesList(sdDevices);
-        }else {
+            list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);
+        } else {
             startPage();
             list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);
         }
         return getDataTable(list);
+    }
+
+
+    /**
+     * 查询设备品牌列表
+     */
+    @GetMapping("/getDevBrandList")
+    @ApiOperation("查询设备品牌列表")
+    public AjaxResult getDevBrandList() {
+        List<SdDevicesBrand> list = sdDevicesService.getDevBrandList();
+        return AjaxResult.success(list);
     }
 }

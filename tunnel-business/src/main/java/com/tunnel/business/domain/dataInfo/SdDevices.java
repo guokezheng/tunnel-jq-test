@@ -1,14 +1,14 @@
 package com.tunnel.business.domain.dataInfo;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 设备对象 sd_devices
@@ -96,7 +96,7 @@ public class SdDevices extends BaseEntity {
     @Excel(name = "设备品牌编号")
 
     @ApiModelProperty("设备品牌编号")
-    private Long brandId;
+    private String brandId;
 
     /**
      * 所属道路方向(上行、下行)
@@ -525,11 +525,11 @@ public class SdDevices extends BaseEntity {
         return eqModel;
     }
 
-    public void setBrandId(Long brandId) {
+    public void setBrandId(String brandId) {
         this.brandId = brandId;
     }
 
-    public Long getBrandId() {
+    public String getBrandId() {
         return brandId;
     }
 

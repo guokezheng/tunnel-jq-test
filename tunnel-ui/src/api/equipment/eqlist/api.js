@@ -1,5 +1,14 @@
 import request from '@/utils/request'
 
+
+export function getDevBrandList() {
+  return request({
+    url: '/devices/getDevBrandList',
+    method: 'get',
+  })
+}
+
+
 // old查询设备列表
 export function listDevices(query) {
   return request({

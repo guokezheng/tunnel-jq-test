@@ -8,8 +8,6 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
-import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
-import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -939,5 +937,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         devicesFireMarkList.add("0");
         devicesFireMarkList.add("255");
         return devicesFireMarkList;
+    }
+
+    @Override
+    public List<SdDevicesBrand> getDevBrandList() {
+        return sdDevicesMapper.getDevBrandList();
     }
 }

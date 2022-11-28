@@ -796,4 +796,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         et.type_id
     </select>
 
+    <select id="getDevBrandList" resultType="com.tunnel.business.domain.dataInfo.SdDevicesBrand">
+        select * from sd_devices_brand
+    </select>
+
 </mapper>

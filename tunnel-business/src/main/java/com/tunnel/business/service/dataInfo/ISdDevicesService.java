@@ -2,6 +2,7 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 
 import java.util.List;
 import java.util.Map;
@@ -202,4 +203,7 @@ public interface ISdDevicesService {
     List<SdDevices> getDevicesList(String tunnelId, String deviceType);
 
     List<String> fireMarkList(String eqId);
+
+    List<SdDevicesBrand> getDevBrandList();
+
 }

@@ -136,6 +136,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         return AjaxResult.success(sdSmartBigScreenMapper.getEmergencyVehicle(tunnelId));
     }
 
+    @Override
+    public AjaxResult getAlarmInformation(String tunnelId) {
+        return AjaxResult.success(sdSmartBigScreenMapper.getAlarmInformation(tunnelId));
+    }
+
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量

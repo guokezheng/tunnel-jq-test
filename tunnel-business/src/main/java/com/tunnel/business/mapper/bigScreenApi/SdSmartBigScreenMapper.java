@@ -155,4 +155,10 @@ public interface SdSmartBigScreenMapper {
      * @return
      */
     List<Map<String, Object>> getEmergencyPer(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 查询应急车辆
+     * @return
+     */
+    List<Map<String, Object>> getEmergencyVehicle(@Param("tunnelId") String tunnelId);
 }

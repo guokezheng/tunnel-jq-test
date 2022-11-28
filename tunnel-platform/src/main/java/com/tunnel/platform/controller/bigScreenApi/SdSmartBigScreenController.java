@@ -130,4 +130,14 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getEmergencyPer(String tunnelId){
         return sdSmartBigScreenService.getEmergencyPer(tunnelId);
     }
+
+    /**
+     * 查询应急车辆
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getEmergencyVehicle")
+    public AjaxResult getEmergencyVehicle(String tunnelId){
+        return sdSmartBigScreenService.getEmergencyVehicle(tunnelId);
+    }
 }

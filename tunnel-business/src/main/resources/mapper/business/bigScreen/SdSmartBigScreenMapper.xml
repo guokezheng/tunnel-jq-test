@@ -394,4 +394,19 @@
             AND sep.tunnel_id = #{tunnelId}
         </if>
     </select>
+
+    <select id="getEmergencyVehicle" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            ev.plate_number AS plateNumber,
+            ev.v_type AS vType,
+            IFNULL(t.tunnel_name,'') AS tunnelName
+        FROM
+            sd_emergency_vehicle ev
+                LEFT JOIN sd_tunnels t ON ev.org_id = t.dept_id
+        WHERE
+            1 =1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND t.tunnel_id = #{tunnelId}
+        </if>
+    </select>
 </mapper>

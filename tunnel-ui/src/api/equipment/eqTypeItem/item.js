@@ -52,10 +52,10 @@ export function exportItem(query) {
   })
 }
 
-export function dataLogInfoList(data) {
+export function dataLogInfoList(query) {
   return request({
     url: '/system/data/dataLogInfoList',
-    method: 'post',
-    data: data
+    method: 'get',
+    params: query
   })
 }

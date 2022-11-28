@@ -9,7 +9,7 @@
     <realTime class="realTime"></realTime>
     <videoCarousel class="videoCarousel"></videoCarousel>
     <reservePlan class="reservePlan" v-show="showPlan"></reservePlan>
-    <weather class="weather"></weather>
+    <!-- <weather class="weather"></weather> -->
     <fourList class="fourList"></fourList>
   </div>
 </template>
@@ -19,7 +19,7 @@ import amap from "./components/amap.vue";
 import realTime from "./components/realTime.vue";
 import videoCarousel from "./components/videoCarousel.vue";
 import reservePlan from "./components/reservePlan.vue";
-import weather from "./components/weather.vue";
+// import weather from "./components/weather.vue";
 import fourList from "./components/fourList.vue";
 export default {
   components: {
@@ -27,7 +27,7 @@ export default {
     realTime,
     videoCarousel,
     reservePlan,
-    weather,
+    // weather,
     fourList,
   },
   data() {
@@ -520,10 +520,10 @@ export default {
 }
 .realTime {
   width: 25%;
-  height: 40%;
+  height: 57%;
   // border: solid 1px white;
   position: absolute;
-  top: 24%;
+  top: 8%;
   left: 1vw;
 }
 .videoCarousel {

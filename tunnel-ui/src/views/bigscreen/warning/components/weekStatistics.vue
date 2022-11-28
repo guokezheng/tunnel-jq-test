@@ -28,11 +28,11 @@ export default {
       getToWeekEventWarning().then((res) => {
         const ywc = res.data[0].eventNumber;
         const wwc = res.data[1].eventNumber;
-        var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
+        // var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
         var option = {
           // backgroundColor: "#03141c",
           title: {
-            text: proportion + "%",
+            text: +wwc + "%",
             subtext: "未完成",
             x: "center",
             y: "center",

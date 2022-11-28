@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="contentTitle">
-      实时报警信息
+      报警信息
       <i>Real time alarm</i>
     </div>
     <div class="alarmsStatisticsBox">
@@ -19,15 +19,16 @@
             <div class="realTimeContent">
               <div class="realLeft">
                 <div style="color: #fff; font-size: 16px">
-                  {{ item.content }}
+                  {{ item.eventTitle }}
                 </div>
                 <div class="msgBox">
-                  <span class="realTitle">{{ item.title }} </span>
-                  <span>{{ item.time }}</span>
+                  <span class="realTitle">报警信息 </span>
+                  <span style="color: #09bdef">{{ item.startTime }}</span>
                 </div>
               </div>
               <div class="realRight">
-                <img :src="item.src" />
+                <img v-if="item.videoUrl != ''" :src="item.videoUrl" />
+                <h6 v-if="item.videoUrl == ''">暂无视频</h6>
               </div>
             </div>
           </li>
@@ -38,54 +39,12 @@
 </template>
 
 <script>
+import { getAlarmInformation } from "@/api/business/new";
 import vueSeamlessScroll from "vue-seamless-scroll";
 export default {
   data() {
     return {
-      policeList: [
-        {
-          title: "报警信息",
-          time: "10：13：12",
-          content:
-            "凤凰山隧道，博山方向，150+016疑似发生火警，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic1.jpg"),
-        },
-        {
-          title: "预警信息",
-          time: "10：30：39",
-          content:
-            "凤凰山隧道，济南方向，152+826疑似发生超速，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic2.jpg"),
-        },
-        {
-          title: "报警信息",
-          time: "11：07：59",
-          content:
-            "凤凰山隧道，济南方向，152+996疑似发生异常变道，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic1.jpg"),
-        },
-        {
-          title: "报警信息",
-          time: "15：03：02",
-          content:
-            "凤凰山隧道，济南方向，159+806疑似发生超速，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic1.jpg"),
-        },
-        {
-          title: "报警信息",
-          time: "19：57：52",
-          content:
-            "凤凰山隧道，济南方向，153+538疑似发生超速，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic2.jpg"),
-        },
-        {
-          title: "报警信息",
-          time: "22：45：22",
-          content:
-            "凤凰山隧道，济南方向，154+0112疑似发生超速，请计时处理以免造成更大损失。",
-          src: require("../../../../assets/Example/pic1.jpg"),
-        },
-      ],
+      policeList: [],
     };
   },
   computed: {
@@ -102,7 +61,17 @@ export default {
       };
     },
   },
-  methods: {},
+  created() {
+    this.getList();
+  },
+  methods: {
+    getList() {
+      // let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
+      getAlarmInformation().then((res) => {
+        this.policeList = res.data;
+      });
+    },
+  },
 };
 </script>
 
@@ -135,8 +104,10 @@ export default {
     width: 100%;
     height: 60%;
     // border: solid 1px red;
-    padding: 15px 15px 0 15px;
+    padding: 0px 15px 0 15px;
     overflow: auto;
+    display: flex;
+    align-items: center;
   }
 }
 .realRight {
@@ -147,6 +118,16 @@ export default {
     width: auto;
     height: 100%;
     margin: 0 auto;
+  }
+  h6 {
+    color: white;
+    margin: 0px;
+    line-break: unset;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 .realTitle {

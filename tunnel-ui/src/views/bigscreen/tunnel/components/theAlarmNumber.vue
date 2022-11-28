@@ -475,6 +475,9 @@ export default {
       position: relative;
       top: 4%;
       flex-flow: wrap;
+      .progress {
+        width: 50%;
+      }
       .title {
         margin-bottom: 0.5vw;
       }

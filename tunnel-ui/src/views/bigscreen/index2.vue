@@ -9,14 +9,9 @@
         justify="space-between"
       >
         <el-col :span="5">
-          <span class="header-icon"></span>
-          <el-row type="flex" align="middle">
-            <el-col class="header-icon"></el-col>
-            <el-col class="header-left">
-              <h1>智慧隧道云控平台</h1>
-            </el-col>
+          <el-row align="middle">
             <el-col class="header-logo">
-              <img src="@/assets/image/0-.png" alt="" />
+              <img src="@/assets/logo/logo.png" alt="" />
             </el-col>
           </el-row>
         </el-col>
@@ -181,8 +176,8 @@ export default {
         background-position: center;
       }
       .header-logo {
-        width: 5vw;
-        height: 2vw;
+        // width: 5vw;
+        // height: 2vw;
         padding: 0 !important;
         margin-right: 1vw;
         font-size: 0;

@@ -51,3 +51,11 @@ export function exportItem(query) {
     params: query
   })
 }
+
+export function dataLogInfoList(data) {
+  return request({
+    url: '/system/data/dataLogInfoList',
+    method: 'post',
+    data: data
+  })
+}

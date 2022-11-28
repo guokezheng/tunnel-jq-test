@@ -264,4 +264,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
+    <update id="savePatrol" parameterType="SdPatrolList">
+        update sd_patrol_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="eqFaultId != null">eq_fault_id = #{eqFaultId},</if>
+            <if test="patrolType != null">patrol_type = #{patrolType},</if>
+            <if test="eqName != null">eq_name = #{eqName},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="impression != null">impression = #{impression},</if>
+            <if test="network != null">network = #{network},</if>
+            <if test="power != null">power = #{power},</if>
+            <if test="eqStatus != null">eq_status = #{eqStatus},</if>
+            <if test="runStatus != null">run_status = #{runStatus},</if>
+            <if test="eqFaultCode != null">eq_fault_code = #{eqFaultCode},</if>
+            <if test="eqFaultDescription != null">eq_fault_description = #{eqFaultDescription},</if>
+            <if test="faultClstatus != null">fault_clstatus = #{faultClstatus},</if>
+            <if test="xcTime != null">xc_time = #{xcTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="xcSort != null">xc_sort = #{xcSort},</if>
+            <if test="xcStatus != null">xc_status = #{xcStatus},</if>
+            <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
 </mapper>

@@ -42,7 +42,7 @@
       class="allTable"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="任务编号" align="center" prop="id" />
+<!--      <el-table-column label="任务编号" align="center" prop="id" />-->
       <!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
@@ -702,6 +702,9 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      // 弹框内容是否重置
+      openCz: false,
+      openGz: false,
       //新增巡查点弹窗
       isShow1: false,
       //新增故障点弹窗
@@ -773,6 +776,7 @@ export default {
     };
   },
   created() {
+    this.getBz();
     this.getList();
 
     this.getTreeSelect();
@@ -833,8 +837,10 @@ export default {
     clickDelete(i,item) {
       if (item && typeof i === "number") {
         //splice 操作数组的方法
-        this.boxList.splice(i, 1);
-        this.$forceUpdate();
+        if (i > -1) {
+          this.boxList.splice(i, 1);
+        }
+        console.log("clickDelete===================="+this.boxList);
       }
     },
     // 弹窗表格翻页
@@ -1000,6 +1006,15 @@ export default {
            });
         });
 
+
+        this.bzData.forEach((opt) => {
+          this.taskNews.forEach((taskitem) => {
+            if (taskitem.bzId == opt.deptId) {
+               taskitem.bzId = opt.deptName;
+            }
+          });
+        });
+
       });
     },
     /** 查询巡查任务列表 */
@@ -1079,10 +1094,28 @@ export default {
     show1() {
      //this.tableData1 = null
       this.isShow1 = true;
+      //点击确定，数据还原
+      if(this.openCz){
+        this.options1value = "0"
+        this.tableData1 = null
+        this.dialogTotal = null
+        console.log("========="+this.options1value);
+        this.getTable(this.options1value)
+      }
+      this.openCz = false;
+
     },
     show2() {
       //this.tableData1 = null
       this.isShow2 = true;
+      if(this.openGz){
+        this.options2value = "0"
+        this.tableData2 = null
+        this.dialogTotal = null
+        console.log("========="+this.options2value);
+        this.getGzTable(this.options2value)
+      }
+      this.openGz = false;
     },
 
     determine1() {
@@ -1113,6 +1146,8 @@ export default {
       this.boxIds = ""
       this.reset();
       this.open = true;
+      this.openGz = true;
+      this.openCz = true;
       this.title = "新增巡查任务";
       this.tableData1 = null
       this.tableData2 = null
@@ -1126,8 +1161,8 @@ export default {
       let that = this
       getList(id).then((response) => {
         that.form = response.data.task[0];
-        debugger
         this.boxList = response.data.list;
+        console.log("handleUpdate============="+this.boxList);
         // this.tableData1 = response.data.devicesPatrolList;//巡检点
         // this.tableData2 = response.data.faultPatrolList;//故障点
         this.boxList.forEach((item) => {
@@ -1148,6 +1183,8 @@ export default {
         this.form.bzId=parseInt(this.form.bzId)
         this.boxList.sort(this.arraySort('xc_sort'))
         this.open = true;
+        this.openGz = true;
+        this.openCz = true;
         this.title = "修改巡查任务";
       });
     },
@@ -1220,14 +1257,16 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","2");
       //判断是否选择点
-      console.log("============="+this.boxList);
+      console.log("release============="+this.boxList);
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
       }
+      this.boxIds = "";
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
       })
+      console.log("this.boxIds============="+this.boxIds);
       this.fileData.append("devicesList",this.boxIds);
       if (this.form.id != null) {
         updateTask(this.fileData).then((response) => {

@@ -157,4 +157,11 @@ public interface ISdTaskListService
      * @return
      */
     int saveLocal(SdTaskList sdTaskList);
+
+    /**巡查点检修情况保存
+     *
+     * @param sdPatrolList
+     * @return
+     */
+    int savePatrol(SdPatrolList sdPatrolList);
 }

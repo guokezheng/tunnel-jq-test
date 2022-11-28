@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectDeptVo">
-        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time 
+        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
         from sys_dept d
     </sql>
     
@@ -62,6 +62,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectDeptVo"/>
 		where dept_id = #{deptId}
 	</select>
+
+	<select id="selectJtDeptById" parameterType="String" resultMap="SysDeptResult">
+		select
+			d.dept_id,
+			d.parent_id,
+			d.ancestors,
+			d.dept_name,
+			d.order_num,
+			d.leader,
+			d.phone,
+			d.email,
+			d.status,
+			d.del_flag,
+			d.create_by,
+			d.create_time
+		from sys_dept d
+		where jt_dept_id = #{jtDeptId}
+	</select>
     
     <select id="checkDeptExistUser" parameterType="Long" resultType="int">
 		select count(1) from sys_user where dept_id = #{deptId} and del_flag = '0'
@@ -89,6 +107,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		insert into sys_dept(
  			<if test="deptId != null and deptId != 0">dept_id,</if>
  			<if test="parentId != null and parentId != 0">parent_id,</if>
+ 			<if test="jtDeptId != null and jtDeptId != ''">jt_dept_id,</if>
+ 			<if test="jtPid != null and jtPid != ''">jt_pid,</if>
  			<if test="deptName != null and deptName != ''">dept_name,</if>
  			<if test="ancestors != null and ancestors != ''">ancestors,</if>
  			<if test="orderNum != null and orderNum != ''">order_num,</if>
@@ -101,6 +121,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		)values(
  			<if test="deptId != null and deptId != 0">#{deptId},</if>
  			<if test="parentId != null and parentId != 0">#{parentId},</if>
+			<if test="jtDeptId != null and jtDeptId != ''">#{jtDeptId},</if>
+			<if test="jtPid != null and jtPid != ''">#{jtPid},</if>
  			<if test="deptName != null and deptName != ''">#{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">#{orderNum},</if>
@@ -113,10 +135,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  		)
 	</insert>
 	
-	<update id="updateDept" parameterType="SysDept">
+	<update id="updateDept" parameterType="com.ruoyi.common.core.domain.entity.SysDept">
  		update sys_dept
  		<set>
  			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
+ 			<if test="jtDeptId != null and jtDeptId != ''">jt_dept_id = #{jtDeptId},</if>
+ 			<if test="jtPid != null and jtPid != ''">jt_pid = #{jtPid},</if>
  			<if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orderNum != null and orderNum != ''">order_num = #{orderNum},</if>

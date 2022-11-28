@@ -79,7 +79,7 @@
         <div class="lineClass"></div>
         <el-row style="margin-top: 10px">
           <el-col :span="13">
-            <el-form-item label="开关状态:">
+            <el-form-item label="当前状态:">
               <el-select v-model="stateForm2.state">
                 <el-option
                   v-for="item in openState"
@@ -91,6 +91,10 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="11">
+            <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true" label-width="10px">
+              <span style="color: red; font-weight: bold">当前地址为报警点位</span>
+            </el-form-item></el-col>
         </el-row>
         <el-row>
           <el-col :span="15">
@@ -127,15 +131,18 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13">
 <!--            <el-form-item label="报警点位:" label-width="130px">-->
-            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">
-              <el-radio-group v-model="stateForm2.address">
-                <el-radio
-                  v-for="item in fireMarkData"
-                  :key="item.value"
-                  :label="item.value"
-                >{{item.label}}</el-radio>
-              </el-radio-group>
-            </el-form-item>
+<!--            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">-->
+<!--              <el-radio-group v-model="stateForm2.address">-->
+<!--                <el-radio-->
+<!--                  v-for="item in fireMarkData"-->
+<!--                  :key="item.value"-->
+<!--                  :label="item.value"-->
+<!--                >{{item.label}}</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </el-form-item>-->
+            <!-- <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true">
+              <span style="color: red; font-weight: bold">当前地址为报警点位</span>
+            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
@@ -185,11 +192,11 @@ export default {
         state: null,
         fireMark: null,
       },
-
+      showTipe: false,
       openState: [
         {
           value: "1",
-          label: "关灯",
+          label: "关闭",
         },
       ],
     };
@@ -218,8 +225,9 @@ export default {
             frequency: Number(response.data.frequency),
             brightness: Number(response.data.brightness),
             state: response.data.state,
-            address: "0",
+            address: this.stateForm.eq_feedback_address1,
             eqType: this.stateForm.eqType,
+            eqFeedbackAddress1: this.stateForm.eq_feedback_address1,
           };
         });
         if (this.eqInfo.clickEqType == 30) {
@@ -231,11 +239,18 @@ export default {
           ];
           if (this.stateForm.eq_feedback_address1 == this.stateForm.fireMark) {
             this.fireMarkData.push({ label: "清除报警点位", value: "255" });
+            this.showTipe = true;
+          } else {
+            this.showTipe = false;
           }
           this.openState.push(
             {
               value: "2",
-              label: "开灯",
+              label: "常亮",
+            },
+            {
+              value: "5",
+              label: "报警",
             },
           )
           // fireMarkList(this.eqInfo.equipmentId).then((res) => {
@@ -285,6 +300,11 @@ export default {
 
     // 提交修改
     handleOK() {
+      if (this.stateForm2.state == "2") {
+        this.stateForm2.address="255";
+      } else if (this.stateForm2.state == "1") {
+        this.stateForm2.address="0";
+      }
       const param = {
         devId: this.stateForm.eqId, //设备id
         state: this.stateForm2.state, //设备状态

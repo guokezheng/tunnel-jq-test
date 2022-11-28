@@ -40,6 +40,11 @@ public class SdVmsTemplateController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/getAllVmsTemplate/{category}")
+    public AjaxResult getAllVmsTemplate(@PathVariable("category") String category) {
+        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category));
+    }
+
     /**
      * 导出情报板模板列表
      */

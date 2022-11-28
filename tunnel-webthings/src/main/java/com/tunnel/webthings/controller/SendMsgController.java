@@ -4,11 +4,9 @@ import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.webthings.service.SendMsgService;
 import com.tunnel.webthings.vo.RadarMsgTopicVo;
-import com.tunnel.webthings.vo.SendMsgVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 

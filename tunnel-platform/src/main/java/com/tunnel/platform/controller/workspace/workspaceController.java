@@ -184,6 +184,7 @@ public class workspaceController extends BaseController {
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
+        String fDeviceState = state;
         String brightness = map.get("brightness").toString();
         String frequency = map.get("frequency").toString();
         String fireMark = "";
@@ -198,7 +199,7 @@ public class workspaceController extends BaseController {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()));
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue()) {
             if (state.equals("2") && map.get("fireMark").toString().equals("0") && map.get("fireMark") != null) {
                 map.put("fireMark", "255");
             }
@@ -230,7 +231,7 @@ public class workspaceController extends BaseController {
                 devices.setFEqId(fEqId);
                 sdDevicesService.updateSdDevicesByFEqId(sdDevices);
             }
-            if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
+            if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
                 //父级设备变更
                 updateDeviceData(sdDevices, state, DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
                 updateDeviceData(sdDevices, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
@@ -247,7 +248,7 @@ public class workspaceController extends BaseController {
                         updateDeviceData(devo, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
                     }
                 }
-            } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
+            } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue()) {
                 //父级设备变更
                 updateDeviceData(sdDevices, state, DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode());
                 updateDeviceData(sdDevices, brightness, DevicesTypeItemEnum.EVACUATION_SIGN_BRIGHNESS.getCode());
@@ -308,7 +309,7 @@ public class workspaceController extends BaseController {
             if (data.size() > 0 && data.get(0) != null) {
                 sdOperationLog.setBeforeState(data.get(0).getData());
             }
-            sdOperationLog.setOperationState(state);
+            sdOperationLog.setOperationState(fDeviceState);
             sdOperationLog.setControlType("0");
             sdOperationLog.setState("1");
             sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
@@ -326,7 +327,7 @@ public class workspaceController extends BaseController {
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
-        sdOperationLog.setOperationState(state);
+        sdOperationLog.setOperationState(fDeviceState);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

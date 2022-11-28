@@ -55,6 +55,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectTemplateList" resultMap="SdVmsTemplateResult">
+        select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
+               a.template_type, a.vms_type, a.remark, a.category
+        from sd_vms_template a
+        where a.category = #{category}
+    </select>
+
     <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">
         <include refid="selectSdVmsTemplateVo"/>
         where a.id = #{id}

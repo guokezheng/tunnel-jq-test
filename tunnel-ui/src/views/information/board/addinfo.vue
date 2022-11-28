@@ -20,37 +20,48 @@
           v-on:drop="faceDrop"
           v-on:dragover="allowDrop"
           :style="{
-             width:boardWidth + 'px',
-            height:boardHeight + 'px',
+            width: boardWidth + 'px',
+            height: boardHeight + 'px',
           }"
           class="blackBoard"
         >
           <div
-
             style="line-height: 1; position: absolute; white-space: nowrap"
             :style="{
               color: dataForm.COLOR,
-                fontSize: dataForm.FONT_SIZE,
-                fontFamily: dataForm.FONT,
-                letterSpacing: dataForm.SPEED + 'px',
-                zIndex: '1000',
-                left:dataForm.COORDINATE.substring(0, 3) + 'px',
-                top:dataForm.COORDINATE.substring(3, 6) + 'px',
+              fontSize: dataForm.FONT_SIZE,
+              fontFamily: dataForm.FONT,
+              letterSpacing: dataForm.SPEED + 'px',
+              zIndex: '1000',
+              left: dataForm.COORDINATE.substring(0, 3) + 'px',
+              top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
             class="textBoard"
-          >{{dataForm.CONTENT}}</div>
-
+            v-html="content"
+          ></div>
         </div>
       </el-card>
-      <el-row >
-            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
-            <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
-            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
-            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
-            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
-            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
-          </el-row>
+      <el-row>
+        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+        <el-button type="info" plain @click="alignment(6)" size="mini"
+          >下对齐</el-button
+        >
+        <el-button type="info" plain @click="alignment(5)" size="mini"
+          >上下居中</el-button
+        >
+        <el-button type="info" plain @click="alignment(4)" size="mini"
+          >上对齐</el-button
+        >
+        <el-button type="info" plain @click="alignment(3)" size="mini"
+          >右对齐</el-button
+        >
+        <el-button type="info" plain @click="alignment(2)" size="mini"
+          >左右居中</el-button
+        >
+        <el-button type="info" plain @click="alignment(1)" size="mini"
+          >左对齐</el-button
+        >
+      </el-row>
       <el-card>
         <el-form
           :model="dataForm"
@@ -135,16 +146,16 @@
             </div>
           </el-dialog> -->
           <!-- 选择图片弹出框结束 -->
-          <el-row
-            :gutter="24"
-          >
+          <el-row :gutter="24">
             <el-col :span="22">
-              <el-form-item label="详细内容" >
+              <el-form-item label="详细内容">
                 <el-input
                   type="textarea"
                   clearable
+                  id="textContent"
                   placeholder="详细内容"
                   v-model="dataForm.CONTENT"
+                  @keyup.enter.native="keyDown()"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -270,10 +281,7 @@
                   >
                   </el-option>
                 </el-select> -->
-                <el-input
-                    disabled
-                    v-model="dataForm.screenSize"
-                  ></el-input>
+                <el-input disabled v-model="dataForm.screenSize"></el-input>
               </el-form-item>
             </el-col>
             <!-- <el-col :span="6">
@@ -312,8 +320,9 @@ import {
 export default {
   data() {
     return {
-      boardWidth:'',
-        boardHeight:'',
+      content: "",
+      boardWidth: "",
+      boardHeight: "",
       checkList: [], //复选框一组
       obj: "",
       imgUrl: [],
@@ -336,7 +345,7 @@ export default {
       startTxt_y: "000",
       width: "400",
       height: "40",
-      content: "",
+      // content: "",
       fontColor: "yellow",
       fontSize: "24",
       fontType: "KaiTi",
@@ -347,7 +356,7 @@ export default {
       ispreviewContent: -1,
       dataForm: {
         id: "",
-        category:'',
+        category: "",
         inScreenMode: "1", //入屏方式
         rollSpeed: "1000",
         stopTime: "500",
@@ -359,13 +368,13 @@ export default {
         height: "",
         width: "",
         coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
-        screenSize:'',
-        COORDINATE:'',
-        FONT_SIZE:'',
+        screenSize: "",
+        COORDINATE: "",
+        FONT_SIZE: "",
       },
       templateContent: [],
       templateDelContent: [],
-      dataRule:{
+      dataRule: {
         fontColor: [
           {
             required: true,
@@ -415,23 +424,21 @@ export default {
             trigger: "blur",
           },
         ],
-
-    },
-    fontTypeOptions: [
-          {
-            code: "KaiTi",
-            content: "楷体",
-          },
-          {
-            code: "SimSun",
-            content: "宋体",
-          },
-          {
-            code: "SimHei",
-            content: "黑体",
-          },
-        
-        ],
+      },
+      fontTypeOptions: [
+        {
+          code: "KaiTi",
+          content: "楷体",
+        },
+        {
+          code: "SimSun",
+          content: "宋体",
+        },
+        {
+          code: "SimHei",
+          content: "黑体",
+        },
+      ],
       screenSizeOptions: [
         {
           type: "440*40",
@@ -439,26 +446,25 @@ export default {
         {
           type: "128*64",
         },
-      
       ],
       colorOptions: [
-          {
-            code: "red",
-            content: "红色",
-          },
-          {
-            code: "yellow",
-            content: "黄色",
-          },
-          {
-            code: "blue",
-            content: "蓝色",
-          },
-          {
-            code: "GreenYellow",
-            content: "绿色",
-          },
-        ],
+        {
+          code: "red",
+          content: "红色",
+        },
+        {
+          code: "yellow",
+          content: "黄色",
+        },
+        {
+          code: "blue",
+          content: "蓝色",
+        },
+        {
+          code: "GreenYellow",
+          content: "绿色",
+        },
+      ],
       isCurrencyOptions: [
         {
           code: "0",
@@ -570,24 +576,24 @@ export default {
         },
       ],
       fontSizeOpt: [
-          {
-            value: "32px",
-            label: "32px",
-          },
-          {
-            value: "24px",
-            label: "24px",
-          },
-          {
-            value: "16px",
-            label: "16px",
-          },
-          
-        ],
+        {
+          value: "32px",
+          label: "32px",
+        },
+        {
+          value: "24px",
+          label: "24px",
+        },
+        {
+          value: "16px",
+          label: "16px",
+        },
+      ],
       title: "选择图片",
       loading: false,
       isAdd: false,
-      iotTemplateCategoryList:[],
+      iotTemplateCategoryList: [],
+      infoType: "",
     };
   },
   //   directives: {
@@ -632,7 +638,6 @@ export default {
   //     },
   //   },
   computed: {
-
     divStyle: function () {
       return {
         width: this.width + "px",
@@ -662,25 +667,26 @@ export default {
   //     },
   //   },
   // },
-  mounted(){
+  mounted() {
     // 屏幕尺寸字典数据
     // this.getDicts("screenSize").then((res) => {
-      // this.screenSizeOptions = res.data;
-      // console.log(this.screenSizeOptions,'this.screenSizeOptions')
+    // this.screenSizeOptions = res.data;
+    // console.log(this.screenSizeOptions,'this.screenSizeOptions')
     // });
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   methods: {
-    init(devicePixel) {
-      console.log(devicePixel,"00000");
-      this.dataForm.screenSize = devicePixel
-      
+    init(devicePixel, type) {
+      this.infoType = type;
+      console.log(devicePixel, "00000");
+      this.dataForm.screenSize = devicePixel;
+
       this.boardWidth = devicePixel.split("*")[0];
       this.boardHeight = devicePixel.split("*")[1];
-      this.title =  "新增"
+      this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
       console.log(this.dataForm.id, "这是模板id");
@@ -697,20 +703,45 @@ export default {
             COLOR: "黄色",
             FONT_SIZE: "24px",
             FONT: "黑体",
-            SPEED: '1',
+            SPEED: "1",
             ACTION: "1",
-            COORDINATE:'063004',
-            STATE:'true',
-            STAY:'500',
-            screenSize:devicePixel
+            COORDINATE: "063004",
+            STATE: "true",
+            STAY: "500",
+            screenSize: devicePixel,
           };
         } else {
           this.getInfo();
           this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
-      this.$forceUpdate()
+      this.$forceUpdate();
+    },
+    keyDown() {
+      let arr = [];
+      let content = "";
+      const input = document.getElementById("textContent");
+      console.log(input.selectionStart);
+      arr = this.dataForm.CONTENT.split("");
+      console.log(arr, "arr");
+      content += "<div>";
+      for (var i = 0; i < arr.length; i++) {
+        // arr[input+1] = '<br>'
+        
+        content += arr[i];
+        if (i == input.selectionStart - 1) {
+          content += "<br>";
+        }
+      }
+      content += "</div>";
 
+      console.log(content,"content");
+      // arr = arr.toString()
+      // console.log(arr.toString());
+      // var reg1 = new RegExp(",", "g"); // 加'g'，删除字符串里所有的"a"
+      // var a1 = arr.toString().replace(reg1, "");
+      // console.log(a1); // bbccddeegg 作者：朵宝特工007 https://www.bilibili.com/read/cv17421049/ 出处：bilibili
+      this.content = content;
     },
     // del(index) {
     //   this.obj = index;
@@ -734,78 +765,78 @@ export default {
     //   };
     // },
     // 选择图片按钮
-    chooseImageEvent() {
-      this.imgUrl = [];
-      this.getImageInfo();
-      this.dialogVisible = true;
-    },
+    // chooseImageEvent() {
+    //   this.imgUrl = [];
+    //   this.getImageInfo();
+    //   this.dialogVisible = true;
+    // },
     //选择图片弹框关闭事件
     close() {
       this.checkList = [];
       this.dialogVisible = false;
     },
     // 图片双击事件
-    dblEvent(item) {
-      if (this.templateContent.length > 7) {
-        this.$modal.msgError("最多只能添加七条信息！");
-        return;
-      }
-      this.templateContent.push({
-        content: "",
-        fontColor: null,
-        fontSize: null,
-        fontType: null,
-        fontSpacing: 0,
-        coordinate: "000000",
-        img: item,
-        imageName: item,
-      });
-      this.checkList = [];
-      this.dialogVisible = false;
-    },
+    // dblEvent(item) {
+    //   if (this.templateContent.length > 7) {
+    //     this.$modal.msgError("最多只能添加七条信息！");
+    //     return;
+    //   }
+    //   this.templateContent.push({
+    //     content: "",
+    //     fontColor: null,
+    //     fontSize: null,
+    //     fontType: null,
+    //     fontSpacing: 0,
+    //     coordinate: "000000",
+    //     img: item,
+    //     imageName: item,
+    //   });
+    //   this.checkList = [];
+    //   this.dialogVisible = false;
+    // },
     // 选择图片点击确定按钮
-    sendBtnEvent() {
-      if (this.templateContent.length > 7) {
-        this.$modal.msgError("最多只能添加七条信息！");
-        return;
-      }
-      if (this.checkList.length > 1) {
-        this.$modal.msgError("每次只能选择一张图片！");
-        return;
-      }
-      if (this.checkList.length > 0) {
-        for (var i = 0; i < this.checkList.length; i++)
-          this.templateContent.push({
-            content: "",
-            fontColor: null,
-            fontSize: null,
-            fontType: null,
-            fontSpacing: 0,
-            coordinate: "000000",
-            img: this.checkList[i],
-          });
-        this.checkList = [];
-      } else {
-        this.$modal.msgError("请选择您要添加的图片！");
-        return;
-      }
-      this.dialogVisible = false;
-    },
+    // sendBtnEvent() {
+    //   if (this.templateContent.length > 7) {
+    //     this.$modal.msgError("最多只能添加七条信息！");
+    //     return;
+    //   }
+    //   if (this.checkList.length > 1) {
+    //     this.$modal.msgError("每次只能选择一张图片！");
+    //     return;
+    //   }
+    //   if (this.checkList.length > 0) {
+    //     for (var i = 0; i < this.checkList.length; i++)
+    //       this.templateContent.push({
+    //         content: "",
+    //         fontColor: null,
+    //         fontSize: null,
+    //         fontType: null,
+    //         fontSpacing: 0,
+    //         coordinate: "000000",
+    //         img: this.checkList[i],
+    //       });
+    //     this.checkList = [];
+    //   } else {
+    //     this.$modal.msgError("请选择您要添加的图片！");
+    //     return;
+    //   }
+    //   this.dialogVisible = false;
+    // },
     // 选择图片弹框拖动图片
-    faceImagedragg(event, item) {
-      this.curDragImgItem = item; //拖动存储该图片信息
-    },
+    // faceImagedragg(event, item) {
+    //   this.curDragImgItem = item; //拖动存储该图片信息
+    // },
     faceDrop(e) {
       e.preventDefault(); //阻止默认行为
       this.listquery.push(this.curDragImgItem);
     },
     /* 拆分分辨率大小 */
-    resolvingPowerType(data) {
-      let a = [];
-      a = data.split("*");
-      this.width = a[0];
-      this.height = a[1];
-    },
+    // resolvingPowerType(data) {
+    //   let a = [];
+    //   a = data.split("*");
+    //   this.width = a[0];
+    //   this.height = a[1];
+    // },
     // 全选
     allowDrop(e) {
       e.preventDefault(); //阻止默认行为
@@ -851,7 +882,7 @@ export default {
       // let templateId = "";
       // let method = !this.isAdd ? "put" : "post";
       if (this.isAdd) {
-        console.log(this.dataForm,"this.dataForm新增组件");
+        console.log(this.dataForm, "this.dataForm新增组件");
         // 新增
         // await addTemplate(this.dataForm, method).then((data) => {
         //   console.log(data, "新增口");
@@ -865,8 +896,6 @@ export default {
         //   throw err;
         // });
         this.$emit("addInfo", this.dataForm);
-
-        
       } else {
         console.log(this.dataForm);
         console.log(params);
@@ -894,53 +923,53 @@ export default {
     /*********************************************业务代码***********************************************/
     // 文字对齐方式
     alignment(alignmentNum) {
-        var divContent = document.getElementsByClassName("blackBoard")
-        var textBoard = document.getElementsByClassName("textBoard")
-        // 获取文字长宽
-        let textWidth = textBoard[0].offsetWidth;
-        let textHeight = textBoard[0].offsetHeight;
-        // 获取黑盒子长宽
-        let divWidth = divContent[0].offsetWidth;
-        let divHeight = divContent[0].offsetHeight;
-        switch (alignmentNum) {
-          // 左对齐
-          case 1:
-            textBoard[0].style.left = '0px';
-            textBoard[0].style.removeProperty('right')
-            break;
-            // 左右居中
-          case 2:
-            textBoard[0].style.left = (divWidth - textWidth)/2 +'px';
-            break;
-            // 右对齐
-          case 3:
-            textBoard[0].style.right = '0px';
-            textBoard[0].style.removeProperty('left')
-            break;
-            // 上对齐
-          case 4:
-            textBoard[0].style.top = '0px';
-            textBoard[0].style.removeProperty('bottom')
-            break;
-            // 上下对齐
-          case 5:
-            console.log(divHeight,textHeight,"00000");
-            textBoard[0].style.top = (divHeight - textHeight)/2 +'px';
-            break;
-            // 下对齐
-          case 6:
-            textBoard[0].style.removeProperty('top')
-            textBoard[0].style.bottom = '0px';
-            break;
-        }
-        var textLeft = this.addZero(textBoard[0].offsetLeft)
-        var textTop = this.addZero(textBoard[0].offsetTop)
-        this.dataForm.COORDINATE = textLeft+textTop
-        console.log(this.dataForm.COORDINATE,"this.dataForm.COORDINATE");
-      },
-      addZero(num) {
-        return ('000' + num).slice(-3);
-      },
+      var divContent = document.getElementsByClassName("blackBoard");
+      var textBoard = document.getElementsByClassName("textBoard");
+      // 获取文字长宽
+      let textWidth = textBoard[0].offsetWidth;
+      let textHeight = textBoard[0].offsetHeight;
+      // 获取黑盒子长宽
+      let divWidth = divContent[0].offsetWidth;
+      let divHeight = divContent[0].offsetHeight;
+      switch (alignmentNum) {
+        // 左对齐
+        case 1:
+          textBoard[0].style.left = "0px";
+          textBoard[0].style.removeProperty("right");
+          break;
+        // 左右居中
+        case 2:
+          textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
+          break;
+        // 右对齐
+        case 3:
+          textBoard[0].style.right = "0px";
+          textBoard[0].style.removeProperty("left");
+          break;
+        // 上对齐
+        case 4:
+          textBoard[0].style.top = "0px";
+          textBoard[0].style.removeProperty("bottom");
+          break;
+        // 上下对齐
+        case 5:
+          console.log(divHeight, textHeight, "00000");
+          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
+          break;
+        // 下对齐
+        case 6:
+          textBoard[0].style.removeProperty("top");
+          textBoard[0].style.bottom = "0px";
+          break;
+      }
+      var textLeft = this.addZero(textBoard[0].offsetLeft);
+      var textTop = this.addZero(textBoard[0].offsetTop);
+      this.dataForm.COORDINATE = textLeft + textTop;
+      console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
+    },
+    addZero(num) {
+      return ("000" + num).slice(-3);
+    },
     /*增加新的内容*/
     addTemplateContent() {
       if (this.templateContent.length >= 7) {

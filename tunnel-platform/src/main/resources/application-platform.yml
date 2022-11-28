@@ -88,5 +88,10 @@ sso:
   token: http://10.166.154.213:30001/auth/sso/token
   # 获取当前登录用户信息
   userInfo: http://10.166.154.213:30001/sys/user/info
+  # 获取组织机构树
+  deptTree: http://10.166.154.213:30001/sys/dept/tree/get_tree_all
+  # 获取组织机构下的用户信息
+  userList: http://10.166.154.213:30001/sys/user/getUserListByCompanyAndDept
+
   #业务中台分配应用ID
   appId: jq_tunnel_server

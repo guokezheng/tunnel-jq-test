@@ -41,12 +41,18 @@
             设备故障
           </div>
         </div>
-        <ul class="listContent" 
-            v-infinite-scroll="load"
-            infinite-scroll-disabled="disabled">
-          <li v-for="(item, index) of list" :key="index"  @click="handleSee(item.id)" style="cursor: pointer;">
-
-            <el-row style="color: white" >
+        <ul
+          class="listContent"
+          v-infinite-scroll="load"
+          infinite-scroll-disabled="disabled"
+        >
+          <li
+            v-for="(item, index) of list"
+            :key="index"
+            @click="handleSee(item.id)"
+            style="cursor: pointer"
+          >
+            <el-row style="color: white">
               <el-col :span="2">
                 <img
                   :src="item.iconUrl"
@@ -70,7 +76,10 @@
                   {{ item.eventType.simplifyName }}
                 </div>
               </el-col>
-              <el-col :span="20" style="display:flex;justify-content: space-between;">
+              <el-col
+                :span="20"
+                style="display: flex; justify-content: space-between"
+              >
                 <div class="overflowText">{{ item.eventTitle }}</div>
                 <div style="float: right; margin-right: 10px">
                   {{ getStartTime(item.startTime) }}
@@ -96,14 +105,22 @@
               <div></div>
             </div>
           </li>
-          <p v-if="noMore" style="margin-top: 10px; font-size: 13px; color: #ccc; text-align: center;">
-          没有更多了
-        </p>
+          <p
+            v-if="noMore"
+            style="
+              margin-top: 10px;
+              font-size: 13px;
+              color: #ccc;
+              text-align: center;
+            "
+          >
+            没有更多了
+          </p>
         </ul>
-        <p v-if="loading"  class="loading">
+        <p v-if="loading" class="loading">
           <span></span>
         </p>
-        
+
         <!-- <div class="listContent">
           <div v-for="(item, index) of list" :key="index" >
             <el-row style="color: white">
@@ -226,9 +243,14 @@
     
     <script>
 import { mapState } from "vuex";
-import moment from 'moment'
+import moment from "moment";
 import bus from "@/utils/bus";
-import { updateEvent, eventList, eventPopFault,eventPopAll } from "@/api/event/event";
+import {
+  updateEvent,
+  eventList,
+  eventPopFault,
+  eventPopAll,
+} from "@/api/event/event";
 import evtdialog from "@/components/eventDialogTable/eventDialog"; //只有数据的弹窗
 
 export default {
@@ -248,19 +270,18 @@ export default {
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
-      startTime:''
+      startTime: "",
     };
   },
   computed: {
     noMore() {
       //当起始页数大于总页数时停止加载
       // console.log(this.pageNum, parseInt(this.total/10));
-      if(this.total%10==0){
-        return this.pageNum >= parseInt(this.total/10);
-      }else{
-        console.log(this.pageNum,parseInt(this.total/10)+1)
-        return this.pageNum >= parseInt(this.total/10)+1;
-
+      if (this.total % 10 == 0) {
+        return this.pageNum >= parseInt(this.total / 10);
+      } else {
+        console.log(this.pageNum, parseInt(this.total / 10) + 1);
+        return this.pageNum >= parseInt(this.total / 10) + 1;
       }
     },
     disabled() {
@@ -268,7 +289,7 @@ export default {
     },
   },
   created() {
-    this.startTime = moment().format('YYYY-MM-DD')
+    this.startTime = moment().format("YYYY-MM-DD");
     // console.log(this.startTime)
     // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
     //   console.log(res, "事件弹窗分类数组");
@@ -276,27 +297,26 @@ export default {
     //   this.total = res.total;
     //   this.loading = false;
     // });
-    var pageNum2 = 0
-    eventPopAll(pageNum2).then((res) =>{
+    var pageNum2 = 0;
+    eventPopAll(pageNum2).then((res) => {
       console.log(res, "全部设备");
       this.list = res.data.data;
       this.total = res.data.total;
       this.loading = false;
-    })
-    
+    });
   },
   mounted() {
-    bus.$on('forceUpdateTable', (id) => {
+    bus.$on("forceUpdateTable", (id) => {
       let index = this.list.findIndex((item) => {
-          if (item.id == id) {
-            return true;
-          }
-        });
-        this.list.splice(index, 1);
-        if(this.list.length == 0){
-          bus.$emit("closeDialog");
+        if (item.id == id) {
+          return true;
         }
-    })
+      });
+      this.list.splice(index, 1);
+      if (this.list.length == 0) {
+        bus.$emit("closeDialog");
+      }
+    });
     // bus.$on('closeTableDialog', () => {
     //  this.eventTableDialog = false
     // })
@@ -305,38 +325,39 @@ export default {
     // })
   },
   methods: {
-    getStartTime(time){
-      return moment(time).format("HH:mm:ss")
+    getStartTime(time) {
+      return moment(time).format("HH:mm:ss");
     },
     load() {
       this.loading = true;
       setTimeout(() => {
         this.pageNum += 1;
-        var pageNum2 =(this.pageNum-1)*10
-        console.log(pageNum2,"pageNum2");
-        console.log(this.searchValue,"this.searchValue");
-        if(this.searchValue == 3){
-            // 全部设备
-          eventPopAll(pageNum2).then((res) =>{
+        var pageNum2 = (this.pageNum - 1) * 10;
+        console.log(pageNum2, "pageNum2");
+        console.log(this.searchValue, "this.searchValue");
+        if (this.searchValue == 3) {
+          // 全部设备
+          eventPopAll(pageNum2).then((res) => {
             console.log(res, "全部设备滚动");
             this.list = this.list.concat(res.data.data);
-          })
-        }else if(this.searchValue == 2){
+          });
+        } else if (this.searchValue == 2) {
           // 设备故障
           eventPopFault(pageNum2).then((res) => {
             console.log(res, "设备故障");
             this.list = this.list.concat(res.data.data);
           });
-        }else{
-          eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
-          console.log(res, "事件弹窗分类数组");
-          // this.list.push(res.rows);
-          this.list = this.list.concat(res.rows);
-          this.$forceUpdate();
-        });
+        } else {
+          eventList(this.searchValue, this.pageNum, this.startTime).then(
+            (res) => {
+              console.log(res, "事件弹窗分类数组");
+              // this.list.push(res.rows);
+              this.list = this.list.concat(res.rows);
+              this.$forceUpdate();
+            }
+          );
         }
-        this.loading = false
-        
+        this.loading = false;
       }, 2000);
     },
     handleSee(id) {
@@ -402,25 +423,23 @@ export default {
         eventPopFault(pageNum2).then((res) => {
           console.log(res, "设备故障");
           this.list = res.data.data;
-          this.total = res.data.total
+          this.total = res.data.total;
         });
-      } else if(searchValue == 3){
+      } else if (searchValue == 3) {
         // 全部设备
-        eventPopAll(pageNum2).then((res) =>{
+        eventPopAll(pageNum2).then((res) => {
           console.log(res, "全部设备");
           this.list = res.data.data;
-          this.total = res.data.total
-
-        })
-      }
-      else {
+          this.total = res.data.total;
+        });
+      } else {
         // 主动安全 交通事件
-      eventList(searchValue, pageNum,this.startTime).then((res) => {
-        console.log(res, "事件弹窗分类数组");
-        this.list = res.rows;
-        this.total = res.total;
-        this.loading = false;
-      });
+        eventList(searchValue, pageNum, this.startTime).then((res) => {
+          console.log(res, "事件弹窗分类数组");
+          this.list = res.rows;
+          this.total = res.total;
+          this.loading = false;
+        });
       }
     },
     // 表格的行样式

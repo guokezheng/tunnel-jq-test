@@ -82,7 +82,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
      */
     @Override
     public List<SdWarningInfo> selectSdWarningInfoList(SdWarningInfo sdWarningInfo) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdWarningInfo.getParams().put("deptId", deptId);
         List<SdWarningInfo> list = sdWarningInfoMapper.selectSdWarningInfoList(sdWarningInfo);
         for (int i = 0; i < list.size(); i++) {
@@ -233,7 +233,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
 
     @Override
     public List<SdWarningInfo> selectSdWarningList(SdWarningInfo sdWarningInfo) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdWarningInfo.getParams().put("deptId", deptId);
         List<SdWarningInfo> list = sdWarningInfoMapper.selectSdWarningList(sdWarningInfo);
         return list;
@@ -241,7 +241,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
 
     @Override
     public List<SdWarningInfo> getAllPressureGaugesWarningMsg() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         return sdWarningInfoMapper.getAllPressureGaugesWarningMsg(deptId);
     }
 
@@ -259,7 +259,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
         Map<String, Object> warn = new HashMap<>();
         //按年查询每月数量
         Map<String, Object> params = sdWarningInfo.getParams();
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         params.put("deptId", deptId);
         if (null != sdWarningInfo.getYear()) {
             String year = sdWarningInfo.getYear().toString();
@@ -304,7 +304,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
 
     @Override
     public List<Map<String, Object>> getTheWarningDataOfToday(SdWarningInfo sdWarningInfo) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdWarningInfo.getParams().put("deptId", deptId);
         List<Map<String, Object>> theWarningDataOfToday = sdWarningInfoMapper.getTheWarningDataOfToday(sdWarningInfo);
         return theWarningDataOfToday;
@@ -312,7 +312,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
 
     @Override
     public List<String> getSystemWarningMsg() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         List<String> strings = sdWarningInfoMapper.sdWarningInfoMapper(deptId);
 //		if (strings.size() == 0) {
 //			strings = new ArrayList<>();
@@ -323,7 +323,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
 
     @Override
     public List<String> getTrafficIncident() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         List<String> trafficIncident = sdWarningInfoMapper.getTrafficIncident(deptId);
 //		if (trafficIncident.size() == 0) {
 //			trafficIncident = new ArrayList<>();
@@ -372,7 +372,7 @@ public class SdWarningInfoServiceImpl implements ISdWarningInfoService {
     @Override
     public List<SdWarningInfo> getWarningMassageOfUnProcess(String tunnelId) {
         SdWarningInfo warningInfo = new SdWarningInfo();
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         warningInfo.getParams().put("deptId", deptId);
         warningInfo.setTunnelId(tunnelId);
         warningInfo.setProcessState("0");

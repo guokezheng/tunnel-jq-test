@@ -41,7 +41,7 @@ public class SdSpecialVehicleServiceImpl implements ISdSpecialVehicleService {
      */
     @Override
     public List<Map<String,String>> selectSdSpecialVehicleList(SdSpecialVehicles sdSpecialVehicle) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdSpecialVehicle.getParams().put("deptId", deptId);
         return sdSpecialVehicleMapper.selectSdSpecialVehicleList(sdSpecialVehicle);
     }

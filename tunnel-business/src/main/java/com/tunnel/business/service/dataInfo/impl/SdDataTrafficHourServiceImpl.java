@@ -102,7 +102,7 @@ public class SdDataTrafficHourServiceImpl implements ISdDataTrafficHourService {
 
     @Override
     public List<Map<String, Object>> getCarNumberByHour(SdDataTrafficHour sdDataTrafficHour) throws ParseException {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdDataTrafficHour.getParams().put("deptId", deptId);
         if (null == sdDataTrafficHour.getTunnelId() || ("").equals(sdDataTrafficHour.getTunnelId())) {
             if (null == sdDataTrafficHour.getTunnelName() || ("").equals(sdDataTrafficHour.getTunnelName())) {

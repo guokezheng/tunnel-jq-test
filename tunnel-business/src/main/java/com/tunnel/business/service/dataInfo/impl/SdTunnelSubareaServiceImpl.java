@@ -49,7 +49,7 @@ public class SdTunnelSubareaServiceImpl implements ISdTunnelSubareaService {
      */
     @Override
     public List<SdTunnelSubarea> selectSdTunnelSubareaList(SdTunnelSubarea sdTunnelSubarea) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdTunnelSubarea.getParams().put("deptId", deptId);
         return sdTunnelSubareaMapper.selectSdTunnelSubareaLists(sdTunnelSubarea);
     }

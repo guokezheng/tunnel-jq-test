@@ -8,15 +8,15 @@ import java.util.List;
 
 /**
  * 巡查任务Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2022-11-04
  */
-public interface SdTaskListMapper 
+public interface SdTaskListMapper
 {
     /**
      * 查询巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 巡查任务
      */
@@ -24,7 +24,7 @@ public interface SdTaskListMapper
 
     /**
      * 查询巡查任务列表
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 巡查任务集合
      */
@@ -32,7 +32,7 @@ public interface SdTaskListMapper
 
     /**
      * 新增巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @param
      * @return 结果
@@ -41,7 +41,7 @@ public interface SdTaskListMapper
 
     /**
      * 修改巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
@@ -49,7 +49,7 @@ public interface SdTaskListMapper
 
     /**
      * 删除巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 结果
      */
@@ -57,7 +57,7 @@ public interface SdTaskListMapper
 
     /**
      * 批量删除巡查任务
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
@@ -75,7 +75,7 @@ public interface SdTaskListMapper
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(Long deptId);
+    List<SysDept> selectTableBzDataInfo(String deptId);
 
     /**
      * 废纸巡查任务

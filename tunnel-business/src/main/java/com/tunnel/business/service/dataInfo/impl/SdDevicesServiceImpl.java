@@ -761,7 +761,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Override
     public List<SdDevices> getAllPressureGaugesMsg() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         return sdDevicesMapper.getAllPressureGaugesMsg(deptId);
     }
 

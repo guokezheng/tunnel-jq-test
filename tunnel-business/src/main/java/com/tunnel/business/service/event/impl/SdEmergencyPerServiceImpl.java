@@ -50,7 +50,7 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
      */
     @Override
     public List<SdEmergencyPer> selectSdEmergencyPerList(SdEmergencyPer sdEmergencyPer) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdEmergencyPer.getParams().put("deptId", deptId);
         List<SdEmergencyPer> pers = sdEmergencyPerMapper.selectSdEmergencyPerList(sdEmergencyPer);
         List<SysDictData> dictData = sysDictDataMapper.selectDictDataByType("sd_emergency_post");

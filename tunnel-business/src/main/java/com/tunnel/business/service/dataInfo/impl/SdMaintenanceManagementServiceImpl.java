@@ -95,7 +95,7 @@ public class SdMaintenanceManagementServiceImpl implements ISdMaintenanceManagem
     @Override
     public List<SdMaintenanceManagement> selectSdMaintenanceManagementList(SdMaintenanceManagement sdMaintenanceManagement) {
         sdMaintenanceManagement.setCuringProgress(null);
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdMaintenanceManagement.getParams().put("deptId", deptId);
         return sdMaintenanceManagementMapper.selectSdMaintenanceManagementList(sdMaintenanceManagement);
     }

@@ -71,8 +71,8 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> selectSdEventList(SdEvent sdEvent) {
-        if (SecurityUtils.getDeptId() != null && SecurityUtils.getDeptId() != 0L) {
-            Long deptId = SecurityUtils.getDeptId();
+        if (SecurityUtils.getDeptId() != null && !"".equals(SecurityUtils.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
             if (deptId == null) {
                 throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
             }
@@ -174,7 +174,7 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> getEvent(SdEvent sdEvent) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }

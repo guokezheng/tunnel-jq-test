@@ -40,7 +40,7 @@ public class SdBroadcastInformationListServiceImpl implements ISdBroadcastInform
      */
     @Override
     public List<SdBroadcastInformationList> selectSdBroadcastInformationListList(SdBroadcastInformationList sdBroadcastInformationList) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdBroadcastInformationList.getParams().put("deptId", deptId);
         return sdBroadcastInformationListMapper.selectSdBroadcastInformationListList(sdBroadcastInformationList);
     }

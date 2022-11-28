@@ -14,15 +14,15 @@ import java.util.Map;
 
 /**
  * 巡查任务Service接口
- * 
+ *
  * @author ruoyi
  * @date 2022-11-04
  */
-public interface ISdTaskListService 
+public interface ISdTaskListService
 {
     /**
      * 查询巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 巡查任务
      */
@@ -30,7 +30,7 @@ public interface ISdTaskListService
 
     /**
      * 查询巡查任务列表
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 巡查任务集合
      */
@@ -38,7 +38,7 @@ public interface ISdTaskListService
 
     /**
      * 新增巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
@@ -46,7 +46,7 @@ public interface ISdTaskListService
 
     /**
      * 修改巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
@@ -54,7 +54,7 @@ public interface ISdTaskListService
 
     /**
      * 批量删除巡查任务
-     * 
+     *
      * @param ids 需要删除的巡查任务主键集合
      * @return 结果
      */
@@ -62,7 +62,7 @@ public interface ISdTaskListService
 
     /**
      * 删除巡查任务信息
-     * 
+     *
      * @param id 巡查任务主键
      * @return 结果
      */
@@ -87,7 +87,7 @@ public interface ISdTaskListService
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(Long deptId);
+    List<SysDept> selectTableBzDataInfo(String deptId);
 
     /**
      * 构建前端所需要下拉树结构

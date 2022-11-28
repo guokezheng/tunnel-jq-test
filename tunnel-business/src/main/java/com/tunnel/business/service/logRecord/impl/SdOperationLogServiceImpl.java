@@ -43,7 +43,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      */
     @Override
     public List<SdOperationLog> selectSdOperationLogList(SdOperationLog sdOperationLog) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }

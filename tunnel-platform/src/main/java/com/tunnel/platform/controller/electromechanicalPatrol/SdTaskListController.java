@@ -32,7 +32,7 @@ import java.util.Map;
 
 /**
  * 巡查任务Controller
- * 
+ *
  * @author tjw
  * @date 2022-11-04
  */
@@ -263,7 +263,7 @@ public class SdTaskListController extends BaseController
     public TableDataInfo<List<SysDept>> list()
     {
         startPage();
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         List<SysDept> list = sdTaskListService.selectTableBzDataInfo(deptId);
         return getDataTable(list);
     }

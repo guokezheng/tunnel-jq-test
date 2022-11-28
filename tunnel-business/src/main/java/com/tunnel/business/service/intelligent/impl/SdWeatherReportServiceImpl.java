@@ -40,7 +40,7 @@ public class SdWeatherReportServiceImpl implements ISdWeatherReportService {
      */
     @Override
     public List<SdWeatherReport> selectSdWeatherReportList(SdWeatherReport sdWeatherReport) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdWeatherReport.getParams().put("deptId", deptId);
         return sdWeatherReportMapper.selectSdWeatherReportList(sdWeatherReport);
     }

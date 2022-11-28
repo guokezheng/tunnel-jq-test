@@ -193,7 +193,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     @Override
     public List<SdStrategy> selectSdStrategyList(SdStrategy sdStrategy) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdStrategy.getParams().put("deptId",deptId);
         List<SdStrategy> list = sdStrategyMapper.selectSdStrategyList(sdStrategy);
         for (int i = 0; i < list.size(); i++) {

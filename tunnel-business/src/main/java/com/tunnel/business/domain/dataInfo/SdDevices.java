@@ -39,7 +39,7 @@ public class SdDevices extends BaseEntity {
     private String fEqId;
 
     @ApiModelProperty("部门id")
-    private Long deptId;
+    private String deptId;
     @ApiModelProperty("部门名称")
     private String deptName;
 
@@ -476,11 +476,11 @@ public class SdDevices extends BaseEntity {
         this.tunnelName = tunnelName;
     }
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 

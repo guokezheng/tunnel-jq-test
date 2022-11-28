@@ -63,7 +63,7 @@ public class SdDevicesController extends BaseController {
     @ApiOperation("查询设备列表")
     public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
-            Long deptId = SecurityUtils.getDeptId();
+            String deptId = SecurityUtils.getDeptId();
             sdDevices.setDeptId(deptId);
         }
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -429,7 +429,7 @@ public class SdDevicesController extends BaseController {
     @ApiOperation("查询设备列表")
     public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
-            Long deptId = SecurityUtils.getDeptId();
+            String deptId = SecurityUtils.getDeptId();
             sdDevices.setDeptId(deptId);
         }
         List<SdDevices> list = sdDevicesService.selectIsControlSdDevicesList(sdDevices);

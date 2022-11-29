@@ -1,9 +1,11 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
@@ -15,6 +17,7 @@ import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
+import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +47,8 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Autowired
     private ISdEventFlowService sdEventFlowService;
 
+    @Autowired
+    private ISdEventService sdEventService;
 
     /**
      * 查询预案流程节点
@@ -199,19 +204,33 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     }
 
     /**
-     * 查询预览
-     *
+     * 应急预案预览
      * @param reserveId
      * @return
      */
     @Override
-    public List<Map> selectPreviewDisplay(Long reserveId) {
-        List<Map> mapList = new ArrayList<>();
+    public List<Map> selectPreviewDisplay(Long reserveId,String eventId) {
         // 预案流程节点
         List<SdReserveProcess> list = sdReserveProcessMapper.selectSdReserveProcessByRid(reserveId);
         if(list.size() < 1){
             return null;
         }
+        if(StrUtil.isNotEmpty(eventId)){
+            //应急调度预览数据
+            return dispatchPreview(list,eventId);
+        }else{
+            //预案列表预览数据
+            return reservePreview(list);
+        }
+    }
+    /**
+     * 应急调度预案预览
+     * @param list
+     * @param eventId
+     * @return
+     */
+    public List<Map> dispatchPreview(List<SdReserveProcess> list,String eventId){
+        List<Map> previewData = new ArrayList<>();
         for (SdReserveProcess process : list) {
             HashMap<String, Object> map = new HashMap<>();
             // 预案Id
@@ -220,20 +239,47 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             map.put("strategyId", process.getStrategyId());
             // 策略名称
             SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
-            map.put("strategyName",sdStrategy.getStrategyName());
-            map.put("strategy",sdStrategy);
+            map.put("strategyName", sdStrategy.getStrategyName());
+            map.put("strategy", sdStrategy);
             // 设备类型Id
             map.put("deviceTypeId", process.getDeviceTypeId());
             List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
-            if(rlList.size() < 1){
+            if (rlList.size() < 1) {
                 continue;
             }
             map.put("strategyRl", rlList);
-            List<String> strings = new ArrayList<>();
+            List<String> eqOperation = new ArrayList<>();
             List<List> iFileList = new ArrayList<>();
             List<Map> equipmentData = new ArrayList<>();
-
             for (SdStrategyRl rl : rlList) {
+                String[] allEquipment = rl.getEquipments().split(",");
+                //疏散标志处理
+                if (rl.getEqTypeId().equals("30")) {
+                    SdEvent event = sdEventService.selectSdEventById(Long.parseLong(eventId));
+                    SdDevices searchObject = new SdDevices();
+                    searchObject.setEqTunnelId(event.getTunnelId());
+                    searchObject.setEqType(30L);
+                    searchObject.setEqDirection(event.getDirection());
+                    //事故点整形桩号
+                    int compareValue = Integer.valueOf(event.getStakeNum().replace("K", "").replace("+", "").replace(" ", ""));
+                    List<SdDevices> deviceList = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(searchObject);
+                    //同一方向上的疏散标志整形桩号去重
+                    int[] allNum = deviceList.stream().filter(s -> StringUtils.isNotBlank(s.getFEqId()))
+                            .mapToInt(s -> s.getPileNum().intValue()).distinct().toArray();
+                    //查找事故点最近的疏散标志
+                    int index = Math.abs(compareValue - allNum[0]);
+                    int closest = 0;
+                    for (int i = 0; i < allNum.length; i++) {
+                        int abs = Math.abs(compareValue - allNum[i]);
+                        if (abs <= index) {
+                            index = abs;
+                            closest = allNum[i];
+                        }
+                    }
+                    Long pile = new Long((long) closest);
+                    allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
+                            stream().map(s -> s.getEqId()).toArray(String[]::new);
+                }
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
                 // 设备类型
@@ -241,32 +287,98 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 SdEquipmentState state = new SdEquipmentState();
                 state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
                 state.setDeviceState(rl.getState());
+                state.setIsControl(1);
                 List<SdEquipmentState> sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
                 // 设备状态名称
                 String stateName = sdEquipmentStates.get(0).getStateName();
-                //所有设备ID
-                //String[] allEquipment = rlList.stream().map(p->p.getEquipments()).collect(Collectors.joining(",")).split(",");
-                String[] allEquipment = rl.getEquipments().split(",");
-                //设备信息
                 List<Map> result = sdDevicesMapper.getReserveProcessDevices(allEquipment);
-                result = result.stream().peek(s->s.put("eq_status",stateName)).collect(Collectors.toList());
+                result.forEach(s -> {
+                    s.put("eq_status", stateName);
+                    eqOperation.add(typeName + s.get("pile") + " 控制执行: " + stateName + ";");
+                });
                 equipmentData.addAll(result);
-                strings.add(typeName + " 控制执行: " + stateName + ";");
+                // 设备状态名称
                 SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
                 sdEquipmentStateIconFile.setStateIconId(sdEquipmentStates.get(0).getIconFileId());
                 List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
                 iFileList.add(sdEquipmentStateIconFiles);
             }
-            map.put("equipmentData",equipmentData);
+            map.put("equipmentData", equipmentData);
             // 策略信息
-            map.put("policyInformation", strings);
+            map.put("policyInformation", eqOperation);
             // 图片
             map.put("iFileList", iFileList);
-            mapList.add(map);
+            previewData.add(map);
         }
-        return mapList;
+        return previewData;
     }
-
+    /**
+     * 应急预案列表预览
+     * @param list
+     * @return
+     */
+    public List<Map> reservePreview(List<SdReserveProcess> list){
+        List<Map> previewData = new ArrayList<>();
+        for (SdReserveProcess process : list) {
+            HashMap<String, Object> map = new HashMap<>();
+            // 预案Id
+            map.put("reserveId", process.getReserveId());
+            // 策略Id
+            map.put("strategyId", process.getStrategyId());
+            // 策略名称
+            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
+            map.put("strategyName", sdStrategy.getStrategyName());
+            map.put("strategy", sdStrategy);
+            // 设备类型Id
+            map.put("deviceTypeId", process.getDeviceTypeId());
+            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            if (rlList.size() < 1) {
+                continue;
+            }
+            map.put("strategyRl", rlList);
+            List<String> eqOperation = new ArrayList<>();
+            List<List> iFileList = new ArrayList<>();
+            List<Map> equipmentData = new ArrayList<>();
+            for (SdStrategyRl rl : rlList) {
+                if (StrUtil.isEmpty(rl.getEquipments())) {
+                    eqOperation.add("根据事件实际位置动态匹配");
+                    continue;
+                }
+                // 设备类型名称
+                String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
+                // 设备类型
+                map.put("typeName", typeName);
+                SdEquipmentState state = new SdEquipmentState();
+                state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
+                state.setDeviceState(rl.getState());
+                state.setIsControl(1);
+                List<SdEquipmentState> sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
+                // 设备状态名称
+                String stateName = sdEquipmentStates.get(0).getStateName();
+                //所有设备ID
+                String[] allEquipment = rl.getEquipments().split(",");
+                //设备信息
+                List<Map> result = sdDevicesMapper.getReserveProcessDevices(allEquipment);
+                //result = result.stream().peek(s -> s.put("eq_status", stateName)).collect(Collectors.toList());
+                equipmentData.addAll(result);
+                result.forEach(s -> {
+                    s.put("eq_status", stateName);
+                    eqOperation.add(typeName + s.get("pile") + " 控制执行: " + stateName + ";");
+                });
+                SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+                sdEquipmentStateIconFile.setStateIconId(sdEquipmentStates.get(0).getIconFileId());
+                List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
+                iFileList.add(sdEquipmentStateIconFiles);
+            }
+            map.put("equipmentData", equipmentData);
+            // 策略信息
+            map.put("policyInformation", eqOperation);
+            // 图片
+            map.put("iFileList", iFileList);
+            previewData.add(map);
+        }
+        return previewData;
+    }
     /**
      * 预案执行
      *

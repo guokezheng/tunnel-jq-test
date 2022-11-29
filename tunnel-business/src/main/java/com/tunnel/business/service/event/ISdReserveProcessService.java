@@ -92,7 +92,7 @@ public interface ISdReserveProcessService {
      * @param reserveId
      * @return
      */
-    List<Map> selectPreviewDisplay(Long reserveId);
+    List<Map> selectPreviewDisplay(Long reserveId,String eventId);
 
     /**
      * 预案执行

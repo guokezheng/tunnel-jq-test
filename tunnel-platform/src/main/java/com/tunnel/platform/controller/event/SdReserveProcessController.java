@@ -226,6 +226,7 @@ public class SdReserveProcessController extends BaseController
                     issuedParam.put("fireMark",fireMark);
                     issuedParam.put("state",controlStatus);
                     issuedParam.put("devId",alarmPointEqId);
+                    issuedParam.put("eventId",eventId);
                     issuedParam.put("controlType","4");
                     issuedParam.put("operIp", InetAddress.getLocalHost().getHostAddress());
                     result = sdDeviceControlService.controlDevices(issuedParam);
@@ -235,8 +236,8 @@ public class SdReserveProcessController extends BaseController
                     for (String devId : split){
                         issuedParam.put("devId",devId);
                         issuedParam.put("state",rl.getState());
-                        issuedParam.put("controlType","4");
                         issuedParam.put("eventId",eventId);
+                        issuedParam.put("controlType","4");
                         //诱导灯默认值
                         if(rl.getEqTypeId().equals("31")){
                             issuedParam.put("brightness","50");

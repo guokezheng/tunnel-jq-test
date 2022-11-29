@@ -70,7 +70,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         SdVmsTemplate sdVmsTemplate = new SdVmsTemplate();
         sdVmsTemplate.setScreenSize(jsonObject.get("screenSize").toString());
         sdVmsTemplate.setInScreenMode(jsonObject.get("inScreenMode").toString());
-        sdVmsTemplate.setRollSpeed(Long.parseLong(jsonObject.get("rollSpeed").toString()));
+//        sdVmsTemplate.setRollSpeed(Long.parseLong(jsonObject.get("rollSpeed").toString()));
         sdVmsTemplate.setStopTime(Long.parseLong(jsonObject.get("stopTime").toString()));
         sdVmsTemplate.setApplyType(jsonObject.get("applyType").toString());
         if (jsonObject.get("category") == null || jsonObject.get("category").toString().equals("")) {
@@ -100,7 +100,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         SdVmsTemplate sdVmsTemplate = new SdVmsTemplate();
         sdVmsTemplate.setScreenSize(templatesMap.get("screenSize").toString());
         sdVmsTemplate.setInScreenMode(templatesMap.get("inScreenMode").toString());
-        sdVmsTemplate.setRollSpeed(Long.parseLong(templatesMap.get("rollSpeed").toString()));
+//        sdVmsTemplate.setRollSpeed(Long.parseLong(templatesMap.get("rollSpeed").toString()));
         sdVmsTemplate.setStopTime(Long.parseLong(templatesMap.get("stopTime").toString()));
         sdVmsTemplate.setApplyType(templatesMap.get("applyType").toString());
         if (templatesMap.get("category") == null || templatesMap.get("category").toString().equals("")) {

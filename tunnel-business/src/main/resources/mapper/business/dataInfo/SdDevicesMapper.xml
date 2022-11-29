@@ -12,8 +12,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqType"    column="eq_type"    />
         <result property="eqModel"    column="eq_model"    />
         <result property="brandId"    column="brand_id"    />
-        <!--设备品牌取字典值，去掉品牌名称字段-->
-        <!--<result property="brandName"    column="brand_name"    />-->
         <result property="eqDirection"    column="eq_direction"    />
         <result property="lane"    column="lane"    />
         <result property="pile"    column="pile"    />
@@ -26,11 +24,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqUser"    column="eq_user"    />
         <result property="eqPwd"    column="eq_pwd"    />
         <result property="protocol"    column="protocol"    />
-        <result property="protocolUrl"    column="protocol_url"    />
-        <result property="protocolVersion"    column="protocol_version"    />
-        <result property="protocolName"    column="protocol_name"    />
-        <result property="dataType"    column="data_type"    />
-        <result property="dataSource"    column="data_source"    />
         <result property="deliveryTime"    column="delivery_time"    />
         <result property="warrantyEndTime"    column="warranty_end_time"    />
         <result property="installTime"    column="install_time"    />
@@ -43,9 +36,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="gatewayNetstatusTime"    column="gateway_netstatus_time"    />
         <result property="eqStatus"    column="eq_status"    />
         <result property="eqStatusTime"    column="eq_status_time"    />
-        <result property="dmcontrolSeat"    column="dmcontrol_seat"    />
-        <result property="eqLampType"    column="eq_lamp_type"    />
-        <result property="instructionSeat"    column="instruction_seat"    />
         <result property="eqControlPointAddress"    column="eq_control_point_address"    />
         <result property="eqFeedbackAddress1"    column="eq_feedback_address1"    />
         <result property="eqFeedbackAddress2"    column="eq_feedback_address2"    />
@@ -57,7 +47,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
-        <result property="controlStatus" column="control_status" />
+        <result property="messageProtocol"    column="message_protocol"    />
+        <result property="protocolId"    column="protocol_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -75,26 +66,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <sql id="selectSdDevicesVo">
         select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, eq_model, brand_id,
-        eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol, protocol_url,
-        protocol_version, protocol_name, data_type, data_source, delivery_time, warranty_end_time, install_time, use_life,
+        eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, protocol,
+        delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
-        eq_status_time, dmcontrol_seat, eq_lamp_type, instruction_seat, eq_control_point_address, eq_feedback_address1,
+        eq_status_time, eq_control_point_address, eq_feedback_address1,
         eq_feedback_address2, eq_feedback_address3, eq_feedback_address4, eq_feedback_address5, create_by, create_time,
-        update_by, update_time, remark, control_status from sd_devices
+        update_by, update_time, remark from sd_devices
     </sql>
 
 
 
     <select id="selectSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id, a.eq_name, a.eq_type, a.eq_model, a.brand_id,
-        <!-- a.brand_name, -->
         a.eq_direction,
-        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol, a.protocol_url, a.protocol_version,
-        a.protocol_name, a.data_type, a.data_source, a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
-        a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+        a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
-        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name, a.control_status
+        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name
         from sd_devices a
         left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
         left join sys_dept c on c.dept_id = b.dept_id
@@ -105,7 +95,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTunnelId != null ">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
-            <if test="eqLampType != null ">and a.eq_lamp_type = #{eqLampType}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
             <if test="isMonitor != null ">and a.is_monitor = #{isMonitor}</if>
@@ -127,13 +116,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSdDevicesList_exp" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
         dit.dict_label as eq_direction,
-        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol, a.protocol_url, a.protocol_version,
-        a.protocol_name, a.data_type, a.data_source, a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
-        a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+        a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name, a.control_status
+        ,c.tunnel_name
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -148,7 +137,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
-            <if test="eqLampType != null and eqLampType != ''">and a.eq_lamp_type = #{eqLampType}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
@@ -182,8 +170,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.eq_type eqType,t.type_name typeName,s.dept_id deptId, s.dept_name deptName,
         a.eq_model eqModel, a.brand_id brandId,a.eq_feedback_address1,
         a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
-        a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.protocol, a.protocol_url protocolUrl,
-        a.protocol_version protocolVersion, a.protocol_name protocolName, a.data_type dataType, a.data_source dataSource,
+        a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.protocol,
         IFNULL(a.eq_status,"2") eqStatus,a.eq_status_time eqStatusTime,
           a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
      from sd_devices a
@@ -197,15 +184,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!-- 下拉查询 -->
     <select id="selectDropSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
-        <!-- a.brand_name, -->
         a.eq_direction,
-        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol, a.protocol_url, a.protocol_version,
-        a.protocol_name, a.data_type, a.data_source, a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
-        a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+        a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name, a.control_status
+        ,c.tunnel_name
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -218,7 +204,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTunnelId != null and eqTunnelId != ''">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
-            <if test="eqLampType != null and eqLampType != ''">and a.eq_lamp_type = #{eqLampType}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
             <if test="eqDirection != null  and eqDirection != ''">and a.eq_direction = #{eqDirection}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
@@ -254,7 +239,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">eq_type,</if>
             <if test="eqModel != null">eq_model,</if>
             <if test="brandId != null">brand_id,</if>
-            <!--<if test="brandName != null">brand_name,</if>-->
             <if test="eqDirection != null">eq_direction,</if>
             <if test="lane != null">lane,</if>
             <if test="pile != null">pile,</if>
@@ -267,11 +251,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqUser != null">eq_user,</if>
             <if test="eqPwd != null">eq_pwd,</if>
             <if test="protocol != null">protocol,</if>
-            <if test="protocolUrl != null">protocol_url,</if>
-            <if test="protocolVersion != null">protocol_version,</if>
-            <if test="protocolName != null">protocol_name,</if>
-            <if test="dataType != null">data_type,</if>
-            <if test="dataSource != null">data_source,</if>
             <if test="deliveryTime != null">delivery_time,</if>
             <if test="warrantyEndTime != null">warranty_end_time,</if>
             <if test="installTime != null">install_time,</if>
@@ -284,9 +263,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayNetstatusTime != null">gateway_netstatus_time,</if>
             <if test="eqStatus != null">eq_status,</if>
             <if test="eqStatusTime != null">eq_status_time,</if>
-            <if test="dmcontrolSeat != null">dmcontrol_seat,</if>
-            <if test="eqLampType != null">eq_lamp_type,</if>
-            <if test="instructionSeat != null">instruction_seat,</if>
             <if test="eqControlPointAddress != null">eq_control_point_address,</if>
             <if test="eqFeedbackAddress1 != null">eq_feedback_address1,</if>
             <if test="eqFeedbackAddress2 != null">eq_feedback_address2,</if>
@@ -298,7 +274,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
-            <if test="controlStatus != null">control_status,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -308,7 +283,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">#{eqType},</if>
             <if test="eqModel != null">#{eqModel},</if>
             <if test="brandId != null">#{brandId},</if>
-           <!-- <if test="brandName != null">#{brandName},</if> -->
             <if test="eqDirection != null">#{eqDirection},</if>
             <if test="lane != null">#{lane},</if>
             <if test="pile != null">#{pile},</if>
@@ -321,11 +295,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqUser != null">#{eqUser},</if>
             <if test="eqPwd != null">#{eqPwd},</if>
             <if test="protocol != null">#{protocol},</if>
-            <if test="protocolUrl != null">#{protocolUrl},</if>
-            <if test="protocolVersion != null">#{protocolVersion},</if>
-            <if test="protocolName != null">#{protocolName},</if>
-            <if test="dataType != null">#{dataType},</if>
-            <if test="dataSource != null">#{dataSource},</if>
             <if test="deliveryTime != null">#{deliveryTime},</if>
             <if test="warrantyEndTime != null">#{warrantyEndTime},</if>
             <if test="installTime != null">#{installTime},</if>
@@ -338,9 +307,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayNetstatusTime != null">#{gatewayNetstatusTime},</if>
             <if test="eqStatus != null">#{eqStatus},</if>
             <if test="eqStatusTime != null">#{eqStatusTime},</if>
-            <if test="dmcontrolSeat != null">#{dmcontrolSeat},</if>
-            <if test="eqLampType != null">#{eqLampType},</if>
-            <if test="instructionSeat != null">#{instructionSeat},</if>
             <if test="eqControlPointAddress != null">#{eqControlPointAddress},</if>
             <if test="eqFeedbackAddress1 != null">#{eqFeedbackAddress1},</if>
             <if test="eqFeedbackAddress2 != null">#{eqFeedbackAddress2},</if>
@@ -352,7 +318,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
-            <if test="controlStatus != null">#{controlStatus},</if>
          </trim>
     </insert>
 
@@ -365,7 +330,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">eq_type = #{eqType},</if>
             <if test="eqModel != null">eq_model = #{eqModel},</if>
             <if test="brandId != null">brand_id = #{brandId},</if>
-           <!-- <if test="brandName != null">brand_name = #{brandName},</if> -->
             <if test="eqDirection != null">eq_direction = #{eqDirection},</if>
             <if test="lane != null">lane = #{lane},</if>
             <if test="pile != null">pile = #{pile},</if>
@@ -378,11 +342,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqUser != null">eq_user = #{eqUser},</if>
             <if test="eqPwd != null">eq_pwd = #{eqPwd},</if>
             <if test="protocol != null">protocol = #{protocol},</if>
-            <if test="protocolUrl != null">protocol_url = #{protocolUrl},</if>
-            <if test="protocolVersion != null">protocol_version = #{protocolVersion},</if>
-            <if test="protocolName != null">protocol_name = #{protocolName},</if>
-            <if test="dataType != null">data_type = #{dataType},</if>
-            <if test="dataSource != null">data_source = #{dataSource},</if>
             <if test="deliveryTime != null">delivery_time = #{deliveryTime},</if>
             <if test="warrantyEndTime != null">warranty_end_time = #{warrantyEndTime},</if>
             <if test="installTime != null">install_time = #{installTime},</if>
@@ -395,9 +354,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gatewayNetstatusTime != null">gateway_netstatus_time = #{gatewayNetstatusTime},</if>
             <if test="eqStatus != null">eq_status = #{eqStatus},</if>
             <if test="eqStatusTime != null">eq_status_time = #{eqStatusTime},</if>
-            <if test="dmcontrolSeat != null">dmcontrol_seat = #{dmcontrolSeat},</if>
-            <if test="eqLampType != null">eq_lamp_type = #{eqLampType},</if>
-            <if test="instructionSeat != null">instruction_seat = #{instructionSeat},</if>
             <if test="eqControlPointAddress != null">eq_control_point_address = #{eqControlPointAddress},</if>
             <if test="eqFeedbackAddress1 != null">eq_feedback_address1 = #{eqFeedbackAddress1},</if>
             <if test="eqFeedbackAddress2 != null">eq_feedback_address2 = #{eqFeedbackAddress2},</if>
@@ -409,7 +365,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
-            <if test="controlStatus != null">control_status = #{controlStatus},</if>
         </trim>
         where eq_id = #{eqId}
     </update>
@@ -548,15 +503,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectIsControlSdDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select a.eq_id, a.f_eq_id,c.tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,a.eq_tunnel_id,
-        <!-- a.brand_name, -->
         a.eq_direction,
-        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol, a.protocol_url, a.protocol_version,
-        a.protocol_name, a.data_type, a.data_source, a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
-        a.dmcontrol_seat, a.eq_lamp_type, a.instruction_seat, a.eq_control_point_address, a.eq_feedback_address1,
+        a.eq_control_point_address, a.eq_feedback_address1,
         a.eq_feedback_address2, a.eq_feedback_address3, a.eq_feedback_address4, a.eq_feedback_address5, a.create_by,
         a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
-        ,c.tunnel_name, a.control_status
+        ,c.tunnel_name
         from sd_devices a
         left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
         left join sd_equipment_type d on a.eq_type = d.type_id
@@ -569,7 +523,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTunnelId != null ">and a.eq_tunnel_id = #{eqTunnelId}</if>
             <if test="eqName != null  and eqName != ''">and a.eq_name like concat('%', #{eqName}, '%')</if>
             <if test="eqType != null ">and a.eq_type = #{eqType}</if>
-            <if test="eqLampType != null ">and a.eq_lamp_type = #{eqLampType}</if>
             <if test="lane != null  and lane != ''">and a.lane = #{lane}</if>
             <if test="eqStatus != null  and eqStatus != ''">and a.eq_status = #{eqStatus}</if>
             <if test="isMonitor != null ">and a.is_monitor = #{isMonitor}</if>

@@ -354,7 +354,7 @@ public class SdDevicesController extends BaseController {
         Map<String, String> map = new HashMap<>();
         StringBuilder sb = new StringBuilder();
         //CIO 查询指令
-        sb.append(sdDevicesService.getCommandCode(sdDevices, sdDevices.getInstructionSeat().split("_")[1], sdDevices.getInstructionSeat().split("_")[0], "0"));
+//        sb.append(sdDevicesService.getCommandCode(sdDevices, sdDevices.getInstructionSeat().split("_")[1], sdDevices.getInstructionSeat().split("_")[0], "0"));
         sb.append(sdDevicesService.getIpleftPad(sdDevices.getqNumber()));//点位地址
         map.put("instructionSeat" , sb.toString());
         return map;

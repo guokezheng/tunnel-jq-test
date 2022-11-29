@@ -156,7 +156,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         if(updateRows < 1){
             return 0;
         }
-        if ("1".equals(sdStrategy.getStrategyType()) || "3".equals(sdStrategy.getStrategyType())) {
+        if (!"0".equals(sdStrategy.getStrategyType())) {
             String relationId = sdStrategy.getJobRelationId();
             if(StrUtil.isBlank(relationId)) {
                 return 1;

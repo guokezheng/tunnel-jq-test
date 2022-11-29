@@ -217,7 +217,7 @@ ORDER BY MERGE.startTime DESC
         </where>
     </select>
 
-    <insert id="insertSdEvent" parameterType="SdEvent">
+    <insert id="insertSdEvent" parameterType="SdEvent" useGeneratedKeys="true" keyProperty="id">
         insert into sd_event
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -251,6 +251,7 @@ ORDER BY MERGE.startTime DESC
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="stakeNum != null">stake_num,</if>
+            <if test="laneNo != null">lane_no,</if>
             <if test="eventSource != null">event_source,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -285,6 +286,7 @@ ORDER BY MERGE.startTime DESC
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="laneNo != null">#{laneNo},</if>
             <if test="eventSource != null">#{eventSource},</if>
         </trim>
     </insert>

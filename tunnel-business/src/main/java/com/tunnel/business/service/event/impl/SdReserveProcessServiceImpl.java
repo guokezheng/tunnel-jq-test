@@ -24,10 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -247,7 +244,6 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             if (rlList.size() < 1) {
                 continue;
             }
-            map.put("strategyRl", rlList);
             List<String> eqOperation = new ArrayList<>();
             List<List> iFileList = new ArrayList<>();
             List<Map> equipmentData = new ArrayList<>();
@@ -279,6 +275,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                     Long pile = new Long((long) closest);
                     allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
                             stream().map(s -> s.getEqId()).toArray(String[]::new);
+                    rl.setEquipments(Arrays.stream(allEquipment).collect(Collectors.joining(",")));
                 }
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
@@ -303,6 +300,7 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
                 iFileList.add(sdEquipmentStateIconFiles);
             }
+            map.put("strategyRl", rlList);
             map.put("equipmentData", equipmentData);
             // 策略信息
             map.put("policyInformation", eqOperation);

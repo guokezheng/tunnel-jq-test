@@ -184,41 +184,6 @@ public class SdDevices extends BaseEntity {
     private String protocol;
 
     /**
-     * 协议通信地址
-     */
-    @Excel(name = "协议通信地址")
-    @ApiModelProperty("协议通信地址")
-    private String protocolUrl;
-
-    /**
-     * 版本号
-     */
-    @Excel(name = "版本号")
-    @ApiModelProperty("版本号")
-    private String protocolVersion;
-
-    /**
-     * 通信协议名称
-     */
-    @Excel(name = "通信协议名称")
-    @ApiModelProperty("通信协议名称")
-    private String protocolName;
-
-    /**
-     * 数据类型
-     */
-    @Excel(name = "数据类型")
-    @ApiModelProperty("数据类型")
-    private String dataType;
-
-    /**
-     * 数据采集方式
-     */
-    @Excel(name = "数据采集方式")
-    @ApiModelProperty("数据采集方式")
-    private String dataSource;
-
-    /**
      * 出厂时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -309,27 +274,6 @@ public class SdDevices extends BaseEntity {
     private Date eqStatusTime;
 
     /**
-     * 控制模式+机位
-     */
-    @Excel(name = "控制模式+机位")
-    @ApiModelProperty("控制模式+机位")
-    private String dmcontrolSeat;
-
-    /**
-     * 照明灯类型
-     */
-    @Excel(name = "照明灯类型")
-    @ApiModelProperty("照明灯类型")
-    private Long eqLampType;
-
-    /**
-     * 查询模式+机位
-     */
-    @Excel(name = "查询模式+机位")
-    @ApiModelProperty("查询模式+机位")
-    private String instructionSeat;
-
-    /**
      * 控制点位地址
      */
     @Excel(name = "控制点位地址")
@@ -394,17 +338,30 @@ public class SdDevices extends BaseEntity {
      **/
     private String qNumber;
 
-    //控制状态
-    @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
-    private String controlStatus;
+    /**
+     * 消息协议（Mobdus/Fins/API/自定义）
+     * */
+    private String messageProtocol;
 
+    /**
+     * 协议ID
+     * */
+    private String protocolId;
 
-    public String getControlStatus() {
-        return controlStatus;
+    public String getProtocolId() {
+        return protocolId;
     }
 
-    public void setControlStatus(String controlStatus) {
-        this.controlStatus = controlStatus;
+    public void setProtocolId(String protocolId) {
+        this.protocolId = protocolId;
+    }
+
+    public String getMessageProtocol() {
+        return messageProtocol;
+    }
+
+    public void setMessageProtocol(String messageProtocol) {
+        this.messageProtocol = messageProtocol;
     }
 
     public String getInstruction() {
@@ -629,46 +586,6 @@ public class SdDevices extends BaseEntity {
         return protocol;
     }
 
-    public void setProtocolUrl(String protocolUrl) {
-        this.protocolUrl = protocolUrl;
-    }
-
-    public String getProtocolUrl() {
-        return protocolUrl;
-    }
-
-    public void setProtocolVersion(String protocolVersion) {
-        this.protocolVersion = protocolVersion;
-    }
-
-    public String getProtocolVersion() {
-        return protocolVersion;
-    }
-
-    public void setProtocolName(String protocolName) {
-        this.protocolName = protocolName;
-    }
-
-    public String getProtocolName() {
-        return protocolName;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public String getDataSource() {
-        return dataSource;
-    }
-
     public void setDeliveryTime(Date deliveryTime) {
         this.deliveryTime = deliveryTime;
     }
@@ -763,30 +680,6 @@ public class SdDevices extends BaseEntity {
 
     public Date getEqStatusTime() {
         return eqStatusTime;
-    }
-
-    public void setDmcontrolSeat(String dmcontrolSeat) {
-        this.dmcontrolSeat = dmcontrolSeat;
-    }
-
-    public String getDmcontrolSeat() {
-        return dmcontrolSeat;
-    }
-
-    public void setEqLampType(Long eqLampType) {
-        this.eqLampType = eqLampType;
-    }
-
-    public Long getEqLampType() {
-        return eqLampType;
-    }
-
-    public void setInstructionSeat(String instructionSeat) {
-        this.instructionSeat = instructionSeat;
-    }
-
-    public String getInstructionSeat() {
-        return instructionSeat;
     }
 
     public void setEqControlPointAddress(String eqControlPointAddress) {
@@ -888,11 +781,6 @@ public class SdDevices extends BaseEntity {
                 ", eqUser='" + eqUser + '\'' +
                 ", eqPwd='" + eqPwd + '\'' +
                 ", protocol='" + protocol + '\'' +
-                ", protocolUrl='" + protocolUrl + '\'' +
-                ", protocolVersion='" + protocolVersion + '\'' +
-                ", protocolName='" + protocolName + '\'' +
-                ", dataType='" + dataType + '\'' +
-                ", dataSource='" + dataSource + '\'' +
                 ", deliveryTime=" + deliveryTime +
                 ", warrantyEndTime=" + warrantyEndTime +
                 ", installTime=" + installTime +
@@ -905,9 +793,6 @@ public class SdDevices extends BaseEntity {
                 ", gatewayNetstatusTime=" + gatewayNetstatusTime +
                 ", eqStatus='" + eqStatus + '\'' +
                 ", eqStatusTime=" + eqStatusTime +
-                ", dmcontrolSeat='" + dmcontrolSeat + '\'' +
-                ", eqLampType=" + eqLampType +
-                ", instructionSeat='" + instructionSeat + '\'' +
                 ", eqControlPointAddress='" + eqControlPointAddress + '\'' +
                 ", eqFeedbackAddress1='" + eqFeedbackAddress1 + '\'' +
                 ", eqFeedbackAddress2='" + eqFeedbackAddress2 + '\'' +
@@ -917,7 +802,6 @@ public class SdDevices extends BaseEntity {
                 ", instruction='" + instruction + '\'' +
                 ", seat='" + seat + '\'' +
                 ", qNumber='" + qNumber + '\'' +
-                ", controlStatus='" + controlStatus + '\'' +
                 ", updateSupport='" + updateSupport + '\'' +
                 '}';
     }

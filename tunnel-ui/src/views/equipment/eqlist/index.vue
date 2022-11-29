@@ -255,31 +255,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="协议通信地址" prop="protocolUrl">
-              <el-input v-model="form.protocolUrl" placeholder="请输入协议通信地址"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="版本号" prop="protocolVersion">
-              <el-input v-model="form.protocolVersion" placeholder="请输入版本号"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="通信协议名称" prop="protocolName">
-              <el-input v-model="form.protocolName" placeholder="请输入通信协议名称"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据类型" prop="dataType">
-              <el-input v-model="form.dataType" placeholder="请输入数据类型"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据采集方式" prop="dataSource">
-              <el-input v-model="form.dataSource" placeholder="请输入数据采集方式"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="出场时间" prop="deliveryTime">
               <el-date-picker
                 v-model="form.deliveryTime"
@@ -354,22 +329,11 @@
             </el-button>
           </el-col>
           <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="查询+机位" prop="instructionSeat">
-              <el-input v-model="form.instructionSeat" placeholder="格式:DM_*/CIO_*"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
             <el-form-item label="查询对应点" prop="qNumber">
               <el-input v-model="form.qNumber" placeholder="请输入对应点"/>
             </el-form-item>
           </el-col>
 
-
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="控制+机位" prop="dmcontrolSeat">
-              <el-input v-model="form.dmcontrolSeat" placeholder="格式:DM_*"/>
-            </el-form-item>
-          </el-col>
           <el-col :span="12" v-if="showOrhide">
             <el-form-item label="点位地址1" prop="eqFeedbackAddress1">
               <el-input v-model="form.eqFeedbackAddress1" placeholder="请输入点位地址1"/>
@@ -409,19 +373,6 @@
               </el-date-picker>
             </el-form-item>
           </el-col> -->
-
-          <!--          <el-col :span="12">-->
-          <!--            <el-form-item label="控制状态" prop="controlStatus">-->
-          <!--              <el-select v-model="form.controlStatus" placeholder="请选择控制状态" clearable>-->
-          <!--                <el-option-->
-          <!--                  v-for="dict in dict.type.inductionlamp_control_type"-->
-          <!--                  :key="dict.value"-->
-          <!--                  :label="dict.label"-->
-          <!--                  :value="dict.value"-->
-          <!--                />-->
-          <!--              </el-select>-->
-          <!--            </el-form-item>-->
-          <!--          </el-col>-->
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -748,16 +699,6 @@
               message: "只能输入数字/字母，无法输入中文及特殊字符",
             },
           ],
-          instructionSeat: [{
-            pattern: /^(DM_|CIO_)[0-9]*$/,
-            message: "格式：DM_*/CIO_*",
-            trigger: "blur",
-          },],
-          dmcontrolSeat: [{
-            pattern: /^(DM_|CIO_)[0-9]*$/,
-            message: "格式：DM_*",
-            trigger: "blur",
-          },],
         },
         instructionFormRules: {
           instruction: [{
@@ -981,18 +922,12 @@
           eqUser: null,
           eqPwd: null,
           protocol: null,
-          protocolUrl: null,
-          protocolVersion: null,
-          protocolName: null,
-          dataType: null,
-          dataSource: null,
           deliveryTime: null,
           warrantyEndTime: null,
           installTime: null,
           useLife: null,
           useStatus: null,
           isMonitor: null,
-          controlStatus: null,
         };
         this.resetForm("form");
         this.queryCmdParams = {
@@ -1224,7 +1159,6 @@
               this.instructionDialog = false;
               this.form.eqControlPointAddress = response.instruction;
               this.input = response.instruction;
-              this.form.instructionSeat = response.instructionAndseat;
             });
           }
         });
@@ -1232,7 +1166,6 @@
       createControlPointAddress() {
         if (
           this.form.fEqId != null &&
-          this.form.instructionSeat != null &&
           this.form.qNumber != null
         ) {
           createInstruction(this.form).then((response) => {

@@ -216,7 +216,7 @@ public class SdReserveProcessController extends BaseController
                     String controlStatus = rl.getState();
                     //1关闭 2常亮 5报警
                     if(controlStatus.equals("5")){
-                        fireMark = list.get(0).getEqFeedbackAddress1();
+                        fireMark = list.get(0).getQueryPointAddress();
                     }else if(controlStatus.equals("2")){
                         fireMark = "255";
                     }

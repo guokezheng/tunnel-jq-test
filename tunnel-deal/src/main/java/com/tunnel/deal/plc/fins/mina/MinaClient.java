@@ -183,7 +183,7 @@ class DMMinaCallBack implements IMinaCallback {
 //                logger.info(hostAddress + "设备类型" + devType + "返回内容" + hexProtocol);
                 if (nIndex <= commands.size()) {
                     if (devType != null) {
-                        CmdProcess.DataUtil.parsingDMContent(devType, hexProtocol);
+//                        CmdProcess.DataUtil.parsingDMContent(devType, hexProtocol);
                     }
                     if (nIndex < commands.size()) {
                         Map<String, String> strCom = commands.get(nIndex);

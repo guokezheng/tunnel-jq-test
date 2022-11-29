@@ -130,7 +130,7 @@ public class GuidanceLampHandle {
                     BigDecimal fMark = new BigDecimal(fireMark);
                     for (int i = 0;i < devicesListByFEqId.size();i++) {
                         SdDevices devices = devicesListByFEqId.get(i);
-                        BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                        BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
                         if (fMark.compareTo(addressMark) < 0) {
                             state = "6";
                         } else if (fMark.compareTo(addressMark) == 0) {

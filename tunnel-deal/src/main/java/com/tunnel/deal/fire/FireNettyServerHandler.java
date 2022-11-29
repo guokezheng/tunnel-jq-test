@@ -134,7 +134,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             String alarmComponentEqId = "";
             for (int i = 0; i < devicesLists.size(); i++) {
                 SdDevices component = devicesLists.get(i);
-                String eqFeedbackAddress1 = component.getEqFeedbackAddress1();
+                String eqFeedbackAddress1 = component.getQueryPointAddress();
                 String[] componentAddress = eqFeedbackAddress1.split(",");
                 for (int j = 0; j < componentAddress.length; j++) {
                     if (componentAddress[j].equals(address)) {

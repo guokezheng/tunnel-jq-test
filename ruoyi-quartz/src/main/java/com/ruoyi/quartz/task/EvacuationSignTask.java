@@ -164,7 +164,7 @@ public class EvacuationSignTask {
                 BigDecimal fireMark = new BigDecimal(codeMap.get("fireMark").toString());
                 for (int i = 0;i < list.size();i++) {
                     SdDevices devices = list.get(i);
-                    BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                    BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
                     if (fireMark.compareTo(addressMark) < 0) {
                         mode = "6";
                     } else if (fireMark.compareTo(addressMark) == 0) {

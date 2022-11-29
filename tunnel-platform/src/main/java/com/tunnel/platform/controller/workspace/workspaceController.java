@@ -274,7 +274,7 @@ public class workspaceController extends BaseController {
                         BigDecimal fMark = new BigDecimal(fireMark);
                         for (int i = 0;i < list.size();i++) {
                             SdDevices devices = list.get(i);
-                            BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                            BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
                             if (fMark.compareTo(addressMark) < 0) {
                                 state = "6";
                             } else if (fMark.compareTo(addressMark) == 0) {

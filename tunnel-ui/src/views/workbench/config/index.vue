@@ -343,11 +343,11 @@
                               : ''
                           "
                         />
-                        <img 
+                        <img
                          v-show="item.eqType == '31'"
                         style="position: absolute"
                           :style="{
-                            
+
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
@@ -863,7 +863,7 @@
                 <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
                 }}事件 -->
-                <div 
+                <div
                   style="width:300px;
                   overflow: hidden;
                   white-space: nowrap;
@@ -872,7 +872,7 @@
                   ">
                   {{item.eventTitle}}</div>
                 <div style="color:#D0CECE;font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
-                
+
               </el-col>
             </el-row>
           </vue-seamless-scroll>
@@ -6349,8 +6349,6 @@ export default {
         //     eqDirection: item.eqDirection,
         //     state: "", //默认状态
         //     pile: item.pile,
-        //     eqFeedbackAddress1: item.eqFeedbackAddress1,
-        //     eqFeedbackAddress2: item.eqFeedbackAddress2,
         //   };
         //   this.title = item.eqName;
         //   // this.cameraVisible = true;

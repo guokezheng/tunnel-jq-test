@@ -181,7 +181,7 @@ public class SdDevices extends BaseEntity {
      */
     @Excel(name = "协议类型")
     @ApiModelProperty("协议类型")
-    private String protocol;
+    private String commProtocol;
 
     /**
      * 出厂时间
@@ -278,42 +278,14 @@ public class SdDevices extends BaseEntity {
      */
     @Excel(name = "控制点位地址")
     @ApiModelProperty("控制点位地址")
-    private String eqControlPointAddress;
+    private String controlPointAddress;
 
     /**
      * 点位地址1
      */
-    @Excel(name = "点位地址1")
-    @ApiModelProperty("点位地址1")
-    private String eqFeedbackAddress1;
-
-    /**
-     * 点位地址2
-     */
-    @Excel(name = "点位地址2")
-    @ApiModelProperty("点位地址2")
-    private String eqFeedbackAddress2;
-
-    /**
-     * 点位地址3
-     */
-    @Excel(name = "点位地址3")
-    @ApiModelProperty("点位地址3")
-    private String eqFeedbackAddress3;
-
-    /**
-     * 点位地址4
-     */
-    @Excel(name = "点位地址4")
-    @ApiModelProperty("点位地址4")
-    private String eqFeedbackAddress4;
-
-    /**
-     * 点位地址5
-     */
-    @Excel(name = "点位地址5")
-    @ApiModelProperty("点位地址5")
-    private String eqFeedbackAddress5;
+    @Excel(name = "点位地址")
+    @ApiModelProperty("点位地址")
+    private String queryPointAddress;
 
     /**
      * 是否更新
@@ -578,12 +550,12 @@ public class SdDevices extends BaseEntity {
         return eqPwd;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setCommProtocol(String commProtocol) {
+        this.commProtocol = commProtocol;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public String getCommProtocol() {
+        return commProtocol;
     }
 
     public void setDeliveryTime(Date deliveryTime) {
@@ -682,52 +654,20 @@ public class SdDevices extends BaseEntity {
         return eqStatusTime;
     }
 
-    public void setEqControlPointAddress(String eqControlPointAddress) {
-        this.eqControlPointAddress = eqControlPointAddress;
+    public void setControlPointAddress(String controlPointAddress) {
+        this.controlPointAddress = controlPointAddress;
     }
 
-    public String getEqControlPointAddress() {
-        return eqControlPointAddress;
+    public String getControlPointAddress() {
+        return controlPointAddress;
     }
 
-    public void setEqFeedbackAddress1(String eqFeedbackAddress1) {
-        this.eqFeedbackAddress1 = eqFeedbackAddress1;
+    public void setQueryPointAddress(String queryPointAddress) {
+        this.queryPointAddress = queryPointAddress;
     }
 
-    public String getEqFeedbackAddress1() {
-        return eqFeedbackAddress1;
-    }
-
-    public void setEqFeedbackAddress2(String eqFeedbackAddress2) {
-        this.eqFeedbackAddress2 = eqFeedbackAddress2;
-    }
-
-    public String getEqFeedbackAddress2() {
-        return eqFeedbackAddress2;
-    }
-
-    public void setEqFeedbackAddress3(String eqFeedbackAddress3) {
-        this.eqFeedbackAddress3 = eqFeedbackAddress3;
-    }
-
-    public String getEqFeedbackAddress3() {
-        return eqFeedbackAddress3;
-    }
-
-    public void setEqFeedbackAddress4(String eqFeedbackAddress4) {
-        this.eqFeedbackAddress4 = eqFeedbackAddress4;
-    }
-
-    public String getEqFeedbackAddress4() {
-        return eqFeedbackAddress4;
-    }
-
-    public void setEqFeedbackAddress5(String eqFeedbackAddress5) {
-        this.eqFeedbackAddress5 = eqFeedbackAddress5;
-    }
-
-    public String getEqFeedbackAddress5() {
-        return eqFeedbackAddress5;
+    public String getQueryPointAddress() {
+        return queryPointAddress;
     }
 
     public String getfEqId() {
@@ -780,7 +720,7 @@ public class SdDevices extends BaseEntity {
                 ", secureKey='" + secureKey + '\'' +
                 ", eqUser='" + eqUser + '\'' +
                 ", eqPwd='" + eqPwd + '\'' +
-                ", protocol='" + protocol + '\'' +
+                ", commProtocol='" + commProtocol + '\'' +
                 ", deliveryTime=" + deliveryTime +
                 ", warrantyEndTime=" + warrantyEndTime +
                 ", installTime=" + installTime +
@@ -793,12 +733,8 @@ public class SdDevices extends BaseEntity {
                 ", gatewayNetstatusTime=" + gatewayNetstatusTime +
                 ", eqStatus='" + eqStatus + '\'' +
                 ", eqStatusTime=" + eqStatusTime +
-                ", eqControlPointAddress='" + eqControlPointAddress + '\'' +
-                ", eqFeedbackAddress1='" + eqFeedbackAddress1 + '\'' +
-                ", eqFeedbackAddress2='" + eqFeedbackAddress2 + '\'' +
-                ", eqFeedbackAddress3='" + eqFeedbackAddress3 + '\'' +
-                ", eqFeedbackAddress4='" + eqFeedbackAddress4 + '\'' +
-                ", eqFeedbackAddress5='" + eqFeedbackAddress5 + '\'' +
+                ", controlPointAddress='" + controlPointAddress + '\'' +
+                ", queryPointAddress='" + queryPointAddress + '\'' +
                 ", instruction='" + instruction + '\'' +
                 ", seat='" + seat + '\'' +
                 ", qNumber='" + qNumber + '\'' +

@@ -147,17 +147,17 @@ public class CmdProcess {
                     String plcIp = plcDevice.getIp();
                     CmdInfo cmdInfo = new CmdInfo();
                     List<Map<String, String>> commands = new ArrayList<>();
-                    switch (plcDevice.getProtocol()) {
+                    switch (plcDevice.getCommProtocol()) {
                         case "DM":
                             SdDevices dev = new SdDevices();
                             dev.setFEqId(plcId);
                             List<SdDevices> plcDeviceLists = devicesService.selectSdDevicesList(dev);
                             for (SdDevices device : plcDeviceLists) {
                                 HashMap<String, String> commandMap = new HashMap<>();
-                                if (device.getEqControlPointAddress() == null || "".equals(device.getEqControlPointAddress())) {//设备没有查询指令直接跳过
+                                if (device.getControlPointAddress() == null || "".equals(device.getControlPointAddress())) {//设备没有查询指令直接跳过
                                     continue;
                                 }
-                                String mandInfo = device.getEqControlPointAddress();
+                                String mandInfo = device.getControlPointAddress();
                                 if (mandInfo != null) {
                                     InetAddress ia = null;
                                     ia = ia.getLocalHost();
@@ -253,7 +253,7 @@ public class CmdProcess {
                 String devType = device.getEqType().toString();
                 switch (devType) {
                     case "1"://普通车道指示器
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //正绿反红 endCont = 0009 a1 = 0009
+                        if (endCont.equals(device.getQueryPointAddress())) { //正绿反红 endCont = 0009 a1 = 0009
                             devState = "1";
                         } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
                             devState = "2";
@@ -264,7 +264,7 @@ public class CmdProcess {
                         }
                         break;
                     case "2"://带左转车道指示器
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //正绿反红 endCont = 0009 a1 = 0009
+                        if (endCont.equals(device.getQueryPointAddress())) { //正绿反红 endCont = 0009 a1 = 0009
                             devState = "1";
                         } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
                             devState = "2";
@@ -277,7 +277,7 @@ public class CmdProcess {
                         }
                         break;
                     case "3"://普通交通信号灯
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //绿灯 endCont = 0004 a1 = 0004
+                        if (endCont.equals(device.getQueryPointAddress())) { //绿灯 endCont = 0004 a1 = 0004
                             devState = "1";
                         } else if (endCont.equals(device.getEqFeedbackAddress2())) {//红灯 endCont = 0001 a1 = 0001
                             devState = "2";
@@ -288,7 +288,7 @@ public class CmdProcess {
                         }
                         break;
                     case "4"://左转交通信号灯
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //开 endCont = 0001 a1 = 0001
+                        if (endCont.equals(device.getQueryPointAddress())) { //开 endCont = 0001 a1 = 0001
                             devState = "1";
                         } else { //其他全为关闭状态
                             devState = "2";
@@ -328,7 +328,7 @@ public class CmdProcess {
 
                         break;
                     case "10"://主风机
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //远程 endCont = 0001 a1 = 0001
+                        if (endCont.equals(device.getQueryPointAddress())) { //远程 endCont = 0001 a1 = 0001
                             devState = "3";
                         } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正传 endCont = 0002 a1 = 0002
                             devState = "1";
@@ -346,7 +346,7 @@ public class CmdProcess {
                         break;
                     case "13"://风向
                         endCont = turnNeedData(endCont);
-                        int index = Integer.parseInt(device.getEqFeedbackAddress1());
+                        int index = Integer.parseInt(device.getQueryPointAddress());
                         endCont = endCont.substring(index, index + 1);
                         if ("1".equals(endCont)) { //正 endCont = 0001 a1 = 0001
                             devState = "反向";
@@ -393,7 +393,7 @@ public class CmdProcess {
                         devState = fsMul.toString();
                         break;
                     case "17"://卷帘门
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //上限位 endCont = 0001 a1 = 0001
+                        if (endCont.equals(device.getQueryPointAddress())) { //上限位 endCont = 0001 a1 = 0001
                             devState = "1";
                         } else if (endCont.equals(device.getEqFeedbackAddress2())) {//下限位 endCont = 0002 a1 = 0002
                             devState = "2";
@@ -632,8 +632,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             if (dev.getEqFeedbackAddress2() != null) {
                 res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
@@ -683,8 +683,8 @@ public class CmdProcess {
             char[] chars1 = s11.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars1[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             if (dev.getEqFeedbackAddress2() != null) {
                 res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress2())]);
@@ -732,8 +732,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             if (dev.getEqFeedbackAddress2() != null) {
                 res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
@@ -772,8 +772,8 @@ public class CmdProcess {
             char[] chars1 = s11.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars1[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             //判断
             String devState = "";
@@ -789,8 +789,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             //判断
             String devState = "";
@@ -806,8 +806,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             if (dev.getEqFeedbackAddress2() != null) {
                 res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
@@ -843,8 +843,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             //判断
             String devState = "";
@@ -882,8 +882,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             if (dev.getEqFeedbackAddress2() != null) {
                 res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
@@ -1465,7 +1465,7 @@ public class CmdProcess {
                 sdDevice.setEqTunnelId(tunnel.getTunnelId());//隧道ID
                 sdDevice.setEqType(0L);//设备类型
                 sdDevice.setIsMonitor(0L);//是否监控
-                sdDevice.setProtocol("CIO");//CIO类型
+                sdDevice.setCommProtocol("CIO");//CIO类型
                 List<SdDevices> plcLists = devicesService.selectSdDevicesList(sdDevice);
                 for (SdDevices plc : plcLists) {
                     SdDevices dev = new SdDevices();
@@ -1480,7 +1480,7 @@ public class CmdProcess {
                         dataInfo.setStakeMark(device.getPile());
                         //普通车指
                         if (device.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress1 = device.getQueryPointAddress();
                             String feedbackAddress2 = device.getEqFeedbackAddress2();
                             String feedbackAddress3 = device.getEqFeedbackAddress3();
                             String feedbackAddress4 = device.getEqFeedbackAddress4();
@@ -1501,7 +1501,7 @@ public class CmdProcess {
                             dataInfo.setY(3, Integer.parseInt(split3[1]));
                             //带左转车指
                         } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress1 = device.getQueryPointAddress();
                             String feedbackAddress2 = device.getEqFeedbackAddress2();
                             String feedbackAddress3 = device.getEqFeedbackAddress3();
                             String feedbackAddress4 = device.getEqFeedbackAddress4();
@@ -1526,7 +1526,7 @@ public class CmdProcess {
                             dataInfo.setY(4, Integer.parseInt(split5[1]));
                             //交通信号灯
                         } else if (device.getEqType() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress1 = device.getQueryPointAddress();
                             String feedbackAddress2 = device.getEqFeedbackAddress2();
                             String feedbackAddress3 = device.getEqFeedbackAddress3();
                             String[] split0 = feedbackAddress1.split("\\.");
@@ -1543,7 +1543,7 @@ public class CmdProcess {
 
                             //带左转交通信号灯
                         } else if (device.getEqType() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress1 = device.getQueryPointAddress();
                             String feedbackAddress2 = device.getEqFeedbackAddress2();
                             String feedbackAddress3 = device.getEqFeedbackAddress3();
                             String feedbackAddress4 = device.getEqFeedbackAddress4();
@@ -1567,7 +1567,7 @@ public class CmdProcess {
                         } else if (device.getEqType() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
                             //如果此处为乐疃的设备,做特殊处理
                             if (plc.getEqId().equals("S29-ZiBoCompany-BoShanStation-001-PLC-006") || plc.getEqId().equals("S29-ZaoZhuangCompany-ShanTingStation-001-PLC-001")) {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
+                                String feedbackAddress1 = device.getQueryPointAddress();
                                 String feedbackAddress2 = device.getEqFeedbackAddress2();
                                 String[] split0 = feedbackAddress1.split("\\.");
                                 dataInfo.setX(0, Integer.parseInt(split0[0]) - 2);
@@ -1576,7 +1576,7 @@ public class CmdProcess {
                                 dataInfo.setX(1, Integer.parseInt(split1[0]) - 2);
                                 dataInfo.setY(1, Integer.parseInt(split1[1]));
                             } else {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
+                                String feedbackAddress1 = device.getQueryPointAddress();
                                 String feedbackAddress2 = device.getEqFeedbackAddress2();
                                 String[] split0 = feedbackAddress1.split("\\.");
                                 dataInfo.setX(0, Integer.parseInt(split0[0]));
@@ -1587,7 +1587,7 @@ public class CmdProcess {
                             }
                             //风机
                         } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
+                            String feedbackAddress1 = device.getQueryPointAddress();
                             String feedbackAddress2 = device.getEqFeedbackAddress2();
                             String feedbackAddress3 = device.getEqFeedbackAddress3();
                             String feedbackAddress4 = device.getEqFeedbackAddress4();

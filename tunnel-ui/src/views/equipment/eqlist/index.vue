@@ -320,8 +320,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="21" v-if="showOrhide">
-            <el-form-item label="查询指令" prop="eqControlPointAddress">
-              <el-input v-model="form.eqControlPointAddress" placeholder="请输入查询指令"/>
+            <el-form-item label="查询指令" prop="controlPointAddress">
+              <el-input v-model="form.controlPointAddress" placeholder="请输入查询指令"/>
             </el-form-item>
           </el-col>
           <el-col :span="1" style="margin: 5px" v-if="showOrhide">
@@ -335,32 +335,10 @@
           </el-col>
 
           <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址1" prop="eqFeedbackAddress1">
-              <el-input v-model="form.eqFeedbackAddress1" placeholder="请输入点位地址1"/>
+            <el-form-item label="点位地址" prop="queryPointAddress">
+              <el-input v-model="form.queryPointAddress" placeholder="请输入点位地址"/>
             </el-form-item>
           </el-col>
-
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址2" prop="eqFeedbackAddress2">
-              <el-input v-model="form.eqFeedbackAddress2" placeholder="请输入点位地址2"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址3" prop="eqFeedbackAddress3">
-              <el-input v-model="form.eqFeedbackAddress3" placeholder="请输入点位地址3"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址4" prop="eqFeedbackAddress4">
-              <el-input v-model="form.eqFeedbackAddress4" placeholder="请输入点位地址4"/>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址5" prop="eqFeedbackAddress5">
-              <el-input v-model="form.eqFeedbackAddress5" placeholder="请输入点位地址5"/>
-            </el-form-item>
-          </el-col>
-
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
               <el-input v-model="form.remark" placeholder="请输入备注"/>
@@ -649,56 +627,6 @@
             message: "查询对应点需为数字",
             trigger: "blur",
           },],
-          /* eqFeedbackAddress1: [{
-                //required: true,
-                message: '请输入点位地址1',
-                trigger: 'blur'
-              },
-              {
-                pattern: /^[a-zA-Z0-9]+$/,
-                message: '只能输入数字/字母，无法输入中文及特殊字符'
-              }
-            ], */
-          eqFeedbackAddress2: [{
-            // required: true,
-            message: "请输入点位地址1",
-            trigger: "blur",
-          },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress3: [{
-            // required: true,
-            message: "请输入点位地址1",
-            trigger: "blur",
-          },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress4: [{
-            // required: true,
-            message: "请输入点位地址1",
-            trigger: "blur",
-          },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress5: [{
-            // required: true,
-            message: "请输入点位地址1",
-            trigger: "blur",
-          },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
         },
         instructionFormRules: {
           instruction: [{
@@ -898,12 +826,8 @@
           eqDirection: null,
           stakeMark: null,
           eqType: null,
-          eqFeedbackAddress1: null,
-          eqFeedbackAddress2: null,
-          eqFeedbackAddress3: null,
-          eqFeedbackAddress4: null,
-          eqFeedbackAddress5: null,
-          eqControlPointAddress: null,
+          queryPointAddress: null,
+          controlPointAddress: null,
           deviceState: null,
           remark: null,
           createBy: null,
@@ -1157,7 +1081,7 @@
           if (valid) {
             createDmcontrolSeat(this.instructionForm).then((response) => {
               this.instructionDialog = false;
-              this.form.eqControlPointAddress = response.instruction;
+              this.form.controlPointAddress = response.instruction;
               this.input = response.instruction;
             });
           }
@@ -1169,7 +1093,7 @@
           this.form.qNumber != null
         ) {
           createInstruction(this.form).then((response) => {
-            this.form.eqControlPointAddress = response.instructionSeat;
+            this.form.controlPointAddress = response.instructionSeat;
           });
         } else {
           this.$modal.msgError(

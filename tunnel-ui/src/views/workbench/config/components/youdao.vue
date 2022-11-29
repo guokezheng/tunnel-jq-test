@@ -225,19 +225,19 @@ export default {
             frequency: Number(response.data.frequency),
             brightness: Number(response.data.brightness),
             state: response.data.state,
-            address: this.stateForm.eq_feedback_address1,
+            address: this.stateForm.query_point_address,
             eqType: this.stateForm.eqType,
-            eqFeedbackAddress1: this.stateForm.eq_feedback_address1,
+            eqFeedbackAddress1: this.stateForm.query_point_address,
           };
         });
         if (this.eqInfo.clickEqType == 30) {
           this.fireMarkData = [
             {
               label: "设置为报警点位",
-              value: this.stateForm.eq_feedback_address1,
+              value: this.stateForm.query_point_address,
             },
           ];
-          if (this.stateForm.eq_feedback_address1 == this.stateForm.fireMark) {
+          if (this.stateForm.query_point_address == this.stateForm.fireMark) {
             this.fireMarkData.push({ label: "清除报警点位", value: "255" });
             this.showTipe = true;
           } else {

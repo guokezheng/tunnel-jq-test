@@ -271,7 +271,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         List<SdDevices> devicesList = new ArrayList<>();
         for (SdDevices devices : checklist) {
             //查询指令 不为空
-//            if (StringUtils.isNotNull(devices.getEqControlPointAddress()) && StringUtils.isNotEmpty(devices.getEqControlPointAddress())) {
+//            if (StringUtils.isNotNull(devices.getControlPointAddress()) && StringUtils.isNotEmpty(devices.getControlPointAddress())) {
 //                if (StringUtils.isNotNull(devices.getInstructionSeat()) && StringUtils.isNotEmpty(devices.getInstructionSeat())) {
 //                    //校验DM模式+IP+机位
 //                    if (devices.getInstructionSeat().contains("DM")) {
@@ -283,12 +283,12 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 ////                            String[] dmcontrolSeat = devices.getDmcontrolSeat().split("_");
 ////                            StringBuffer dmControl = getCommandCode(devices, dmcontrolSeat[1], dmcontrolSeat[0], "1");
 ////                            //DM控制命令或者DM查询命令 校验
-////                            if (!getControlCommands(devices, dmControl.toString(), list) || !devices.getEqControlPointAddress().contains(dmQuery.toString())) {
+////                            if (!getControlCommands(devices, dmControl.toString(), list) || !devices.getControlPointAddress().contains(dmQuery.toString())) {
 ////                                devicesList.add(devices);
 ////                            }
 ////                        } else {
 //                            //DM查询 （模式+机位）不为空
-//                            if (!devices.getEqControlPointAddress().contains(dmQuery.toString())) {
+//                            if (!devices.getControlPointAddress().contains(dmQuery.toString())) {
 //                                devicesList.add(devices);
 //                            }
 ////                        }
@@ -299,7 +299,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 //                        StringBuffer cioQuery = getCommandCode(devices, cioeast[1], cioeast[0], "0");
 //                        // StringBuffer cioControl= cioControlAndQuery(plcIp,cioeast[1],"CIO_1");//控制
 //                        //|| !getControlCommands(devices).toString().contains(cioControl.toString())
-//                        if (!devices.getEqControlPointAddress().contains(cioQuery.toString())) {
+//                        if (!devices.getControlPointAddress().contains(cioQuery.toString())) {
 //                            devicesList.add(devices);
 //                        }
 //                    }
@@ -316,7 +316,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     }
 
     public List<SdDevices> checkIp(SdDevices devices, List<SdDevices> devicesList, List<SdEquipmentState> list) {
-        String devicesIp = devices.getEqControlPointAddress().substring(40, 42);
+        String devicesIp = devices.getControlPointAddress().substring(40, 42);
         SdDevices plc = sdDevicesMapper.selectSdDevicesById(devices.getFEqId());
         String plcIp = plc.getIp().split("\\.")[3];
         if (!intToHex(Integer.parseInt(plcIp)).equals(devicesIp)) {
@@ -437,8 +437,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
-//                        sb.append(getIpleftPad(devices.getEqControlPointAddress()));//点位地址
-//                        devices.setEqControlPointAddress(sb.toString());
+//                        sb.append(getIpleftPad(devices.getControlPointAddress()));//点位地址
+//                        devices.setControlPointAddress(sb.toString());
                         devices.setCreateBy(operName);
                         this.insertSdDevices(devices);
 //                        insertOrUpdateOrDeleteSdDeviceCmd(devices);
@@ -455,8 +455,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
-//                        sb.append(getIpleftPad(devices.getEqControlPointAddress()));//点位地址
-//                        devices.setEqControlPointAddress(sb.toString());
+//                        sb.append(getIpleftPad(devices.getControlPointAddress()));//点位地址
+//                        devices.setControlPointAddress(sb.toString());
                         this.updateSdDevices(devices);
 //                        insertOrUpdateOrDeleteSdDeviceCmd(devices);
                         successNum++;
@@ -532,7 +532,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             }else {
                 sbquery= getCommandCode(sdHosts.getPlcIp().split("\\.")[3],devices.getInstructionSeat().split("CIO")[1],"CIO","0");//查询
             }
-            if (!devices.getEqControlPointAddress().contains(sbquery.toString()) ){
+            if (!devices.getControlPointAddress().contains(sbquery.toString()) ){
                 failureMsg.append("、设备ID " + devices.getEqId() + " 指令不正确");
                 map.put("flag",false);
                 map.put("failureMsg",failureMsg);

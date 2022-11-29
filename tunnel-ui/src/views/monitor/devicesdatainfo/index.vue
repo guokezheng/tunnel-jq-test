@@ -11,7 +11,7 @@
       <el-form-item label="管理机构" prop="deptId">
         <el-select
           v-model="queryParams.deptId"
-          placeholder="请选择隧道"
+          placeholder="请选择管理机构"
           clearable
           size="small"
         >
@@ -99,8 +99,8 @@
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="CO" align="center" prop="CO" />
-        <el-table-column label="VI" align="center" prop="VI" />
+        <el-table-column label="CO(ppm)" align="center" prop="CO" />
+        <el-table-column label="VI(km)" align="center" prop="VI" />
         <el-table-column label="采集时间" align="center" prop="createTime" />
       </el-table>
 
@@ -119,7 +119,7 @@
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="风速" align="center" prop="FS" />
+        <el-table-column label="风速(m/s)" align="center" prop="FS" />
         <el-table-column label="风向" align="center" prop="FX" />
         <!--      <el-table-column label="采集时间" align="center" prop="createTime" />-->
         <el-table-column
@@ -150,7 +150,7 @@
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="洞内亮度" align="center" prop="data" />
+        <el-table-column label="洞内亮度(lux)" align="center" prop="data" />
         <el-table-column label="采集时间" align="center" prop="createTime" />
       </el-table>
       <el-table
@@ -169,7 +169,7 @@
         <el-table-column label="所属设施" align="center" prop="tunnelName" />
         <el-table-column label="方向" align="center" prop="direction" />
         <el-table-column label="桩号" align="center" prop="pile" />
-        <el-table-column label="洞外亮度" align="center" prop="data" />
+        <el-table-column label="洞外亮度(cd/㎡)" align="center" prop="data" />
         <el-table-column label="采集时间" align="center" prop="createTime" />
       </el-table>
       <pagination

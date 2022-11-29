@@ -25,10 +25,9 @@
                 >
                 <!-- @mouseleave="mouseleave(index)" -->
                   <div class="partitionBox"></div>
-                  <!-- v-show="fqIndex == index" -->
                   <div
                     class="rightClickClass"
-                    
+                    v-show="fqIndex == index"
                     :style="item.style"
                   >
                     <div class="row1">{{ item.sName }}</div>
@@ -1141,6 +1140,7 @@ export default {
     // 预览按钮
     getPreview(row) {
       this.$nextTick(() => {
+        this.$refs.workBench.eventId = this.$route.query.id;
         this.$refs.workBench.id = row.id; //预案ID
         this.$refs.workBench.tunnelId = this.eventMsg.tunnelId;
         this.$refs.workBench.init();

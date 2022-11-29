@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-17 14:42:00
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-23 10:00:53
+ * @LastEditTime: 2022-11-29 16:27:17
  * @FilePath: \tunnel-ui\src\views\event\reservePlan\workBench.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -243,8 +243,11 @@
               :key="index"
               class="listRow"
             >
-              <div style="color: #000;">
-                {{ index + 1 }}:{{ items }}
+              <div style="color:red;" v-if="items.indexOf('动态') != -1">
+                {{ index + 1 }}:<span>{{ items }}</span>
+              </div>
+              <div style="color: #000;" v-if="items.indexOf('动态') == -1">
+                {{ index + 1 }}:<span>{{ items }}</span>
               </div>
             </div>
           </vue-seamless-scroll>
@@ -279,6 +282,8 @@ export default {
   },
   data() {
     return {
+      currentClass: "",
+      eventId: "", //事件id
       displayNumb: false, //显示编号
       lightSwitch: 0,
       screenEqName: "", //筛选设备名称
@@ -672,25 +677,35 @@ export default {
       });
     },
     getPreview() {
-      previewDisplay(this.id).then((res) => {
+      previewDisplay(this.id, this.eventId).then((res) => {
         this.previewList = res;
         console.log(this.previewList, ";;;;;;;;;");
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
           var item = this.previewList[i].strategyRl;
+          var arr = this.previewList[i].equipmentData;
           for (let z = 0; z < item.length; z++) {
             var arr = this.previewList[i].iFileList[z];
-            if (item[z].equipments.indexOf(",")) {
-              console.log(item[z].equipments, "////////////");
-              deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
-                file: arr,
-              });
+            if (item[z].equipments != "") {
+              if (item[z].equipments.indexOf(",")) {
+                console.log(item[z].equipments, "////////////");
+                deviceList.push({
+                  list: item[z].equipments.split(","),
+                  state: item[z].state,
+                  eqId: this.previewList[i].deviceTypeId,
+                  file: arr,
+                });
+              } else {
+                deviceList.push({
+                  list: item[z].equipments,
+                  state: item[z].state,
+                  eqId: this.previewList[i].deviceTypeId,
+                  file: arr,
+                });
+              }
             } else {
               deviceList.push({
-                list: item[z].equipments,
+                list: item[z].equipments.split(","),
                 state: item[z].state,
                 eqId: this.previewList[i].deviceTypeId,
                 file: arr,
@@ -706,13 +721,15 @@ export default {
     },
     // 操作设备，改变设备状态
     ChangeDeviceState() {
-      console.log(this.selectedIconList, "-------------");
+      // console.log(this.selectedIconList, "-------------");
+      console.log(this.deviceList, "mmmmmmmmmmmmmmmmmmmm");
       for (let i = 0; i < this.selectedIconList.length; i++) {
         for (let x = 0; x < this.deviceList.length; x++) {
           var eqType = this.selectedIconList[i].eqType;
           if ((eqType ?? "") !== "") {
             if (eqType == this.deviceList[x].eqId) {
               var brr = this.deviceList[x].list;
+              console.log(brr, "zzzzzzzzzzzzzzzzz");
               for (let p = 0; p < brr.length; p++) {
                 if (this.selectedIconList[i].eqId == brr[p]) {
                   this.selectedIconList[i].url = [];
@@ -776,6 +793,9 @@ export default {
       text-align: center;
     }
   }
+}
+.red {
+  color: red;
 }
 </style>
 <style>

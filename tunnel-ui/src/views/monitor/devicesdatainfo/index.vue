@@ -1,7 +1,13 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForms" :inline="true" v-show="showSearch"
-             label-width="68px" style="margin-top: 10px">
+    <el-form
+      :model="queryParams"
+      ref="queryForms"
+      :inline="true"
+      v-show="showSearch"
+      label-width="68px"
+      style="margin-top: 10px"
+    >
       <el-form-item label="管理机构" prop="deptId">
         <el-select
           v-model="queryParams.deptId"
@@ -46,106 +52,162 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
-
-    <div class="butBox">
-      <div :class="searchValue=='1'?'xz':''" @click="qiehuan('1')">CO/VI</div>
-      <div :class="searchValue=='2'?'xz':''" @click="qiehuan('2')">风速风向</div>
-      <div :class="searchValue=='3'?'xz':''" @click="qiehuan('3')">洞内光强</div>
-      <div :class="searchValue=='4'?'xz':''" @click="qiehuan('4')">洞外光强</div>
+    <div class="topBox" style="display: flex; justify-content: space-between">
+      <div class="butBox">
+        <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
+          CO/VI
+        </div>
+        <div :class="searchValue == '2' ? 'xz' : ''" @click="qiehuan('2')">
+          风速风向
+        </div>
+        <div :class="searchValue == '3' ? 'xz' : ''" @click="qiehuan('3')">
+          洞内光强
+        </div>
+        <div :class="searchValue == '4' ? 'xz' : ''" @click="qiehuan('4')">
+          洞外光强
+        </div>
+      </div>
+      <div @click="marketChang()">
+        <i
+          class="el-icon-s-marketing"
+          style="font-size: 36px; color: #39adff"
+        ></i>
+      </div>
     </div>
-
-    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
-            :row-class-name="tableRowClassName" v-show="searchValue == '1'" max-height="640" >
-<!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="序号" align="center" prop="num"/>
-      <el-table-column label="设备编码" align="center" prop="eqId" />
-      <el-table-column label="设备名称" align="center" prop="eqName" />
-      <el-table-column label="所属设施" align="center" prop="tunnelName" />
-      <el-table-column label="方向" align="center" prop="direction" />
-      <el-table-column label="桩号" align="center" prop="pile" />
-      <el-table-column label="CO" align="center" prop="CO" />
-      <el-table-column label="VI" align="center" prop="VI" />
-      <el-table-column label="采集时间" align="center" prop="createTime" />
-    </el-table>
-
-    <el-table v-loading="loading" :data="list" max-height="640"  @selection-change="handleSelectionChange"
-      :row-class-name="tableRowClassName" v-show="searchValue == '2'" >
-<!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="序号" align="center" prop="num"/>
-      <el-table-column label="设备编码" align="center" prop="eqId" />
-      <el-table-column label="设备名称" align="center" prop="eqName" />
-      <el-table-column label="所属设施" align="center" prop="tunnelName" />
-      <el-table-column label="方向" align="center" prop="direction" />
-      <el-table-column label="桩号" align="center" prop="pile" />
-      <el-table-column label="风速" align="center" prop="FS" />
-      <el-table-column label="风向" align="center" prop="FX" />
-<!--      <el-table-column label="采集时间" align="center" prop="createTime" />-->
-      <el-table-column
-        label="采集时间"
-        align="center"
-        prop="createTime"
-        width="180"
-        sortable
+    <div v-show="echartShow == false">
+      <el-table
+        ref="tables"
+        v-loading="loading"
+        :data="list"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="searchValue == '1'"
+        max-height="640"
       >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.createTime) }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName" v-show="searchValue == '3'" max-height="640" >
-<!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="序号" align="center" prop="num"/>
-      <el-table-column label="设备编码" align="center" prop="eqId" />
-      <el-table-column label="设备名称" align="center" prop="eqName" />
-      <el-table-column label="所属设施" align="center" prop="tunnelName" />
-      <el-table-column label="方向" align="center" prop="direction" />
-      <el-table-column label="桩号" align="center" prop="pile" />
-      <el-table-column label="洞内亮度" align="center" prop="data" />
-      <el-table-column label="采集时间" align="center" prop="createTime" />
-    </el-table>
-    <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName" v-show="searchValue == '4'" max-height="640" >
-<!--      <el-table-column type="selection" width="55" align="center" />-->
-      <el-table-column label="序号" align="center" prop="num"/>
-      <el-table-column label="设备编码" align="center" prop="eqId" />
-      <el-table-column label="设备名称" align="center" prop="eqName" />
-      <el-table-column label="所属设施" align="center" prop="tunnelName" />
-      <el-table-column label="方向" align="center" prop="direction" />
-      <el-table-column label="桩号" align="center" prop="pile" />
-      <el-table-column label="洞外亮度" align="center" prop="data" />
-      <el-table-column label="采集时间" align="center" prop="createTime" />
-    </el-table>
+        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column label="序号" align="center" prop="num" />
+        <el-table-column label="设备编码" align="center" prop="eqId" />
+        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="方向" align="center" prop="direction" />
+        <el-table-column label="桩号" align="center" prop="pile" />
+        <el-table-column label="CO" align="center" prop="CO" />
+        <el-table-column label="VI" align="center" prop="VI" />
+        <el-table-column label="采集时间" align="center" prop="createTime" />
+      </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+      <el-table
+        v-loading="loading"
+        :data="list"
+        max-height="640"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="searchValue == '2'"
+      >
+        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column label="序号" align="center" prop="num" />
+        <el-table-column label="设备编码" align="center" prop="eqId" />
+        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="方向" align="center" prop="direction" />
+        <el-table-column label="桩号" align="center" prop="pile" />
+        <el-table-column label="风速" align="center" prop="FS" />
+        <el-table-column label="风向" align="center" prop="FX" />
+        <!--      <el-table-column label="采集时间" align="center" prop="createTime" />-->
+        <el-table-column
+          label="采集时间"
+          align="center"
+          prop="createTime"
+          width="180"
+          sortable
+        >
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        ref="tables"
+        v-loading="loading"
+        :data="list"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="searchValue == '3'"
+        max-height="640"
+      >
+        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column label="序号" align="center" prop="num" />
+        <el-table-column label="设备编码" align="center" prop="eqId" />
+        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="方向" align="center" prop="direction" />
+        <el-table-column label="桩号" align="center" prop="pile" />
+        <el-table-column label="洞内亮度" align="center" prop="data" />
+        <el-table-column label="采集时间" align="center" prop="createTime" />
+      </el-table>
+      <el-table
+        ref="tables"
+        v-loading="loading"
+        :data="list"
+        @selection-change="handleSelectionChange"
+        :row-class-name="tableRowClassName"
+        v-show="searchValue == '4'"
+        max-height="640"
+      >
+        <!--      <el-table-column type="selection" width="55" align="center" />-->
+        <el-table-column label="序号" align="center" prop="num" />
+        <el-table-column label="设备编码" align="center" prop="eqId" />
+        <el-table-column label="设备名称" align="center" prop="eqName" />
+        <el-table-column label="所属设施" align="center" prop="tunnelName" />
+        <el-table-column label="方向" align="center" prop="direction" />
+        <el-table-column label="桩号" align="center" prop="pile" />
+        <el-table-column label="洞外亮度" align="center" prop="data" />
+        <el-table-column label="采集时间" align="center" prop="createTime" />
+      </el-table>
+      <pagination
+        v-show="total > 0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </div>
+    <div v-show="echartShow">
+      <div ref="echartsBox" id="echarts-Box" class="echarts-Box"></div>
+    </div>
   </div>
 </template>
 
 <script>
-import { list, delLogininfor, cleanLogininfor, exportLogininfor } from "@/api/monitor/logininfor";
-import {listTunnels} from "@/api/equipment/tunnel/api";
-import {listType} from "@/api/equipment/type/api";
-import {listLog} from "@/api/system/log";
-import {listDept} from "@/api/system/dept";
-import {getUserDeptId} from "@/api/system/user";
-import {dataLogInfoList} from "@/api/equipment/eqTypeItem/item";
+import * as echarts from "echarts";
+import elementResizeDetectorMaker from "element-resize-detector";
+import {
+  list,
+  delLogininfor,
+  cleanLogininfor,
+  exportLogininfor,
+} from "@/api/monitor/logininfor";
+import { listTunnels } from "@/api/equipment/tunnel/api";
+import { listType } from "@/api/equipment/type/api";
+import { listLog } from "@/api/system/log";
+import { listDept } from "@/api/system/dept";
+import { getUserDeptId } from "@/api/system/user";
+import { dataLogInfoList } from "@/api/equipment/eqTypeItem/item";
 
 export default {
   name: "Logininfor",
-  dicts: ['sys_common_status'],
+  dicts: ["sys_common_status"],
   data() {
     return {
-      searchValue : '1',
+      searchValue: "1",
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -184,11 +246,17 @@ export default {
         tunnelId: null,
         deptId: null,
         searchValue: "1",
-      }
+      },
+      echartShow: false,
+      CO: [],
+      VI: [],
+      fsData: [],
+      dnData: [],
+      dwData: [],
     };
   },
   created() {
-    this.getList('1');
+    this.getList("1");
     this.getDepts();
     this.getUserDept();
     this.getDicts("sd_control_type").then((response) => {
@@ -198,13 +266,121 @@ export default {
       this.operationStateOptions = response.data;
     });
   },
+  mounted() {
+    this.watchSize();
+  },
   methods: {
+    marketChang() {
+      this.echartShow = !this.echartShow;
+      this.initChart();
+    },
+    watchSize() {
+      let that = this;
+      let erd = elementResizeDetectorMaker();
+      let Dom = that.$refs.echartsBox; //拿dom元素
+      //监听盒子的变化
+      erd.listenTo(Dom, function (element) {
+        let myChart = echarts.init(Dom);
+        myChart.resize(); //echarts自带的方法可以使图表重新加载
+      });
+    },
+    initChart() {
+      var chartDom = document.getElementById("echarts-Box");
+      console.log(chartDom, "666666666");
+      var myChart = echarts.init(chartDom);
+      var option;
+      if (this.searchValue == 1) {
+        var series = [
+          {
+            name: "CO",
+            stack: "Total",
+            label: {
+              show: true,
+              position: "top",
+            },
+            data: this.CO,
+            type: "line",
+          },
+          {
+            name: "VI",
+            stack: "Total",
+            label: {
+              show: true,
+              position: "top",
+            },
+            data: this.VI,
+            type: "line",
+          },
+        ];
+      } else if (this.searchValue == 2) {
+        //   fsData: [],
+        // dnData: [],
+        // dwData: [],
+        var series = [
+          {
+            name: "风速风向",
+            stack: "Total",
+            label: {
+              show: true,
+              position: "top",
+            },
+            data: this.fsData,
+            type: "line",
+          },
+        ];
+      } else if (this.searchValue == 3) {
+        //   fsData: [],
+        // dnData: [],
+        // dwData: [],
+        var series = [
+          {
+            name: "洞内亮度",
+            stack: "Total",
+            label: {
+              show: true,
+              position: "top",
+            },
+            data: this.dnData,
+            type: "line",
+          },
+        ];
+      } else if (this.searchValue == 4) {
+        //   fsData: [],
+        // dnData: [],
+        // dwData: [],
+        var series = [
+          {
+            name: "洞外亮度",
+            stack: "Total",
+            label: {
+              show: true,
+              position: "top",
+            },
+            data: this.dwData,
+            type: "line",
+          },
+        ];
+      }
+      option = {
+        xAxis: {
+          type: "category",
+          // data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        },
+        yAxis: {
+          type: "value",
+        },
+        series,
+      };
+
+      option && myChart.setOption(option, true);
+    },
     // 切换按钮
-    qiehuan(inx){
+    qiehuan(inx) {
       this.dateRange = [];
       this.resetForm("queryForms");
-      this.searchValue=inx;
+      this.searchValue = inx;
       this.getList(inx);
+      this.initChart();
     },
     /** 所属隧道 */
     getTunnel(userDeptId) {
@@ -234,44 +410,52 @@ export default {
     /** 查询列表 */
     getList(inx) {
       this.loading = true;
-      if (inx == null || inx == '1' || this.searchValue == '1') {
+      if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
-        dataLogInfoList(this.addDateRange(this.queryParams, this.dateRange)).then(
-          (response) => {
-            this.list = response.rows;
-            this.total = response.total;
-            this.loading = false;
-          }
-        );
-      } else if ((inx != null && inx == '2') || this.searchValue == '2') {
+        dataLogInfoList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          this.list = response.rows;
+          this.CO = this.list.map((item) => item.CO);
+          this.VI = this.list.map((item) => item.VI);
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if ((inx != null && inx == "2") || this.searchValue == "2") {
         this.queryParams.searchValue = "2";
-        dataLogInfoList(this.addDateRange(this.queryParams, this.dateRange)).then(
-          (response) => {
-            this.list = response.rows;
-            this.total = response.total;
-            this.loading = false;
-          }
-        );
-      } else if ((inx != null && inx == '3') || this.searchValue == '3') {
+        dataLogInfoList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          this.list = response.rows;
+          this.fsData = this.list.map((item) => item.FS);
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if ((inx != null && inx == "3") || this.searchValue == "3") {
         this.queryParams.searchValue = "3";
-        dataLogInfoList(this.addDateRange(this.queryParams, this.dateRange)).then(
-          (response) => {
-            this.list = response.rows;
-            this.total = response.total;
-            this.loading = false;
-          }
-        );
-      } else if ((inx != null && inx == '4') || this.searchValue == '4') {
+        dataLogInfoList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          this.list = response.rows;
+          this.dnData = this.list.map((item) => item.data);
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
+      } else if ((inx != null && inx == "4") || this.searchValue == "4") {
         this.queryParams.searchValue = "4";
-        dataLogInfoList(this.addDateRange(this.queryParams, this.dateRange)).then(
-          (response) => {
-            this.list = response.rows;
-            this.total = response.total;
-            this.loading = false;
-          }
-        );
+        dataLogInfoList(
+          this.addDateRange(this.queryParams, this.dateRange)
+        ).then((response) => {
+          this.list = response.rows;
+          this.dwData = this.list.map((item) => item.data);
+          this.total = response.total;
+          this.loading = false;
+          this.initChart();
+        });
       }
-
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -286,8 +470,8 @@ export default {
     },
     /** 多选框选中数据 */
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.infoId)
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.infoId);
+      this.multiple = !selection.length;
     },
     /** 排序触发事件 */
     handleSortChange(column, prop, order) {
@@ -298,46 +482,62 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const infoIds = row.infoId || this.ids;
-      this.$modal.confirm('是否确认删除选中数据项？').then(function() {
-        return delLogininfor(infoIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认删除选中数据项？")
+        .then(function () {
+          return delLogininfor(infoIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 清空按钮操作 */
     handleClean() {
-      this.$modal.confirm('是否确认清空所有登录日志数据项？').then(function() {
-        return cleanLogininfor();
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("清空成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认清空所有登录日志数据项？")
+        .then(function () {
+          return cleanLogininfor();
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("清空成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有操作日志数据项？').then(() => {
-        this.exportLoading = true;
-        return exportLogininfor(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
+      this.$modal
+        .confirm("是否确认导出所有操作日志数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportLogininfor(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     // 表格行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
-  }
+  },
 };
 </script>
 <style scoped lang="scss">
-.butBox{
+.echarts-Box {
+  width: 100vw;
+  height: 80vh;
+}
+.butBox {
   width: 315px;
   display: flex;
   padding: 4px 4px;
@@ -346,13 +546,13 @@ export default {
   margin-bottom: 10px;
   font-size: 14px;
   // justify-content: space-between;
-  div{
+  div {
     padding: 6px 10px;
     color: #fff;
     letter-spacing: 1px;
     cursor: pointer;
   }
-  .xz{
+  .xz {
     background: #285b8d;
     border-radius: 10px;
   }

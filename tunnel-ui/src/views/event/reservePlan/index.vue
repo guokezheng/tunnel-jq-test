@@ -1058,6 +1058,7 @@ export default {
     openWorkbench(row) {
       this.tunnelId = row.tunnelId;
       this.$nextTick(() => {
+        this.$refs.workBench.currentClass = "red";
         this.$refs.workBench.id = row.id;
         this.$refs.workBench.tunnelId = this.tunnelId;
         this.$refs.workBench.init();

@@ -45,6 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="messageProtocol"    column="message_protocol"    />
         <result property="protocolId"    column="protocol_id"    />
+        <result property="roadId"    column="road_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -66,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
         eq_status_time, control_point_address, query_point_address, create_by, create_time,
-        update_by, update_time, remark from sd_devices
+        update_by, update_time, remark,road_id,message_protocol,protocol_id from sd_devices
     </sql>
 
 

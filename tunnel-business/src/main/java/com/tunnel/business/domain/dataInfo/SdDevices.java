@@ -320,6 +320,19 @@ public class SdDevices extends BaseEntity {
      * */
     private String protocolId;
 
+    /**
+     * road_id路段ID
+     * */
+    private String roadId;
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
     public String getProtocolId() {
         return protocolId;
     }

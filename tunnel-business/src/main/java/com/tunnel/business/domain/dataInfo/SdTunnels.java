@@ -91,6 +91,20 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道结束桩号(整形)")
     private String endPileNum;
 
+    /**
+     * road_id路段ID
+     * */
+    @ApiModelProperty("路段ID")
+    private String roadId;
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
     public String getStartPileNum() {
         return startPileNum;
     }

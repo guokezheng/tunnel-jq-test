@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.TunnelAssociationMapper">
+
+    <resultMap type="TunnelAssociation" id="TunnelAssociationResult">
+        <result property="id"    column="id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="tunnelDirection"    column="tunnel_direction"    />
+        <result property="externalSystemId"    column="external_system_id"    />
+        <result property="externalSystemTunnelId"    column="external_system_tunnel_id"    />
+        <result property="externalSystemTunnelDirection"    column="external_system_tunnel_direction"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTunnelAssociationVo">
+        select id, tunnel_id, tunnel_direction, external_system_id, external_system_tunnel_id, external_system_tunnel_direction, remark from tunnel_association
+    </sql>
+
+    <select id="selectTunnelAssociationList" parameterType="TunnelAssociation" resultMap="TunnelAssociationResult">
+        <include refid="selectTunnelAssociationVo"/>
+        <where>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="tunnelDirection != null  and tunnelDirection != ''"> and tunnel_direction = #{tunnelDirection}</if>
+            <if test="externalSystemId != null  and externalSystemId != ''"> and external_system_id = #{externalSystemId}</if>
+            <if test="externalSystemTunnelId != null  and externalSystemTunnelId != ''"> and external_system_tunnel_id = #{externalSystemTunnelId}</if>
+            <if test="externalSystemTunnelDirection != null  and externalSystemTunnelDirection != ''"> and external_system_tunnel_direction = #{externalSystemTunnelDirection}</if>
+        </where>
+    </select>
+
+    <select id="selectTunnelAssociationById" parameterType="Long" resultMap="TunnelAssociationResult">
+        <include refid="selectTunnelAssociationVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTunnelAssociation" parameterType="TunnelAssociation" useGeneratedKeys="true" keyProperty="id">
+        insert into tunnel_association
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="tunnelDirection != null">tunnel_direction,</if>
+            <if test="externalSystemId != null">external_system_id,</if>
+            <if test="externalSystemTunnelId != null">external_system_tunnel_id,</if>
+            <if test="externalSystemTunnelDirection != null">external_system_tunnel_direction,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="tunnelDirection != null">#{tunnelDirection},</if>
+            <if test="externalSystemId != null">#{externalSystemId},</if>
+            <if test="externalSystemTunnelId != null">#{externalSystemTunnelId},</if>
+            <if test="externalSystemTunnelDirection != null">#{externalSystemTunnelDirection},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTunnelAssociation" parameterType="TunnelAssociation">
+        update tunnel_association
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="tunnelDirection != null">tunnel_direction = #{tunnelDirection},</if>
+            <if test="externalSystemId != null">external_system_id = #{externalSystemId},</if>
+            <if test="externalSystemTunnelId != null">external_system_tunnel_id = #{externalSystemTunnelId},</if>
+            <if test="externalSystemTunnelDirection != null">external_system_tunnel_direction = #{externalSystemTunnelDirection},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTunnelAssociationById" parameterType="Long">
+        delete from tunnel_association where id = #{id}
+    </delete>
+
+    <delete id="deleteTunnelAssociationByIds" parameterType="String">
+        delete from tunnel_association where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

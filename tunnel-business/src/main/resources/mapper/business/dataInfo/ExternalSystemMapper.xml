@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.ExternalSystemMapper">
+
+    <resultMap type="ExternalSystem" id="ExternalSystemResult">
+        <result property="id"    column="id"    />
+        <result property="brandId"    column="brand_id"    />
+        <result property="isDirection"    column="is_direction"    />
+        <result property="username"    column="username"    />
+        <result property="password"    column="password"    />
+        <result property="networkStatus"    column="network_status"    />
+        <result property="systemName"    column="system_name"    />
+        <result property="systemUrl"    column="system_url"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectExternalSystemVo">
+        select id, brand_id, is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time from external_system
+    </sql>
+
+    <select id="selectExternalSystemList" parameterType="ExternalSystem" resultMap="ExternalSystemResult">
+        <include refid="selectExternalSystemVo"/>
+        <where>
+            <if test="brandId != null  and brandId != ''"> and brand_id = #{brandId}</if>
+            <if test="isDirection != null  and isDirection != ''"> and is_direction = #{isDirection}</if>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="password != null  and password != ''"> and password = #{password}</if>
+            <if test="networkStatus != null  and networkStatus != ''"> and network_status = #{networkStatus}</if>
+            <if test="systemName != null  and systemName != ''"> and system_name like concat('%', #{systemName}, '%')</if>
+            <if test="systemUrl != null  and systemUrl != ''"> and system_url = #{systemUrl}</if>
+        </where>
+    </select>
+
+    <select id="selectExternalSystemById" parameterType="Long" resultMap="ExternalSystemResult">
+        <include refid="selectExternalSystemVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertExternalSystem" parameterType="ExternalSystem" useGeneratedKeys="true" keyProperty="id">
+        insert into external_system
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="brandId != null">brand_id,</if>
+            <if test="isDirection != null">is_direction,</if>
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="networkStatus != null">network_status,</if>
+            <if test="systemName != null">system_name,</if>
+            <if test="systemUrl != null">system_url,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="brandId != null">#{brandId},</if>
+            <if test="isDirection != null">#{isDirection},</if>
+            <if test="username != null">#{username},</if>
+            <if test="password != null">#{password},</if>
+            <if test="networkStatus != null">#{networkStatus},</if>
+            <if test="systemName != null">#{systemName},</if>
+            <if test="systemUrl != null">#{systemUrl},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExternalSystem" parameterType="ExternalSystem">
+        update external_system
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="brandId != null">brand_id = #{brandId},</if>
+            <if test="isDirection != null">is_direction = #{isDirection},</if>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="networkStatus != null">network_status = #{networkStatus},</if>
+            <if test="systemName != null">system_name = #{systemName},</if>
+            <if test="systemUrl != null">system_url = #{systemUrl},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteExternalSystemById" parameterType="Long">
+        delete from external_system where id = #{id}
+    </delete>
+
+    <delete id="deleteExternalSystemByIds" parameterType="String">
+        delete from external_system where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

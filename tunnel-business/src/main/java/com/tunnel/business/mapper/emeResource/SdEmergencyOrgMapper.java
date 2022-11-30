@@ -1,5 +1,6 @@
 package com.tunnel.business.mapper.emeResource;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public interface SdEmergencyOrgMapper
      * @param sdEmergencyOrg 应急机构
      * @return 应急机构集合
      */
-    public List<SdEmergencyOrg> selectSdEmergencyOrgList(SdEmergencyOrg sdEmergencyOrg);
+    public List<SysDept> selectSdEmergencyOrgList(SdEmergencyOrg sdEmergencyOrg);
 
     /**
      * 新增应急机构

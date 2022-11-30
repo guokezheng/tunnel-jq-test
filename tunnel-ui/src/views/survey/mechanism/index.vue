@@ -4,179 +4,75 @@
       :model="queryParams"
       ref="queryForm"
       :inline="true"
-      :rules="rules"
       v-show="showSearch"
     >
-      <el-form-item label="物资名称" prop="orgName">
+      <el-form-item label="机构名称" prop="deptName">
         <el-input
           style="width: 200px"
-          v-model.number="queryParams.orgName"
+          v-model.number="queryParams.deptName"
           placeholder="请输入机构名称"
           size="small"
         />
       </el-form-item>
-      <el-form-item label="驻点名称" prop="stagPointName">
+      <el-form-item label="机构负责人" prop="leader">
         <el-input
           style="width: 200px"
-          v-model.number="queryParams.stagPointName"
-          placeholder="请输入驻点名称"
+          v-model.number="queryParams.leader"
+          placeholder="请输入机构负责人"
           size="small"
         />
       </el-form-item>
+      <el-form-item label="机构状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择机构状态" size="small">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button
-          type="cyan"
-          icon="el-icon-search"
+          type="primary"
           size="mini"
           @click="handleQuery"
           >搜索</el-button
         >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+        <el-button type="primary" plain size="mini" @click="resetQuery"
           >重置</el-button
         >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['monitor:logininfor:export']"
-          >导出</el-button
-        >
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:material:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['business:SdEmergencyPer:remove']"
-          >删除</el-button
-        >
-      </el-col>
-      <div class="top-right-btn">
-        <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-          <el-button
-            size="mini"
-            circle
-            icon="el-icon-refresh"
-            @click="handleQuery"
-          />
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="dark"
-          :content="showSearch ? '隐藏搜索' : '显示搜索'"
-          placement="top"
-        >
-          <el-button
-            size="mini"
-            circle
-            icon="el-icon-search"
-            @click="showSearch = !showSearch"
-          />
-        </el-tooltip>
-      </div>
-    </el-row>
-
-    <el-table
-      v-loading="loading"
-      :data="mechanismList"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="机构名称" align="center" prop="orgName" />
-      <el-table-column label="驻点名称" align="center" prop="stationName" />
-      <el-table-column label="机构地址" align="center" prop="orgAddress" />
-      <el-table-column label="经度" align="center" prop="longitude" />
-      <el-table-column label="纬度" align="center" prop="latitude" />
-      <el-table-column
-        label="救援外协单位"
-        align="center"
-        prop="outsourceUnit"
-      />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
+      <el-table
+        v-if="refreshTable"
+        v-loading="loading"
+        :data="mechanismList"
+        row-key="deptId"
+        :default-expand-all="isExpandAll"
+        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+        max-height="640"
+        :row-class-name="tableRowClassName"
+        class="menuAdministration"
       >
+      <el-table-column label="机构名称" prop="deptName" />
+      <el-table-column label="机构负责人" align="center" prop="leader" />
+      <el-table-column label="联系电话" align="center" prop="phone" />
+      <el-table-column label="邮箱" align="center" prop="email" />
+      <el-table-column label="机构状态" align="center" prop="status">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdateMaterial(scope)"
-            v-hasPermi="['system:material:edit']"
-            >修改</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:material:remove']"
-            >删除</el-button
-          >
+          <span>{{scope.row.status == "0" ? "正常" : "停用"}}</span>
         </template>
       </el-table-column>
     </el-table>
-    <pagination :total="total" :limit.sync="pageSize" />
 
-    <!-- 添加/修改应急资源对话框 -->
-    <el-dialog
-      :title="title"
-      :visible.sync="open"
-      width="500px"
-      append-to-body
-      :before-close="cancel"
-    >
-      <el-form ref="form" :model="form" :rules="rules" label-width="106px">
-        <el-form-item label="机构名称" prop="orgName">
-          <el-input v-model="form.orgName" placeholder="请输入机构名称" />
-        </el-form-item>
-        <el-form-item label="驻点名称" prop="stationName">
-          <el-input v-model="form.stationName" placeholder="请输入驻点名称" />
-        </el-form-item>
-        <el-form-item label="机构地址" prop="orgAddress">
-          <el-input v-model="form.orgAddress" placeholder="请输入机构地址" />
-        </el-form-item>
-
-        <el-form-item label="经度" prop="longitude">
-          <el-input v-model="form.longitude" placeholder="请输入经度" />
-        </el-form-item>
-        <el-form-item label="纬度" prop="latitude">
-          <el-input v-model="form.latitude" placeholder="请输入纬度" />
-        </el-form-item>
-        <el-form-item label="救援外协单位" prop="outsourceUnit">
-          <el-input
-            v-model="form.outsourceUnit"
-            placeholder="请输入救援外协单位"
-          />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="submitForm"
-          >确 定</el-button
-        >
-        <el-button size="small" @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -197,6 +93,10 @@ export default {
       open: false,
       // 遮罩层
       loading: false,
+      // 重新渲染表格状态
+      refreshTable: true,
+      // 是否展开，默认全部折叠
+      isExpandAll: false,
       // 选中数组
       ids: [],
       // 非单个禁用
@@ -207,62 +107,17 @@ export default {
       title: "",
       queryParams: {
         orgName: null,
-        stagPointName: null,
+        stagPointName: null
       },
       form: {},
-      mechanismList: [
-        // {
-        //   materialName:'济南路管分中心',
-        //   materialType:'济南驻点',
-        //   tunnelName:'济南收费站',
-        //   station:'35.3773444',
-        //   direction:'117.23742',
-        //   number:'-'
-        // },
-        // {
-        //   materialName:'1',
-        //   materialType:'2',
-        //   tunnelName:'3',
-        //   station:'35.3773444',
-        //   direction:'117.23742',
-        //   number:'-'
-        // }
-      ],
-      // 表单校验
-      rules: {
-        // longitude: { pattern: /^((([^0][0-9]+|0)\.([0-9]{1,2}))$)|^(([1-9]+)\.([0-9]{1,6})$)/,
-        //       message: '经纬度须输入小数，小数点后最多支持六位', trigger: ['blur','change']},
-        // latitude: { pattern: /^((([^0][0-9]+|0)\.([0-9]{1,2}))$)|^(([1-9]+)\.([0-9]{1,6})$)/,
-        //       message: "经纬度须输入小数，小数点后最多支持六位", trigger: ['blur','change']},
-
-        orgName: [
-          { required: true, message: "请输入机构", trigger: "orgName" },
-        ],
-        stationName: [
-          { required: true, message: "请输入驻点名称", trigger: "stationName" },
-        ],
-        orgAddress: [
-          { required: true, message: "请输入机构地址", trigger: "orgAddress" },
-        ],
-        outsourceUnit: [
-          {
-            required: true,
-            message: "请输入救援外协单位",
-            trigger: "outsourceUnit",
-          },
-        ],
-        longitude: [
-          { required: true, message: "请输入经度", trigger: "longitude" },
-        ],
-        latitude: [
-          { required: true, message: "请输入纬度", trigger: "latitude" },
-        ],
-      },
-      //总条数
-      total: 0,
-      //每页条数
-      pageSize: 10,
-
+      options: [{
+          value: '0',
+          label: '正常'
+        }, {
+          value: '1',
+          label: '停用'
+      }],
+      mechanismList: [],
       exportLoading: false,
       showSearch: true,
     };
@@ -271,27 +126,20 @@ export default {
     this.getList();
   },
   methods: {
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal
-        .confirm("是否确认导出所有数据项？")
-        .then(() => {
-          this.exportLoading = true;
-          return exportData();
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-          this.exportLoading = false;
-        })
-        .catch(() => {});
+    /** 展开/折叠操作 */
+    toggleExpandAll() {
+      this.refreshTable = false;
+      this.isExpandAll = !this.isExpandAll;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
     },
-
     /** 查询应急机构列表 */
-    getList(queryParams = {}) {
-      handleQueryList(queryParams).then((res) => {
-        this.mechanismList = res.rows;
-        this.total = res.total;
+    getList() {
+      this.loading = true;
+      handleQueryList(this.queryParams).then((res) => {
+        this.mechanismList = this.handleTree(res,"deptId");
+        console.log(this.mechanismList,"111111");
       });
       this.loading = false;
     },
@@ -304,10 +152,9 @@ export default {
       this.resetForm("queryForm");
       this.$refs.queryForm.resetFields();
       this.queryForm = {
-        pageNum: 1,
-        pageSize: 10,
-        orgName: null,
-        stagPointName: null,
+        deptName: null,
+        leader: null,
+        status: null
       };
       this.handleQuery();
     },
@@ -318,31 +165,9 @@ export default {
       this.single = selection.length !== 1;
       this.multiple = !selection.length; //非多个禁用
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      // this.reset();、
-      this.open = true;
-      this.title = "添加应急资源";
-      console.log("xinz");
-    },
     // 表单重置
     reset() {
-      this.form = {
-        // id: undefined,
-        // materialId: undefined,
-        // materialName: undefined,
-        // materialType: undefined,
-        // inventoryQuantity: undefined,
-        // company: undefined,
-        // position: undefined,
-        // warningValue: undefined,
-        // code: undefined,
-        // remark: undefined,
-        // state: undefined,
-        // createTime: undefined,
-        // updateTime: undefined,
-        // price: undefined
-      };
+      this.form = {};
       this.resetForm("form");
     },
     /** 应急机构提交按钮 */
@@ -379,41 +204,13 @@ export default {
       this.open = false;
       this.reset();
     },
-    /** 修改按钮操作 */
-    handleUpdateMaterial(scope) {
-      // this.reset();
-      // const id = row.id || this.ids
-      this.open = true;
-      this.title = "修改应急资源";
-      // console.log(scope,'row.idrow.id');
-      editForm(scope.row.orgId).then((res) => {
-        if (res.code == 200) {
-          this.form = res.data;
-        }
-        console.log(res, "sssssssssssssss");
-        // this.form = response.data;
-        // this.open = true;
-        // this.title = "修改应急资源";
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.orgId ? [row.orgId] : this.ids;
-      var that = this;
-      this.$confirm("是否确认删除?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        batchDelete(ids).then((res) => {
-          if (res.code == 200) {
-            console.log(res);
-            that.$modal.msgSuccess("删除成功");
-            that.getList();
-            that.$forceUpdate();
-          }
-        });
-      });
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
     },
   },
 };

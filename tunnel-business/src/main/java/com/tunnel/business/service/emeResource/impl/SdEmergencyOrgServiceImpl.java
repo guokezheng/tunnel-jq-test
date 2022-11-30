@@ -24,11 +24,11 @@ public class SdEmergencyOrgServiceImpl implements ISdEmergencyOrgService {
     /**
      * 查询应急机构列表
      *
-     * @param sdEmergencyOrg 应急机构
+     * @param sysDept 应急机构
      * @return 应急机构
      */
     @Override
-    public List<SysDept> selectSdEmergencyOrgList(SdEmergencyOrg sdEmergencyOrg) {
-        return sdEmergencyOrgMapper.selectSdEmergencyOrgList(sdEmergencyOrg);
+    public List<SysDept> selectSdEmergencyOrgList(SysDept sysDept) {
+        return sdEmergencyOrgMapper.selectSdEmergencyOrgList(sysDept);
     }
 }

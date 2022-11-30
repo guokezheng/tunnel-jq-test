@@ -25,9 +25,6 @@ public class SysDept extends BaseEntity {
     @ApiModelProperty("部门id")
     private String deptId;
 
-
-
-
     /**
      * 父部门ID
      */
@@ -93,6 +90,26 @@ public class SysDept extends BaseEntity {
      */
     @ApiModelProperty("子部门")
     private List<SysDept> children = new ArrayList<SysDept>();
+
+    private String value;
+
+    private String lable;
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getLable() {
+        return lable;
+    }
+
+    public void setLable(String lable) {
+        this.lable = lable;
+    }
 
     public String getDeptId() {
         return deptId;

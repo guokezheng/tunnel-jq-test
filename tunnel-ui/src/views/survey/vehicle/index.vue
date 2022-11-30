@@ -10,6 +10,9 @@
       <el-form-item label="机构" prop="orgName">
         <!-- <el-input style="width:200px"  v-model.number="queryParams.orgId" placeholder="请输入机构名称" size="small" /> -->
         <el-cascader
+          popper-class="jigou"
+          v-model="queryParams.orgName"
+          :show-all-levels="false"
           :options="orgData"
           :props="{ checkStrictly: true }"
           clearable></el-cascader>
@@ -226,22 +229,8 @@
       :before-close="cancel"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="106px">
-        <el-form-item label="机构" prop="orgId" v-show="model">
-          <!-- <el-input v-model="form.orgId" placeholder="请输入机构名称" /> -->
-          <el-select
-            v-model="form.orgId"
-            placeholder="请选择机构"
-            clearable
-            style="width: 100%"
-            :disabled="disabled"
-          >
-            <el-option
-              v-for="item in orgData"
-              :key="item.orgId"
-              :label="item.orgName"
-              :value="item.orgId"
-            />
-          </el-select>
+        <el-form-item label="机构" prop="orgName" v-show="model">
+          <el-input v-model="form.orgName" placeholder="请输入机构名称" />
         </el-form-item>
         <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
           <el-input v-model="form.plateNumber" placeholder="请输入车牌" :disabled="disabled"/>
@@ -418,6 +407,10 @@ export default {
     },
     /** 查询应急机构列表 */
     getList() {
+      // console.log(this.queryParams)
+      if(this.queryParams.orgName){
+        this.queryParams.orgName = this.queryParams.orgName[2]?this.queryParams.orgName[2]:this.queryParams.orgName[1]?this.queryParams.orgName[1]:this.queryParams.orgName[0]?this.queryParams.orgName[0]:''
+      }
       handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;
@@ -430,7 +423,8 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-      this.getList(this.queryParams);
+
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -577,8 +571,11 @@ export default {
 };
 </script>
 
-<style>
-.cascaderJigou{
-  width: 500px;
+<style lang="scss">
+.jigou .el-scrollbar{
+  width: 215px !important;
+}
+.jigou .el-icon-arrow-right{
+  right: 25px;
 }
 </style>

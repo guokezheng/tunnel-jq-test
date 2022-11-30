@@ -86,10 +86,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <select id="selectSdEmergencyOrgList" parameterType="com.tunnel.business.domain.emeResource.SdEmergencyOrg" resultType="com.ruoyi.common.core.domain.entity.SysDept">
+    <select id="selectSdEmergencyOrgList" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultType="com.ruoyi.common.core.domain.entity.SysDept">
         SELECT DISTINCT
             d.dept_id AS deptId,
-            d.parent_id AS parent_id,
+            d.parent_id AS parentId,
             d.dept_name deptName,
             d.leader,
             d.phone,
@@ -100,10 +100,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             1 = 1
           AND d.parent_id = 'YG0'
-          AND d.del_flag = '0' UNION ALL
+          AND d.del_flag = '0'
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="leader != null and leader != ''">
+            AND d.leader = #{leader}
+        </if>
+        <if test="deptName != null and deptName != ''">
+            AND INSTR(d.dept_name,#{deptName}) > 0
+        </if>
+        UNION ALL
         SELECT DISTINCT
             d.dept_id AS deptId,
-            d.parent_id AS parent_id,
+            d.parent_id AS parentId,
             d.dept_name deptName,
             d.leader,
             d.phone,
@@ -118,5 +128,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                       ( SELECT d.dept_id FROM sys_dept d WHERE 1 = 1 AND d.parent_id = 'YG0' AND d.del_flag = '0' )
                   ) > 0
           AND d.del_flag = '0'
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="leader != null and leader != ''">
+            AND d.leader = #{leader}
+        </if>
+        <if test="deptName != null and deptName != ''">
+            AND INSTR(d.dept_name,#{deptName}) > 0
+        </if>
     </select>
 </mapper>

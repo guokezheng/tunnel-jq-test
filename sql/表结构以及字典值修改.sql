@@ -507,4 +507,6 @@ alter table iot_device modify column manage_agency_id varchar(50) comment '管�
 
 -- 部门表主键修改为varchar（集团部门数据对接需要）  ---------end---------------
 
-
+ALTER TABLE sd_emergency_vehicle
+    MODIFY COLUMN `id` bigint(20) NOT NULL COMMENT '主键' FIRST,
+    ADD COLUMN `acc_state` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '车辆运行状态 0:未启动,1:启动,2:离线,4:清障救援,5:道路巡查' AFTER `status_desc`;

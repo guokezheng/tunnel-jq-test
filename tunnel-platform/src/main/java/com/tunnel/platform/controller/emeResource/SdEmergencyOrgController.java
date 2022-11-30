@@ -33,9 +33,9 @@ public class SdEmergencyOrgController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:org:list')")
     @GetMapping("/list")
-    public List<SysDept> list(SdEmergencyOrg sdEmergencyOrg)
+    public List<SysDept> list(SysDept sysDept)
     {
-        List<SysDept> list = sdEmergencyOrgService.selectSdEmergencyOrgList(sdEmergencyOrg);
+        List<SysDept> list = sdEmergencyOrgService.selectSdEmergencyOrgList(sysDept);
         return list;
     }
 }

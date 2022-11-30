@@ -61,7 +61,98 @@ public class SdEmergencyVehicle extends BaseEntity
     @Excel(name = "技术状态描述")
     private String statusDesc;
 
-    public void setId(Long id) 
+    /**
+     * 车辆运行状态
+     */
+    private String accState;
+
+    /**
+     * 资产归属
+     */
+    private String ownerName;
+
+    /**
+     * 车辆型号
+     */
+    private String vehicleModel;
+
+    /**
+     * ETC使用情况名称
+     */
+    private String etcStateDesc;
+
+    /**
+     * ETC卡类型名称
+     */
+    private String etcTypeDesc;
+
+    /**
+     * 车龄
+     */
+    private String carAge;
+
+    /**
+     * 公里数
+     */
+    private String mileage;
+
+    public String getVehicleModel() {
+        return vehicleModel;
+    }
+
+    public void setVehicleModel(String vehicleModel) {
+        this.vehicleModel = vehicleModel;
+    }
+
+    public String getEtcStateDesc() {
+        return etcStateDesc;
+    }
+
+    public void setEtcStateDesc(String etcStateDesc) {
+        this.etcStateDesc = etcStateDesc;
+    }
+
+    public String getEtcTypeDesc() {
+        return etcTypeDesc;
+    }
+
+    public void setEtcTypeDesc(String etcTypeDesc) {
+        this.etcTypeDesc = etcTypeDesc;
+    }
+
+    public String getCarAge() {
+        return carAge;
+    }
+
+    public void setCarAge(String carAge) {
+        this.carAge = carAge;
+    }
+
+    public String getMileage() {
+        return mileage;
+    }
+
+    public void setMileage(String mileage) {
+        this.mileage = mileage;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getAccState() {
+        return accState;
+    }
+
+    public void setAccState(String accState) {
+        this.accState = accState;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

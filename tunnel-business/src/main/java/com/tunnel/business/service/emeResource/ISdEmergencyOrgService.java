@@ -20,5 +20,5 @@ public interface ISdEmergencyOrgService {
      * @param sdEmergencyOrg 应急机构
      * @return 应急机构集合
      */
-    List<SysDept> selectSdEmergencyOrgList(SdEmergencyOrg sdEmergencyOrg);
+    List<SysDept> selectSdEmergencyOrgList(SysDept sysDept);
 }

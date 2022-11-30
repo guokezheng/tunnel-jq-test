@@ -3,6 +3,7 @@ package com.tunnel.platform.controller.emeResource;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -16,10 +17,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 应急车辆Controller
- * 
+ *
  * @author dzy
  * @date 2022-08-09
  */
@@ -39,9 +41,29 @@ public class SdEmergencyVehicleController extends BaseController
     @ApiOperation("查询应急车辆列表")
     public TableDataInfo list(SdEmergencyVehicle sdEmergencyVehicle)
     {
+        sdEmergencyVehicleService.synVehicleData();
         startPage();
         List<SdEmergencyVehicle> list = sdEmergencyVehicleService.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         return getDataTable(list);
+    }
+
+    /**
+     * 第三方查询应急车辆列表
+     */
+    @GetMapping("/getVehiclelist")
+    public String getVehiclelist()
+    {
+        return sdEmergencyVehicleService.synVehicleData();
+    }
+
+    /**
+     * 获取车辆详细信息
+     * @param sdEmergencyVehicle
+     * @return
+     */
+    @GetMapping("/getVehicleDetails")
+    public AjaxResult getVehicleDetails(SdEmergencyVehicle sdEmergencyVehicle){
+        return AjaxResult.success(sdEmergencyVehicleService.getVehicleDetails(sdEmergencyVehicle.getPlateNumber()));
     }
 
     /**
@@ -98,7 +120,7 @@ public class SdEmergencyVehicleController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:vehicle:remove')")
     @Log(title = "应急车辆", businessType = BusinessType.DELETE)
-	@DeleteMapping("/batchDelete")
+    @DeleteMapping("/batchDelete")
     @ApiOperation("删除应急车辆")
     public AjaxResult remove(@RequestBody Long[] ids)
     {
@@ -107,11 +129,11 @@ public class SdEmergencyVehicleController extends BaseController
     }
 
     /**
-     * 获取控制策略详细信息
+     * 新增应急车辆对应关联机构sd_emergency_org
      */
     @GetMapping("/getOrg")
-    public AjaxResult getOrg(){
-        List<SdEmergencyOrg> list=sdEmergencyVehicleService.getOrg();
-        return AjaxResult.success(list);
+    public List<Map<String, Object>> getOrg(){
+        List<Map<String, Object>> list=sdEmergencyVehicleService.getOrg();
+        return list;
     }
 }

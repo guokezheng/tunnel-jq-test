@@ -44,7 +44,6 @@ public class SdReservePlanController extends BaseController {
      * 查询预案信息列表
      */
     @GetMapping("/list")
-    @ApiOperation("查询预案信息列表")
     public TableDataInfo<List<SysRole>> list(SdReservePlan sdReservePlan) {
         startPage();
         List<SdReservePlan> list = sdReservePlanService.selectSdReservePlanList(sdReservePlan);
@@ -220,7 +219,6 @@ public class SdReservePlanController extends BaseController {
      * @return
      */
     @GetMapping("/getListBySId")
-    @ApiOperation("根据分区id查询预案")
     public Result selectPlanBySid(SdReservePlan sdReservePlan) {
         return Result.success(sdReservePlanService.selectSdReservePlanBySubareaId(sdReservePlan));
     }

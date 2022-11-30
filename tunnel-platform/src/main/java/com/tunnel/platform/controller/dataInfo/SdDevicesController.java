@@ -60,7 +60,6 @@ public class SdDevicesController extends BaseController {
      * 查询设备列表
      */
     @GetMapping("/list")
-    @ApiOperation("查询设备列表")
     public TableDataInfo<List<SdDevices>> list(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
             String deptId = SecurityUtils.getDeptId();
@@ -95,7 +94,6 @@ public class SdDevicesController extends BaseController {
      * 查询传感器设备列表
      */
     @GetMapping("/sensorList")
-    @ApiOperation("查询传感器设备列表")
     public Result<List<SdDevices>> sensorList(SdDevices sdDevices) {
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
         return Result.success(list);
@@ -139,7 +137,6 @@ public class SdDevicesController extends BaseController {
      * 查询设备列表+情报板
      */
     @GetMapping("/alllist")
-    @ApiOperation("查询设备列表+情报板")
     public TableDataInfo<List<SdDevices>> qbblist(SdDevices sdDevices) {
         startPage();
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -348,7 +345,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 生成查询指令
      */
-    //  @ApiOperation("生成查询指令")
+    @ApiOperation("生成查询指令")
     @PostMapping(value = "/createInstruction")
     public Map createInstruction(@RequestBody SdDevices sdDevices) {
         Map<String, String> map = new HashMap<>();
@@ -364,7 +361,7 @@ public class SdDevicesController extends BaseController {
     /**
      * 校验指令
      */
-    //  @ApiOperation("校验指令")
+    // @ApiOperation("校验指令")
     @GetMapping("/checkInstruction")
     public Map checkInstruction(SdDevices sdDevices) {
         Map<String, Object> map = new HashMap<>();
@@ -426,7 +423,6 @@ public class SdDevicesController extends BaseController {
      * 查询可控设备列表
      */
     @GetMapping("/isControl")
-    @ApiOperation("查询设备列表")
     public TableDataInfo<List<SdDevices>> isControlList(SdDevices sdDevices) {
         if (null == sdDevices.getDeptId() || "".equals(sdDevices.getDeptId())) {
             String deptId = SecurityUtils.getDeptId();

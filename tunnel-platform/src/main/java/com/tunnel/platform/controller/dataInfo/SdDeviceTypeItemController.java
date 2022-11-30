@@ -9,6 +9,8 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/eqType/item")
+@Api(tags = "设备类型数据项")
 public class SdDeviceTypeItemController extends BaseController
 {
     @Autowired
@@ -33,6 +36,7 @@ public class SdDeviceTypeItemController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eqType:item:list')")
     @GetMapping("/list")
+    @ApiOperation("查询设备类型数据项列表")
     public TableDataInfo list(SdDeviceTypeItem sdDeviceTypeItem)
     {
         startPage();
@@ -46,6 +50,7 @@ public class SdDeviceTypeItemController extends BaseController
     @PreAuthorize("@ss.hasPermi('eqType:item:export')")
     @Log(title = "设备类型数据项", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
+    @ApiOperation("导出设备类型数据项列表")
     public AjaxResult export(SdDeviceTypeItem sdDeviceTypeItem)
     {
         List<SdDeviceTypeItem> list = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
@@ -58,6 +63,7 @@ public class SdDeviceTypeItemController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('eqType:item:query')")
     @GetMapping(value = "/{id}")
+    @ApiOperation("获取设备类型数据项详细信息")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdDeviceTypeItemService.selectSdDeviceTypeItemById(id));
@@ -69,6 +75,7 @@ public class SdDeviceTypeItemController extends BaseController
     @PreAuthorize("@ss.hasPermi('eqType:item:add')")
     @Log(title = "设备类型数据项", businessType = BusinessType.INSERT)
     @PostMapping
+    @ApiOperation("新增设备类型数据项")
     public AjaxResult add(@RequestBody SdDeviceTypeItem sdDeviceTypeItem)
     {
         return toAjax(sdDeviceTypeItemService.insertSdDeviceTypeItem(sdDeviceTypeItem));
@@ -80,6 +87,7 @@ public class SdDeviceTypeItemController extends BaseController
     @PreAuthorize("@ss.hasPermi('eqType:item:edit')")
     @Log(title = "设备类型数据项", businessType = BusinessType.UPDATE)
     @PutMapping
+    @ApiOperation("设备类型数据项")
     public AjaxResult edit(@RequestBody SdDeviceTypeItem sdDeviceTypeItem)
     {
         return toAjax(sdDeviceTypeItemService.updateSdDeviceTypeItem(sdDeviceTypeItem));
@@ -91,6 +99,7 @@ public class SdDeviceTypeItemController extends BaseController
     @PreAuthorize("@ss.hasPermi('eqType:item:remove')")
     @Log(title = "设备类型数据项", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
+    @ApiOperation("删除设备类型数据项")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(sdDeviceTypeItemService.deleteSdDeviceTypeItemByIds(ids));

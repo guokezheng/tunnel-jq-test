@@ -8,7 +8,6 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
-import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
@@ -53,7 +52,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
-    @ApiOperation("查询隧道列表")
+    // @ApiOperation("查询隧道列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
@@ -72,7 +71,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 获取隧道详细信息
      */
-    @ApiOperation("获取选中隧道详细信息")
+    // @ApiOperation("获取选中隧道详细信息")
     @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class)
     @GetMapping(value = "/{tunnelId}")
     public Result<SdTunnels> getInfo(@PathVariable("tunnelId") String tunnelId)
@@ -133,7 +132,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
-    @ApiOperation("查询隧道分区列表")
+    // @ApiOperation("查询隧道分区列表")
     @GetMapping("/sublist")
     public TableDataInfo<List<SdTunnels>> sublist(SdTunnels sdTunnels)
     {

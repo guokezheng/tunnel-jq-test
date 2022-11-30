@@ -1,6 +1,5 @@
 package com.tunnel.platform.controller.event;
 
-import com.google.gson.JsonObject;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -51,7 +50,6 @@ public class SdEventController extends BaseController
      * 查询事件管理列表
      */
     @GetMapping("/list")
-    @ApiOperation("查询事件管理列表")
     public TableDataInfo<List<SysRole>> list(SdEvent sdEvent)
     {
         startPage();
@@ -62,7 +60,6 @@ public class SdEventController extends BaseController
      * 大屏查询事件报警列表
      */
     @GetMapping("/bigscreenEventList")
-    @ApiOperation("大屏查询事件报警列表")
     public Result bigscreenEventList(SdEvent sdEvent)
     {
         List<SdEvent> list = sdEventService.selectSdEventList(sdEvent);

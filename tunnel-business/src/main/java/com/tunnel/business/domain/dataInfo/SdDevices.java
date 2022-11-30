@@ -325,6 +325,32 @@ public class SdDevices extends BaseEntity {
      * */
     private String roadId;
 
+    /**
+     * 设备唯一标识码
+     * */
+    private String sn;
+
+    /**
+     * 外部设备ID
+     **/
+    private String externalDeviceId;
+
+    public String getExternalDeviceId() {
+        return externalDeviceId;
+    }
+
+    public void setExternalDeviceId(String externalDeviceId) {
+        this.externalDeviceId = externalDeviceId;
+    }
+
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+
     public String getRoadId() {
         return roadId;
     }
@@ -374,10 +400,6 @@ public class SdDevices extends BaseEntity {
     public void setLxNum(final Integer lxNum) {
         this.lxNum = lxNum;
     }
-
-    //控制状态
-    @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
-    private String controlStatus;
 
     public void setProtocolId(String protocolId) {
         this.protocolId = protocolId;

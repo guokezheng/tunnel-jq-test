@@ -346,6 +346,19 @@ public class SdDevices extends BaseEntity {
      **/
     private Integer lxNum;
 
+    /**
+     * 运行状态
+     **/
+    private String runStatus;
+
+    public String getRunStatus() {
+        return this.runStatus;
+    }
+
+    public void setRunStatus(final String runStatus) {
+        this.runStatus = runStatus;
+    }
+
     public Integer getZxNum() {
         return this.zxNum;
     }

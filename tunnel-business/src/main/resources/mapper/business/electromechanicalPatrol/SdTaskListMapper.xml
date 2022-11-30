@@ -143,6 +143,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deptId != null and deptId != ''">
                 AND (dept_id = #{deptId} OR dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
+            AND dept_id like 'YG1%'
         </where>
     </select>
 

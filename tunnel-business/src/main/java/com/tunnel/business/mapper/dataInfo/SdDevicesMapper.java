@@ -251,4 +251,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	List<SdDevices> getAppDevicesInfo(String eqId);
+
+	/**
+	 * app端查询设备状态
+	 * @param eqId
+	 * @return
+	 */
+    List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
 }

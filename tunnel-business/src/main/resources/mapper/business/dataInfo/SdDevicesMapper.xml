@@ -766,4 +766,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+
+
+    <select id="getAppDevicesStatus" parameterType="SdDevices" resultMap="SdDevicesResult">
+        SELECT t.eq_id,i.item_name,i.item_code,d.data,s.state_name runStatus,e.state_name eqStatus
+        FROM `sd_device_type_item` i
+        left join sd_device_data d on i.id = d.item_id
+        left join sd_devices t on t.eq_id = d.device_id
+        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '2'
+        left join sd_equipment_state e on e.state_type_id = i.device_type_id and e.device_state = d.data and e.state_type = '1'
+        where 1=1
+        and t.eq_id = #{eqId}
+    </select>
+
 </mapper>

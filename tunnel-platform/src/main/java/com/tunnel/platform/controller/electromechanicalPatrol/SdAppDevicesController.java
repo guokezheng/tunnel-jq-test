@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,11 +61,23 @@ public class SdAppDevicesController extends BaseController
         return Result.success(map);
     }
 
+    /**
+     * app端获取设备信息
+     * @param eqId
+     * @return
+     */
     @PostMapping("/app/getAppDevicesInfo")
     public Result getAppDevicesInfo(String eqId){
-
+        Map<String,Object>map = new HashMap<>();
         List<SdDevices> eqList = devicesService.getAppDevicesInfo(eqId);
+        List<SdDevices> statusList = devicesService.getAppDevicesStatus(eqId);
+        if(statusList!=null&&statusList.size()>0){
+            eqList.get(0).setEqStatus(statusList.get(0).getEqStatus());
+            eqList.get(0).setRunStatus(statusList.get(0).getRunStatus());
+        }
         return Result.success(eqList);
     }
+
+
 
 }

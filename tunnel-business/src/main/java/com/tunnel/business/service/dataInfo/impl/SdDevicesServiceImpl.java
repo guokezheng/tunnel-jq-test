@@ -801,4 +801,14 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> getAppDevicesInfo(String eqId) {
         return sdDevicesMapper.getAppDevicesInfo(eqId);
     }
+
+    /**
+     * app端查询设备状态
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getAppDevicesStatus(String eqId) {
+       return  sdDevicesMapper.getAppDevicesStatus(eqId);
+    }
 }

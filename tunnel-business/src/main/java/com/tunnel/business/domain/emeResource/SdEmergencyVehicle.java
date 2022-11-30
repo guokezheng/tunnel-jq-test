@@ -20,7 +20,7 @@ public class SdEmergencyVehicle extends BaseEntity
 
     /** 应急机构id */
     @Excel(name = "应急机构id")
-    private Long orgId;
+    private String orgId;
 
     //机构名
     private String orgName;
@@ -161,12 +161,12 @@ public class SdEmergencyVehicle extends BaseEntity
     {
         return id;
     }
-    public void setOrgId(Long orgId) 
+    public void setOrgId(String orgId)
     {
         this.orgId = orgId;
     }
 
-    public Long getOrgId() 
+    public String getOrgId()
     {
         return orgId;
     }

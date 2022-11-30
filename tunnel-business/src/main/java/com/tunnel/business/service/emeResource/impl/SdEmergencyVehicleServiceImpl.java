@@ -183,7 +183,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
         for(int i = 0; i < objects.size(); i++){
             SdEmergencyVehicle sdEmergencyVehicle = new SdEmergencyVehicle();
             JSONObject object = JSONObject.parseObject(objects.get(i).toString());
-            sdEmergencyVehicle.setOrgId(Long.valueOf(object.getString("deptId")));
+            sdEmergencyVehicle.setOrgId(object.getString("deptId"));
             sdEmergencyVehicle.setPlateNumber(object.getString("carNum"));
             sdEmergencyVehicle.setvType(object.getString("ptypeName"));
             sdEmergencyVehicle.setvPlace(object.getString("locationName"));
@@ -251,7 +251,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             String data = JSONObject.parseObject(exchange.getBody()).getString("data");
             JSONObject object = JSONObject.parseObject(data);
 
-            sdEmergencyVehicle.setOrgId(object.getLong("deptId"));
+            sdEmergencyVehicle.setOrgId(object.getString("deptId"));
             sdEmergencyVehicle.setOwnerName(object.getString("ownerName"));
             sdEmergencyVehicle.setvPlace(object.getString("locationName"));
             sdEmergencyVehicle.setPlateNumber(object.getString("carNum"));

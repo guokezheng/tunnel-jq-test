@@ -229,22 +229,8 @@
       :before-close="cancel"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="106px">
-        <el-form-item label="机构" prop="orgId" v-show="model">
-          <!-- <el-input v-model="form.orgId" placeholder="请输入机构名称" /> -->
-          <el-select
-            v-model="form.orgId"
-            placeholder="请选择机构"
-            clearable
-            style="width: 100%"
-            :disabled="disabled"
-          >
-            <el-option
-              v-for="item in orgData"
-              :key="item.orgId"
-              :label="item.orgName"
-              :value="item.orgId"
-            />
-          </el-select>
+        <el-form-item label="机构" prop="orgName" v-show="model">
+          <el-input v-model="form.orgName" placeholder="请输入机构名称" />
         </el-form-item>
         <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
           <el-input v-model="form.plateNumber" placeholder="请输入车牌" :disabled="disabled"/>

@@ -243,7 +243,7 @@
     />
 
     <!-- 添加或修改隧道对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-row>
           <el-col :span="12">
@@ -368,7 +368,14 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属部门" prop="deptId">
-              <el-select
+              <treeselect
+                v-model="form.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+              />
+
+              <!--<el-select
                 v-model="form.deptId"
                 placeholder="请选择所属部门"
                 clearable
@@ -381,7 +388,7 @@
                   :label="item.deptName"
                   :value="item.deptId"
                 />
-              </el-select>
+              </el-select>-->
             </el-form-item>
           </el-col>
 
@@ -433,11 +440,15 @@ import {
   addTunnels,
   updateTunnels,
 } from "@/api/equipment/tunnel/api.js";
-import { listDept } from "@/api/system/dept";
+import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
 
 export default {
   name: "Tunnels",
+  components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
       var longreg =
@@ -539,9 +550,12 @@ export default {
       // selectedTunnel:{},
       // 隧道列表
       tunnelData: [],
+      // 部门树选项
+      deptOptions: undefined,
     };
   },
   created() {
+    this.getTreeselect();
     // this.getList();
     this.getTunnel();
     this.getDicts("sys_tunnel_use").then((response) => {
@@ -561,6 +575,12 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
     setPileInt(param){
       if(param=='start'){
         let startPile = this.form.startPile;

@@ -87,7 +87,18 @@
         </el-select>
       </el-form-item>
       <el-form-item label="管理机构" prop="deptId">
-        <el-select
+        <treeselect
+          v-model="queryParams.deptId"
+          :options="deptOptions"
+          :show-count="true"
+          placeholder="请选择归属部门"
+          @select="changeMechanism"
+          style="width: 300px"
+
+        />
+
+
+        <!--<el-select
           v-model="queryParams.deptId"
           placeholder="请选择管理机构"
           clearable
@@ -101,7 +112,7 @@
             :value="item.deptId"
             @click.native="changeMechanism(item.deptId)"
           />
-        </el-select>
+        </el-select>-->
       </el-form-item>
       <el-form-item label="所属隧道" prop="tunnelId">
         <el-select
@@ -152,10 +163,12 @@
 
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
+        >搜索
+        </el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
+        >重置
+        </el-button
         >
       </el-form-item>
     </el-form>
@@ -202,10 +215,12 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
+        >搜索
+        </el-button
         >
         <el-button type="primary" plain size="mini" @click="resetQuery"
-          >重置</el-button
+        >重置
+        </el-button
         >
         <el-button
           type="primary"
@@ -213,7 +228,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:list:add']"
-          >新增</el-button
+        >新增
+        </el-button
         >
         <el-button
           type="primary"
@@ -222,7 +238,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['system:list:edit']"
-          >修改</el-button
+        >修改
+        </el-button
         >
         <el-button
           type="primary"
@@ -231,7 +248,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:list:remove']"
-          >删除</el-button
+        >删除
+        </el-button
         >
         <el-button
           type="primary"
@@ -240,7 +258,8 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['system:list:export']"
-          >导出</el-button
+        >导出
+        </el-button
         >
       </el-form-item>
     </el-form>
@@ -269,7 +288,7 @@
           <span>{{ getDirection(scope.row.direction) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="桩号" align="center" prop="stakeNum" />
+      <el-table-column label="桩号" align="center" prop="stakeNum"/>
       <el-table-column
         label="车道号"
         align="center"
@@ -283,7 +302,7 @@
         prop="eventType.eventType"
       />
       <!-- <el-table-column label="级别" align="center" prop="eventGrade" /> -->
-      <el-table-column label="事件标题" align="center" prop="eventTitle" />
+      <el-table-column label="事件标题" align="center" prop="eventTitle"/>
       <!-- <el-table-column
         label="事件描述"
         align="center"
@@ -312,20 +331,20 @@
       <el-table-column label="事件状态" align="center" prop="eventState">
         <template slot-scope="scope">
           <span v-show="scope.row.eventState == 0" style="color: #00aa00"
-            ><i class="el-icon-info" style="color: #00aa00;!important"></i
-            >&nbsp;处理中</span
+          ><i class="el-icon-info" style="color: #00aa00;!important"></i
+          >&nbsp;处理中</span
           >
           <span v-show="scope.row.eventState == 1" style="color: #00aa00"
-            ><i class="el-icon-success" style="color: #00aa00;!important"></i
-            >&nbsp;已处理</span
+          ><i class="el-icon-success" style="color: #00aa00;!important"></i
+          >&nbsp;已处理</span
           >
           <span v-show="scope.row.eventState == 2" style="color: #00aa00"
-            ><i class="el-icon-success" style="color: #00aa00;!important"></i
-            >&nbsp;已忽略</span
+          ><i class="el-icon-success" style="color: #00aa00;!important"></i
+          >&nbsp;已忽略</span
           >
           <span v-show="scope.row.eventState == 3" style="color: #ff0000"
-            ><i class="el-icon-info" style="color: #ff0000;!important"></i
-            >&nbsp;未处理</span
+          ><i class="el-icon-info" style="color: #ff0000;!important"></i
+          >&nbsp;未处理</span
           >
         </template>
       </el-table-column>
@@ -357,7 +376,8 @@
             class="tableBlueButtton"
             @click="changeState(scope.row, 2)"
             v-hasPermi="['system:event:edit']"
-            >忽略</el-button
+          >忽略
+          </el-button
           >
           <!-- <el-button
             v-show="scope.row.eventState == 0"
@@ -373,7 +393,7 @@
             class="tableBlueButtton"
             v-hasPermi="['system:event:remove']"
             @click="handleDetails(scope.row)"
-            >查看详情
+          >查看详情
           </el-button>
           <!-- </router-link> -->
           <el-button
@@ -385,7 +405,7 @@
             class="tableBlueButtton"
             v-hasPermi="['system:event:remove']"
             @click="handleDispatch(scope.row)"
-            >应急调度
+          >应急调度
           </el-button>
           <!-- <el-button
             size="mini"
@@ -405,8 +425,8 @@
       max-height="600"
       v-show="searchValue == '2'"
     >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="故障类型" align="center" prop="faultType" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="故障类型" align="center" prop="faultType"/>
       <el-table-column
         label="发现时间"
         align="center"
@@ -417,16 +437,16 @@
           <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="持续时间" align="center" prop="faultCxtime" />
-      <el-table-column label="设备id" align="center" prop="eqId" />
-      <el-table-column label="设备状态" align="center" prop="eqStatus" />
-      <el-table-column label="故障等级" align="center" prop="faultLevel" />
+      <el-table-column label="持续时间" align="center" prop="faultCxtime"/>
+      <el-table-column label="设备id" align="center" prop="eqId"/>
+      <el-table-column label="设备状态" align="center" prop="eqStatus"/>
+      <el-table-column label="故障等级" align="center" prop="faultLevel"/>
       <el-table-column
         label="消除状态"
         align="center"
         prop="falltRemoveStatue"
       />
-      <el-table-column label="状态" align="center" prop="faultStatus" />
+      <el-table-column label="状态" align="center" prop="faultStatus"/>
       <el-table-column
         label="操作"
         align="center"
@@ -438,14 +458,16 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
-            >修改</el-button
+          >修改
+          </el-button
           >
           <el-button
             size="mini"
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
-            >删除</el-button
+          >删除
+          </el-button
           >
         </template>
       </el-table-column>
@@ -929,551 +951,584 @@
 </template>
 
 <script>
-import {
-  listEvent,
-  getEvent,
-  delEvent,
-  addEvent,
-  updateEvent,
-  toll,
-  getTunnelList,
-} from "@/api/event/event";
-import { listList } from "@/api/electromechanicalPatrol/faultManage/fault";
-import { listEventType, getTodayEventCount } from "@/api/event/eventType";
-import { listPlan } from "@/api/event/reservePlan";
-import { listTunnels } from "@/api/equipment/tunnel/api";
-import { image, video } from "@/api/eventDialog/api.js";
-import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
-export default {
-  name: "Event",
-  dicts: ["sd_direction"],
-  data() {
-    return {
-      dialogEventList: [],
-      eventMsg: {
-        allnum: 0,
-        process: 0,
-        bl: 0,
-      },
-      urls: [
-        { imgUrl: require("@/assets/image/nodata.png") },
-        { imgUrl: require("@/assets/image/nodata.png") },
-      ],
+  import {
+    listEvent,
+    getEvent,
+    delEvent,
+    addEvent,
+    updateEvent,
+    toll,
+    getTunnelList,
+  } from "@/api/event/event";
+  import {listList} from "@/api/electromechanicalPatrol/faultManage/fault";
+  import {listEventType, getTodayEventCount} from "@/api/event/eventType";
+  import {listPlan} from "@/api/event/reservePlan";
+  import {listTunnels} from "@/api/equipment/tunnel/api";
+  import {image, video} from "@/api/eventDialog/api.js";
+  import {listEventFlow, getListBySId} from "@/api/event/eventFlow";
+  import {treeselect, treeselectExcYG1} from "@/api/system/dept";
+  import Treeselect from "@riophae/vue-treeselect";
+  import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
-      videoUrl: "",
-      // 管理机构
-      mechanism: [],
-      // 所属隧道
-      tunnelList: [],
-      // 遮罩层
-      loading: true,
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      //事件类型
-      eventTypeData: {},
-      // 总条数
-      total: 0,
-      // 事件管理表格数据
-      eventList: [
-        {
-          tunnels: {
-            tunnelName: "",
+
+  export default {
+    name: "Event",
+    dicts: ["sd_direction"],
+    components: {Treeselect},
+    data() {
+      return {
+        dialogEventList: [],
+        eventMsg: {
+          allnum: 0,
+          process: 0,
+          bl: 0,
+        },
+        urls: [
+          {imgUrl: require("@/assets/image/nodata.png")},
+          {imgUrl: require("@/assets/image/nodata.png")},
+        ],
+
+        videoUrl: "",
+        // 管理机构
+        mechanism: [],
+        // 所属隧道
+        tunnelList: [],
+        // 遮罩层
+        loading: true,
+        // 非单个禁用
+        single: true,
+        // 非多个禁用
+        multiple: true,
+        // 显示搜索条件
+        showSearch: true,
+        //事件类型
+        eventTypeData: {},
+        // 总条数
+        total: 0,
+        // 事件管理表格数据
+        eventList: [
+          {
+            tunnels: {
+              tunnelName: "",
+            },
+          },
+        ],
+        //
+        searchValue: "1",
+        // 弹出层标题
+        title: "",
+        // 状态字典
+        eventStateOptions: [],
+        // 级别 字典
+        eventGradeOptions: [],
+        // 查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          tunnelId: null,
+          eventTypeId: null,
+          eventTitle: null,
+          eventTime: null,
+          eventState: null,
+          eventGrade: null,
+          eventLocation: null,
+          eventDeath: null,
+          eventInjured: null,
+          eventDescription: null,
+          startTime: null,
+          endTime: null,
+          deptId: null,
+          searchValue: null,
+          searchValue: 1,
+        },
+        allmsg: "",
+        process: "",
+        proportion: "",
+        // 表单参数
+        form: {},
+        eqTunnelData: {},
+        // 表单校验
+        rules: {
+          /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
+          eventTitle: [
+            {required: true, message: "请输入事件标题", trigger: "blur"},
+          ],
+          eventTypeId: [
+            {required: true, message: "请选择事件类型", trigger: "change"},
+          ],
+          eventGrade: [
+            {required: true, message: "请选择事件级别", trigger: "change"},
+          ],
+          eventLocation: [
+            {required: true, message: "请输入位置", trigger: "blur"},
+          ],
+          eventDescription: [
+            {required: true, message: "请输入内容", trigger: "blur"},
+          ],
+        },
+        // 日期范围
+        dateRange: [],
+        open: false,
+        details: false,
+        submitEventFormLoading: false,
+        direction: "rtl",
+        eventForm: {
+          eventType: {
+            eventType: "",
           },
         },
-      ],
-      //
-      searchValue: "1",
-      // 弹出层标题
-      title: "",
-      // 状态字典
-      eventStateOptions: [],
-      // 级别 字典
-      eventGradeOptions: [],
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        tunnelId: null,
-        eventTypeId: null,
-        eventTitle: null,
-        eventTime: null,
-        eventState: null,
-        eventGrade: null,
-        eventLocation: null,
-        eventDeath: null,
-        eventInjured: null,
-        eventDescription: null,
-        startTime: null,
-        endTime: null,
-        deptId: null,
-        searchValue: null,
-        searchValue: 1,
-      },
-      allmsg: "",
-      process: "",
-      proportion: "",
-      // 表单参数
-      form: {},
-      eqTunnelData: {},
-      // 表单校验
-      rules: {
-        /*  tunnelId: [{required: true, message: '请选择隧道名称', trigger: 'blur'}], */
-        eventTitle: [
-          { required: true, message: "请输入事件标题", trigger: "blur" },
-        ],
-        eventTypeId: [
-          { required: true, message: "请选择事件类型", trigger: "change" },
-        ],
-        eventGrade: [
-          { required: true, message: "请选择事件级别", trigger: "change" },
-        ],
-        eventLocation: [
-          { required: true, message: "请输入位置", trigger: "blur" },
-        ],
-        eventDescription: [
-          { required: true, message: "请输入内容", trigger: "blur" },
-        ],
-      },
-      // 日期范围
-      dateRange: [],
-      open: false,
-      details: false,
-      submitEventFormLoading: false,
-      direction: "rtl",
-      eventForm: {
-        eventType: {
-          eventType: "",
-        },
-      },
-      // 遮罩层
-      dloading: false,
-    };
-  },
-  async created() {
-    await this.getDicts("sd_direction").then((data) => {
-      console.log(data, "方向");
-      this.directionList = data.data;
-    });
-    await this.getList();
-    await this.getEventMsg();
+        // 遮罩层
+        dloading: false,
+        // 部门树选项
+        deptOptions: undefined,
+      };
+    },
+    async created() {
+      this.getTreeselect();
 
-    this.getEventType();
-    this.getTunnel();
-    this.getDicts("sd_event_state").then((response) => {
-      this.eventStateOptions = response.data;
-    });
-    this.getDicts("sd_incident_level").then((response) => {
-      console.log(response.data, "response.data事件级别");
-      this.eventGradeOptions = response.data;
-    });
-    // 管理机构
-    toll().then((res) => {
-      console.log(res);
-      this.mechanism = res.data;
-    });
-  },
-  methods: {
-    // 切换按钮
-    qiehuan(inx) {
-      this.queryParams.eventTypeId = "";
-      this.queryParams.searchValue = inx;
-      this.searchValue = inx;
+      await this.getDicts("sd_direction").then((data) => {
+        console.log(data, "方向");
+        this.directionList = data.data;
+      });
+      await this.getList();
+      await this.getEventMsg();
+
       this.getEventType();
-      this.getList();
-    },
-    accidentInit(eventId) {
-      var eventId = { eventId: eventId };
-      listEventFlow(eventId).then((result) => {
-        this.dialogEventList = result.rows;
-        console.log(this.dialogEventList);
+      this.getTunnel();
+      this.getDicts("sd_event_state").then((response) => {
+        this.eventStateOptions = response.data;
+      });
+      this.getDicts("sd_incident_level").then((response) => {
+        console.log(response.data, "response.data事件级别");
+        this.eventGradeOptions = response.data;
+      });
+      // 管理机构
+      toll().then((res) => {
+        console.log(res);
+        this.mechanism = res.data;
       });
     },
-    changeState(row, state) {
-      this.$confirm("是否确认忽略此事件！", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        row.eventState = state;
-        return updateEvent(row);
-      });
-    },
-    getEventMsg() {
-      // 获取事件预警信息
-      getTodayEventCount().then((result) => {
-        console.log(result, "11111111111111");
-        this.eventMsg = result.data;
-        this.$forceUpdate();
-      });
-    },
-    //获取图片视频
-    getUrl(id) {
-      const param3 = {
-        businessId: id,
-      };
-      const param4 = {
-        id: id,
-      };
-      image(param3).then((response) => {
-        console.log(response.data.length);
-        if (response.data.length >= 1) {
-          this.urls = response.data;
-        }
-      });
-      video(param4).then((response) => {
-        console.log(response.data, "视频信息");
-        this.videoUrl = response.data.videoUrl;
-      });
-    },
-    // 查询方向
-    getDirection(num) {
-      for (var item of this.directionList) {
-        if (item.dictValue == num) {
-          return item.dictLabel;
-        }
-      }
-    },
-
-    // 根据管理机构筛选所属隧道
-    changeMechanism(deptId) {
-      this.queryParams.tunnelId = null;
-      const param = {
-        deptId: deptId,
-      };
-      getTunnelList(param).then((res) => {
-        console.log(res, "根据管理机构筛选所属隧道");
-        this.tunnelList = res.data;
-      });
-    },
-
-    /** 查询事件管理列表 */
-    getList() {
-      this.loading = true;
-      if (this.searchValue == "2") {
-        listList(this.queryParams).then((response) => {
-          this.eventList = response.rows;
-          this.total = response.total;
-          this.loading = false;
+    methods: {
+      getTreeselect() {
+        treeselectExcYG1().then((response) => {
+          this.deptOptions = response.data;
+          console.log(this.deptOptions);
         });
-      } else {
-        if (!this.dateRange) {
-          this.dateRange = [];
-        }
-        this.queryParams.startTime = this.dateRange[0];
-        this.queryParams.endTime = this.dateRange[1];
-        this.queryParams.searchValue = this.searchValue;
-        console.log(this.queryParams, this.addDateRange(this.queryParams));
-        listEvent(this.addDateRange(this.queryParams)).then((response) => {
-          console.log(response.rows, "查询事件管理列表");
-          this.eventList = response.rows;
-          this.$nextTick(() => {
-            this.$refs.tableRef.doLayout();
-          });
-          this.total = response.total;
-          this.loading = false;
+      },
+      // 切换按钮
+      qiehuan(inx) {
+        this.queryParams.eventTypeId = "";
+        this.queryParams.searchValue = inx;
+        this.searchValue = inx;
+        this.getEventType();
+        this.getList();
+      },
+      accidentInit(eventId) {
+        var eventId = {eventId: eventId};
+        listEventFlow(eventId).then((result) => {
+          this.dialogEventList = result.rows;
+          console.log(this.dialogEventList);
         });
-      }
-    },
-    // getList() {
-    //   this.loading = true;
-    //   if(!this.dateRange){
-    //     this.dateRange = []
-    //   }
-    //   this.queryParams.startTime = this.dateRange[0];
-    //   this.queryParams.endTime = this.dateRange[1];
-    //   listEvent(this.addDateRange(this.queryParams)).then((response) => {
-    //     console.log(response.rows, "查询事件管理列表");
-    //     this.eventList = response.rows;
-    //     this.$nextTick(() => {
-    //       this.$refs.tableRef.doLayout();
-    //     });
-    //     this.total = response.total;
-    //     this.loading = false;
-    //   });
-    // },
-    /** 所属隧道 */
-    getTunnel() {
-      if (!this.queryParams.deptId) {
-        listTunnels().then((response) => {
-          console.log(response.rows, "所属隧道");
-          this.tunnelList = response.rows;
-        });
-      }
-    },
-    /** 查询事件类型列表 */
-    getEventType() {
-      let prevControlType = { prevControlType: this.searchValue };
-      listEventType(prevControlType).then((response) => {
-        console.log(response, "responseresponse");
-        this.eventTypeData = response.rows;
-      });
-    },
-    // 状态字典翻译
-    eventStateFormat(row, column) {
-      return this.selectDictLabel(this.eventStateOptions, row.eventState);
-    },
-    // 级别 字典翻译
-    eventGradeFormat(row, column) {
-      return this.selectDictLabel(this.eventGradeOptions, row.eventGrade);
-    },
-    /** 已解决按钮操作 */
-    handleOk(row) {
-      // const ids = row.id || this.ids;
-      this.$confirm("是否确认此事件已解决！", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(function () {
-          row.eventState = "1";
+      },
+      changeState(row, state) {
+        this.$confirm("是否确认忽略此事件！", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(function () {
+          row.eventState = state;
           return updateEvent(row);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("解决成功");
-        })
-        .catch(function () {});
-    },
-    /** 进入应急指挥大屏 */
-    loadBigScreen(row) {
-      alert("正在研发中...");
-    },
-    handleDetails(row) {
-      this.details = true;
-      this.title = "事件详情";
-      this.eventForm = row;
-      this.accidentInit(row.id);
-      this.getUrl(row.id);
-      console.log(row, "事件详情row");
-    },
-    handleDispatch(row) {
-      console.log(row);
-      this.$router.push({
-        path: "/emergency/administration/dispatch",
-        query: {
-          id: row.id,
-          tunnelId: row.tunnelId,
-          stakeNum: row.stakeNum,
-          direction: row.direction,
-        },
-      });
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        tunnelId: null,
-        eventTypeId: null,
-        eventTitle: null,
-        eventTime: null,
-        eventState: null,
-        eventGrade: "0",
-        eventLocation: null,
-        eventDeath: null,
-        eventInjured: null,
-        eventDescription: null,
-        reservePlanId: null,
-        flowId: null,
-        warningId: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null,
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.queryParams = { pageNum: 1, pageSize: 10 };
-      this.dateRange = [];
-      this.tunnelList = [];
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.open = true;
-      this.title = "新增事件";
-    },
-    //关闭drawer
-    handleClose(done) {
-      this.$confirm("确认关闭？")
-        .then((_) => {
-          done();
-        })
-        .catch((_) => {});
-    },
-    /** 提交按钮 */
-    submitEventForm() {
-      this.dloading = true;
-      if (this.submitEventFormLoading) return;
-      this.submitEventFormLoading = true;
-      this.$refs["form1"].validate(async (valid) => {
-        if (valid) {
-          await addEvent(this.eventForm).then((response) => {
-            if (response.code === 200) {
-              this.$modal.msgSuccess("新增成功");
-              setTimeout(() => {
-                this.resetEvent();
-                this.dloading = false;
-                this.open = false;
-              }, 400);
-              this.getList();
-            }
+        });
+      },
+      getEventMsg() {
+        // 获取事件预警信息
+        getTodayEventCount().then((result) => {
+          console.log(result, "11111111111111");
+          this.eventMsg = result.data;
+          this.$forceUpdate();
+        });
+      },
+      //获取图片视频
+      getUrl(id) {
+        const param3 = {
+          businessId: id,
+        };
+        const param4 = {
+          id: id,
+        };
+        image(param3).then((response) => {
+          console.log(response.data.length);
+          if (response.data.length >= 1) {
+            this.urls = response.data;
+          }
+        });
+        video(param4).then((response) => {
+          console.log(response.data, "视频信息");
+          this.videoUrl = response.data.videoUrl;
+        });
+      },
+      // 查询方向
+      getDirection(num) {
+        for (var item of this.directionList) {
+          if (item.dictValue == num) {
+            return item.dictLabel;
+          }
+        }
+      },
+
+      // 根据管理机构筛选所属隧道
+      changeMechanism(item) {
+        this.queryParams.tunnelId = null;
+        const param = {
+          deptId: item.id,
+        };
+        getTunnelList(param).then((res) => {
+          console.log(res, "根据管理机构筛选所属隧道");
+          this.tunnelList = res.data;
+        });
+      },
+      /** 查询事件管理列表 */
+      getList() {
+        this.loading = true;
+        if (this.searchValue == "2") {
+          listList(this.queryParams).then((response) => {
+            this.eventList = response.rows;
+            this.total = response.total;
+            this.loading = false;
+          });
+        } else {
+          if (!this.dateRange) {
+            this.dateRange = [];
+          }
+          this.queryParams.startTime = this.dateRange[0];
+          this.queryParams.endTime = this.dateRange[1];
+          this.queryParams.searchValue = this.searchValue;
+          console.log(this.queryParams, this.addDateRange(this.queryParams));
+          listEvent(this.addDateRange(this.queryParams)).then((response) => {
+            console.log(response.rows, "查询事件管理列表");
+            this.eventList = response.rows;
+            this.$nextTick(() => {
+              this.$refs.tableRef.doLayout();
+            });
+            this.total = response.total;
+            this.loading = false;
           });
         }
-        this.submitEventFormLoading = false;
-      });
+      },
+      // getList() {
+      //   this.loading = true;
+      //   if(!this.dateRange){
+      //     this.dateRange = []
+      //   }
+      //   this.queryParams.startTime = this.dateRange[0];
+      //   this.queryParams.endTime = this.dateRange[1];
+      //   listEvent(this.addDateRange(this.queryParams)).then((response) => {
+      //     console.log(response.rows, "查询事件管理列表");
+      //     this.eventList = response.rows;
+      //     this.$nextTick(() => {
+      //       this.$refs.tableRef.doLayout();
+      //     });
+      //     this.total = response.total;
+      //     this.loading = false;
+      //   });
+      // },
+      /** 所属隧道 */
+      getTunnel() {
+        if (!this.queryParams.deptId) {
+          listTunnels().then((response) => {
+            console.log(response.rows, "所属隧道");
+            this.tunnelList = response.rows;
+          });
+        }
+      },
+      /** 查询事件类型列表 */
+      getEventType() {
+        let prevControlType = {prevControlType: this.searchValue};
+        listEventType(prevControlType).then((response) => {
+          console.log(response, "responseresponse");
+          this.eventTypeData = response.rows;
+        });
+      },
+      // 状态字典翻译
+      eventStateFormat(row, column) {
+        return this.selectDictLabel(this.eventStateOptions, row.eventState);
+      },
+      // 级别 字典翻译
+      eventGradeFormat(row, column) {
+        return this.selectDictLabel(this.eventGradeOptions, row.eventGrade);
+      },
+      /** 已解决按钮操作 */
+      handleOk(row) {
+        // const ids = row.id || this.ids;
+        this.$confirm("是否确认此事件已解决！", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(function () {
+            row.eventState = "1";
+            return updateEvent(row);
+          })
+          .then(() => {
+            this.getList();
+            this.$modal.msgSuccess("解决成功");
+          })
+          .catch(function () {
+          });
+      },
+      /** 进入应急指挥大屏 */
+      loadBigScreen(row) {
+        alert("正在研发中...");
+      },
+      handleDetails(row) {
+        this.details = true;
+        this.title = "事件详情";
+        this.eventForm = row;
+        this.accidentInit(row.id);
+        this.getUrl(row.id);
+        console.log(row, "事件详情row");
+      },
+      handleDispatch(row) {
+        console.log(row);
+        this.$router.push({
+          path: "/emergency/administration/dispatch",
+          query: {
+            id: row.id,
+            tunnelId: row.tunnelId,
+            stakeNum: row.stakeNum,
+            direction: row.direction,
+          },
+        });
+      },
+      // 表单重置
+      reset() {
+        this.form = {
+          id: null,
+          tunnelId: null,
+          eventTypeId: null,
+          eventTitle: null,
+          eventTime: null,
+          eventState: null,
+          eventGrade: "0",
+          eventLocation: null,
+          eventDeath: null,
+          eventInjured: null,
+          eventDescription: null,
+          reservePlanId: null,
+          flowId: null,
+          warningId: null,
+          createBy: null,
+          createTime: null,
+          updateBy: null,
+          updateTime: null,
+        };
+        this.resetForm("form");
+      },
+      /** 搜索按钮操作 */
+      handleQuery() {
+        this.queryParams.pageNum = 1;
+        this.getList();
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.queryParams = {pageNum: 1, pageSize: 10};
+        this.dateRange = [];
+        this.tunnelList = [];
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      /** 新增按钮操作 */
+      handleAdd() {
+        this.open = true;
+        this.title = "新增事件";
+      },
+      //关闭drawer
+      handleClose(done) {
+        this.$confirm("确认关闭？")
+          .then((_) => {
+            done();
+          })
+          .catch((_) => {
+          });
+      },
+      /** 提交按钮 */
+      submitEventForm() {
+        this.dloading = true;
+        if (this.submitEventFormLoading) return;
+        this.submitEventFormLoading = true;
+        this.$refs["form1"].validate(async (valid) => {
+          if (valid) {
+            await addEvent(this.eventForm).then((response) => {
+              if (response.code === 200) {
+                this.$modal.msgSuccess("新增成功");
+                setTimeout(() => {
+                  this.resetEvent();
+                  this.dloading = false;
+                  this.open = false;
+                }, 400);
+                this.getList();
+              }
+            });
+          }
+          this.submitEventFormLoading = false;
+        });
+      },
+      //关闭弹窗
+      eventFormClose() {
+        this.resetEvent();
+        this.open = false;
+      },
+      // 表单重置
+      resetEvent() {
+        this.$refs.form1.resetFields();
+        this.eventForm.eventTypeId = null;
+        this.eventForm.eventInjured = null;
+      },
+      // 取消按钮
+      cancel() {
+        this.open = false;
+        this.details = false;
+        this.reset();
+      },
+      // 表格的行样式
+      tableRowClassName({row, rowIndex}) {
+        if (rowIndex % 2 == 0) {
+          return "tableEvenRow";
+        } else {
+          return "tableOddRow";
+        }
+      },
     },
-    //关闭弹窗
-    eventFormClose() {
-      this.resetEvent();
-      this.open = false;
-    },
-    // 表单重置
-    resetEvent() {
-      this.$refs.form1.resetFields();
-      this.eventForm.eventTypeId = null;
-      this.eventForm.eventInjured = null;
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.details = false;
-      this.reset();
-    },
-    // 表格的行样式
-    tableRowClassName({ row, rowIndex }) {
-      if (rowIndex % 2 == 0) {
-        return "tableEvenRow";
-      } else {
-        return "tableOddRow";
-      }
-    },
-  },
-};
+  };
 </script>
 <style scoped lang="scss">
-.butBox {
-  width: 280px;
-  display: flex;
-  padding: 4px 4px;
-  background: #9ecced;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  // justify-content: space-between;
-  div {
-    padding: 6px 10px;
-    color: #fff;
-    letter-spacing: 1px;
-    cursor: pointer;
-  }
-  .xz {
-    background: #285b8d;
+  .butBox {
+    width: 280px;
+    display: flex;
+    padding: 4px 4px;
+    background: #9ecced;
     border-radius: 10px;
-  }
-}
-.addClass {
-  .el-select {
-    width: 250px;
-  }
-  .el-input {
-    width: 250px !important;
-  }
-  .el-date-editor.el-input,
-  .el-date-editor.el-input__inner {
-    width: 250px !important;
-  }
-}
-.circle {
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  display: inline-block;
-}
-.detailsText {
-  display: inline-block;
-  margin-left: 20px;
-  line-height: 40px;
-  width: 100px;
-}
-hr {
-  border: solid 1px #ddd;
-}
-.rowClass {
-  border-top: solid 1px #ddd;
-  border-bottom: solid 1px #ddd;
-  height: 40px;
-  margin-top: 10px;
-}
-.eventClass {
-  height: 30px;
-  border-right: solid 1px #ddd;
-  width: 100%;
-  text-align: center;
-  margin-top: 5px;
-  line-height: 30px;
-}
-.eventTitleClass {
-  height: 40px;
-  background-color: #eeeeee;
-  line-height: 40px;
-  text-align: center;
-}
-.video {
-  height: 300px;
-  border-radius: 0;
-  padding: 5px;
-  margin-top: 0;
-}
-.image3 {
-  padding: 5px;
-  height: 49%;
-  // border: solid 1px green;
-  width: 100%;
-}
-.card-box {
-  width: 30%;
-  text-align: center;
-  font-weight: bold;
-}
+    margin-bottom: 10px;
+    font-size: 14px;
+    // justify-content: space-between;
+    div {
+      padding: 6px 10px;
+      color: #fff;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
 
-.EquipStatistics {
-  width: 200px;
-  height: 40px;
-  background-image: url(../../../assets/cloudControl/shebeiWarning.png);
-  color: white;
-  text-align: center;
-  line-height: 40px;
-  font-weight: 400;
-  font-size: 16px;
-  margin-left: 14px;
-  > span {
-    font-size: 24px;
-    font-weight: 600;
-    vertical-align: middle;
+    .xz {
+      background: #285b8d;
+      border-radius: 10px;
+    }
   }
-}
-.warningStatistics {
-  line-height: 60px;
-  font-size: 14px;
-  // color: #606266;
-  font-weight: 700;
-}
-.eventTitle {
-  padding: 15px 0;
-  font-size: 18px;
-  font-weight: 400;
-  color: #303133;
-}
+
+  .addClass {
+    .el-select {
+      width: 250px;
+    }
+
+    .el-input {
+      width: 250px !important;
+    }
+
+    .el-date-editor.el-input,
+    .el-date-editor.el-input__inner {
+      width: 250px !important;
+    }
+  }
+
+  .circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    display: inline-block;
+  }
+
+  .detailsText {
+    display: inline-block;
+    margin-left: 20px;
+    line-height: 40px;
+    width: 100px;
+  }
+
+  hr {
+    border: solid 1px #ddd;
+  }
+
+  .rowClass {
+    border-top: solid 1px #ddd;
+    border-bottom: solid 1px #ddd;
+    height: 40px;
+    margin-top: 10px;
+  }
+
+  .eventClass {
+    height: 30px;
+    border-right: solid 1px #ddd;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+    line-height: 30px;
+  }
+
+  .eventTitleClass {
+    height: 40px;
+    background-color: #eeeeee;
+    line-height: 40px;
+    text-align: center;
+  }
+
+  .video {
+    height: 300px;
+    border-radius: 0;
+    padding: 5px;
+    margin-top: 0;
+  }
+
+  .image3 {
+    padding: 5px;
+    height: 49%;
+    // border: solid 1px green;
+    width: 100%;
+  }
+
+  .card-box {
+    width: 30%;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .EquipStatistics {
+    width: 200px;
+    height: 40px;
+    background-image: url(../../../assets/cloudControl/shebeiWarning.png);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 400;
+    font-size: 16px;
+    margin-left: 14px;
+
+    > span {
+      font-size: 24px;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+  }
+
+  .warningStatistics {
+    line-height: 60px;
+    font-size: 14px;
+    // color: #606266;
+    font-weight: 700;
+  }
+
+  .eventTitle {
+    padding: 15px 0;
+    font-size: 18px;
+    font-weight: 400;
+    color: #303133;
+  }
 </style>

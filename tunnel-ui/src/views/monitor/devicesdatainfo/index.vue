@@ -9,7 +9,14 @@
       style="margin-top: 10px"
     >
       <el-form-item label="管理机构" prop="deptId">
-        <el-select
+        <treeselect
+          v-model="queryParams.deptId"
+          :options="deptOptions"
+          :show-count="true"
+          placeholder="请选择归属部门"
+          style="width: 360px;"
+        />
+        <!--<el-select
           v-model="queryParams.deptId"
           placeholder="请选择管理机构"
           clearable
@@ -21,7 +28,7 @@
             :label="item.deptName"
             :value="item.deptId"
           />
-        </el-select>
+        </el-select>-->
       </el-form-item>
       <el-form-item label="隧道名称" prop="tunnelId">
         <el-select
@@ -198,13 +205,17 @@ import {
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listType } from "@/api/equipment/type/api";
 import { listLog } from "@/api/system/log";
-import { listDept } from "@/api/system/dept";
+import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import { dataLogInfoList } from "@/api/equipment/eqTypeItem/item";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "Logininfor",
   dicts: ["sys_common_status"],
+  components: { Treeselect },
+
   data() {
     return {
       searchValue: "1",
@@ -253,9 +264,12 @@ export default {
       fsData: [],
       dnData: [],
       dwData: [],
+      // 部门树选项
+      deptOptions: undefined,
     };
   },
   created() {
+    this.getTreeselect();
     this.getList("1");
     this.getDepts();
     this.getUserDept();
@@ -270,6 +284,12 @@ export default {
     this.watchSize();
   },
   methods: {
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
     marketChang() {
       this.echartShow = !this.echartShow;
       this.initChart();

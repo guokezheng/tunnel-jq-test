@@ -213,3 +213,8 @@ devStatusTopic: "wq_devStatusTopic"
 tunnelDeviceBaseData: "tunnelDeviceBaseData"
 #物联中台隧道基础数据topic
 tunnelBaseData: "tunnelBaseData"
+
+url:
+  syn: "http://10.166.154.213:30001/equipment/CarInfo/list"
+  edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
+  detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"

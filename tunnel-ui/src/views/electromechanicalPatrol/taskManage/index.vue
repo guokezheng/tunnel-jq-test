@@ -99,6 +99,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleAbolish(scope.row)"
+            :style="{ display: scope.row.publishStatus==2?'':'none' }"
           >废止任务</el-button
           >
           <el-button
@@ -106,6 +107,7 @@
             class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
+            :style="{ display: scope.row.publishStatus==2?'none':'' }"
             >修改</el-button
           >
           <el-button
@@ -113,6 +115,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:list:remove']"
+            :style="{ display: scope.row.publishStatus==2?'none':'' }"
             >删除</el-button
           >
         </template>
@@ -213,9 +216,9 @@
           <el-button type="primary" style="height: 15%" @click="show2"
             >选择故障点</el-button
           >
-          <el-button type="primary" style="height: 15%" disabled
+<!--          <el-button type="primary" style="height: 15%" disabled
             >导入巡查计划</el-button
-          >
+          >-->
         </div>
         <div class="box-father">
           <div class="box" :key="index" v-for="(item, index) in boxList">
@@ -427,7 +430,7 @@
         <div class="col-card">{{ ite.taskStatus }}</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews" :key="index">
-        <div class="card-col">
+        <div class="card-col" style="font-size:16px">
           <div>
             任务编号：
             <span>{{ item.id }}</span>

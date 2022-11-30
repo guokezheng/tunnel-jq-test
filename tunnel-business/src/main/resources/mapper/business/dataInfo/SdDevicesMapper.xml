@@ -733,4 +733,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from sd_devices_brand
     </select>
 
+
+    <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select eq_name,pile from sd_devices
+        <where>
+            <if test="param != null and param != ''">and CONCAT(eq_name,pile) like CONCAT('%',#{param},'%') </if>
+            <if test="eqType != null and eqType != ''">and eq_type in #{eqType}</if>
+            <if test="eqStatus != null and eqStatus != ''">and eq_status = #{eqStatus}</if>
+
+        </where>
+    </select>
+
+
+    <select id="getDevicesNum" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select count(if(eq_status='1',1,null)) zxNum,count(if(eq_status='2',1,null)) lxNum from sd_devices
+        <where>
+            <if test="param != null and param != ''">and CONCAT(eq_name,pile) like CONCAT('%',#{param},'%') </if>
+            <if test="eqType != null and eqType != ''">and eq_type in #{eqType}</if>
+            <if test="eqStatus != null and eqStatus != ''">and eq_status = #{eqStatus}</if>
+
+        </where>
+    </select>
+
+
+    <select id="getAppDevicesInfo" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile
+        from sd_devices d
+        left join sd_equipment_type t on d.eq_type = t.type_id
+        left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
+        left join sys_dict_data c on c. dict_value = d.eq_direction and  c.dict_type = 'sd_direction_list'
+        where d.eq_id = #{eqId}
+    </select>
+
+
 </mapper>

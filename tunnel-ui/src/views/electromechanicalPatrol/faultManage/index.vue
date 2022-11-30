@@ -222,7 +222,7 @@
 
           <el-col :span="8">
             <el-form-item label="故障类型" prop="faultType">
-              <el-select v-model="form.faultType" :disabled="disstate" placeholder="请选择所属隧道">
+              <el-select v-model="form.faultType" :disabled="disstate" placeholder="请选择故障类型">
                 <el-option
                   v-for="item in faultTypeOptions"
                   :key="item.dictValue"
@@ -248,8 +248,8 @@
                 size="small"
                 :disabled="disstate"
                 v-model="form.faultFxtime"
-                type="date"
-                value-format="yyyy-MM-dd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障发现时间"
               >
               </el-date-picker>
@@ -260,7 +260,7 @@
               <el-input
                 :disabled="disstate"
                 v-model="form.faultCxtime"
-                placeholder="请输入故障持续时间"
+                placeholder="请按照天/小时/分格式填写"
               />
             </el-form-item>
           </el-col>
@@ -271,8 +271,8 @@
                 size="small"
                 :disabled="disstate"
                 v-model="form.faultTbtime"
-                type="date"
-                value-format="yyyy-MM-dd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障填报时间"
               >
               </el-date-picker>
@@ -416,9 +416,9 @@
     <el-dialog
       :visible.sync="record"
       width="70%" >
-      <div style="text-align: center;">故障检修记录</div>
-      <div class="card"   v-for="item in news" >
-        <div class="card-col" id ="firstRow">
+      <div style="text-align: center;font-size: 18px;">故障检修记录</div>
+      <div class="card" v-if="news.length>0"   v-for="item in news" >
+        <div class="card-col" style = "font-size: 16px">
           <div>
             巡检时间:
             <span>{{item.xcTime}}</span>
@@ -432,7 +432,7 @@
             <span>{{ item.walkerId }}</span>
           </div>
         </div>
-        <div class="card-col" id ="secondRow">
+        <div class="card-col" style = "font-size: 16px">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -446,7 +446,7 @@
             <span>{{item.power}}</span>
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           <div>
             设备运行状态:
             <span style="margin:6%;">设备状态:{{item.eqStatus}}</span><span> 设备运行状态:{{item.runStatus}}</span>
@@ -455,7 +455,7 @@
             (检修时检测情况)
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           <div>
             现场故障情况:
             <span>{{item.eqFaultDescription}}</span>
@@ -464,11 +464,16 @@
             (检修时检测情况)
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           现场图片:
           <div  v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName">
           </div>
+        </div>
+      </div>
+      <div v-if="news.length==0">
+        <div   style="text-align: center;margin-top: 50px;margin-bottom: 50px">
+          暂无记录
         </div>
       </div>
     </el-dialog>
@@ -490,6 +495,7 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 import {addType, listType, loadPicture, updateType} from "@/api/equipment/type/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import {editForm} from "@/api/equipment/yingJiGou/emergencyVehicles";
+import {listBz} from "@/api/electromechanicalPatrol/taskManage/task";
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -519,6 +525,8 @@ export default {
       // 是否不可点击
       disstate: false,
       // 弹出层标题
+      //巡查班组
+      bzData: {},
       title: "",
       // 是否显示弹出层
       open: false,
@@ -622,6 +630,7 @@ export default {
     };
   },
   created() {
+    this.getBz();
     this.getList();
     this.getTunnel();
     this.getEqType();
@@ -776,7 +785,12 @@ export default {
         this.loading = false;
       });
     },
-
+    /** 巡查班组 */
+    getBz() {
+      listBz().then((response) => {
+        this.bzData = response.rows;
+      });
+    },
     /** 所属隧道 */
     getTunnel() {
       listTunnels().then((response) => {
@@ -912,6 +926,17 @@ export default {
           }
 
         })
+
+        this.bzData.forEach((opt) => {
+          this.news.forEach((taskitem) => {
+            if (taskitem.bzId == opt.deptId) {
+              taskitem.bzId = opt.deptName;
+            }
+            if(taskitem.bzId==null||taskitem.bzId=="null"){
+               taskitem.bzId = "";
+            }
+          });
+        });
       });
 
     },
@@ -940,11 +965,14 @@ export default {
       this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
+/*      if(this.fileList.length <= 0) {
+        this.fileData.append("file", -1);
+      }else{
+        console.log("================"+this.fileList)
+        return
+      }*/
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图片')
-          }
           if (this.form.id != null) {
             this.fileData.append("removeIds", this.removeIds);
             updateList(this.fileData).then((response) => {

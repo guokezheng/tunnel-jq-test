@@ -168,4 +168,11 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
         </foreach>
     </delete>
 
+
+
+
+    <select id="getDevicesType" resultMap="SdEquipmentTypeResult">
+        select type_id,type_name from sd_equipment_type
+    </select>
+
 </mapper>

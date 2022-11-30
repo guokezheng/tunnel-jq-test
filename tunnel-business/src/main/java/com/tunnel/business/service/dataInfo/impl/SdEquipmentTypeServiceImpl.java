@@ -165,6 +165,15 @@ public class SdEquipmentTypeServiceImpl implements ISdEquipmentTypeService {
     }
 
     /**
+     * app端查询设备类型
+     * @return
+     */
+    @Override
+    public List<SdEquipmentType> getDevicesType() {
+        return sdEquipmentTypeMapper.getDevicesType();
+    }
+
+    /**
      * 新增设备类型
      *
      * @param sdEquipmentType 设备类型

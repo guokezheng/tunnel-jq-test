@@ -77,7 +77,7 @@ public class SdFaultListController extends BaseController
     @Log(title = "故障清单", businessType = BusinessType.INSERT)
     @PostMapping
     /*public AjaxResult add(@RequestBody SdFaultList sdFaultList)*/
-    public AjaxResult add(@RequestParam("file") MultipartFile[] file, SdFaultList sdFaultList)
+    public AjaxResult add(@RequestParam(name = "file",required=false) MultipartFile[] file, SdFaultList sdFaultList)
     {
         sdFaultList.setId(UUIDUtil.getRandom32BeginTimePK());// 文件关联ID
         return toAjax(sdFaultListService.insertSdFaultList(file,sdFaultList));

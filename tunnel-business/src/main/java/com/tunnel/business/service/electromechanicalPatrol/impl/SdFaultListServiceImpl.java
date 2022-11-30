@@ -116,12 +116,13 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public int insertSdFaultList(MultipartFile[] file, SdFaultList sdFaultList)
     {
+        System.out.println("+++++++++=+++++++++++++++++++====="+file);
         int result = -1;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         try {
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
-            if (file.length > 0) {
+            if(file!=null){
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdFaultList.setImgFileId(guid);// 文件关联ID
                 for (int i = 0; i < file.length; i++) {
@@ -169,8 +170,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                 if (result > -1) {
                     result = sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
-
-            } else {
+            }else {
                 sdFaultList.setImgFileId(null);// 图标文件ID
                 result = sdFaultListMapper.insertSdFaultList(sdFaultList);
             }
@@ -201,7 +201,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                 guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
             }
             sdFaultList.setImgFileId(guid);// 文件关联ID
-            if (file != null && file.length > 0) {
+            if (file != null) {
                 for (int i = 0; i < file.length; i++) {
                     // 图片Base64
                     String imageBaseStr = null;

@@ -777,4 +777,28 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevicesBrand> getDevBrandList() {
         return sdDevicesMapper.getDevBrandList();
     }
+
+    /**
+     * app端获取设备列表
+     * @return
+     */
+    @Override
+    public Map getAppDevicesList(String param, String eqType, String eqStatus) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
+        List<SdDevices> num = sdDevicesMapper.getDevicesNum(param,eqType,eqStatus);
+        map.put("sdDevicesList",sdDevicesList);
+        map.put("numList",num);
+        return map;
+    }
+
+    /**
+     * app端设备信息
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getAppDevicesInfo(String eqId) {
+        return sdDevicesMapper.getAppDevicesInfo(eqId);
+    }
 }

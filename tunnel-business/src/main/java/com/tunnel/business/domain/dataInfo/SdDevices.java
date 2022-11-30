@@ -336,6 +336,35 @@ public class SdDevices extends BaseEntity {
     public String getProtocolId() {
         return protocolId;
     }
+    /**
+     * 在线数量
+     **/
+    private Integer zxNum;
+
+    /**
+     * 离线数量
+     **/
+    private Integer lxNum;
+
+    public Integer getZxNum() {
+        return this.zxNum;
+    }
+
+    public void setZxNum(final Integer zxNum) {
+        this.zxNum = zxNum;
+    }
+
+    public Integer getLxNum() {
+        return this.lxNum;
+    }
+
+    public void setLxNum(final Integer lxNum) {
+        this.lxNum = lxNum;
+    }
+
+    //控制状态
+    @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
+    private String controlStatus;
 
     public void setProtocolId(String protocolId) {
         this.protocolId = protocolId;

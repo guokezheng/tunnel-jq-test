@@ -227,4 +227,28 @@ public interface SdDevicesMapper
 
     List<SdDevicesBrand> getDevBrandList();
 
+	/**
+	 * app端获取设备列表
+	 * @param param
+	 * @param eqType
+	 * @param eqStatus
+	 * @return
+	 */
+    List<SdDevices> getAppDevicesList(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+
+	/**
+	 * 查询在线离线设备数量
+	 * @param param
+	 * @param eqType
+	 * @param eqStatus
+	 * @return
+	 */
+	List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus);
+
+	/**
+	 * app端设备信息
+	 * @param eqId
+	 * @return
+	 */
+	List<SdDevices> getAppDevicesInfo(String eqId);
 }

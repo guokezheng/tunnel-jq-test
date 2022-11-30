@@ -128,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>
             <if test="faultDescription != null">fault_description = #{faultDescription},</if>
             <if test="faultStatus != null">fault_status = #{faultStatus},</if>
+            <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
         </trim>
         where id = #{id}
     </update>

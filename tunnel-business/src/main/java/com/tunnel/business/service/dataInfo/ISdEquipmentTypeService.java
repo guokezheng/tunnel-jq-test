@@ -93,4 +93,10 @@ public interface ISdEquipmentTypeService {
      * @return
      */
     List<Map> selectTypeAndStrategy(SdEquipmentType sdEquipmentType);
+
+    /**
+     * 查询设备类型
+     * @return
+     */
+    List<SdEquipmentType> getDevicesType();
 }

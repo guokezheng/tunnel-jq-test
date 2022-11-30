@@ -203,20 +203,33 @@
             v-hasPermi="['system:tunnels:edit']"
             >配置
           </el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="tunnelAssociationConfig(scope.row)"-->
+<!--            v-hasPermi="['system:tunnels:edit']"-->
+<!--          >关联配置-->
+<!--          </el-button>-->
           <el-button
             size="mini"
             class="tableBlueButtton"
-            @click="handleUpdate(scope.row)"
             v-hasPermi="['system:tunnels:edit']"
-            >修改
+          >关联配置
           </el-button>
-          <el-button
-            size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:tunnels:remove']"
-            >删除
-          </el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="handleUpdate(scope.row)"-->
+<!--            v-hasPermi="['system:tunnels:edit']"-->
+<!--            >修改-->
+<!--          </el-button>-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableDelButtton"-->
+<!--            @click="handleDelete(scope.row)"-->
+<!--            v-hasPermi="['system:tunnels:remove']"-->
+<!--            >删除-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -586,6 +599,11 @@ export default {
     number() {
       this.form.lane = this.form.lane.replace(/[^\.\d]/g, "");
       this.form.lane = this.form.lane.replace(".", "");
+    },
+    /* 进入隧道关联关系配置 */
+    tunnelAssociationConfig() {
+      const tunnelId = row.tunnelId || this.ids;
+      console.log("开启隧道关系配置弹窗");
     },
     /* 进入配置界面*/
     tunnelConfig(row) {

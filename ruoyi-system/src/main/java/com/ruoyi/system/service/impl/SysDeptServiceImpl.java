@@ -2,7 +2,6 @@ package com.ruoyi.system.service.impl;
 
 import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.constant.UserConstants;
-import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.TreeDeptSelect;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
@@ -50,6 +49,35 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         return deptMapper.selectDeptList(dept);
     }
+
+
+    /**
+     * 查询部门管理数据(不包括dept=YG1及其子孙部门)
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    @Override
+    @DataScope(deptAlias = "d")
+    public List<SysDept> listDeptExcYG1(SysDept dept)
+    {
+        return deptMapper.listDeptExcYG1(dept);
+    }
+
+    /**
+     * 查询部门管理数据(dept=YG1及其子孙部门)
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    @Override
+    @DataScope(deptAlias = "d")
+    public List<SysDept> treeselectYG1(SysDept dept)
+    {
+        return deptMapper.listDeptYG1(dept);
+    }
+
+
 
     /**
      * 构建前端所需要树结构

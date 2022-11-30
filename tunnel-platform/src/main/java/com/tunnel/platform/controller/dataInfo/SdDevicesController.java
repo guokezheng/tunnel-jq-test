@@ -84,7 +84,6 @@ public class SdDevicesController extends BaseController {
     }
 
     @GetMapping("/getDevicesByTypeAndTunnel")
-    @ApiOperation("根据设备类型和隧道ID查询设备列表")
     public TableDataInfo<List<Map<String, Object>>> getDevicesByTypeAndTunnel(SdDevices sdDevices) {
         List<Map<String, Object>> devicesByTypeAndTunnel = sdDevicesService.getDevicesByTypeAndTunnel(sdDevices);
         return getDataTable(devicesByTypeAndTunnel);

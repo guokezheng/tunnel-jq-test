@@ -1,12 +1,10 @@
 package com.ruoyi.system.service;
 
 import com.ruoyi.common.core.domain.TreeDeptSelect;
-import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.system.domain.vo.SysDeptUserTreeVO;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 部门管理 服务层
@@ -22,6 +20,22 @@ public interface ISysDeptService
      * @return 部门信息集合
      */
     public List<SysDept> selectDeptList(SysDept dept);
+
+    /**
+     * 查询部门管理数据(不包括dept_id=YG1及其子孙部门)
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<SysDept> listDeptExcYG1(SysDept dept);
+
+    /**
+     * 查询部门管理数据(只查询 dept_id=YG1及其子孙部门)
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<SysDept> treeselectYG1(SysDept dept);
 
     /**
      * 构建前端所需要树结构

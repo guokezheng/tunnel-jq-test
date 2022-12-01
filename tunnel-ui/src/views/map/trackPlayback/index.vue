@@ -1,6 +1,6 @@
 <template>
     <!-- 轨迹回放 -->
-    <div style="height: calc(100% + 72px)">
+    <div style="height: calc(100% + 38px)">
       <iframe
         name="tuniframe"
         id="miframe"

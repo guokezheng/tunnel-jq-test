@@ -624,11 +624,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             C.eq_type = 1 and C.eq_tunnel_id = #{tunnelId}
     </select>
 
-    <select id="selectLaneSize" resultType="int">
-        select MAX(A.lane) from sd_devices A
-        where A.eq_type = 1 and A.eq_direction = 0
-    </select>
-
     <select id="batchControlCarFinger" parameterType="SdDevices" resultMap="SdDevicesResult">
         select * from sd_devices a
         <where>

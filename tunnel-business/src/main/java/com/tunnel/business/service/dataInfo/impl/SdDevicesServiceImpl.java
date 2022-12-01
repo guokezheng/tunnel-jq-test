@@ -721,8 +721,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         if(deviceData.size()<1){
             return null;
         }
-        int laneSize = sdDevicesMapper.selectLaneSize();
-        // 根据方向进行分组
         Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {
             @Override
             public String apply(Map<String, Object> t) {

@@ -441,6 +441,22 @@ let laneImage = [
     num: 3,
     direction: 0
   },
+  {
+    id: "7",
+    name: "金家楼隧道",
+    url: require('@/assets/image/lane/jjl.jpg'),
+    width: 1620,
+    num: 3,
+    direction: 0
+  },
+  {
+    id: "8",
+    name: "马鞍山隧道",
+    url: require('@/assets/image/lane/mas.jpg'),
+    width: 1620,
+    num: 3,
+    direction: 0
+  },
 ]
 
 export {

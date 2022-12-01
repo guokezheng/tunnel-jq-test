@@ -594,9 +594,9 @@ export default {
         tunnelId: [
           { required: true, message: "请填写隧道ID", trigger: "blur" },
         ],
-        // externalSystemId: [
-        //   { required: true, message: "请选择外部系统", trigger: "change" },
-        // ],
+        externalSystemId: [
+          { required: true, message: "请选择外部系统", trigger: "change" },
+        ],
       },
       // selectedTunnel:{},
       // 隧道列表

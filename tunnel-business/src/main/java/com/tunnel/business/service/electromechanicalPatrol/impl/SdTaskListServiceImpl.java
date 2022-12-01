@@ -1,5 +1,6 @@
 package com.tunnel.business.service.electromechanicalPatrol.impl;
 
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,9 +89,10 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         int result = -1;
         String taskId = UUIDUtil.getRandom32BeginTimePK();//任务编号
         sdTaskList.setId(taskId);//id
-        sdTaskList.setDispatcher(SecurityUtils.getLoginUser().getUsername());
+        sdTaskList.setZzjgId(SecurityUtils.getLoginUser().getDeptId());
+        sdTaskList.setDispatcher(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
         sdTaskList.setCreateBy(SecurityUtils.getLoginUser().getUsername());
-        sdTaskList.setTaskStatus("0");//待巡查
+        //sdTaskList.setTaskStatus("0");//待巡查
         result = sdTaskListMapper.insertSdTaskList(sdTaskList);
         if(result>0){
             result = insertPatrol(sdTaskList,taskId);
@@ -238,7 +240,76 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public List<SdTaskList> getTaskInfoList(String task_id) {
-        return sdTaskListMapper.getTaskInfoList(task_id);
+        List<SdTaskList> taskList = new ArrayList<>();
+        taskList = sdTaskListMapper.getTaskInfoList(task_id);
+        //任务持续时间逻辑判断   task_status=2  已完结
+        if(taskList!=null){
+            String  st0 = "0";//待巡查
+            String  st1 = "1";//巡查中
+            /*String st2 = "4";//已超时*/
+            //判断任务状态，已完结时保存任务持续时间
+            if(taskList.get(0).getTaskStatus()!=null&&!"".equals(taskList.get(0).getTaskStatus())){
+                //if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0||taskList.get(0).getTaskStatus().indexOf(st1) >= 0){// 待巡查/巡查中 直接取持续时间即可无需计算
+                    //if(taskList.get(0).getTaskStatus().indexOf("4") >= 0){//已超时
+                        if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0){
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
+                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+                            long diff = System.currentTimeMillis() - time + 1000;
+                            if(diff>0){//当前时间与计划完成时间的差值
+                                taskList.get(0).setTaskStatus("待巡查");
+                                taskList.get(0).setIfchaosgu("已超时");
+                            }else{
+                                taskList.get(0).setTaskStatus("待巡查");
+                                taskList.get(0).setIfchaosgu("");//未超时
+                            }
+
+                        }
+                        if(taskList.get(0).getTaskStatus().indexOf(st1) >= 0){
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
+                            long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
+                            long diff = System.currentTimeMillis() - time;
+                            if(diff>0){//当前时间与计划完成时间的差值
+                                taskList.get(0).setTaskStatus("巡查中");
+                                taskList.get(0).setIfchaosgu("已超时");
+                            }else{
+                                taskList.get(0).setTaskStatus("巡查中");
+                                taskList.get(0).setIfchaosgu("");//未超时
+                            }
+
+                        }
+               // }
+                if(taskList.get(0).getTaskCxtime()==null||"".equals(taskList.get(0).getTaskCxtime())){//没有持续时间
+                    //任务持续时间为 当前时间-发布时间
+                    if(taskList.get(0).getEndPlantime()!=null&&!"".equals(taskList.get(0).getEndPlantime())){
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String  fbtime = sdf.format(taskList.get(0).getDispatchTime());
+                        long time = sdf.parse(fbtime, new ParsePosition(0)).getTime();
+                        long nd = 1000 * 24 * 60 * 60;
+                        long nh = 1000 * 60 * 60;
+                        long nm = 1000 * 60;
+                        long ns = 1000;
+                        // 获得两个时间的毫秒时间差异
+                        long diff = System.currentTimeMillis() - time + 1000;
+                        // 计算差多少天
+                        long day = diff / nd;
+                        // 计算差多少小时
+                        long hour = diff % nd / nh;
+                        // 计算差多少分钟
+                        long min = diff % nd % nh / nm;
+                        // 计算差多少秒//输出结果
+                        long sec = diff % nd % nh % nm / ns;
+                        System.out.println(day + "天" + hour + "小时" + min + "分钟" + sec + "秒");
+                        taskList.get(0).setTaskCxtime(day + "天" + hour + "小时");
+                    }
+                }
+
+            }
+
+        }
+
+        return taskList;
     }
 
     /**
@@ -331,7 +402,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
 
     /**
      * 查询巡查列表
-     * @param tunnelName
+     * @param sdTaskList
      * @param sdTaskList
      * @return
      */
@@ -477,12 +548,6 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      */
     @Override
     public int saveLocal(SdTaskList sdTaskList) {
-        if(sdTaskList!=null){
-           //判断任务状态，已完结时保存任务持续时间
-            if("1".equals(sdTaskList.getTaskStatus())){
-
-            }
-        }
         return sdTaskListMapper.saveLocal(sdTaskList);
     }
 

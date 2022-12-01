@@ -73,6 +73,16 @@ public class SdTaskList extends BaseEntity
     /** 现场情况描述 */
     @Excel(name = "现场情况描述")
     private String siteDescription;
+    /*是否超时*/
+    private String ifchaosgu;
+
+    public String getIfchaosgu() {
+        return this.ifchaosgu;
+    }
+
+    public void setIfchaosgu(final String ifchaosgu) {
+        this.ifchaosgu = ifchaosgu;
+    }
 
     /*巡检点数量*/
     private Integer totalNum;

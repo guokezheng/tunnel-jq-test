@@ -668,9 +668,13 @@ export default {
   methods: {
     eqStatusGet(e){
       getEquipmentInfo({eqId:e}).then((response) => {
-        this.$refs.faultLocation.value = "";
+        this.form.faultLocation = "";
+        this.form.eqRunStatus = "";
+        this.form.eqStatus = "";
+        debugger
         if(response.data.length!=0){
-          this.$refs.faultLocation.value = response.data[0].pile;
+          this.form.faultLocation= response.data[0].pile;
+          this.form.eqRunStatus = response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eqStatus;
           //this.$refs(this.form, "eqStatus", 1);
         }
@@ -927,14 +931,16 @@ export default {
 
         })
 
-        this.bzData.forEach((opt) => {
           this.news.forEach((taskitem) => {
-            if (taskitem.bzId == opt.deptId) {
-              taskitem.bzId = opt.deptName;
-            }
-            if(taskitem.bzId==null||taskitem.bzId=="null"){
-               taskitem.bzId = "";
-            }
+            this.bzData.forEach((opt) => {
+              if (taskitem.bzId == opt.deptId) {
+                taskitem.bzId = opt.deptName;
+              }else{
+                taskitem.bzId = "";
+              }
+              if(taskitem.bzId==null||taskitem.bzId=="null"){
+                 taskitem.bzId = "";
+              }
           });
         });
       });

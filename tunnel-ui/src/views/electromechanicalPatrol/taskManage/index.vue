@@ -253,7 +253,7 @@
         </div>
         <div class="release-father">
           <el-button style="height: 20%" @click="save">暂存</el-button>
-          <el-button style="height: 20%" type="warning" @click="abolish">废止</el-button>
+          <el-button style="height: 20%;display: none"   type="warning" @click="abolish">废止</el-button>
           <el-button style="height: 20%" type="primary" @click="release"
             >发布</el-button
           >
@@ -549,7 +549,7 @@
           <div class="test">
             任务持续时长：
             <span>{{ tas.taskCxtime }}</span>
-            <div class="chaoshi">超时</div>
+            <div class="chaoshi">{{ tas.ifchaosgu }}</div>
           </div>
         </div>
         <div class="card-cols">
@@ -560,11 +560,16 @@
         </div>
       </div>
       <div class="card">
-        <div class="table-row"  v-for="(item, index) in taskOpt" :key="index">
+        <div class="table-row" v-if="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
           <div style="width: 20%">凤凰山隧道 / {{item.optPersonId}}</div>
           <div style="width: 30%">{{item.optTime}}</div>
+        </div>
+        <div v-if="taskOpt.length==0">
+          <div   style="text-align: center;margin-top: 20px;margin-bottom: 20px">
+            暂无执行记录
+          </div>
         </div>
 <!--        <div class="table-row">
           <div style="width: 10%">操作记录</div>
@@ -740,6 +745,7 @@ export default {
         taskDescription: "",
         taskStatus:"",
         publishStatus:"",
+        ifchaosgu:"",
       },
       //操作记录
       taskOpt:{
@@ -803,9 +809,6 @@ export default {
     this.userName = this.$store.state.user.name;
     const t = new Date();
     this.currentTime = t.getFullYear()+'-'+t.getMonth()+'-'+t.getDay();
-  },
-  mounted() {
-    this.getBz();
   },
   methods: {
     //  上移
@@ -932,26 +935,12 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
+        debugger
         this.taskNews = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;
-        /*this.impressionOptions.forEach((opt) => {
-            this.patrolNews.forEach((taskitem) => {
-            console.log("taskitem.impression========="+taskitem.impression)
-            if (opt.dictValue == "0"&taskitem.impression == 0) {
-                taskitem.impression = opt.dictLabel;
-            }
-            if (opt.dictValue == "1"&taskitem.impression == 1) {
-                taskitem.impression = opt.dictLabel;
-            }
-          });
-
-        });*/
-
         this.impressionOptions.forEach((opt) => {
           this.patrolNews.forEach((taskitem) => {
-            console.log("taskitem.impression=============="+taskitem.impression);
-            console.log("opt.dictValue===================="+opt.dictValue);
             if (taskitem.impression == opt.dictValue) {
               taskitem.impression = opt.dictLabel;
             }
@@ -1010,12 +999,19 @@ export default {
         });
 
 
-        this.bzData.forEach((opt) => {
           this.taskNews.forEach((taskitem) => {
-            if (taskitem.bzId == opt.deptId) {
-               taskitem.bzId = opt.deptName;
+            if(this.bzData!=""){
+              this.bzData.forEach((opt) => {
+                if (taskitem.bzId == opt.deptId) {
+                  taskitem.bzId = opt.deptName;
+                }else{
+                  taskitem.bzId = "";
+                }
+              });
+            }else {
+              taskitem.bzId = "";
             }
-          });
+
         });
 
       });
@@ -1030,11 +1026,16 @@ export default {
           if(item.bzId=="null"||item.bzId==NaN){
             item.bzId = "";
           }else{
-            this.bzData.forEach((sitem) =>{
+            if(this.bzData!=""){
+              this.bzData.forEach((sitem) =>{
                 if(sitem.deptId == parseInt(item.bzId)){
-                      item.bzId = sitem.deptName
+                  item.bzId = sitem.deptName
                 }
-            })
+              })
+            }else{
+              item.bzId = ""
+            }
+
           }
         })
         this.loading = false;
@@ -1183,7 +1184,12 @@ export default {
         if(this.form.taskDescription=="null"){
           this.form.taskDescription=""
         }
-        this.form.bzId=parseInt(this.form.bzId)
+
+        if(this.form.bzId!=null&&this.form.bzId!=""&&this.form.bzId!="null"){
+            this.form.bzId = parseInt(this.form.bzId)
+        }else{
+          this.form.bzId=""
+        }
         this.boxList.sort(this.arraySort('xc_sort'))
         this.open = true;
         this.openGz = true;
@@ -1259,6 +1265,7 @@ export default {
       this.fileData.append("bzId", this.form.bzId);
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","2");
+      this.fileData.append("taskStatus","0");
       //判断是否选择点
       console.log("release============="+this.boxList);
       if(this.boxList==[]||this.boxList==""){
@@ -1269,7 +1276,6 @@ export default {
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
       })
-      console.log("this.boxIds============="+this.boxIds);
       this.fileData.append("devicesList",this.boxIds);
       if (this.form.id != null) {
         updateTask(this.fileData).then((response) => {
@@ -1293,6 +1299,7 @@ export default {
       this.fileData.append("bzId", this.form.bzId);
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","1");
+      this.fileData.append("taskStatus","");
       //判断是否选择点
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
@@ -1325,6 +1332,8 @@ export default {
       this.fileData.append("bzId", this.form.bzId);
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","0");
+      this.fileData.append("taskStatus","");
+
       //判断是否选择点
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");

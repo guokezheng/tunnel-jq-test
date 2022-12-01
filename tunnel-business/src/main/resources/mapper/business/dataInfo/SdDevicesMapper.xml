@@ -648,11 +648,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getEquipmentInfo" parameterType="String" resultType="hashmap">
-    select d.eq_direction,concat(s.dict_label,d.pile) pile,d.eq_status from sd_devices d
-    left join sys_dict_data s on d.eq_direction = s.dict_value
+        SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,e.device_state eqStatus
+        FROM `sd_device_type_item` i
+        left join sd_device_data d on i.id = d.item_id
+        left join sd_devices t on t.eq_id = d.device_id
+        left join sys_dict_data c on t.eq_direction = c.dict_value and c.dict_type= 'sd_direction'
+        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '2'
+        left join sd_equipment_state e on e.state_type_id = i.device_type_id and e.device_state = d.data and e.state_type = '1'
         <where>
-            and s.dict_type= 'sd_direction'
-            <if test="eqId != null ">and d.eq_id = #{eqId}</if>
+            <if test="eqId != null ">and t.eq_id = #{eqId}</if>
         </where>
     </select>
 

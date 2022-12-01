@@ -20,8 +20,8 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
         <el-button type="primary" plain size="mini" @click="handleAdd"
                    v-hasPermi="['system:system:add']">新增
         </el-button>
@@ -84,7 +84,7 @@
     <el-table v-loading="loading" :data="systemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="主键" align="center" prop="id" />-->
-      <el-table-column label="厂商品牌id" align="center" prop="brandId" />
+      <el-table-column label="厂商品牌" align="center" prop="brandId" />
       <el-table-column label="是否映射方向" align="center" prop="isDirection" />
       <el-table-column label="用户名" align="center" prop="username" />
       <el-table-column label="密码" align="center" prop="password" />
@@ -123,8 +123,8 @@
     <!-- 添加或修改外部系统对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="厂商品牌id" prop="brandId">
-          <el-input v-model="form.brandId" placeholder="请输入厂商品牌id" />
+        <el-form-item label="厂商品牌" prop="brandId">
+          <el-input v-model="form.brandId" placeholder="请输入厂商品牌" />
         </el-form-item>
         <el-form-item label="是否映射方向" prop="isDirection">
           <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />
@@ -135,11 +135,11 @@
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" placeholder="请输入密码" />
         </el-form-item>
-        <el-form-item label="网络状态">
-          <el-radio-group v-model="form.networkStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
+<!--        <el-form-item label="网络状态">-->
+<!--          <el-radio-group v-model="form.networkStatus">-->
+<!--            <el-radio label="1">请选择字典生成</el-radio>-->
+<!--          </el-radio-group>-->
+<!--        </el-form-item>-->
         <el-form-item label="系统名称" prop="systemName">
           <el-input v-model="form.systemName" placeholder="请输入系统名称" />
         </el-form-item>

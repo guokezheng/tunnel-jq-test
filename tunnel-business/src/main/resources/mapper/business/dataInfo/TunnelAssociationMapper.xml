@@ -82,4 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <delete id="deleteTunnelAssociationByTunnelIds" parameterType="String">
+        delete from tunnel_association where tunnel_id in
+        <foreach item="tunnelId" collection="array" open="(" separator="," close=")">
+            #{tunnelId}
+        </foreach>
+    </delete>
 </mapper>

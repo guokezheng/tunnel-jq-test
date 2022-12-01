@@ -82,6 +82,16 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService
         return tunnelAssociationMapper.deleteTunnelAssociationByIds(ids);
     }
 
+    @Override
+    public int deleteTunnelAssociationByTunnelIds(String[] tunnelIds)
+    {
+        if (tunnelIds.length > 0) {
+            return tunnelAssociationMapper.deleteTunnelAssociationByTunnelIds(tunnelIds);
+        } else {
+            return 0;
+        }
+    }
+
     /**
      * 删除隧道关联关系信息
      *

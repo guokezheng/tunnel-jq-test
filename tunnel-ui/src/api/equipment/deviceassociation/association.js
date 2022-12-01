@@ -50,6 +50,13 @@ export function delAssociation(id) {
   })
 }
 
+export function delAssociationByTunnelIds(tunnelId) {
+  return request({
+    url: '/system/association/delDetials/' + tunnelId,
+    method: 'delete'
+  })
+}
+
 // 导出隧道关联关系
 export function exportAssociation(query) {
   return request({

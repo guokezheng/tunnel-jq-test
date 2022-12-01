@@ -57,4 +57,6 @@ public interface TunnelAssociationMapper
      * @return 结果
      */
     public int deleteTunnelAssociationByIds(Long[] ids);
+
+    public int deleteTunnelAssociationByTunnelIds(String[] tunnelIds);
 }

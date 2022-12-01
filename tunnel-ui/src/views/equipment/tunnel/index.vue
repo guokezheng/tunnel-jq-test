@@ -244,15 +244,22 @@
 
     <!-- 添加或修改隧道关联关系对话框 -->
     <el-dialog :title="titles" :visible.sync="opens" width="500px" append-to-body>
-      <el-form ref="forms" :model="forms" :rules="rule" label-width="80px">
+      <el-form ref="forms" :model="forms" :rules="rule" label-width="140px">
         <el-form-item label="隧道" prop="tunnelId">
           <el-input v-model="forms.tunnelId" placeholder="请输入隧道" :disabled="true"/>
         </el-form-item>
         <el-form-item label="隧道方向" prop="tunnelDirection">
           <el-input v-model="forms.tunnelDirection" placeholder="请输入隧道方向" />
         </el-form-item>
-        <el-form-item label="外部系统ID" prop="externalSystemId">
-          <el-input v-model="forms.externalSystemId" placeholder="请输入外部系统ID" />
+        <el-form-item label="外部系统" prop="externalSystemId">
+<!--          <el-input v-model="forms.externalSystemId" placeholder="请选择外部系统" />-->
+          <el-select v-model="forms.externalSystemId" placeholder="请选择外部系统" class="externalSystemId" style="width: 100%">
+            <el-option v-for="item in externalSystemData"
+                       :key="item.id"
+                       :label="item.systemName"
+                       :value="item.id">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId">
           <el-input v-model="forms.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />
@@ -473,8 +480,9 @@ import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {
-  getAssociation, delAssociation, addAssociation, updateAssociation, getAssociationByTunnelId
+  addAssociation, updateAssociation, getAssociationByTunnelId, delAssociationByTunnelIds
 } from "@/api/equipment/deviceassociation/association";
+import { listSystem } from "@/api/equipment/externalsystem/system";
 
 
 export default {
@@ -521,6 +529,7 @@ export default {
       total: 0,
       // 隧道表格数据
       tunnelsList: [],
+      externalSystemData: [],
       // 弹出层标题
       title: "",
       titles: "",
@@ -585,6 +594,9 @@ export default {
         tunnelId: [
           { required: true, message: "请填写隧道ID", trigger: "blur" },
         ],
+        // externalSystemId: [
+        //   { required: true, message: "请选择外部系统", trigger: "change" },
+        // ],
       },
       // selectedTunnel:{},
       // 隧道列表
@@ -602,6 +614,7 @@ export default {
     });
     this.getDepts();
     this.getUserDept();
+    this.getExternalsystem();
   },
   mounted() {
     if (window.history && window.history.pushState) {
@@ -614,6 +627,11 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    getExternalsystem() {
+      listSystem(this.queryParams).then(response => {
+        this.externalSystemData = response.rows;
+      });
+    },
     getTreeselect() {
       treeselectExcYG1().then((response) => {
         this.deptOptions = response.data;
@@ -862,6 +880,7 @@ export default {
           return delTunnels(tunnelIds);
         })
         .then(() => {
+          delAssociationByTunnelIds(tunnelIds);
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })

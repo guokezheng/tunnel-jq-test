@@ -50,6 +50,8 @@ public interface ITunnelAssociationService
      */
     public int deleteTunnelAssociationByIds(Long[] ids);
 
+    public int deleteTunnelAssociationByTunnelIds(String[] tunnelIds);
+
     /**
      * 删除隧道关联关系信息
      *

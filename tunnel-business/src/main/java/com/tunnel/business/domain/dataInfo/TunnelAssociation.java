@@ -25,7 +25,7 @@ public class TunnelAssociation extends BaseEntity
 
     /** 外部系统ID */
     @Excel(name = "外部系统ID")
-    private String externalSystemId;
+    private Long externalSystemId;
 
     /** 外部系统隧道ID */
     @Excel(name = "外部系统隧道ID")
@@ -62,12 +62,12 @@ public class TunnelAssociation extends BaseEntity
     {
         return tunnelDirection;
     }
-    public void setExternalSystemId(String externalSystemId)
+    public void setExternalSystemId(Long externalSystemId)
     {
         this.externalSystemId = externalSystemId;
     }
 
-    public String getExternalSystemId()
+    public Long getExternalSystemId()
     {
         return externalSystemId;
     }

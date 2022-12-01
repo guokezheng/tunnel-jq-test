@@ -103,4 +103,10 @@ public class TunnelAssociationController extends BaseController
     {
         return toAjax(tunnelAssociationService.deleteTunnelAssociationByIds(ids));
     }
+
+    @DeleteMapping("/delDetials/{tunnelIds}")
+    public AjaxResult removeByTunnelIds(@PathVariable String[] tunnelIds)
+    {
+        return toAjax(tunnelAssociationService.deleteTunnelAssociationByTunnelIds(tunnelIds));
+    }
 }

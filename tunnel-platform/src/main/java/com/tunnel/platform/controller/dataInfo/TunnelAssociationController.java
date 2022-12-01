@@ -65,6 +65,12 @@ public class TunnelAssociationController extends BaseController
         return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationById(id));
     }
 
+    @GetMapping(value = "/getDetail/{tunnelId}")
+    public AjaxResult getDetail(@PathVariable("tunnelId") String tunnelId)
+    {
+        return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationByTunnelId(tunnelId));
+    }
+
     /**
      * 新增隧道关联关系
      */

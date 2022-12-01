@@ -203,19 +203,19 @@
             v-hasPermi="['system:tunnels:edit']"
             >配置
           </el-button>
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            class="tableBlueButtton"-->
-<!--            @click="tunnelAssociationConfig(scope.row)"-->
-<!--            v-hasPermi="['system:tunnels:edit']"-->
-<!--          >关联配置-->
-<!--          </el-button>-->
           <el-button
             size="mini"
             class="tableBlueButtton"
+            @click="tunnelAssociationConfig(scope.row)"
             v-hasPermi="['system:tunnels:edit']"
           >关联配置
           </el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            v-hasPermi="['system:tunnels:edit']"-->
+<!--          >关联配置-->
+<!--          </el-button>-->
 <!--          <el-button-->
 <!--            size="mini"-->
 <!--            class="tableBlueButtton"-->
@@ -241,6 +241,34 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
+
+    <!-- 添加或修改隧道关联关系对话框 -->
+    <el-dialog :title="titles" :visible.sync="opens" width="500px" append-to-body>
+      <el-form ref="forms" :model="forms" :rules="rule" label-width="80px">
+        <el-form-item label="隧道" prop="tunnelId">
+          <el-input v-model="forms.tunnelId" placeholder="请输入隧道" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="隧道方向" prop="tunnelDirection">
+          <el-input v-model="forms.tunnelDirection" placeholder="请输入隧道方向" />
+        </el-form-item>
+        <el-form-item label="外部系统ID" prop="externalSystemId">
+          <el-input v-model="forms.externalSystemId" placeholder="请输入外部系统ID" />
+        </el-form-item>
+        <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId">
+          <el-input v-model="forms.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />
+        </el-form-item>
+        <el-form-item label="外部系统隧道方向" prop="externalSystemTunnelDirection">
+          <el-input v-model="forms.externalSystemTunnelDirection" placeholder="请输入外部系统隧道方向" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="forms.remark" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForms">确 定</el-button>
+        <el-button @click="cancels">取 消</el-button>
+      </div>
+    </el-dialog>
 
     <!-- 添加或修改隧道对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body>
@@ -444,6 +472,9 @@ import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {
+  getAssociation, delAssociation, addAssociation, updateAssociation, getAssociationByTunnelId
+} from "@/api/equipment/deviceassociation/association";
 
 
 export default {
@@ -492,8 +523,10 @@ export default {
       tunnelsList: [],
       // 弹出层标题
       title: "",
+      titles: "",
       // 是否显示弹出层
       open: false,
+      opens: false,
       // 是否使用字典
       pollOptions: [],
       // 查询参数
@@ -512,6 +545,7 @@ export default {
       userDeptId: null,
       // 表单参数
       form: {},
+      forms: {},
       // 表单校验
       rules: {
         tunnelName: [
@@ -545,6 +579,11 @@ export default {
         ],
         poll: [
           { required: true, message: "请选择是否可用", trigger: "change" },
+        ],
+      },
+      rule: {
+        tunnelId: [
+          { required: true, message: "请填写隧道ID", trigger: "blur" },
         ],
       },
       // selectedTunnel:{},
@@ -620,11 +659,6 @@ export default {
       this.form.lane = this.form.lane.replace(/[^\.\d]/g, "");
       this.form.lane = this.form.lane.replace(".", "");
     },
-    /* 进入隧道关联关系配置 */
-    tunnelAssociationConfig() {
-      const tunnelId = row.tunnelId || this.ids;
-      console.log("开启隧道关系配置弹窗");
-    },
     /* 进入配置界面*/
     tunnelConfig(row) {
       const tunnelId = row.tunnelId || this.ids;
@@ -653,11 +687,27 @@ export default {
       return this.selectDictLabel(this.pollOptions, row.poll);
     },
     // 取消按钮
+    cancels() {
+      this.opens = false;
+      this.resets();
+    },
     cancel() {
       this.open = false;
       this.reset();
     },
     // 表单重置
+    resets() {
+      this.forms = {
+        id: null,
+        tunnelId: null,
+        tunnelDirection: null,
+        externalSystemId: null,
+        externalSystemTunnelId: null,
+        externalSystemTunnelDirection: null,
+        remark: null
+      };
+      this.resetForm("forms");
+    },
     reset() {
       this.form = {
         tunnelId: null,
@@ -710,6 +760,26 @@ export default {
         document.getElementById("aaa").removeAttribute("readOnly");
       });
     },
+    /* 进入隧道关联关系配置 */
+    tunnelAssociationConfig(row) {
+      const tunnelId = row.tunnelId || this.ids;
+      console.log("开启隧道关系配置弹窗");
+      this.resets();
+      if (tunnelId != null) {
+        getAssociationByTunnelId(tunnelId).then(response => {
+          if (response.data != null && response.data.tunnelId != null) {
+            this.forms = response.data;
+            this.opens = true;
+            this.titles = "修改隧道关联关系";
+          } else {
+            this.resets();
+            this.opens = true;
+            this.titles = "添加隧道关联关系";
+            this.forms.tunnelId = tunnelId;
+          }
+        });
+      }
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -726,6 +796,25 @@ export default {
         this.form = response.data;
         this.open = true;
         this.title = "修改隧道";
+      });
+    },
+    submitForms() {
+      this.$refs["forms"].validate(valid => {
+        if (valid) {
+          if (this.forms.id != null) {
+            updateAssociation(this.forms).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.opens = false;
+              this.getList();
+            });
+          } else {
+            addAssociation(this.forms).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.opens = false;
+              this.getList();
+            });
+          }
+        }
       });
     },
     /** 提交按钮 */

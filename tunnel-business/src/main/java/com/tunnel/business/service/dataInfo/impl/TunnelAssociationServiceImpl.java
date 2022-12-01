@@ -28,6 +28,12 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService
         return tunnelAssociationMapper.selectTunnelAssociationById(id);
     }
 
+    @Override
+    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId)
+    {
+        return tunnelAssociationMapper.selectTunnelAssociationByTunnelId(tunnelId);
+    }
+
     /**
      * 查询隧道关联关系列表
      *

@@ -16,6 +16,8 @@ public interface ITunnelAssociationService
      */
     public TunnelAssociation selectTunnelAssociationById(Long id);
 
+    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId);
+
     /**
      * 查询隧道关联关系列表
      *

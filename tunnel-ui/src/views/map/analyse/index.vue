@@ -24,9 +24,9 @@
   </script>
   <style scoped>
   .mapHuaWei {
-    height: calc(100% + 10px);
+    height:100px;
     position: relative;
-    top: -10px;
+    top: 0px;
     z-index: 3;
     width: 100%;
   }

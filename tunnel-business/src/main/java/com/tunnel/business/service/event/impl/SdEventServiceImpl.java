@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
@@ -247,9 +248,10 @@ public class SdEventServiceImpl implements ISdEventService {
         //2.根据桩号遍历匹配
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            boolean isDown = TunnelDirectionEnum.getTunnelDirection(direction).equals("下行");
             for(SdTunnelSubarea data:subareaData){
-                Integer upLimit = direction.equals("0")?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
-                Integer downLimit = direction.equals("0")?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
+                Integer upLimit = isDown?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
+                Integer downLimit = isDown?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
 //                Integer upLimit = Integer.parseInt(data.getPileMax());
 //                Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(upLimit >= compareValue && compareValue >= downLimit){
@@ -263,7 +265,7 @@ public class SdEventServiceImpl implements ISdEventService {
             String[] pileStr = s.split(",");
             int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
             //下行取反
-            if(direction.equals("0")){
+            if(isDown){
                 ArrayUtils.reverse(allPile);
             }
             int index = Math.abs(compareValue-allPile[0]);
@@ -282,11 +284,10 @@ public class SdEventServiceImpl implements ISdEventService {
             if(mark %2 !=0){
                 //最接近的值为桩号下限
                 only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
-                subareaId = only.get(0).getsId();
             }else{
                 only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
-                subareaId = only.get(0).getsId();
             }
+            subareaId = only.get(0).getsId();
         }catch (Exception ex){
             ex.printStackTrace();
         }

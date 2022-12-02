@@ -104,4 +104,6 @@ public interface SdFaultListMapper
                                                           @Param("tunnelId") String tunnelId,
                                                           @Param("faultStatus") String faultStatus,
                                                           @Param("falltRemoveStatue") String falltRemoveStatue);
+
+    SdFaultList exportFaultReport(String faultId);
 }

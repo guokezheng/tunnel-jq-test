@@ -26,7 +26,7 @@
           style="width: 100%"
         >
           <el-option
-            v-for="dict in dict.type.sd_wj_vehicle_type"
+            v-for="dict in dict.type.sd_emergency_vehicle_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.label"
@@ -41,7 +41,7 @@
           size="small"
         />
       </el-form-item>
-      <el-form-item label="使用状态" prop="tunnelId">
+<!--      <el-form-item label="使用状态" prop="tunnelId">
         <el-select
           v-model="queryParams.useStatus"
           placeholder="请选择使用状态"
@@ -55,7 +55,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item label="运行状态" prop="tunnelId">
         <el-select
           v-model="queryParams.accState"
@@ -94,24 +94,6 @@
           @click="handleUpdateMaterial"
           v-hasPermi="['system:vehicle:edit']"
           >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['business:SdEmergencyPer:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:vehicle:export']"
-          >导出</el-button
         >
         <!-- <el-col :span="1.5"> -->
 
@@ -159,11 +141,9 @@
     <el-table
       v-loading="loading"
       :data="mechanismList"
-      @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
       max-height="640"
     >
-      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
       <el-table-column label="车型" align="center" prop="vType"/>
@@ -195,13 +175,6 @@
             @click="handleUpdateMaterial(scope.row)"
             v-hasPermi="['system:vehicle:edit']"
             >修改</el-button
-          >
-          <el-button
-            size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vehicle:remove']"
-            >删除</el-button
           >
           <el-button
             size="mini"
@@ -244,7 +217,7 @@
             :disabled="disabled"
           >
             <el-option
-              v-for="dict in dict.type.sd_wj_vehicle_type"
+              v-for="dict in dict.type.sd_emergency_vehicle_type"
               :key="dict.label"
               :label="dict.label"
               :value="dict.label"
@@ -334,7 +307,7 @@ import {
 import { batchDelete } from "@/api/surveyVehicle/api.js";
 
 export default {
-  dicts: ["sd_use_status", "sd_wj_vehicle_type","sd_vehicle_run_type"],
+  dicts: ["sd_use_status", "sd_emergency_vehicle_type","sd_vehicle_run_type"],
   data() {
     const validateLongitude = (rule, value, callback) => {
       if (value == "" || value == null && this.upDisabled == false) {
@@ -384,27 +357,12 @@ export default {
       this.orgData = this.handleTree(res,"value");
       console.log(this.orgData, "机构名称");
     });
-    this.getDicts("sd_wj_vehicle_type").then((data) => {
+    this.getDicts("sd_emergency_vehicle_type").then((data) => {
       console.log(data, "车型");
       this.vehicleTypeList = data.data;
     });
   },
   methods: {
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal
-        .confirm("是否确认导出所有数据项？")
-        .then(() => {
-          this.exportLoading = true;
-          return exportData();
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-          this.exportLoading = false;
-        })
-        .catch(() => {});
-    },
     /** 查询应急机构列表 */
     getList() {
       // console.log(this.queryParams)
@@ -510,7 +468,7 @@ export default {
       // this.reset();
       this.model = false;
       this.upDisabled = false;
-      const id = row.id ? [row.id] : this.ids;
+      const id = row.id;
       this.open = true;
       this.title = "修改应急车辆";
       // console.log(scope,'row.idrow.id');
@@ -539,24 +497,6 @@ export default {
         // this.form = response.data;
         // this.open = true;
         // this.title = "修改应急资源";
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.orgId ? [row.orgId] : this.ids;
-      var that = this;
-      this.$confirm("是否确认删除?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        batchDelete(ids).then((res) => {
-          if (res.code == 200) {
-            that.$modal.msgSuccess("删除成功");
-            that.getList();
-            that.$forceUpdate();
-          }
-        });
       });
     },
     // 表格的行样式

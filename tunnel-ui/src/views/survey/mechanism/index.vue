@@ -139,7 +139,6 @@ export default {
       this.loading = true;
       handleQueryList(this.queryParams).then((res) => {
         this.mechanismList = this.handleTree(res,"deptId");
-        console.log(this.mechanismList,"111111");
       });
       this.loading = false;
     },
@@ -161,7 +160,6 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.orgId);
-      console.log(this.ids);
       this.single = selection.length !== 1;
       this.multiple = !selection.length; //非多个禁用
     },
@@ -175,7 +173,6 @@ export default {
       this.$refs["form"].validate(async (valid) => {
         if (valid) {
           if (this.title == "修改应急资源") {
-            console.log(this.form, "formfffffff");
             await updateForm(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
@@ -183,9 +180,7 @@ export default {
                 this.getList();
               }
             });
-            console.log("修改应急资源");
           } else {
-            console.log(this.form, "22222222222222");
             await addList(this.form).then((response) => {
               if (response.code === 200) {
                 this.$modal.msgSuccess("新增成功");

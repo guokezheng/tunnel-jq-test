@@ -12,7 +12,7 @@
       </el-form-item> -->
       <el-form-item label="隧道名称" prop="tunnelId">
         <el-select v-model="queryParams.tunnelId" placeholder="请选择隧道名称" clearable size="small">
-          <el-option 
+          <el-option
            v-for="(item) in eqTunnelData"
            :key="item.tunnelId"
            :label="item.tunnelName"
@@ -22,17 +22,17 @@
       </el-form-item>
       <el-form-item label="车辆类型" prop="vehicleType">
         <el-select v-model="queryParams.vehicleType" placeholder="请选择车辆类型" clearable size="small">
-          <el-option 
+          <el-option
            v-for="(item) in vehicleType"
-           :key="item.dictValue"
-           :label="item.dictLabel"
-           :value="item.dictValue"
+           :key="item.vehicleTypeCode"
+           :label="item.vehicleTypeName"
+           :value="item.vehicleTypeCode"
            />
         </el-select>
       </el-form-item>
       <el-form-item label="车辆颜色" prop="vehicleColor">
         <el-select v-model="queryParams.vehicleColor" placeholder="请选择车辆颜色" clearable size="small">
-          <el-option 
+          <el-option
            v-for="(item) in vehicleColor"
            :key="item.dictValue"
            :label="item.dictLabel"
@@ -51,7 +51,7 @@
       </el-form-item> -->
       <el-form-item label="车牌颜色" prop="licenseColor">
         <el-select v-model="queryParams.licenseColor" placeholder="请选择车牌颜色" clearable size="small">
-          <el-option 
+          <el-option
            v-for="(item) in licenseColor"
            :key="item.dictValue"
            :label="item.dictLabel"
@@ -79,7 +79,7 @@
         <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
         <el-button
-          type="primary" 
+          type="primary"
           plain
           size="mini"
           :loading="exportLoading"
@@ -124,7 +124,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="primary" 
+          type="primary"
           plain
           icon="el-icon-download"
           size="mini"
@@ -136,14 +136,21 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" max-height="640" 
+    <el-table v-loading="loading" :data="vehicleList" @selection-change="handleSelectionChange" max-height="640"
               :row-class-name="tableRowClassName"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <!-- <el-table-column label="车辆id" align="center" prop="vehicleId" /> -->
       <el-table-column label="隧道名称" align="center" prop="tunnelName" />
-      <el-table-column label="车辆类型" align="center" prop="vehicleType"  :formatter="vehicleTypeFormat" />
+      <el-table-column label="车辆类型" align="center" prop="vehicleType">
+        <template slot-scope="scope">
+          <span>
+            {{ getVehicleTypeData(scope.row.vehicleType)
+            }}
+          </span>
+        </template>
+      </el-table-column>
       <el-table-column label="车辆颜色" align="center" prop="vehicleColor"  :formatter="vehicleColorFormat" />
       <el-table-column label="车牌号" align="center" prop="vehicleLicense" />
       <el-table-column label="车牌颜色" align="center" prop="licenseColor"  :formatter="licenseColorFormat"/>
@@ -176,7 +183,7 @@
         </template>
       </el-table-column> -->
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -235,6 +242,7 @@
 
 <script>
 import { listVehicle, getVehicle, delVehicle, addVehicle, updateVehicle, exportVehicle } from "@/api/map/special/vehicle";
+import { getVehicleSelectList } from "@/api/surveyType/api";
 import {
     listTunnels
   } from "@/api/equipment/tunnel/api";
@@ -291,9 +299,9 @@ export default {
     this.getList();
     this.getTunnel();
      //车辆类型
-     this.getDicts("sd_wj_vehicle_type").then(response => {
-      // console.log(response,'车辆类型')
-      this.vehicleType = response.data;
+     getVehicleSelectList({iskeyVehicle:'1'}).then(response => {
+      console.log(response,'车辆类型')
+      this.vehicleType = response;
     });
     //车辆颜色
     this.getDicts("sd_wj_vehicle_color").then(response => {
@@ -315,10 +323,10 @@ export default {
         });
       },
      //车辆类型字典给翻译
-     vehicleTypeFormat(row, column) {
+     /*vehicleTypeFormat(row, column) {
       // console.log(row)
-      return this.selectDictLabel(this.vehicleType, row.vehicleType);
-    },
+      return this.vehicleType(this.vehicleType, row.vehicleType);
+    },*/
     //车辆颜色字典翻译
     vehicleColorFormat(row, column){
         // console.log(row)
@@ -338,6 +346,13 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    getVehicleTypeData(row){
+      for(let item of this.vehicleType){
+        if(row == item.vehicleTypeCode){
+          return item.vehicleTypeName
+        }
+      }
     },
     // 取消按钮
     cancel() {
@@ -394,7 +409,7 @@ export default {
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
-      
+
         if (valid) {
           if (this.form.id != null) {
             updateVehicle(this.form).then(response => {

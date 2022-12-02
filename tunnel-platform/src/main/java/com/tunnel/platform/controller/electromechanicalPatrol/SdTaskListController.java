@@ -495,8 +495,8 @@ public class SdTaskListController extends BaseController
             template.write(fos);
             //=================生成word到设置浏览默认下载地址=================
             // 设置强制下载不打开
-            // response.setContentType("application/force-download");
-            response.setContentType("application/msword");
+            response.setContentType("application/force-download");
+//            response.setContentType("application/msword");
             // 设置文件名
             response.addHeader("Content-Disposition", "attachment;fileName=" + fileName);
             OutputStream out = response.getOutputStream();

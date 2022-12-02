@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.emeResource.SdVehicleTypeMapper">
+    
+    <resultMap type="SdVehicleType" id="SdVehicleTypeResult">
+        <result property="id"    column="id"    />
+        <result property="vehicleTypeCode"    column="vehicle_type_code"    />
+        <result property="vehicleTypeName"    column="vehicle_type_name"    />
+        <result property="iskeyVehicle"    column="is_key_vehicle"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdVehicleTypeVo">
+        select id, vehicle_type_code, vehicle_type_name, is_key_vehicle, create_by, create_time, update_by, update_time from sd_vehicle_type
+    </sql>
+
+    <select id="selectSdVehicleTypeList" parameterType="SdVehicleType" resultMap="SdVehicleTypeResult">
+        <include refid="selectSdVehicleTypeVo"/>
+        <where>  
+            <if test="vehicleTypeCode != null  and vehicleTypeCode != ''"> and INSTR(vehicle_type_code, #{vehicleTypeCode}) > 0</if>
+            <if test="vehicleTypeName != null  and vehicleTypeName != ''"> and INSTR(vehicle_type_name, #{vehicleTypeName}) > 0</if>
+            <if test="iskeyVehicle != null  and iskeyVehicle != ''"> and is_key_vehicle = #{iskeyVehicle}</if>
+        </where>
+        ORDER BY CAST(vehicle_type_code as UNSIGNED) ASC
+    </select>
+
+    <select id="exportSdVehicleTypeList" parameterType="SdVehicleType" resultMap="SdVehicleTypeResult">
+        SELECT
+            id,
+            vehicle_type_code,
+            vehicle_type_name,
+            CASE
+            WHEN is_key_vehicle = '0' THEN
+            '否' ELSE '是'
+            END is_key_vehicle,
+            create_by,
+            create_time,
+            update_by,
+            update_time
+        FROM
+        sd_vehicle_type
+        <where>
+            <if test="vehicleTypeCode != null  and vehicleTypeCode != ''"> and INSTR(vehicle_type_code, #{vehicleTypeCode}) > 0</if>
+            <if test="vehicleTypeName != null  and vehicleTypeName != ''"> and INSTR(vehicle_type_name, #{vehicleTypeName}) > 0</if>
+            <if test="iskeyVehicle != null  and iskeyVehicle != ''"> and is_key_vehicle = #{iskeyVehicle}</if>
+        </where>
+        ORDER BY CAST(vehicle_type_code as UNSIGNED) ASC
+    </select>
+    
+    <select id="selectSdVehicleTypeById" parameterType="String" resultMap="SdVehicleTypeResult">
+        <include refid="selectSdVehicleTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdVehicleType" parameterType="SdVehicleType">
+        insert into sd_vehicle_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vehicleTypeCode != null">vehicle_type_code,</if>
+            <if test="vehicleTypeName != null">vehicle_type_name,</if>
+            <if test="iskeyVehicle != null">is_key_vehicle,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vehicleTypeCode != null">#{vehicleTypeCode},</if>
+            <if test="vehicleTypeName != null">#{vehicleTypeName},</if>
+            <if test="iskeyVehicle != null">#{iskeyVehicle},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdVehicleType" parameterType="SdVehicleType">
+        update sd_vehicle_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vehicleTypeCode != null">vehicle_type_code = #{vehicleTypeCode},</if>
+            <if test="vehicleTypeName != null">vehicle_type_name = #{vehicleTypeName},</if>
+            <if test="iskeyVehicle != null">is_key_vehicle = #{iskeyVehicle},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdVehicleTypeById" parameterType="String">
+        delete from sd_vehicle_type where id = #{id}
+    </delete>
+
+    <delete id="deleteSdVehicleTypeByIds" parameterType="String">
+        delete from sd_vehicle_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="checkData" parameterType="com.tunnel.business.domain.emeResource.SdVehicleType" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            sd_vehicle_type vt
+        WHERE
+            1 = 1
+        <if test="vehicleTypeCode != null and vehicleTypeCode != ''">
+            AND vt.vehicle_type_code = #{vehicleTypeCode}
+        </if>
+        <if test="vehicleTypeName != null and vehicleTypeName != ''">
+            AND vt.vehicle_type_name = #{vehicleTypeName}
+        </if>
+        <if test="id != null">
+            AND vt.id <![CDATA[ <> ]]> #{id}
+        </if>
+    </select>
+</mapper>

@@ -2789,6 +2789,7 @@ import {
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
+import {getVehicleSelectList} from "@/api/surveyType/api";//车辆类型
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -3513,9 +3514,13 @@ export default {
       console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
     });
-    this.getDicts("sd_wj_vehicle_type").then((data) => {
+    /*this.getDicts("sd_wj_vehicle_type").then((data) => {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
+    });*/
+    getVehicleSelectList({}).then(response => {
+      console.log(response,'车辆类型')
+      this.vehicleTypeList = response;
     });
     this.getTunnelState();
     // this.carchange();
@@ -4011,8 +4016,8 @@ export default {
     // 车型通过字典表获取值
     getCheXing(num) {
       for (var item of this.vehicleTypeList) {
-        if (num == Number(item.dictValue)) {
-          return item.dictLabel;
+        if (num == Number(item.vehicleTypeCode)) {
+          return item.vehicleTypeName;
         }
       }
     },

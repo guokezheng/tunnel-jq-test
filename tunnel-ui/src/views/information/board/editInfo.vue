@@ -5,7 +5,7 @@
         title="修改"
         :visible.sync="dialogVisible"
         width="60%"
-        :before-close="handleClose"
+        :before-close="closeDialog"
       >
         <el-card class="box-card" >
           <div
@@ -28,7 +28,7 @@
           >
             <div
               class="textBoard"
-              style="line-height: 1; position: absolute; white-space: nowrap"
+              style="line-height: 1; position: absolute; white-space: pre-wrap"
              
               :style="{
                 color: dataForm.COLOR,
@@ -40,18 +40,18 @@
                 left:dataForm.COORDINATE.substring(0, 3) + 'px',
                 top:dataForm.COORDINATE.substring(3, 6) + 'px',
               }"
-              
-            >{{dataForm.CONTENT}}</div>
+            v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
+            ></div>
           </div>
         </el-card>
         <el-row >
             <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-            <el-button type="info" plain @click="alignment(6)">下对齐</el-button>
+            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
-            <el-button type="info" plain @click="alignment(4)">上对齐</el-button>
-            <el-button type="info" plain @click="alignment(3)">右对齐</el-button>
+            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
+            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
             <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
-            <el-button type="info" plain @click="alignment(1)">左对齐</el-button>
+            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
           </el-row>
         <el-card>
           <el-form
@@ -85,6 +85,24 @@
                   </el-select> -->
                 </el-form-item>
               </el-col>
+              <el-col :span="6">
+              <el-form-item prop="category" label="所属类别">
+                <el-select
+                  v-model="dataForm.category"
+                  placeholder="请选择所属类别"
+                  size="small"
+                  disabled
+                >
+                  <el-option
+                    v-for="item in iotTemplateCategoryList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             </el-row>
             <el-row
               :gutter="24"
@@ -94,8 +112,11 @@
                   <el-input
                     type="textarea"
                     clearable
+                    id="textContent"
+
                     placeholder="详细内容"
                     v-model="dataForm.CONTENT"
+                    @keyup.native="keyDown($event)"
                   ></el-input>
                 </el-form-item>
               </el-col>
@@ -208,7 +229,7 @@
         </el-card>
   
         <template slot="footer">
-          <el-button size="small" @click="dialogVisible = false">取消</el-button>
+          <el-button size="small" @click="closeDialog()">取消</el-button>
           <el-button
             size="small"
             @click="dataFormSubmitHandle()"
@@ -229,6 +250,8 @@
     // editTemplate,
     // deleteTemplate,
     // getTemplateContent,
+    editTemplate,
+    editTemplateContent,
     getGalleryList,
     uploadBoardEditInfo,
 
@@ -247,6 +270,9 @@
 
     data() {
       return {
+      iotTemplateCategoryList: [],
+      content: "",
+
         boardWidth:'',
         boardHeight:'',
         // boardEmitItem:this.boardEmitItem,
@@ -576,15 +602,20 @@
         };
       },
     },
-    // watch: {
+    watch: {
     //   boardEmitItem(newval){
     //       console.log(newval,"newval")
     //       this.boardEmitItem = newval
           
         
     //   }
- 
-    // },
+      "dataForm.CONTENT": {
+        deep: true,
+        handler: function (newValue, oldValue) {
+          this.dataForm.content1 = newValue;
+        },
+      },
+    },
     created(){
       console.log(this.boardEmitItem,"this.boardEmitItem")
       if(this.boardEmitItem){
@@ -596,6 +627,10 @@
        
         this.init()
       }
+      this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+    });
     },
     mounted() {
       console.log(this.boardEmitItem,"boardEmitItemboardEmitItem")
@@ -638,6 +673,9 @@
             // 左右居中
           case 2:
             textBoard[0].style.left = (divWidth - textWidth)/2 +'px';
+            // divContent[0].style.display='flex';
+            // divContent[0].style.justifyContent= 'center';
+
             break;
             // 右对齐
           case 3:
@@ -687,73 +725,146 @@
       ondragenter(e) {
         e.preventDefault(); //阻止默认行为
       },
+      keyDown(ev){
+        // console.log(ev.keyCode,"ev.keyCode");
+      let arr = [];
+      let content = "";
+      const input = document.getElementById("textContent");
+      // console.log(input.selectionStart);
+      arr = this.dataForm.CONTENT.split("");
+      // console.log(arr, "arr");
+      content += "<div>";
+      for (var i = 0; i < arr.length; i++) {
+        content += arr[i];
+        if (i == input.selectionStart - 1) {
+          if(ev.keyCode == 13){
+            content += "<br>";
+          }else if(ev.keyCode == 32){
+            content += "&nbsp";
+          }
+        }
+      }
+      content += "</div>";
+      this.dataForm.content1 = content;
+      // console.log( this.dataForm.content1," this.content");
+      },
       // 表单确认
-      async dataFormSubmitHandle() {
-        let valid = await this.$refs.dataForm.validate().catch(() => {
+      dataFormSubmitHandle() {
+        let valid = this.$refs.dataForm.validate().catch(() => {
           return this.$modal.msgError("校验错误");
         });
         if (!valid) return;
         this.loading = true;
-        // let templateId = "";
-        // let method = !this.isAdd ? "put" : "post";
-        // if (this.isAdd) {
-        //   // 新增
-        //   await addTemplate(this.dataForm, method).then((data) => {
-        //     console.log(data, "新增口");
-        //     templateId = data;
-        //   });
-        //   let params = {
-        //     templateContent: this.templateContent,
-        //     templateId: templateId,
-        //   };
-        //   addTemplateContent(params).catch((err) => {
-        //     throw err;
-        //   });
-        // } else {
-          console.log(this.dataForm,"点击修改 表单");
-          // console.log(params);
-          // 修改
-          // await editTemplate(this.dataForm).then((data) => {});
-  
-          // this.templateContent.forEach((e) => {
-          //   e.img = e.imageName;
-          // });
-        //   var reg = /,/g;
-        //     console.log(this.dataForm,"this.dataForm00000");
-        //   var parameters =  this.addItemPropertyMap(this.dataForm.deviceId, false, this.dataForm.STAY, this.dataForm.ACTION, this.dataForm.SPEED, this.dataForm.COORDINATE,
-        //   this.dataForm.FONT, this.dataForm.FONT_SIZE, this.dataForm.COLOR, this.dataForm.CONTENT.replace(reg, '，').replace(/<br>/g,
-        //           "\n"));
-        //   let protocolType= 'GUANGDIAN_V33';
-        //  console.log(parameters,"parameters");
-        //   uploadBoardEditInfo(this.dataForm.deviceId,protocolType,parameters).then((response) => {
-        //     console.log(response, "返回结果");
-        //   });
-        // }
+        console.log(this.dataForm,"点击修改 表单");
+       
         this.loading = false;
-        this.dialogVisible = false;
         this.isAdd = false;
-        this.$emit("receiveForm", this.dataForm);
+        if(this.dataForm.type == 1){
+          this.$emit("receiveForm", this.dataForm);
+        }else{
+          const tcontent = {
+          content: this.dataForm.CONTENT,
+          coordinate: this.dataForm.COORDINATE,
+          createBy: null,
+          createTime: null,
+          fontColor: this.dataForm.COLOR,
+          fontSize: this.dataForm.FONT_SIZE.substring(0, 2),
+          fontSpacing: this.dataForm.SPEED,
+          fontType: this.getFontStyle(this.dataForm.FONT),
+          height: null,
+          id: this.dataForm.id,
+          imageUrl: null,
+          params: {},
+          remark: null,
+          searchValue: null,
+          templateId: this.dataForm.id,
+          updateBy: null,
+          updateTime: null,
+          width: null,
+        }
+        const param = {
+          applyType: "",
+          category: this.dataForm.category,
+          createBy: null,
+          createTime: null,
+          dictLable: null,
+          id: this.dataForm.id,
+          inScreenMode: this.dataForm.ACTION,
+          isCurrency: null,
+          params: {},
+          remark: "",
+          screenSize:  this.dataForm.screenSize,
+          searchValue: null,
+          stopTime: this.dataForm.STAY,
+          tcontents: null,
+          templateType: null,
+          updateBy: null,
+          updateTime: null,
+          vmsType: "",
+          tcontent:tcontent,
+          templateId:this.dataForm.id
+
+        }
+          editTemplate(param).then((data) => {});
+          let templateContent = []
+          templateContent.push({
+            content: this.dataForm.CONTENT,
+            fontColor: this.dataForm.COLOR,
+            fontSize: this.dataForm.FONT_SIZE.substring(0, 2),
+            fontType: this.getFontStyle(this.dataForm.FONT),
+            fontSpacing: this.dataForm.SPEED,
+            coordinate: this.dataForm.COORDINATE,
+            id:this.dataForm.tcontentsId,
+            templateId:this.dataForm.id
+          });
+        
+
+          var params = {
+            templateContent: templateContent,
+            templateId: this.dataForm.id,
+            templateDelContent: [],
+          }
+          editTemplateContent(params).then(response => {
+            console.log(response,'返回结果');
+          });
+        }
+        this.closeDialog()
+
+      },
+      getFontStyle(font) {
+      if (font == "宋体") {
+        return "Simsun";
+      } else if (font == "黑体") {
+        return "SimHei";
+      } else if (font == "楷体") {
+        return "KaiTi";
+      }
+    },
+      closeDialog(){
+        this.dialogVisible = false;
+        this.$emit("dialogClose");
+
       },
       //将item属性存入Map
-      addItemPropertyMap(itemId, addFlg, stay, action, speed, coordinate, font, font_size, color, content) {
-        if (!action) {
-          action = 0;
-        }
-        this.addPropertyMap(itemId + '_STAY', this.itemPropertyMap, addFlg, stay);
-        this.addPropertyMap(itemId + '_ACTION', this.itemPropertyMap, addFlg, action);
-        this.addPropertyMap(itemId + '_SPEED', this.itemPropertyMap, addFlg, speed);
-        this.addPropertyMap(itemId + '_COORDINATE', this.itemPropertyMap, addFlg, coordinate);
-        this.addPropertyMap(itemId + '_FONT', this.itemPropertyMap, addFlg, font);
-        this.addPropertyMap(itemId + '_FONT_SIZE', this.itemPropertyMap, addFlg, font_size);
-        this.addPropertyMap(itemId + '_COLOR', this.itemPropertyMap, addFlg, color);
-        this.addPropertyMap(itemId + '_CONTENT', this.itemPropertyMap, addFlg, content);
-      },
-      addPropertyMap(itemIdStr, map, addFlg, propertyStr) {
-        var array = map.get(itemIdStr);
-        if (array == null || addFlg) array = new Array();
-        array.push(propertyStr);
-        map.put(itemIdStr, array);
-      },
+      // addItemPropertyMap(itemId, addFlg, stay, action, speed, coordinate, font, font_size, color, content) {
+      //   if (!action) {
+      //     action = 0;
+      //   }
+      //   this.addPropertyMap(itemId + '_STAY', this.itemPropertyMap, addFlg, stay);
+      //   this.addPropertyMap(itemId + '_ACTION', this.itemPropertyMap, addFlg, action);
+      //   this.addPropertyMap(itemId + '_SPEED', this.itemPropertyMap, addFlg, speed);
+      //   this.addPropertyMap(itemId + '_COORDINATE', this.itemPropertyMap, addFlg, coordinate);
+      //   this.addPropertyMap(itemId + '_FONT', this.itemPropertyMap, addFlg, font);
+      //   this.addPropertyMap(itemId + '_FONT_SIZE', this.itemPropertyMap, addFlg, font_size);
+      //   this.addPropertyMap(itemId + '_COLOR', this.itemPropertyMap, addFlg, color);
+      //   this.addPropertyMap(itemId + '_CONTENT', this.itemPropertyMap, addFlg, content);
+      // },
+      // addPropertyMap(itemIdStr, map, addFlg, propertyStr) {
+      //   var array = map.get(itemIdStr);
+      //   if (array == null || addFlg) array = new Array();
+      //   array.push(propertyStr);
+      //   map.put(itemIdStr, array);
+      // },
       /*********************************************业务代码***********************************************/
       
       // /*增加新的内容*/
@@ -794,47 +905,47 @@
       //   this.ispreviewContent = this.templateContent.indexOf(data);
       // },
       /********************图片上传*********************/
-      handleRemove(file, fileList) {},
-      handlePreview(file) {},
-      handleExceed(files, fileList) {
-        this.$modal.msgError(
-          `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
-            files.length + fileList.length
-          } 个文件`
-        );
-      },
-      beforeRemove(file, fileList) {
-        return this.$confirm(`确定移除 ${file.name}？`);
-      },
+      // handleRemove(file, fileList) {},
+      // handlePreview(file) {},
+      // handleExceed(files, fileList) {
+      //   this.$modal.msgError(
+      //     `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+      //       files.length + fileList.length
+      //     } 个文件`
+      //   );
+      // },
+      // beforeRemove(file, fileList) {
+      //   return this.$confirm(`确定移除 ${file.name}？`);
+      // },
   
       /**
        * 获取图片信息
        */
-      getImageInfo() {
-        let params = {
-          vmsSize: this.dataForm.screenSize,
-        };
-        console.log(params, "params");
-        getGalleryList(params).then((data) => {
-          console.log(data, "data");
+      // getImageInfo() {
+      //   let params = {
+      //     vmsSize: this.dataForm.screenSize,
+      //   };
+      //   console.log(params, "params");
+      //   getGalleryList(params).then((data) => {
+      //     console.log(data, "data");
   
-          if (!data) {
-            return;
-          }
-          let list = data.rows.sort((dataA, dataB) => {
-            dataA.id - dataB.id;
-          });
-          this.imgUrl.push(...list);
-          console.log(this.imgUrl, "this.imgUrl");
-        });
-      },
-      handleClose(done) {
-        this.$confirm("确认关闭？")
-          .then((_) => {
-            done();
-          })
-          .catch((_) => {});
-      },
+      //     if (!data) {
+      //       return;
+      //     }
+      //     let list = data.rows.sort((dataA, dataB) => {
+      //       dataA.id - dataB.id;
+      //     });
+      //     this.imgUrl.push(...list);
+      //     console.log(this.imgUrl, "this.imgUrl");
+      //   });
+      // },
+      // handleClose(done) {
+      //   this.$confirm("确认关闭？")
+      //     .then((_) => {
+      //       done();
+      //     })
+      //     .catch((_) => {});
+      // },
     },
   };
   </script>

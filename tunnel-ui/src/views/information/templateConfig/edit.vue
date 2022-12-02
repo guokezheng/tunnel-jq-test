@@ -160,13 +160,13 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+          <!-- <el-col :span="2">
             <el-button
               type="danger"
               icon="el-icon-delete"
               @click="delTemplateContent(res)"
             ></el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item prop="fontColor" label="字体颜色">
               <el-select
@@ -225,7 +225,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="24">
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item prop="rollSpeed" label="滚动速度(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
@@ -234,8 +234,8 @@
                 style="width: 100%"
               />
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
+          </el-col> -->
+          <!-- <el-col :span="8">
             <el-form-item prop="stopTime" label="停留时间(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
@@ -244,7 +244,7 @@
                 style="width: 100%"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item prop="inScreenMode" label="入屏方式">
               <el-select
@@ -354,7 +354,6 @@ export default {
         id: "",
         screenSize: "1024*128",//屏幕尺寸
         inScreenMode: "1",//入屏方式
-        rollSpeed: '1000',
         stopTime: '500',
         applyType: "",//适用类型
         vmsType: "",//情报板类型
@@ -378,13 +377,10 @@ export default {
             content: '宋体'
         },
         {
-            code: 'FangSong',
-            content: '仿宋'
+            code: 'SimHei',
+            content: '黑体'
         },
-        {
-            code: 'LiSu',
-            content: '隶书'
-        },
+
       ],
       screenSizeOptions: [
         // {
@@ -422,8 +418,8 @@ export default {
           content: "黄色",
         },
         {
-          code: "White",
-          content: "白色",
+          code: "blue",
+          content: "蓝色",
         },
         {
           code: "GreenYellow",
@@ -546,29 +542,14 @@ export default {
           name: "24",
         },
         {
-          code: "23",
-          name: "23",
+          code: "32",
+          name: "32",
         },
         {
-          code: "22",
-          name: "22",
+          code: "16",
+          name: "16",
         },
-        {
-          code: "21",
-          name: "21",
-        },
-        {
-          code: "20",
-          name: "20",
-        },
-        {
-          code: "19",
-          name: "19",
-        },
-        {
-          code: "18",
-          name: "18",
-        }
+
       ],
       iotTemplateCategoryList:[],
       title: "选择图片",
@@ -620,14 +601,7 @@ export default {
   computed: {
     dataRule() {
       return {
-        rollSpeed: [
-          //滚动速度
-          {
-            required: true,
-            message: '请填写滚动速度',
-            trigger: "blur",
-          },
-        ],
+
         stopTime: [
           //停留时间
           {
@@ -860,6 +834,8 @@ export default {
       this.loading = true;
       let templateId = "";
       let method = !this.isAdd ? "put" : "post";
+      console.log(this.dataForm,"this.dataForm");
+      console.log(this.templateContent,"this.templateContent")
       if (this.isAdd) {
         // 新增
         await addTemplate(this.dataForm, method).then((data) => {

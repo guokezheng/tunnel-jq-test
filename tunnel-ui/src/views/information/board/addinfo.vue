@@ -37,7 +37,7 @@
               top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
             class="textBoard"
-            v-html="content"
+            v-html="dataForm.CONTENT"
           ></div>
         </div>
       </el-card>
@@ -155,7 +155,7 @@
                   id="textContent"
                   placeholder="详细内容"
                   v-model="dataForm.CONTENT"
-                  @keyup.enter.native="keyDown()"
+                  @keyup.native="keyDown($event)"
                 ></el-input>
               </el-form-item>
             </el-col>
@@ -267,11 +267,11 @@
             </el-col>
             <el-col :span="6">
               <el-form-item prop="screenSize" label="屏幕尺寸">
-                <!-- <el-select
-                  @change="resolvingPowerType"
+                <el-select
                   v-model="dataForm.screenSize"
                   filterable
                   placeholder="请选择"
+                  v-if="!devicePixelBoolean"
                 >
                   <el-option
                     v-for="item in screenSizeOptions"
@@ -280,8 +280,12 @@
                     :value="item.type"
                   >
                   </el-option>
-                </el-select> -->
-                <el-input disabled v-model="dataForm.screenSize"></el-input>
+                </el-select>
+                <el-input
+                  disabled
+                  v-model="dataForm.screenSize"
+                  v-if="devicePixelBoolean"
+                ></el-input>
               </el-form-item>
             </el-col>
             <!-- <el-col :span="6">
@@ -375,6 +379,20 @@ export default {
       templateContent: [],
       templateDelContent: [],
       dataRule: {
+        screenSize: [
+          {
+            required: true,
+            message: "请选择分辨率",
+            trigger: "blur",
+          },
+        ],
+        category: [
+          {
+            required: true,
+            message: "请选择所属类别",
+            trigger: "blur",
+          },
+        ],
         fontColor: [
           {
             required: true,
@@ -594,6 +612,7 @@ export default {
       isAdd: false,
       iotTemplateCategoryList: [],
       infoType: "",
+      devicePixelBoolean: false,
     };
   },
   //   directives: {
@@ -645,28 +664,34 @@ export default {
       };
     },
   },
-  // watch: {
-  //   templateContent: {
-  //     deep: true,
-  //     handler: function (newValue, oldValue) {
-  //       // this.templateContent=newValue
-  //       var vm = this;
-  //       let inrex = [];
-  //       for (let index = vm.templateContent.length - 1; index >= 0; index--) {
-  //         if (
-  //           vm.templateContent[index].content == "" &&
-  //           (vm.templateContent[index].img == "" ||
-  //             vm.templateContent[index].imageName == "")
-  //         ) {
-  //           inrex.push(index);
-  //         }
-  //       }
-  //       for (let index = 0; index < inrex.length; index++) {
-  //         vm.templateContent.splice(inrex[index], 1);
-  //       }
-  //     },
-  //   },
-  // },
+  watch: {
+    "dataForm.CONTENT": {
+      deep: true,
+      handler: function (newValue, oldValue) {
+        this.dataForm.CONTENT = newValue;
+      },
+    },
+    //   templateContent: {
+    //     deep: true,
+    //     handler: function (newValue, oldValue) {
+    //       // this.templateContent=newValue
+    //       var vm = this;
+    //       let inrex = [];
+    //       for (let index = vm.templateContent.length - 1; index >= 0; index--) {
+    //         if (
+    //           vm.templateContent[index].content == "" &&
+    //           (vm.templateContent[index].img == "" ||
+    //             vm.templateContent[index].imageName == "")
+    //         ) {
+    //           inrex.push(index);
+    //         }
+    //       }
+    //       for (let index = 0; index < inrex.length; index++) {
+    //         vm.templateContent.splice(inrex[index], 1);
+    //       }
+    //     },
+    //   },
+  },
   mounted() {
     // 屏幕尺寸字典数据
     // this.getDicts("screenSize").then((res) => {
@@ -680,12 +705,20 @@ export default {
   },
   methods: {
     init(devicePixel, type) {
-      this.infoType = type;
-      console.log(devicePixel, "00000");
-      this.dataForm.screenSize = devicePixel;
+      if (devicePixel) {
+        this.devicePixelBoolean = true;
 
-      this.boardWidth = devicePixel.split("*")[0];
-      this.boardHeight = devicePixel.split("*")[1];
+        console.log(devicePixel, "00000");
+        this.dataForm.screenSize = devicePixel;
+
+        this.boardWidth = devicePixel.split("*")[0];
+        this.boardHeight = devicePixel.split("*")[1];
+      } else {
+        this.devicePixelBoolean = false;
+        (this.boardWidth = "400"), (this.boardHeight = "40");
+      }
+      this.infoType = type;
+
       this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
@@ -710,6 +743,7 @@ export default {
             STAY: "500",
             screenSize: devicePixel,
           };
+          this.content = "请输入内容";
         } else {
           this.getInfo();
           this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
@@ -717,126 +751,51 @@ export default {
       });
       this.$forceUpdate();
     },
-    keyDown() {
+    keyDown(ev) {
+      console.log(ev.keyCode, "ev.keyCode");
       let arr = [];
       let content = "";
       const input = document.getElementById("textContent");
-      console.log(input.selectionStart);
-      arr = this.dataForm.CONTENT.split("");
-      console.log(arr, "arr");
-      content += "<div>";
-      for (var i = 0; i < arr.length; i++) {
-        // arr[input+1] = '<br>'
-        
-        content += arr[i];
-        if (i == input.selectionStart - 1) {
-          content += "<br>";
-        }
-      }
-      content += "</div>";
 
-      console.log(content,"content");
-      // arr = arr.toString()
-      // console.log(arr.toString());
-      // var reg1 = new RegExp(",", "g"); // 加'g'，删除字符串里所有的"a"
-      // var a1 = arr.toString().replace(reg1, "");
-      // console.log(a1); // bbccddeegg 作者：朵宝特工007 https://www.bilibili.com/read/cv17421049/ 出处：bilibili
-      this.content = content;
+      // console.log(input.selectionStart);
+      // arr = this.dataForm.CONTENT.split("");
+      // content += "<div>";
+      // for (var i = 0; i < arr.length; i++) {
+      //   content += arr[i];
+      //   if (i == input.selectionStart - 1) {
+      //     if(ev.keyCode == 13){
+      //       content += "<br>";
+      //     }
+      //     if(ev.keyCode == 32){
+      //       content += "&nbsp";
+      //     }
+      //   }
+      // }
+      var str1 = this.dataForm.CONTENT.substring(0, input.selectionStart - 1);
+      var str2 = this.dataForm.CONTENT.substring(input.selectionStart - 1,this.dataForm.CONTENT.length);
+      content += "<div>";
+      content += str1;
+      if (ev.keyCode == 13) {
+        content += "<br>";
+      }
+      if (ev.keyCode == 32) {
+        content += "&nbsp";
+      }
+      content += str2;
+      content += "</div>";
+      this.dataForm.CONTENT = content;
+      console.log(this.content, "this.content");
     },
-    // del(index) {
-    //   this.obj = index;
-    //   var _this = this;
-    //   document.onkeydown = function (e) {
-    //     let key = window.event.keyCode;
-    //     if (_this.obj != "") {
-    //       if (key == 46 || key == 8) {
-    //         let inx = "";
-    //         for (let index = 0; index < _this.templateContent.length; index++) {
-    //           if (_this.templateContent[index] == _this.obj) {
-    //             inx = index;
-    //           }
-    //         }
-    //         _this.templateContent.splice(inx, 1);
-    //         _this.obj = "";
-    //       } else {
-    //         _this.obj = "";
-    //       }
-    //     }
-    //   };
-    // },
-    // 选择图片按钮
-    // chooseImageEvent() {
-    //   this.imgUrl = [];
-    //   this.getImageInfo();
-    //   this.dialogVisible = true;
-    // },
+
     //选择图片弹框关闭事件
     close() {
       this.checkList = [];
       this.dialogVisible = false;
     },
-    // 图片双击事件
-    // dblEvent(item) {
-    //   if (this.templateContent.length > 7) {
-    //     this.$modal.msgError("最多只能添加七条信息！");
-    //     return;
-    //   }
-    //   this.templateContent.push({
-    //     content: "",
-    //     fontColor: null,
-    //     fontSize: null,
-    //     fontType: null,
-    //     fontSpacing: 0,
-    //     coordinate: "000000",
-    //     img: item,
-    //     imageName: item,
-    //   });
-    //   this.checkList = [];
-    //   this.dialogVisible = false;
-    // },
-    // 选择图片点击确定按钮
-    // sendBtnEvent() {
-    //   if (this.templateContent.length > 7) {
-    //     this.$modal.msgError("最多只能添加七条信息！");
-    //     return;
-    //   }
-    //   if (this.checkList.length > 1) {
-    //     this.$modal.msgError("每次只能选择一张图片！");
-    //     return;
-    //   }
-    //   if (this.checkList.length > 0) {
-    //     for (var i = 0; i < this.checkList.length; i++)
-    //       this.templateContent.push({
-    //         content: "",
-    //         fontColor: null,
-    //         fontSize: null,
-    //         fontType: null,
-    //         fontSpacing: 0,
-    //         coordinate: "000000",
-    //         img: this.checkList[i],
-    //       });
-    //     this.checkList = [];
-    //   } else {
-    //     this.$modal.msgError("请选择您要添加的图片！");
-    //     return;
-    //   }
-    //   this.dialogVisible = false;
-    // },
-    // 选择图片弹框拖动图片
-    // faceImagedragg(event, item) {
-    //   this.curDragImgItem = item; //拖动存储该图片信息
-    // },
     faceDrop(e) {
       e.preventDefault(); //阻止默认行为
       this.listquery.push(this.curDragImgItem);
     },
-    /* 拆分分辨率大小 */
-    // resolvingPowerType(data) {
-    //   let a = [];
-    //   a = data.split("*");
-    //   this.width = a[0];
-    //   this.height = a[1];
-    // },
     // 全选
     allowDrop(e) {
       e.preventDefault(); //阻止默认行为
@@ -847,12 +806,7 @@ export default {
     // 获取信息
     getInfo() {
       getTemplateInfo(this.dataForm.id).then((data) => {
-        // console.log()
         this.dataForm = data.data;
-        // this.dataForm.isCurrency = this.dataForm.isCurrency + "";
-        // if (this.dataForm.templateType != null) {
-        //   this.dataForm.templateType = this.dataForm.templateType + "";
-        // }
         this.width = this.dataForm.screenSize.split("*")[0];
         this.height = this.dataForm.screenSize.split("*")[1];
       });
@@ -880,22 +834,50 @@ export default {
       if (!valid) return;
       this.loading = true;
       // let templateId = "";
-      // let method = !this.isAdd ? "put" : "post";
+      let method = "put";
       if (this.isAdd) {
         console.log(this.dataForm, "this.dataForm新增组件");
-        // 新增
-        // await addTemplate(this.dataForm, method).then((data) => {
-        //   console.log(data, "新增口");
-        //   templateId = data;
-        // });
-        // let params = {
-        //   templateContent: this.templateContent,
-        //   templateId: templateId,
-        // };
-        // addTemplateContent(params).catch((err) => {
-        //   throw err;
-        // });
-        this.$emit("addInfo", this.dataForm);
+        console.log(this.devicePixelBoolean, "this.devicePixelBoolean");
+        if (this.devicePixelBoolean) {
+          this.$emit("addInfo", this.dataForm);
+        } else {
+          const params1 = {
+            applyType: "",
+            category: this.dataForm.category,
+            coordinate: "",
+            height: "",
+            id: "",
+            imageUrl: "",
+            imgSizeFrom: "",
+            inScreenMode: this.dataForm.ACTION,
+            remark: "",
+            screenSize: this.dataForm.screenSize,
+            stopTime: this.dataForm.STAY,
+            vmsType: "",
+            width: "",
+          };
+          const templateContent = [];
+          templateContent.push({
+            content: this.dataForm.CONTENT,
+            coordinate: this.dataForm.COORDINATE,
+            fontColor: this.getColorStyle(this.dataForm.COLOR),
+            fontSize: this.dataForm.FONT_SIZE.substring(0, 2),
+            fontSpacing: this.dataForm.SPEED,
+            fontType: this.getFontStyle(this.dataForm.FONT),
+          });
+          // this.$emit("addInfoMode", this.dataForm);
+          addTemplate(params1, method).then((data) => {
+            console.log(data, "新增口");
+            let params2 = {
+              templateContent: templateContent,
+              templateId: data,
+            };
+            addTemplateContent(params2).catch((err) => {
+              throw err;
+            });
+            this.$emit("getActiveNames", this.dataForm.category);
+          });
+        }
       } else {
         console.log(this.dataForm);
         console.log(params);
@@ -921,6 +903,26 @@ export default {
       this.$emit("refreshDataList", this.dataForm);
     },
     /*********************************************业务代码***********************************************/
+    getFontStyle(font) {
+      if (font == "宋体") {
+        return "Simsun";
+      } else if (font == "黑体") {
+        return "SimHei";
+      } else if (font == "楷体") {
+        return "KaiTi";
+      }
+    },
+    getColorStyle(font) {
+      if (font == "黄色") {
+        return "yellow";
+      } else if (font == "红色") {
+        return "red";
+      } else if (font == "绿色") {
+        return "green";
+      } else if (font == "蓝色") {
+        return "blue";
+      }
+    },
     // 文字对齐方式
     alignment(alignmentNum) {
       var divContent = document.getElementsByClassName("blackBoard");

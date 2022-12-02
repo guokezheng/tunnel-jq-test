@@ -146,6 +146,7 @@
       <el-table-column
         label="操作"
         align="center"
+        width="300px"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
@@ -161,6 +162,14 @@
             @click="recordQuery(scope.row)"
           >
             检修记录
+          </el-button>
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="exportFaultReport(scope.row)"
+            :style="{ display: scope.row.faultStatus==0?'':'none' }"
+          >
+            检修报告
           </el-button>
           <el-button
             size="mini"
@@ -496,6 +505,7 @@ import {addType, listType, loadPicture, updateType} from "@/api/equipment/type/a
 import { listDevices } from "@/api/equipment/eqlist/api";
 import {editForm} from "@/api/equipment/yingJiGou/emergencyVehicles";
 import {listBz} from "@/api/electromechanicalPatrol/taskManage/task";
+import {download} from "@/utils/request";
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -869,6 +879,11 @@ export default {
         this.open = true;
         this.title = "修改故障清单";
       });
+    },
+    exportFaultReport(row) {
+      let time = parseInt(new Date().getTime() / 1000) + '';
+      let fileName = '检修报告'+time;
+      download("/fault/list/exportFaultReport", {faultId:row.id}, fileName+".docx");
     },
     handleCheckDetail(row) {
       var that = this;

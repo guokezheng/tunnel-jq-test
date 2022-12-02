@@ -105,6 +105,13 @@
           <el-button
             size="mini"
             class="tableBlueButtton"
+            @click="exportTaskReport(scope.row)"
+            :style="{ display: scope.row.publishStatus==2?'':'none' }"
+          >巡查报告</el-button
+          >
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:list:edit']"
             :style="{ display: scope.row.publishStatus==2?'none':'' }"
@@ -616,6 +623,7 @@ import {
 import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
+import {download} from "@/utils/request";
 
 export default {
   name: "List",
@@ -1197,7 +1205,11 @@ export default {
         this.title = "修改巡查任务";
       });
     },
-
+    exportTaskReport(row) {
+      let time = parseInt(new Date().getTime() / 1000) + '';
+      let fileName = '巡查报告'+time;
+      download("/task/list/exportPatrolTaskReport", {taskNo:row.id}, fileName+".docx");
+    },
     /** 废止按钮操作 */
     handleAbolish(row) {
       const id = row.id || this.ids

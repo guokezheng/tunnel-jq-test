@@ -1,17 +1,22 @@
-package com.tunnel.platform.task;
+package com.tunnel.platform.controller.sso;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDeptSg;
 import com.ruoyi.system.mapper.SysDeptSgMapper;
 import com.tunnel.platform.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Component("userDeptTask")
-public class UserDeptTask {
+/**
+ * 用于同步集团数据库数据的控制器
+ * 暂时不对外开放
+ */
+// @RestController
+// @RequestMapping(value = "/syncData")
+public class SyncDataController {
 
     @Autowired
     private SysDeptSgMapper deptSgMapper;
@@ -19,7 +24,8 @@ public class UserDeptTask {
     /**
      * 同步部门
      */
-    public void syncDept() {
+    // @GetMapping(value = "/syncDept")
+    public AjaxResult syncDept() {
         // 获取授权码
         String authCode = AuthUtil.getAuthCode("admin");
         // 获取token
@@ -60,23 +66,16 @@ public class UserDeptTask {
                 sysDeptSg.setFullName(fullName);
 
                 SysDeptSg deptSg = deptSgMapper.selectSysDeptSgById(id);
-                if (null!= deptSg) {
+                if (null != deptSg) {
                     // 如果存在就更新
                     deptSgMapper.updateSysDeptSg(deptSg);
-                }else {
+                } else {
                     // 如果不存在就新增
                     deptSgMapper.insertSysDeptSg(deptSg);
                 }
             }
         }
+
+        return AjaxResult.success("部门数据同步完成");
     }
-
-    /**
-     * 同步用户
-     */
-    public void syncUser() {
-
-    }
-
 }
-

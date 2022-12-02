@@ -93,6 +93,7 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle) {
         sdEmergencyVehicle.setUpdateTime(DateUtils.getNowDate());
         int code = updateVehicle(sdEmergencyVehicle);

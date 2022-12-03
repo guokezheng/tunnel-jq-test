@@ -701,4 +701,15 @@ CREATE TABLE `external_system` (
 update sd_devices set eq_direction = '2' where eq_direction = '0'
 -- 字典值：设备方向 sd_direction 修改
 
-
+-- 添加车辆类型表
+CREATE TABLE `sd_vehicle_type` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `vehicle_type_code` varchar(50) DEFAULT NULL COMMENT '车辆类型编码',
+  `vehicle_type_name` varchar(50) DEFAULT NULL COMMENT '车辆类型名称',
+  `is_key_vehicle` varchar(1) DEFAULT '0' COMMENT '是否是重点车辆 0:否 1:是  默认为0',
+  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='车辆类型配置表';

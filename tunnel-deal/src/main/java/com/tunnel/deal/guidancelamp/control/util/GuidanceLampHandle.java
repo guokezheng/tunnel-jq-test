@@ -61,7 +61,7 @@ public class GuidanceLampHandle {
     public int toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices,String brightness, String frequency, String fireMark) {
         String ip = sdDevices.getIp();
         Integer port = Integer.parseInt(sdDevices.getPort());
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
             //发送诱导灯控制指令
             try {
                 String code = "1GH+STATUS?\r\n";
@@ -86,7 +86,7 @@ public class GuidanceLampHandle {
                 updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()), brightness);
                 updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
             }
-        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue() && !fireMark.equals("")) {
+        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode().longValue() && !fireMark.equals("")) {
             //发送疏散标志控制指令
             try {
                 String code = "1GH+FIRE?\r\n";

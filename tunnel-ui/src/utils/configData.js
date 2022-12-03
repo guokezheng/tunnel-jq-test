@@ -421,7 +421,7 @@ let laneImage = [
     id: "4",
     name: "马家峪隧道",
     url: require('@/assets/image/lane/mjy.jpg'),
-    width: 2200,
+    width: 2270,
     num: 3,
     direction: 0
   },
@@ -453,10 +453,13 @@ let laneImage = [
     id: "8",
     name: "马鞍山隧道",
     url: require('@/assets/image/lane/mas.jpg'),
-    width: 1620,
+    width: 2270,
     num: 3,
     direction: 0
   },
+  // 小于1300米的隧道 用1300px小车跑的长度加320光伏棚洞的px
+  // 大于1300小于2600的隧道 用1300*1.5+320 等于2270
+  // 大于2600的隧道 用1300*2+320 等于2920
 ]
 
 export {

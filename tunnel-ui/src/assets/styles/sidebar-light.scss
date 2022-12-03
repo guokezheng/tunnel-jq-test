@@ -140,13 +140,13 @@
         padding: 10px 0;
       }
     }
-    // .el-table__body-wrapper .el-table__cell{
-    //   border-left: solid 1px #E1E4E6;
-    // }
-    // .el-table__body-wrapper tbody{
-    //   border-right: solid 1px #E1E4E6;
+    .el-table__body-wrapper .el-table__cell{
+      border-left: solid 1px rgba($color: #E1E4E6, $alpha: 0.16);
+    }
+    .el-table__body-wrapper tbody{
+      border-right: solid 1px rgba($color: #E1E4E6, $alpha: 0.16);
 
-    // }
+    }
     // .el-table__header-wrapper .el-table__cell{
     //   border-left: solid 1px #E1E4E6;
     //   border-top: solid 1px #E1E4E6;
@@ -167,7 +167,9 @@
       background-color: #F2F8FF;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
-      background-color: #4FA4E6;
+      background-color: #00518D;
+      border-bottom: solid 1px transparent;
+      border-left: solid 1px rgba($color: #E1E4E6, $alpha: 0.16);
       color: white;
     }
     // 表格鼠标移入行选中
@@ -180,7 +182,7 @@
   }
   //  表格下边框
   .el-table td.el-table__cell{
-    border-bottom: 1px solid #05AFE3;
+    border-bottom: 1px solid transparent;
   }
   .el-table .el-button--text{
     color: white;
@@ -240,10 +242,10 @@
     }
     // 表格隔行变色
     .tableEvenRow{
-      background: #2B5F96;
+      background: #004375;
     }
     .tableOddRow{
-      background: #326CA9;
+      background: #00487F;
     }
     // 系统监控-服务监控页面 不规则表格
     .othertableRowClass{

@@ -95,6 +95,18 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         //sdTaskList.setTaskStatus("0");//待巡查
         result = sdTaskListMapper.insertSdTaskList(sdTaskList);
         if(result>0){
+            /*添加操作记录*/
+            if("0".equals(sdTaskList.getTaskStatus())){//发布任务
+                SdTaskOpt sdTaskOpt = new SdTaskOpt();
+                sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+                sdTaskOpt.setTaskId(taskId);
+                sdTaskOpt.setOptType("0");
+                sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+                result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+            }
+
+        }
+        if(result>0){
             result = insertPatrol(sdTaskList,taskId);
         }
         return result;
@@ -200,6 +212,18 @@ public class SdTaskListServiceImpl implements ISdTaskListService
             String taskId = sdTaskList.getId();
             result = insertPatrol(sdTaskList,taskId);
         }
+        if(result>0){
+            /*添加操作记录*/
+            if("0".equals(sdTaskList.getTaskStatus())){//发布任务
+                SdTaskOpt sdTaskOpt = new SdTaskOpt();
+                sdTaskOpt.setId(UUIDUtil.getRandom32BeginTimePK());
+                sdTaskOpt.setTaskId(sdTaskList.getId());
+                sdTaskOpt.setOptType("0");
+                sdTaskOpt.setOptPersonId(String.valueOf(SecurityUtils.getLoginUser().getUserId()));
+                result = sdTaskListMapper.insertTaskOpt(sdTaskOpt);
+            }
+
+        }
         return result;
     }
 
@@ -244,14 +268,14 @@ public class SdTaskListServiceImpl implements ISdTaskListService
         taskList = sdTaskListMapper.getTaskInfoList(task_id);
         //任务持续时间逻辑判断   task_status=2  已完结
         if(taskList!=null){
-            String  st0 = "0";//待巡查
-            String  st1 = "1";//巡查中
+            String  st0 = "待";//待巡查
+            String  st1 = "中";//巡查中
             /*String st2 = "4";//已超时*/
             //判断任务状态，已完结时保存任务持续时间
             if(taskList.get(0).getTaskStatus()!=null&&!"".equals(taskList.get(0).getTaskStatus())){
                 //if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0||taskList.get(0).getTaskStatus().indexOf(st1) >= 0){// 待巡查/巡查中 直接取持续时间即可无需计算
                     //if(taskList.get(0).getTaskStatus().indexOf("4") >= 0){//已超时
-                        if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0){
+                        if(taskList.get(0).getTaskStatus().indexOf(st0) >= 0&&taskList.get(0).getEndPlantime()!=null){
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
                             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();
@@ -265,7 +289,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
                             }
 
                         }
-                        if(taskList.get(0).getTaskStatus().indexOf(st1) >= 0){
+                        if(taskList.get(0).getTaskStatus().indexOf(st1) >= 0&&taskList.get(0).getEndPlantime()!=null){
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             String  plantime = sdf.format(taskList.get(0).getEndPlantime());//计划完成时间
                             long time = sdf.parse(plantime, new ParsePosition(0)).getTime();

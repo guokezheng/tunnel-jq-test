@@ -960,7 +960,7 @@
     toll,
     getTunnelList,
   } from "@/api/event/event";
-  import {listList} from "@/api/electromechanicalPatrol/faultManage/fault";
+  import {getList, listList} from "@/api/electromechanicalPatrol/faultManage/fault";
   import {listEventType, getTodayEventCount} from "@/api/event/eventType";
   import {listPlan} from "@/api/event/reservePlan";
   import {listTunnels} from "@/api/equipment/tunnel/api";
@@ -969,6 +969,7 @@
   import {treeselect, treeselectExcYG1} from "@/api/system/dept";
   import Treeselect from "@riophae/vue-treeselect";
   import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+  import {loadPicture} from "@/api/equipment/type/api";
 
 
   export default {
@@ -993,6 +994,8 @@
         mechanism: [],
         // 所属隧道
         tunnelList: [],
+        fileList:[],
+        removeIds:[],
         // 遮罩层
         loading: true,
         // 非单个禁用
@@ -1081,6 +1084,7 @@
         dloading: false,
         // 部门树选项
         deptOptions: undefined,
+
       };
     },
     async created() {
@@ -1280,6 +1284,34 @@
       loadBigScreen(row) {
         alert("正在研发中...");
       },
+      /** 修改按钮操作 */
+      handleUpdate(row) {
+        let that = this;
+       // this.isWritable = true;
+        this.searchValue = '2'
+        that.reset();
+        const id = row.id|| that.ids;
+        getList(id).then((response) => {
+          this.form = response.data;
+          /*if(this.form.faultSource=="null"){
+            this.form.faultSource=""
+          }
+          if(this.form.eqRunStatus=="undefined"){
+            this.form.eqRunStatus=""
+          }
+          if(this.form.faultCode=="null"){
+            this.form.faultCode=""
+          }
+          if(this.form.faultDescription=="null"){
+            this.form.faultDescription=""
+          }*/
+          console.log("that.form.iFileList"+that.form.iFileList.length);
+          that.planRoadmapUrl(that.form.iFileList);
+         /* this.disstate = false;
+          this.open = true;*/
+          this.title = "修改故障清单";
+        });
+      },
       handleDetails(row) {
         this.details = true;
         this.title = "事件详情";
@@ -1321,8 +1353,81 @@
           createTime: null,
           updateBy: null,
           updateTime: null,
+          faultLocation: null,
+          faultType: null,
+          faultSource: null,
+          faultFxtime: null,
+          faultCxtime: null,
+          eqTunnelId:null,
+          faultTbr: null,
+          faultTbtime: null,
+          eqId: null,
+          eqStatus: null,
+          faultCode: null,
+          faultLevel: null,
+          falltRemoveStatue: null,
+          faultDescription: null,
+          faultStatus: 0,
         };
+        this.fileList = [];
+        this.removeIds = [];
         this.resetForm("form");
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      //删除文件
+      handleRemove(file, fileList) {
+        if (file.hasOwnProperty("fId")) {
+          this.removeIds.push(file.fId);
+        }
+        this.fileList = fileList;
+      },
+      // 上传文件
+      uploadFile(file) {
+        this.fileData.append("file", file.file); // append增加数据
+      },
+      // 选取文件超过数量提示
+      /* handleExceed(files, fileList) {
+         // let num = this.direction == 0 ? 2 : 1;
+         this.$message.warning("限制上传图标个数不超过2个");
+       },*/
+      //监控上传文件列表
+      handleChange(file, fileList) {
+        this.fileList = fileList;
+      },
+      async planRoadmapUrl(iFileList) {
+        var that = this;
+        that.fileList = [];
+        for (let i = 0; i < iFileList.length; i++) {
+          let iconName = iFileList[i].imgName;
+          // let iconUrl = await that.picture(iFileList[i].url);
+          let iconUrl = iFileList[i].imgUrl
+          that.fileList.push({
+            name: iconName,
+            url: iconUrl,
+            fId: iFileList[i].id,
+          });
+        }
+      },
+      /* 请求图片base64地址*/
+      picture(fileUrl) {
+        return new Promise((resolve, reject) => {
+          loadPicture({
+            url: fileUrl,
+          }).then((response) => {
+            if (response.code == 200) {
+              let base64 = response.msg;
+              resolve(base64); //不可缺少
+            }
+          });
+        });
+        return resolve(base64);
+      },
+      openImg(url) {
+        this.img = url;
+        this.yn = !this.yn;
       },
       /** 搜索按钮操作 */
       handleQuery() {

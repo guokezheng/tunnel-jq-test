@@ -112,4 +112,11 @@ public interface SdTaskListMapper
      * @return
      */
     int saveLocal(SdTaskList sdTaskList);
+
+    /**
+     * 添加操作记录
+     * @param sdTaskOpt
+     * @return
+     */
+    int insertTaskOpt(SdTaskOpt sdTaskOpt);
 }

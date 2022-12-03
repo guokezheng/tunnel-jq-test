@@ -43,7 +43,7 @@
     >
       <el-table-column type="selection" width="55" align="center" />
 <!--      <el-table-column label="任务编号" align="center" prop="id" />-->
-      <!--      <el-table-column label="所属单位" align="center" prop="zzjgId" />-->
+      <el-table-column label="所属单位" align="center" prop="zzjgId" />
       <el-table-column label="派单人员" align="center" prop="dispatcher" />
       <el-table-column
         label="派单时间"

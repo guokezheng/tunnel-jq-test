@@ -29,23 +29,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
-        <include refid="selectSdTaskListVo"/>
+        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
+        left join sys_dept d on d.dept_id =  t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sys_dept b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
         <where>
           1=1
-            <if test="zzjgId != null  and zzjgId != ''"> and zzjg_id = #{zzjgId}</if>
-            <if test="endPlantime != null "> and end_plantime = #{endPlantime}</if>
-            <if test="dispatcher != null  and dispatcher != ''"> and dispatcher = #{dispatcher}</if>
-            <if test="dispatchTime != null "> and dispatch_time = #{dispatchTime}</if>
-            <if test="bzId != null  and bzId != ''"> and bz_id = #{bzId}</if>
-            <if test="taskDescription != null  and taskDescription != ''"> and task_description = #{taskDescription}</if>
-            <if test="publishStatus != null "> and publish_status = #{publishStatus}</if>
-            <if test="taskStatus != null "> and task_status = #{taskStatus}</if>
-            <if test="walkerId != null  and walkerId != ''"> and walker_id = #{walkerId}</if>
-            <if test="taskEndtime != null "> and task_endtime = #{taskEndtime}</if>
-            <if test="taskCxtime != null "> and task_cxtime = #{taskCxtime}</if>
-            <if test="siteDescription != null  and siteDescription != ''"> and site_description = #{siteDescription}</if>
+            <if test="zzjgId != null  and zzjgId != ''"> and t.zzjg_id = #{zzjgId}</if>
+            <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
+            <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
+            <if test="dispatchTime != null "> and t.dispatch_time = #{dispatchTime}</if>
+            <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
+            <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
+            <if test="publishStatus != null "> and t.publish_status = #{publishStatus}</if>
+            <if test="taskStatus != null "> and t.task_status = #{taskStatus}</if>
+            <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
+            <if test="taskEndtime != null "> and t.task_endtime = #{taskEndtime}</if>
+            <if test="taskCxtime != null "> and t.task_cxtime = #{taskCxtime}</if>
+            <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
         </where>
-        order  by  create_time desc
+        order  by  t.create_time desc
     </select>
     
     <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">

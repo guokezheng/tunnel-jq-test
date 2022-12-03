@@ -757,7 +757,7 @@ export default {
         that.fileList.push({
           name: iconName,
           url: iconUrl,
-          fId: iFileList[i].id,
+          fId: iFileList[i].businessId,
         });
       }
     },

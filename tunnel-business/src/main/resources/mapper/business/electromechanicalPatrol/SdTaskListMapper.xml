@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sys_user w on t.walker_id = w.user_id
         <where>
           1=1
-            <if test="zzjgId != null  and zzjgId != ''"> and t.zzjg_id = #{zzjgId}</if>
+            <if test="zzjgId != null  and zzjgId != ''"> and d.dept_name like concat('%', #{zzjgId}, '%')</if>
             <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
             <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
             <if test="dispatchTime != null "> and t.dispatch_time = #{dispatchTime}</if>

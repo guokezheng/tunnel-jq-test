@@ -11,6 +11,7 @@ import com.deepoove.poi.data.PictureType;
 import com.deepoove.poi.data.Pictures;
 import com.deepoove.poi.plugin.table.HackLoopTableRenderPolicy;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.SysDeptTunnel;
@@ -479,8 +480,8 @@ public class SdTaskListController extends BaseController
                         }
                     }}
             );
-            //=================生成文件保存本地地址=================
-            String temDir="D:/Electromechanical/"+ File.separator+"file/word/"; ;//生成临时文件存放地址
+            String temDir = RuoYiConfig.getProfile()+"/word/";
+            //"D:/Electromechanical/"+ File.separator+"file/word/"; ;//生成临时文件存放地址
             File file = new File(temDir);
             if (!file.exists()){
                 file.mkdirs();

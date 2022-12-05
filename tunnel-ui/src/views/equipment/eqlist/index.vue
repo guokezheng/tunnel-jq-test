@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="90px">
       <el-input v-model="queryParams.eqDirection" v-show="false"/>
-      <el-form-item label="所属隧道" prop="eqTunnelId">
+      <el-form-item label="所属隧道" prop="eqTunnelId" v-show="manageStatin == '0'">
         <el-select v-model="queryParams.eqTunnelId" placeholder="请选择所属隧道" clearable size="small">
           <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                      :value="item.tunnelId"/>
@@ -538,7 +538,7 @@
         open: false,
         submitFormLoading: false,
         instructionDialog: false,
-
+        manageStatin:this.$cache.local.get("manageStation"),
         ctrlcmd: false,
         //plc主机
         eqHostData: {},
@@ -773,6 +773,9 @@
       },
       /** 查询设备列表 */
       getList() {
+        if(this.manageStatin == '1'){
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
         this.loading = true;
         listDevices(this.queryParams).then((response) => {
           this.devicesList = response.rows;

@@ -131,3 +131,11 @@ export function fireMarkList(eqId) {
     method: 'get'
   })
 }
+
+// 疏散标志弹窗信息
+export function getJlyTunnel() {
+  return request({
+    url: '/tunnels/getJlyTunnel',
+    method: 'get'
+  })
+}

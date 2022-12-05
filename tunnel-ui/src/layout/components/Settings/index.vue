@@ -190,7 +190,7 @@ export default {
         value: val
       })
       this.sideTheme = val;
-      bus.$emit("process", val);
+      // bus.$emit("process", val);
     },
     saveSetting() {
       this.$modal.loading("正在保存到本地，请稍候...");

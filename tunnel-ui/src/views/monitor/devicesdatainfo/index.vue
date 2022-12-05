@@ -30,7 +30,7 @@
           />
         </el-select>-->
       </el-form-item>
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -218,6 +218,8 @@ export default {
 
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       searchValue: "1",
       // 遮罩层
       loading: true,
@@ -430,6 +432,9 @@ export default {
     /** 查询列表 */
     getList(inx) {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       if (inx == null || inx == "1" || this.searchValue == "1") {
         this.queryParams.searchValue = "1";
         dataLogInfoList(

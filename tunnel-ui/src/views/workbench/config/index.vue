@@ -18,9 +18,9 @@
             @change="changeSite"
             placeholder="请选择"
             size="mini"
-            class="siteClass"
+            :class="manageStation=='1'?'siteClassDisabled':'siteClass'"
             popper-class="popper-class-site"
-            v-show="!isManagementStation"
+            v-show="(!isManagementStation)"
           />
           <el-button-group
             class="menu-button-group"
@@ -2722,6 +2722,7 @@ import {
   setCorLight,
   updateCarFinger,
   getDeviceDataAndState,
+  getJlyTunnel,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2789,7 +2790,7 @@ import {
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
-import {getVehicleSelectList} from "@/api/surveyType/api";//车辆类型
+import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -2819,8 +2820,10 @@ export default {
     comData,
     comYoudao,
   },
+
   data() {
     return {
+      manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
       carList: [],
@@ -3160,6 +3163,7 @@ export default {
       userDeptId: null,
       tunnelQueryParams: {
         deptId: this.userDeptId,
+        deptName: "",
       },
       userQueryParams: {
         userName: this.$store.state.user.name,
@@ -3480,6 +3484,8 @@ export default {
     },
   },
   created: function () {
+    this.getUserDept();
+
     this.getDicts("sd_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
@@ -3492,7 +3498,7 @@ export default {
     getLocalIP().then((response) => {
       this.hostIP = response;
     });
-    this.getUserDept();
+
     // this.getTunnelList();
     // this.selectEquipmentType()
     // this.initWebSocket()
@@ -3518,8 +3524,8 @@ export default {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
     });*/
-    getVehicleSelectList({}).then(response => {
-      console.log(response,'车辆类型')
+    getVehicleSelectList({}).then((response) => {
+      console.log(response, "车辆类型");
       this.vehicleTypeList = response;
     });
     this.getTunnelState();
@@ -3529,6 +3535,36 @@ export default {
   },
 
   watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
+    
+      if (this.manageStation == "1") {
+            getJlyTunnel().then((res) => {
+              var arr = []
+              for(let item of res.data){
+                if(newVal == item.tunnelId){
+                  var atr = item.ancestors.slice(2)
+                  arr = atr.split(",");
+                  arr.push(item.deptId)
+                  this.tunnelQueryParams.deptId = item.deptId
+                  console.log(arr,"arrarr")
+                  this.changeSite(arr);
+                }
+              }
+              
+            })
+          }
+     
+      this.getTunnelList()
+    },
+    // "$store.state.manage.manageStation": function (newVal, oldVal) {
+    //   console.log(newVal, "监听到啦监听到啦监听到啦监听到啦监听到啦");
+    //   if(newVal == )
+    //   this.manageStation == '0'
+    //   this.$cache.local.set("manageStationSelect", newVal);
+    //   this.getTunnelList()
+    // },
+
     sdEventList(event) {
       // console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
@@ -4267,7 +4303,7 @@ export default {
     /** 查询部门列表 */
     getDeptList() {
       var that = this;
-      var id = this.tunnelQueryParams.deptId;
+      var id = this.userDeptId;
       var iid = "";
       const params = {
         status: 0,
@@ -4276,6 +4312,8 @@ export default {
         .then((response) => {
           var list = that.handleTree(response.data, "deptId");
           console.log(list, "级联选择器格式");
+          let arr = []
+          this.checkData(list[0],arr)
           function a(list) {
             list.forEach((item) => {
               if (item.deptId == id) {
@@ -4285,7 +4323,6 @@ export default {
               }
             });
           }
-
           a(list);
         })
         .then(() => {
@@ -4306,10 +4343,32 @@ export default {
           });
         })
         .then(() => {
+          
           // 获取隧道
           that.getTunnelList();
+          that.tunnelQueryParams.deptId == "555503";
+          if (this.manageStation == "1") {
+            let arr = ["6266", "5555", "555503"];
+            this.changeSite(arr);
+          }
           that.siteList.length == 0 ? (that.isManagementStation = true) : "";
         });
+    },
+    checkData(obj,arr){
+      if (obj.children && obj.children.length > 0) {
+        arr.push(obj.deptId)
+        this.checkData(obj.children[0],arr);
+      } else {
+        
+        arr.push(obj.deptId)
+        console.log(arr,"arrrrrrrrrrrrrr")
+        arr.shift()
+        console.log(arr,"arrrrrrrrrrrrrr")
+
+        this.changeSite(arr)
+
+        this.$forceUpdate();
+      }  
     },
     // 获取最近24小时时间数组
     getTimeData() {
@@ -4333,6 +4392,7 @@ export default {
     },
     // 改变站点
     changeSite(index) {
+      console.log(index, "index------------------------");
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
         this.getTunnelList();
@@ -5133,8 +5193,10 @@ export default {
     getUserDept() {
       getUserDeptId(this.userQueryParams).then((response) => {
         console.log(response, "管理站级联");
+
         this.userDeptId = response.rows[0].deptId;
-        this.tunnelQueryParams.deptId = response.rows[0].deptId;
+        // this.tunnelQueryParams.deptId = response.rows[0].deptId;
+
         this.getDeptList();
       });
     },
@@ -5431,13 +5493,41 @@ export default {
               let num = 0;
               list[i].tunnelLength = num.toString();
             }
+            // if(list[i].tunnelId == this.$cache.local.get("manageStationSelect") && list[i].tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+            //   this.$store.dispatch("manage/changeManage", "1");
+            //   this.tunnelList.push(list[i]);
+            //   this.checkboxTunnel.push(list[i]);
+            //   this.setTunnel(list[i],0);
+            //   return;
+            // }else if(list[i].tunnelId == this.$cache.local.get("manageStationSelect")){
+            //   this.$store.dispatch("manage/changeManage", "0");
+            //   this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-HSD");
+            //   this.tunnelList = list;
+            //   this.checkboxTunnel.push(list[i]);
+            //   this.setTunnel(list[i],i);
+            //   return;
+            // }
           }
-          this.tunnelList = list;
-          this.checkboxTunnel.push(this.tunnelList[0]);
-          this.currentTunnel.id = this.tunnelList[0].tunnelId;
-          this.currentTunnel.name = this.tunnelList[0].tunnelName;
-          this.selectEquipmentType(this.currentTunnel.id);
-          this.getTunnelData(this.currentTunnel.id);
+          // this.buttonIndex = 0;
+          if(this.manageStation == "0"){
+            this.tunnelList = list;
+            this.checkboxTunnel.push(list[0]);
+            this.currentTunnel.id = list[0].tunnelId;
+            this.currentTunnel.name = list[0].tunnelName;
+            this.selectEquipmentType(this.currentTunnel.id);
+            this.getTunnelData(this.currentTunnel.id);
+          }else{
+            console.log(2222222)
+            for(let i=0;i<list.length;i++){
+              if(list[i].tunnelId == this.$cache.local.get("manageStationSelect")){
+                console.log(list[i],"list[i]list[i]list[i]")
+                this.tunnelList.push(list[i]);
+                this.checkboxTunnel.push(list[i]);
+                this.setTunnel(list[i],0);
+              }
+             
+            }
+          }
         }
         this.getTunnelLane();
         // this.timingControl()
@@ -5603,6 +5693,7 @@ export default {
       };
       this.carchange(tunnelId);
       getTunnels(tunnelId).then((response) => {
+        console.log(response, "获取隧道配置信息");
         that.loading = false;
         let res = response.data.storeConfigure;
         //存在配置内容
@@ -6030,6 +6121,10 @@ export default {
     },
     /* 选择隧道*/
     setTunnel(item, index) {
+      // if(this.manageStation == "0" && item.tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+      //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
+      //   return;
+      // }
       this.buttonIndex = index;
       this.tunnelNameEarlyWarn = item.tunnelName;
       this.tunnelId = item.tunnelId;
@@ -8505,7 +8600,13 @@ input {
   color: #c0ccda !important;
   font-weight: bold;
 }
-
+::v-deep .siteClassDisabled {
+  pointer-events: none;
+  margin-left: 16px;
+  .el-input__suffix-inner {
+    pointer-events: none !important;
+  }
+}
 /* 级联选择器 */
 //  ::v-deep  .siteClass {
 //   line-height: unset;

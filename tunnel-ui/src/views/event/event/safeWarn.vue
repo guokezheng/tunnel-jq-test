@@ -114,7 +114,7 @@
           />
         </el-select>-->
       </el-form-item>
-      <el-form-item label="所属隧道" prop="tunnelId">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -1317,6 +1317,7 @@
     components: {Treeselect},
     data() {
       return {
+        manageStatin:this.$cache.local.get("manageStation"),
         //检修记录弹出窗
         record:false,
         dialogEventList: [],
@@ -1672,6 +1673,9 @@
       /** 查询事件管理列表 */
       getList() {
         this.loading = true;
+        if(this.manageStatin == '1'){
+            this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+          }
         if (this.searchValue == "2") {
           listList(this.queryParams).then((response) => {
             this.eventList = response.rows;

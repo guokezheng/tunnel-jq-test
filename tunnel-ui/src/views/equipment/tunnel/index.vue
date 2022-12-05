@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="80px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -514,6 +514,8 @@ export default {
       }
     };
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       oper: "add", //add 添加  edit修改
       // 遮罩层
       loading: true,
@@ -694,6 +696,9 @@ export default {
     /** 查询隧道列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
       listTunnels(this.queryParams).then((response) => {
         this.tunnelsList = response.rows;
         this.total = response.total;

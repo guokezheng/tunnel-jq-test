@@ -8,6 +8,7 @@ import permission from './modules/permission'
 import settings from './modules/settings'
 import wsData from './modules/wsData'
 import getters from './getters'
+import manage from './modules/manage'
 
 Vue.use(Vuex)
 
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
     tagsView,
     permission,
     settings,
-    wsData
+    wsData,
+    manage
   },
   getters
 })

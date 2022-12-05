@@ -17,7 +17,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -266,6 +266,8 @@ export default {
   dicts: [ 'sd_direction'],
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -365,6 +367,9 @@ export default {
     /** 查询隧道分区列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listSubarea(this.queryParams).then((response) => {
         this.subareaList = response.rows;
         this.total = response.total;

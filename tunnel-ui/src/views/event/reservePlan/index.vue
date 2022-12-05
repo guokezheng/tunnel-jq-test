@@ -7,7 +7,7 @@
       :model="queryParams"
       label-width="68px"
     >
-      <el-form-item label="所属隧道" prop="tunnelId">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -719,6 +719,8 @@ export default {
   },
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       deviceList: [], //需要操作的设备以及状态数据
       previewList: [], //预览数据
       checkStrictly: {
@@ -1555,6 +1557,9 @@ export default {
     /** 查询预案信息列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
         console.log(this.planList, "========");

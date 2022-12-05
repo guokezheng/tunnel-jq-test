@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="100px"
+    >
       <el-form-item label="设备厂商名称" prop="supplierName">
         <el-input
           v-model="queryParams.supplierName"
@@ -20,86 +26,91 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+        <el-button type="primary" size="mini" @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button size="mini" type="primary" plain @click="resetQuery"
+          >重置</el-button
+        >
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
           v-hasPermi="['device:brand:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >新增</el-button
+        >
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['device:brand:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >修改</el-button
+        >
         <el-button
-          type="danger"
+          type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['device:brand:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
+          >删除</el-button
+        >
         <el-button
-          type="warning"
+          type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['device:brand:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+          >导出</el-button
+        >
+      </el-form-item>
+    </el-form>
 
-    <el-table v-loading="loading" :data="brandList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="brandList"
+      @selection-change="handleSelectionChange"
+      class="allTable"
+    >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备厂商编号" align="center" prop="supplierId" />
-      <el-table-column label="设备厂商名称" align="center" prop="supplierName" />
+      <el-table-column
+        label="设备厂商名称"
+        align="center"
+        prop="supplierName"
+      />
       <el-table-column label="简称" align="center" prop="shortName" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-edit"
+            class="tableBlueButtton"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['device:brand:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-delete"
+            class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['device:brand:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
 
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -110,7 +121,10 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="设备厂商名称" prop="supplierName">
-          <el-input v-model="form.supplierName" placeholder="请输入设备厂商名称" />
+          <el-input
+            v-model="form.supplierName"
+            placeholder="请输入设备厂商名称"
+          />
         </el-form-item>
         <el-form-item label="简称" prop="shortName">
           <el-input v-model="form.shortName" placeholder="请输入简称" />
@@ -128,7 +142,14 @@
 </template>
 
 <script>
-import { listBrand, getBrand, delBrand, addBrand, updateBrand, exportBrand } from "@/api/equipment/deviceBrand/brand";
+import {
+  listBrand,
+  getBrand,
+  delBrand,
+  addBrand,
+  updateBrand,
+  exportBrand,
+} from "@/api/equipment/deviceBrand/brand";
 export default {
   name: "Brand",
   data() {
@@ -165,12 +186,12 @@ export default {
       // 表单校验
       rules: {
         supplierName: [
-          { required: true, message: "设备厂商名称不能为空", trigger: "blur" }
+          { required: true, message: "设备厂商名称不能为空", trigger: "blur" },
         ],
         shortName: [
-          { required: true, message: "简称不能为空", trigger: "blur" }
+          { required: true, message: "简称不能为空", trigger: "blur" },
         ],
-      }
+      },
     };
   },
   created() {
@@ -180,7 +201,7 @@ export default {
     /** 查询物联设备厂商列表 */
     getList() {
       this.loading = true;
-      listBrand(this.queryParams).then(response => {
+      listBrand(this.queryParams).then((response) => {
         this.brandList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -201,7 +222,7 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
-        remark: null
+        remark: null,
       };
       this.resetForm("form");
     },
@@ -217,9 +238,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.supplierId)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.supplierId);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -230,8 +251,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const supplierId = row.supplierId || this.ids
-      getBrand(supplierId).then(response => {
+      const supplierId = row.supplierId || this.ids;
+      getBrand(supplierId).then((response) => {
         this.form = response.data;
         this.open = true;
         this.title = "修改设备厂商";
@@ -239,16 +260,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.supplierId != null) {
-            updateBrand(this.form).then(response => {
+            updateBrand(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addBrand(this.form).then(response => {
+            addBrand(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -260,24 +281,34 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const supplierIds = row.supplierId || this.ids;
-      this.$modal.confirm('是否确认删除物联设备厂商编号为"' + supplierIds + '"的数据项？').then(function() {
-        return delBrand(supplierIds);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm(
+          '是否确认删除物联设备厂商编号为"' + supplierIds + '"的数据项？'
+        )
+        .then(function () {
+          return delBrand(supplierIds);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有物联设备厂商数据项？').then(() => {
-        this.exportLoading = true;
-        return exportBrand(queryParams);
-      }).then(response => {
-        this.$download.name(response.msg);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
-  }
+      this.$modal
+        .confirm("是否确认导出所有物联设备厂商数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportBrand(queryParams);
+        })
+        .then((response) => {
+          this.$download.name(response.msg);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>

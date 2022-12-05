@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -247,6 +247,8 @@ export default {
   components: {},
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       emergencyPostList:[],
       // 遮罩层
       loading: true,
@@ -323,6 +325,9 @@ export default {
     /** 查询应急人员信息列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listSdEmergencyPer(this.queryParams).then((response) => {
         console.log(response,"应急人员表格")
         this.SdEmergencyPerList = response.rows;

@@ -10,7 +10,7 @@
       <el-card class="box-card" style="margin-top: 2vh">
         <div
           style="
-            background-color: #000000;
+            backgroundColor: #000000;
             color: yellow;
             margin: 0 auto;
             overflow: hidden;
@@ -37,8 +37,9 @@
               top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
             class="textBoard"
-            v-html="dataForm.CONTENT"
+            v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
           ></div>
+         
         </div>
       </el-card>
       <el-row>
@@ -278,6 +279,7 @@
                     :key="item.type"
                     :label="item.type"
                     :value="item.type"
+                    @click.native="changeScreenSize(item.type)"
                   >
                   </el-option>
                 </el-select>
@@ -459,7 +461,7 @@ export default {
       ],
       screenSizeOptions: [
         {
-          type: "440*40",
+          type: "400*40",
         },
         {
           type: "128*64",
@@ -668,7 +670,7 @@ export default {
     "dataForm.CONTENT": {
       deep: true,
       handler: function (newValue, oldValue) {
-        this.dataForm.CONTENT = newValue;
+        this.dataForm.content1 = newValue;
       },
     },
     //   templateContent: {
@@ -751,40 +753,35 @@ export default {
       });
       this.$forceUpdate();
     },
+    changeScreenSize(size){
+      console.log(size,"00000000000000000000");
+      this.boardWidth = size.split("*")[0];
+      this.boardHeight = size.split("*")[1];
+
+      this.$forceUpdate()
+    },
     keyDown(ev) {
       console.log(ev.keyCode, "ev.keyCode");
+      
       let arr = [];
       let content = "";
       const input = document.getElementById("textContent");
-
       // console.log(input.selectionStart);
-      // arr = this.dataForm.CONTENT.split("");
-      // content += "<div>";
-      // for (var i = 0; i < arr.length; i++) {
-      //   content += arr[i];
-      //   if (i == input.selectionStart - 1) {
-      //     if(ev.keyCode == 13){
-      //       content += "<br>";
-      //     }
-      //     if(ev.keyCode == 32){
-      //       content += "&nbsp";
-      //     }
-      //   }
-      // }
-      var str1 = this.dataForm.CONTENT.substring(0, input.selectionStart - 1);
-      var str2 = this.dataForm.CONTENT.substring(input.selectionStart - 1,this.dataForm.CONTENT.length);
+      arr = this.dataForm.CONTENT.split("");
+      // console.log(arr, "arr");
       content += "<div>";
-      content += str1;
-      if (ev.keyCode == 13) {
-        content += "<br>";
+      for (var i = 0; i < arr.length; i++) {
+        content += arr[i];
+        if (i == input.selectionStart - 1) {
+          if(ev.keyCode == 13){
+            content += "<br>";
+          }else if(ev.keyCode == 32){
+            content += "&nbsp";
+          }
+        }
       }
-      if (ev.keyCode == 32) {
-        content += "&nbsp";
-      }
-      content += str2;
       content += "</div>";
-      this.dataForm.CONTENT = content;
-      console.log(this.content, "this.content");
+      this.dataForm.content1 = content;
     },
 
     //选择图片弹框关闭事件

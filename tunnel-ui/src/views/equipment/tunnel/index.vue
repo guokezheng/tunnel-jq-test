@@ -248,9 +248,6 @@
         <el-form-item label="隧道" prop="tunnelId">
           <el-input v-model="forms.tunnelId" placeholder="请输入隧道" :disabled="true"/>
         </el-form-item>
-        <el-form-item label="隧道方向" prop="tunnelDirection">
-          <el-input v-model="forms.tunnelDirection" placeholder="请输入隧道方向" />
-        </el-form-item>
         <el-form-item label="外部系统" prop="externalSystemId">
 <!--          <el-input v-model="forms.externalSystemId" placeholder="请选择外部系统" />-->
           <el-select v-model="forms.externalSystemId" placeholder="请选择外部系统" class="externalSystemId" style="width: 100%">
@@ -260,6 +257,9 @@
                        :value="item.id">
             </el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="隧道方向" prop="tunnelDirection">
+          <el-input v-model="forms.tunnelDirection" placeholder="请输入隧道方向" />
         </el-form-item>
         <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId">
           <el-input v-model="forms.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />

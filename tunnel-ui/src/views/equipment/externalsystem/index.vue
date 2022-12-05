@@ -122,13 +122,22 @@
 
     <!-- 添加或修改外部系统对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="厂商品牌" prop="brandId">
           <el-input v-model="form.brandId" placeholder="请输入厂商品牌" />
         </el-form-item>
-        <el-form-item label="是否映射方向" prop="isDirection">
-          <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />
+<!--        <el-form-item label="是否映射方向" prop="isDirection">-->
+<!--          <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />-->
+<!--        </el-form-item>-->
+
+        <el-form-item label="是否映射方向:" prop="isDirection">
+          <el-select v-model="form.isDirection" placeholder="请选择是否映射方向" style="width: 100%">
+            <el-option
+              v-for="item in directionMapping" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
+
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名" />
         </el-form-item>
@@ -202,7 +211,17 @@ export default {
       form: {},
       // 表单校验
       rules: {
-      }
+      },
+      directionMapping: [
+        {
+          value: "0",
+          label: "是",
+        },
+        {
+          value: "1",
+          label: "否",
+        },
+      ],
     };
   },
   created() {
@@ -214,9 +233,19 @@ export default {
       this.loading = true;
       listSystem(this.queryParams).then(response => {
         this.systemList = response.rows;
+        for (let i = 0;i < this.systemList.length;i++) {
+          if (this.systemList[i].isDirection == "0") {
+            this.systemList[i].isDirection = "是";
+          } else if (this.systemList[i].isDirection == "1") {
+            this.systemList[i].isDirection = "否";
+          }
+        }
         this.total = response.total;
         this.loading = false;
       });
+    },
+    directionFormat(row, column) {
+      return this.selectDictLabel(this.directionMapping, row.isDirection);
     },
     // 取消按钮
     cancel() {

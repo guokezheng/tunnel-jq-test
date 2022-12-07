@@ -114,7 +114,7 @@
           />
         </el-select>-->
       </el-form-item>
-      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
+      <el-form-item label="所属隧道" prop="tunnelId">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -1317,6 +1317,7 @@
     components: {Treeselect},
     data() {
       return {
+        sClick:true,
         manageStatin:this.$cache.local.get("manageStation"),
         //检修记录弹出窗
         record:false,
@@ -1674,8 +1675,8 @@
       getList() {
         this.loading = true;
         if(this.manageStatin == '1'){
-            this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
-          }
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
         if (this.searchValue == "2") {
           listList(this.queryParams).then((response) => {
             this.eventList = response.rows;
@@ -2115,20 +2116,29 @@
           if (valid) {
             if (this.form.id != null) {
               this.fileData.append("removeIds", this.removeIds);
-              updateList(this.fileData).then((response) => {
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
+              if(this.isClick){
+                updateList(this.fileData).then((response) => {
+                  this.isClick = false;
+                  this.$modal.msgSuccess("修改成功");
+                  this.open = false;
+                  this.getList();
+                });
+              }
+
             } else {
-              addList(this.fileData).then((response) => {
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
+              if(this.isClick){
+                addList(this.fileData).then((response) => {
+                  this.isClick = false;
+                  this.$modal.msgSuccess("新增成功");
+                  this.open = false;
+                  this.getList();
+                });
+              }
+
             }
           }
         });
+        this.isClick = true;
       },
       publishForm() {
         this.fileData = new FormData(); // new formData对象
@@ -2151,25 +2161,31 @@
         this.fileData.append("faultStatus", 0);
         this.$refs["form"].validate((valid) => {
           if (valid) {
-            if(this.fileList.length <= 0) {
-              return this.$modal.msgWarning('请选择要上传的图片')
-            }
             if (this.form.id != null) {
               this.fileData.append("removeIds", this.removeIds);
-              updateList(this.fileData).then((response) => {
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              });
+              if(this.isClick){
+                updateList(this.fileData).then((response) => {
+                  this.isClick = false;
+                  this.$modal.msgSuccess("修改成功");
+                  this.open = false;
+                  this.getList();
+                });
+              }
+
             } else {
-              addList(this.fileData).then((response) => {
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              });
+              if(this.isClick){
+                addList(this.fileData).then((response) => {
+                  this.isClick = false;
+                  this.$modal.msgSuccess("新增成功");
+                  this.open = false;
+                  this.getList();
+                });
+              }
+
             }
           }
         });
+        this.isClick = true;
       },
       // 表单重置
       resetEvent() {

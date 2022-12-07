@@ -6,6 +6,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesProtocolMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -50,6 +51,13 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
      */
     @Override
     public int insertSdDevicesProtocol(SdDevicesProtocol sdDevicesProtocol) {
+        SdDevicesProtocol protocol = new SdDevicesProtocol();
+        protocol.setBrandId(sdDevicesProtocol.getBrandId());
+        protocol.setEqTypeId(sdDevicesProtocol.getEqTypeId());
+        List<SdDevicesProtocol> list = sdDevicesProtocolMapper.selectSdDevicesProtocolList(protocol);
+        if (!CollectionUtils.isEmpty(list)) {
+            throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认！");
+        }
         sdDevicesProtocol.setCreateTime(DateUtils.getNowDate());
         sdDevicesProtocol.setIsDel(0);
         return sdDevicesProtocolMapper.insertSdDevicesProtocol(sdDevicesProtocol);
@@ -63,6 +71,10 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
      */
     @Override
     public int updateSdDevicesProtocol(SdDevicesProtocol sdDevicesProtocol) {
+        if (!checkUniqueForUpdate(sdDevicesProtocol)) {
+            throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认！");
+        }
+
         sdDevicesProtocol.setUpdateTime(DateUtils.getNowDate());
         return sdDevicesProtocolMapper.updateSdDevicesProtocol(sdDevicesProtocol);
     }
@@ -87,5 +99,11 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
     @Override
     public int deleteSdDevicesProtocolById(Integer id) {
         return sdDevicesProtocolMapper.deleteSdDevicesProtocolById(id);
+    }
+
+    @Override
+    public boolean checkUniqueForUpdate(SdDevicesProtocol sdDevicesProtocol) {
+        List<SdDevicesProtocol> list = sdDevicesProtocolMapper.checkUniqueForUpdate(sdDevicesProtocol);
+        return CollectionUtils.isEmpty(list) ? true : false;
     }
 }

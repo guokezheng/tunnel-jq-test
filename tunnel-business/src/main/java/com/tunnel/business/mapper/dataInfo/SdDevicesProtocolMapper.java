@@ -58,4 +58,7 @@ public interface SdDevicesProtocolMapper {
      * @return 结果
      */
     public int deleteSdDevicesProtocolByIds(Integer[] ids);
+
+    List<SdDevicesProtocol> checkUniqueForUpdate(SdDevicesProtocol sdDevicesProtocol);
+
 }

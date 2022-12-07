@@ -100,4 +100,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </update>
+
+    <select id="checkUniqueForUpdate" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesProtocol" resultMap="SdDevicesProtocolResult">
+        <include refid="selectSdDevicesProtocolVo"/>
+        where brand_id = #{brandId} and eq_type_id=#{eqTypeId} and id != #{id}
+    </select>
 </mapper>

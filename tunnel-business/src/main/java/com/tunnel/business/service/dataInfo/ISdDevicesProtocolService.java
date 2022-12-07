@@ -58,4 +58,12 @@ public interface ISdDevicesProtocolService {
      * @return 结果
      */
     public int deleteSdDevicesProtocolById(Integer id);
+
+    /**
+     * 修改时校验唯一
+     *
+     * @param sdDevicesProtocol 设备协议
+     * @return 结果
+     */
+    boolean checkUniqueForUpdate(SdDevicesProtocol sdDevicesProtocol);
 }

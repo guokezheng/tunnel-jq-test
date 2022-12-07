@@ -205,7 +205,7 @@
         select a.tunnel_id, a.tunnel_name, b.s_id, b.s_name from sd_tunnels a
         left join sd_tunnel_subarea b on a.tunnel_id = b.tunnel_id
         <where>
-            <if test="tunnelId != null">a.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelId != null and tunnelId != ''">a.tunnel_id = #{tunnelId}</if>
             <if test="tunnelName != null">a.tunnelName = #{tunnelName} </if>
         </where>
     </select>

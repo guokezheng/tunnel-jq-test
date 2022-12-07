@@ -74,10 +74,11 @@ export function listStrategyByPlanId(id) {
   })
 }
 
-export function tunnelNames() {
+export function tunnelNames(query) {
   return request({
     url:'/tunnels/sublist',
     method: 'get',
+    params: query
   })
 }
 

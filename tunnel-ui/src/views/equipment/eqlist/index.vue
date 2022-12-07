@@ -774,7 +774,7 @@
       /** 查询设备列表 */
       getList() {
         if(this.manageStatin == '1'){
-          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+          this.queryParams.eqTunnelId = this.$cache.local.get("manageStationSelect")
         }
         this.loading = true;
         listDevices(this.queryParams).then((response) => {
@@ -799,7 +799,10 @@
       },
       /** 所属隧道 */
       getTunnel() {
-        listTunnels().then((response) => {
+        if(this.$cache.local.get("manageStation") == '1'){
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
+        listTunnels(this.queryParams).then((response) => {
           console.log(response.rows, "所属隧道列表")
           this.eqTunnelData = response.rows;
         });
@@ -1135,6 +1138,13 @@
         }
       },
     },
+    watch: {
+      "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+        console.log(newVal, "0000000000000000000000");
+        this.getList();
+        this.getTunnel();
+      }
+    }
   };
 </script>
 <style scoped lang="scss">

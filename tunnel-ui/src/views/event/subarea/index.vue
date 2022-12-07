@@ -350,7 +350,10 @@ export default {
     },
     // 隧道名称 下拉框
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, " this.tunnelData");
         console.log(this.subareaList, "this.subareaListthis.subareaList");
@@ -497,6 +500,13 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnels();
+    }
+  }
 };
 </script>
 

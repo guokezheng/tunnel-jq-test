@@ -515,6 +515,6 @@ export default {
   width: 215px !important;
 }
 .jigou .el-icon-arrow-right{
-  right: 25px;
+  right: 15px;
 }
 </style>

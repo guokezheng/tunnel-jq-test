@@ -174,7 +174,7 @@
     </el-dialog>
   </div>
 </template>
-    
+
     <script>
 import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -197,6 +197,9 @@ export default {
   data() {
     return {
       selectIndex: 0,
+      paramsData : {
+        tunnelId: ""
+      },
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层
       chooseEq: false,
@@ -536,7 +539,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         this.getAutoEqTypeList();
         this.getSymbol();
@@ -590,7 +596,7 @@ export default {
   },
 };
 </script>
-    
+
     <style>
 .triggers .box .el-form-item__content {
   display: flex;

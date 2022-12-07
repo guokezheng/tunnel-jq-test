@@ -348,7 +348,10 @@ export default {
   methods: {
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
         console.log(response.rows,"所属隧道列表")
         this.eqTunnelData = response.rows;
       });
@@ -476,6 +479,13 @@ export default {
       return "tableOddRow";
       }
     },
+  },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    }
   }
 };
 </script>

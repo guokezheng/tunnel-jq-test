@@ -133,7 +133,7 @@
       <!-- <el-table-column label="序号" align="center" type="index" /> -->
       <el-table-column label="屏幕尺寸" align="center" prop="screenSize"  />
       <el-table-column label="入屏方式" align="center" prop="inScreenMode" :formatter="inScreenModeMatter" />
-      <el-table-column label="滚动速度/毫秒" align="center" prop="rollSpeed" />
+      <el-table-column label="滚动速度/毫秒" align="center" prop="tcontent.content" />
       <el-table-column label="停留时间/秒" align="center" prop="stopTime" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column

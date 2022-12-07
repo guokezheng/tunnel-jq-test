@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper">
+    
+    <resultMap type="SdMicrowavePeriodicStatistics" id="SdMicrowavePeriodicStatisticsResult">
+        <result property="statisticsId"    column="statistics_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="laneNo"    column="lane_no"    />
+        <result property="avgSpeed"    column="avg_speed"    />
+        <result property="smallVehicleNum"    column="small_vehicle_num"    />
+        <result property="midVehicleNum"    column="mid_vehicle_num"    />
+        <result property="heavyVehicleNum"    column="heavy_vehicle_num"    />
+        <result property="avgLength"    column="avg_length"    />
+        <result property="avgHeadway"    column="avg_headway"    />
+        <result property="avgOccupancy"    column="avg_occupancy"    />
+        <result property="flag"    column="flag"    />
+        <result property="trafficFlowTotal"    column="traffic_flow_total"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="eqDirection"    column="eq_direction"    />
+        <result property="smallVehicleSpeed"    column="small_vehicle_speed"    />
+        <result property="midVehicleSpeed"    column="mid_vehicle_speed"    />
+        <result property="heavyVehicleSpeed"    column="heavy_vehicle_speed"    />
+    </resultMap>
+
+    <sql id="selectSdMicrowavePeriodicStatisticsVo">
+        select statistics_id, tunnel_id, device_id, lane_no, avg_speed, small_vehicle_num, mid_vehicle_num, heavy_vehicle_num, avg_length, avg_headway, avg_occupancy, flag, traffic_flow_total, create_by, create_time, eq_direction, small_vehicle_speed, mid_vehicle_speed, heavy_vehicle_speed from sd_microwave_periodic_statistics
+    </sql>
+
+    <select id="selectSdMicrowavePeriodicStatisticsList" parameterType="SdMicrowavePeriodicStatistics" resultMap="SdMicrowavePeriodicStatisticsResult">
+        <include refid="selectSdMicrowavePeriodicStatisticsVo"/>
+        <where>  
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="laneNo != null  and laneNo != ''"> and lane_no = #{laneNo}</if>
+            <if test="avgSpeed != null  and avgSpeed != ''"> and avg_speed = #{avgSpeed}</if>
+            <if test="smallVehicleNum != null  and smallVehicleNum != ''"> and small_vehicle_num = #{smallVehicleNum}</if>
+            <if test="midVehicleNum != null  and midVehicleNum != ''"> and mid_vehicle_num = #{midVehicleNum}</if>
+            <if test="heavyVehicleNum != null  and heavyVehicleNum != ''"> and heavy_vehicle_num = #{heavyVehicleNum}</if>
+            <if test="avgLength != null  and avgLength != ''"> and avg_length = #{avgLength}</if>
+            <if test="avgHeadway != null  and avgHeadway != ''"> and avg_headway = #{avgHeadway}</if>
+            <if test="avgOccupancy != null  and avgOccupancy != ''"> and avg_occupancy = #{avgOccupancy}</if>
+            <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+            <if test="trafficFlowTotal != null  and trafficFlowTotal != ''"> and traffic_flow_total = #{trafficFlowTotal}</if>
+            <if test="eqDirection != null  and eqDirection != ''"> and eq_direction = #{eqDirection}</if>
+            <if test="smallVehicleSpeed != null  and smallVehicleSpeed != ''"> and small_vehicle_speed = #{smallVehicleSpeed}</if>
+            <if test="midVehicleSpeed != null  and midVehicleSpeed != ''"> and mid_vehicle_speed = #{midVehicleSpeed}</if>
+            <if test="heavyVehicleSpeed != null  and heavyVehicleSpeed != ''"> and heavy_vehicle_speed = #{heavyVehicleSpeed}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdMicrowavePeriodicStatisticsByStatisticsId" parameterType="Long" resultMap="SdMicrowavePeriodicStatisticsResult">
+        <include refid="selectSdMicrowavePeriodicStatisticsVo"/>
+        where statistics_id = #{statisticsId}
+    </select>
+        
+    <insert id="insertSdMicrowavePeriodicStatistics" parameterType="SdMicrowavePeriodicStatistics" useGeneratedKeys="true" keyProperty="statisticsId">
+        insert into sd_microwave_periodic_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="deviceId != null">device_id,</if>
+            <if test="laneNo != null">lane_no,</if>
+            <if test="avgSpeed != null">avg_speed,</if>
+            <if test="smallVehicleNum != null">small_vehicle_num,</if>
+            <if test="midVehicleNum != null">mid_vehicle_num,</if>
+            <if test="heavyVehicleNum != null">heavy_vehicle_num,</if>
+            <if test="avgLength != null">avg_length,</if>
+            <if test="avgHeadway != null">avg_headway,</if>
+            <if test="avgOccupancy != null">avg_occupancy,</if>
+            <if test="flag != null">flag,</if>
+            <if test="trafficFlowTotal != null">traffic_flow_total,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="eqDirection != null">eq_direction,</if>
+            <if test="smallVehicleSpeed != null">small_vehicle_speed,</if>
+            <if test="midVehicleSpeed != null">mid_vehicle_speed,</if>
+            <if test="heavyVehicleSpeed != null">heavy_vehicle_speed,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="laneNo != null">#{laneNo},</if>
+            <if test="avgSpeed != null">#{avgSpeed},</if>
+            <if test="smallVehicleNum != null">#{smallVehicleNum},</if>
+            <if test="midVehicleNum != null">#{midVehicleNum},</if>
+            <if test="heavyVehicleNum != null">#{heavyVehicleNum},</if>
+            <if test="avgLength != null">#{avgLength},</if>
+            <if test="avgHeadway != null">#{avgHeadway},</if>
+            <if test="avgOccupancy != null">#{avgOccupancy},</if>
+            <if test="flag != null">#{flag},</if>
+            <if test="trafficFlowTotal != null">#{trafficFlowTotal},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="eqDirection != null">#{eqDirection},</if>
+            <if test="smallVehicleSpeed != null">#{smallVehicleSpeed},</if>
+            <if test="midVehicleSpeed != null">#{midVehicleSpeed},</if>
+            <if test="heavyVehicleSpeed != null">#{heavyVehicleSpeed},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMicrowavePeriodicStatistics" parameterType="SdMicrowavePeriodicStatistics">
+        update sd_microwave_periodic_statistics
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="laneNo != null">lane_no = #{laneNo},</if>
+            <if test="avgSpeed != null">avg_speed = #{avgSpeed},</if>
+            <if test="smallVehicleNum != null">small_vehicle_num = #{smallVehicleNum},</if>
+            <if test="midVehicleNum != null">mid_vehicle_num = #{midVehicleNum},</if>
+            <if test="heavyVehicleNum != null">heavy_vehicle_num = #{heavyVehicleNum},</if>
+            <if test="avgLength != null">avg_length = #{avgLength},</if>
+            <if test="avgHeadway != null">avg_headway = #{avgHeadway},</if>
+            <if test="avgOccupancy != null">avg_occupancy = #{avgOccupancy},</if>
+            <if test="flag != null">flag = #{flag},</if>
+            <if test="trafficFlowTotal != null">traffic_flow_total = #{trafficFlowTotal},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="eqDirection != null">eq_direction = #{eqDirection},</if>
+            <if test="smallVehicleSpeed != null">small_vehicle_speed = #{smallVehicleSpeed},</if>
+            <if test="midVehicleSpeed != null">mid_vehicle_speed = #{midVehicleSpeed},</if>
+            <if test="heavyVehicleSpeed != null">heavy_vehicle_speed = #{heavyVehicleSpeed},</if>
+        </trim>
+        where statistics_id = #{statisticsId}
+    </update>
+
+    <delete id="deleteSdMicrowavePeriodicStatisticsByStatisticsId" parameterType="Long">
+        delete from sd_microwave_periodic_statistics where statistics_id = #{statisticsId}
+    </delete>
+
+    <delete id="deleteSdMicrowavePeriodicStatisticsByStatisticsIds" parameterType="String">
+        delete from sd_microwave_periodic_statistics where statistics_id in 
+        <foreach item="statisticsId" collection="array" open="(" separator="," close=")">
+            #{statisticsId}
+        </foreach>
+    </delete>
+</mapper>

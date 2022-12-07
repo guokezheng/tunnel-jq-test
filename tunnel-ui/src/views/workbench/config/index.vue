@@ -10,7 +10,6 @@
           style="display: flex; align-items: center"
           :style="isManagementStation ? 'padding-left:100px;' : ''"
         >
-        {{tunnelQueryParams.deptId}}
           <el-cascader
             v-model="tunnelQueryParams.deptId"
             :options="siteList"
@@ -3536,30 +3535,28 @@ export default {
   },
 
   watch: {
-    "tunnelQueryParams.deptId":function (newVal, oldVal){
-      console.log(newVal,"newValnewValnewVal");
+    tunnelList: function (newVal, oldVal) {
+      console.log(newVal, "8888888888888888");
     },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
-    
+
       if (this.manageStation == "1") {
-            getJlyTunnel().then((res) => {
-              var arr = []
-              for(let item of res.data){
-                if(newVal == item.tunnelId){
-                  var atr = item.ancestors.slice(2)
-                  arr = atr.split(",");
-                  arr.push(item.deptId)
-                  this.tunnelQueryParams.deptId = item.deptId
-                  console.log(arr,"arrarr")
-                  this.changeSite(arr);
-                }
-              }
-              
-            })
+        getJlyTunnel().then((res) => {
+          var arr = [];
+          for (let item of res.data) {
+            if (newVal == item.tunnelId) {
+              var atr = item.ancestors.slice(2);
+              arr = atr.split(",");
+              arr.push(item.deptId);
+              this.tunnelQueryParams.deptId = item.deptId;
+              this.changeSite(arr);
+            }
           }
-     
-      this.getTunnelList()
+        });
+      }
+      console.log(11111111111111);
+      this.getTunnelList();
     },
     // "$store.state.manage.manageStation": function (newVal, oldVal) {
     //   console.log(newVal, "监听到啦监听到啦监听到啦监听到啦监听到啦");
@@ -4316,8 +4313,8 @@ export default {
         .then((response) => {
           var list = that.handleTree(response.data, "deptId");
           console.log(list, "级联选择器格式");
-          let arr = []
-          this.checkData(list[0],arr)
+          let arr = [];
+          this.checkData(list[0], arr);
           function a(list) {
             list.forEach((item) => {
               if (item.deptId == id) {
@@ -4329,29 +4326,31 @@ export default {
           }
           a(list);
         })
+        // .then(() => {
+        //   that.siteList.filter((item) => {
+        //     if (item.children) {
+        //       item.children.forEach((val) => {
+        //         iid ? "" : (iid = val.deptId);
+        //         that.tunnelQueryParams.deptId == iid
+        //           ? ""
+        //           : (that.tunnelQueryParams.deptId = iid);
+        //       });
+        //     } else {
+        //       iid ? "" : (iid = item.deptId);
+        //       that.tunnelQueryParams.deptId == iid
+        //         ? ""
+        //         : (that.tunnelQueryParams.deptId = iid);
+        //     }
+        //     console.log(that.tunnelQueryParams.deptId,"3333333333333333333333")
+        //   });
+        // })
         .then(() => {
-          that.siteList.filter((item) => {
-            if (item.children) {
-              item.children.forEach((val) => {
-                iid ? "" : (iid = val.deptId);
-                that.tunnelQueryParams.deptId == iid
-                  ? ""
-                  : (that.tunnelQueryParams.deptId = iid);
-              });
-            } else {
-              iid ? "" : (iid = item.deptId);
-              that.tunnelQueryParams.deptId == iid
-                ? ""
-                : (that.tunnelQueryParams.deptId = iid);
-            }
-          });
-        })
-        .then(() => {
-          
           // 获取隧道
+          console.log(22222222222);
+
           that.getTunnelList();
           if (this.manageStation == "1") {
-          // that.tunnelQueryParams.deptId == "555503";
+            // that.tunnelQueryParams.deptId == "555503";
 
             let arr = ["6266", "5555", "555503"];
             this.changeSite(arr);
@@ -4359,19 +4358,17 @@ export default {
           that.siteList.length == 0 ? (that.isManagementStation = true) : "";
         });
     },
-    checkData(obj,arr){
+    checkData(obj, arr) {
       if (obj.children && obj.children.length > 0) {
-        arr.push(obj.deptId)
-        this.checkData(obj.children[0],arr);
+        arr.push(obj.deptId);
+        this.checkData(obj.children[0], arr);
       } else {
-        
-        arr.push(obj.deptId)
-        arr.shift()
-        console.log(arr,"arrrrrrrrrrrrrr")
-        this.changeSite(arr)
+        arr.push(obj.deptId);
+        arr.shift();
+        this.changeSite(arr);
 
         this.$forceUpdate();
-      }  
+      }
     },
     // 获取最近24小时时间数组
     getTimeData() {
@@ -4388,18 +4385,18 @@ export default {
           result.push(h);
         }
         return result.reverse();
-        console.log();
       }
 
       return hourArr;
     },
     // 改变站点
     changeSite(index) {
-      console.log(index, "index------------------------");
+      console.log(index, "index------------------------1");
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
-        console.log(this.tunnelQueryParams.deptId,"deptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptId");
-        this.$forceUpdate()
+        this.$forceUpdate();
+        console.log(3333333333);
+
         this.getTunnelList();
         // this.srollAuto()
       }
@@ -4529,16 +4526,12 @@ export default {
 
     // 缩略图开关
     changeThumbnail(val) {
-      console.log(val, "val");
       var vehicleLane = document.getElementsByClassName("vehicleLane");
       var footer = document.getElementsByClassName("footer");
-      console.log(vehicleLane, "vehicleLane");
-      console.log(footer, "footer");
       if (!val) {
         vehicleLane[0].style.height = "87%";
         footer[1].style.height = "0%";
       } else {
-        console.log(footer);
         vehicleLane[0].style.removeProperty("height");
         this.initEharts();
       }
@@ -5228,7 +5221,6 @@ export default {
     },
     lightSwitchFunc() {
       this.getConfigKey("lightSwitch").then((response) => {
-        console.log(response, "responseresponseresponse");
         this.lightSwitch = response.msg;
       });
     },
@@ -5341,7 +5333,6 @@ export default {
       if (boxEqList.length > 0 && this.boxTypeList.length > 0) {
         if (boxEqList.length == 1 && boxEqList[0].eqlist.length == 1) {
           //单个配置
-          // console.log(boxEqList[0].eqlist[0])
           this.openStateSwitch(boxEqList[0].eqlist[0]);
         } else {
           //超过1个设备进行批量配置
@@ -5469,7 +5460,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      console.log(this.tunnelQueryParams.deptId,"this.tunnelQueryParams.deptIdthis.tunnelQueryParams.deptId")
+      console.log(this.tunnelQueryParams, "44444444444");
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -5490,7 +5481,7 @@ export default {
           this.dictList = this.dict.type.sd_sys_name;
           // this.robotShow = true;
         }
-        this.tunnelList = [];
+        // this.tunnelList = [];
         this.checkboxTunnel = [];
         let list = response.rows;
         if (list.length > 0) {
@@ -5499,39 +5490,26 @@ export default {
               let num = 0;
               list[i].tunnelLength = num.toString();
             }
-            // if(list[i].tunnelId == this.$cache.local.get("manageStationSelect") && list[i].tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
-            //   this.$store.dispatch("manage/changeManage", "1");
-            //   this.tunnelList.push(list[i]);
-            //   this.checkboxTunnel.push(list[i]);
-            //   this.setTunnel(list[i],0);
-            //   return;
-            // }else if(list[i].tunnelId == this.$cache.local.get("manageStationSelect")){
-            //   this.$store.dispatch("manage/changeManage", "0");
-            //   this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-HSD");
-            //   this.tunnelList = list;
-            //   this.checkboxTunnel.push(list[i]);
-            //   this.setTunnel(list[i],i);
-            //   return;
-            // }
           }
           // this.buttonIndex = 0;
-          if(this.manageStation == "0"){
+          if (this.manageStation == "0") {
+            this.tunnelList = [];
             this.tunnelList = list;
             this.checkboxTunnel.push(list[0]);
             this.currentTunnel.id = list[0].tunnelId;
             this.currentTunnel.name = list[0].tunnelName;
             this.selectEquipmentType(this.currentTunnel.id);
             this.getTunnelData(this.currentTunnel.id);
-          }else{
-            console.log(2222222)
-            for(let i=0;i<list.length;i++){
-              if(list[i].tunnelId == this.$cache.local.get("manageStationSelect")){
-                console.log(list[i],"list[i]list[i]list[i]")
+          } else {
+            for (let i = 0; i < list.length; i++) {
+              if (
+                list[i].tunnelId == this.$cache.local.get("manageStationSelect")
+              ) {
+                this.tunnelList = [];
                 this.tunnelList.push(list[i]);
                 this.checkboxTunnel.push(list[i]);
-                this.setTunnel(list[i],0);
+                this.setTunnel(list[i], 0);
               }
-             
             }
           }
         }
@@ -5807,7 +5785,6 @@ export default {
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
-                  console.log(item, "000000000000000000000");
                   // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
                 } else {
@@ -6174,10 +6151,6 @@ export default {
         this.lane = tunnel.lane;
         this.tunnelLength = length; //px长度
         this.proportion = math.divide(length / (Mileage * 1000)); //计算px和米的比例
-        console.log(
-          this.proportion,
-          "this.proportionthis.proportionthis.proportionthis.proportion"
-        );
       });
       // 首页获取隧道长度，根据隧道长度判断车辆行驶的全部距离
     },
@@ -6314,13 +6287,11 @@ export default {
           for (let itm of this.selectedIconList) {
             // console.log(itm);
             if (itm.eqId == item.eqId) {
-              console.log(itm, "0000000000000000000000000");
               itm.click = true;
               this.itemEqId.push(itm.eqId);
               this.itemEqType = itm.eqType;
               this.batchManageForm.eqType = itm.eqType;
               this.batchManageForm.eqDirection = itm.eqDirection;
-              console.log(this.batchManageForm);
               this.$forceUpdate();
               getType(itm.eqType).then((res) => {
                 console.log(res, "查询设备图标宽高");
@@ -8808,6 +8779,15 @@ input {
 }
 </style>
 <style lang="scss">
+.popper-class-site {
+  .el-cascader-menu__wrap {
+    max-width: 245px;
+    
+  }
+  .el-cascader-node__postfix {
+      right: 18px !important;
+    }
+}
 .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
   display: none !important;
 }

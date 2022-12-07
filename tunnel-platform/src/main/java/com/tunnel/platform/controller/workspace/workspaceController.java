@@ -320,7 +320,7 @@ public class workspaceController extends BaseController {
         int controlState = 0;
         if (sdDevices.getBrandId() != null && sdDevices.getBrandId().equals("0057")) {
             controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
-        } else {
+        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue() && !sdDevices.getBrandId().equals("0057")) {
             controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency);
         }
         //添加操作记录

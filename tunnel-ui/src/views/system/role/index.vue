@@ -236,6 +236,7 @@
             :check-strictly="!form.menuCheckStrictly"
             empty-text="加载中，请稍候"
             :props="defaultProps"
+            style="max-height: 350px;overflow: auto;"
           ></el-tree>
         </el-form-item>
         <el-form-item label="备注">

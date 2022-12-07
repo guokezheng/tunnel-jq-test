@@ -1641,10 +1641,8 @@ export default {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "0000000000000000000000");
       this.getList();
-      const paramsData = {
-        tunnelId : this.$cache.local.get("manageStationSelect")
-      }
-      tunnelNames(paramsData).then((res) => {
+      this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      tunnelNames(this.paramsData).then((res) => {
         this.eqTunnelData = res.rows;
         console.log(this.eqTunnelData, "111");
         this.eqTunnelData.forEach((item) => {

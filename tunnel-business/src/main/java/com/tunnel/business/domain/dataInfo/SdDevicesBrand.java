@@ -31,6 +31,9 @@ public class SdDevicesBrand extends BaseEntity {
     @Excel(name = "简称")
     private String shortName;
 
+    /**
+     * 是否删除（1-是，0-否）
+     */
     private Integer isDel;
 
     public void setSupplierId(String supplierId) {

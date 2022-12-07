@@ -1292,7 +1292,7 @@ export default {
       this.fileData.append("publishStatus","2");
       this.fileData.append("taskStatus","0");
       //判断是否选择点
-      if(this.bzId==-1||this.boxList==""){
+      if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return
       }

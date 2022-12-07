@@ -274,6 +274,7 @@ import timingControl from "./components/timingControl"; //定时控制
 import autoControl from "./components/autoControl"; //自动触发
 import timeControl from "./components/timeControl"; //分时控制
 import cron from "@/components/cron/cron.vue";
+import {tunnelNames} from "@/api/event/reservePlan";
 export default {
   components: {
     manualControl,
@@ -875,6 +876,12 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+    }
+  }
 };
 </script>
   <style>
@@ -891,6 +898,6 @@ export default {
 <style scoped>
 .el-input--small .el-input__icon{
   height: 34px;
-} 
+}
 </style>
 

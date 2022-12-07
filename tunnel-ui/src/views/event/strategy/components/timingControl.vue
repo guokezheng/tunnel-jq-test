@@ -198,7 +198,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import {
   listJob,
@@ -240,6 +240,9 @@ export default {
   data() {
     return {
       expression: "",
+      paramsData : {
+        tunnelId: ""
+      },
       openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
@@ -596,7 +599,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });
@@ -639,6 +645,6 @@ export default {
   },
 };
 </script>
-  
+
   <style>
 </style>

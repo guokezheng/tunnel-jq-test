@@ -323,6 +323,9 @@ export default {
         { warningType: "0", name: "仅预警" },
         { warningType: "1", name: "预警联动" },
       ],
+      paramsData : {
+        tunnelId: ""
+      },
       expression: "",
       openCron: false,
       id: "", //策略id
@@ -777,7 +780,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         this.getAutoEqTypeList();
         this.getSymbol();

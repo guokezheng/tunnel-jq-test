@@ -277,6 +277,9 @@ export default {
         pageSize: 10,
         tunnelId: null,
       },
+      paramsData: {
+        tunnelId : ""
+      },
       // 表单参数
       form: {
         id: null,
@@ -318,7 +321,10 @@ export default {
   },
   methods: {
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
       });
     },
@@ -467,5 +473,12 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnels();
+    }
+  }
 };
 </script>

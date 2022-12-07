@@ -526,6 +526,7 @@ import {
 } from "@/api/system/material";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { number } from 'echarts';
+import {tunnelNames} from "@/api/event/reservePlan";
 var type = "";
 var varid = "";
 export default {
@@ -570,6 +571,9 @@ export default {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e6;
         },
+      },
+      paramsData: {
+        tunnelId : ""
       },
       statusClass: {
         1: "yellowClass",
@@ -837,6 +841,9 @@ export default {
         params.station = 'K' + '.' +  obj.station + '.' + obj.deviation
         params.endStation = 'K' + '.' +  obj.endStation + '.' + obj.endDeviation
       }
+      if(this.$cache.local.get("manageStation") == "1"){
+        params.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listMaterial(params).then(response => {
         this.materialList = response.rows;
         this.total = response.total;
@@ -845,7 +852,10 @@ export default {
     },
     /** 查询隧道下拉框 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
       });
     },
@@ -1129,6 +1139,13 @@ export default {
     //   this.queryStationVisible = false
     //   this.$refs.queryStationForm.resetFields()
     // }
+  },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnels();
+    }
   }
 };
 </script>

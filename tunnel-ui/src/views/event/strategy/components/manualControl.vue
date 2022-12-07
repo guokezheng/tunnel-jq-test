@@ -163,6 +163,9 @@ export default {
     return {
       sink: "", //删除/修改
       id: "", //策略id
+      paramsData : {
+        tunnelId: ""
+      },
       strategyForm: {
         jobRelationId: "", //时间戳
         equipmentTypeId: "", //设备类型
@@ -436,7 +439,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });

@@ -782,6 +782,9 @@ export default {
     /** 查询故障清单列表 */
     getList() {
       this.loading = true;
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.listList.forEach((item) =>{
@@ -807,7 +810,10 @@ export default {
     },
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
         console.log(response.rows, "所属隧道列表");
         this.eqTunnelData = response.rows;
       });
@@ -1090,6 +1096,13 @@ export default {
         .catch(() => {});
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    }
+  }
 };
 
 </script>

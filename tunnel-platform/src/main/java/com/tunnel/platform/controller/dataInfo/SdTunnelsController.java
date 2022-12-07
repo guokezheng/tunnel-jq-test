@@ -2,6 +2,7 @@ package com.tunnel.platform.controller.dataInfo;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
@@ -147,11 +148,26 @@ public class SdTunnelsController extends BaseController
         return Result.success(sdTunnelsService.deptId(deptId));
     }
 
+    /**
+     * 同步数据
+     * @param sdTunnels
+     * @param pushType
+     * @param count
+     */
     public void pushData(SdTunnels sdTunnels, String pushType, int count){
         if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && count > 0){
             List<SdTunnels> sdTunnelsList = new ArrayList<>();
             sdTunnelsList.add(sdTunnels);
             platformApiController.tunnelsPush(sdTunnelsList,pushType);
         }
+    }
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    @GetMapping("/getJlyTunnel")
+    public AjaxResult getJlyTunnel(){
+        return AjaxResult.success(sdTunnelsService.getJlyTunnel());
     }
 }

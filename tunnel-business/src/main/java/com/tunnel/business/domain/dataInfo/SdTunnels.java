@@ -97,6 +97,17 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("路段ID")
     private String roadId;
 
+    @ApiModelProperty("祖级列表")
+    private String ancestors;
+
+    public String getAncestors() {
+        return ancestors;
+    }
+
+    public void setAncestors(String ancestors) {
+        this.ancestors = ancestors;
+    }
+
     public String getRoadId() {
         return roadId;
     }

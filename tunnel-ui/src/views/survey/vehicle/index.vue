@@ -180,7 +180,6 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleDetailsMaterial(scope.row)"
-            v-hasPermi="['system:vehicle:edit']"
           >详情</el-button
           >
         </template>
@@ -203,7 +202,7 @@
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="106px">
         <el-form-item label="机构" prop="orgName" v-show="model">
-          <el-input v-model="form.orgName" placeholder="请输入机构名称" />
+          <el-input v-model="form.orgName" placeholder="请输入机构名称" :disabled="disabled"/>
         </el-form-item>
         <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
           <el-input v-model="form.plateNumber" placeholder="请输入车牌" :disabled="disabled"/>

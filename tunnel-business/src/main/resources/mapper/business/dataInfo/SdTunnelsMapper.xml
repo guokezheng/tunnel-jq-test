@@ -254,5 +254,23 @@
 
     </select>
 
-
+    <select id="getJlyTunnel" resultType="com.tunnel.business.domain.dataInfo.SdTunnels">
+        SELECT
+            t.tunnel_id AS tunnelId,
+            t.tunnel_name AS tunnelName,
+            d.dept_name AS deptName,
+            t.tunnel_length AS tunnelLength,
+            d.dept_id AS deptId,
+            d.ancestors
+        FROM
+            sd_tunnels t
+                LEFT JOIN sys_dept d ON t.dept_id = d.dept_id
+        WHERE
+            1 = 1
+        <if test="deptId != null and deptId != ''">
+            AND (
+            d.dept_id = #{deptId}
+            OR d.dept_id IN ( SELECT dept_id FROM sys_dept WHERE 1 = 1 AND FIND_IN_SET( #{deptId}, ancestors ) > 0 ))
+        </if>
+    </select>
 </mapper>

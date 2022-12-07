@@ -1,12 +1,15 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -153,5 +156,12 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     @Override
     public List<SdTunnels> selectTunnelList(String deptId) {
         return sdTunnelsMapper.selectTunnelList(deptId);
+    }
+
+    @Override
+    public List<SdTunnels> getJlyTunnel() {
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels> jlyTunnel = sdTunnelsMapper.getJlyTunnel(deptId);
+        return jlyTunnel;
     }
 }

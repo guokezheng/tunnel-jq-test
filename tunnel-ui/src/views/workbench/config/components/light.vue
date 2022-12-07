@@ -98,7 +98,7 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '2' && stateForm.eqType == (1 || 2)">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1' && stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -114,7 +114,7 @@
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'&& stateForm.eqType == (1 || 2)">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '2'&& stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"

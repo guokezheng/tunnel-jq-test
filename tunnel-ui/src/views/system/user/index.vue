@@ -22,6 +22,7 @@
             ref="tree"
             default-expand-all
             @node-click="handleNodeClick"
+            style="height:740px; overflow: auto;"
           />
         </div>
       </el-col>

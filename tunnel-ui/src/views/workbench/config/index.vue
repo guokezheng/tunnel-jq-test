@@ -10,6 +10,7 @@
           style="display: flex; align-items: center"
           :style="isManagementStation ? 'padding-left:100px;' : ''"
         >
+        {{tunnelQueryParams.deptId}}
           <el-cascader
             v-model="tunnelQueryParams.deptId"
             :options="siteList"
@@ -421,7 +422,7 @@
                             padding-left: 5px;
                             width: 100px;
                             text-align: left;
-                            transform: translateY(5px);
+                            transform: translate(30px,5px);
                           "
                           v-if="item.eqType == 5 || item.eqType == 18"
                         >
@@ -3162,7 +3163,7 @@ export default {
       hostIP: null,
       userDeptId: null,
       tunnelQueryParams: {
-        deptId: this.userDeptId,
+        deptId: "",
         deptName: "",
       },
       userQueryParams: {
@@ -3535,6 +3536,9 @@ export default {
   },
 
   watch: {
+    "tunnelQueryParams.deptId":function (newVal, oldVal){
+      console.log(newVal,"newValnewValnewVal");
+    },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
     
@@ -4346,8 +4350,9 @@ export default {
           
           // 获取隧道
           that.getTunnelList();
-          that.tunnelQueryParams.deptId == "555503";
           if (this.manageStation == "1") {
+          // that.tunnelQueryParams.deptId == "555503";
+
             let arr = ["6266", "5555", "555503"];
             this.changeSite(arr);
           }
@@ -4361,10 +4366,8 @@ export default {
       } else {
         
         arr.push(obj.deptId)
-        console.log(arr,"arrrrrrrrrrrrrr")
         arr.shift()
         console.log(arr,"arrrrrrrrrrrrrr")
-
         this.changeSite(arr)
 
         this.$forceUpdate();
@@ -4395,6 +4398,8 @@ export default {
       console.log(index, "index------------------------");
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
+        console.log(this.tunnelQueryParams.deptId,"deptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptIddeptId");
+        this.$forceUpdate()
         this.getTunnelList();
         // this.srollAuto()
       }
@@ -5464,6 +5469,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
+      console.log(this.tunnelQueryParams.deptId,"this.tunnelQueryParams.deptIdthis.tunnelQueryParams.deptId")
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {

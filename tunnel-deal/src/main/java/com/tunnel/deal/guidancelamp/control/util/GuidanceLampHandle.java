@@ -165,6 +165,44 @@ public class GuidanceLampHandle {
         return 1;
     }
 
+    // 深圳显科诱导灯控制设备逻辑
+    public int toControlXianKeDev(String deviceId,Integer ctrState,SdDevices sdDevices,String brightness, String frequency) {
+        String ip = sdDevices.getIp();
+        Integer port = Integer.parseInt(sdDevices.getPort());
+        //发送诱导灯控制指令
+        try {
+            String code = "000000000006010300010001";
+            NettyClient client = new NettyClient(ip, port,code,1);
+            client.start(null);
+            //控制亮度
+            Map codeMap = InductionlampUtil.getXianKePilotLightMode(ctrState,Integer.parseInt(brightness));
+            client.pushCode(codeMap.get("code").toString());
+            //控制频率（1S闪几次）
+            codeMap = InductionlampUtil.getXianKeFrequency(ctrState,Integer.parseInt(frequency));
+            client.pushCode(codeMap.get("code").toString());
+            //控制占空比（亮的时间在一整个周期的比例）
+//            codeMap = InductionlampUtil.getXianKeDutyCycle(ctrState,Integer.parseInt(frequency));
+//            client.pushCode(codeMap.get("code").toString());
+            client.stop();
+        } catch (Exception e) {
+            System.err.println("设备编号为" + deviceId + "的设备变更状态失败");
+            return 0;
+        }
+        //存储变更后控制器状态到数据库
+        updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()), ctrState.toString());
+        updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()), brightness);
+        updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
+        //存储子级设备状态
+        List<SdDevices> devicesListByFEqId = sdDevicesMapper.getDevicesListByFEqId(deviceId);
+        for (int i = 0;i < devicesListByFEqId.size();i++) {
+            String eqId = devicesListByFEqId.get(i).getEqId();
+            updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode()), ctrState.toString());
+            updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode()), brightness);
+            updateDeviceData(eqId, Long.valueOf(DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode()), frequency);
+        }
+        return 1;
+    }
+
     private void updateDeviceDatas(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());

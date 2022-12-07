@@ -168,6 +168,20 @@ public class YddTask {
             return;
         }
         Integer port = Integer.valueOf(portAddress);
+        if (sdDevices.getBrandId() != null && !sdDevices.getBrandId().equals("0057")) {
+            Map codeMap = InductionlampUtil.getXianKeDeviceBrightness(ip, port);
+            if (codeMap == null || codeMap.isEmpty() || codeMap.get("brightness") == null || codeMap.get("brightness").toString() == "0") {
+                saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
+                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                return;
+            } else {
+                handleCodeMap(sdDevices, codeMap);
+                codeMap = InductionlampUtil.getXianKeDeviceFrequency(ip, port);
+                handleCodeMap(sdDevices, codeMap);
+                saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+            }
+            return;
+        }
         try {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);

@@ -169,7 +169,11 @@ public class SdDeviceControlService {
             devId = sdDevices.getEqId();
             if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
                 //连接设备进行控制
-                controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
+                if (sdDevices.getBrandId() != null && sdDevices.getBrandId().equals("0057")) {
+                    controlState = GuidanceLampHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency, null);
+                } else {
+                    controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(devId, Integer.parseInt(state), sdDevices, brightness, frequency);
+                }
             } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
                 //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
                 sdDevices.setEqStatus("1");

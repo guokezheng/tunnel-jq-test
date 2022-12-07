@@ -317,7 +317,12 @@ public class workspaceController extends BaseController {
             return AjaxResult.success(1);
         }
         //控制设备
-        int controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
+        int controlState = 0;
+        if (sdDevices.getBrandId() != null && sdDevices.getBrandId().equals("0057")) {
+            controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
+        } else {
+            controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency);
+        }
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
         sdOperationLog.setEqTypeId(sdDevices.getEqType());

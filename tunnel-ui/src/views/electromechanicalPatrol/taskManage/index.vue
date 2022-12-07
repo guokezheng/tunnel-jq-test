@@ -667,7 +667,7 @@ export default {
   },
   data() {
     return {
-
+      isClick:true,
       userName:'',
       currentTime:'',
       deviceType:'',
@@ -1292,29 +1292,41 @@ export default {
       this.fileData.append("publishStatus","2");
       this.fileData.append("taskStatus","0");
       //判断是否选择点
-      console.log("release============="+this.boxList);
+      if(this.bzId==-1||this.boxList==""){
+        this.$modal.msgWarning("请指派巡查班组");
+        return
+      }
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
       }
+
       this.boxIds = "";
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
       })
       this.fileData.append("devicesList",this.boxIds);
       if (this.form.id != null) {
-        updateTask(this.fileData).then((response) => {
-          this.$modal.msgSuccess("发布成功");
-          this.open = false;
-          this.getList();
-        });
+        if(this.isClick){
+          updateTask(this.fileData).then((response) => {
+            this.isClick = false;
+            this.$modal.msgSuccess("发布成功");
+            this.open = false;
+            this.getList();
+          });
+        }
       }else{
-      addTask(this.fileData).then((response) => {
-        this.$modal.msgSuccess("发布成功");
-        this.open = false;
-        this.getList();
-      });
+        if(this.isClick){
+          addTask(this.fileData).then((response) => {
+            this.isClick = false;
+            this.$modal.msgSuccess("发布成功");
+            this.open = false;
+            this.getList();
+          });
+        }
+
       }
+      this.isClick = true;
     },
 //废止
     abolish() {
@@ -1370,18 +1382,26 @@ export default {
       this.fileData.append("devicesList",this.boxIds);
 
       if (this.form.id != null) {
-        updateTask(this.fileData).then((response) => {
-          this.$modal.msgSuccess("暂存成功");
-          this.open = false;
-          this.getList();
-        });
+        if(this.isClick) {
+          updateTask(this.fileData).then((response) => {
+            this.isClick = false;
+            this.$modal.msgSuccess("暂存成功");
+            this.open = false;
+            this.getList();
+          });
+        }
       }else{
-        addTask(this.fileData).then((response) => {
-          this.$modal.msgSuccess("暂存成功");
-          this.open = false;
-          this.getList();
-        });
+        if(this.isClick){
+          addTask(this.fileData).then((response) => {
+            this.isClick = false;
+            this.$modal.msgSuccess("暂存成功");
+            this.open = false;
+            this.getList();
+          });
+        }
+
       }
+      this.isClick = true;
     },
   },
 };

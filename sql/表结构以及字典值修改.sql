@@ -713,3 +713,22 @@ CREATE TABLE `sd_vehicle_type` (
   `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='车辆类型配置表';
+
+-- 新增 设备协议配置表：
+CREATE TABLE `sd_devices_protocol` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `brand_id` varchar(50) DEFAULT NULL COMMENT '厂商 ID',
+  `eq_type_id` bigint(20) DEFAULT NULL COMMENT '设备类型',
+  `protocol_name` varchar(255) DEFAULT NULL COMMENT '协议名称',
+  `protocol_type` varchar(255) DEFAULT NULL COMMENT '协议类型',
+  `class_name` varchar(255) DEFAULT NULL COMMENT '类名',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除（1-是，0-否）',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改者',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='设备协议配置表';
+
+-- 微波车检：新增表 sd_microwave_periodic_statistics、sd_microwave_real_data

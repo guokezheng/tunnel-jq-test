@@ -32,59 +32,46 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" type="primary" plain @click="resetQuery">重置</el-button>
         <el-button
           type="primary"
           plain
-          icon="el-icon-download"
           size="mini"
           @click="handleGenTable"
           v-hasPermi="['tool:gen:code']"
         >生成</el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button
-          type="info"
+          type="primary"
           plain
-          icon="el-icon-upload"
           size="mini"
           @click="openImportTable"
           v-hasPermi="['tool:gen:import']"
         >导入</el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleEditTable"
           v-hasPermi="['tool:gen:edit']"
         >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
         <el-button
-          type="danger"
+          type="primary"
           plain
-          icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['tool:gen:remove']"
         >删除</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+      </el-form-item>
+    </el-form>
+
+   
 
     <el-table v-loading="loading" :data="tableList"
-    max-height="610" @selection-change="handleSelectionChange">
+    max-height="610" @selection-change="handleSelectionChange"
+    class="allTable">
       <el-table-column type="selection" align="center" width="55"></el-table-column>
       <el-table-column label="序号" type="index" align="center">
         <template slot-scope="scope">
@@ -117,39 +104,34 @@
       <el-table-column label="操作" align="center" width="350" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            type="text"
             size="small"
-            icon="el-icon-view"
             @click="handlePreview(scope.row)"
             v-hasPermi="['tool:gen:preview']"
+            class="tableBlueButtton"
           >预览</el-button>
           <el-button
-            type="text"
             size="small"
-            icon="el-icon-edit"
             @click="handleEditTable(scope.row)"
             v-hasPermi="['tool:gen:edit']"
+            class="tableBlueButtton"
           >编辑</el-button>
           <el-button
-            type="text"
             size="small"
-            icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['tool:gen:remove']"
+            class="tableDelButtton"
           >删除</el-button>
           <el-button
-            type="text"
             size="small"
-            icon="el-icon-refresh"
             @click="handleSynchDb(scope.row)"
             v-hasPermi="['tool:gen:edit']"
+            class="tableBlueButtton"
           >同步</el-button>
           <el-button
-            type="text"
             size="small"
-            icon="el-icon-download"
             @click="handleGenTable(scope.row)"
             v-hasPermi="['tool:gen:code']"
+            class="tableBlueButtton"
           >生成代码</el-button>
         </template>
       </el-table-column>

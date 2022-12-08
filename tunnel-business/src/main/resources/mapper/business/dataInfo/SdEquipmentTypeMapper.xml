@@ -17,11 +17,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="iconHeight"    column="icon_height"    />
         <result property="bigType"    column="big_type"    />
         <result property="isControl"    column="is_control"    />
+        <result property="isAnalog"    column="is_analog"    />
+        <result property="eqCategory"    column="eq_category"    />
+        <result property="eqSystem"    column="eq_system"    />
     </resultMap>
 
     <sql id="selectSdEquipmentTypeVo">
         select type_id, type_name,type_abbr, create_by, create_time,icon_width,icon_height, is_control,
-        update_by, update_time,icon_file_id,big_type from sd_equipment_type
+        update_by, update_time,icon_file_id,big_type,is_analog,eq_category,eq_system from sd_equipment_type
     </sql>
 
     <select id="selectSdEquipmentTypeList" parameterType="SdEquipmentType" resultMap="SdEquipmentTypeResult">
@@ -30,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
-
+            <if test="isAnalog != null  and isAnalog != ''"> and is_analog = #{isAnalog}</if>
         </where>
     </select>
 
@@ -42,6 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="typeName != null  and typeName != ''"> and type_name like concat('%', #{typeName}, '%')</if>
             <if test="typeAbbr != null  and typeAbbr != ''"> and type_abbr like concat('%', #{typeAbbr}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+            <if test="isAnalog != null  and isAnalog != ''"> and is_analog = #{isAnalog}</if>
         </where>
         group by a.type_id
     </select>
@@ -104,6 +108,9 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconWidth != null">icon_width,</if>
             <if test="iconHeight != null">icon_height,</if>
             <if test="isControl != null">is_control,</if>
+            <if test="isAnalog != null">is_analog,</if>
+            <if test="eqCategory != null">eq_category,</if>
+            <if test="eqSystem != null">eq_system,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
@@ -117,6 +124,9 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconWidth != null">#{iconWidth},</if>
             <if test="iconHeight != null">#{iconHeight},</if>
             <if test="isControl != null">#{isControl},</if>
+            <if test="isAnalog != null">#{isAnalog},</if>
+            <if test="eqCategory != null">#{eqCategory},</if>
+            <if test="eqSystem != null">#{eqSystem},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
@@ -134,6 +144,9 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             <if test="iconWidth != null">icon_width = #{iconWidth},</if>
             <if test="iconHeight != null">icon_height = #{iconHeight},</if>
             <if test="isControl != null">is_control = #{isControl},</if>
+            <if test="isAnalog != null">is_analog = #{isAnalog},</if>
+            <if test="eqCategory != null">eq_category = #{eqCategory},</if>
+            <if test="eqSystem != null">eq_system = #{eqSystem},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -154,5 +167,12 @@ where type_id = '7' or type_id = '8' or type_id = '9' or type_id = '21' -->
             #{typeId}
         </foreach>
     </delete>
+
+
+
+
+    <select id="getDevicesType" resultMap="SdEquipmentTypeResult">
+        select type_id,type_name from sd_equipment_type
+    </select>
 
 </mapper>

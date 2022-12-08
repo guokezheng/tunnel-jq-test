@@ -131,7 +131,36 @@ public class SdPictureUploadController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateImage:add')")
     @Log(title = "情报板使用图片", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestParam("file") MultipartFile[] file, SdPictureUpload sdPictureUpload) throws IOException {
+    public AjaxResult add(MultipartFile[] file,
+                          @RequestParam("pictureName") String pictureName,
+                          @RequestParam("imageRemark") String imageRemark,
+                          @RequestParam("imageWidth") String imageWidth,
+                          @RequestParam("imageHeight") String imageHeight,
+                          @RequestParam("imageType") String imageType,
+                          @RequestParam("vmsSize") String vmsSize,
+                          @RequestParam("speed") String speed,
+                          @RequestParam("deleteflag") String deleteflag) throws IOException {
+        if (file == null) {
+            throw new RuntimeException("图片不能为空");
+        }
+        if (vmsSize.length() > 60) {
+            throw new RuntimeException("图片分辨率输入过长，请重新输入");
+        }
+        if (imageRemark.length() > 60) {
+            throw new RuntimeException("图片备注输入过长，请重新输入");
+        }
+        if (speed.length() > 60) {
+            throw new RuntimeException("速度输入过长，请重新输入");
+        }
+        SdPictureUpload sdPictureUpload = new SdPictureUpload();
+        sdPictureUpload.setPictureName(pictureName.equals("null")?null:pictureName);
+        sdPictureUpload.setImageRemark(imageRemark.equals("null")?null:imageRemark);
+        sdPictureUpload.setImageWidth(imageWidth.equals("null")?null:imageWidth);
+        sdPictureUpload.setImageHeight(imageHeight.equals("null")?null:imageHeight);
+        sdPictureUpload.setImageType(imageType.equals("null")?null:imageType);
+        sdPictureUpload.setVmsSize(vmsSize.equals("null")?null:vmsSize);
+        sdPictureUpload.setSpeed(speed.equals("null")?null:speed);
+        sdPictureUpload.setDeleteflag(deleteflag.equals("null")?null:deleteflag);
         return toAjax(sdPictureUploadService.insertSdPictureUpload(file,sdPictureUpload));
     }
 
@@ -151,6 +180,15 @@ public class SdPictureUploadController extends BaseController
                            @RequestParam("vmsSize") String vmsSize,
                            @RequestParam("speed") String speed,
                            @RequestParam("deleteflag") String deleteflag) throws IOException {
+        if (vmsSize.length() > 60) {
+            throw new RuntimeException("图片分辨率输入过长，请重新输入");
+        }
+        if (imageRemark.length() > 60) {
+            throw new RuntimeException("图片备注输入过长，请重新输入");
+        }
+        if (speed.length() > 60) {
+            throw new RuntimeException("速度输入过长，请重新输入");
+        }
         SdPictureUpload sdPictureUpload = new SdPictureUpload();
         sdPictureUpload.setId(id);
         sdPictureUpload.setPictureName(pictureName.equals("null")?null:pictureName);

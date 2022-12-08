@@ -2,6 +2,7 @@ spring:
   kafka:
     bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
     consumer:
+      group-id: tetet5ea
       enable-auto-commit: false # 不自动签收
       auto-offset-reset: earliest  #kafka出现错误重启后，会找到未消费的offset继续消费
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -12,13 +13,13 @@ spring:
         sasl:
           mechanism: SCRAM-SHA-256
           jaas:
-            config: org.apache.kafka.common.security.scram.ScramLoginModule required username='its_iot_mp' password='Sdhsg2021';
+            config: org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';
     listener:
       ack-mode: manual
       concurrency: 3
 iot:
   #中台测试
-  url: http://10.166.139.240:38900/iotGateway/inner/report/data
+  url: http://10.166.157.192:30959/iotGateway/inner/report/data
   #物联
   host: http://10.200.1.93:31006
   #获取token

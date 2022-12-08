@@ -1,5 +1,6 @@
 package com.tunnel.business.service.emeResource.impl;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.mapper.emeResource.SdEmergencyOrgMapper;
@@ -21,70 +22,13 @@ public class SdEmergencyOrgServiceImpl implements ISdEmergencyOrgService {
     private SdEmergencyOrgMapper sdEmergencyOrgMapper;
 
     /**
-     * 查询应急机构
-     *
-     * @param orgId 应急机构主键
-     * @return 应急机构
-     */
-    @Override
-    public SdEmergencyOrg selectSdEmergencyOrgByOrgId(Long orgId) {
-        return sdEmergencyOrgMapper.selectSdEmergencyOrgByOrgId(orgId);
-    }
-
-    /**
      * 查询应急机构列表
      *
-     * @param sdEmergencyOrg 应急机构
+     * @param sysDept 应急机构
      * @return 应急机构
      */
     @Override
-    public List<SdEmergencyOrg> selectSdEmergencyOrgList(SdEmergencyOrg sdEmergencyOrg) {
-        return sdEmergencyOrgMapper.selectSdEmergencyOrgList(sdEmergencyOrg);
-    }
-
-    /**
-     * 新增应急机构
-     *
-     * @param sdEmergencyOrg 应急机构
-     * @return 结果
-     */
-    @Override
-    public int insertSdEmergencyOrg(SdEmergencyOrg sdEmergencyOrg) {
-        sdEmergencyOrg.setCreateTime(DateUtils.getNowDate());
-        return sdEmergencyOrgMapper.insertSdEmergencyOrg(sdEmergencyOrg);
-    }
-
-    /**
-     * 修改应急机构
-     *
-     * @param sdEmergencyOrg 应急机构
-     * @return 结果
-     */
-    @Override
-    public int updateSdEmergencyOrg(SdEmergencyOrg sdEmergencyOrg) {
-        sdEmergencyOrg.setUpdateTime(DateUtils.getNowDate());
-        return sdEmergencyOrgMapper.updateSdEmergencyOrg(sdEmergencyOrg);
-    }
-
-    /**
-     * 批量删除应急机构
-     *
-     * @param orgIds 需要删除的应急机构主键
-     * @return 结果
-     */
-    @Override
-    public int deleteSdEmergencyOrgByOrgIds(Long[] orgIds) {
-        return sdEmergencyOrgMapper.deleteSdEmergencyOrgByOrgIds(orgIds);
-    }
-
-    /**
-     * 删除应急机构信息
-     *
-     * @param orgId 应急机构主键
-     * @return 结果
-     */
-    @Override
-    public int deleteSdEmergencyOrgByOrgId(Long orgId) {
-        return sdEmergencyOrgMapper.deleteSdEmergencyOrgByOrgId(orgId);
+    public List<SysDept> selectSdEmergencyOrgList(SysDept sysDept) {
+        return sdEmergencyOrgMapper.selectSdEmergencyOrgList(sysDept);
     }
 }

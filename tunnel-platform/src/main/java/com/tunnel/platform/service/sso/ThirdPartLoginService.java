@@ -1,6 +1,5 @@
 package com.tunnel.platform.service.sso;
 
-import cn.hutool.json.JSONUtil;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
@@ -12,8 +11,8 @@ import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
 import com.ruoyi.framework.web.service.TokenService;
 import com.ruoyi.system.service.ISysUserService;
+import com.tunnel.platform.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,25 +23,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class ThirdPartLoginService {
-
-    @Value("${sso.authCode}")
-    private String authCodeUrl;
-
-    @Value("${sso.token}")
-    private String tokenUrl;
-
-    @Value("${sso.userInfo}")
-    private String userInfoUrl;
-
-    @Value("${sso.appId}")
-    private String appId;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -56,44 +45,8 @@ public class ThirdPartLoginService {
     @Resource
     private AuthenticationManager authenticationManager;
 
-    public String getAuthCode(String username) {
-        //设置请求头
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        //设置请求体
-        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(httpHeaders);
-        //发送请求
-        String url = authCodeUrl + "?username=" + username;
-        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, httpEntity, Map.class);
 
-        HashMap<String, Object> body = (HashMap<String, Object>) responseEntity.getBody();
-        String authCode = null;
-        if (body.get("code").equals(0)) {
-            authCode = (String) body.get("data");
-        }
-        return authCode;
-    }
-
-
-    public String getToken(String authCode, String appId) {
-        //设置请求头
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        //设置请求体
-        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(httpHeaders);
-        //发送请求
-        String url = tokenUrl + "?code=" + authCode + "&app_id=" + appId;
-        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, httpEntity, Map.class);
-
-        HashMap<String, Object> body = (HashMap<String, Object>) responseEntity.getBody();
-        String token = null;
-        if (body.get("code").equals(0)) {
-            token = (String) body.get("access_token");
-        }
-        return token;
-    }
-
-    public Map<String, Object> getUserInfo(String token) {
+    public List<Map<String, Object>> getUsersByDept(String token, String companyName, String deptName) {
         //设置请求头
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -101,27 +54,33 @@ public class ThirdPartLoginService {
         //设置请求体
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(httpHeaders);
         //发送请求
-        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(userInfoUrl, httpEntity, Map.class);
 
+        // String url = userListUrl;
+        String url = "http://localhost:8000/Robot/getUsersByDept";
+
+        url = UriComponentsBuilder.fromUriString(url).queryParam("companyName", companyName).queryParam("deptName", deptName).build().toString();
+
+        ResponseEntity<Map> responseEntity = restTemplate.postForEntity(url, httpEntity, Map.class);
         HashMap<String, Object> body = (HashMap<String, Object>) responseEntity.getBody();
-        Map<String, Object> userInfo = null;
-        if (body.get("code").equals(0)) {
-            userInfo = JSONUtil.toBean(JSONUtil.parse(body.get("data")).toString(), Map.class);
+        List<Map<String, Object>> list = null;
+        if (body.get("code").equals(200)) {
+            list = (List<Map<String, Object>>) body.get("data");
         }
-        return userInfo;
+        return list;
     }
+
 
     public AjaxResult login(String username) {
         //获取授权码
-        String authCode = getAuthCode(username);
+        String authCode = AuthUtil.getAuthCode(username);
 
         AjaxResult ajaxResult = null;
-        if (null != getAuthCode(username)) {
+        if (null != authCode) {
             //获取token
-            String token = getToken(authCode, appId);
+            String token = AuthUtil.getToken(authCode);
             if (null != token) {
                 //获取用户信息
-                Map<String, Object> userInfo = getUserInfo(token);
+                Map<String, Object> userInfo = AuthUtil.getUserInfo(token);
                 //通过解析token得到的第三方系统用户名称
                 String thirdUserName = (String) userInfo.get("username");
                 //查询己方系统中是否存在此用户
@@ -151,4 +110,15 @@ public class ThirdPartLoginService {
         }
         return ajaxResult;
     }
+
+
+    public void metho() {
+        AuthUtil.getToken("12121");
+
+
+
+
+    }
+
+
 }

@@ -147,17 +147,17 @@ public class CmdProcess {
                     String plcIp = plcDevice.getIp();
                     CmdInfo cmdInfo = new CmdInfo();
                     List<Map<String, String>> commands = new ArrayList<>();
-                    switch (plcDevice.getProtocol()) {
+                    switch (plcDevice.getCommProtocol()) {
                         case "DM":
                             SdDevices dev = new SdDevices();
                             dev.setFEqId(plcId);
                             List<SdDevices> plcDeviceLists = devicesService.selectSdDevicesList(dev);
                             for (SdDevices device : plcDeviceLists) {
                                 HashMap<String, String> commandMap = new HashMap<>();
-                                if (device.getEqControlPointAddress() == null || "".equals(device.getEqControlPointAddress())) {//设备没有查询指令直接跳过
+                                if (device.getControlPointAddress() == null || "".equals(device.getControlPointAddress())) {//设备没有查询指令直接跳过
                                     continue;
                                 }
-                                String mandInfo = device.getEqControlPointAddress();
+                                String mandInfo = device.getControlPointAddress();
                                 if (mandInfo != null) {
                                     InetAddress ia = null;
                                     ia = ia.getLocalHost();
@@ -231,236 +231,236 @@ public class CmdProcess {
         }
 
         //解析DM全部设备的状态数据 id：设备id  content 设备状态反馈报文
-        public static void parsingDMContent(String id, String content) {
-            if (id.contains("kz")) {
-                parsingKZ(id, content);
-                return;
-            }
-            //设定设备状态初始化
-            String devState = "";
-            //redis初始化
-            redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
-            //解析内容
-            String firstContent = content.replaceAll(" ", "");
-            if (firstContent.length() > 60) {
-                String endCont = firstContent.substring(60, firstContent.length());
-                //获取当前设备
-                SdDevices device = CmdUtil.deviceList.get(id);
-                if (device.getEqType() == null) {
-                    return;
-                }
-                //获取当前设备分类
-                String devType = device.getEqType().toString();
-                switch (devType) {
-                    case "1"://普通车道指示器
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //正绿反红 endCont = 0009 a1 = 0009
-                            devState = "1";
-                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
-                            devState = "2";
-                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//正红反红 endCont = 0005 a1 = 000A
-                            devState = "3";
-                        } else { //其他全为故障状态
-                            devState = "0";
-                        }
-                        break;
-                    case "2"://带左转车道指示器
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //正绿反红 endCont = 0009 a1 = 0009
-                            devState = "1";
-                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
-                            devState = "2";
-                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//正红反红 endCont = 0005 a1 = 0005
-                            devState = "3";
-                        } else if (endCont.equals(device.getEqFeedbackAddress4())) {//正左反红 endCont = 0018 a1 = 0018
-                            devState = "5";
-                        } else { //其他全为故障状态
-                            devState = "4";
-                        }
-                        break;
-                    case "3"://普通交通信号灯
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //绿灯 endCont = 0004 a1 = 0004
-                            devState = "1";
-                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//红灯 endCont = 0001 a1 = 0001
-                            devState = "2";
-                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//黄灯 endCont = 0002 a1 = 0002
-                            devState = "3";
-                        } else { //其他全为故障状态
-                            devState = "4";
-                        }
-                        break;
-                    case "4"://左转交通信号灯
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //开 endCont = 0001 a1 = 0001
-                            devState = "1";
-                        } else { //其他全为关闭状态
-                            devState = "2";
-                        }
-                        break;
-                    case "5"://洞内亮度 //计算方法除以4000乘以20000，最大20000
-                        //devState = endCont;
-                        String inSideDev = RadixUtil.hexToDecimal(endCont);
-                        BigDecimal inSideMul = ArithmeticUtils.mul(inSideDev, "5");
-                        BigDecimal inSideData2 = new BigDecimal("20000");//最大量程20000
-                        if (inSideMul.compareTo(inSideData2) > 0) {
-                            //	System.out.println("第一位数大！");
-                            return;
-                        }
-
-                        devState = inSideMul.toString();
-                        break;
-                    case "6"://洞外亮度 //计算方法除以4000乘以6500，最大6500
-                        //devState = RadixUtil.hexToDecimal(endCont);
-                        String outSideDev = RadixUtil.hexToDecimal(endCont);
-                        BigDecimal outSideMul = ArithmeticUtils.mul(outSideDev, "1.625");
-                        BigDecimal outSideData2 = new BigDecimal("6500");//最大量程6500
-                        if (outSideMul.compareTo(outSideData2) > 0) {
-                            //	System.out.println("第一位数大！");超过最大量程，丢弃
-                            return;
-                        }
-                        devState = outSideMul.toString();
-                        //devState = endCont;
-                        break;
-                    case "7"://加强照明
-
-                        break;
-                    case "8"://引道照明
-
-                        break;
-                    case "9"://基本照明
-
-                        break;
-                    case "10"://主风机
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //远程 endCont = 0001 a1 = 0001
-                            devState = "3";
-                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正传 endCont = 0002 a1 = 0002
-                            devState = "1";
-                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//反转 endCont = 0004 a1 = 0004
-                            devState = "2";
-                        } else { //其他全为故障状态
-                            devState = "0";
-                        }
-                        break;
-                    case "11"://备用风机
-
-                        break;
-                    case "12"://棚洞照明
-
-                        break;
-                    case "13"://风向
-                        endCont = turnNeedData(endCont);
-                        int index = Integer.parseInt(device.getEqFeedbackAddress1());
-                        endCont = endCont.substring(index, index + 1);
-                        if ("1".equals(endCont)) { //正 endCont = 0001 a1 = 0001
-                            devState = "反向";
-                        } else { //其他全为关闭状态
-                            devState = "正向";
-                        }
-                        break;
-                    case "14"://CO监测 //计算方法除以4000乘以20000
-                        String s1 = RadixUtil.hexToDecimal(endCont);
-                        Double d = 0.075;
-                        Double coMul = ArithmeticUtils.mul(Double.valueOf(s1), d);
-
-                        BigDecimal coData1 = new BigDecimal(coMul);//接受值
-                        BigDecimal coData2 = new BigDecimal("300");//最大量程300
-                        if (coData1.compareTo(coData2) > 0) {
-                            //	System.out.println("第一位数大！");
-                            return;
-                        }
-                        devState = coMul.toString();
-                        break;
-                    case "15"://能见度监测 //计算方法除以4000乘以20000---最大值15
-                        //devState = RadixUtil.hexToDecimal(endCont);
-                        String viOrinal = RadixUtil.hexToDecimal(endCont);
-                        Double dou = 0.00375;
-                        Double viMul = ArithmeticUtils.mul(Double.valueOf(viOrinal), dou);
-                        BigDecimal viData1 = new BigDecimal(viMul);//接受值
-                        BigDecimal viData2 = new BigDecimal("15");//最大量程
-                        if (viData1.compareTo(viData2) > 0) {
-                            //	System.out.println("第一位数大！");
-                            return;
-                        }
-                        devState = viMul.toString();
-                        break;
-                    case "16"://风速监测，最大40
-                        String fsDevState = RadixUtil.hexToDecimal(endCont);
-                        Double fsd = 0.01;
-                        Double fsMul = ArithmeticUtils.mul(Double.valueOf(fsDevState), fsd);
-                        BigDecimal fsData1 = new BigDecimal(fsMul);//接受值
-                        BigDecimal fsData2 = new BigDecimal("40");//最大量程40
-                        if (fsData1.compareTo(fsData2) > 0) {
-                            //	System.out.println("第一位数大！");
-                            return;
-                        }
-                        devState = fsMul.toString();
-                        break;
-                    case "17"://卷帘门
-                        if (endCont.equals(device.getEqFeedbackAddress1())) { //上限位 endCont = 0001 a1 = 0001
-                            devState = "1";
-                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//下限位 endCont = 0002 a1 = 0002
-                            devState = "2";
-                        } else { //其他全为故障状态
-                            devState = "0";
-                        }
-                        break;
-                    case "18"://水泵
-                        JSONObject object = new JSONObject();
-                        if (endCont.length() > 19) {
-                            object.put("devState", "1");
-                            String beng1 = RadixUtil.hexToDecimal(endCont.substring(0, 4));
-                            String beng2 = RadixUtil.hexToDecimal(endCont.substring(4, 4 + 4));
-                            String queshui = RadixUtil.hexToDecimal(endCont.substring(8, 8 + 4));
-                            String dianyuan = RadixUtil.hexToDecimal(endCont.substring(12, 12 + 4));
-                            String liandong = RadixUtil.hexToDecimal(endCont.substring(16, 16 + 4));
-                            if ("0".equals(beng1)) {
-                                object.put("beng1", "关闭");
-                            } else {
-                                object.put("beng1", "开启");
-                            }
-                            if ("0".equals(beng2)) {
-                                object.put("beng2", "关闭");
-                            } else {
-                                object.put("beng2", "开启");
-                            }
-                            if ("0".equals(queshui)) {
-                                object.put("queshui", "无");
-                            } else {
-                                object.put("queshui", "故障");
-                            }
-                            if ("0".equals(dianyuan)) {
-                                object.put("dianyuan", "无");
-                            } else {
-                                object.put("dianyuan", "故障");
-                            }
-                            if ("0".equals(liandong)) {
-                                object.put("liandong", "未联动");
-                            } else {
-                                object.put("liandong", "联动");
-                            }
-                        }
-                        devState = object.toString();
-                        break;
-                    case "19"://水泵状态：手动/远程
-
-                        break;
-                    case "20"://水池液位
-
-                        break;
-                    case "108"://微波车检
-                        /*青龙崮
-                        String weiboCont = firstContent.substring(88, firstContent.length());
-                        //存储微波数据
-                        System.out.println("微波存放");
-                        redisCache.setCacheObject(id,parseWeiBoInfo(id, weiboCont));*/
-                        //新台
-                        String weiboCont = firstContent.substring(60, firstContent.length());
-                        //存储微波数据
-                        System.out.println("微波存放");
-                        redisCache.setCacheObject(id, parseXTWeiBoInfo(id, weiboCont));
-                        return;
-                }
-                redisCache.setCacheObject(id, devState);
-
-            }
-        }
+//        public static void parsingDMContent(String id, String content) {
+//            if (id.contains("kz")) {
+//                parsingKZ(id, content);
+//                return;
+//            }
+//            //设定设备状态初始化
+//            String devState = "";
+//            //redis初始化
+//            redisCache = (RedisCache) SpringContextUtils.getBean(RedisCache.class);
+//            //解析内容
+//            String firstContent = content.replaceAll(" ", "");
+//            if (firstContent.length() > 60) {
+//                String endCont = firstContent.substring(60, firstContent.length());
+//                //获取当前设备
+//                SdDevices device = CmdUtil.deviceList.get(id);
+//                if (device.getEqType() == null) {
+//                    return;
+//                }
+//                //获取当前设备分类
+//                String devType = device.getEqType().toString();
+//                switch (devType) {
+//                    case "1"://普通车道指示器
+//                        if (endCont.equals(device.getQueryPointAddress())) { //正绿反红 endCont = 0009 a1 = 0009
+//                            devState = "1";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
+//                            devState = "2";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//正红反红 endCont = 0005 a1 = 000A
+//                            devState = "3";
+//                        } else { //其他全为故障状态
+//                            devState = "0";
+//                        }
+//                        break;
+//                    case "2"://带左转车道指示器
+//                        if (endCont.equals(device.getQueryPointAddress())) { //正绿反红 endCont = 0009 a1 = 0009
+//                            devState = "1";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正红反绿 endCont = 0006 a1 = 0006
+//                            devState = "2";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//正红反红 endCont = 0005 a1 = 0005
+//                            devState = "3";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress4())) {//正左反红 endCont = 0018 a1 = 0018
+//                            devState = "5";
+//                        } else { //其他全为故障状态
+//                            devState = "4";
+//                        }
+//                        break;
+//                    case "3"://普通交通信号灯
+//                        if (endCont.equals(device.getQueryPointAddress())) { //绿灯 endCont = 0004 a1 = 0004
+//                            devState = "1";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//红灯 endCont = 0001 a1 = 0001
+//                            devState = "2";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//黄灯 endCont = 0002 a1 = 0002
+//                            devState = "3";
+//                        } else { //其他全为故障状态
+//                            devState = "4";
+//                        }
+//                        break;
+//                    case "4"://左转交通信号灯
+//                        if (endCont.equals(device.getQueryPointAddress())) { //开 endCont = 0001 a1 = 0001
+//                            devState = "1";
+//                        } else { //其他全为关闭状态
+//                            devState = "2";
+//                        }
+//                        break;
+//                    case "5"://洞内亮度 //计算方法除以4000乘以20000，最大20000
+//                        //devState = endCont;
+//                        String inSideDev = RadixUtil.hexToDecimal(endCont);
+//                        BigDecimal inSideMul = ArithmeticUtils.mul(inSideDev, "5");
+//                        BigDecimal inSideData2 = new BigDecimal("20000");//最大量程20000
+//                        if (inSideMul.compareTo(inSideData2) > 0) {
+//                            //	System.out.println("第一位数大！");
+//                            return;
+//                        }
+//
+//                        devState = inSideMul.toString();
+//                        break;
+//                    case "6"://洞外亮度 //计算方法除以4000乘以6500，最大6500
+//                        //devState = RadixUtil.hexToDecimal(endCont);
+//                        String outSideDev = RadixUtil.hexToDecimal(endCont);
+//                        BigDecimal outSideMul = ArithmeticUtils.mul(outSideDev, "1.625");
+//                        BigDecimal outSideData2 = new BigDecimal("6500");//最大量程6500
+//                        if (outSideMul.compareTo(outSideData2) > 0) {
+//                            //	System.out.println("第一位数大！");超过最大量程，丢弃
+//                            return;
+//                        }
+//                        devState = outSideMul.toString();
+//                        //devState = endCont;
+//                        break;
+//                    case "7"://加强照明
+//
+//                        break;
+//                    case "8"://引道照明
+//
+//                        break;
+//                    case "9"://基本照明
+//
+//                        break;
+//                    case "10"://主风机
+//                        if (endCont.equals(device.getQueryPointAddress())) { //远程 endCont = 0001 a1 = 0001
+//                            devState = "3";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//正传 endCont = 0002 a1 = 0002
+//                            devState = "1";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress3())) {//反转 endCont = 0004 a1 = 0004
+//                            devState = "2";
+//                        } else { //其他全为故障状态
+//                            devState = "0";
+//                        }
+//                        break;
+//                    case "11"://备用风机
+//
+//                        break;
+//                    case "12"://棚洞照明
+//
+//                        break;
+//                    case "13"://风向
+//                        endCont = turnNeedData(endCont);
+//                        int index = Integer.parseInt(device.getQueryPointAddress());
+//                        endCont = endCont.substring(index, index + 1);
+//                        if ("1".equals(endCont)) { //正 endCont = 0001 a1 = 0001
+//                            devState = "反向";
+//                        } else { //其他全为关闭状态
+//                            devState = "正向";
+//                        }
+//                        break;
+//                    case "14"://CO监测 //计算方法除以4000乘以20000
+//                        String s1 = RadixUtil.hexToDecimal(endCont);
+//                        Double d = 0.075;
+//                        Double coMul = ArithmeticUtils.mul(Double.valueOf(s1), d);
+//
+//                        BigDecimal coData1 = new BigDecimal(coMul);//接受值
+//                        BigDecimal coData2 = new BigDecimal("300");//最大量程300
+//                        if (coData1.compareTo(coData2) > 0) {
+//                            //	System.out.println("第一位数大！");
+//                            return;
+//                        }
+//                        devState = coMul.toString();
+//                        break;
+//                    case "15"://能见度监测 //计算方法除以4000乘以20000---最大值15
+//                        //devState = RadixUtil.hexToDecimal(endCont);
+//                        String viOrinal = RadixUtil.hexToDecimal(endCont);
+//                        Double dou = 0.00375;
+//                        Double viMul = ArithmeticUtils.mul(Double.valueOf(viOrinal), dou);
+//                        BigDecimal viData1 = new BigDecimal(viMul);//接受值
+//                        BigDecimal viData2 = new BigDecimal("15");//最大量程
+//                        if (viData1.compareTo(viData2) > 0) {
+//                            //	System.out.println("第一位数大！");
+//                            return;
+//                        }
+//                        devState = viMul.toString();
+//                        break;
+//                    case "16"://风速监测，最大40
+//                        String fsDevState = RadixUtil.hexToDecimal(endCont);
+//                        Double fsd = 0.01;
+//                        Double fsMul = ArithmeticUtils.mul(Double.valueOf(fsDevState), fsd);
+//                        BigDecimal fsData1 = new BigDecimal(fsMul);//接受值
+//                        BigDecimal fsData2 = new BigDecimal("40");//最大量程40
+//                        if (fsData1.compareTo(fsData2) > 0) {
+//                            //	System.out.println("第一位数大！");
+//                            return;
+//                        }
+//                        devState = fsMul.toString();
+//                        break;
+//                    case "17"://卷帘门
+//                        if (endCont.equals(device.getQueryPointAddress())) { //上限位 endCont = 0001 a1 = 0001
+//                            devState = "1";
+//                        } else if (endCont.equals(device.getEqFeedbackAddress2())) {//下限位 endCont = 0002 a1 = 0002
+//                            devState = "2";
+//                        } else { //其他全为故障状态
+//                            devState = "0";
+//                        }
+//                        break;
+//                    case "18"://水泵
+//                        JSONObject object = new JSONObject();
+//                        if (endCont.length() > 19) {
+//                            object.put("devState", "1");
+//                            String beng1 = RadixUtil.hexToDecimal(endCont.substring(0, 4));
+//                            String beng2 = RadixUtil.hexToDecimal(endCont.substring(4, 4 + 4));
+//                            String queshui = RadixUtil.hexToDecimal(endCont.substring(8, 8 + 4));
+//                            String dianyuan = RadixUtil.hexToDecimal(endCont.substring(12, 12 + 4));
+//                            String liandong = RadixUtil.hexToDecimal(endCont.substring(16, 16 + 4));
+//                            if ("0".equals(beng1)) {
+//                                object.put("beng1", "关闭");
+//                            } else {
+//                                object.put("beng1", "开启");
+//                            }
+//                            if ("0".equals(beng2)) {
+//                                object.put("beng2", "关闭");
+//                            } else {
+//                                object.put("beng2", "开启");
+//                            }
+//                            if ("0".equals(queshui)) {
+//                                object.put("queshui", "无");
+//                            } else {
+//                                object.put("queshui", "故障");
+//                            }
+//                            if ("0".equals(dianyuan)) {
+//                                object.put("dianyuan", "无");
+//                            } else {
+//                                object.put("dianyuan", "故障");
+//                            }
+//                            if ("0".equals(liandong)) {
+//                                object.put("liandong", "未联动");
+//                            } else {
+//                                object.put("liandong", "联动");
+//                            }
+//                        }
+//                        devState = object.toString();
+//                        break;
+//                    case "19"://水泵状态：手动/远程
+//
+//                        break;
+//                    case "20"://水池液位
+//
+//                        break;
+//                    case "108"://微波车检
+//                        /*青龙崮
+//                        String weiboCont = firstContent.substring(88, firstContent.length());
+//                        //存储微波数据
+//                        System.out.println("微波存放");
+//                        redisCache.setCacheObject(id,parseWeiBoInfo(id, weiboCont));*/
+//                        //新台
+//                        String weiboCont = firstContent.substring(60, firstContent.length());
+//                        //存储微波数据
+//                        System.out.println("微波存放");
+//                        redisCache.setCacheObject(id, parseXTWeiBoInfo(id, weiboCont));
+//                        return;
+//                }
+//                redisCache.setCacheObject(id, devState);
+//
+//            }
+//        }
 
         //解析CIO全部设备的状态数据 id：设备id  content 设备状态反馈报文
         public static void parsingCIOContent(String id, String devType, String content) {
@@ -628,169 +628,169 @@ public class CmdProcess {
         private static void parsingKZ(String id, String content) {
         }
 
-        public static void parsingCZ(SdDevices dev, String content) {
-            char[] chars = content.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            if (dev.getEqFeedbackAddress2() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
-            }
-            if (dev.getEqFeedbackAddress3() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
-            }
-            if (dev.getEqFeedbackAddress4() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
-            }
-            //判断
-            String devState = "";
-            if ("1001".equals(res.toString())) {
-                devState = "1";
-            } else if ("0110".equals(res.toString())) {
-                devState = "2";
-            } else if ("0101".equals(res.toString())) {
-                devState = "3";
-            } else if ("0000".equals(res.toString())) {
-                devState = "4";
-            } else if ("1000".equals(res.toString())) {
-                devState = "5";
-            } else if ("0100".equals(res.toString())) {
-                devState = "6";
-            } else if ("0010".equals(res.toString())) {
-                devState = "7";
-            } else {
-                devState = "8";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingCZ(SdDevices dev, String content) {
+//            char[] chars = content.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            if (dev.getEqFeedbackAddress2() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
+//            }
+//            if (dev.getEqFeedbackAddress3() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
+//            }
+//            if (dev.getEqFeedbackAddress4() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("1001".equals(res.toString())) {
+//                devState = "1";
+//            } else if ("0110".equals(res.toString())) {
+//                devState = "2";
+//            } else if ("0101".equals(res.toString())) {
+//                devState = "3";
+//            } else if ("0000".equals(res.toString())) {
+//                devState = "4";
+//            } else if ("1000".equals(res.toString())) {
+//                devState = "5";
+//            } else if ("0100".equals(res.toString())) {
+//                devState = "6";
+//            } else if ("0010".equals(res.toString())) {
+//                devState = "7";
+//            } else {
+//                devState = "8";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
-        public static void parsingTSCZ(SdDevices dev, String content) {
-            //去除空格
-            String firstContent = content.replaceAll(" ", "");
-            //截取返回内容的数据
-            String substring = firstContent.substring(60, firstContent.length());
-            //转换为二进制，位置反转
-            String s1 = RadixUtil.hex2Binary(substring);
-            StringBuffer str = new StringBuffer();
-            for (int i = 0; i < 16 - s1.length(); i++) {
-                str.append("0");
-            }
-            s1 = str.toString() + s1;
-            //反转
-            String s11 = new StringBuilder(s1).reverse().toString();
-            char[] chars1 = s11.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            if (dev.getEqFeedbackAddress2() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress2())]);
-            }
-            if (dev.getEqFeedbackAddress3() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress3())]);
-            }
-            if (dev.getEqFeedbackAddress4() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress4())]);
-            }
-            if (dev.getEqFeedbackAddress5() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress5())]);
-            }
-            //判断
-            String devState = "";
-            if ("10010".equals(res.toString())) {
-                devState = "1";
-            } else if ("01100".equals(res.toString())) {
-                devState = "2";
-            } else if ("01010".equals(res.toString())) {
-                devState = "3";
-            } else if ("00000".equals(res.toString())) {
-                devState = "4";
-            } else if ("00101".equals(res.toString())) {
-                devState = "5";
-            } else if ("10000".equals(res.toString())) {
-                devState = "6";
-            } else if ("01000".equals(res.toString())) {
-                devState = "7";
-            } else if ("00100".equals(res.toString())) {
-                devState = "8";
-            } else if ("00010".equals(res.toString())) {
-                devState = "9";
-            } else if ("00001".equals(res.toString())) {
-                devState = "10";
-            } else if ("00011".equals(res.toString())) {
-                devState = "11";
-            } else {
-                devState = "4";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingTSCZ(SdDevices dev, String content) {
+//            //去除空格
+//            String firstContent = content.replaceAll(" ", "");
+//            //截取返回内容的数据
+//            String substring = firstContent.substring(60, firstContent.length());
+//            //转换为二进制，位置反转
+//            String s1 = RadixUtil.hex2Binary(substring);
+//            StringBuffer str = new StringBuffer();
+//            for (int i = 0; i < 16 - s1.length(); i++) {
+//                str.append("0");
+//            }
+//            s1 = str.toString() + s1;
+//            //反转
+//            String s11 = new StringBuilder(s1).reverse().toString();
+//            char[] chars1 = s11.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            if (dev.getEqFeedbackAddress2() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress2())]);
+//            }
+//            if (dev.getEqFeedbackAddress3() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress3())]);
+//            }
+//            if (dev.getEqFeedbackAddress4() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress4())]);
+//            }
+//            if (dev.getEqFeedbackAddress5() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress5())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("10010".equals(res.toString())) {
+//                devState = "1";
+//            } else if ("01100".equals(res.toString())) {
+//                devState = "2";
+//            } else if ("01010".equals(res.toString())) {
+//                devState = "3";
+//            } else if ("00000".equals(res.toString())) {
+//                devState = "4";
+//            } else if ("00101".equals(res.toString())) {
+//                devState = "5";
+//            } else if ("10000".equals(res.toString())) {
+//                devState = "6";
+//            } else if ("01000".equals(res.toString())) {
+//                devState = "7";
+//            } else if ("00100".equals(res.toString())) {
+//                devState = "8";
+//            } else if ("00010".equals(res.toString())) {
+//                devState = "9";
+//            } else if ("00001".equals(res.toString())) {
+//                devState = "10";
+//            } else if ("00011".equals(res.toString())) {
+//                devState = "11";
+//            } else {
+//                devState = "4";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
-        public static void parsingXHD(SdDevices dev, String content) {
-            char[] chars = content.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            if (dev.getEqFeedbackAddress2() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
-            }
-            if (dev.getEqFeedbackAddress3() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
-            }
-            //判断
-            String devState = "";
-            if ("100".equals(res.toString())) {
-                devState = "2";
-            } else if ("010".equals(res.toString())) {
-                devState = "3";
-            } else if ("001".equals(res.toString())) {
-                devState = "1";
-            } else {
-                devState = "4";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingXHD(SdDevices dev, String content) {
+//            char[] chars = content.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            if (dev.getEqFeedbackAddress2() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
+//            }
+//            if (dev.getEqFeedbackAddress3() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("100".equals(res.toString())) {
+//                devState = "2";
+//            } else if ("010".equals(res.toString())) {
+//                devState = "3";
+//            } else if ("001".equals(res.toString())) {
+//                devState = "1";
+//            } else {
+//                devState = "4";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
-        public static void parsingZZXHD(SdDevices dev, String content) {
-            //去除空格
-            String firstContent = content.replaceAll(" ", "");
-            //截取返回内容的数据
-            String substring = firstContent.substring(60, firstContent.length());
-            //转换为二进制，位置反转
-            String s1 = RadixUtil.hex2Binary(substring);
-            StringBuffer str = new StringBuffer();
-            for (int i = 0; i < 16 - s1.length(); i++) {
-                str.append("0");
-            }
-            s1 = str.toString() + s1;
-            //反转
-            String s11 = new StringBuilder(s1).reverse().toString();
-            char[] chars1 = s11.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars1[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            //判断
-            String devState = "";
-            if ("1".equals(res.toString())) {
-                devState = "1";
-            } else {
-                devState = "2";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingZZXHD(SdDevices dev, String content) {
+//            //去除空格
+//            String firstContent = content.replaceAll(" ", "");
+//            //截取返回内容的数据
+//            String substring = firstContent.substring(60, firstContent.length());
+//            //转换为二进制，位置反转
+//            String s1 = RadixUtil.hex2Binary(substring);
+//            StringBuffer str = new StringBuffer();
+//            for (int i = 0; i < 16 - s1.length(); i++) {
+//                str.append("0");
+//            }
+//            s1 = str.toString() + s1;
+//            //反转
+//            String s11 = new StringBuilder(s1).reverse().toString();
+//            char[] chars1 = s11.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars1[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("1".equals(res.toString())) {
+//                devState = "1";
+//            } else {
+//                devState = "2";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
         public static void parsingZM(SdDevices dev, String content) {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             //判断
             String devState = "";
@@ -802,35 +802,35 @@ public class CmdProcess {
             redisCache.setCacheObject(dev.getEqId().toString(), devState);
         }
 
-        public static void parsingFJ(SdDevices dev, String content) {
-            char[] chars = content.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            if (dev.getEqFeedbackAddress2() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
-            }
-            if (dev.getEqFeedbackAddress3() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
-            }
-            if (dev.getEqFeedbackAddress4() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
-            }
-            //判断
-            String devState = "";
-            if ("1000".equals(res.toString())) {
-                devState = "3";
-            } else if ("0100".equals(res.toString())) {
-                devState = "1";
-            } else if ("0001".equals(res.toString())) {
-                devState = "2";
-            } else {
-                devState = "0";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingFJ(SdDevices dev, String content) {
+//            char[] chars = content.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            if (dev.getEqFeedbackAddress2() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
+//            }
+//            if (dev.getEqFeedbackAddress3() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
+//            }
+//            if (dev.getEqFeedbackAddress4() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("1000".equals(res.toString())) {
+//                devState = "3";
+//            } else if ("0100".equals(res.toString())) {
+//                devState = "1";
+//            } else if ("0001".equals(res.toString())) {
+//                devState = "2";
+//            } else {
+//                devState = "0";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
         public static void parsingLD(SdDevices dev, String content) {
             String s1 = RadixUtil.hexToDecimal(content);
@@ -843,8 +843,8 @@ public class CmdProcess {
             char[] chars = content.toCharArray();
             //点位分析
             StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
+            if (dev.getQueryPointAddress() != null) {
+                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
             }
             //判断
             String devState = "";
@@ -878,35 +878,35 @@ public class CmdProcess {
             redisCache.setCacheObject(dev.getEqId().toString(), mul.toString());
         }
 
-        public static void parsingJLM(SdDevices dev, String content) {
-            char[] chars = content.toCharArray();
-            //点位分析
-            StringBuffer res = new StringBuffer();
-            if (dev.getEqFeedbackAddress1() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress1())]);
-            }
-            if (dev.getEqFeedbackAddress2() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
-            }
-            if (dev.getEqFeedbackAddress3() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
-            }
-            if (dev.getEqFeedbackAddress4() != null) {
-                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
-            }
-            //判断
-            String devState = "";
-            if ("1000".equals(res.toString())) {
-                devState = "1";
-            } else if ("0100".equals(res.toString())) {
-                devState = "2";
-            } else if ("0010".equals(res.toString())) {
-                devState = "3";
-            } else {
-                devState = "0";
-            }
-            redisCache.setCacheObject(dev.getEqId().toString(), devState);
-        }
+//        public static void parsingJLM(SdDevices dev, String content) {
+//            char[] chars = content.toCharArray();
+//            //点位分析
+//            StringBuffer res = new StringBuffer();
+//            if (dev.getQueryPointAddress() != null) {
+//                res.append(chars[Integer.parseInt(dev.getQueryPointAddress())]);
+//            }
+//            if (dev.getEqFeedbackAddress2() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress2())]);
+//            }
+//            if (dev.getEqFeedbackAddress3() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress3())]);
+//            }
+//            if (dev.getEqFeedbackAddress4() != null) {
+//                res.append(chars[Integer.parseInt(dev.getEqFeedbackAddress4())]);
+//            }
+//            //判断
+//            String devState = "";
+//            if ("1000".equals(res.toString())) {
+//                devState = "1";
+//            } else if ("0100".equals(res.toString())) {
+//                devState = "2";
+//            } else if ("0010".equals(res.toString())) {
+//                devState = "3";
+//            } else {
+//                devState = "0";
+//            }
+//            redisCache.setCacheObject(dev.getEqId().toString(), devState);
+//        }
 
         //解析车指数据
         public static void parsingCZ(String id, String content) {
@@ -1449,191 +1449,191 @@ public class CmdProcess {
         }
 
         // 在构造方法执行后执行
-        @PostConstruct
-        public void init() {
-            initMap();
-        }
+//        @PostConstruct
+//        public void init() {
+//            initMap();
+//        }
 
         //初始化内存
-        public void initMap() {
-            SdTunnels tunnelModel = new SdTunnels();
-            tunnelModel.setPoll(1L);
-            List<SdTunnels> tunnelList = tunnelService.selectSdTunnelsList(tunnelModel);
-            for (SdTunnels tunnel : tunnelList) {
-                //查询需要巡检的PLC
-                SdDevices sdDevice = new SdDevices();
-                sdDevice.setEqTunnelId(tunnel.getTunnelId());//隧道ID
-                sdDevice.setEqType(0L);//设备类型
-                sdDevice.setIsMonitor(0L);//是否监控
-                sdDevice.setProtocol("CIO");//CIO类型
-                List<SdDevices> plcLists = devicesService.selectSdDevicesList(sdDevice);
-                for (SdDevices plc : plcLists) {
-                    SdDevices dev = new SdDevices();
-                    dev.setFEqId(plc.getEqId());
-                    List<SdDevices> devLists = devicesService.selectSdDevicesList(dev);
-                    List<DataInfo> dataInfos = new ArrayList<>();
-                    for (SdDevices device : devLists) {
-                        DataInfo dataInfo = new DataInfo();
-                        dataInfo.setDeviceId(device.getEqId());
-                        dataInfo.setDeviceType(device.getEqType());
-                        dataInfo.setDeviceName(device.getEqName());
-                        dataInfo.setStakeMark(device.getPile());
-                        //普通车指
-                        if (device.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]));
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]));
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]));
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]));
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                            //带左转车指
-                        } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String feedbackAddress5 = device.getEqFeedbackAddress5();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]));
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]));
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]));
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]));
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                            String[] split5 = feedbackAddress5.split("\\.");
-                            dataInfo.setX(4, Integer.parseInt(split5[0]));
-                            dataInfo.setY(4, Integer.parseInt(split5[1]));
-                            //交通信号灯
-                        } else if (device.getEqType() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, 0);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, 0);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, 0);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            //带左转交通信号灯
-                        } else if (device.getEqType() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, 0);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, 0);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, 0);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, 0);
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-
-                            //加强照明 引道照明 基本照明
-                        } else if (device.getEqType() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
-                            //如果此处为乐疃的设备,做特殊处理
-                            if (plc.getEqId().equals("S29-ZiBoCompany-BoShanStation-001-PLC-006") || plc.getEqId().equals("S29-ZaoZhuangCompany-ShanTingStation-001-PLC-001")) {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
-                                String feedbackAddress2 = device.getEqFeedbackAddress2();
-                                String[] split0 = feedbackAddress1.split("\\.");
-                                dataInfo.setX(0, Integer.parseInt(split0[0]) - 2);
-                                dataInfo.setY(0, Integer.parseInt(split0[1]));
-                                String[] split1 = feedbackAddress2.split("\\.");
-                                dataInfo.setX(1, Integer.parseInt(split1[0]) - 2);
-                                dataInfo.setY(1, Integer.parseInt(split1[1]));
-                            } else {
-                                String feedbackAddress1 = device.getEqFeedbackAddress1();
-                                String feedbackAddress2 = device.getEqFeedbackAddress2();
-                                String[] split0 = feedbackAddress1.split("\\.");
-                                dataInfo.setX(0, Integer.parseInt(split0[0]));
-                                dataInfo.setY(0, Integer.parseInt(split0[1]));
-                                String[] split1 = feedbackAddress2.split("\\.");
-                                dataInfo.setX(1, Integer.parseInt(split1[0]));
-                                dataInfo.setY(1, Integer.parseInt(split1[1]));
-                            }
-                            //风机
-                        } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
-                            String feedbackAddress1 = device.getEqFeedbackAddress1();
-                            String feedbackAddress2 = device.getEqFeedbackAddress2();
-                            String feedbackAddress3 = device.getEqFeedbackAddress3();
-                            String feedbackAddress4 = device.getEqFeedbackAddress4();
-                            String[] split0 = feedbackAddress1.split("\\.");
-                            dataInfo.setX(0, Integer.parseInt(split0[0]) - 20);
-                            dataInfo.setY(0, Integer.parseInt(split0[1]));
-
-                            String[] split1 = feedbackAddress2.split("\\.");
-                            dataInfo.setX(1, Integer.parseInt(split1[0]) - 20);
-                            dataInfo.setY(1, Integer.parseInt(split1[1]));
-
-                            String[] split2 = feedbackAddress3.split("\\.");
-                            dataInfo.setX(2, Integer.parseInt(split2[0]) - 20);
-                            dataInfo.setY(2, Integer.parseInt(split2[1]));
-
-                            String[] split3 = feedbackAddress4.split("\\.");
-                            dataInfo.setX(3, Integer.parseInt(split3[0]) - 20);
-                            dataInfo.setY(3, Integer.parseInt(split3[1]));
-                        }
-                        //                    else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
-                        //                        String feedbackAddress1 = device.getEqFeedbackAddress1();
-                        //                        String feedbackAddress2 = device.getEqFeedbackAddress2();
-                        //                        String feedbackAddress3 = device.getEqFeedbackAddress3();
-                        //                        String feedbackAddress4 = device.getEqFeedbackAddress4();
-                        //                        String[] split0 = feedbackAddress1.split("\\.");
-                        //                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
-                        //                        dataInfo.setY(0, Integer.parseInt(split0[1]));
-                        //
-                        //                        String[] split1 = feedbackAddress2.split("\\.");
-                        //                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
-                        //                        dataInfo.setY(1, Integer.parseInt(split1[1]));
-                        //
-                        //                        String[] split2 = feedbackAddress3.split("\\.");
-                        //                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
-                        //                        dataInfo.setY(2, Integer.parseInt(split2[1]));
-                        //
-                        //                        String[] split3 = feedbackAddress4.split("\\.");
-                        //                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
-                        //                        dataInfo.setY(3, Integer.parseInt(split3[1]));
-                        //                    }
-                        dataInfos.add(dataInfo);
-                    }
-                    dataMap.put(plc.getEqId(), dataInfos);
-                }
-            }
-        }
+//        public void initMap() {
+//            SdTunnels tunnelModel = new SdTunnels();
+//            tunnelModel.setPoll(1L);
+//            List<SdTunnels> tunnelList = tunnelService.selectSdTunnelsList(tunnelModel);
+//            for (SdTunnels tunnel : tunnelList) {
+//                //查询需要巡检的PLC
+//                SdDevices sdDevice = new SdDevices();
+//                sdDevice.setEqTunnelId(tunnel.getTunnelId());//隧道ID
+//                sdDevice.setEqType(0L);//设备类型
+//                sdDevice.setIsMonitor(0L);//是否监控
+//                sdDevice.setCommProtocol("CIO");//CIO类型
+//                List<SdDevices> plcLists = devicesService.selectSdDevicesList(sdDevice);
+//                for (SdDevices plc : plcLists) {
+//                    SdDevices dev = new SdDevices();
+//                    dev.setFEqId(plc.getEqId());
+//                    List<SdDevices> devLists = devicesService.selectSdDevicesList(dev);
+//                    List<DataInfo> dataInfos = new ArrayList<>();
+//                    for (SdDevices device : devLists) {
+//                        DataInfo dataInfo = new DataInfo();
+//                        dataInfo.setDeviceId(device.getEqId());
+//                        dataInfo.setDeviceType(device.getEqType());
+//                        dataInfo.setDeviceName(device.getEqName());
+//                        dataInfo.setStakeMark(device.getPile());
+//                        //普通车指
+//                        if (device.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+//                            String feedbackAddress1 = device.getQueryPointAddress();
+//                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                            String[] split0 = feedbackAddress1.split("\\.");
+//                            dataInfo.setX(0, Integer.parseInt(split0[0]));
+//                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                            String[] split1 = feedbackAddress2.split("\\.");
+//                            dataInfo.setX(1, Integer.parseInt(split1[0]));
+//                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                            String[] split2 = feedbackAddress3.split("\\.");
+//                            dataInfo.setX(2, Integer.parseInt(split2[0]));
+//                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                            String[] split3 = feedbackAddress4.split("\\.");
+//                            dataInfo.setX(3, Integer.parseInt(split3[0]));
+//                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+//                            //带左转车指
+//                        } else if (device.getEqType() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()) {
+//                            String feedbackAddress1 = device.getQueryPointAddress();
+//                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                            String feedbackAddress5 = device.getEqFeedbackAddress5();
+//                            String[] split0 = feedbackAddress1.split("\\.");
+//                            dataInfo.setX(0, Integer.parseInt(split0[0]));
+//                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                            String[] split1 = feedbackAddress2.split("\\.");
+//                            dataInfo.setX(1, Integer.parseInt(split1[0]));
+//                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                            String[] split2 = feedbackAddress3.split("\\.");
+//                            dataInfo.setX(2, Integer.parseInt(split2[0]));
+//                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                            String[] split3 = feedbackAddress4.split("\\.");
+//                            dataInfo.setX(3, Integer.parseInt(split3[0]));
+//                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+//                            String[] split5 = feedbackAddress5.split("\\.");
+//                            dataInfo.setX(4, Integer.parseInt(split5[0]));
+//                            dataInfo.setY(4, Integer.parseInt(split5[1]));
+//                            //交通信号灯
+//                        } else if (device.getEqType() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode()) {
+//                            String feedbackAddress1 = device.getQueryPointAddress();
+//                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                            String[] split0 = feedbackAddress1.split("\\.");
+//                            dataInfo.setX(0, 0);
+//                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                            String[] split1 = feedbackAddress2.split("\\.");
+//                            dataInfo.setX(1, 0);
+//                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                            String[] split2 = feedbackAddress3.split("\\.");
+//                            dataInfo.setX(2, 0);
+//                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                            //带左转交通信号灯
+//                        } else if (device.getEqType() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode()) {
+//                            String feedbackAddress1 = device.getQueryPointAddress();
+//                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                            String[] split0 = feedbackAddress1.split("\\.");
+//                            dataInfo.setX(0, 0);
+//                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                            String[] split1 = feedbackAddress2.split("\\.");
+//                            dataInfo.setX(1, 0);
+//                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                            String[] split2 = feedbackAddress3.split("\\.");
+//                            dataInfo.setX(2, 0);
+//                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                            String[] split3 = feedbackAddress4.split("\\.");
+//                            dataInfo.setX(3, 0);
+//                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+//
+//                            //加强照明 引道照明 基本照明
+//                        } else if (device.getEqType() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode() || device.getEqType() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()) {
+//                            //如果此处为乐疃的设备,做特殊处理
+//                            if (plc.getEqId().equals("S29-ZiBoCompany-BoShanStation-001-PLC-006") || plc.getEqId().equals("S29-ZaoZhuangCompany-ShanTingStation-001-PLC-001")) {
+//                                String feedbackAddress1 = device.getQueryPointAddress();
+//                                String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                                String[] split0 = feedbackAddress1.split("\\.");
+//                                dataInfo.setX(0, Integer.parseInt(split0[0]) - 2);
+//                                dataInfo.setY(0, Integer.parseInt(split0[1]));
+//                                String[] split1 = feedbackAddress2.split("\\.");
+//                                dataInfo.setX(1, Integer.parseInt(split1[0]) - 2);
+//                                dataInfo.setY(1, Integer.parseInt(split1[1]));
+//                            } else {
+//                                String feedbackAddress1 = device.getQueryPointAddress();
+//                                String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                                String[] split0 = feedbackAddress1.split("\\.");
+//                                dataInfo.setX(0, Integer.parseInt(split0[0]));
+//                                dataInfo.setY(0, Integer.parseInt(split0[1]));
+//                                String[] split1 = feedbackAddress2.split("\\.");
+//                                dataInfo.setX(1, Integer.parseInt(split1[0]));
+//                                dataInfo.setY(1, Integer.parseInt(split1[1]));
+//                            }
+//                            //风机
+//                        } else if (device.getEqType() == DevicesTypeEnum.FENG_JI.getCode()) {
+//                            String feedbackAddress1 = device.getQueryPointAddress();
+//                            String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                            String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                            String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                            String[] split0 = feedbackAddress1.split("\\.");
+//                            dataInfo.setX(0, Integer.parseInt(split0[0]) - 20);
+//                            dataInfo.setY(0, Integer.parseInt(split0[1]));
+//
+//                            String[] split1 = feedbackAddress2.split("\\.");
+//                            dataInfo.setX(1, Integer.parseInt(split1[0]) - 20);
+//                            dataInfo.setY(1, Integer.parseInt(split1[1]));
+//
+//                            String[] split2 = feedbackAddress3.split("\\.");
+//                            dataInfo.setX(2, Integer.parseInt(split2[0]) - 20);
+//                            dataInfo.setY(2, Integer.parseInt(split2[1]));
+//
+//                            String[] split3 = feedbackAddress4.split("\\.");
+//                            dataInfo.setX(3, Integer.parseInt(split3[0]) - 20);
+//                            dataInfo.setY(3, Integer.parseInt(split3[1]));
+//                        }
+//                        //                    else if (device.getEqType() == DevicesTypeEnum.FENG_JI_2.getCode()) {
+//                        //                        String feedbackAddress1 = device.getEqFeedbackAddress1();
+//                        //                        String feedbackAddress2 = device.getEqFeedbackAddress2();
+//                        //                        String feedbackAddress3 = device.getEqFeedbackAddress3();
+//                        //                        String feedbackAddress4 = device.getEqFeedbackAddress4();
+//                        //                        String[] split0 = feedbackAddress1.split("\\.");
+//                        //                        dataInfo.setX(0, Integer.parseInt(split0[0]) - 21);
+//                        //                        dataInfo.setY(0, Integer.parseInt(split0[1]));
+//                        //
+//                        //                        String[] split1 = feedbackAddress2.split("\\.");
+//                        //                        dataInfo.setX(1, Integer.parseInt(split1[0]) - 21);
+//                        //                        dataInfo.setY(1, Integer.parseInt(split1[1]));
+//                        //
+//                        //                        String[] split2 = feedbackAddress3.split("\\.");
+//                        //                        dataInfo.setX(2, Integer.parseInt(split2[0]) - 21);
+//                        //                        dataInfo.setY(2, Integer.parseInt(split2[1]));
+//                        //
+//                        //                        String[] split3 = feedbackAddress4.split("\\.");
+//                        //                        dataInfo.setX(3, Integer.parseInt(split3[0]) - 21);
+//                        //                        dataInfo.setY(3, Integer.parseInt(split3[1]));
+//                        //                    }
+//                        dataInfos.add(dataInfo);
+//                    }
+//                    dataMap.put(plc.getEqId(), dataInfos);
+//                }
+//            }
+//        }
 
     }
 

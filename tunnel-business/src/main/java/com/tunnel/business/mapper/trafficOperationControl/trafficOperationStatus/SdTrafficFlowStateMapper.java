@@ -67,5 +67,5 @@ public interface SdTrafficFlowStateMapper
      * @param tunnelId 隧道id
      * @return
      */
-    List<SdTrafficFlowState> getChartData(@Param("tunnelId") String tunnelId, @Param("deptId") Long deptId);
+    List<SdTrafficFlowState> getChartData(@Param("tunnelId") String tunnelId, @Param("deptId") String deptId);
 }

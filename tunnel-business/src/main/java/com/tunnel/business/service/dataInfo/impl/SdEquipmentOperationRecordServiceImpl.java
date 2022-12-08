@@ -40,7 +40,7 @@ public class SdEquipmentOperationRecordServiceImpl implements ISdEquipmentOperat
      */
     @Override
     public List<SdEquipmentOperationRecord> selectSdEquipmentOperationRecordList(SdEquipmentOperationRecord sdEquipmentOperationRecord) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdEquipmentOperationRecord.getParams().put("deptId", deptId);
         return sdEquipmentOperationRecordMapper.selectSdEquipmentOperationRecordList(sdEquipmentOperationRecord);
     }

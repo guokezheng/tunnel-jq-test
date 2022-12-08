@@ -8,7 +8,6 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
-import com.tunnel.business.mapper.dataInfo.InductionlampControlStatusParamMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
@@ -46,12 +45,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Autowired
     private ISdEquipmentTypeService equipmentTypeService;
     @Autowired
-    private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
-    @Autowired
-    private IInductionlampControlStatusParamService iInductionlampControlStatusParamService;
-    @Autowired
-    private InductionlampControlStatusParamMapper inductionlampControlStatusParamMapper;
-    @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
 
 
@@ -79,7 +72,11 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             devices.put("eqStatus","2");
         }
         SdDeviceData sdDeviceData = new SdDeviceData();
-        sdDeviceData.setDeviceId(eqId);
+        if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode()))) {
+            sdDeviceData.setDeviceId(devices.get("fEqId"));
+        } else {
+            sdDeviceData.setDeviceId(eqId);
+        }
         List<SdDeviceData> deviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         if (!deviceDataList.isEmpty()) {
             for (int i = 0;i < deviceDataList.size();i++) {
@@ -104,7 +101,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                     } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_FIREMARK.getCode())) {
                         devices.put("fireMark", data.getData());
                     }
-                //车指
+                    //车指
                 } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()))) {
                     if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode())) {
                         devices.put("state", data.getData());
@@ -117,6 +114,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                             devices.put("state", data.getData());
                         }
                     }
+                } else if (data != null) {
+                    devices.put("state", data.getData());
                 }
             }
         }
@@ -143,8 +142,29 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices) {
-        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList_exp(sdDevices);
+        List<SdDevices> devicesList = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         return devicesList;
+    }
+
+    /**
+     * 故障管理页面----根据设备名称获取设备详情
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getEquipmentInfo(String eqId) {
+        return sdDevicesMapper.getEquipmentInfo(eqId);
+    }
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    @Override
+    public List<SdDevices> getDevicesList(String tunnelId, String deviceType) {
+        return sdDevicesMapper.getDevicesList(tunnelId,deviceType);
     }
 
     /**
@@ -156,67 +176,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public int insertSdDevices(SdDevices sdDevices) {
         sdDevices.setCreateTime(DateUtils.getNowDate());
-        //判断当前是否是诱导灯设备
-        Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
-        if (null != sdDevices.getEqType() && sdDevices.getEqType().longValue() == yddEqTypeId.longValue()
-                && (sdDevices.getControlStatus() == null || "".equals(sdDevices.getControlStatus()))) {
-            String eqId = sdDevices.getEqId();
-            //诱导灯设备暂时只对接手动控制模式，直接指定并默认运行模式为0
-            sdDevices.setControlStatus("1");
-            InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
-            inductionlampControlStatusDetails.setEquipmentId(eqId);
-            inductionlampControlStatusDetails.setEquipmentModeType(0);
-            inductionlampControlStatusDetails.setBrightness("50");
-            inductionlampControlStatusDetails.setFrequency("69");
-            inductionlampControlStatusDetails.setCreateTime(DateUtils.getNowDate());
-            iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
-            InductionlampControlStatusParam inductionlampControlStatusParam = new InductionlampControlStatusParam();
-            inductionlampControlStatusParam.setEquipmentId(eqId);
-            List<InductionlampControlStatusParam> controlStatusParams = iInductionlampControlStatusParamService.selectInductionlampControlStatusParamList(inductionlampControlStatusParam);
-            if (controlStatusParams == null || controlStatusParams.size() == 0) {
-                if (controlStatusParams.size() < 6) {
-                    for (int i = 0; i < controlStatusParams.size(); i++) {
-                        iInductionlampControlStatusParamService.deleteInductionlampControlStatusParamById(controlStatusParams.get(i).getId());
-                    }
-                }
-                //创建默认模式类型
-                InductionlampControlStatusParam statusParam0 = new InductionlampControlStatusParam();
-                statusParam0.setEquipmentId(eqId);
-                statusParam0.setModeName("模式0");
-                statusParam0.setModeCode(0);
-                //温度
-                statusParam0.setTemperatureStart(0);
-                //湿度
-                statusParam0.setHumidityEnd(89);
-                //光照
-                statusParam0.setIlluminationStart(1000);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam0);
-
-                InductionlampControlStatusParam statusParam1 = new InductionlampControlStatusParam();
-                statusParam1.setEquipmentId(eqId);
-                statusParam1.setModeName("模式1");
-                statusParam1.setModeCode(1);
-                //温度
-                statusParam1.setTemperatureEnd(0);
-                //湿度
-                statusParam1.setHumidityStart(90);
-                //光照
-                statusParam1.setIlluminationEnd(1000);
-                //亮度
-                statusParam1.setBrightnessParam(50);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam1);
-
-                InductionlampControlStatusParam statusParam2 = new InductionlampControlStatusParam();
-                statusParam2.setEquipmentId(eqId);
-                statusParam2.setModeName("模式2");
-                statusParam2.setModeCode(2);
-                //光照
-                statusParam2.setIlluminationEnd(500);
-                //闪烁/每秒
-                statusParam2.setTimeSecond(30);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam2);
-            }
-        }
         return sdDevicesMapper.insertSdDevices(sdDevices);
     }
 
@@ -229,84 +188,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public int updateSdDevices(SdDevices sdDevices) {
         sdDevices.setUpdateTime(DateUtils.getNowDate());
-        String eqId = sdDevices.getEqId();
-        Long yddEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
-        if (null != sdDevices.getEqType() && sdDevices.getEqType().longValue() == yddEqTypeId.longValue()) {
-            InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
-            inductionlampControlStatusDetails.setEquipmentId(eqId);
-            List<InductionlampControlStatusDetails> controlStatusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
-            if (controlStatusDetails == null || controlStatusDetails.size() == 0) {
-                inductionlampControlStatusDetails.setEquipmentModeType(0);
-                inductionlampControlStatusDetails.setBrightness("50");
-                inductionlampControlStatusDetails.setFrequency("69");
-                iInductionlampControlStatusDetailsService.insertInductionlampControlStatusDetails(inductionlampControlStatusDetails);
-            }
-            sdDevices.setControlStatus("1");
-            InductionlampControlStatusParam inductionlampControlStatusParam = new InductionlampControlStatusParam();
-            inductionlampControlStatusParam.setEquipmentId(eqId);
-            List<InductionlampControlStatusParam> controlStatusParams = iInductionlampControlStatusParamService.selectInductionlampControlStatusParamList(inductionlampControlStatusParam);
-            if (controlStatusParams == null || controlStatusParams.size() == 0) {
-                if (controlStatusParams.size() < 3) {
-                    for (int i = 0; i < controlStatusParams.size(); i++) {
-                        iInductionlampControlStatusParamService.deleteInductionlampControlStatusParamById(controlStatusParams.get(i).getId());
-                    }
-                }
-                //创建默认模式类型
-                InductionlampControlStatusParam statusParam0 = new InductionlampControlStatusParam();
-                statusParam0.setEquipmentId(eqId);
-                statusParam0.setModeName("模式0");
-                statusParam0.setModeCode(0);
-                //温度
-                statusParam0.setTemperatureStart(0);
-                //湿度
-                statusParam0.setHumidityEnd(89);
-                //光照
-                statusParam0.setIlluminationStart(1000);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam0);
-
-                InductionlampControlStatusParam statusParam1 = new InductionlampControlStatusParam();
-                statusParam1.setEquipmentId(eqId);
-                statusParam1.setModeName("模式1");
-                statusParam1.setModeCode(1);
-                //温度
-                statusParam1.setTemperatureEnd(0);
-                //湿度
-                statusParam1.setHumidityStart(90);
-                //光照
-                statusParam1.setIlluminationEnd(1000);
-                //亮度
-                statusParam1.setBrightnessParam(50);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam1);
-
-                InductionlampControlStatusParam statusParam2 = new InductionlampControlStatusParam();
-                statusParam2.setEquipmentId(eqId);
-                statusParam2.setModeName("模式2");
-                statusParam2.setModeCode(2);
-                //光照
-                statusParam2.setIlluminationEnd(500);
-                //闪烁/每秒
-                statusParam2.setTimeSecond(30);
-                inductionlampControlStatusParamMapper.insertInductionlampControlStatusParam(statusParam2);
-            }
-        } else {
-            InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
-            inductionlampControlStatusDetails.setEquipmentId(eqId);
-            List<InductionlampControlStatusDetails> controlStatusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
-            if (controlStatusDetails.size() > 0) {
-                for (int i = 0; i < controlStatusDetails.size(); i++) {
-                    Long id = controlStatusDetails.get(i).getId();
-                    iInductionlampControlStatusDetailsService.deleteInductionlampControlStatusDetailsById(id);
-                }
-            }
-            InductionlampControlStatusParam inductionlampControlStatusParam = new InductionlampControlStatusParam();
-            inductionlampControlStatusParam.setEquipmentId(eqId);
-            List<InductionlampControlStatusParam> controlStatusParams = iInductionlampControlStatusParamService.selectInductionlampControlStatusParamList(inductionlampControlStatusParam);
-            if (controlStatusParams.size() > 0) {
-                for (int i = 0; i < controlStatusParams.size(); i++) {
-                    iInductionlampControlStatusParamService.deleteInductionlampControlStatusParamById(controlStatusParams.get(i).getId());
-                }
-            }
-        }
         return sdDevicesMapper.updateSdDevices(sdDevices);
     }
 
@@ -318,26 +199,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
      */
     @Override
     public int deleteSdDevicesByIds(String[] eqIds) {
-        for (int j = 0; j < eqIds.length; j++) {
-            String eqId = eqIds[j];
-            InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
-            inductionlampControlStatusDetails.setEquipmentId(eqId);
-            List<InductionlampControlStatusDetails> controlStatusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
-            if (controlStatusDetails.size() > 0) {
-                for (int i = 0; i < controlStatusDetails.size(); i++) {
-                    Long id = controlStatusDetails.get(i).getId();
-                    iInductionlampControlStatusDetailsService.deleteInductionlampControlStatusDetailsById(id);
-                }
-            }
-            InductionlampControlStatusParam inductionlampControlStatusParam = new InductionlampControlStatusParam();
-            inductionlampControlStatusParam.setEquipmentId(eqId);
-            List<InductionlampControlStatusParam> controlStatusParams = iInductionlampControlStatusParamService.selectInductionlampControlStatusParamList(inductionlampControlStatusParam);
-            if (controlStatusParams.size() > 0) {
-                for (int i = 0; i < controlStatusParams.size(); i++) {
-                    iInductionlampControlStatusParamService.deleteInductionlampControlStatusParamById(controlStatusParams.get(i).getId());
-                }
-            }
-        }
         return sdDevicesMapper.deleteSdDevicesByIds(eqIds);
     }
 
@@ -410,52 +271,52 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         List<SdDevices> devicesList = new ArrayList<>();
         for (SdDevices devices : checklist) {
             //查询指令 不为空
-            if (StringUtils.isNotNull(devices.getEqControlPointAddress()) && StringUtils.isNotEmpty(devices.getEqControlPointAddress())) {
-                if (StringUtils.isNotNull(devices.getInstructionSeat()) && StringUtils.isNotEmpty(devices.getInstructionSeat())) {
-                    //校验DM模式+IP+机位
-                    if (devices.getInstructionSeat().contains("DM")) {
-
-                        String[] dmeast = devices.getInstructionSeat().split("_");
-                        StringBuffer dmQuery = getCommandCode(devices, dmeast[1], dmeast[0], "0");
-                        //DM控制（模式+机位）不为空
-                        if (StringUtils.isNotNull(devices.getDmcontrolSeat()) && StringUtils.isNotEmpty(devices.getDmcontrolSeat())) {
-                            String[] dmcontrolSeat = devices.getDmcontrolSeat().split("_");
-                            StringBuffer dmControl = getCommandCode(devices, dmcontrolSeat[1], dmcontrolSeat[0], "1");
-                            //DM控制命令或者DM查询命令 校验
-                            if (!getControlCommands(devices, dmControl.toString(), list) || !devices.getEqControlPointAddress().contains(dmQuery.toString())) {
-                                devicesList.add(devices);
-                            }
-                        } else {
-                            //DM查询 （模式+机位）不为空
-                            if (!devices.getEqControlPointAddress().contains(dmQuery.toString())) {
-                                devicesList.add(devices);
-                            }
-                        }
-                    } else {
-                        //CIO
-                        String[] cioeast = devices.getInstructionSeat().split("_");
-                        //查询命令
-                        StringBuffer cioQuery = getCommandCode(devices, cioeast[1], cioeast[0], "0");
-                        // StringBuffer cioControl= cioControlAndQuery(plcIp,cioeast[1],"CIO_1");//控制
-                        //|| !getControlCommands(devices).toString().contains(cioControl.toString())
-                        if (!devices.getEqControlPointAddress().contains(cioQuery.toString())) {
-                            devicesList.add(devices);
-                        }
-                    }
-                } else {
+//            if (StringUtils.isNotNull(devices.getControlPointAddress()) && StringUtils.isNotEmpty(devices.getControlPointAddress())) {
+//                if (StringUtils.isNotNull(devices.getInstructionSeat()) && StringUtils.isNotEmpty(devices.getInstructionSeat())) {
+//                    //校验DM模式+IP+机位
+//                    if (devices.getInstructionSeat().contains("DM")) {
+//
+//                        String[] dmeast = devices.getInstructionSeat().split("_");
+//                        StringBuffer dmQuery = getCommandCode(devices, dmeast[1], dmeast[0], "0");
+//                        //DM控制（模式+机位）不为空
+////                        if (StringUtils.isNotNull(devices.getDmcontrolSeat()) && StringUtils.isNotEmpty(devices.getDmcontrolSeat())) {
+////                            String[] dmcontrolSeat = devices.getDmcontrolSeat().split("_");
+////                            StringBuffer dmControl = getCommandCode(devices, dmcontrolSeat[1], dmcontrolSeat[0], "1");
+////                            //DM控制命令或者DM查询命令 校验
+////                            if (!getControlCommands(devices, dmControl.toString(), list) || !devices.getControlPointAddress().contains(dmQuery.toString())) {
+////                                devicesList.add(devices);
+////                            }
+////                        } else {
+//                            //DM查询 （模式+机位）不为空
+//                            if (!devices.getControlPointAddress().contains(dmQuery.toString())) {
+//                                devicesList.add(devices);
+//                            }
+////                        }
+//                    } else {
+//                        //CIO
+//                        String[] cioeast = devices.getInstructionSeat().split("_");
+//                        //查询命令
+//                        StringBuffer cioQuery = getCommandCode(devices, cioeast[1], cioeast[0], "0");
+//                        // StringBuffer cioControl= cioControlAndQuery(plcIp,cioeast[1],"CIO_1");//控制
+//                        //|| !getControlCommands(devices).toString().contains(cioControl.toString())
+//                        if (!devices.getControlPointAddress().contains(cioQuery.toString())) {
+//                            devicesList.add(devices);
+//                        }
+//                    }
+//                } else {
                     //只校验IP
 //                    devicesList= checkIp(devices,devicesList,list);
-                }
+//                }
 
-            } else {
+//            } else {
                 devicesList.add(devices);
-            }
+//            }
         }
         return devicesList;
     }
 
     public List<SdDevices> checkIp(SdDevices devices, List<SdDevices> devicesList, List<SdEquipmentState> list) {
-        String devicesIp = devices.getEqControlPointAddress().substring(40, 42);
+        String devicesIp = devices.getControlPointAddress().substring(40, 42);
         SdDevices plc = sdDevicesMapper.selectSdDevicesById(devices.getFEqId());
         String plcIp = plc.getIp().split("\\.")[3];
         if (!intToHex(Integer.parseInt(plcIp)).equals(devicesIp)) {
@@ -568,6 +429,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         for (SdDevices devices : sdDevicesList) {
             try {
+                /*SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());*/
                 SdDevices d = sdDevicesMapper.selectSdDevicesById(devices.getEqId());
                 if (StringUtils.isNull(d)) {
                     Map map = checkDevices(devices);
@@ -575,8 +437,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
-//                        sb.append(getIpleftPad(devices.getEqControlPointAddress()));//点位地址
-//                        devices.setEqControlPointAddress(sb.toString());
+//                        sb.append(getIpleftPad(devices.getControlPointAddress()));//点位地址
+//                        devices.setControlPointAddress(sb.toString());
                         devices.setCreateBy(operName);
                         this.insertSdDevices(devices);
 //                        insertOrUpdateOrDeleteSdDeviceCmd(devices);
@@ -593,8 +455,8 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         //todo 目前没有点位信息，先注释掉生成指令相关代码
 //                        StringBuilder sb=new StringBuilder();
 //                        sb.append(getCommandCode(devices,devices.getInstructionSeat().split("_")[1],devices.getInstructionSeat().split("_")[0],"0"));
-//                        sb.append(getIpleftPad(devices.getEqControlPointAddress()));//点位地址
-//                        devices.setEqControlPointAddress(sb.toString());
+//                        sb.append(getIpleftPad(devices.getControlPointAddress()));//点位地址
+//                        devices.setControlPointAddress(sb.toString());
                         this.updateSdDevices(devices);
 //                        insertOrUpdateOrDeleteSdDeviceCmd(devices);
                         successNum++;
@@ -631,6 +493,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         StringBuilder failureMsg = new StringBuilder();
         Map<String, Object> map = new HashMap<String, Object>();
         Long eqType = devices.getEqType();
+        SdEquipmentType sdeq = devices.getTypeName();
         String fEqId = devices.getFEqId();
         //所属隧道
         SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(devices.getEqTunnelId());
@@ -669,7 +532,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             }else {
                 sbquery= getCommandCode(sdHosts.getPlcIp().split("\\.")[3],devices.getInstructionSeat().split("CIO")[1],"CIO","0");//查询
             }
-            if (!devices.getEqControlPointAddress().contains(sbquery.toString()) ){
+            if (!devices.getControlPointAddress().contains(sbquery.toString()) ){
                 failureMsg.append("、设备ID " + devices.getEqId() + " 指令不正确");
                 map.put("flag",false);
                 map.put("failureMsg",failureMsg);
@@ -696,7 +559,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                 SdDeviceCmd sdDeviceCmd = new SdDeviceCmd();
                 sdDeviceCmd.setCodeDeviceId(devices.getEqId());
                 sdDeviceCmd.setCodePlcId(devices.getFEqId());
-                if (StringUtils.isNotNull(devices.getDmcontrolSeat()) && StringUtils.isNotEmpty(devices.getDmcontrolSeat())) {
+                /*if (StringUtils.isNotNull(devices.getDmcontrolSeat()) && StringUtils.isNotEmpty(devices.getDmcontrolSeat())) {
                     sdDeviceCmd.setDeviceTypeId(devices.getEqType());
                     sdDeviceCmd.setCodeDeviceState(sdEquipmentState1.getDeviceState());
                     StringBuilder sb = new StringBuilder();
@@ -710,7 +573,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         sdDeviceCmd.setCommand(sb.toString());
                         sdDeviceCmdService.insertSdDeviceCmd(sdDeviceCmd);
                     }
-                }/*else {
+                } else {
                         List<SdDeviceCmd> sdDeviceCmds = sdDeviceCmdService.selectSdDeviceCmdList(sdDeviceCmd);
                         for (SdDeviceCmd sdDeviceCmd1:sdDeviceCmds){
                             sdDeviceCmdService.deleteSdDeviceCmdById(sdDeviceCmd1.getCodeId());
@@ -732,7 +595,7 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Override
     public List<SdDevices> getAllPressureGaugesMsg() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         return sdDevicesMapper.getAllPressureGaugesMsg(deptId);
     }
 
@@ -757,9 +620,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
 
     @Override
     public String autoId(String tunnelId, Integer typeId) {
-        if (typeId == 1) {
-            return null;
-        }
         //所有隧道类型
         List<SdEquipmentType> equipmentTypes = sdDevicesMapper.selectList();
         //当前设备类型的设备id 如果为null则该设备没添加
@@ -777,9 +637,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
             log.info("进来了--->当前设备类型数据库已有");
             List<Integer> integerList = list.stream().map(
                     f -> {
+                        //获取到最后标志位
                         int i = f.lastIndexOf("-");
-                        int length = f.length();
-                        String s = f.substring(i + 1, length);
+                        int k = f.lastIndexOf("+");
+                        int length = 0;
+                        if(k > 0){
+                            length = k;
+                        }else {
+                            length = f.length();
+                        }
+                        String s = f.substring(i + 1, length).trim();
                         return Integer.parseInt(s);
                     }
             ).sorted().collect(Collectors.toList());
@@ -854,8 +721,6 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         if(deviceData.size()<1){
             return null;
         }
-        int laneSize = sdDevicesMapper.selectLaneSize();
-        // 根据方向进行分组
         Function<Map<String,Object>, String> direction = new Function<Map<String,Object>, String>() {
             @Override
             public String apply(Map<String, Object> t) {
@@ -885,5 +750,63 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
         ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
         return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    @Override
+    public List<String> fireMarkList(String eqId) {
+        SdDevices devices = sdDevicesMapper.selectSdDevicesById(eqId);
+        if (devices == null) {
+            throw new RuntimeException("当前设备信息为空，请到设备管理中进行核对");
+        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqTunnelId(devices.getEqTunnelId());
+        sdDevices.setEqType(devices.getEqType());
+        sdDevices.setEqDirection(devices.getEqDirection());
+        List<String> devicesFireMarkList = sdDevicesMapper.getDevicesFireMarkList(sdDevices);
+        if (devicesFireMarkList.isEmpty()) {
+            devicesFireMarkList = new ArrayList<>();
+        }
+        devicesFireMarkList.add("0");
+        devicesFireMarkList.add("255");
+        return devicesFireMarkList;
+    }
+
+    @Override
+    public List<SdDevicesBrand> getDevBrandList() {
+        return sdDevicesMapper.getDevBrandList();
+    }
+
+    /**
+     * app端获取设备列表
+     * @return
+     */
+    @Override
+    public Map getAppDevicesList(String param, String eqType, String eqStatus) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
+        List<SdDevices> num = sdDevicesMapper.getDevicesNum(param,eqType,eqStatus);
+        map.put("sdDevicesList",sdDevicesList);
+        map.put("numList",num);
+        return map;
+    }
+
+    /**
+     * app端设备信息
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getAppDevicesInfo(String eqId) {
+        return sdDevicesMapper.getAppDevicesInfo(eqId);
+    }
+
+    /**
+     * app端查询设备状态
+     * @param eqId
+     * @return
+     */
+    @Override
+    public List<SdDevices> getAppDevicesStatus(String eqId) {
+       return  sdDevicesMapper.getAppDevicesStatus(eqId);
     }
 }

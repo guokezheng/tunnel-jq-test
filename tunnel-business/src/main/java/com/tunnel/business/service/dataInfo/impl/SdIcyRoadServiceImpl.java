@@ -55,7 +55,7 @@ public class SdIcyRoadServiceImpl implements ISdIcyRoadService {
      */
     @Override
     public List<SdIcyRoad> selectSdIcyRoadList(SdIcyRoad sdIcyRoad) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdIcyRoad.getParams().put("deptId", deptId);
         return sdIcyRoadMapper.selectSdIcyRoadList(sdIcyRoad);
     }

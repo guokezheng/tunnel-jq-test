@@ -1,6 +1,9 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -12,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 设备实时数据（存储模拟量）Service业务层处理
@@ -229,4 +229,47 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         }
         return map;
     }
+
+    @Override
+    public List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData) {
+        String dept = "";
+        if (sdDeviceData.getDeptId() == null) {
+            String deptId = SecurityUtils.getDeptId();
+            dept = deptId;
+        } else if (sdDeviceData.getDeptId() != null) {
+            dept = sdDeviceData.getDeptId().toString();
+        }
+        String tunnelId = "";
+        if (sdDeviceData.getTunnelId() != null && !sdDeviceData.getTunnelId().equals("")) {
+            tunnelId = sdDeviceData.getTunnelId();
+        }
+        String searchValue = "1";
+        if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
+            searchValue = sdDeviceData.getSearchValue();
+        }
+        String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String beginTime = now + " 00:00:00";
+        String endTime = now + " 23:59:59";
+        if (!sdDeviceData.getParams().isEmpty()) {
+//            Map<String, String> params = (Map<String, String>)map.get("params");
+            beginTime = sdDeviceData.getParams().get("beginTime").toString();
+            endTime = sdDeviceData.getParams().get("endTime").toString();
+        }
+        if (searchValue.equals("1")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime);
+            return maps;
+        } else if (searchValue.equals("2")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(dept, tunnelId, beginTime, endTime);
+            return maps;
+        } else if (searchValue.equals("3")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(dept, tunnelId, beginTime, endTime);
+            return maps;
+        } else if (searchValue.equals("4")) {
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(dept, tunnelId, beginTime, endTime);
+            return maps;
+        } else {
+            return null;
+        }
+    }
+
 }

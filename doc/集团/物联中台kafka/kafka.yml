@@ -1,0 +1,13 @@
+spring:
+  kafka:
+    bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      security:
+        protocol: SASL_PLAINTEXT
+      properties:
+        sasl:
+          mechanism: SCRAM-SHA-256
+          jaas:
+            config: org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021';

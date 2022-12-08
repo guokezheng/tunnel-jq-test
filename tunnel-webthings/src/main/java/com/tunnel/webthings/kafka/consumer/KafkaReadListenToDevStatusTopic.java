@@ -1,36 +1,47 @@
 package com.tunnel.webthings.kafka.consumer;
 
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.tunnel.webthings.service.TunnelIotDeviceService;
-import com.tunnel.webthings.vo.SdDevStatusVO;
-import com.tunnel.webthings.vo.SdRadarMsgTopicVO;
+import com.alibaba.fastjson.JSONObject;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
+import com.tunnel.business.domain.dataInfo.SdDeviceDataRecord;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataRecordService;
+import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Date;
+
 /**
- * @author ZHC
- * @date 2022/7/16 9:16
  * 读取DevStatus主题内容
+ * 物联中台设备状态
  */
-//@Component
+@Component
 public class KafkaReadListenToDevStatusTopic {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaReadListenToDevStatusTopic.class);
 
+
+    @Value("${authorize.name}")
+    private String authorizeName;
+
     @Autowired
-    private TunnelIotDeviceService service;
+    private ISdDeviceDataService sdDeviceDataService;
 
-    private SdRadarMsgTopicVO sdRadarMsgTopicVO;
+    @Autowired
+    private ISdDeviceDataRecordService sdDeviceDataRecordService;
 
-    private SdDevStatusVO sdDevStatusVO;
+    @Autowired
+    private ISdDevicesService sdDevicesService;
 
     /**
      * 读取设备状态数据
@@ -38,33 +49,46 @@ public class KafkaReadListenToDevStatusTopic {
      * @param acknowledgment
      * @param consumer
      */
-    @KafkaListener(topics = "devStatusTopic",groupId = "zcTestGroup")
+    @KafkaListener(topics = {"wq_devStatusTopic"}, containerFactory = "kafkaTwoContainerFactory")
     public void devStatusData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-//        log.info("===================");
-//        log.info("------>{}",record.value());
-        Object value = record.value();
-        String devStatus = value.toString();
-        if (StrUtil.contains(devStatus,"G00030001A1990001") || StrUtil.contains(devStatus,"G00030001A1990002")) {
-//            log.info("---RadarMsg--->{}",record.value());
-            sdRadarMsgTopicVO = JSONUtil.toBean(devStatus, SdRadarMsgTopicVO.class);
-            boolean notEmpty = ObjectUtil.isNotEmpty(sdRadarMsgTopicVO);
-            if (notEmpty) {
-                int i = service.addRadarMag(sdRadarMsgTopicVO);
-//                log.info("----addNumber------>  {}",i);
+        log.info("{}", record.value());
+        if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GSY")) {
+            if (record.value() != null || !record.value().toString().equals("")) {
+                System.out.println(record.value());
+                JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+                if (jsonObject.get("deviceData") != null) {
+                    Object o = jsonObject.get("deviceData");
+                    SdDeviceData sdDeviceData = JSONUtil.toBean(o.toString(), SdDeviceData.class);
+                    SdDeviceData deviceData = sdDeviceDataService.selectSdDeviceDataById(sdDeviceData.getId());
+                    if (deviceData != null) {
+                        sdDeviceData.setUpdateTime(new Date());
+                        sdDeviceDataService.updateSdDeviceData(sdDeviceData);
+                    } else {
+                        sdDeviceDataService.insertSdDeviceData(sdDeviceData);
+                    }
+                } else if (jsonObject.get("deviceDataRecord") != null) {
+                    Object o = jsonObject.get("deviceDataRecord");
+                    SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(o.toString(), SdDeviceDataRecord.class);
+                    SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());
+                    if (deviceDataRecord != null) {
+                        sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
+                    } else {
+                        sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);
+                    }
+                } else if (jsonObject.get("deviceStatus") != null) {
+                    Object o = jsonObject.get("deviceStatus");
+                    SdDevices sdDevices = JSONUtil.toBean(o.toString(), SdDevices.class);
+                    SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
+                    if (devices != null) {
+                        sdDevices.setUpdateTime(new Date());
+                        sdDevicesService.updateSdDevices(sdDevices);
+                    } else {
+                        sdDevicesService.insertSdDevices(sdDevices);
+                    }
+                }
             }
-        } else {
-            sdDevStatusVO = JSONUtil.toBean(devStatus, SdDevStatusVO.class);
         }
-//        log.info("---Radar--> {}", sdRadarMsgTopicVO);
-//        log.info("---DevStatus--> {}",sdDevStatusVO);
         consumer.commitSync();
     }
 
-    /**
-     * 图片存储路径修改数据库
-     */
-    @PostMapping("/aaa")
-    public void method(){
-        service.method();
-    }
 }

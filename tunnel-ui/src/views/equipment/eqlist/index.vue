@@ -1,40 +1,41 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="90px">
-      <el-input v-model="queryParams.eqDirection" v-show="false" />
-      <el-form-item label="所属隧道" prop="eqTunnelId">
+      <el-input v-model="queryParams.eqDirection" v-show="false"/>
+      <el-form-item label="所属隧道" prop="eqTunnelId" v-show="manageStatin == '0'">
         <el-select v-model="queryParams.eqTunnelId" placeholder="请选择所属隧道" clearable size="small">
           <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
-            :value="item.tunnelId" />
+                     :value="item.tunnelId"/>
         </el-select>
       </el-form-item>
       <el-form-item label="设备名称" prop="eqName">
         <el-input v-model="queryParams.eqName" placeholder="请输入设备名称" clearable size="small"
-          @keyup.enter.native="handleQuery" />
+                  @keyup.enter.native="handleQuery"/>
       </el-form-item>
 
       <el-form-item label="设备类型" prop="eqType">
         <el-select v-model="queryParams.eqType" placeholder="请选择设备类型" clearable size="small">
-          <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId" />
+          <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId"/>
         </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
         <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
         <el-button type="primary" plain size="mini" @click="handleAdd"
-          v-hasPermi="['system:devices:add']">新增
+                   v-hasPermi="['system:devices:add']">新增
         </el-button>
         <el-button type="primary" plain size="mini" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:devices:edit']">修改
+                   v-hasPermi="['system:devices:edit']">修改
         </el-button>
-        <el-button type="primary" plain  size="mini" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:devices:remove']">删除
+        <el-button type="primary" plain size="mini" :disabled="multiple" @click="handleDelete"
+                   v-hasPermi="['system:devices:remove']">删除
         </el-button>
         <el-button type="primary" plain size="mini" @click="handleExport"
-          v-hasPermi="['system:devices:export']">导出
+                   v-hasPermi="['system:devices:export']">导出
         </el-button>
         <el-button type="primary" plain size="mini" @click="handleImport"
-          v-hasPermi="['system:devices:import']">导入</el-button>
+                   v-hasPermi="['system:devices:import']">导入
+        </el-button>
         <!-- <el-button
           type="info"
           icon="el-icon-s-help"
@@ -80,41 +81,43 @@
       </div>
     </el-row> -->
     <el-table v-loading="loading" :data="devicesList" @selection-change="handleSelectionChange" max-height="640"
-    :row-class-name="tableRowClassName"
+              :row-class-name="tableRowClassName"
     >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备ID" align="center" prop="eqId" show-overflow-tooltip />
-      <el-table-column label="所属隧道" align="center" prop="tunnelName.tunnelName" min-width="100" show-overflow-tooltip />
-      <el-table-column label="设备名称" align="center" prop="eqName" min-width="200" show-overflow-tooltip />
-      <el-table-column label="设备类型" align="center" prop="typeName.typeName" min-width="150" show-overflow-tooltip />
-      <el-table-column label="设备品牌" align="center" prop="brandId" min-width="100" show-overflow-tooltip >
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="设备ID" min-width="220" align="center" prop="eqId" show-overflow-tooltip/>
+      <el-table-column label="所属隧道" align="center" prop="tunnelName.tunnelName" min-width="100" show-overflow-tooltip/>
+      <el-table-column label="设备名称" align="center" prop="eqName" min-width="200" show-overflow-tooltip/>
+      <el-table-column label="设备类型" align="center" prop="typeName.typeName" min-width="150" show-overflow-tooltip/>
+      <el-table-column label="设备品牌" align="center" prop="brandId" min-width="100" show-overflow-tooltip>
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.brand" :value="scope.row.brandId"/>
+          <!--<dict-tag :options="dict.type.brand" :value="scope.row.brandId"/>-->
+
+          <span>{{ getBrand(scope.row.brandId) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备型号" align="center" prop="eqModel" min-width="100" show-overflow-tooltip />
-      <el-table-column label="设备方向" align="center" prop="eqDirection" min-width="100" show-overflow-tooltip >
+      <el-table-column label="设备型号" align="center" prop="eqModel" min-width="100" show-overflow-tooltip/>
+      <el-table-column label="设备方向" align="center" prop="eqDirection" min-width="100" show-overflow-tooltip>
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sd_direction" :value="scope.row.eqDirection"/>
         </template>
       </el-table-column>
-      <el-table-column label="设备IP" align="center" prop="ip" />
-      <el-table-column label="设备端口号" align="center" prop="port" />
-      <el-table-column label="桩号" align="center" prop="pile" min-width="150" show-overflow-tooltip />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180" >
+      <el-table-column label="设备IP" align="center" prop="ip"/>
+      <el-table-column label="设备端口号" align="center" prop="port"/>
+      <el-table-column label="桩号" align="center" prop="pile" min-width="150" show-overflow-tooltip/>
+      <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
         <template slot-scope="scope">
           <el-button size="mini" class="tableBlueButtton" @click="updateCmd(scope.row)"
-            v-hasPermi="['system:devices:edit']">控制修改
+                     v-hasPermi="['system:devices:edit']">控制修改
           </el-button>
           <el-button size="mini" class="tableDelButtton" @click="handleDelete(scope.row)"
-            v-hasPermi="['system:devices:remove']">删除
+                     v-hasPermi="['system:devices:remove']">删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
-      @pagination="getList" />
+                @pagination="getList"/>
 
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="740px" append-to-body>
@@ -124,12 +127,12 @@
             <el-form-item label="所属隧道" prop="eqTunnelId">
               <el-select v-model="form.eqTunnelId" @change="getPlcs()" placeholder="请选择所属隧道">
                 <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
-                  :value="item.tunnelId"></el-option>
+                           :value="item.tunnelId"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备类型">
+            <el-form-item label="设备类型" prop="eqType">
               <el-select v-model="form.eqType" placeholder="请选择设备类型" @change="changeEqType(form.eqType)">
                 <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
                 </el-option>
@@ -138,25 +141,25 @@
           </el-col>
           <el-col :span="21">
             <el-form-item label="设备ID" prop="eqId" v-if="submitMode == 1">
-              <el-input v-model="form.eqId" placeholder="请输入设备ID" />
+              <el-input v-model="form.eqId" placeholder="请输入设备ID"/>
             </el-form-item>
           </el-col>
           <el-col :span="1" style="margin: 5px" v-if="submitMode == 1">
             <el-button type="success" icon="el-icon-setting" size="mini" @click="automaticGenerationID(form)">生成
             </el-button>
           </el-col>
-          <el-col :span="12" >
+          <el-col :span="12">
             <el-form-item label="plc主机" prop="fEqId" v-if="showPlc">
               <el-select v-model="form.fEqId" placeholder="请选择plc主机"
-                        @click.native="onChangePlc(form.eqTunnelId)"
-                        @change="changePlc(form.fEqId)">
-                <el-option v-for="item in eqHostData" :key="item.eqId" :label="item.eqName" :value="item.eqId" />
+                         @click.native="onChangePlc(form.eqTunnelId)"
+                         @change="changePlc(form.fEqId)">
+                <el-option v-for="item in eqHostData" :key="item.eqId" :label="item.eqName" :value="item.eqId"/>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备名称" prop="eqName">
-              <el-input v-model="form.eqName" placeholder="请输入设备名称" />
+              <el-input v-model="form.eqName" placeholder="请输入设备名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -175,17 +178,17 @@
             <el-form-item label="设备品牌" prop="brandId">
               <el-select v-model="form.brandId" placeholder="请选择设备品牌">
                 <el-option
-                  v-for="dict in dict.type.brand"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
+                  v-for="item in brandList"
+                  :key="item.supplierId"
+                  :label="item.shortName"
+                  :value="item.supplierId"
                 />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备型号" prop="eqModel">
-              <el-input v-model="form.eqModel" placeholder="设备型号" />
+              <el-input v-model="form.eqModel" placeholder="设备型号"/>
             </el-form-item>
           </el-col>
 
@@ -203,109 +206,90 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备桩号" prop="pile">
-              <el-input v-model="form.pile" placeholder="请输入桩号" />
+              <el-input v-model="form.pile" placeholder="请输入桩号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备整形桩号" prop="pileNum">
-              <el-input v-model="form.pileNum" placeholder="请输入设备整形桩号" />
+              <el-input v-model="form.pileNum" placeholder="请输入设备整形桩号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="纬度" prop="lat">
-              <el-input v-model="form.lat" placeholder="请输入纬度" />
+              <el-input v-model="form.lat" placeholder="请输入纬度"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="经度" prop="lng">
-              <el-input v-model="form.lng" placeholder="请输入经度" />
+              <el-input v-model="form.lng" placeholder="请输入经度"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备IP" prop="ip">
-              <el-input v-model="form.ip" placeholder="请输入设备IP" />
+              <el-input v-model="form.ip" placeholder="请输入设备IP"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备端口号" prop="port">
-              <el-input v-model="form.port" placeholder="请输入设备端口号" />
+              <el-input v-model="form.port" placeholder="请输入设备端口号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备密钥" prop="secureKey">
-              <el-input v-model="form.secureKey" placeholder="请输入设备密钥" />
+              <el-input v-model="form.secureKey" placeholder="请输入设备密钥"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备用户名" prop="eqUser">
-              <el-input v-model="form.eqUser" placeholder="请输入设备用户名" />
+              <el-input v-model="form.eqUser" placeholder="请输入设备用户名"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备密码" prop="eqPwd">
-              <el-input v-model="form.eqPwd" placeholder="请输入设备密码" />
+              <el-input v-model="form.eqPwd" placeholder="请输入设备密码"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="协议类型" prop="protocol">
-              <el-input v-model="form.protocol" placeholder="请输入协议类型" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="协议通信地址" prop="protocolUrl">
-              <el-input v-model="form.protocolUrl" placeholder="请输入协议通信地址" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="版本号" prop="protocolVersion">
-              <el-input v-model="form.protocolVersion" placeholder="请输入版本号" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="通信协议名称" prop="protocolName">
-              <el-input v-model="form.protocolName" placeholder="请输入通信协议名称" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据类型" prop="dataType">
-              <el-input v-model="form.dataType" placeholder="请输入数据类型" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="数据采集方式" prop="dataSource">
-              <el-input v-model="form.dataSource" placeholder="请输入数据采集方式" />
+              <el-input v-model="form.protocol" placeholder="请输入协议类型"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="出场时间" prop="deliveryTime">
               <el-date-picker
-                    v-model="form.deliveryTime"
-                    type="date"
-                    placeholder="请选择出场时间">
-                  </el-date-picker>
+                v-model="form.deliveryTime"
+                type="date"
+                placeholder="请选择出场时间"
+                :picker-options="optionsDisable"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="维保截至时间" prop="warrantyEndTime">
               <el-date-picker
-                    v-model="form.warrantyEndTime"
-                    type="date"
-                    placeholder="请选择维保截至时间">
-                  </el-date-picker>
+                v-model="form.warrantyEndTime"
+                type="date"
+                placeholder="请选择维保截至时间"
+                :picker-options="optionsDisable"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备安装时间" prop="installTime">
               <el-date-picker
-                    v-model="form.installTime"
-                    type="date"
-                    placeholder="请选择设备安装时间">
-                  </el-date-picker>
+                v-model="form.installTime"
+                type="date"
+                placeholder="请选择设备安装时间"
+                :picker-options="optionsDisable"
+                value-format="yyyy-MM-dd">
+              </el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="11">
             <el-form-item label="预期寿命" prop="useLife">
-              <el-input v-model="form.useLife" placeholder="请输入预期寿命" />
+              <el-input v-model="form.useLife" placeholder="请输入预期寿命"/>
             </el-form-item>
           </el-col>
           <el-col :span="1">
@@ -330,14 +314,14 @@
                   v-for="dict in dict.type.sd_is_monitor"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
+                  :value="parseInt(dict.value)"
                 />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="21" v-if="showOrhide">
-            <el-form-item label="查询指令" prop="eqControlPointAddress">
-              <el-input v-model="form.eqControlPointAddress" placeholder="请输入查询指令" />
+            <el-form-item label="查询指令" prop="controlPointAddress">
+              <el-input v-model="form.controlPointAddress" placeholder="请输入查询指令"/>
             </el-form-item>
           </el-col>
           <el-col :span="1" style="margin: 5px" v-if="showOrhide">
@@ -345,74 +329,28 @@
             </el-button>
           </el-col>
           <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="查询+机位" prop="instructionSeat">
-              <el-input v-model="form.instructionSeat" placeholder="格式:DM_*/CIO_*" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
             <el-form-item label="查询对应点" prop="qNumber">
-              <el-input v-model="form.qNumber" placeholder="请输入对应点" />
-            </el-form-item>
-          </el-col>
-
-
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="控制+机位" prop="dmcontrolSeat">
-              <el-input v-model="form.dmcontrolSeat" placeholder="格式:DM_*" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址1" prop="eqFeedbackAddress1">
-              <el-input v-model="form.eqFeedbackAddress1" placeholder="请输入点位地址1" />
+              <el-input v-model="form.qNumber" placeholder="请输入对应点"/>
             </el-form-item>
           </el-col>
 
           <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址2" prop="eqFeedbackAddress2">
-              <el-input v-model="form.eqFeedbackAddress2" placeholder="请输入点位地址2" />
+            <el-form-item label="点位地址" prop="queryPointAddress">
+              <el-input v-model="form.queryPointAddress" placeholder="请输入点位地址"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址3" prop="eqFeedbackAddress3">
-              <el-input v-model="form.eqFeedbackAddress3" placeholder="请输入点位地址3" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址4" prop="eqFeedbackAddress4">
-              <el-input v-model="form.eqFeedbackAddress4" placeholder="请输入点位地址4" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" v-if="showOrhide">
-            <el-form-item label="点位地址5" prop="eqFeedbackAddress5">
-              <el-input v-model="form.eqFeedbackAddress5" placeholder="请输入点位地址5" />
-            </el-form-item>
-          </el-col>
-
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark" placeholder="请输入备注" />
+              <el-input v-model="form.remark" placeholder="请输入备注"/>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="安装时间" prop="installTime">
               <el-date-picker clearable v-model="form.installTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="请输入安装时间">
               </el-date-picker>
             </el-form-item>
-          </el-col>
-
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="控制状态" prop="controlStatus">-->
-<!--              <el-select v-model="form.controlStatus" placeholder="请选择控制状态" clearable>-->
-<!--                <el-option-->
-<!--                  v-for="dict in dict.type.inductionlamp_control_type"-->
-<!--                  :key="dict.value"-->
-<!--                  :label="dict.label"-->
-<!--                  :value="dict.value"-->
-<!--                />-->
-<!--              </el-select>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
+          </el-col> -->
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -452,44 +390,47 @@
             <el-form-item label="指令模式" prop="instruction">
               <el-select v-model="instructionForm.instruction" placeholder="请选择指令模式" clearable size="small">
                 <el-option v-for="dict in instructionTypeOptions" :key="dict.dictValue" :label="dict.dictLabel"
-                  :value="dict.dictValue" />
+                           :value="dict.dictValue"/>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="18">
             <el-form-item label="机位" prop="seat">
-              <el-input v-model="instructionForm.seat" placeholder="请输入机位" />
+              <el-input v-model="instructionForm.seat" placeholder="请输入机位"/>
             </el-form-item>
           </el-col>
           <el-col :span="18">
             <el-form-item label="对应点" prop="qNumber">
-              <el-input v-model="instructionForm.qNumber" placeholder="请输入对应点" />
+              <el-input v-model="instructionForm.qNumber" placeholder="请输入对应点"/>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="insertEqControlPointAddress"
-          v-hasPermi="['system:devices:createDmcontrolSeat']">确
-          定</el-button>
+                   v-hasPermi="['system:devices:createDmcontrolSeat']">确
+          定
+        </el-button>
         <el-button @click="cancelInstruction">取 消</el-button>
       </div>
     </el-dialog>
 
     <!-- 用户导入对话框 -->
-    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body class="zxc">
+    <el-dialog :title="upload.title" v-if="upload.open" :visible.sync="upload.open" width="400px" append-to-body
+               class="zxc">
       <el-upload ref="upload" :limit="1" accept=".xlsx, .xls" :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
-        :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :on-error="handleFileError"
-        :auto-upload="false" drag>
+                 :action="upload.url + '?updateSupport=' + upload.updateSupport" :disabled="upload.isUploading"
+                 :on-progress="handleFileUploadProgress" :on-success="handleFileSuccess" :on-error="handleFileError"
+                 :auto-upload="false" drag>
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">
           将文件拖到此处，或
           <em>点击上传</em>
         </div>
         <div class="el-upload__tip" slot="tip">
-          <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的设备数据
-          <el-link type="info" style="font-size: 12px" @click="importTemplate">下载模板</el-link>
+          <el-checkbox v-model="upload.updateSupport"/>
+          是否更新已经存在的设备数据
+          <el-link type="info" style="font-size: 12px;color:#39ADFF" @click="importTemplate">下载模板</el-link>
         </div>
         <div class="el-upload__tip" style="color: red" slot="tip">
           提示：仅允许导入“xls”或“xlsx”格式文件！
@@ -505,6 +446,7 @@
 
 <script>
   import {
+    getDevBrandList,
     listDevices,
     getDevices,
     delDevices,
@@ -540,13 +482,14 @@
   import {
     getToken
   } from "@/utils/auth";
+
   export default {
     name: "Devices",
     //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
-    dicts: [ 'sd_direction','brand','sd_lane','sd_use_status','sd_is_monitor','inductionlamp_control_type'],
+    dicts: ['sd_direction', 'brand', 'sd_lane', 'sd_use_status', 'sd_is_monitor', 'inductionlamp_control_type'],
     data() {
       const validatePass = (rule, value, callback) => {
-        console.log(rule, value, callback,"rule, value, callback")
+        console.log(rule, value, callback, "rule, value, callback")
         if (this.option) {
           callback(new Error("请选择列表中已有的选项"));
         } else {
@@ -554,10 +497,16 @@
         }
       }
       return {
+        //不能选择当前日期
+        optionsDisable: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          },
+        },
         //巡检状态
         showOrhide: false,
         // plc主机
-        showPlc:true,
+        showPlc: true,
         //设备品牌
         brandList: [],
         //提交模式 0是修改（隐藏）  1是新增（显示）（控制设备ID字段是否展示）
@@ -589,7 +538,7 @@
         open: false,
         submitFormLoading: false,
         instructionDialog: false,
-
+        manageStatin:this.$cache.local.get("manageStation"),
         ctrlcmd: false,
         //plc主机
         eqHostData: {},
@@ -638,24 +587,28 @@
             required: true,
             message: "请选择所属隧道",
             trigger: "change",
-          }, ],
-          eqType:[{required: true, message: "请选择设备类型", trigger: "blur"}],
+          },],
+          eqType: [{
+            required: true,
+            message: "请选择设备类型",
+            trigger: "blur",
+          }],
           eqName: [{
             required: true,
             message: "请选择设备名称",
             trigger: "blur",
-          }, ],
+          },],
           eqId: [{
-              required: true,
-              message: "请填写设备ID",
-              trigger: "blur",
-            },
+            required: true,
+            message: "请填写设备ID",
+            trigger: "blur",
+          },
             {
               pattern: /^[0-9a-zA-Z_-]{1,}$/,
               message: "请输入数字字母或横线",
             },
           ],
-          pileNum:[{
+          pileNum: [{
             pattern: /^[1-9]\d*$/,
             message: "只能输入整数",
           }],
@@ -668,84 +621,24 @@
             required: true,
             message: "请选择设备方向",
             trigger: "change",
-          }, ], //{ min: 1, max:1,message: '只允许输入1或0，1为左线0为右线' },{ pattern: /^[0-1]{1,}$/, message: '只允许输入1或0，1为左线0为右线' }
+          },], //{ min: 1, max:1,message: '只允许输入1或0，1为左线0为右线' },{ pattern: /^[0-1]{1,}$/, message: '只允许输入1或0，1为左线0为右线' }
           qNumber: [{
             pattern: /^[0-9]*$/,
             message: "查询对应点需为数字",
             trigger: "blur",
-          }, ],
-          /* eqFeedbackAddress1: [{
-                //required: true,
-                message: '请输入点位地址1',
-                trigger: 'blur'
-              },
-              {
-                pattern: /^[a-zA-Z0-9]+$/,
-                message: '只能输入数字/字母，无法输入中文及特殊字符'
-              }
-            ], */
-          eqFeedbackAddress2: [{
-              // required: true,
-              message: "请输入点位地址1",
-              trigger: "blur",
-            },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress3: [{
-              // required: true,
-              message: "请输入点位地址1",
-              trigger: "blur",
-            },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress4: [{
-              // required: true,
-              message: "请输入点位地址1",
-              trigger: "blur",
-            },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          eqFeedbackAddress5: [{
-              // required: true,
-              message: "请输入点位地址1",
-              trigger: "blur",
-            },
-            {
-              pattern: /^[a-zA-Z0-9]+$/,
-              message: "只能输入数字/字母，无法输入中文及特殊字符",
-            },
-          ],
-          instructionSeat: [{
-            pattern: /^(DM_|CIO_)[0-9]*$/,
-            message: "格式：DM_*/CIO_*",
-            trigger: "blur",
-          }, ],
-          dmcontrolSeat: [{
-            pattern: /^(DM_|CIO_)[0-9]*$/,
-            message: "格式：DM_*",
-            trigger: "blur",
-          }, ],
+          },],
         },
         instructionFormRules: {
           instruction: [{
             required: true,
             message: "请选择指令模式",
             trigger: "blur",
-          }, ],
+          },],
           seat: [{
-              required: true,
-              message: "机位不能为空",
-              trigger: "blur"
-            },
+            required: true,
+            message: "机位不能为空",
+            trigger: "blur"
+          },
             {
               pattern: /^[0-9]*$/,
               message: "机位需为数字",
@@ -753,10 +646,10 @@
             },
           ],
           qNumber: [{
-              required: true,
-              message: "对应点不能为空",
-              trigger: "blur"
-            },
+            required: true,
+            message: "对应点不能为空",
+            trigger: "blur"
+          },
             {
               pattern: /^[0-9]*$/,
               message: "对应点需为数字",
@@ -783,6 +676,9 @@
         },
         // zhanshi:false,
         input: "",
+
+
+        brandList: []
       };
     },
 
@@ -800,36 +696,56 @@
       /* this.getDicts("sys_eq_state").then(response => {
           this.deviceStateOptions = response.data;
         }); */
+
+      this.getDevBrandList()
     },
     methods: {
+      getDevBrandList() {
+        getDevBrandList().then(result => {
+          console.log("brandList:>>>",result.data)
+          this.brandList = result.data
+        })
+      },
+      getBrand(num) {
+        for (var item of this.brandList) {
+          if (item.supplierId == num) {
+            return item.shortName;
+          }
+        }
+      },
+
       // 弹窗校验 当没选择隧道时 点击plc 提示先选隧道
-      onChangePlc(eqTunnelId){
-        if(eqTunnelId == null){
+      onChangePlc(eqTunnelId) {
+        if (eqTunnelId == null) {
           this.$refs.form.validateField('eqTunnelId') //单独触发校验
         }
       },
       // 选中plc主机时
-      changePlc(fEqId){
-        if(fEqId == 0){
+      changePlc(fEqId) {
+        if (fEqId == 0) {
           this.showOrhide = true
         }
       },
       // 点击弹窗设备类型
       changeEqType(data) {
-        console.log(data,'data')
+        console.log(data, 'data')
         this.form.fEqId = null
-        if(data == 0){
+        if (data == 0) {
           this.showPlc = false
           this.showOrhide = false
-        }else{
+        } else {
           this.showPlc = true
         }
       },
       // 新增弹窗 自动生成id
-      automaticGenerationID(form){
-        console.log(form,'form')
-        if(!form.eqTunnelId){
+      automaticGenerationID(form) {
+        console.log(form, 'form')
+        if (!form.eqTunnelId) {
           this.$modal.msgError("请选择所属隧道");
+          return;
+        }
+        if (!form.eqType) {
+          this.$modal.msgError("请选择设备类型");
           return;
         }
         // if(!form.eqType){
@@ -838,12 +754,12 @@
         // }
         const params = {
           tunnelId: form.eqTunnelId,
-          typeId:form.eqType
+          typeId: form.eqType
         }
         autoId(params).then((response) => {
-          if(response.data){
+          if (response.data) {
             this.form.eqId = response.data
-          }else{
+          } else {
             this.$modal.msgError("未生成设备ID，请检查配置");
           }
         });
@@ -857,20 +773,23 @@
       },
       /** 查询设备列表 */
       getList() {
-         this.loading = true;
-         listDevices(this.queryParams).then((response) => {
-           this.devicesList = response.rows;
-           this.total = response.total;
-           this.loading = false;
-         });
-       },
+        if(this.manageStatin == '1'){
+          this.queryParams.eqTunnelId = this.$cache.local.get("manageStationSelect")
+        }
+        this.loading = true;
+        listDevices(this.queryParams).then((response) => {
+          this.devicesList = response.rows;
+          this.total = response.total;
+          this.loading = false;
+        });
+      },
       /** plc主机 */
       getPlcs() {
         listDevices({
           eqTunnelId: this.form.eqTunnelId,
-          eqType:'0',
+          eqType: '0',
         }).then((response) => {
-          console.log(response,'response')
+          console.log(response, 'response')
           this.eqHostData = response.rows;
           // this.eqHostData.unshift({
           //   eqId: 0,
@@ -880,8 +799,11 @@
       },
       /** 所属隧道 */
       getTunnel() {
-        listTunnels().then((response) => {
-          console.log(response.rows,"所属隧道列表")
+        if(this.$cache.local.get("manageStation") == '1'){
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
+        listTunnels(this.queryParams).then((response) => {
+          console.log(response.rows, "所属隧道列表")
           this.eqTunnelData = response.rows;
         });
       },
@@ -894,7 +816,8 @@
       // 取消按钮
       cancel() {
         this.open = false;
-        this.reset();
+        this.submitFormLoading = false;
+        this.reset()
       },
       cancelInstruction() {
         this.instructionDialog = false;
@@ -909,12 +832,8 @@
           eqDirection: null,
           stakeMark: null,
           eqType: null,
-          eqFeedbackAddress1: null,
-          eqFeedbackAddress2: null,
-          eqFeedbackAddress3: null,
-          eqFeedbackAddress4: null,
-          eqFeedbackAddress5: null,
-          eqControlPointAddress: null,
+          queryPointAddress: null,
+          controlPointAddress: null,
           deviceState: null,
           remark: null,
           createBy: null,
@@ -922,29 +841,23 @@
           updateBy: null,
           updateTime: null,
           leishiDeviceIp: null,
-          lane:null,
-          pile:null,
-          pileName:null,
-          lat:null,
-          lng:null,
-          ip:null,
-          port:null,
-          secureKey:null,
-          eqUser:null,
-          eqPwd:null,
-          protocol:null,
-          protocolUrl:null,
-          protocolVersion:null,
-          protocolName:null,
-          dataType:null,
-          dataSource:null,
-          deliveryTime:null,
-          warrantyEndTime:null,
-          installTime:null,
-          useLife:null,
-          useStatus:null,
-          isMonitor:null,
-          controlStatus:null,
+          lane: null,
+          pile: null,
+          pileName: null,
+          lat: null,
+          lng: null,
+          ip: null,
+          port: null,
+          secureKey: null,
+          eqUser: null,
+          eqPwd: null,
+          protocol: null,
+          deliveryTime: null,
+          warrantyEndTime: null,
+          installTime: null,
+          useLife: null,
+          useStatus: null,
+          isMonitor: null,
         };
         this.resetForm("form");
         this.queryCmdParams = {
@@ -955,7 +868,7 @@
           codeDeviceState: null,
           command: null,
         };
-         this.eqHostData = []
+        this.eqHostData = []
       },
       instructionFormReset() {
         this.instructionForm = {
@@ -1079,7 +992,7 @@
       /** 提交按钮 */
       submitForm() {
         if (this.submitFormLoading) return
-        this.submitFormLoading = true
+        /*this.submitFormLoading = true*/
         this.$refs["form"].validate(async (valid) => {
           if (valid) {
             if (this.submitMode == 0) {
@@ -1100,25 +1013,26 @@
               });
             }
           }
-          this.submitFormLoading = false
+          /*this.submitFormLoading = false*/
         });
       },
       /** 删除按钮操作 */
       handleDelete(row) {
         const eqIds = row.eqId || this.ids;
         this.$confirm("是否确认删除?", "警告", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          })
-          .then(function() {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(function () {
             return delDevices(eqIds);
           })
           .then(() => {
             this.getList();
             this.$modal.msgSuccess("删除成功");
           })
-          .catch(function() {});
+          .catch(function () {
+          });
       },
       /** 导出按钮操作 */
       handleExport() {
@@ -1127,7 +1041,7 @@
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        }).then(function() {
+        }).then(function () {
           return exportDevices(queryParams);
         }).then(response => {
           this.$download.name(response.msg);
@@ -1149,7 +1063,7 @@
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
         this.$alert(response.msg, "导入结果", {
-          customClass :'el-message-box_style',
+          customClass: 'el-message-box_style',
           dangerouslyUseHTMLString: true
 
         });
@@ -1163,19 +1077,18 @@
       },
       /** 下载模板操作 */
       importTemplate() {
-        exportDevicesTemplate()
-          .then((response) => {
-            this.$download.name(response.msg);
-          });
+        /* exportDevicesTemplate()*/
+        /*.then((response) => {*/
+        this.$download.name('sbsj.xlsx', false);
+        /*});*/
       },
       insertEqControlPointAddress() {
         this.$refs["instructionForm"].validate((valid) => {
           if (valid) {
             createDmcontrolSeat(this.instructionForm).then((response) => {
               this.instructionDialog = false;
-              this.form.eqControlPointAddress = response.instruction;
+              this.form.controlPointAddress = response.instruction;
               this.input = response.instruction;
-              this.form.instructionSeat = response.instructionAndseat;
             });
           }
         });
@@ -1183,11 +1096,10 @@
       createControlPointAddress() {
         if (
           this.form.fEqId != null &&
-          this.form.instructionSeat != null &&
           this.form.qNumber != null
         ) {
           createInstruction(this.form).then((response) => {
-            this.form.eqControlPointAddress = response.instructionSeat;
+            this.form.controlPointAddress = response.instructionSeat;
           });
         } else {
           this.$modal.msgError(
@@ -1218,31 +1130,39 @@
         this.$refs.upload.submit();
       },
       // 表格行样式
-      tableRowClassName({ row, rowIndex }) {
-        if (rowIndex%2 == 0) {
-        return 'tableEvenRow';
+      tableRowClassName({row, rowIndex}) {
+        if (rowIndex % 2 == 0) {
+          return 'tableEvenRow';
         } else {
-        return "tableOddRow";
+          return "tableOddRow";
         }
       },
     },
+    watch: {
+      "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+        console.log(newVal, "0000000000000000000000");
+        this.getList();
+        this.getTunnel();
+      }
+    }
   };
 </script>
 <style scoped lang="scss">
-  .el-select-dropdown__item.selected{
+  .el-select-dropdown__item.selected {
     color: #606266;
     font-weight: 400;
   }
-  ::v-deep .el-dialog__body{
+
+  ::v-deep .el-dialog__body {
     max-height: 690px;
     overflow: auto;
   }
 
 </style>
 <style lang="scss">
-.el-message-box_style{
-    .el-message-box__content{
-      height: 500px !important;
+  .el-message-box_style {
+    .el-message-box__content {
+      max-height: 500px !important;
       overflow: auto !important;
     }
   }

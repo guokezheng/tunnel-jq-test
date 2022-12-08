@@ -56,13 +56,23 @@ public class SdRadarDetectData {
     private String endTime;
     private String startTime;
 
-    private Long deptId;
+    private String deptId;
 
-    public Long getDeptId() {
+    private String distance;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 

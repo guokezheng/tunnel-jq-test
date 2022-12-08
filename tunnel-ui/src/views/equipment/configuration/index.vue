@@ -274,7 +274,7 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;">
+          <el-dialog :visible.sync="dialogVisible" append-to-body style="width:600px !important;margin: 0 auto;" class="environmentPicDialog">
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
@@ -516,10 +516,46 @@ export default {
       if (this.fileList.length < 1) {
         return this.$modal.msgWarning("请上传图片");
       }
-      const isLt100M = this.fileList.every(file => file.size / 1024 / 1024 < 1);
-      if (!isLt100M) {
-        this.$message.error('请检查，上传文件大小不能超过1MB!');
-      } else {
+      if(this.fileList[0].hasOwnProperty('size')){
+        const isLt100M = this.fileList.every(file => file.size / 1024 / 1024 < 1);
+        if (!isLt100M) {
+          this.$message.error('请检查，上传文件大小不能超过1MB!');
+        }else{
+          this.fileData = new FormData(); // new formData对象
+          this.$refs.upload.submit();
+          this.fileData.append("sdName", this.form.sdName);
+          this.fileData.append("environmentType", this.form.environmentType);
+          this.fileData.append("width", this.form.width);
+          this.fileData.append("height", this.form.height);
+          this.fileData.append("direction", this.form.direction);
+          this.fileData.append("remark", this.form.remark);
+          this.$refs["form"].validate((valid) => {
+            if (valid) {
+              if (this.form.id != null) {
+                this.fileData.append("id", this.form.id);
+                this.fileData.append("url", this.form.url);
+                this.fileData.append("removeIds", this.removeIds);
+                console.log(this.fileData,'this.fileData');
+                updateConfiguration(this.fileData).then((response) => {
+                  this.$modal.msgSuccess("修改成功");
+                  this.open = false;
+                  this.$refs.upload.clearFiles();
+                  this.getList();
+                });
+              } else {
+                addConfiguration(this.fileData).then((response) => {
+                  this.$modal.msgSuccess("新增成功");
+                  this.open = false;
+                  this.$refs.upload.clearFiles();
+                  this.getList();
+                });
+                this.eqObj.uploadDisabled = false;
+              }
+            }
+          });
+        }
+      }
+      else {
         this.fileData = new FormData(); // new formData对象
         this.$refs.upload.submit();
         this.fileData.append("sdName", this.form.sdName);
@@ -667,4 +703,9 @@ export default {
 .disabled .el-button--success.is-plain {
     display: none !important;
 }
+.environmentPicDialog .el-dialog__headerbtn{
+    top: 10px !important;
+  }
+
 </style>
+

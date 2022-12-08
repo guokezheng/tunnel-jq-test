@@ -85,6 +85,53 @@ public class SdTunnels extends BaseEntity
     @ApiModelProperty("隧道结束桩号")
     private String endPile;
 
+    @ApiModelProperty("隧道开始桩号(整形)")
+    private String startPileNum;
+
+    @ApiModelProperty("隧道结束桩号(整形)")
+    private String endPileNum;
+
+    /**
+     * road_id路段ID
+     * */
+    @ApiModelProperty("路段ID")
+    private String roadId;
+
+    @ApiModelProperty("祖级列表")
+    private String ancestors;
+
+    public String getAncestors() {
+        return ancestors;
+    }
+
+    public void setAncestors(String ancestors) {
+        this.ancestors = ancestors;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getStartPileNum() {
+        return startPileNum;
+    }
+
+    public void setStartPileNum(String startPileNum) {
+        this.startPileNum = startPileNum;
+    }
+
+    public String getEndPileNum() {
+        return endPileNum;
+    }
+
+    public void setEndPileNum(String endPileNum) {
+        this.endPileNum = endPileNum;
+    }
+
     public String getStartPile() {
         return startPile;
     }
@@ -128,19 +175,24 @@ public class SdTunnels extends BaseEntity
      * 隧道所属部门id
      * */
     @ApiModelProperty("隧道所属部门id")
-    private Long deptId;
+    private String deptId;
 
     @ApiModelProperty("隧道所属部门名称")
     private String deptName;
 
+    /**
+     * 隧道ID集合
+     */
+    private List<String> tunnelIds;
+
     private List<SdTunnelSubarea> list;
 
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 
@@ -304,6 +356,14 @@ public class SdTunnels extends BaseEntity
         return storeConfigure;
     }
 
+    public List<String> getTunnelIds() {
+        return tunnelIds;
+    }
+
+    public void setTunnelIds(List<String> tunnelIds) {
+        this.tunnelIds = tunnelIds;
+    }
+
     @Override
     public String toString() {
         return "SdTunnels{" +
@@ -324,6 +384,7 @@ public class SdTunnels extends BaseEntity
                 ", storeConfigure='" + storeConfigure + '\'' +
                 ", deptId=" + deptId +
                 ", deptName='" + deptName + '\'' +
+                ", tunnelIds='" + tunnelIds + '\'' +
                 ", list=" + list +
                 ", percentage=" + percentage +
                 '}';

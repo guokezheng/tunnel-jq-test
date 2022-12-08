@@ -62,4 +62,6 @@ public interface SdVmsTemplateMapper
     public int deleteSdVmsTemplateByIds(Long[] ids);
 
     public Long selectSdVmsTemplateId();
+
+    public List<SdVmsTemplate> selectTemplateList(String category);
 }

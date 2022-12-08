@@ -9,14 +9,9 @@
         justify="space-between"
       >
         <el-col :span="5">
-          <span class="header-icon"></span>
-          <el-row type="flex" align="middle">
-            <el-col class="header-icon"></el-col>
-            <el-col class="header-left">
-              <h1>智慧隧道云控平台</h1>
-            </el-col>
+          <el-row align="middle">
             <el-col class="header-logo">
-              <img src="@/assets/image/0-.png" alt="" />
+              <img src="@/assets/logo/logo.png" alt="" />
             </el-col>
           </el-row>
         </el-col>
@@ -67,7 +62,7 @@ import tunnel from "./tunnel";
 import warning from "./warning";
 import contingencyPlan from "./contingencyPlan";
 import smartEnergyConsumption from "./smartEnergyConsumption";
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   components: {
@@ -84,11 +79,11 @@ export default {
       tabs: [
         { id: 0, name: "全视图", type: "tunnel" },
         { id: 1, name: "报警研判", type: "warning" },
-        { id: 2, name: "应急预案", type: "contingencyPlan" },
+        { id: 2, name: "应急处置", type: "contingencyPlan" },
         { id: 3, name: "智能能耗", type: "smartEnergyConsumption" },
       ],
-      isAcitve: this.$cache.session.get('TABSSELECT')||"tunnel", // 当前页
-      weather_weather: '', // 温度
+      isAcitve: this.$cache.session.get("TABSSELECT") || "tunnel", // 当前页
+      weather_weather: "", // 温度
     };
   },
   computed: {},
@@ -102,7 +97,7 @@ export default {
     // 3.设置根元素样式
     htmlDom.style.fontSize = htmlwidth / 20 + "px"; // 记住这个20是等份的意思,这样每一份是16px,即1rem=16px;
 
-    this.getWeather()
+    this.getWeather();
     this.initTime();
   },
   methods: {
@@ -131,7 +126,7 @@ export default {
     tabsClick(item) {
       if (item.type != this.isAcitve) {
         this.isAcitve = item.type;
-        this.$cache.session.set('TABSSELECT',item.type)
+        this.$cache.session.set("TABSSELECT", item.type);
       }
     },
     // 获取天气
@@ -143,10 +138,7 @@ export default {
       const url = `${header}/${word}/?${key}&${city}`;
       axios.get(url).then((res) => {
         const data = res.data.newslist[0];
-        this.weather_weather =
-          data.area +
-          ": " +
-          data.lowest 
+        this.weather_weather = data.area + ": " + data.lowest;
       });
     },
   },
@@ -158,7 +150,7 @@ export default {
 .index-container {
   width: 100%;
   padding: 1vw;
-  background-color: #040f4e;
+  background-color: #004375;
   height: 100%;
   .header {
     height: 6%;
@@ -184,8 +176,8 @@ export default {
         background-position: center;
       }
       .header-logo {
-        width: 5vw;
-        height: 2vw;
+        // width: 5vw;
+        // height: 2vw;
         padding: 0 !important;
         margin-right: 1vw;
         font-size: 0;

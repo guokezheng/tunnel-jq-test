@@ -72,7 +72,7 @@ public class SysRole extends BaseEntity
 
     /** 部门组（数据权限） */
     @ApiModelProperty("部门组（数据权限）")
-    private Long[] deptIds;
+    private String[] deptIds;
 
     public SysRole()
     {
@@ -209,12 +209,12 @@ public class SysRole extends BaseEntity
         this.menuIds = menuIds;
     }
 
-    public Long[] getDeptIds()
+    public String[] getDeptIds()
     {
         return deptIds;
     }
 
-    public void setDeptIds(Long[] deptIds)
+    public void setDeptIds(String[] deptIds)
     {
         this.deptIds = deptIds;
     }

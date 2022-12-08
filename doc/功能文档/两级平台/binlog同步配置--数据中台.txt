@@ -1,0 +1,4 @@
+修改 /etc/mysql/mysql.conf.d/mysqld.cnf，在配置文件中，添加 binlog_format 选项，设置binlog_format=MIXED
+数据库的登录账号用于后续执行操作，此账号需要拥有数据库的 SELECT, REPLICATION SLAVE, REPLICATION CLIENT权限
+-- CREATE USER '同步账号'@'%' IDENTIFIED BY '密码'; //创建同步账号并设置密码，使其可以通过任意主机登录数据库。%表示任意主机。
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO '同步账号'@'%'; //授权同步账号数据库的 SELECT, REPLICATION SLAVE, REPLICATION CLIENT权限。

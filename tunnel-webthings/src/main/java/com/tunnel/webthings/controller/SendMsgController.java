@@ -4,11 +4,9 @@ import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.webthings.service.SendMsgService;
 import com.tunnel.webthings.vo.RadarMsgTopicVo;
-import com.tunnel.webthings.vo.SendMsgVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -32,8 +30,21 @@ public class SendMsgController {
 
     @PostMapping("/event")
     @ApiOperation("发送事件数据")
-    public Result event(@Validated @RequestBody SendMsgVO msgVO){
-        return Result.success(sendMsgService.sendEvent(msgVO));
+    public Result event(){
+        return Result.success(sendMsgService.sendEvent());
+    }
+
+    @PostMapping("/devicestatus")
+    @ApiOperation("发送设备数据")
+    public Result devicestatus(@RequestParam("devId") String devId){
+
+        return Result.success(sendMsgService.devicestatus(devId));
+    }
+
+    @PostMapping("/devicesdata")
+    @ApiOperation("发送设备数据")
+    public Result devicesdata(@RequestParam("devId") String devId,@RequestParam("state") String state){
+        return Result.success(sendMsgService.devicesdata(devId,state));
     }
 
     @PutMapping("/storage")

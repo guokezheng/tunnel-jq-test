@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="80px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -206,17 +206,30 @@
           <el-button
             size="mini"
             class="tableBlueButtton"
-            @click="handleUpdate(scope.row)"
+            @click="tunnelAssociationConfig(scope.row)"
             v-hasPermi="['system:tunnels:edit']"
-            >修改
+          >关联配置
           </el-button>
-          <el-button
-            size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:tunnels:remove']"
-            >删除
-          </el-button>
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            v-hasPermi="['system:tunnels:edit']"-->
+<!--          >关联配置-->
+<!--          </el-button>-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="handleUpdate(scope.row)"-->
+<!--            v-hasPermi="['system:tunnels:edit']"-->
+<!--            >修改-->
+<!--          </el-button>-->
+<!--          <el-button-->
+<!--            size="mini"-->
+<!--            class="tableDelButtton"-->
+<!--            @click="handleDelete(scope.row)"-->
+<!--            v-hasPermi="['system:tunnels:remove']"-->
+<!--            >删除-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -229,8 +242,43 @@
       @pagination="getList"
     />
 
+    <!-- 添加或修改隧道关联关系对话框 -->
+    <el-dialog :title="titles" :visible.sync="opens" width="500px" append-to-body>
+      <el-form ref="forms" :model="forms" :rules="rule" label-width="140px">
+        <el-form-item label="隧道" prop="tunnelId">
+          <el-input v-model="forms.tunnelId" placeholder="请输入隧道" :disabled="true"/>
+        </el-form-item>
+        <el-form-item label="外部系统" prop="externalSystemId">
+<!--          <el-input v-model="forms.externalSystemId" placeholder="请选择外部系统" />-->
+          <el-select v-model="forms.externalSystemId" placeholder="请选择外部系统" class="externalSystemId" style="width: 100%">
+            <el-option v-for="item in externalSystemData"
+                       :key="item.id"
+                       :label="item.systemName"
+                       :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="隧道方向" prop="tunnelDirection">
+          <el-input v-model="forms.tunnelDirection" placeholder="请输入隧道方向" />
+        </el-form-item>
+        <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId">
+          <el-input v-model="forms.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />
+        </el-form-item>
+        <el-form-item label="外部系统隧道方向" prop="externalSystemTunnelDirection">
+          <el-input v-model="forms.externalSystemTunnelDirection" placeholder="请输入外部系统隧道方向" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="forms.remark" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForms">确 定</el-button>
+        <el-button @click="cancels">取 消</el-button>
+      </div>
+    </el-dialog>
+
     <!-- 添加或修改隧道对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-row>
           <el-col :span="12">
@@ -317,6 +365,7 @@
               <el-col :span="22">
                 <el-input
                   v-model="form.startPile"
+                  @blur="setPileInt('start')"
                   placeholder="请输入开始桩号"
                 />
               </el-col>
@@ -326,15 +375,42 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="开始桩号(整形)" prop="startPileNum">
+              <el-input v-model="form.startPileNum" disabled="disabled"  />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="结束桩号" prop="endPile">
-              <el-input v-model="form.endPile" placeholder="请输入结束桩号" />
+              <el-col :span="22">
+                <el-input v-model="form.endPile"
+                          @blur="setPileInt('end')"
+                          placeholder="请输入结束桩号"
+                />
+              </el-col>
+            </el-form-item>
+          </el-col>
+              <el-col :span="2">
+                <!-- <p>米</p> -->
+              </el-col>
+          <el-col :span="12">
+            <el-form-item label="结束桩号(整形)" prop="endPileNum">
+              <el-input v-model="form.endPileNum" disabled="disabled"/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属部门" prop="deptId">
-              <el-select
+              <treeselect
+                v-model="form.deptId"
+                :options="deptOptions"
+                :show-count="true"
+                placeholder="请选择归属部门"
+              />
+
+              <!--<el-select
                 v-model="form.deptId"
                 placeholder="请选择所属部门"
                 clearable
@@ -347,7 +423,7 @@
                   :label="item.deptName"
                   :value="item.deptId"
                 />
-              </el-select>
+              </el-select>-->
             </el-form-item>
           </el-col>
 
@@ -399,11 +475,19 @@ import {
   addTunnels,
   updateTunnels,
 } from "@/api/equipment/tunnel/api.js";
-import { listDept } from "@/api/system/dept";
+import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {
+  addAssociation, updateAssociation, getAssociationByTunnelId, delAssociationByTunnelIds
+} from "@/api/equipment/deviceassociation/association";
+import { listSystem } from "@/api/equipment/externalsystem/system";
+
 
 export default {
   name: "Tunnels",
+  components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
       var longreg =
@@ -430,6 +514,8 @@ export default {
       }
     };
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       oper: "add", //add 添加  edit修改
       // 遮罩层
       loading: true,
@@ -445,10 +531,13 @@ export default {
       total: 0,
       // 隧道表格数据
       tunnelsList: [],
+      externalSystemData: [],
       // 弹出层标题
       title: "",
+      titles: "",
       // 是否显示弹出层
       open: false,
+      opens: false,
       // 是否使用字典
       pollOptions: [],
       // 查询参数
@@ -467,6 +556,7 @@ export default {
       userDeptId: null,
       // 表单参数
       form: {},
+      forms: {},
       // 表单校验
       rules: {
         tunnelName: [
@@ -502,12 +592,23 @@ export default {
           { required: true, message: "请选择是否可用", trigger: "change" },
         ],
       },
+      rule: {
+        tunnelId: [
+          { required: true, message: "请填写隧道ID", trigger: "blur" },
+        ],
+        externalSystemId: [
+          { required: true, message: "请选择外部系统", trigger: "change" },
+        ],
+      },
       // selectedTunnel:{},
       // 隧道列表
       tunnelData: [],
+      // 部门树选项
+      deptOptions: undefined,
     };
   },
   created() {
+    this.getTreeselect();
     // this.getList();
     this.getTunnel();
     this.getDicts("sys_tunnel_use").then((response) => {
@@ -515,6 +616,7 @@ export default {
     });
     this.getDepts();
     this.getUserDept();
+    this.getExternalsystem();
   },
   mounted() {
     if (window.history && window.history.pushState) {
@@ -527,6 +629,35 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    getExternalsystem() {
+      listSystem(this.queryParams).then(response => {
+        this.externalSystemData = response.rows;
+      });
+    },
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log(this.deptOptions);
+      });
+    },
+    setPileInt(param){
+      if(param=='start'){
+        let startPile = this.form.startPile;
+        if (startPile == null) {
+          return;
+        }
+        //var reg = startPile.replace(/[\u4e00-\u9fa5]/g, "");
+        let pileInt = startPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.startPileNum = pileInt;
+      }else{
+        let endPile = this.form.endPile;
+        if (endPile == null) {
+          return;
+        }
+        let pileInt = endPile.replace(/[^\u4e00-\u9fa50-9]/g, '')
+        this.form.endPileNum = pileInt;
+      }
+    },
     getTunnel() {
       listTunnels().then((response) => {
         this.tunnelData = response.rows;
@@ -565,6 +696,9 @@ export default {
     /** 查询隧道列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+          this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
       listTunnels(this.queryParams).then((response) => {
         this.tunnelsList = response.rows;
         this.total = response.total;
@@ -576,11 +710,27 @@ export default {
       return this.selectDictLabel(this.pollOptions, row.poll);
     },
     // 取消按钮
+    cancels() {
+      this.opens = false;
+      this.resets();
+    },
     cancel() {
       this.open = false;
       this.reset();
     },
     // 表单重置
+    resets() {
+      this.forms = {
+        id: null,
+        tunnelId: null,
+        tunnelDirection: null,
+        externalSystemId: null,
+        externalSystemTunnelId: null,
+        externalSystemTunnelDirection: null,
+        remark: null
+      };
+      this.resetForm("forms");
+    },
     reset() {
       this.form = {
         tunnelId: null,
@@ -601,6 +751,8 @@ export default {
         createTime: null,
         endPile: null,
         startPile: null,
+        endPileNum: null,
+        startPileNum: null,
         updateBy: null,
         updateTime: null,
       };
@@ -631,6 +783,26 @@ export default {
         document.getElementById("aaa").removeAttribute("readOnly");
       });
     },
+    /* 进入隧道关联关系配置 */
+    tunnelAssociationConfig(row) {
+      const tunnelId = row.tunnelId || this.ids;
+      console.log("开启隧道关系配置弹窗");
+      this.resets();
+      if (tunnelId != null) {
+        getAssociationByTunnelId(tunnelId).then(response => {
+          if (response.data != null && response.data.tunnelId != null) {
+            this.forms = response.data;
+            this.opens = true;
+            this.titles = "修改隧道关联关系";
+          } else {
+            this.resets();
+            this.opens = true;
+            this.titles = "添加隧道关联关系";
+            this.forms.tunnelId = tunnelId;
+          }
+        });
+      }
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -649,15 +821,34 @@ export default {
         this.title = "修改隧道";
       });
     },
+    submitForms() {
+      this.$refs["forms"].validate(valid => {
+        if (valid) {
+          if (this.forms.id != null) {
+            updateAssociation(this.forms).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.opens = false;
+              this.getList();
+            });
+          } else {
+            addAssociation(this.forms).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.opens = false;
+              this.getList();
+            });
+          }
+        }
+      });
+    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (
-            !new RegExp("^[1-9][0-9]*$").test(this.form.startPile) ||
-            !new RegExp("^[1-9][0-9]*$").test(this.form.startPile)
+            !new RegExp("^[1-9][0-9]*$").test(this.form.startPileNum) ||
+            !new RegExp("^[1-9][0-9]*$").test(this.form.endPileNum)
           ) {
-            this.$modal.msgWarning("桩号要求输入的格式为整形");
+            this.$modal.msgWarning("桩号格式输入有误！");
             return;
           }
           if (this.oper == "edit") {
@@ -694,6 +885,7 @@ export default {
           return delTunnels(tunnelIds);
         })
         .then(() => {
+          delAssociationByTunnelIds(tunnelIds);
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
@@ -718,6 +910,12 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+    }
+  }
 };
 </script>
 <style scoped>

@@ -93,7 +93,7 @@ public class SdInspectionServiceImpl implements ISdInspectionService {
      */
     @Override
     public List<SdInspection> selectSdInspectionList(SdInspection sdInspection) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdInspection.getParams().put("deptId", deptId);
         return sdInspectionMapper.selectSdInspectionList(sdInspection);
     }

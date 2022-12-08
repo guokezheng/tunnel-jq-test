@@ -2,6 +2,8 @@ package com.tunnel.business.service.dataInfo;
 
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
+import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -185,4 +187,45 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> selectSdDevicesList_exp(SdDevices sdDevices);
+
+    /**
+     * 故障管理页面--根据设备id获取设备详情
+     * @param eqId
+     * @return
+     */
+    public List<SdDevices> getEquipmentInfo(String eqId);
+
+    /**
+     * 查询设备列表--新增巡查点
+     * @param tunnelId
+     * @param deviceType
+     * @return
+     */
+    List<SdDevices> getDevicesList(String tunnelId, String deviceType);
+
+    List<String> fireMarkList(String eqId);
+
+    List<SdDevicesBrand> getDevBrandList();
+
+
+
+    /**
+     * app端获取设备列表
+     * @return
+     */
+    Map getAppDevicesList(String param, String eqType, String eqStatus);
+
+    /**
+     * app端设备信息
+     * @param eqId
+     * @return
+     */
+    List<SdDevices> getAppDevicesInfo(String eqId);
+
+    /**
+     * app端查询设备状态
+     * @param eqId
+     * @return
+     */
+    List<SdDevices> getAppDevicesStatus(String eqId);
 }

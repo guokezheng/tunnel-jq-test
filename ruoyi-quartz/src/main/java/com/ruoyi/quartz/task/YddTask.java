@@ -2,6 +2,7 @@ package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -10,18 +11,25 @@ import com.tunnel.business.domain.event.SdDeviceNowState;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
-import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-//诱导灯定时任务调度
+/**
+ * 诱导灯定时任务调度
+ */
 @Component("yddTask")
 public class YddTask {
+
+    @Value("${authorize.name}")
+    private String deploymentType;
+
     private static final Logger log = LoggerFactory.getLogger(YddTask.class);
 
     @Autowired
@@ -29,10 +37,11 @@ public class YddTask {
 
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
+    private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
 
     public void handle() {
         //定时获取诱导灯当前状态
-        Long guidanceLampTypeId = Long.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode());
+        Long guidanceLampTypeId = Long.valueOf(DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode());
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(guidanceLampTypeId);
         List<SdDevices> guidanceLampDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -40,9 +49,10 @@ public class YddTask {
             SdDevices devices = guidanceLampDevicesList.get(i);
             if (devices.getIp() == null && devices.getPort() == null && ("").equals(devices.getIp())) {
                 continue;
-            } else {
+            } else if (deploymentType != null && deploymentType.equals("GLZ")) {
+                System.err.println("111111111111111");
                 //进行状态查询
-                sendCommand(devices, devices.getIp(), devices.getPort());
+//                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }
@@ -51,18 +61,27 @@ public class YddTask {
         String state = "";
         if (codeMap == null || codeMap.isEmpty()) {
             //当前诱导灯控制器已经离线，存储状态到devices
-            sdDevices.setEqStatus("2");
+            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
             sdDevices.setEqStatusTime(new Date());
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "off");
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "off");
         } else {
             if (codeMap.get("openState") != null) {
                 state = codeMap.get("openState").toString();
             } else if (codeMap.get("runMode") != null) {
                 state = codeMap.get("runMode").toString();
             }
-            sdDevices.setEqStatus("1");
+            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             sdDevices.setEqStatusTime(new Date());
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "on");
+            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "on");
         }
+        //更新诱导灯控制器状态，诱导灯子设备状态也需要更改
         sdDevicesService.updateSdDevices(sdDevices);
+        SdDevices sonDevices = new SdDevices();
+        sonDevices.setFEqId(sdDevices.getEqId());
+        sonDevices.setEqStatus(sdDevices.getEqStatus());
+        sdDevicesService.updateSdDevicesByFEqId(sonDevices);
         return state;
     }
 
@@ -82,7 +101,7 @@ public class YddTask {
         sdDeviceNowState.setFrequency(state[2]);
         dataList.add(sdDeviceNowState);
         jsonObject.put("deviceStatus", dataList);
-        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
+//        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
     }
 
     private static void sendDataToWanJi(SdDevices sdDevices, String runStatus, String runMode) {
@@ -134,10 +153,12 @@ public class YddTask {
             data.setData(value);
             data.setUpdateTime(new Date());
             deviceDataMapper.updateSdDeviceData(data);
+            sendData.pushDevicesDataNowTime(data);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setCreateTime(new Date());
             deviceDataMapper.insertSdDeviceData(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData);
         }
 
     }
@@ -147,10 +168,21 @@ public class YddTask {
             return;
         }
         Integer port = Integer.valueOf(portAddress);
+        if (sdDevices.getBrandId() != null && !sdDevices.getBrandId().equals("0057")) {
+            Map codeMap = InductionlampUtil.getXianKeDeviceBrightness(ip, port);
+            if (codeMap == null || codeMap.isEmpty() || codeMap.get("brightness") == null || codeMap.get("brightness").toString() == "0") {
+                saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
+                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                return;
+            } else {
+                handleCodeMap(sdDevices, codeMap);
+                codeMap = InductionlampUtil.getXianKeDeviceFrequency(ip, port);
+                handleCodeMap(sdDevices, codeMap);
+                saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+            }
+            return;
+        }
         try {
-//                String code = "1GH+STATUS?\r\n";
-//                NettyClient client = new NettyClient(ip, port,code,1);
-//                client.start(null);
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);
             if (state != "" && state.equals("1")) {
@@ -178,8 +210,6 @@ public class YddTask {
                 saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
                 sendDataToWanJi(sdDevices, "lightOff", "0");
             }
-//                client.pushCode(codeMap.get("code").toString());
-//                client.stop();
         } catch (Exception e) {
             e.printStackTrace();
         }

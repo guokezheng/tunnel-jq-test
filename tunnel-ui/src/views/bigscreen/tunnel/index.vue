@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="adminClass-center">
-        <div style="height: 100%">
+        <div style="height: 99%">
           <amap
             v-if="isSelect == 'map'"
             ref="amapRef"
@@ -42,12 +42,6 @@
           <span
             v-show="isSelect == 'map'"
             style="margin-right: 1vw"
-            @click="switchingMap"
-            >切换{{ tunnelName == "山东" ? "四川" : "山东" }}</span
-          >
-          <span
-            v-show="isSelect == 'map'"
-            style="margin-right: 1vw"
             @click="changeViewMode"
             >{{ viewMode == "2D" ? "3D地图" : "2D地图" }}显示</span
           >
@@ -56,7 +50,7 @@
           >
           <span
             @click="
-              changeTuunel('http://10.168.56.206:7090/tunnel-fhs/','fhs')
+              changeTuunel('http://10.168.56.206:7090/tunnel-fhs/', 'fhs')
             "
             v-show="isSelect == '3Dtuunel'"
             :class="isActive == 'fhs' ? 'active' : ''"
@@ -65,7 +59,7 @@
           >
           <span
             @click="
-              changeTuunel('http://10.168.56.206:7090/tunnel-qsg/','qsg')
+              changeTuunel('http://10.168.56.206:7090/tunnel-qsg/', 'qsg')
             "
             v-show="isSelect == '3Dtuunel'"
             :class="isActive == 'qsg' ? 'active' : ''"
@@ -74,7 +68,7 @@
           >
           <span
             @click="
-              changeTuunel('http://10.168.56.206:7090/tunnel-new/','new')
+              changeTuunel('http://10.168.56.206:7090/tunnel-new/', 'new')
             "
             :class="isActive == 'new' ? 'active' : ''"
             v-show="isSelect == '3Dtuunel'"
@@ -161,8 +155,18 @@
           <el-col :span="10" class="body-center">
             <div class="body-center-title">
               <h1>{{ tunnelName }}隧道状况分布</h1>
-              <span class="switchingMap" @click="switchingMap" style="margin-right:1vw;">切换</span>
-              <span style="cursor: pointer;" v-show="!userRight && role" @click="userRight = true">返回全视图</span>
+              <span
+                class="switchingMap"
+                @click="switchingMap"
+                style="margin-right: 1vw"
+                >切换</span
+              >
+              <span
+                style="cursor: pointer"
+                v-show="!userRight && role"
+                @click="userRight = true"
+                >返回全视图</span
+              >
             </div>
             <div style="width: 99%; height: 100%">
               <amap
@@ -292,7 +296,7 @@ import TheAlarmNumber from "./components/theAlarmNumber.vue";
 import weight from "./components/weight.vue";
 import controlRecord from "./components/controlRecord.vue";
 import EquipmentPm from "./components/EquipmentPm.vue";
-import { checkPermi, checkRole } from "@/utils/permission.js"
+import { checkPermi, checkRole } from "@/utils/permission.js";
 
 export default {
   components: {
@@ -820,13 +824,13 @@ export default {
       topShow: true, // 控制记录浮动窗
       isSelect: "map",
       viewMode: "3D",
-      isActive: 'map',
+      isActive: "map",
     };
   },
   created() {
     // 获取角色权限
-    this.role = checkRole(['admin'])
-    this.userRight = this.role
+    this.role = checkRole(["admin"]);
+    this.userRight = this.role;
   },
   mounted() {
     if (!this.userRight) {
@@ -859,18 +863,18 @@ export default {
     },
     // 初始化echarts
     initEcharts() {
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.TrafficFlowRef.TrafficFlow();
         this.$refs.windSpeedRef.windSpeed();
         this.$refs.COconcentrationRef.COconcentration();
         this.$refs.HoleHeightRef.HoleHeight();
         this.$refs.EquipmentRef.Equipment();
         this.$refs.yearRef.year();
-      })
+      });
     },
     // 切换地图显示地区
     switchingMap() {
-      if(this.switchingMapTimeout) clearTimeout(this.switchingMapTimeout);
+      if (this.switchingMapTimeout) clearTimeout(this.switchingMapTimeout);
       this.switchingMapTimeout = setTimeout(async () => {
         if (this.tunnelName == "山东") {
           this.placeDate = {
@@ -1375,7 +1379,7 @@ export default {
         this.echartsDate = this.placeDate.markersList[0].extData.echartsDate;
         this.tunnelName = this.placeDate.name;
         await this.$refs.amapRef.setMarkersList(this.placeDate.markersList);
-        this.$refs.amapRef.delLoopIndex()
+        this.$refs.amapRef.delLoopIndex();
         this.$refs.amapRef.initNetTick();
       }, 500);
     },
@@ -1387,7 +1391,7 @@ export default {
     switchingTuunel() {
       if (this.isSelect == "map") {
         this.isSelect = "3Dtuunel";
-        this.isActive = 'fhs'
+        this.isActive = "fhs";
         this.footerShow = false;
         this.topShow = false;
       } else {
@@ -1404,10 +1408,10 @@ export default {
       this.$refs.amapRef.initNetTick();
     },
     // 3D隧道切换
-    changeTuunel(src,val) {
+    changeTuunel(src, val) {
       if (this.iframeSrc != src) {
         this.iframeSrc = src;
-        this.isActive = val
+        this.isActive = val;
       }
     },
   },
@@ -1571,6 +1575,7 @@ export default {
     }
     div {
       box-sizing: border-box;
+      background: #004375;
     }
     .adminClass-right,
     .adminClass-left {
@@ -1654,12 +1659,12 @@ export default {
       .float-footer {
         position: absolute;
         width: 100%;
-        height: 30%;
+        height: 34%;
         left: 0;
-        bottom: 0;
+        bottom: 1%;
         // border: 1px solid #027dec;
-        border-radius: 1vw 1vw 0 0;
-        background-color: rgba(4, 15, 77, 0.5);
+        // border-radius: 1vw 1vw 0 0;
+        // background-color: #00427a;
 
         .footer-fold-icon {
           position: absolute;
@@ -1696,11 +1701,11 @@ export default {
     .adminClass-right {
       .adminClass-right-top {
         height: 30%;
-        margin-bottom: 0.5vw;
+        // margin-bottom: 0.5vw;
       }
       .adminClass-right-body {
         height: 30%;
-        margin-bottom: 0.5vw;
+        margin-bottom: 20px;
       }
       .adminClass-right-footer {
         height: 38%;
@@ -1711,5 +1716,10 @@ export default {
 .switchingMap {
   cursor: pointer;
   caret-color: transparent;
+}
+.theAlarmNumber-container {
+  border: 1px solid #00ade3;
+  width: 98%;
+  margin: auto;
 }
 </style>

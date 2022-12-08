@@ -14,13 +14,13 @@ import java.util.Map;
  * @date 2020-03-26
  */
 public interface IIotBoardMonitorService {
-    /*
-     * 获取情报板设备树
-     * */
-    List<Ztree> selectBoardTree(SdIotDevice SdIotDevice);
-
-    /*
-     * 获取设备信息
-     * */
-    Map getDeviceInfo(Long deviceId);
+//    /*
+//     * 获取情报板设备树
+//     * */
+//    List<Ztree> selectBoardTree(SdIotDevice SdIotDevice);
+//
+//    /*
+//     * 获取设备信息
+//     * */
+//    Map getDeviceInfo(Long deviceId);
 }

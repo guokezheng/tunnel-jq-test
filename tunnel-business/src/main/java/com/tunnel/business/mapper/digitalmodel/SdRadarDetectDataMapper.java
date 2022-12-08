@@ -70,4 +70,6 @@ public interface SdRadarDetectDataMapper
     public List<Map> eventById(String tunnelId);
 
     public List<Map<String, Object>> vehicleMonitoringInRecent24Hours(@Param("tunnelId") String tunnelId);
+
+    public List<SdRadarDetectData> selectList(SdRadarDetectData sdRadarDetectData);
 }

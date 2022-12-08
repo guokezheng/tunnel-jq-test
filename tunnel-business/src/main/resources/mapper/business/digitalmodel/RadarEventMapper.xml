@@ -41,12 +41,12 @@
 
     <insert id="insertRadarDetect">
         insert into sd_radar_detect_data
-        (record_Serial_Number,vehicle_id,tunnel_id,vehicle_type,vehicle_color,longitude,latitude,speed,lane_num,course_angle,vehicle_license,license_color,stake_num,detect_time)
+        (record_Serial_Number,vehicle_id,tunnel_id,vehicle_type,vehicle_color,longitude,latitude,speed,lane_num,course_angle,vehicle_license,license_color,stake_num,detect_time,distance)
         values
         <foreach collection="list" item="item" separator=",">
             (#{item.recordSerialNumber},#{item.vehicleId},#{item.tunnelId},#{item.vehicleType},#{item.vehicleColor},
             #{item.longitude},#{item.latitude},#{item.speed},#{item.laneNum},#{item.courseAngle},
-            #{item.vehicleLicense},#{item.licenseColor},#{item.stakeNum},#{item.detectTime})
+            #{item.vehicleLicense},#{item.licenseColor},#{item.stakeNum},#{item.detectTime},#{item.distance})
         </foreach>
     </insert>
 

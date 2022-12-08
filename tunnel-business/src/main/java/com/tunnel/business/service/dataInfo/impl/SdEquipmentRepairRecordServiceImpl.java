@@ -41,7 +41,7 @@ public class SdEquipmentRepairRecordServiceImpl implements ISdEquipmentRepairRec
      */
     @Override
     public List<SdEquipmentRepairRecord> selectSdEquipmentRepairRecordList(SdEquipmentRepairRecord sdEquipmentRepairRecord) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdEquipmentRepairRecord.getParams().put("deptId", deptId);
         return sdEquipmentRepairRecordMapper.selectDropSdEquipmentRepairRecordList(sdEquipmentRepairRecord);
     }

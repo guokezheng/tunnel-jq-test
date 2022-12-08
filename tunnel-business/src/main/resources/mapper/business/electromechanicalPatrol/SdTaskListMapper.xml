@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.electromechanicalPatrol.SdTaskListMapper">
+
+    <resultMap type="SdTaskList" id="SdTaskListResult">
+        <result property="id"    column="id"    />
+        <result property="zzjgId"    column="zzjg_id"    />
+        <result property="endPlantime"    column="end_plantime"    />
+        <result property="dispatcher"    column="dispatcher"    />
+        <result property="dispatchTime"    column="dispatch_time"    />
+        <result property="bzId"    column="bz_id"    />
+        <result property="taskDescription"    column="task_description"    />
+        <result property="publishStatus"    column="publish_status"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="walkerId"    column="walker_id"    />
+        <result property="taskEndtime"    column="task_endtime"    />
+        <result property="taskCxtime"    column="task_cxtime"    />
+        <result property="siteDescription"    column="site_description"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdTaskListVo">
+        select id, zzjg_id, end_plantime, dispatcher, dispatch_time, bz_id, task_description, publish_status, task_status, walker_id, task_endtime, task_cxtime, site_description, create_by, create_time, update_by, update_time from sd_task_list
+    </sql>
+
+    <select id="selectSdTaskListList" parameterType="SdTaskList" resultMap="SdTaskListResult">
+        select t.id, d.dept_name zzjg_id, t.end_plantime, u.user_name dispatcher,t.dispatch_time, b.dept_name bz_id, t.task_description, t.publish_status, t.task_status, w.user_name walker_id, t.task_endtime, t.task_cxtime, t.site_description, t.create_by, t.create_time, t.update_by, t.update_time from sd_task_list t
+        left join sys_dept d on d.dept_id =  t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        left join sys_dept b on b.dept_id =  t.bz_id
+        left join sys_user w on t.walker_id = w.user_id
+        <where>
+          1=1
+            <if test="zzjgId != null  and zzjgId != ''"> and d.dept_name like concat('%', #{zzjgId}, '%')</if>
+            <if test="endPlantime != null "> and t.end_plantime = #{endPlantime}</if>
+            <if test="dispatcher != null  and dispatcher != ''"> and t.dispatcher = #{dispatcher}</if>
+            <if test="dispatchTime != null "> and t.dispatch_time = #{dispatchTime}</if>
+            <if test="bzId != null  and bzId != ''"> and t.bz_id = #{bzId}</if>
+            <if test="taskDescription != null  and taskDescription != ''"> and t.task_description = #{taskDescription}</if>
+            <if test="publishStatus != null "> and t.publish_status = #{publishStatus}</if>
+            <if test="taskStatus != null "> and t.task_status = #{taskStatus}</if>
+            <if test="walkerId != null  and walkerId != ''"> and t.walker_id = #{walkerId}</if>
+            <if test="taskEndtime != null "> and t.task_endtime = #{taskEndtime}</if>
+            <if test="taskCxtime != null "> and t.task_cxtime = #{taskCxtime}</if>
+            <if test="siteDescription != null  and siteDescription != ''"> and t.site_description = #{siteDescription}</if>
+        </where>
+        order  by  t.create_time desc
+    </select>
+    
+    <select id="selectSdTaskListById" parameterType="String" resultMap="SdTaskListResult">
+        <include refid="selectSdTaskListVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdTaskList" parameterType="SdTaskList">
+        insert into sd_task_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="zzjgId != null">zzjg_id,</if>
+            <if test="endPlantime != null">end_plantime,</if>
+            <if test="dispatcher != null">dispatcher,</if>
+            dispatch_time,
+            <if test="bzId != null">bz_id,</if>
+            <if test="taskDescription != null">task_description,</if>
+            <if test="publishStatus != null">publish_status,</if>
+            <if test="taskStatus != null">task_status,</if>
+            <if test="walkerId != null">walker_id,</if>
+            <if test="taskEndtime != null">task_endtime,</if>
+            <if test="taskCxtime != null">task_cxtime,</if>
+            <if test="siteDescription != null">site_description,</if>
+            <if test="createBy != null">create_by,</if>
+            create_time,
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="zzjgId != null">#{zzjgId},</if>
+            <if test="endPlantime != null">#{endPlantime},</if>
+            <if test="dispatcher != null">#{dispatcher},</if>
+            SYSDATE(),
+            <if test="bzId != null">#{bzId},</if>
+            <if test="taskDescription != null">#{taskDescription},</if>
+            <if test="publishStatus != null">#{publishStatus},</if>
+            <if test="taskStatus != null">#{taskStatus},</if>
+            <if test="walkerId != null">#{walkerId},</if>
+            <if test="taskEndtime != null">#{taskEndtime},</if>
+            <if test="taskCxtime != null">#{taskCxtime},</if>
+            <if test="siteDescription != null">#{siteDescription},</if>
+            <if test="createBy != null">#{createBy},</if>
+            SYSDATE(),
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdTaskList" parameterType="SdTaskList">
+        update sd_task_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="zzjgId != null">zzjg_id = #{zzjgId},</if>
+            <if test="endPlantime != null">end_plantime = #{endPlantime},</if>
+            <if test="dispatcher != null">dispatcher = #{dispatcher},</if>
+            <if test="dispatchTime != null">dispatch_time = #{dispatchTime},</if>
+            <if test="bzId != null">bz_id = #{bzId},</if>
+            <if test="taskDescription != null">task_description = #{taskDescription},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="walkerId != null">walker_id = #{walkerId},</if>
+            <if test="taskEndtime != null">task_endtime = #{taskEndtime},</if>
+            <if test="taskCxtime != null">task_cxtime = #{taskCxtime},</if>
+            <if test="siteDescription != null">site_description = #{siteDescription},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdTaskListById" parameterType="String">
+        delete from sd_task_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSdTaskListByIds" parameterType="String">
+        delete from sd_task_list where id  =  #{id}
+    </delete>
+
+    <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
+        select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
+        from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
+        left join sys_dept d on s.zzjg_id = d.dept_id
+        left join sys_dict_data t on t.dict_value = s.task_status and t.dict_type = 'task_status'
+        left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'
+        where s.id = #{task_id}
+    </select>
+
+    <select id="selectTableBzDataInfo" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.SysDept">
+        select *
+        from sys_dept
+        <where>
+            1=1
+            <if test="deptId != null and deptId != ''">
+                AND (dept_id = #{deptId} OR dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
+            </if>
+            AND dept_id like 'YG1%'
+        </where>
+    </select>
+
+
+    <update id="abolishSdTaskList" parameterType="SdTaskList">
+        update sd_task_list set publish_status = '1' where id = #{id}
+    </update>
+
+
+
+    <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
+        select d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status from sd_task_list t
+        left join sys_dept d on d.dept_id = t.zzjg_id
+        left join sys_user u on t.dispatcher = u.user_id
+        <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
+        order by t.create_time desc
+    </select>
+
+
+    <update id="acceptSdTaskList" parameterType="SdTaskList">
+        update sd_task_list set task_status = '1' where id = #{id}
+    </update>
+
+
+    <select id="getTaskOpt" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt">
+        select p.opt_type,u.user_name opt_person_id,p.opt_time,opt_description
+        from sd_task_opt p left join sys_user u on u.user_id = p.opt_person_id  where p.task_id = #{taskId}
+    </select>
+
+
+
+
+    <update id="saveLocal" parameterType="SdTaskList">
+        update sd_task_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="zzjgId != null">zzjg_id = #{zzjgId},</if>
+            <if test="endPlantime != null">end_plantime = #{endPlantime},</if>
+            <if test="dispatcher != null">dispatcher = #{dispatcher},</if>
+            <if test="dispatchTime != null">dispatch_time = #{dispatchTime},</if>
+            <if test="bzId != null">bz_id = #{bzId},</if>
+            <if test="taskDescription != null">task_description = #{taskDescription},</if>
+            <if test="publishStatus != null">publish_status = #{publishStatus},</if>
+            <if test="taskStatus != null">task_status = #{taskStatus},</if>
+            <if test="walkerId != null">walker_id = #{walkerId},</if>
+            <if test="taskEndtime != null">task_endtime = #{taskEndtime},</if>
+            <if test="taskCxtime != null">task_cxtime = #{taskCxtime},</if>
+            <if test="siteDescription != null">site_description = #{siteDescription},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+    <insert id="insertTaskOpt" parameterType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt">
+        insert into sd_task_opt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="optType != null">opt_type,</if>
+            <if test="optPersonId != null">opt_person_id,</if>
+            opt_time,
+            <if test="optDescription != null">opt_description,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="optType != null">#{optType},</if>
+            <if test="optPersonId != null">#{optPersonId},</if>
+            SYSDATE(),
+            <if test="optDescription != null">#{optDescription},</if>
+        </trim>
+    </insert>
+
+
+</mapper>

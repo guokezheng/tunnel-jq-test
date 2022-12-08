@@ -48,7 +48,7 @@ public class SdCrashRecoveryServiceImpl implements ISdCrashRecoveryService {
      */
     @Override
     public List<SdCrashRecovery> selectSdCrashRecoveryList(SdCrashRecovery sdCrashRecovery) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdCrashRecovery.getParams().put("deptId", deptId);
         List<SdCrashRecovery> sdCrashRecoveries = sdCrashRecoveryMapper.selectSdCrashRecoveryList(sdCrashRecovery);
         for (SdCrashRecovery sdCrashRecovery1 : sdCrashRecoveries) {

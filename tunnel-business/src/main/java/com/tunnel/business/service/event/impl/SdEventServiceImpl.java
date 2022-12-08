@@ -4,22 +4,30 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.net.InetAddress;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +47,11 @@ public class SdEventServiceImpl implements ISdEventService {
     @Autowired
     private SdTunnelSubareaMapper sdTunnelSubareaMapper;
 
+    @Autowired
+    private SdOperationLogMapper sdOperationLogMapper;
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
 
     /**
      * 查询事件管理
@@ -59,8 +72,8 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> selectSdEventList(SdEvent sdEvent) {
-        if (SecurityUtils.getDeptId() != null && SecurityUtils.getDeptId() != 0L) {
-            Long deptId = SecurityUtils.getDeptId();
+        if (SecurityUtils.getDeptId() != null && !"".equals(SecurityUtils.getDeptId())) {
+            String deptId = SecurityUtils.getDeptId();
             if (deptId == null) {
                 throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
             }
@@ -162,7 +175,7 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public List<SdEvent> getEvent(SdEvent sdEvent) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
@@ -222,6 +235,7 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public Long getSubareaByStakeNum(String tunnelId,String stakeNum,String direction) {
+        //0是下行1是上行   上行，桩号增大；下行，桩号减小
         //1.根据隧道、方向获取所有同一方向上的分区数据
         Long subareaId =0L;
         SdTunnelSubarea subarea = new SdTunnelSubarea();
@@ -234,9 +248,12 @@ public class SdEventServiceImpl implements ISdEventService {
         //2.根据桩号遍历匹配
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            boolean isDown = TunnelDirectionEnum.getTunnelDirection(direction).equals("下行");
             for(SdTunnelSubarea data:subareaData){
-                Integer upLimit = Integer.parseInt(data.getPileMax());
-                Integer downLimit = Integer.parseInt(data.getPileMin());
+                Integer upLimit = isDown?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
+                Integer downLimit = isDown?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
+//                Integer upLimit = Integer.parseInt(data.getPileMax());
+//                Integer downLimit = Integer.parseInt(data.getPileMin());
                 if(upLimit >= compareValue && compareValue >= downLimit){
                     subareaId = data.getsId();
                     return subareaId;
@@ -247,6 +264,10 @@ public class SdEventServiceImpl implements ISdEventService {
             String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
             String[] pileStr = s.split(",");
             int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
+            //下行取反
+            if(isDown){
+                ArrayUtils.reverse(allPile);
+            }
             int index = Math.abs(compareValue-allPile[0]);
             int result = allPile[0];
             int mark = 0;
@@ -263,14 +284,47 @@ public class SdEventServiceImpl implements ISdEventService {
             if(mark %2 !=0){
                 //最接近的值为桩号下限
                 only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
-                subareaId = only.get(0).getsId();
             }else{
                 only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
-                subareaId = only.get(0).getsId();
             }
+            subareaId = only.get(0).getsId();
         }catch (Exception ex){
-            throw new RuntimeException("数据处理异常");
+            ex.printStackTrace();
         }
         return subareaId;
     }
+
+    @Override
+    public List<SdDevices> getEventCamera(String tunnelId, String stakeNum, String direction) {
+        SdDevices devices = new SdDevices();
+        devices.setEqTunnelId(tunnelId);
+        devices.setEqDirection(direction);
+        devices.setEqType(23L);
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
+        try {
+            int param = Integer.valueOf(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());
+            pileNum.add(param);
+            pileNum = pileNum.stream().sorted().collect(Collectors.toList());
+            for(int i = 0;i < pileNum.size(); i++){
+                if(pileNum.get(i)==param){
+                    param = pileNum.get(i+1);
+                    break;
+                }
+            }
+            devices.setPileNum(new Long((long)param));
+            List<SdDevices> result = sdDevicesService.selectSdDevicesList(devices);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Map> eventPopAll(String subIndex) {
+        return sdEventMapper.eventPopAll(subIndex);
+    }
+
+
 }

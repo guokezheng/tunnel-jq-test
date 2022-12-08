@@ -728,7 +728,7 @@
         <hr /> -->
 
         <el-row style="height: 300px">
-          <el-col :span="18" style="height: 300px">
+          <el-col :span="16" style="height: 300px">
             <video
               :src="videoUrl"
               controls
@@ -738,7 +738,7 @@
               class="video"
             ></video>
           </el-col>
-          <el-col :span="6" style="height: 300px">
+          <el-col :span="8" style="height: 300px">
             <img
               v-for="(item, index) in urls"
               :key="index"
@@ -746,6 +746,30 @@
               class="image3"
             />
           </el-col>
+        </el-row>
+        <el-row>
+          <p class="eventTitle">处置记录</p>
+          <el-timeline
+            style="
+              height: calc(100% - 150px);
+              overflow: auto;
+              padding: 20px 0px;
+              box-sizing: border-box;
+            "
+          >
+            <el-timeline-item
+              placement="top"
+              v-for="(item, index) in dialogEventList"
+              :key="index + item.flowTime"
+              color="#00A0FF"
+              :timestamp="item.flowTime"
+            >
+              <!-- <div>{{ item.flowTime }}</div> -->
+              <el-card>
+                <p>{{ item.flowDescription }}</p>
+              </el-card>
+            </el-timeline-item>
+          </el-timeline>
         </el-row>
       </el-form>
     </el-dialog>
@@ -766,17 +790,22 @@ import { listEventType, getTodayEventCount } from "@/api/event/eventType";
 import { listPlan } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { image, video } from "@/api/eventDialog/api.js";
+import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
 export default {
   name: "Event",
   dicts: ["sd_direction"],
   data() {
     return {
+      dialogEventList: [],
       eventMsg: {
         allnum: 0,
         process: 0,
         bl: 0,
       },
-      urls: [],
+      urls: [
+        { imgUrl: require("@/assets/image/nodata.png") },
+        { imgUrl: require("@/assets/image/nodata.png") },
+      ],
 
       videoUrl: "",
       // 管理机构
@@ -884,7 +913,6 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-
     // 管理机构
     toll().then((res) => {
       console.log(res);
@@ -892,6 +920,13 @@ export default {
     });
   },
   methods: {
+    accidentInit(eventId) {
+      var eventId = { eventId: eventId };
+      listEventFlow(eventId).then((result) => {
+        this.dialogEventList = result.rows;
+        console.log(this.dialogEventList);
+      });
+    },
     changeState(row, state) {
       this.$confirm("是否确认忽略此事件！", "警告", {
         confirmButtonText: "确定",
@@ -919,8 +954,10 @@ export default {
         id: id,
       };
       image(param3).then((response) => {
-        console.log(response.data);
-        this.urls = response.data;
+        console.log(response.data.length);
+        if (response.data.length >= 1) {
+          this.urls = response.data;
+        }
       });
       video(param4).then((response) => {
         console.log(response.data, "视频信息");
@@ -950,6 +987,9 @@ export default {
     /** 查询事件管理列表 */
     getList() {
       this.loading = true;
+      if(!this.dateRange){
+        this.dateRange = []
+      }
       this.queryParams.startTime = this.dateRange[0];
       this.queryParams.endTime = this.dateRange[1];
       listEvent(this.addDateRange(this.queryParams)).then((response) => {
@@ -1012,6 +1052,7 @@ export default {
       this.details = true;
       this.title = "事件详情";
       this.eventForm = row;
+      this.accidentInit(row.id);
       this.getUrl(row.id);
       console.log(row, "事件详情row");
     },
@@ -1181,8 +1222,8 @@ hr {
 }
 .image3 {
   padding: 5px;
-  height: 33%;
-  border: solid 1px green;
+  height: 49%;
+  // border: solid 1px green;
   width: 100%;
 }
 .card-box {
@@ -1212,5 +1253,11 @@ hr {
   font-size: 14px;
   // color: #606266;
   font-weight: 700;
+}
+.eventTitle {
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 400;
+  color: #303133;
 }
 </style>

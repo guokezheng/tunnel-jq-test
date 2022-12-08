@@ -3,7 +3,9 @@ package com.tunnel.business.mapper.event;
 
 import com.tunnel.business.domain.event.SdEvent;
 import org.apache.ibatis.annotations.MapKey;
+import org.apache.ibatis.annotations.Select;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,9 +83,37 @@ public interface SdEventMapper
      */
     List<SdEvent> getEventList(List<Long> eventIdList);
 
-
+    /**
+     * 事件统计今日数量
+     * @return
+     */
     Map getTodayEventCount();
 
+    /**
+     * 当日全部未处理事件
+     * @param subIndex
+     * @return
+     */
+    List<Map> eventPopAll(String subIndex);
 
+    /**
+     * 事件当日未处理总条数
+     * @return
+     */
+    int getEventUntreatedNum();
+
+    /**
+     * 事件弹窗设备故障
+     * @return
+     */
+    List<Map> eventPopFault(String subIndex);
+
+    /**
+     * 设备故障条数
+     * @return
+     */
+    @Select("select count(id) from sd_fault_list where " +
+            "fault_status = '0' and TO_DAYS(create_time) = TO_DAYS(NOW())")
+    int eventPopFaultCount();
 
 }

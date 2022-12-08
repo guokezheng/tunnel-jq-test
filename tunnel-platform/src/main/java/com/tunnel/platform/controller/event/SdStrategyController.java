@@ -36,7 +36,6 @@ public class SdStrategyController extends BaseController
      * 查询控制策略列表
      */
     @GetMapping("/list")
-    @ApiOperation("查询控制策略列表")
     public TableDataInfo<List<SdStrategy>> list(SdStrategy sdStrategy)
     {
         startPage();

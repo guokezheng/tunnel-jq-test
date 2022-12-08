@@ -79,7 +79,7 @@
         <div class="lineClass"></div>
         <el-row style="margin-top: 10px">
           <el-col :span="13">
-            <el-form-item label="开关状态:">
+            <el-form-item label="当前状态:">
               <el-select v-model="stateForm2.state">
                 <el-option
                   v-for="item in openState"
@@ -91,7 +91,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-       
+          <el-col :span="11">
+            <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true" label-width="10px">
+              <span style="color: red; font-weight: bold">当前地址为报警点位</span>
+            </el-form-item></el-col>
         </el-row>
         <el-row>
           <el-col :span="15">
@@ -102,7 +105,7 @@
               ></el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="9" v-if="stateForm2.frequency">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ stateForm2.frequency }} m/s</span
             >
@@ -119,10 +122,27 @@
               ></el-slider>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="9" v-if="stateForm2.brightness">
             <span style="padding-left: 10px; line-height: 30px"
               >{{ stateForm2.brightness }} lux</span
             >
+          </el-col>
+        </el-row>
+        <el-row style="margin-top: 10px">
+          <el-col :span="13">
+<!--            <el-form-item label="报警点位:" label-width="130px">-->
+<!--            <el-form-item label="报警点位:" v-show="stateForm2.eqType == 30">-->
+<!--              <el-radio-group v-model="stateForm2.address">-->
+<!--                <el-radio-->
+<!--                  v-for="item in fireMarkData"-->
+<!--                  :key="item.value"-->
+<!--                  :label="item.value"-->
+<!--                >{{item.label}}</el-radio>-->
+<!--              </el-radio-group>-->
+<!--            </el-form-item>-->
+            <!-- <el-form-item v-show="stateForm2.eqType == 30 && showTipe == true">
+              <span style="color: red; font-weight: bold">当前地址为报警点位</span>
+            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
@@ -146,20 +166,19 @@
           >取 消</el-button
         >
       </div>
-    
     </el-dialog>
   </div>
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
 import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
-import { getDevice } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
-
+import { getDevice, fireMarkList } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
+      fireMarkData: [],
       stateForm: {},
       title: "",
       visible: true,
@@ -171,20 +190,13 @@ export default {
         frequency: null,
         brightness: null,
         state: null,
+        fireMark: null,
       },
-    
+      showTipe: false,
       openState: [
         {
-          value: '1',
-          label: "关灯",
-        },
-        {
-          value: '2',
-          label: "同步单闪",
-        },
-        {
-          value: '3',
-          label: "逆向流水",
+          value: "1",
+          label: "关闭",
         },
       ],
     };
@@ -205,15 +217,60 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
         });
+
         await getDevice(this.eqInfo.equipmentId).then((response) => {
-          console.log(response,"诱导灯频率、亮度等")
+          console.log(response, "诱导灯频率、亮度等");
           // this.stateForm2 = response.data
           this.stateForm2 = {
-            frequency:Number(response.data.frequency),
-            brightness:Number(response.data.brightness),
-            state:response.data.state
+            frequency: Number(response.data.frequency),
+            brightness: Number(response.data.brightness),
+            state: response.data.state,
+            address: this.stateForm.query_point_address,
+            eqType: this.stateForm.eqType,
+            eqFeedbackAddress1: this.stateForm.query_point_address,
+          };
+        });
+        if (this.eqInfo.clickEqType == 30) {
+          this.fireMarkData = [
+            {
+              label: "设置为报警点位",
+              value: this.stateForm.query_point_address,
+            },
+          ];
+          if (this.stateForm.query_point_address == this.stateForm.fireMark) {
+            this.fireMarkData.push({ label: "清除报警点位", value: "255" });
+            this.showTipe = true;
+          } else {
+            this.showTipe = false;
           }
-        })
+          this.openState.push(
+            {
+              value: "2",
+              label: "常亮",
+            },
+            {
+              value: "5",
+              label: "报警",
+            },
+          )
+          // fireMarkList(this.eqInfo.equipmentId).then((res) => {
+          //   let data = res.data;
+          //   this.fireMarkData = data;
+          //   //
+          //   console.log(this.fireMarkData, "000");
+          // });
+        } else if (this.eqInfo.clickEqType == 31) {
+          this.openState.push(
+            {
+              value: "2",
+              label: "同步单闪",
+            },
+            {
+              value: "3",
+              label: "逆向流水",
+            },
+          )
+        }
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -240,18 +297,24 @@ export default {
         }
       }
     },
-    
+
     // 提交修改
     handleOK() {
+      if (this.stateForm2.state == "2") {
+        this.stateForm2.address="255";
+      } else if (this.stateForm2.state == "1") {
+        this.stateForm2.address="0";
+      }
       const param = {
         devId: this.stateForm.eqId, //设备id
         state: this.stateForm2.state, //设备状态
         // devType: this.eqInfo.clickEqType,
         brightness: this.stateForm2.brightness, //诱导灯亮度
         frequency: this.stateForm2.frequency, //诱导灯频率
+        fireMark: this.stateForm2.address,
         // tunnelId: this.stateForm.tunnelId,
       };
-
+      this.$modal.msgSuccess("指令下发中，请稍后。");
       controlGuidanceLampDevice(param).then((response) => {
         console.log(response, "提交控制");
         this.$modal.msgSuccess("操作成功");
@@ -358,4 +421,3 @@ export default {
 //   color:white;
 // }
 </style>
-  

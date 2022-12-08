@@ -5,6 +5,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.List;
+
 /**
  * 情报板模板对象 sd_vms_template
  *
@@ -50,7 +52,37 @@ public class SdVmsTemplate extends BaseEntity
     @Excel(name = "情报板类型")
     private String vmsType;
 
+    private String category;
+
+    private String dictLable;
+
     private SdVmsTemplateContent tcontent;
+
+    private List<SdVmsTemplateContent> tcontents;
+
+    public List<SdVmsTemplateContent> getTcontents() {
+        return tcontents;
+    }
+
+    public void setTcontents(List<SdVmsTemplateContent> tcontents) {
+        this.tcontents = tcontents;
+    }
+
+    public String getDictLable() {
+        return dictLable;
+    }
+
+    public void setDictLable(String dictLable) {
+        this.dictLable = dictLable;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public SdVmsTemplateContent getTcontent() {
         if (tcontent == null) {

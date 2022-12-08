@@ -4,6 +4,7 @@
 @import "./element-ui.scss";
 @import "./sidebar-dark.scss";
 @import "./sidebar-light.scss";
+@import "./sidebar-blue.scss";
 @import "./btn.scss";
 
 body {
@@ -38,6 +39,7 @@ html {
       }
       .noSeparate{
         height: 100%;
+        background: none;
       }
     // transform: translateY(-14px);
     // border: solid 1px red;
@@ -153,8 +155,9 @@ p {
 .app-container {
   padding: 16px;
   box-sizing: border-box;
-  overflow: hidden;
+  // overflow: hidden;
   height: 100%;
+  width: 100%;
   // background: white;
 }
 // 内页标题全部样式
@@ -168,6 +171,9 @@ p {
 
 .pagination-container {
   margin-top: 30px;
+}
+.el-dialog__body{
+  padding:0px 20px 10px 20px;
 }
 .el-button:hover{
   background-color: none;

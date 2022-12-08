@@ -17,7 +17,7 @@
       :treetBoxTop="treetBoxTop"
       :treetBoxRight="treetBoxRight"
   ></gisMap> -->
-  <div class="mapBox" style="height: 100%">
+  <div class="mapBox" style="height: 100%;position: relative;">
     <gisMap :tunnelInfo="tunnelInfo" style="height: 100% !important"></gisMap>
     <div class="leftCharts">
       <leftChart1 />
@@ -91,7 +91,7 @@ export default {
   top: 0;
   left: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
-  box-shadow: 20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  box-shadow: 20px 30px 30px 30px rgba($color: #001021, $alpha: 0.9);
   padding-top: 4px;
 }
 .rightCharts {
@@ -101,7 +101,7 @@ export default {
   top: 0;
   right: 0px;
   background: rgba($color: #001021, $alpha: 0.9);
-  box-shadow: -20px 0px 30px 10px rgba($color: #001021, $alpha: 0.9);
+  box-shadow: -20px 30px 30px 30px rgba($color: #001021, $alpha: 0.9);
   padding-top: 4px;
 
 }

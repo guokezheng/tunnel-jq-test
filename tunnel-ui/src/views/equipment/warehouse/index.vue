@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
+        <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
+          <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId" />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="备件名称" prop="partName">
         <el-input
           v-model="queryParams.partName"
@@ -121,11 +127,11 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange" 
+    <el-table v-loading="loading" :data="warehouseList" @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="id" align="center" prop="id" />-->
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" min-width="100" show-overflow-tooltip />
       <el-table-column label="备件名称" align="center" prop="partName" />
       <el-table-column label="品牌" align="center" prop="brand" />
       <el-table-column label="型号" align="center" prop="model" />
@@ -173,6 +179,11 @@
     <!-- 添加或修改备品备件库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+        <el-form-item label="所属隧道" prop="eqTunnelId">
+          <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">
+            <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备件名称" prop="partName">
           <el-input v-model="form.partName" placeholder="请输入备件名称" />
         </el-form-item>
@@ -228,13 +239,16 @@
 </template>
 
 <script>
-import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse, exportWarehouse }
-  from "@/api/equipment/warehouse/warehouse";
-
+import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse, exportWarehouse } from "@/api/equipment/warehouse/warehouse";
+import {listTunnels} from "@/api/equipment/tunnel/api";
 export default {
   name: "Warehouse",
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
+      //所属隧道
+      eqTunnelData: {},
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -259,6 +273,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        tunnelId: null,
         partName: null,
         brand: null,
         model: null,
@@ -328,11 +343,25 @@ export default {
   },
   created() {
     this.getList();
+    this.getTunnel();
   },
   methods: {
+    /** 所属隧道 */
+    getTunnel() {
+      if(this.$cache.local.get("manageStation") == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
+        console.log(response.rows,"所属隧道列表")
+        this.eqTunnelData = response.rows;
+      });
+    },
     /** 查询备品备件库列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listWarehouse(this.queryParams).then(response => {
         this.warehouseList = response.rows;
         this.total = response.total;
@@ -450,6 +479,13 @@ export default {
       return "tableOddRow";
       }
     },
+  },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    }
   }
 };
 </script>

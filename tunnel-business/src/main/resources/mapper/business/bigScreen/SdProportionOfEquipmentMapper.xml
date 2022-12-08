@@ -4,11 +4,38 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdProportionOfEquipmentMapper">
     
-    <select id="getProportionOfEquipment" resultType="hashmap">
+    <select id="getProportionOfEquipment" resultType="hashmap" parameterType="java.lang.String">
         SELECT b.type_name name,count(b.type_name) number from sd_devices a
         left join sd_equipment_type b on a.eq_type = b.type_id
-        WHERE a.eq_tunnel_id = #{tunnelId}
+        WHERE 1=1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND a.eq_tunnel_id = #{tunnelId}
+        </if>
         GROUP BY b.type_name
+    </select>
+
+    <select id="getEquipmentOperationStatus" resultType="com.tunnel.business.domain.bigScreenApi.SdProportionOfEquipment" parameterType="java.lang.String">
+        SELECT
+            count(*) AS number,
+            eq_status as eqStatus,
+            CONCAT(
+                ROUND(
+                    ROUND(( count(*) / ( SELECT count(*) FROM `sd_devices` WHERE 1 = 1 AND eq_status IS NOT NULL AND eq_status != '' )), 5 ) * 100,
+                        2
+                    ),
+                '%'
+            ) AS percentage
+        FROM
+            `sd_devices`
+        WHERE
+            1 = 1
+          AND eq_status IS NOT NULL
+          AND eq_status != ''
+          <if test="tunnelId != null and tunnelId != ''">
+              AND eq_tunnel_id = #{tunnelId}
+          </if>
+        GROUP BY
+            eq_status
     </select>
     
 </mapper>

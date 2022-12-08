@@ -69,6 +69,11 @@ public class Constants
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 
     /**
+     * 集团统一认证平台Token redis key
+     */
+    public static final String TOCC_TOKEN_KEY = "tocc_token:";
+
+    /**
      * 防重提交 redis key
      */
     public static final String REPEAT_SUBMIT_KEY = "repeat_submit:";

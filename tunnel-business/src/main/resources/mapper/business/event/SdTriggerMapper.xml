@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="warningType"    column="warning_type"    />
         <association property="sdDeviceTypeItem" column="element_id" javaType="SdDeviceTypeItem" resultMap="SdDeviceTypeItemResult" />
     </resultMap>
 
@@ -27,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdTriggerVo">
-        select id, relate_id, device_type_id, trigger_type, element_id, compare_pattern, compare_value, create_by, create_time, update_by, update_time from sd_trigger
+        select id, relate_id, device_type_id, trigger_type, element_id, compare_pattern, compare_value, create_by, create_time, update_by, update_time, warning_type from sd_trigger
     </sql>
 
     <select id="selectSdTriggerList" parameterType="SdTrigger" resultMap="SdTriggerResult">
@@ -46,10 +47,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdTriggerVo"/>
         where id = #{id}
     </select>
+    <select id="getTriggerInfo"  resultType="hashmap" parameterType="String">
+        SELECT strategy.id,strategy.tunnel_id,main.compare_pattern,strategy.strategy_type,main.compare_value,main.device_type_id,device.device_id,
+               rl.state alterState,main.element_id,main.warning_type,eq.pile,eq.eq_direction,eq.eq_type,eq.lane,rl.equipments
+         FROM sd_strategy strategy
+              left join sd_strategy_rl rl on rl.strategy_id = strategy.id
+              left join sd_trigger main on main.relate_id = strategy.id
+              left join sd_trigger_device device on main.id = device.trigger_id
+              left join sd_devices eq on eq.eq_id = device.device_id
+        where strategy.strategy_type='2' and strategy.strategy_state = '0' and main.id = #{id}
+    </select>
 
     <select id="selectSdTriggerByRelateId" parameterType="Long" resultMap="SdTriggerResult">
         select a.id, a.relate_id, a.device_type_id, b.device_id, a.trigger_type, a.element_id, a.compare_pattern, a.compare_value,
-               c.item_code,c.item_name
+               c.item_code,c.item_name,a.warning_type
         from sd_trigger a
         left join sd_trigger_device b on a.id = b.trigger_id
         left join sd_device_type_item c on a.element_id = c.id
@@ -68,7 +79,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
-         </trim>
+            <if test="warningType != null">warning_type,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="relateId != null">#{relateId},</if>
             <if test="deviceTypeId != null">#{deviceTypeId},</if>
@@ -80,7 +92,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
-         </trim>
+            <if test="warningType != null">#{warningType},</if>
+        </trim>
     </insert>
 
     <update id="updateSdTrigger" parameterType="SdTrigger">
@@ -96,6 +109,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="warningType != null">warning_type = #{warningType},</if>
         </trim>
         where id = #{id}
     </update>

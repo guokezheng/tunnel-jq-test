@@ -97,7 +97,7 @@ public class SdDataTrafficMonthServiceImpl implements ISdDataTrafficMonthService
             }
         }
         Map<String, Object> params = sdDataTrafficMonth.getParams();
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         params.put("deptId", deptId);
         if (null == params.get("year")) {
             throw new RuntimeException("查询时间条件为空，请选择查询时间！");

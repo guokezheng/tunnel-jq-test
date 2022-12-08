@@ -7,10 +7,10 @@
       v-show="showSearch"
       label-width="40px"
     >
-      <el-form-item label="文本" prop="word">
+      <el-form-item label="图片名称" prop="pictureName">
         <el-input
-          v-model="queryParams.word"
-          placeholder="请输入文本"
+          v-model="queryParams.pictureName"
+          placeholder="请输入图片名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -121,28 +121,30 @@
       :data="vocabularyList"
       max-height="640"
       @selection-change="handleSelectionChange"
-      :default-sort = "{prop: 'creatTime', order: 'descending'}"
+      :default-sort="{ prop: 'creatTime', order: 'descending' }"
       :row-class-name="tableRowClassName"
-
     >
       <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="序号"
-      type="index"
-      width="50">
-    </el-table-column>
+      <el-table-column label="序号" type="index" width="50"> </el-table-column>
 
       <el-table-column label="图片名称" align="center" prop="pictureName" />
       <el-table-column label="图片" align="center">
-
         <template slot-scope="scope">
-　　　　  <img :src="scope.row.pictureUrl" width="35px" height="35px" class="pictureUrl"/>
-　　    </template>
+          　　　　
+          <img
+            :src="scope.row.pictureUrl"
+            width="35px"
+            height="35px"
+            class="pictureUrl"
+          />
+          　　
+        </template>
       </el-table-column>
       <el-table-column label="图片宽度" align="center" prop="imageWidth" />
       <el-table-column label="图片高度" align="center" prop="imageHeight" />
       <!-- <el-table-column label="图片类型" align="center" prop=" imageType" /> -->
       <el-table-column label="图片分辨率" align="center" prop="vmsSize" />
-      <el-table-column label="图片备注" align="center" prop="imageRemark" />
+      <el-table-column label="图片备注" align="center" prop="imageRemark" :show-overflow-tooltip="true"/>
       <el-table-column label="速度" align="center" prop="speed" />
       <!-- <el-table-column label="是否停用" align="center" prop="deleteflag" /> -->
       <el-table-column
@@ -193,7 +195,7 @@
           <!-- <el-input v-model="form.url" placeholder="请输入图片路径" /> -->
           <el-upload
             id="promise"
-            :class="{disabled:eqObj.uploadDisabled}"
+            :class="{ disabled: eqObj.uploadDisabled }"
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
             list-type="picture-card"
@@ -204,13 +206,14 @@
             :on-exceed="handleExceed"
             :on-change="handleChange"
             :onSuccess="uploadSuccess"
+            accept=".png, .jpg"
             :limit="1"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <!-- <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="form.url" alt="" />
-          </el-dialog> -->
+          <el-dialog :visible.sync="dialogVisible" append-to-body>
+            <img width="100%" :src="dialogImageUrl" alt="" />
+          </el-dialog>
         </el-form-item>
         <el-form-item label="图片宽度" prop="imageWidth">
           <!-- <el-input v-model="form.width" placeholder="请输入图片宽度" /> -->
@@ -274,6 +277,7 @@ import {
   editTemplateImage,
   addTemplateImage,
   getTemplateImageInfo,
+  exportTemplateImage,
 } from "@/api/board/templateimage";
 import { loadPicture } from "@/api/equipment/type/api.js";
 import $ from "jquery";
@@ -283,26 +287,28 @@ export default {
   data() {
     var checkWidth = (rule, value, callback) => {
       if (value <= 0 || value >= 1000) {
-        callback(new Error('宽度大于0，小于1000'));
+        callback(new Error("宽度大于0，小于1000"));
       } else {
-        console.log(this.ruleForm,'this.ruleForm')
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('imageWidth');
+        console.log(this.ruleForm, "this.ruleForm");
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("imageWidth");
         }
         callback();
       }
     };
     var checkHeight = (rule, value, callback) => {
       if (value <= 0 || value >= 1000) {
-        callback(new Error('高度大于0，小于1000'));
+        callback(new Error("高度大于0，小于1000"));
       } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('imageHeight');
+        if (this.ruleForm.checkPass !== "") {
+          this.$refs.ruleForm.validateField("imageHeight");
         }
         callback();
       }
     };
     return {
+      dialogImageUrl:'',
+      dialogVisible:false,
       //需要移除的文件ids
       removeIds: [],
       fileData: "", // 文件上传数据（多文件合一）
@@ -311,7 +317,7 @@ export default {
       //图片路径
       img: "",
       fileList: [],
-      eqObj:{uploadDisabled:false},
+      eqObj: { uploadDisabled: false },
       // 遮罩层
       loading: true,
       // 选中数组
@@ -336,24 +342,31 @@ export default {
         pageSize: 10,
         word: null,
         creatTime: null,
+        pictureName: null,
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         pictureName: [
-          { required: true, message: '请输入名称', trigger: 'blur'},
-          { min: 1, max: 30, message: '长度在1~30个字符之间', trigger: 'blur'},
+          { required: true, message: "请输入名称", trigger: "blur" },
+          { min: 1, max: 30, message: "长度在1~30个字符之间", trigger: "blur" },
         ],
         imageWidth: [
-          { required: true, message: '请输入图片宽度', trigger: ['blur', 'change']},
+          {
+            required: true,
+            message: "请输入图片宽度",
+            trigger: ["blur", "change"],
+          },
         ],
         imageHeight: [
-          { required: true, message: '请输入图片高度', trigger: ['blur', 'change']},
+          {
+            required: true,
+            message: "请输入图片高度",
+            trigger: ["blur", "change"],
+          },
         ],
-        vmsSize:[
-          {required: true, message: '请输入分辨率', trigger: 'blur'}
-        ]
+        vmsSize: [{ required: true, message: "请输入分辨率", trigger: "blur" }],
       },
     };
   },
@@ -364,7 +377,9 @@ export default {
   methods: {
     getList() {
       this.loading = true;
+      console.log(this.queryParams,"this.queryParams");
       getTemplateImageList(this.queryParams).then((response) => {
+        console.log(response, "情报板列表");
         this.vocabularyList = response.rows;
         this.total = response.total;
         this.loading = false;
@@ -389,6 +404,7 @@ export default {
         speed: null,
         deleteflag: null,
       };
+      this.fileList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -421,7 +437,7 @@ export default {
       var that = this;
       that.fileList = [];
       getTemplateImageInfo(id).then((response) => {
-        console.log(response,"修改情报板图片")
+        console.log(response, "修改情报板图片");
         this.form = response.data;
         this.title = "修改情报板图片";
 
@@ -439,7 +455,7 @@ export default {
       for (let i = 0; i < iFileList.length; i++) {
         let iconName = iFileList[i].stateIconName;
         // let iconUrl = await that.picture(iFileList[i].url);
-        let iconUrl = iFileList[i].url
+        let iconUrl = iFileList[i].url;
         that.fileList.push({
           name: iconName,
           url: iconUrl,
@@ -448,8 +464,8 @@ export default {
       }
     },
     handlePictureCardPreview(file) {
-      // this.dialogImageUrl = file.url;
-      // this.dialogVisible = true;
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     /** 提交按钮 */
     submitForm() {
@@ -460,12 +476,29 @@ export default {
       this.fileData.append("imageWidth", this.form.imageWidth);
       this.fileData.append("imageHeight", this.form.imageHeight);
       this.fileData.append("vmsSize", this.form.vmsSize);
-      this.fileData.append("imageRemark", this.form.imageRemark);
-      this.fileData.append("speed", this.form.speed);
-      this.fileData.append("deleteflag", this.form.deleteflag == false ? '0' : '1');
-      console.log(this.fileData)
+      this.fileData.append(
+        "imageRemark",
+        this.form.imageRemark == null ? "" : this.form.imageRemark
+      );
+      this.fileData.append(
+        "speed",
+        this.form.speed == null ? "" : this.form.speed
+      );
+      this.fileData.append(
+        "deleteflag",
+        this.form.deleteflag == false ? "0" : "1"
+      );
+      console.log(this.fileData);
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          if (parseInt(this.form.imageWidth) == 0) {
+            this.$modal.msgError("图片宽度不能为0");
+            return;
+          }
+          if (parseInt(this.form.imageHeight) == 0) {
+            this.$modal.msgError("图片高度不能为0");
+            return;
+          }
           if (this.form.id != null) {
             this.fileData.append("id", this.form.id);
             this.fileData.append("pictureUrl", this.form.pictureUrl);
@@ -510,13 +543,13 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm("是否确认导出所有情报板敏感字管理数据项?", "警告", {
+      this.$confirm("是否确认导出所有情报板模板图片数据项?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(function () {
-          return exportVocabulary(queryParams);
+          return exportTemplateImage(queryParams);
         })
         .then((response) => {
           this.$download.name(response.msg);
@@ -527,10 +560,10 @@ export default {
       this.fileList = fileList;
       if (fileList.length >= 1) {
         this.eqObj.uploadDisabled = true;
-        this.$set(this.eqObj, 'uploadDisabled', true);
+        this.$set(this.eqObj, "uploadDisabled", true);
       } else {
           this.eqObj.uploadDisabled = false;
-          this.$set(this.eqObj, 'uploadDisabled', false);
+        this.$set(this.eqObj, "uploadDisabled", false);
       }
       this.$forceUpdate();
     },
@@ -546,8 +579,8 @@ export default {
     uploadFile(file) {
       this.fileData.append("file", file.file); // append增加数据
     },
-    uploadSuccess(){
-      console.log('成功了')
+    uploadSuccess() {
+      console.log("成功了");
       this.$refs.upload.clearFiles();
     },
     // 选取文件超过数量提示
@@ -574,8 +607,8 @@ export default {
     },
      // 表格的行样式
      tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
       return "tableOddRow";
       }

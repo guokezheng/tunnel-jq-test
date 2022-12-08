@@ -164,4 +164,12 @@ public class SdDeviceDataController extends BaseController
         Map<String, Object> todayLDData = sdDeviceDataService.getTodayLDData(deviceId);
         return Result.success(todayLDData);
     }
+
+    @GetMapping("/dataLogInfoList")
+    public TableDataInfo dataLogInfoList(SdDeviceData sdDeviceData)
+    {
+        startPage();
+        List<Map<String, String>> list = sdDeviceDataService.dataLogInfoList(sdDeviceData);
+        return getDataTable(list);
+    }
 }

@@ -67,7 +67,7 @@ public class SdTrafficControlInfoServiceImpl implements ISdTrafficControlInfoSer
      */
     @Override
     public List<Map> selectControlInfoList(SdTrafficIncidentInfo incidentInfo) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         incidentInfo.getParams().put("deptId", deptId);
         List<Map> list = sdTrafficControlInfoMapper.selectControlInfoList(incidentInfo);
         //获取列表数据的措施详情

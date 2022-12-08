@@ -15,6 +15,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="templateType"    column="template_type"    />
         <result property="vmsType"    column="vms_type"    />
         <result property="remark"    column="remark"    />
+        <result property="category"    column="category"    />
+        <result property="dictLable"    column="dict_lable"    />
         <association property="tcontent" column="template_id" javaType="SdVmsTemplateContent" resultMap="contentResult"/>
     </resultMap>
 
@@ -35,9 +37,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectSdVmsTemplateVo">
         select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
                a.template_type, a.vms_type, a.remark, b.id, b.template_id, b.content, b.font_color, b.font_size,
-               b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width
+               b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width, a.category, c.dict_label
         from sd_vms_template a
         left join sd_vms_template_content b on a.id = b.template_id
+        left join sys_dict_data c on c.dict_type = "iot_template_category" and a.category = c.dict_value
     </sql>
 
     <select id="selectSdVmsTemplateList" parameterType="SdVmsTemplate" resultMap="SdVmsTemplateResult">
@@ -48,7 +51,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isCurrency != null "> and a.is_currency = #{isCurrency}</if>
             <if test="templateType != null "> and a.template_type = #{templateType}</if>
             <if test="vmsType != null  and vmsType != ''"> and a.vms_type = #{vmsType}</if>
+            <if test="category != null  and category != ''"> and a.category = #{category}</if>
         </where>
+    </select>
+
+    <select id="selectTemplateList" resultMap="SdVmsTemplateResult">
+        select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
+               a.template_type, a.vms_type, a.remark, a.category
+        from sd_vms_template a
+        where a.category = #{category}
     </select>
 
     <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">
@@ -68,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateType != null">template_type,</if>
             <if test="vmsType != null">vms_type,</if>
             <if test="remark != null">remark,</if>
+            <if test="category != null">category,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="screenSize != null">#{screenSize},</if>
@@ -79,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="templateType != null">#{templateType},</if>
             <if test="vmsType != null">#{vmsType},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="category != null">#{category},</if>
          </trim>
     </insert>
 
@@ -91,9 +104,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stopTime != null">stop_time = #{stopTime},</if>
             <if test="applyType != null">apply_type = #{applyType},</if>
             <if test="isCurrency != null">is_currency = #{isCurrency},</if>
-            <if test="templateType != null">template_type = #{templateType},</if>
             <if test="vmsType != null">vms_type = #{vmsType},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="category != null">category = #{category},</if>
         </trim>
         where id = #{id}
     </update>

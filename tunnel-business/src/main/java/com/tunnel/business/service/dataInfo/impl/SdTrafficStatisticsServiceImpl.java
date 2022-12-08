@@ -42,7 +42,7 @@ public class SdTrafficStatisticsServiceImpl implements ISdTrafficStatisticsServi
      */
     @Override
     public List<SdTrafficStatistics> selectSdTrafficStatisticsList(SdTrafficStatistics sdTrafficStatistics) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdTrafficStatistics.getParams().put("deptId", deptId);
         return sdTrafficStatisticsMapper.selectSdTrafficStatisticsList(sdTrafficStatistics);
     }

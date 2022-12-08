@@ -41,15 +41,15 @@
           v-hasPermi="['system:templateConfig:add']"
           >新增</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:templateConfig:edit']"
-          >修改</el-button
-        >
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['system:templateConfig:edit']"-->
+<!--          >修改</el-button-->
+<!--        >-->
         <el-button
           type="primary"
           plain
@@ -59,14 +59,14 @@
           v-hasPermi="['system:templateConfig:remove']"
           >删除</el-button
         >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:templateConfig:export']"
-          >导出</el-button
-        >
+<!--        <el-button-->
+<!--          type="primary"-->
+<!--          plain-->
+<!--          size="mini"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['system:templateConfig:export']"-->
+<!--          >导出</el-button-->
+<!--        >-->
       </el-form-item>
     </el-form>
     <!-- <el-row :gutter="10" class="mb8">
@@ -130,10 +130,10 @@
     max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
-      <el-table-column label="屏幕尺寸" align="center" prop="screenSize" :formatter="screenSizeFormat" />
+      <!-- <el-table-column label="序号" align="center" type="index" /> -->
+      <el-table-column label="屏幕尺寸" align="center" prop="screenSize"  />
       <el-table-column label="入屏方式" align="center" prop="inScreenMode" :formatter="inScreenModeMatter" />
-      <el-table-column label="滚动速度/毫秒" align="center" prop="rollSpeed" />
+      <el-table-column label="滚动速度/毫秒" align="center" prop="tcontent.content" />
       <el-table-column label="停留时间/秒" align="center" prop="stopTime" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
@@ -182,6 +182,7 @@ export default {
   data () {
     return {
       screenSizeList:[],//屏幕尺寸列表
+      iotTemplateCategoryList:[],
         // 显示搜索条件
         showSearch: true,
         dataForm: {},
@@ -335,6 +336,10 @@ export default {
       this.screenSizeList = res.data;
       console.log(this.screenSizeList,'this.screenSizeList')
     });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+    });
   },
   methods: {
     init () {
@@ -366,7 +371,7 @@ export default {
         this.loading = false;
         this.$modal.msgError(err);
       });
-      
+
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -445,7 +450,7 @@ export default {
           this.$refs.addOrUpdate.dataForm.id = false;
         }
         console.log(this.$refs.addOrUpdate.dataForm.id)
-        // this.$refs.addOrUpdate.isAdd = 
+        // this.$refs.addOrUpdate.isAdd =
         this.$refs.addOrUpdate.init()
       })
     },

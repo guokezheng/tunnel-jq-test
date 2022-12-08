@@ -116,7 +116,7 @@ public class XfyjWaterReceviceServiceImpl implements XfyjWaterReceviceService {
             }
             // 通过隧道Id查询隧道所属部门，用于设备记录保存
             SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(xfyjMaintenanceOfEquipment.getEqTunnelId());
-            long zdbh = sdTunnels.getDeptId();
+            String zdbh = sdTunnels.getDeptId();
             // 通讯记录插入
             SdXfwaterRecord electricalDetectorRecord = new SdXfwaterRecord();
             electricalDetectorRecord.setDeptId(zdbh);

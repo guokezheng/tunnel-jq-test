@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdDevicesBrandMapper">
+    <resultMap type="com.tunnel.business.domain.dataInfo.SdDevicesBrand" id="SdDevicesBrandResult">
+        <result property="supplierId" column="supplier_id"/>
+        <result property="supplierName" column="supplier_name"/>
+        <result property="shortName" column="short_name"/>
+        <result property="isDel" column="is_del"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectSdDevicesBrandVo">
+        select supplier_id,
+               supplier_name,
+               short_name,
+               is_del,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark
+        from sd_devices_brand
+    </sql>
+
+    <select id="selectSdDevicesBrandList" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesBrand"
+            resultMap="SdDevicesBrandResult">
+        <include refid="selectSdDevicesBrandVo"/>
+        <where>
+            is_del = 0
+            <if test="supplierName != null  and supplierName != ''">
+                and supplier_name like concat('%', #{supplierName}, '%')
+            </if>
+            <if test="shortName != null  and shortName != ''">
+                and short_name like concat('%', #{shortName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSdDevicesBrandBySupplierId" parameterType="String" resultMap="SdDevicesBrandResult">
+        <include refid="selectSdDevicesBrandVo"/>
+        where supplier_id = #{supplierId}
+    </select>
+
+    <insert id="insertSdDevicesBrand" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesBrand">
+        insert into sd_devices_brand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">
+                supplier_id,
+            </if>
+            <if test="supplierName != null">
+                supplier_name,
+            </if>
+            <if test="shortName != null">
+                short_name,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierId != null">
+                #{supplierId},
+            </if>
+            <if test="supplierName != null">
+                #{supplierName},
+            </if>
+            <if test="shortName != null">
+                #{shortName},
+            </if>
+            <if test="isDel != null">
+                #{isDel},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateSdDevicesBrand" parameterType="com.tunnel.business.domain.dataInfo.SdDevicesBrand">
+        update sd_devices_brand
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierName != null">
+                supplier_name = #{supplierName},
+            </if>
+            <if test="shortName != null">
+                short_name = #{shortName},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+        </trim>
+        where supplier_id = #{supplierId}
+    </update>
+
+    <update id="deleteSdDevicesBrandBySupplierId" parameterType="String">
+        update sd_devices_brand set is_del=1 where supplier_id = #{supplierId}
+    </update>
+
+    <update id="deleteSdDevicesBrandBySupplierIds" parameterType="String">
+        update sd_devices_brand set is_del=1
+        where supplier_id in
+        <foreach item="supplierId" collection="array" open="(" separator="," close=")">
+            #{supplierId}
+        </foreach>
+    </update>
+
+</mapper>

@@ -22,7 +22,7 @@ import com.ruoyi.common.utils.sql.SqlUtil;
 
 /**
  * web层通用数据处理
- * 
+ *
  */
 public class BaseController
 {
@@ -122,7 +122,7 @@ public class BaseController
 
     /**
      * 响应返回结果
-     * 
+     *
      * @param rows 影响行数
      * @return 操作结果
      */
@@ -133,7 +133,7 @@ public class BaseController
 
     /**
      * 响应返回结果
-     * 
+     *
      * @param result 结果
      * @return 操作结果
      */
@@ -169,7 +169,7 @@ public class BaseController
     /**
      * 获取登录部门id
      */
-    public Long getDeptId()
+    public String getDeptId()
     {
         return getLoginUser().getDeptId();
     }

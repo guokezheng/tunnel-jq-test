@@ -38,6 +38,9 @@ public interface ISdEventFlowService {
     int execPlanSaveEventFlow(String eventId, Map data);
 
     int saveUserConfirmFlow(String eventId);
+
+    int saveUserEventEndedFlow(String eventId);
+
     /**
      * 新增事件处理流程
      *

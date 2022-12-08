@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 操作日志Service业务层处理
@@ -42,7 +43,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      */
     @Override
     public List<SdOperationLog> selectSdOperationLogList(SdOperationLog sdOperationLog) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
@@ -58,7 +59,7 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
      */
     @Override
     public int insertSdOperationLog(SdOperationLog sdOperationLog) {
-        sdOperationLog.setCreateTime(DateUtils.getNowDate());
+        //sdOperationLog.setCreateTime(DateUtils.getNowDate());
         return sdOperationLogMapper.insertSdOperationLog(sdOperationLog);
     }
 
@@ -124,5 +125,10 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
             WebSocketService.broadcast("operationLog", sdOperationLog);
         }
         return AjaxResult.success();
+    }
+
+    @Override
+    public List<Map> getDispatchExecuted(String eventId) {
+        return sdOperationLogMapper.getDispatchExecuted(eventId);
     }
 }

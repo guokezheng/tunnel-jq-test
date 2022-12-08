@@ -9,10 +9,11 @@
 import request from '@/utils/request'
 
 // 查询情报板模板图片列表
-export function getTemplateImageList() {
+export function getTemplateImageList(query) {
     return request({
       url: '/system/upload/list',
       method: 'get',
+      params: query
     })
 }
 
@@ -49,4 +50,13 @@ export function deleteTemplateImage(id) {
         url: '/system/upload/' + id,
         method: 'delete'
     })
+}
+
+// 导出情报板图片
+export function exportTemplateImage(query) {
+  return request({
+    url: '/system/upload/export',
+    method: 'get',
+    params: query
+  })
 }

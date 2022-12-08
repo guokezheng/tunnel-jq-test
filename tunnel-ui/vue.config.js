@@ -33,22 +33,40 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        // target: `http://127.0.0.1:8000`, // 服务器
-        target: `http://10.3.16.40:8000`, // 服务器
+
+        target: `http://127.0.0.1:8000`, // 服务器
+        // target: `http://10.3.16.40:8000`, // 服务器
+        // target: `http://10.168.56.206:8000`, // 服务器
+
+        // target: `http://10.3.16.40:8000`, // 服务器
+
         // target: `http://10.168.64.171:8000`, // 服务器
+
+        // target: `http://10.168.56.206:8000`, // 服务器、
+        // target: `http://10.168.78.127:8000/`, // 王畅、
+
         // target: `http://10.168.56.206:7075`, // 服务器、
+        // target: `http://10.168.64.171:8000/`, // 翟昌宏
+
+        // target: `http://10.168.56.206:7070`, // 服务器、
+
         // target: `http://10.168.65.230:8000/`, // 展双、
+
         // target: `http://10.168.65.206:8080/`, // 服务器、
-        // target: `http://10.168.66.254:8000`, //张浩程 服务器、
-        // target: `http://10.168.57.31:7075`, // 杜振宇服务器、
-        // target: `http://10.168.70.120:8000`, // 张国利服务器、
-        // target: `http://10.168.64.171:8000`, //玉伟服务器、
+        // target: `http://10.168.78.127:8000/`,//王畅
+        // target: `http://10.168.64.171:8000/`, // 翟昌宏
+
+        // target: `http://10.168.65.230:7075/`, // 展双、
+        // target: `http://10.168.78.127:8000/`, // 王畅
+        // target: `http://10.168.64.75:8000/`, // 吴昊阳
+        // target: `http://10.168.64.171:8000/`, // 翟昌宏
+        // target: `http://10.3.16.252:8000/`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
       },
-      '/gdLayer':{
+      '/gdLayer': {
         target: `https://tm.amap.com/trafficengine/mapabc/traffictile`, // 服务器
         secure: true,
         changeOrigin: true,
@@ -59,6 +77,19 @@ module.exports = {
     },
 
     disableHostCheck: true
+  },
+  css: {
+    // 避免dart-sass将伪元素中的字符集转义
+    loaderOptions: {
+      sass: {
+        //additionalData: `@import "@/assets/style/scss/index.scss";`,
+        // 避免dart-sass在打包过程中会将伪元素content中的字符集转义
+        sassOptions: {
+          outputStyle: 'expanded'
+        }
+      }
+    },
+    extract: false
   },
   configureWebpack: {
     name: name,

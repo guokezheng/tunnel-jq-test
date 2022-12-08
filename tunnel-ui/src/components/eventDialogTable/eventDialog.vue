@@ -60,14 +60,22 @@
                 <img :src="item.imgUrl" style="width: 100%" />
               </el-carousel-item>
             </el-carousel>
-            <div style="width:100%;height:200px;position: absolute; top: 0;text-align: center;" v-show="urls.length == 0">
+            <div
+              style="
+                width: 100%;
+                height: 200px;
+                position: absolute;
+                top: 0;
+                text-align: center;
+              "
+              v-show="urls.length == 0"
+            >
               <el-image
-              :src="require('@/assets/icons/outline.png')"
-              style=" width: 229px"
-            />
-            <div style="font-weight:bold">暂无内容!</div>
+                :src="require('@/assets/icons/outline.png')"
+                style="width: 229px"
+              />
+              <div style="font-weight: bold">暂无内容!</div>
             </div>
-            
           </div>
         </div>
         <div class="eventRight">
@@ -81,7 +89,9 @@
           </div>
           <div class="eventRow">
             <div>车道号:</div>
-            <div>{{ eventMes.laneNo }}<span v-if="eventMes.laneNo">车道</span></div>
+            <div>
+              {{ eventMes.laneNo }}<span v-if="eventMes.laneNo">车道</span>
+            </div>
           </div>
           <div class="eventRow">
             <div>事件位置经度:</div>
@@ -103,10 +113,25 @@
             <div>事件结束时间:</div>
             <div>{{ eventMes.endTime }}</div>
           </div>
-
-          <div style="width: 90%; display: flex; margin-top: 80px">
+          <div class="eventRow">
+            <div>上游相机:</div>
+            <!-- <div>{{'1000米'}}</div> -->
+            <img
+              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              class="icon"
+              @click="openVideoDialog(video1)"
+             v-show="video1"
+            />
+            <img
+              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              class="icon" style="margin-left:10px"
+              @click="openVideoDialog(video2)"
+              v-show="video2"
+            />
+          </div>
+          <div style="width: 90%; display: flex; margin-top: 10px">
             <div class="handle button" @click="handleDispatch(eventMes)">
-              处 理
+              应急调度
             </div>
             <div class="ignore button" @click="handleIgnore(eventMes)">
               忽 略
@@ -122,36 +147,49 @@
 // import { mapState } from 'vuex';
 import bus from "@/utils/bus";
 import { loadPicture } from "@/api/equipment/type/api.js";
-import { image, video, userConfirm } from "@/api/eventDialog/api.js";
+import {
+  image,
+  video,
+  userConfirm,
+  getEventCamera,
+} from "@/api/eventDialog/api.js";
 import { listEventType } from "@/api/event/eventType";
 import { updateEvent, listEvent } from "@/api/event/event";
 
 export default {
   name: "eventDialog",
-  props: ["eventId"],
+  // props: ["eventId"],
   data() {
     return {
       // eventList: [],
-      eventPicDialog: false,
+      eventPicDialog: true,
       urls: [],
       videoUrl: "",
       row11: null,
       // event: [{}],
       eventMes: {},
       eventTypeData: [],
+      eventId: "",
+      video1:'',
+      video2:''
     };
   },
   created() {
-    this.getDicts("sd_event_source").then((data) => {
-      this.tabList = data.data;
-    });
+    // this.getDicts("sd_event_source").then((data) => {
+    //   this.tabList = data.data;
+    // });
     this.getEventTypeList();
   },
   mounted() {
-    bus.$on('getPicId',(e) =>{
-      this.init(e)
-    })
+    bus.$on("getPicId", (e) => {
+      this.eventId = e;
+      this.init(e);
+    });
   },
+  beforeCreate() {},
+  // beforeDestroy(){
+  //   bus.$off();
+  // },
   methods: {
     /** 查询事件类型列表 */
     getEventTypeList() {
@@ -172,14 +210,25 @@ export default {
           id: id,
         };
         listEvent(param).then((response) => {
-          if(response.rows.length>0){
-            this.eventMes = response.rows[0];
+          console.log(response, "response");
 
+          if (response.rows.length > 0) {
+            this.eventMes = response.rows[0];
+            this.$forceUpdate();
+            getEventCamera(
+              response.rows[0].tunnelId,
+              response.rows[0].stakeNum,
+              response.rows[0].direction
+            ).then((response) => {
+              this.video1 = response.data[0].eqId
+              this.video2 = response.data[1].eqId
+
+            });
           }
         });
-      this.getUrl(id);
+        this.getUrl(id);
       }
-      this.eventPicDialog = true;
+      // this.eventPicDialog = true;
     },
     getUrl(id) {
       const param3 = {
@@ -200,20 +249,22 @@ export default {
 
     // 忽略事件
     handleIgnore(event) {
-      if(event){
+      if (event) {
         const param = {
-        id: event.id,
-        eventState: "2",
-      };
-      updateEvent(param).then((response) => {
-        this.$modal.msgSuccess("已成功忽略");
-      });
+          id: event.id,
+          eventState: "2",
+        };
+        updateEvent(param).then((response) => {
+          this.$modal.msgSuccess("已成功忽略");
+        });
       }
-      this.$emit("closePicDialog");
-      this.$emit("closeDialog");
-      bus.$emit("closeTableDialog");
+      // this.$emit("closePicDialog");
+      bus.$emit("closePicDialog");
+      bus.$emit("forceUpdateTable", event.id);
 
-      this.eventPicDialog = false;
+      // bus.$emit("closeTableDialog");
+
+      // this.eventPicDialog = false;
     },
     // 处理 跳转应急调度
     handleDispatch(event) {
@@ -228,17 +279,27 @@ export default {
         path: "/emergency/administration/dispatch",
         query: { id: event.id },
       });
-      if(this.eventMes.eventState == "3"){
+      if (this.eventMes.eventState == "3") {
         userConfirm(event.id).then(() => {});
       }
+      // bus.$emit("closePicDialog");
       bus.$emit("closePicDialog");
       bus.$emit("closeDialog");
-      bus.$emit("closeTableDialog")
-      this.eventPicDialog = false;
+      // this.eventPicDialog = false;
+    },
+    // 弹摄像机弹窗
+    openVideoDialog(id) {
+      setTimeout(()=>{
+        bus.$emit("getVideoDialog",id)
+
+      },200)
+      bus.$emit("openVideoDialog")
+
+      bus.$emit("closePicDialog")
     },
     closeDialogTable() {
-      this.$emit("closePicDialog");
-      this.eventPicDialog = false;
+      bus.$emit("closePicDialog");
+      // this.eventPicDialog = false;
     },
   },
 };
@@ -324,7 +385,7 @@ export default {
   font-size: 16px;
   .eventRow {
     display: flex;
-    height: 50px;
+    height: 45px;
     > div:nth-of-type(1) {
       width: 140px;
       color: #0198ff;
@@ -346,14 +407,14 @@ export default {
     color: #fff;
   }
   .handle {
-    background: linear-gradient(180deg, #E5A535 0%, #FFBD49 100%);
+    background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
   }
   .handle:hover {
     background-color: #e1aa43;
     color: white;
   }
   .ignore {
-    background: linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
   .ignore:hover {
     background-color: #19b9ea;
@@ -391,6 +452,11 @@ export default {
   text-align: center;
   line-height: 35px;
   cursor: pointer;
+}
+.icon {
+  width: 20px;
+  height: 22px;
+  margin-left: 5px;
 }
 ::v-deep .el-icon-close {
   font-size: 24px !important;

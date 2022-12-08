@@ -3,6 +3,7 @@ package com.tunnel.business.service.dataInfo.impl;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.framework.web.domain.server.Sys;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
@@ -69,17 +70,31 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService {
     public List<SdEquipmentState> selectSdEquipmentStateList(SdEquipmentState sdEquipmentState) {
 //        return sdEquipmentStateMapper.selectDropSdEquipmentStateList(sdEquipmentState);
         List<SdEquipmentState> list = sdEquipmentStateMapper.selectDropSdEquipmentStateList(sdEquipmentState);
+        SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
+        List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile);
+        List<SdEquipmentStateIconFile> iconList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            String iconFileId = list.get(i).getIconFileId();
+            SdEquipmentState state = list.get(i);
+            String iconFileId = state.getIconFileId();
+            iconList = new ArrayList<>();
             if (iconFileId != null && !"".equals(iconFileId) && !"null".equals(iconFileId)) {
                 if (!"-1".equals(iconFileId)) {
-                    SdEquipmentStateIconFile sdEquipmentStateIconFile = new SdEquipmentStateIconFile();
-                    sdEquipmentStateIconFile.setStateIconId(iconFileId);
-                    list.get(i).setiFileList(sdEquipmentIconFileMapper.selectStateIconFileList(sdEquipmentStateIconFile));
+                    for (int j = 0;j < sdEquipmentStateIconFiles.size();j++) {
+                        SdEquipmentStateIconFile file = sdEquipmentStateIconFiles.get(j);
+                        if (file.getStateIconId() != null && !file.getStateIconId().equals("") && file.getStateIconId().equals(iconFileId)) {
+                            iconList.add(file);
+                        }
+                    }
+                    //车道指示器类型顺序变换
+                    if(state.getStateTypeId() == 1){
+                        Collections.reverse(iconList);
+                        state.setiFileList(iconList);
+                    }else {
+                        state.setiFileList(iconList);
+                    }
                 }
             }
         }
-
         return list;
     }
 

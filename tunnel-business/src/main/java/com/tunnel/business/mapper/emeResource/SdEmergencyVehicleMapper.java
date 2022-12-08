@@ -1,9 +1,12 @@
 package com.tunnel.business.mapper.emeResource;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,6 +42,13 @@ public interface SdEmergencyVehicleMapper
     public int insertSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle);
 
     /**
+     * 批量新增应急车辆
+     * @param list
+     * @return
+     */
+    public int insertSdEmergencyVehicles(@Param("list") List<SdEmergencyVehicle> list);
+
+    /**
      * 修改应急车辆
      * 
      * @param sdEmergencyVehicle 应急车辆
@@ -62,5 +72,11 @@ public interface SdEmergencyVehicleMapper
      */
     public int deleteSdEmergencyVehicleByIds(Long[] ids);
 
-    List<SdEmergencyOrg> getOrg();
+    List<Map<String, Object>> getOrg();
+
+    /**
+     * 删除应急车辆数据
+     * @return
+     */
+    int deleteSdVehicle();
 }

@@ -3,14 +3,18 @@ package com.ruoyi.common.utils.oss;
 import com.aliyun.oss.ClientBuilderConfiguration;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.PutObjectResult;
+import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 @Component
 public class OssUtil {
@@ -22,6 +26,8 @@ public class OssUtil {
     private static String accessKeyId;
 
     private static String accessKeySecret;
+
+    private static String outAccessDomainName;
 
     private static String upFolder;
 
@@ -43,9 +49,14 @@ public class OssUtil {
         return accessKeySecret;
     }
 
+    public static String getOutAccessDomainName() {
+        return outAccessDomainName;
+    }
+
     public static String getUpFolder() {
         return upFolder;
     }
+
     public static String getUploadType() {
         return uploadType;
     }
@@ -64,6 +75,10 @@ public class OssUtil {
 
     public static void setAccessKeySecret(String accessKeySecret) {
         OssUtil.accessKeySecret = accessKeySecret;
+    }
+
+    public static void setOutAccessDomainName(String outAccessDomainName) {
+        OssUtil.outAccessDomainName = outAccessDomainName;
     }
 
     public static void setUpFolder(String upFolder) {
@@ -88,6 +103,7 @@ public class OssUtil {
 
     /**
      * 阿里OSS存储
+     *
      * @param multipartFile 上传的文件对象
      * @param fileDir       上传目录
      * @return
@@ -109,7 +125,7 @@ public class OssUtil {
         }
         String fileUrl = fileDir + "/" + filename;
         //完整路径
-        String filePath = "https://" + bucketName + "." + endPoint + "/" + fileUrl;
+        String filePath = outAccessDomainName + fileUrl;
 
         try {
             PutObjectResult putObjectResult = ossClient.putObject(bucketName, fileUrl, multipartFile.getInputStream());
@@ -127,8 +143,8 @@ public class OssUtil {
     }
 
     /**
-     * @param file       上传的文件
-     * @param upFolder   上传到哪个分目录下,如果传值为空（null、空字符串）则以默认配置进行文件上传
+     * @param file     上传的文件
+     * @param upFolder 上传到哪个分目录下,如果传值为空（null、空字符串）则以默认配置进行文件上传
      * @return
      */
     public static String upload(MultipartFile file, String upFolder) {
@@ -152,5 +168,68 @@ public class OssUtil {
         return savePath;
     }
 
+    /**
+     *  文件下载 支持本地下载和从OSS下载
+     * @param filePath 文件的保存路径
+     * @param response
+     */
+    public static void download(String filePath, HttpServletResponse response) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            //以http开头的从OSS下载,否则从本地下载
+            if (filePath.startsWith("https")) {
+                String objectName = filePath.replace(outAccessDomainName, "");
+                inputStream = getOssFile(bucketName, objectName);
+            } else {
+                filePath = RuoYiConfig.getProfile() + filePath;
+                inputStream = new BufferedInputStream(new FileInputStream(filePath));
+            }
+
+            String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.setHeader("Content-disposition", "attachment; filename=" + new String(fileName.getBytes("UTF-8"), "iso-8859-1"));
+
+            outputStream = response.getOutputStream();
+            if (null != inputStream) {
+                byte[] bys = new byte[1024];
+                int length = 0;
+                while ((length = inputStream.read(bys)) != -1) {
+                    outputStream.write(bys, 0, length);
+                }
+                response.flushBuffer();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static InputStream getOssFile(String bucketName, String objectName) {
+        //初始化Client
+        initOSS(endPoint, accessKeyId, accessKeySecret);
+        //获取文件对象
+        OSSObject object = ossClient.getObject(bucketName, objectName);
+        //获取文件流
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(object.getObjectContent());
+        return bufferedInputStream;
+
+    }
 
 }

@@ -7,37 +7,41 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
         <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
+              placeholder="请选择方向"
               @change="changeEvent()"
+              style="width: 95%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -47,37 +51,23 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item style="margin-top: -10px; margin-bottom: 0px">
-            <cron
-              v-if="showCronBox"
-              v-model.trim="strategyForm.schedulerTime"
-              ref="cron"
-              @changeValue="changeValue"
-            ></cron>
-            <span style="color: #e6a23c; font-size: 12px"
-              >corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份
-              星期中的日期 年份</span
-            >
-          </el-form-item>
+        </el-col>
+        <el-col :span="24">
           <el-form-item
-            v-show="strategyForm.strategyType == '1'"
-            style="width: 90%"
+            label="cron表达式"
+            prop="schedulerTime"
+            style="width: 92%"
           >
-            <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
-              <el-button
-                slot="append"
-                v-if="!showCronBox"
-                icon="el-icon-arrow-up"
-                @click="showCronBox = true"
-                title="打开图形配置"
-              ></el-button>
-              <el-button
-                slot="append"
-                v-else
-                icon="el-icon-arrow-down"
-                @click="showCronBox = false"
-                title="关闭图形配置"
-              ></el-button>
+            <el-input
+              v-model="strategyForm.schedulerTime"
+              placeholder="请输入cron执行表达式"
+            >
+              <template slot="append">
+                <el-button type="primary" @click="handleShowCron">
+                  生成表达式
+                  <i class="el-icon-time el-icon--right"></i>
+                </el-button>
+              </template>
             </el-input>
           </el-form-item>
         </el-col>
@@ -88,10 +78,10 @@
           :key="index"
         >
           <div>
-            <el-form-item style="width: 100%; margin-top: 20px">
+            <el-form-item style="width: 100%">
               <el-input
                 @click.native="openEqDialog2($event, index)"
-                style="width: 40%; margin-top: 20px"
+                style="width: 40%"
                 v-model="dain.typeName"
                 placeholder="请点击选择控制类型"
               />
@@ -193,13 +183,34 @@
         <el-button @click="cancelChooseEq">取消</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="Cron表达式生成器"
+      :visible.sync="openCron"
+      append-to-body
+      destroy-on-close
+      class="scrollbar"
+    >
+      <crontab
+        @hide="openCron = false"
+        @fill="crontabFill"
+        :expression="expression"
+      ></crontab>
+    </el-dialog>
   </div>
 </template>
-  
+
   <script>
-import cron from "@/components/cron/cron.vue";
-import EasyCron from "@/components/easy-cron/index";
-import InputCron from "@/components/easy-cron/input-cron";
+import {
+  listJob,
+  getJob,
+  delJob,
+  addJob,
+  updateJob,
+  exportJob,
+  runJob,
+  changeJobStatus,
+} from "@/api/monitor/job";
+import Crontab from "@/components/Crontab";
 
 import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
 import { listTunnels } from "@/api/equipment/tunnel/api";
@@ -223,12 +234,16 @@ export default {
     event: "change",
   },
   components: {
-    cron,
-    EasyCron,
-    InputCron,
+    Crontab,
   },
+  dicts: ["sys_job_group", "sys_job_status"],
   data() {
     return {
+      expression: "",
+      paramsData : {
+        tunnelId: ""
+      },
+      openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层
@@ -238,6 +253,7 @@ export default {
         equipment_type: null, //设备类型ID
         equipments: null, //设备列表
       },
+      manualControlStateList: [],
       // 二次表单校验
       rules: {
         equipment_type: [
@@ -247,6 +263,7 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
+      viewStrategy: false,
       showCronBox: false,
       strategyForm: {
         schedulerTime: "", //cron数据
@@ -285,7 +302,10 @@ export default {
     init() {
       if (this.sink == "add") {
         this.resetForm();
-        console.log("定时控制新增重置表单");
+        this.$nextTick(() => {
+          this.showCronBox = false;
+          this.$refs.cron.checkClear();
+        });
       }
       this.getEquipmentType();
       this.getTunnels();
@@ -298,6 +318,7 @@ export default {
       });
       getStrategy(this.id).then((response) => {
         let data = response.data;
+        this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
@@ -367,7 +388,12 @@ export default {
       this.$refs["timingControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          if (autoControl[0].value.length == 0 || autoControl[0].state == "") {
+
+          if (
+            autoControl.length < 1 ||
+            autoControl[0].value.length == 0 ||
+            autoControl[0].state == ""
+          ) {
             return this.$modal.msgError("请选择设备并添加执行操作");
           }
           // 判断是修改还是删除
@@ -381,10 +407,12 @@ export default {
     },
     // 编辑操作
     async updateStrategyInfoData() {
-      await getGuid().then((res) => {
-        this.strategyForm.jobRelationId = res;
-        this.strategyForm.id = this.id;
-      });
+      if (this.sink == "add") {
+        await getGuid().then((res) => {
+          this.strategyForm.jobRelationId = res;
+          this.strategyForm.id = this.id;
+        });
+      }
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -417,6 +445,10 @@ export default {
       });
       this.chooseEq = false; //关闭弹窗
       this.index = 0;
+      // 如果设备操作状态已选择,则重置状态值
+      if (this.strategyForm.autoControl[index].state) {
+        this.strategyForm.autoControl[index].state = "";
+      }
       listEqTypeStateIsControl({
         stateTypeId: this.eqForm.equipment_type,
         isControl: 1,
@@ -471,7 +503,7 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if (this.eqForm.equipments.length > 1) {
+      if (this.eqForm.equipments.length >= 1) {
         this.eqForm.equipments = "";
       }
       this.listDevices();
@@ -567,7 +599,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });
@@ -598,9 +633,18 @@ export default {
     strategyFormClose() {
       this.$emit("dialogVisibleClose");
     },
+    /** cron表达式按钮操作 */
+    handleShowCron() {
+      this.expression = this.strategyForm.schedulerTime;
+      this.openCron = true;
+    },
+    /** 确定后回传值 */
+    crontabFill(value) {
+      this.strategyForm.schedulerTime = value;
+    },
   },
 };
 </script>
-  
+
   <style>
 </style>

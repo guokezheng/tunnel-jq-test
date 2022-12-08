@@ -65,7 +65,9 @@ export default {
       ],
     };
   },
-  methods: {},
+  methods: {
+  
+  },
 };
 </script>
   <style scoped lang="scss">
@@ -120,7 +122,7 @@ export default {
     margin: 8px;
     color:white;
     tr{
-      background-color: #010F23;
+      background-color: #010F23 !important;
     }
     // .el-table__header-wrapper .el-table__cell
     .el-table__header-wrapper {

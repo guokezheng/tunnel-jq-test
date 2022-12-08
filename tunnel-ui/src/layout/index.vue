@@ -1,6 +1,12 @@
 <template>
   <div>
-    <template v-if="sideTheme == 'theme-dark' || sideTheme == 'theme-light'">
+    <template
+      v-if="
+        sideTheme == 'theme-dark' ||
+        sideTheme == 'theme-light' ||
+        sideTheme == 'theme-blue'
+      "
+    >
       <!-- 左右结构 -->
       <div :class="classObj" class="app-wrapper">
         <div
@@ -19,10 +25,22 @@
               :class="{ 'fixed-header': fixedHeader }"
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
-              <navbar style="display: block" />
-              <tags-view v-if="needTagsView" />
+              <navbar style="display: block; height: 72px" />
+              <!-- <tags-view v-if="needTagsView" /> -->
             </div>
-            <app-main />
+            <div
+              :class="getRoute2($route.path) ? '' : 'breadcrumbAppmainBox'"
+              style="height: 100%"
+            >
+              <breadcrumb
+                :style="'display:' + getRoute($route.path) + ';'"
+                ref="Breadcrumb"
+                id="breadcrumb-container"
+                class="breadcrumb-container"
+              />
+              <app-main />
+            </div>
+
             <right-panel>
               <settings />
             </right-panel>
@@ -50,6 +68,8 @@
                   position: relative;
                   box-shadow: unset;
                   float: left;
+                  display: flex;
+                  align-items: center;
                 "
               />
               <template v-if="weatherView">
@@ -67,7 +87,7 @@
                 :style="
                   weatherView
                     ? 'width: 15%!important;justify-content:right;'
-                    : 'width: 25%;justify-content:right;'
+                    : 'width: 25%;justify-content:right;display:flex'
                 "
               />
             </div>
@@ -81,33 +101,36 @@
                 : 'margin-left:0px;'
             "
           >
-          <!-- <div :class=""> -->
-          <div :class="getRoute2($route.path)?'noSeparate':'separate'" >
-
-            <breadcrumb
-              :style="'display:' + getRoute($route.path) + ';'"
-              ref="Breadcrumb"
-              id="breadcrumb-container"
-              class="breadcrumb-container"
-              
-            />
-            <app-main />
-            <right-panel>
-              <settings />
-            </right-panel>
-            <el-badge :value = 'eventValue' class="eventIcon" :hidden="badgeHidden">
-              <div
-                class="el-icon-s-order"
-                @click="openEventTitleDialog"
-              ></div>
-            </el-badge>
-
-            <event-dialog
-              v-show="eventDialogPic"
-              ref="picDialog"
-            ></event-dialog>
-            <event-dialogTable v-show="eventDialogTable"></event-dialogTable>
-          </div>
+            <!-- <div :class=""> -->
+            <div :class="getRoute2($route.path) ? 'noSeparate' : 'separate'">
+              <breadcrumb
+                :style="'display:' + getRoute($route.path) + ';'"
+                ref="Breadcrumb"
+                id="breadcrumb-container"
+                class="breadcrumb-container"
+              />
+              <app-main />
+              <right-panel>
+                <settings />
+              </right-panel>
+              <!-- <el-badge
+                :value="eventValue"
+                class="eventIcon"
+                :hidden="badgeHidden"
+              >
+                <div
+                  class="el-icon-s-order"
+                  @click="openEventTitleDialog"
+                ></div>
+              </el-badge> -->
+              <evtDialogOneThing v-if="evtDialogOneThing"></evtDialogOneThing>
+              <event-dialog
+                v-if="eventDialogPic"
+                ref="picDialog"
+              ></event-dialog>
+              <event-dialogTable v-if="eventDialogTable"></event-dialogTable>
+              <evtDialogVideo v-if="evtDialogVideo" ></evtDialogVideo>
+            </div>
           </div>
         </template>
       </div>
@@ -197,8 +220,9 @@ export default {
   },
   data() {
     return {
-      badgeHidden:true,
-      eventValue:0,
+      evtDialogOneThing:false,
+      badgeHidden: true,
+      eventValue: 0,
       mapStyle: "",
       // 天气
       weather_weather: "",
@@ -210,7 +234,14 @@ export default {
       tunnelStyle: null,
       eventDialogPic: false,
       eventDialogTable: false,
-      routePath:['/index','/map/map/index','/emergency/administration/dispatch','/map/map3d/index','/energy']
+      evtDialogVideo:false,
+      routePath: [
+        "/index",
+        "/map/map/index",
+        "/emergency/administration/dispatch",
+        "/map/map3d/index",
+        "/energy",
+      ],
     };
   },
   mixins: [ResizeMixin],
@@ -269,6 +300,7 @@ export default {
     },
   },
   created() {
+    console.log(this.topNav,"this.topNav");
     console.log(this.$route.path, "路由");
     if (this.$route.path == "/tunnel") {
       if (
@@ -285,19 +317,26 @@ export default {
     }
   },
   methods: {
-    openEventTitleDialog() {
-      if(this.eventDialogTable == false){
-        bus.$emit("openTableDialog");
-        this.eventDialogTable = true;
-      }
-    },
+    // openEventTitleDialog() {
+    //   if (this.eventDialogTable == false) {
+    //     bus.$emit("openTableDialog");
+    //     this.eventDialogTable = true;
+    //   }
+    // },
     getRoute(path) {
+      console.log(path,"path");
       var arr = [
         "/index",
         "/map/map/index",
         "/emergency/administration/dispatch",
         "/map/map3d/index",
         "/energy",
+        "/map/trafficChart",
+        "/map/emphasisCars",
+        "/map/deviceMonitor",
+        "/map/trackPlayback",
+        "/map/analyse",
+
       ];
       if (arr.includes(path)) {
         return "none";
@@ -305,13 +344,19 @@ export default {
         return "block";
       }
     },
-    getRoute2(path){
+    getRoute2(path) {
       var arr = [
         "/index",
         "/map/map/index",
         "/emergency/administration/dispatch",
         "/map/map3d/index",
         "/energy",
+        "/map/trafficChart",
+        "/map/emphasisCars",
+        "/map/deviceMonitor",
+        "/map/trackPlayback",
+        "/map/analyse",
+
       ];
       if (arr.includes(path)) {
         return true;
@@ -351,13 +396,17 @@ export default {
       document.getElementsByTagName("body")[0].className = val;
     },
     sdEventList(event) {
-      this.eventValue += event.length
-      if(this.eventValue > 0){ 
-        this.$forceUpdate()
-        this.badgeHidden = false
+      if(event.length>0){
+        this.evtDialogOneThing = true
       }
-    },
+      // this.eventValue += event.length;
+      // if (this.eventValue > 0) {
+      //   this.$forceUpdate();
+      //   // this.badgeHidden = false;
+      //   this.eventDialogPic = true;
 
+      // }
+    },
   },
   mounted() {
     if (this.weatherView == undefined) {
@@ -368,11 +417,14 @@ export default {
     this.is_breadcrumb = systemConfig.navBarShow(systemConfig.systemType)[
       "breadcrumb"
     ];
+    // 打开列表弹窗
+    bus.$on('openTableDialog', () => {
+      this.eventDialogTable = true;
+    })
     // 关闭列表弹窗
-    bus.$on("closeDialog", (e) => {
-      if (e == false) {
-        this.eventDialogTable = false;
-      }
+    bus.$on("closeDialog", () => {
+      this.eventDialogTable = false;
+      this.evtDialogOneThing = false
     });
     // 打开三图一视弹窗
     bus.$on("openPicDialog", () => {
@@ -382,14 +434,21 @@ export default {
     bus.$on("closePicDialog", () => {
       this.eventDialogPic = false;
     });
+    // 打开视频弹窗
+    bus.$on('openVideoDialog', () => {
+      this.evtDialogVideo = true;
+    })
+    // 关闭视频弹窗
+    bus.$on('closeVideoDialog', () => {
+      this.evtDialogVideo = false;
+    })
     // 事件表格忽略后 右上角数字跟着改
-    bus.$on("getEvtList", () => {
-      this.eventValue = this.eventValue-1
-      if(this.eventValue == 0){
-        this.badgeHidden = false
-      }
-
-    });
+    // bus.$on("getEvtList", () => {
+    //   this.eventValue = this.eventValue - 1;
+    //   if (this.eventValue == 0) {
+    //     this.badgeHidden = false;
+    //   }
+    // });
   },
 };
 </script>
@@ -419,7 +478,12 @@ export default {
     top: 0;
   }
 }
-
+.topNav_head .has-logo {
+  background: transparent !important;
+}
+ .has-logo {
+  background: rgb(0, 67, 117);
+}
 .drawer-bg {
   background: #000;
   opacity: 0.3;
@@ -507,5 +571,8 @@ export default {
 }
 .el-icon-s-order:before {
   font-size: 24px;
+}
+.main-container > div {
+  background: rgb(0, 67, 117);
 }
 </style>

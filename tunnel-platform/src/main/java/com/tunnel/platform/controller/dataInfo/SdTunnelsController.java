@@ -2,19 +2,26 @@ package com.tunnel.platform.controller.dataInfo;
 
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.PathParam;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -32,15 +39,27 @@ public class SdTunnelsController extends BaseController
     private ISdTunnelsService sdTunnelsService;
 
     /**
+     * 平台
+     */
+    @Value("${authorize.name}")
+    private String platformName;
+
+    /**
+     * 推送、接收controller
+     */
+    @Autowired
+    private PlatformApiController platformApiController;
+
+    /**
      * 查询隧道列表
      */
-    @ApiOperation("查询隧道列表")
+    // @ApiOperation("查询隧道列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
         startPage();
         if (null == sdTunnels.getDeptId() || "".equals(sdTunnels.getDeptId())){
-            Long deptId = SecurityUtils.getDeptId();
+            String deptId = SecurityUtils.getDeptId();
             if (deptId == null) {
                 throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
             }
@@ -53,7 +72,7 @@ public class SdTunnelsController extends BaseController
     /**
      * 获取隧道详细信息
      */
-    @ApiOperation("获取选中隧道详细信息")
+    // @ApiOperation("获取选中隧道详细信息")
     @ApiImplicitParam(name = "tunnelId", value = "隧道ID", required = true, dataType = "String", paramType = "path", dataTypeClass = String.class)
     @GetMapping(value = "/{tunnelId}")
     public Result<SdTunnels> getInfo(@PathVariable("tunnelId") String tunnelId)
@@ -69,7 +88,10 @@ public class SdTunnelsController extends BaseController
     @PostMapping
     public Result add(@RequestBody SdTunnels sdTunnels)
     {
-        return Result.toResult(sdTunnelsService.insertSdTunnels(sdTunnels));
+        int i = sdTunnelsService.insertSdTunnels(sdTunnels);
+        //管理站平台下推送数据
+        pushData(sdTunnels,"add",i);
+        return Result.toResult(i);
     }
 
     /**
@@ -80,7 +102,10 @@ public class SdTunnelsController extends BaseController
     @PutMapping
     public Result edit(@RequestBody SdTunnels sdTunnels)
     {
-        return Result.toResult(sdTunnelsService.updateSdTunnels(sdTunnels));
+        int i = sdTunnelsService.updateSdTunnels(sdTunnels);
+        //管理站平台下推送数据
+        pushData(sdTunnels,"edit",i);
+        return Result.toResult(i);
     }
 
     /**
@@ -92,13 +117,23 @@ public class SdTunnelsController extends BaseController
 	@DeleteMapping("/{tunnelIds}")
     public Result remove(@PathVariable String[] tunnelIds)
     {
-        return Result.toResult(sdTunnelsService.deleteSdTunnelsByIds(tunnelIds));
+        int i = sdTunnelsService.deleteSdTunnelsByIds(tunnelIds);
+        //管理站平台下推送数据
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && i > 0){
+            List<SdTunnels> sdTunnelsList = new ArrayList<>();
+            SdTunnels sdTunnels = new SdTunnels();
+            sdTunnels.setTunnelIds(Arrays.asList(tunnelIds));
+            sdTunnels.setCreateTime(DateUtils.getNowDate());
+            sdTunnelsList.add(sdTunnels);
+            platformApiController.tunnelsPush(sdTunnelsList,"del");
+        }
+        return Result.toResult(i);
     }
 
     /**
      * 查询隧道列表
      */
-    @ApiOperation("查询隧道分区列表")
+    // @ApiOperation("查询隧道分区列表")
     @GetMapping("/sublist")
     public TableDataInfo<List<SdTunnels>> sublist(SdTunnels sdTunnels)
     {
@@ -113,4 +148,26 @@ public class SdTunnelsController extends BaseController
         return Result.success(sdTunnelsService.deptId(deptId));
     }
 
+    /**
+     * 同步数据
+     * @param sdTunnels
+     * @param pushType
+     * @param count
+     */
+    public void pushData(SdTunnels sdTunnels, String pushType, int count){
+        if(PlatformAuthEnum.GLZ.getCode().equals(platformName) && count > 0){
+            List<SdTunnels> sdTunnelsList = new ArrayList<>();
+            sdTunnelsList.add(sdTunnels);
+            platformApiController.tunnelsPush(sdTunnelsList,pushType);
+        }
+    }
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    @GetMapping("/getJlyTunnel")
+    public AjaxResult getJlyTunnel(){
+        return AjaxResult.success(sdTunnelsService.getJlyTunnel());
+    }
 }

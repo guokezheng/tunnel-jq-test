@@ -79,5 +79,23 @@ public interface ISdTunnelsService {
      */
     Map<String,String> getTunnelNameMap();
 
+    /**
+     * 查询隧道list根据权限
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelsList(String deptId);
 
+    /**
+     * 查询隧道列表
+     * @param deptId
+     * @return
+     */
+    List<SdTunnels> selectTunnelList(String deptId);
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    List<SdTunnels> getJlyTunnel();
 }

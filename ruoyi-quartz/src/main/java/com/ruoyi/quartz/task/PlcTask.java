@@ -1,6 +1,7 @@
 package com.ruoyi.quartz.task;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.serotonin.modbus4j.ModbusMaster;
 import com.serotonin.modbus4j.code.DataType;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -15,14 +16,15 @@ import com.tunnel.business.mapper.dataInfo.SdDeviceDataRecordMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.deal.plc.modbus.ModbusTcpMaster;
 import com.tunnel.deal.plc.modbus.util.Modbus4jReadUtils;
-import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -48,10 +50,16 @@ public class PlcTask {
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
 
+    @Resource
+    private RedisCache redisCache;
+
+    @Autowired
+    private SendDeviceStatusToKafkaService sendData;
+
     //
     public void createModbusTcpMaster() {
 //        ModbusTcpMaster.getInstance().init();
-        System.out.println("本地环境不开启创建PLC客户端");
+//        System.out.println("本地环境不开启创建PLC客户端");
     }
 
     public void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state, String type) {
@@ -75,7 +83,7 @@ public class PlcTask {
         }
         dataList.add(sdDeviceNowState);
         jsonObject.put("deviceStatus", dataList);
-        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
+//        WebSocketService.broadcast("deviceStatus", jsonObject.toString());
     }
 
     public void modbusTcpDataHandle() {
@@ -87,10 +95,10 @@ public class PlcTask {
             sdDevices.setFEqId(plcId);
             List<SdDevices> sdDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
             for (SdDevices sdDevice : sdDevicesList) {
-                if (sdDevice.getEqType() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode()) {
+                if (sdDevice.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
                     try {
                         boolean[] registers = Modbus4jReadUtils.readInputStatus(master, 1, 0, 100);
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 2) {
                             boolean bHong = registers[Integer.parseInt(split[0]) - 1];
                             boolean bLv = registers[Integer.parseInt(split[1]) - 1];
@@ -117,9 +125,9 @@ public class PlcTask {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (sdDevice.getEqType() == DevicesTypeEnum.FENG_SU_FENG_XIANG.getCode()) {
+                } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.FENG_SU_FENG_XIANG.getCode().longValue()) {
                     try {
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 1) {
                             Number FS = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[0]) - 1, DataType.FOUR_BYTE_FLOAT);
                             boolean[] FX = Modbus4jReadUtils.readInputStatus(master, 1, Integer.parseInt(split[1]) - 1, 1);
@@ -154,9 +162,9 @@ public class PlcTask {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (sdDevice.getEqType() == DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode()) {
+                } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode().longValue()) {
                     try {
-                        Integer addr = Integer.valueOf(sdDevice.getEqFeedbackAddress1());
+                        Integer addr = Integer.valueOf(sdDevice.getQueryPointAddress());
                         Number number = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, addr - 1, DataType.FOUR_BYTE_FLOAT);
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
@@ -179,9 +187,9 @@ public class PlcTask {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (sdDevice.getEqType() == DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode()) {
+                } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode().longValue()) {
                     try {
-                        Integer addr = Integer.valueOf(sdDevice.getEqFeedbackAddress1());
+                        Integer addr = Integer.valueOf(sdDevice.getQueryPointAddress());
                         Number number = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, addr - 1, DataType.FOUR_BYTE_FLOAT);
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
@@ -204,9 +212,9 @@ public class PlcTask {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (sdDevice.getEqType() == DevicesTypeEnum.CO_VI.getCode()) {
+                } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.CO_VI.getCode().longValue()) {
                     try {
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 1) {
                             Number CO = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[0]) - 1, DataType.FOUR_BYTE_FLOAT);
                             Number VI = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[1]) - 1, DataType.FOUR_BYTE_FLOAT);
@@ -276,11 +284,15 @@ public class PlcTask {
             deviceData.setData(value);
             deviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.updateSdDeviceData(deviceData);
+            sendData.pushDevicesDataNowTime(deviceData);
         } else {
             sdDeviceData.setData(value);
             sdDeviceData.setUpdateTime(new Date());
             sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+            sendData.pushDevicesDataNowTime(sdDeviceData);
         }
+        //redis存储设备实时数据
+        redisCache.setCacheMapValue("deviceData",sdDeviceData.getDeviceId()+"-"+sdDeviceData.getItemId(),sdDeviceData);
         //每5分钟记录一次数据存储，车指不需要存储
         if (DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId) {
             return;
@@ -304,5 +316,6 @@ public class PlcTask {
         sdDeviceDataRecord.setData(value);
         sdDeviceDataRecord.setCreateTime(new Date());
         sdDeviceDataRecordMapper.insertSdDeviceDataRecord(sdDeviceDataRecord);
+        sendData.pushDevicesDataRecord(sdDeviceDataRecord);
     }
 }

@@ -1,6 +1,7 @@
 package com.tunnel.platform.config;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,7 @@ import java.util.Map;
  * @author dzy
  * @date 2022/9/9 11:26
  */
-@Configuration
+//@Configuration
 public class KafkaConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String servers;
@@ -41,6 +42,9 @@ public class KafkaConfig {
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
         consumerProperties.put("session.timeout.ms", 3000000);
+//        consumerProperties.put("security.protocol", "SASL_SSL");
+//        consumerProperties.put(SaslConfigs.SASL_MECHANISM, "SCRAM-SHA-256");
+//        consumerProperties.put(SaslConfigs.SASL_JAAS_CONFIG, "org.apache.kafka.common.security.scram.ScramLoginModule required username='jq_tunnel' password='Sdhsg2021'");
         return new DefaultKafkaConsumerFactory<>(consumerProperties);
     }
 

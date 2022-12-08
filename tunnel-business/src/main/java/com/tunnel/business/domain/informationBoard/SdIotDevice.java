@@ -11,7 +11,7 @@ import java.util.Date;
 
 /**
  * 设备列表对象 iot_device
- * 
+ *
  * @author yangqichao
  * @date 2020-03-25
  */
@@ -114,7 +114,7 @@ public class SdIotDevice extends BaseEntity
     private Integer runStatus;
 
     /** 设备状态 */
-    @Excel(name = "设备状态")
+    @Excel(name = "隧道ID")
     private String tunnelId;
 
     /** 设备状态 */
@@ -139,7 +139,7 @@ public class SdIotDevice extends BaseEntity
 
     /** 管理单位 */
     @Excel(name = "管理单位")
-    private Long manageAgencyId;
+    private String manageAgencyId;
 
     /** 生产日期 */
     @Excel(name = "生产日期", width = 30, dateFormat = "yyyy-MM-dd")
@@ -262,25 +262,25 @@ public class SdIotDevice extends BaseEntity
         this.routeName = routeName;
     }
 
-    public Long getDeviceId() 
+    public Long getDeviceId()
     {
         return deviceId;
     }
-    public void setDeviceName(String deviceName) 
+    public void setDeviceName(String deviceName)
     {
         this.deviceName = deviceName;
     }
 
-    public String getDeviceName() 
+    public String getDeviceName()
     {
         return deviceName;
     }
-    public void setBrandId(Long brandId) 
+    public void setBrandId(Long brandId)
     {
         this.brandId = brandId;
     }
 
-    public Long getBrandId() 
+    public Long getBrandId()
     {
         return brandId;
     }
@@ -290,30 +290,30 @@ public class SdIotDevice extends BaseEntity
 	public void setIotBrandName(IotBrand iotBrandName) {
 		this.iotBrandName = iotBrandName;
 	}
-    public void setRouteId(Long routeId) 
+    public void setRouteId(Long routeId)
     {
         this.routeId = routeId;
     }
 
-    public Long getRouteId() 
+    public Long getRouteId()
     {
         return routeId;
     }
-    public void setRouteDirection(String routeDirection) 
+    public void setRouteDirection(String routeDirection)
     {
         this.routeDirection = routeDirection;
     }
 
-    public String getRouteDirection() 
+    public String getRouteDirection()
     {
         return routeDirection;
     }
-    public void setDeviceMarkingName(String deviceMarkingName) 
+    public void setDeviceMarkingName(String deviceMarkingName)
     {
         this.deviceMarkingName = deviceMarkingName;
     }
 
-    public String getDeviceMarkingName() 
+    public String getDeviceMarkingName()
     {
         return deviceMarkingName;
     }
@@ -347,79 +347,79 @@ public class SdIotDevice extends BaseEntity
         this.factoryLibrary = factoryLibrary;
     }
 
-    public String getFactoryLibrary() 
+    public String getFactoryLibrary()
     {
         return factoryLibrary;
     }
-    public void setUserUnitId(Long userUnitId) 
+    public void setUserUnitId(Long userUnitId)
     {
         this.userUnitId = userUnitId;
     }
 
-    public Long getUserUnitId() 
+    public Long getUserUnitId()
     {
         return userUnitId;
     }
-    public void setOperatorId(Long operatorId) 
+    public void setOperatorId(Long operatorId)
     {
         this.operatorId = operatorId;
     }
 
-    public Long getOperatorId() 
+    public Long getOperatorId()
     {
         return operatorId;
     }
-    public void setLongitude(String longitude) 
+    public void setLongitude(String longitude)
     {
         this.longitude = longitude;
     }
 
-    public String getLongitude() 
+    public String getLongitude()
     {
         return longitude;
     }
-    public void setLatitude(String latitude) 
+    public void setLatitude(String latitude)
     {
         this.latitude = latitude;
     }
 
-    public String getLatitude() 
+    public String getLatitude()
     {
         return latitude;
     }
-    public void setFirmId(Long firmId) 
+    public void setFirmId(Long firmId)
     {
         this.firmId = firmId;
     }
 
-    public Long getFirmId() 
+    public Long getFirmId()
     {
         return firmId;
     }
-    public void setPurchaseDate(Date purchaseDate) 
+    public void setPurchaseDate(Date purchaseDate)
     {
         this.purchaseDate = purchaseDate;
     }
 
-    public Date getPurchaseDate() 
+    public Date getPurchaseDate()
     {
         return purchaseDate;
     }
-    public void setWarrantyYears(Integer warrantyYears) 
+    public void setWarrantyYears(Integer warrantyYears)
     {
         this.warrantyYears = warrantyYears;
     }
 
-    public Integer getWarrantyYears() 
+    public Integer getWarrantyYears()
     {
         return warrantyYears;
     }
-    public void setUnitPrice(Long unitPrice) 
+    public void setUnitPrice(Long unitPrice)
     {
         this.unitPrice = unitPrice;
     }
 
-    public Long getUnitPrice() 
+    public Long getUnitPrice()
     {
         return unitPrice;
     }
@@ -440,111 +440,111 @@ public class SdIotDevice extends BaseEntity
     {
         return deviceStatus;
     }
-    public void setInstallDate(Date installDate) 
+    public void setInstallDate(Date installDate)
     {
         this.installDate = installDate;
     }
 
-    public Date getInstallDate() 
+    public Date getInstallDate()
     {
         return installDate;
     }
-    public void setMaintainId(Long maintainId) 
+    public void setMaintainId(Long maintainId)
     {
         this.maintainId = maintainId;
     }
 
-    public Long getMaintainId() 
+    public Long getMaintainId()
     {
         return maintainId;
     }
-    public void setCollarAgencyId(Long collarAgencyId) 
+    public void setCollarAgencyId(Long collarAgencyId)
     {
         this.collarAgencyId = collarAgencyId;
     }
 
-    public Long getCollarAgencyId() 
+    public Long getCollarAgencyId()
     {
         return collarAgencyId;
     }
-    public void setPileNumber(String pileNumber) 
+    public void setPileNumber(String pileNumber)
     {
         this.pileNumber = pileNumber;
     }
 
-    public String getPileNumber() 
+    public String getPileNumber()
     {
         return pileNumber;
     }
-    public void setManageAgencyId(Long manageAgencyId) 
+    public void setManageAgencyId(String manageAgencyId)
     {
         this.manageAgencyId = manageAgencyId;
     }
 
-    public Long getManageAgencyId() 
+    public String getManageAgencyId()
     {
         return manageAgencyId;
     }
-    public void setProducteDate(Date producteDate) 
+    public void setProducteDate(Date producteDate)
     {
         this.producteDate = producteDate;
     }
 
-    public Date getProducteDate() 
+    public Date getProducteDate()
     {
         return producteDate;
     }
-    public void setRepairDate(Date repairDate) 
+    public void setRepairDate(Date repairDate)
     {
         this.repairDate = repairDate;
     }
 
-    public Date getRepairDate() 
+    public Date getRepairDate()
     {
         return repairDate;
     }
-    public void setOperateDate(Date operateDate) 
+    public void setOperateDate(Date operateDate)
     {
         this.operateDate = operateDate;
     }
 
-    public Date getOperateDate() 
+    public Date getOperateDate()
     {
         return operateDate;
     }
-    public void setServiceLife(Integer serviceLife) 
+    public void setServiceLife(Integer serviceLife)
     {
         this.serviceLife = serviceLife;
     }
 
-    public Integer getServiceLife() 
+    public Integer getServiceLife()
     {
         return serviceLife;
     }
-    public void setStorageDate(Date storageDate) 
+    public void setStorageDate(Date storageDate)
     {
         this.storageDate = storageDate;
     }
 
-    public Date getStorageDate() 
+    public Date getStorageDate()
     {
         return storageDate;
     }
-    public void setIsMonitor(Integer isMonitor) 
+    public void setIsMonitor(Integer isMonitor)
     {
         this.isMonitor = isMonitor;
     }
 
-    public Integer getIsMonitor() 
+    public Integer getIsMonitor()
     {
         return isMonitor;
     }
-    public void setLocalInfo(Integer localInfo) 
+    public void setLocalInfo(Integer localInfo)
     {
         this.localInfo = localInfo;
     }
 
-    public Integer getLocalInfo() 
+    public Integer getLocalInfo()
     {
         return localInfo;
     }

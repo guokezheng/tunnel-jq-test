@@ -8,6 +8,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.SdSparePartsWarehouse;
+import com.tunnel.business.domain.dataInfo.vo.SdSparePartsWarehouseVO;
 import com.tunnel.business.service.dataInfo.ISdSparePartsWarehouseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,6 +45,16 @@ public class SdSparePartsWarehouseController extends BaseController
         List<SdSparePartsWarehouse> list = sdSparePartsWarehouseService.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
         return getDataTable(list);
     }
+
+    @GetMapping(value = "/getHsdSparePartList")
+    @ApiOperation("瑞华赢获取备件库接口")
+    public AjaxResult getHsdSparePartList() {
+        SdSparePartsWarehouse warehouse = new SdSparePartsWarehouse();
+        warehouse.setTunnelId("JQ-WeiFang-JiuLongYu-HSD");
+        List<SdSparePartsWarehouseVO> list = sdSparePartsWarehouseService.getHsdSparePartList(warehouse);
+        return AjaxResult.success(list);
+    }
+
 
     /**
      * 导出备品备件库列表

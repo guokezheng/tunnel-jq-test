@@ -11,17 +11,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="prevControlType"    column="prev_control_type"    />
+        <result property="simplifyName"    column="simplify_name"    />
+        <result property="iconUrl"    column="icon_url"    />
     </resultMap>
 
     <sql id="selectSdEventTypeVo">
-        select id, event_type, create_by, create_time, update_by, update_time from sd_event_type
+        select id, event_type, create_by, create_time, update_by, update_time, prev_control_type, simplify_name,icon_url  from sd_event_type
     </sql>
 
     <select id="selectSdEventTypeList" parameterType="SdEventType" resultMap="SdEventTypeResult">
         <include refid="selectSdEventTypeVo"/>
         <where>
-            <if test="eventType != null  and eventType != ''"> and event_type like concat('%', #{eventType}, '%')</if>
-        </where>
+            <if test="eventType != null  and eventType != ''">and event_type like concat('%', #{eventType}, '%')</if>
+            <if test="prevControlType != null  and prevControlType != ''">and prev_control_type =#{prevControlType}</if>
+        </where> order by id
     </select>
 
     <select id="selectSdEventTypeById" parameterType="Long" resultMap="SdEventTypeResult">
@@ -33,10 +37,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sd_event_type(
             <if test="eventType != null">event_type,</if>
             <if test="createBy != null">create_by,</if>
+            <if test="prevControlType != null">prev_control_type,</if>
+            <if test="simplifyName != null">simplify_name,</if>
+            <if test="iconUrl != null">icon_url,</if>
          	create_time
  		)values(
             <if test="eventType != null">#{eventType},</if>
             <if test="createBy != null">#{createBy},</if>
+            <if test="prevControlType != null">#{prevControlType},</if>
+            <if test="simplifyName != null">#{simplifyName},</if>
+            <if test="iconUrl != null">#{iconUrl},</if>
             sysdate()
          )
     </insert>
@@ -48,7 +58,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="prevControlType != null">prev_control_type = #{prevControlType},</if>
+            <if test="simplifyName != null">simplify_name = #{simplifyName},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="iconUrl != null">icon_url = #{iconUrl},</if>
         </trim>
         where id = #{id}
     </update>

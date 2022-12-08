@@ -189,7 +189,7 @@ export default {
       // 是否显示弹出层
       open: false,
       // 是否展开，默认全部展开
-      isExpandAll: true,
+      isExpandAll: false,
       // 重新渲染表格状态
       refreshTable: true,
       // 是否展开

@@ -4,6 +4,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 操作日志Service接口
@@ -72,4 +73,6 @@ public interface ISdOperationLogService {
      * @return
      */
     AjaxResult operationLog(SdOperationLog sdOperationLog);
+
+    List<Map> getDispatchExecuted(String eventId);
 }

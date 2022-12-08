@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -47,10 +47,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          size="mini"
-          @click="handleQuery"
+        <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
@@ -111,7 +108,6 @@
       :header-cell-style="{ 'text-align': 'center' }"
       max-height="640"
       :row-class-name="tableRowClassName"
-
     >
       <el-table-column
         label="隧道名称"
@@ -147,7 +143,6 @@
             inactive-color="#ccc"
             active-value="0"
             inactive-value="1"
-           
             @change="changeStrategyState(scope.row)"
           >
           </el-switch>
@@ -278,16 +273,20 @@ import manualControl from "./components/manualControl"; //手动控制
 import timingControl from "./components/timingControl"; //定时控制
 import autoControl from "./components/autoControl"; //自动触发
 import timeControl from "./components/timeControl"; //分时控制
-
+import cron from "@/components/cron/cron.vue";
+import {tunnelNames} from "@/api/event/reservePlan";
 export default {
   components: {
     manualControl,
     timingControl,
     autoControl,
     timeControl,
+    cron,
   },
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       dialogVisible: false,
       index: 0,
       manualControlStateList: [], //当前选择设备状态选项
@@ -666,6 +665,7 @@ export default {
         .then((_) => {
           this.strategyForm.strategyType = "";
           this.dialogVisible = false;
+          // this.$refs.cron.checkClear();
           done();
         })
         .catch((_) => {});
@@ -673,6 +673,9 @@ export default {
     /** 查询控制策略列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
@@ -847,7 +850,7 @@ export default {
       //  if(this.model == '2'){
       addJob({
         jobName: this.strategyForm.strategyName, //任务名称
-        invokeTarget: "ryTask.strategyParams('" + guid + "')", //调用目标字符串
+        invokeTarget: "strategyTask.strategyParams('" + guid + "')", //调用目标字符串
         cronExpression: this.strategyForm.schedulerTime, //corn表达式
         misfirePolicy: "1", //计划执行错误策略（1立即执行 2执行一次 3放弃执行）
         concurrent: "0", //'是否并发执行（0允许 1禁止）'
@@ -860,34 +863,25 @@ export default {
           this.$modal.msgError("新增失败，请删除重建控制策略！");
         }
       });
-      // return
-      /* }addJob({jobName:this.strategyForm.strategyName,//任务名称
-            invokeTarget:"ryTask.strategyParams('"+guid+"')",//调用目标字符串
-            cronExpression:str,//corn表达式
-            misfirePolicy:'3',//计划执行错误策略（1立即执行 2执行一次 3放弃执行）
-            concurrent:'0',//'是否并发执行（0允许 1禁止）'
-            status:'0',//状态（0正常 1暂停）'
-            relationId:guid
-            }).then(response => {
-            if (response.code === 200) {
-                this.$modal.msgSuccess("新增任务成功");
-             }else{
-               this.$modal.msgError("新增失败，请删除重建控制策略！");
-             }
-        }) */
     },
     changeValue(value) {
       this.changeVal = value;
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex%2 == 0) {
-      return 'tableEvenRow';
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
       } else {
-      return "tableOddRow";
+        return "tableOddRow";
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+    }
+  }
 };
 </script>
   <style>
@@ -901,5 +895,9 @@ export default {
   white-space: pre-line;
 }
 </style>
-  
-  
+<style scoped>
+.el-input--small .el-input__icon{
+  height: 34px;
+}
+</style>
+

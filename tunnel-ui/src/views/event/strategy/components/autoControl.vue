@@ -7,37 +7,41 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
         <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
+              placeholder="请选择方向"
               @change="changeEvent()"
+              style="width: 95%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -48,8 +52,29 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col>
+          <el-col :span="24">
+            <el-form-item
+              label="cron表达式"
+              prop="schedulerTime"
+              style="width: 92%"
+            >
+              <el-input
+                v-model="strategyForm.schedulerTime"
+                placeholder="请输入cron执行表达式"
+              >
+                <template slot="append">
+                  <el-button type="primary" @click="handleShowCron">
+                    生成表达式
+                    <i class="el-icon-time el-icon--right"></i>
+                  </el-button>
+                </template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-col>
         <el-col class="triggers">
-          <div class="box">
+          <div class="box" style="width: 91%">
             <el-form-item
               label="触发器"
               prop="triggers.deviceTypeId"
@@ -69,12 +94,13 @@
                 >
                 </el-option>
               </el-select>
-              <el-form-item prop="triggers.deviceId" label-width="0">
+              <el-form-item prop="triggers.deviceId" style="width: 18%">
                 <el-select
                   v-model="strategyForm.triggers.deviceId"
                   placeholder="请选择设备名称"
-                  @change="selectDataItem()"
+                  multiple
                 >
+                  <!-- @change="selectDataItem()" -->
                   <el-option
                     v-for="item in deviceName"
                     :key="item.eqId"
@@ -84,7 +110,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.elementId" label-width="0">
+              <el-form-item prop="triggers.elementId" style="width: 17%">
                 <el-select
                   v-model="strategyForm.triggers.elementId"
                   placeholder="请选择数据项"
@@ -98,7 +124,8 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.comparePattern" label-width="0">
+              <!-- 计算符 -->
+              <el-form-item prop="triggers.comparePattern" style="width: 12%">
                 <el-select v-model="strategyForm.triggers.comparePattern">
                   <el-option
                     v-for="item in symbol"
@@ -109,56 +136,71 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item prop="triggers.compareValue" label-width="0">
+              <el-form-item prop="triggers.compareValue" style="width: 12%">
                 <el-input
                   v-model="strategyForm.triggers.compareValue"
                   placeholder="请输入阈值"
                 />
               </el-form-item>
+              <el-form-item prop="triggers.warningType" style="width: 15%">
+                <el-select v-model="strategyForm.triggers.warningType">
+                  <el-option
+                    v-for="item in definition"
+                    :key="item.warningType"
+                    :label="item.name"
+                    :value="item.warningType"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </el-form-item>
           </div>
         </el-col>
       </el-row>
-      <el-row>
-        <el-form-item
-          v-for="(dain, index) in strategyForm.autoControl"
-          :key="index"
-        >
-          <div>
-            <el-form-item style="width: 100%; margin-top: 20px">
-              <el-input
-                @click.native="openEqDialog2($event, index)"
-                style="width: 40%; margin-top: 20px"
-                v-model="dain.typeName"
-                placeholder="请点击选择控制类型"
-              />
-              <el-select
-                v-model="dain.state"
-                placeholder="请选择设备需要执行的操作"
-                style="width: 40%; margin-left: 5%"
-              >
-                <el-option
-                  v-for="(item, indx) in dain.eqStateList"
-                  :key="item.deviceState"
-                  :label="item.stateName"
-                  :value="item.deviceState"
+      <div v-show="strategyForm.triggers.warningType == 1">
+        <el-row>
+          <el-form-item
+            v-for="(dain, index) in strategyForm.autoControl"
+            :key="index"
+          >
+            <div>
+              <el-form-item style="width: 100%">
+                <el-input
+                  @click.native="openEqDialog2($event, index)"
+                  style="width: 40%"
+                  v-model="dain.typeName"
+                  placeholder="请点击选择控制类型"
+                />
+                <el-select
+                  v-model="dain.state"
+                  placeholder="请选择设备需要执行的操作"
+                  style="width: 40%; margin-left: 5%"
                 >
-                </el-option>
-              </el-select>
-              <el-button
-                type=""
-                icon="el-icon-delete"
-                circle
-                @click="removeItem(index)"
-                style="margin-left: 2%"
-              ></el-button>
-            </el-form-item>
-          </div>
-        </el-form-item>
-        <el-form-item label="" style="">
-          <a href="#" @click="addItem" style="color: #1890ff">+添加执行操作</a>
-        </el-form-item>
-      </el-row>
+                  <el-option
+                    v-for="(item, indx) in dain.eqStateList"
+                    :key="item.deviceState"
+                    :label="item.stateName"
+                    :value="item.deviceState"
+                  >
+                  </el-option>
+                </el-select>
+                <el-button
+                  type=""
+                  icon="el-icon-delete"
+                  circle
+                  @click="removeItem(index)"
+                  style="margin-left: 2%"
+                ></el-button>
+              </el-form-item>
+            </div>
+          </el-form-item>
+          <el-form-item label="" style="">
+            <a href="#" @click="addItem" style="color: #1890ff"
+              >+添加执行操作</a
+            >
+          </el-form-item>
+        </el-row>
+      </div>
       <el-form-item class="dialog-footer">
         <el-button style="width: 30%" type="primary" @click="submitStrategyForm"
           >提交</el-button
@@ -186,7 +228,7 @@
         <el-form-item label="设备类型" prop="equipment_type">
           <el-radio-group
             v-model="eqForm.equipment_type"
-            @change.native="eqTypeChange()"
+            @change="eqTypeChange()"
           >
             <el-radio-button
               :label="item.typeId"
@@ -230,6 +272,19 @@
         <el-button @click="cancelChooseEq">取消</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="Cron表达式生成器"
+      :visible.sync="openCron"
+      append-to-body
+      destroy-on-close
+      class="scrollbar"
+    >
+      <crontab
+        @hide="openCron = false"
+        @fill="crontabFill"
+        :expression="expression"
+      ></crontab>
+    </el-dialog>
   </div>
 </template>
 
@@ -257,9 +312,22 @@ import {
   getGuid,
   handleStrategy,
 } from "@/api/event/strategy";
+import Crontab from "@/components/Crontab";
 export default {
+  components: {
+    Crontab,
+  },
   data() {
     return {
+      definition: [
+        { warningType: "0", name: "仅预警" },
+        { warningType: "1", name: "预警联动" },
+      ],
+      paramsData : {
+        tunnelId: ""
+      },
+      expression: "",
+      openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
       //是否显示 选择设备弹出层
@@ -278,6 +346,8 @@ export default {
           { required: true, message: "请选择设备", trigger: "blur" },
         ],
       },
+      viewStrategy: false,
+      manualControlStateList: [],
       showCronBox: false,
       strategyForm: {
         strategyType: "2", //策略类型
@@ -298,11 +368,17 @@ export default {
           elementId: "", //设备数据项
           comparePattern: "", //比较的符号
           compareValue: "", //阈值
+          warningType: "",
         },
+        schedulerTime: "",
       },
       //设备类型查询参数
       queryEqTypeParams: {
         isControl: 1,
+      },
+      //模拟量设备查询
+      queryAnalogEqParams: {
+        isAnalog: 1,
       },
       deviceName: [], //设备名称列表
       dataItem: [], //数据项
@@ -349,11 +425,10 @@ export default {
       this.getTunnels();
       this.getDirection();
     },
-
     /** 获取当前策略数据 */
     async getStrategyData(row) {
       //获取设备
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
       });
       await listType(this.queryEqTypeParams).then((response) => {
@@ -361,12 +436,14 @@ export default {
       });
       getStrategy(this.id).then((response) => {
         let data = response.data;
+        this.strategyForm.id = data.id;
         this.strategyForm.strategyName = data.strategyName;
         this.strategyForm.tunnelId = data.tunnelId;
         this.strategyForm.strategyType = data.strategyType;
         this.strategyForm.direction = data.direction;
         this.strategyForm.equipmentTypeId = data.equipmentTypeId;
         this.strategyForm.jobRelationId = data.jobRelationId;
+        this.strategyForm.schedulerTime = data.schedulerTime;
         listItem({
           deviceTypeId: this.strategyForm.triggers.deviceTypeId,
         }).then((res) => {
@@ -375,31 +452,41 @@ export default {
 
         // 获取触发器的数据
         getTriggersByRelateId({ relateId: response.data.id }).then((res) => {
+          console.log(res, "触发器数据");
           this.strategyForm.triggers.id = res.data.id;
           this.strategyForm.triggers.comparePattern = res.data.comparePattern;
           this.strategyForm.triggers.compareValue = res.data.compareValue;
           this.strategyForm.triggers.deviceTypeId = res.data.deviceTypeId;
           this.strategyForm.triggers.elementId = res.data.elementId;
-          this.strategyForm.triggers.deviceId = res.data.deviceId;
-        });
-
-        listRl({ strategyId: row.id }).then((response) => {
-          this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
+          // this.strategyForm.triggers.warningType = res.data.warningType;
+          this.$set(this.strategyForm.triggers,"warningType",res.data.warningType)
           listDevices({
-            eqType: response.rows[0].eqTypeId,
+            eqType: this.strategyForm.triggers.deviceTypeId,
             eqTunnelId: this.strategyForm.tunnelId,
-          }).then((res) => {
-            this.equipmentData = res.rows;
+            eqDirection: this.strategyForm.direction,
+          }).then((data) => {
+            this.deviceName = data.rows;
+            this.strategyForm.triggers.deviceId = res.data.deviceId.split(",");
           });
-          this.strategyForm.autoControl = response.rows;
-          for (var i = 0; i < response.rows.length; i++) {
-            var attr = response.rows[i];
-            this.strategyForm.autoControl[i].value = attr.equipments.split(",");
-            this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
-            this.strategyForm.autoControl[i].state = attr.state;
-            this.strategyForm.autoControl[i].type = attr.eqTypeId;
-            this.strategyForm.autoControl[i].typeName = attr.eqType.typeName;
-          }
+          listRl({ strategyId: row.id }).then((response) => {
+            this.strategyForm.equipmentTypeId = response.rows[0].eqTypeId;
+            listDevices({
+              eqType: response.rows[0].eqTypeId,
+              eqTunnelId: this.strategyForm.tunnelId,
+            }).then((list) => {
+              this.equipmentData = list.rows;
+            });
+            this.strategyForm.autoControl = response.rows;
+            for (var i = 0; i < response.rows.length; i++) {
+              var attr = response.rows[i];
+              this.strategyForm.autoControl[i].value =
+                attr.equipments.split(",");
+              this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
+              this.strategyForm.autoControl[i].state = attr.state;
+              this.strategyForm.autoControl[i].type = attr.eqTypeId;
+              this.strategyForm.autoControl[i].typeName = attr.eqType.typeName;
+            }
+          });
         });
       });
     },
@@ -444,9 +531,17 @@ export default {
       this.$refs["autoControl"].validate((valid) => {
         if (valid) {
           var autoControl = this.strategyForm.autoControl;
-          if (autoControl[0].value.length == 0 || autoControl[0].state == "") {
-            return this.$modal.msgError("请选择设备并添加执行操作");
+          console.log(autoControl.length);
+          if (this.strategyForm.warningType == 1) {
+            if (
+              !autoControl.length ||
+              autoControl[0].value.length == 0 ||
+              autoControl[0].state == ""
+            ) {
+              return this.$modal.msgError("请选择设备并添加执行操作");
+            }
           }
+
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
@@ -458,10 +553,14 @@ export default {
     },
     // 编辑操作
     async updateStrategyInfoData() {
-      await getGuid().then((res) => {
-        this.strategyForm.jobRelationId = res;
-        this.strategyForm.id = this.id;
-      });
+      if (this.sink == "add") {
+        await getGuid().then((res) => {
+          this.strategyForm.jobRelationId = res;
+          this.strategyForm.id = this.id;
+        });
+      }
+      this.strategyForm.triggers.deviceId =
+        this.strategyForm.triggers.deviceId.toString();
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -474,6 +573,8 @@ export default {
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
+      this.strategyForm.triggers.deviceId =
+        this.strategyForm.triggers.deviceId.toString();
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
@@ -494,6 +595,10 @@ export default {
       });
       this.chooseEq = false; //关闭弹窗
       this.index = 0;
+      // 如果设备操作状态已选择,则重置状态值
+      if (this.strategyForm.autoControl[index].state) {
+        this.strategyForm.autoControl[index].state = "";
+      }
       listEqTypeStateIsControl({
         stateTypeId: this.eqForm.equipment_type,
         isControl: 1,
@@ -566,6 +671,7 @@ export default {
       });
       console.log(flag);
       if (flag == false) {
+        console.log(this.strategyForm, "当前数据");
         return this.$modal.msgError("请选择设备并添加执行操作");
       }
       this.addCf();
@@ -577,7 +683,8 @@ export default {
     },
     //查询设备控制状态和设备列表
     eqTypeChange() {
-      if (this.eqForm.equipments.length > 1) {
+      console.log(this.eqForm.equipments, "设备数据");
+      if (this.eqForm.equipments.length >= 1) {
         this.eqForm.equipments = "";
       }
       this.listDevices();
@@ -673,7 +780,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         this.getAutoEqTypeList();
         this.getSymbol();
@@ -686,7 +796,7 @@ export default {
     },
     // 查询触发器设备类型
     getAutoEqTypeList() {
-      autoEqTypeList().then((res) => {
+      autoEqTypeList(this.queryAnalogEqParams).then((res) => {
         this.eqTypeList = res.rows;
         console.log(this.eqTypeList, "触发器设备类型");
       });
@@ -724,16 +834,25 @@ export default {
     strategyFormClose() {
       this.$emit("dialogVisibleClose");
     },
+    /** cron表达式按钮操作 */
+    handleShowCron() {
+      this.expression = this.strategyForm.schedulerTime;
+      this.openCron = true;
+    },
+    /** 确定后回传值 */
+    crontabFill(value) {
+      this.strategyForm.schedulerTime = value;
+    },
   },
 };
 </script>
 
     <style>
-.triggers .box .el-form-item__content {
+/* .triggers .box .el-form-item__content {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 .triggers .box .el-form-item__content .el-form-item {
   margin-left: 15px;
 }

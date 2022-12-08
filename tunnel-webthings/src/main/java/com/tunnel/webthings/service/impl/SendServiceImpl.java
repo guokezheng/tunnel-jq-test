@@ -40,8 +40,7 @@ public class SendServiceImpl implements SendService {
     /**
      * 测试设备编号
      */
-    private static final String devNo1 = "G00030001A1990001";
-    private static final String devNo2 = "G00030001A1990001";
+    private static final String devNo1 = "S00063700001980001";
 
     private static final String direct = "up";
     private static final String msgVer = "V1.0";
@@ -49,7 +48,7 @@ public class SendServiceImpl implements SendService {
     /**
      * 设备类型
      */
-    private static final String devType = "199";
+    private static final String devType = "198";
     /**
      * 消息类型
      */
@@ -75,19 +74,8 @@ public class SendServiceImpl implements SendService {
         dev01Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
         dev01Map.put("expands", new HashMap<>()); //自定义扩展数据，选填
 
-        Map<String, Object> dev02Map = new HashMap<>();
-        dev02Map.put("devNo", devNo2);
-        dev02Map.put("devType", devType);
-        dev02Map.put("loginTime", DateUtil.format(DateUtil.date(), sdf_pattern));
-        dev02Map.put("devStatus", "1");
-        dev02Map.put("netStatus", "1");
-        dev02Map.put("devStatusRemark", "在线");
-        dev02Map.put("netStatusRemark", "连通");
-        dev02Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        dev02Map.put("expands", new HashMap<>());
-
-        List<String> devNos = CollUtil.newArrayList(devNo1, devNo2);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map, dev02Map);
+        List<String> devNos = CollUtil.newArrayList(devNo1);
+        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map);
         Map<String, Object> content = new HashMap<>();
         content.put("devList", devList);
 
@@ -112,23 +100,12 @@ public class SendServiceImpl implements SendService {
 
         dev01Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
         dev01Map.put("expands", new HashMap<>()); //自定义扩展数据，选填
-
-        Map<String, Object> dev02Map = new HashMap<>();
-        dev02Map.put("devNo", devNo2);
-        dev02Map.put("devType", devType);
-        //事件数据，格式根据业务自定义开始
-        dev02Map.put("eventType", "EVENT_TYPE_B"); //事件B
-        dev02Map.put("eventTypeDesc", "测试事件B描述"); //事件B描述
-        dev02Map.put("random", RandomUtil.randomString(128)); //随机写入
         //TODO 自定义key和value
 
         //事件数据，格式根据业务自定义结束
 
-        dev02Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        dev02Map.put("expands", new HashMap<>());
-
-        List<String> devNos = CollUtil.newArrayList(devNo1, devNo2);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map, dev02Map);
+        List<String> devNos = CollUtil.newArrayList(devNo1);
+        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map);
         Map<String, Object> content = new HashMap<>();
         content.put("devList", devList);
 
@@ -153,23 +130,12 @@ public class SendServiceImpl implements SendService {
 
         dev01Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern)); //时间戳，必填
         dev01Map.put("expands", new HashMap<>()); //自定义扩展数据，选填
-
-        Map<String, Object> dev02Map = new HashMap<>();
-        dev02Map.put("devNo", devNo2);
-        dev02Map.put("devType", devType);
-        //指令数据，格式根据业务自定义开始
-        dev02Map.put("directType", "DIRECT_TYPE_B"); //指令B
-        dev02Map.put("directTypeDesc", "测试指令B描述"); //指令B描述
-        dev02Map.put("random", RandomUtil.randomString(128)); //随机写入
         //TODO 自定义key和value
 
         //指令数据，格式根据业务自定义结束
 
-        dev02Map.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-        dev02Map.put("expands", new HashMap<>());
-
-        List<String> devNos = CollUtil.newArrayList(devNo1, devNo2);
-        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map, dev02Map);
+        List<String> devNos = CollUtil.newArrayList(devNo1);
+        List<Map<String, Object>> devList = CollUtil.newArrayList(dev01Map);
         Map<String, Object> content = new HashMap<>();
         content.put("devList", devList);
 

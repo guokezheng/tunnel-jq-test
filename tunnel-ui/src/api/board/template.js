@@ -104,6 +104,27 @@ export function getInformationBoardRelease(data) {
   })
 }
 
+//情报板发布
+export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
+  var data = {
+    deviceIds:devicelds,
+    protocolType:protocolType,
+    parameters:encodeURI(parameters)
+  }
+  return request({
+    url: '/parser/board/uploadBoardEditInfo',
+    method: 'get',
+    params: data
+  })
+}
 
 
 
+//情报板管理右侧查询接口
+export function getAllVmsTemplate(category) {
+  return request({
+    url: '/system/template/getAllVmsTemplate/' + category,
+    method: 'get',
+
+  })
+}

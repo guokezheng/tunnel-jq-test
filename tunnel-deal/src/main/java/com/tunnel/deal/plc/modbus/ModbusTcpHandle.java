@@ -36,10 +36,10 @@ public class ModbusTcpHandle {
     }
 
     public int toControlDev(String deviceId,Integer ctrState,SdDevices sdDevices) {
-        if (sdDevices.getEqControlPointAddress() == null || sdDevices.getEqControlPointAddress().equals("")) {
+        if (sdDevices.getControlPointAddress() == null || sdDevices.getControlPointAddress().equals("")) {
             return 0;
         }
-        String[] point = sdDevices.getEqControlPointAddress().split(",");
+        String[] point = sdDevices.getControlPointAddress().split(",");
         Long deviceType = sdDevices.getEqType();
         String plcId = sdDevices.getFEqId();
         Map<String, ModbusMaster> masterMap = ModbusTcpMaster.masterMap;

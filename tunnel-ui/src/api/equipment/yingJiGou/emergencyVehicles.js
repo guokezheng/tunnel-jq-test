@@ -34,6 +34,15 @@ export function editForm(id) {
     })
 }
 
+//点击详情的回显
+export function detailForm(data) {
+  return request({
+    url: '/system/vehicle/getVehicleDetails',
+    method: 'get',
+    params: data
+  })
+}
+
 //修改的提交
 export function updateForm(data) {
     return request({
@@ -55,6 +64,6 @@ export function exportData(data) {
 export function veicleOrgId() {
     return request({
         url: '/system/vehicle/getOrg',
-        method: 'get',        
+        method: 'get',
     })
 }

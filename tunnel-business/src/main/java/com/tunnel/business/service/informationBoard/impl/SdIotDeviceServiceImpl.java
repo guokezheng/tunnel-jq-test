@@ -174,9 +174,14 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
 
     @Override
     public List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice sdIotDevice) {
-        sdIotDevice.setIsMonitor(1);
-        Long deptId = SecurityUtils.getDeptId();
+//        sdIotDevice.setIsMonitor(1);
+        String deptId = SecurityUtils.getDeptId();
         sdIotDevice.setManageAgencyId(deptId);
         return sdIotDeviceMapper.selectIotDeviceArrayList(sdIotDevice);
+    }
+
+    @Override
+    public List<Map<String, Object>> getDevicesSize() {
+        return sdIotDeviceMapper.getDevicesSize();
     }
 }

@@ -1,14 +1,14 @@
 package com.tunnel.business.domain.dataInfo;
 
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
+import com.ruoyi.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * 设备对象 sd_devices
@@ -39,7 +39,7 @@ public class SdDevices extends BaseEntity {
     private String fEqId;
 
     @ApiModelProperty("部门id")
-    private Long deptId;
+    private String deptId;
     @ApiModelProperty("部门名称")
     private String deptName;
 
@@ -69,8 +69,8 @@ public class SdDevices extends BaseEntity {
     /**
      * 设备类型
      */
-   /* @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")*/
+    @ApiModelProperty("设备类型")
+    @Excel(name = "设备类型")
     private Long eqType;
 
 
@@ -96,12 +96,12 @@ public class SdDevices extends BaseEntity {
     @Excel(name = "设备品牌编号")
 
     @ApiModelProperty("设备品牌编号")
-    private Long brandId;
+    private String brandId;
 
     /**
      * 所属道路方向(上行、下行)
      */
-    @Excel(name = "所属道路方向(上行、下行)")
+    @Excel(name = "所属道路方向(上行、下行)", dictType = "sd_direction")
     //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;
@@ -181,42 +181,7 @@ public class SdDevices extends BaseEntity {
      */
     @Excel(name = "协议类型")
     @ApiModelProperty("协议类型")
-    private String protocol;
-
-    /**
-     * 协议通信地址
-     */
-    @Excel(name = "协议通信地址")
-    @ApiModelProperty("协议通信地址")
-    private String protocolUrl;
-
-    /**
-     * 版本号
-     */
-    @Excel(name = "版本号")
-    @ApiModelProperty("版本号")
-    private String protocolVersion;
-
-    /**
-     * 通信协议名称
-     */
-    @Excel(name = "通信协议名称")
-    @ApiModelProperty("通信协议名称")
-    private String protocolName;
-
-    /**
-     * 数据类型
-     */
-    @Excel(name = "数据类型")
-    @ApiModelProperty("数据类型")
-    private String dataType;
-
-    /**
-     * 数据采集方式
-     */
-    @Excel(name = "数据采集方式")
-    @ApiModelProperty("数据采集方式")
-    private String dataSource;
+    private String commProtocol;
 
     /**
      * 出厂时间
@@ -309,67 +274,23 @@ public class SdDevices extends BaseEntity {
     private Date eqStatusTime;
 
     /**
-     * 控制模式+机位
-     */
-    @Excel(name = "控制模式+机位")
-    @ApiModelProperty("控制模式+机位")
-    private String dmcontrolSeat;
-
-    /**
-     * 照明灯类型
-     */
-    @Excel(name = "照明灯类型")
-    @ApiModelProperty("照明灯类型")
-    private Long eqLampType;
-
-    /**
-     * 查询模式+机位
-     */
-    @Excel(name = "查询模式+机位")
-    @ApiModelProperty("查询模式+机位")
-    private String instructionSeat;
-
-    /**
      * 控制点位地址
      */
     @Excel(name = "控制点位地址")
     @ApiModelProperty("控制点位地址")
-    private String eqControlPointAddress;
+    private String controlPointAddress;
 
     /**
      * 点位地址1
      */
-    @Excel(name = "点位地址1")
-    @ApiModelProperty("点位地址1")
-    private String eqFeedbackAddress1;
+    @Excel(name = "点位地址")
+    @ApiModelProperty("点位地址")
+    private String queryPointAddress;
 
     /**
-     * 点位地址2
+     * 是否更新
      */
-    @Excel(name = "点位地址2")
-    @ApiModelProperty("点位地址2")
-    private String eqFeedbackAddress2;
-
-    /**
-     * 点位地址3
-     */
-    @Excel(name = "点位地址3")
-    @ApiModelProperty("点位地址3")
-    private String eqFeedbackAddress3;
-
-    /**
-     * 点位地址4
-     */
-    @Excel(name = "点位地址4")
-    @ApiModelProperty("点位地址4")
-    private String eqFeedbackAddress4;
-
-    /**
-     * 点位地址5
-     */
-    @Excel(name = "点位地址5")
-    @ApiModelProperty("点位地址5")
-    private String eqFeedbackAddress5;
+    private boolean updateSupport;
 
     public void setEqId(String eqId) {
         this.eqId = eqId;
@@ -389,17 +310,107 @@ public class SdDevices extends BaseEntity {
      **/
     private String qNumber;
 
-    //控制状态
-    @ApiModelProperty("控制状态:1-手动控制 2-自动控制")
-    private String controlStatus;
+    /**
+     * 消息协议（Mobdus/Fins/API/自定义）
+     * */
+    private String messageProtocol;
 
+    /**
+     * 协议ID
+     * */
+    private String protocolId;
 
-    public String getControlStatus() {
-        return controlStatus;
+    /**
+     * road_id路段ID
+     * */
+    private String roadId;
+
+    /**
+     * 设备唯一标识码
+     * */
+    private String sn;
+
+    /**
+     * 外部设备ID
+     **/
+    private String externalDeviceId;
+
+    public String getExternalDeviceId() {
+        return externalDeviceId;
     }
 
-    public void setControlStatus(String controlStatus) {
-        this.controlStatus = controlStatus;
+    public void setExternalDeviceId(String externalDeviceId) {
+        this.externalDeviceId = externalDeviceId;
+    }
+
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+
+    public String getRoadId() {
+        return roadId;
+    }
+
+    public void setRoadId(String roadId) {
+        this.roadId = roadId;
+    }
+
+    public String getProtocolId() {
+        return protocolId;
+    }
+    /**
+     * 在线数量
+     **/
+    private Integer zxNum;
+
+    /**
+     * 离线数量
+     **/
+    private Integer lxNum;
+
+    /**
+     * 运行状态
+     **/
+    private String runStatus;
+
+    public String getRunStatus() {
+        return this.runStatus;
+    }
+
+    public void setRunStatus(final String runStatus) {
+        this.runStatus = runStatus;
+    }
+
+    public Integer getZxNum() {
+        return this.zxNum;
+    }
+
+    public void setZxNum(final Integer zxNum) {
+        this.zxNum = zxNum;
+    }
+
+    public Integer getLxNum() {
+        return this.lxNum;
+    }
+
+    public void setLxNum(final Integer lxNum) {
+        this.lxNum = lxNum;
+    }
+
+    public void setProtocolId(String protocolId) {
+        this.protocolId = protocolId;
+    }
+
+    public String getMessageProtocol() {
+        return messageProtocol;
+    }
+
+    public void setMessageProtocol(String messageProtocol) {
+        this.messageProtocol = messageProtocol;
     }
 
     public String getInstruction() {
@@ -471,11 +482,11 @@ public class SdDevices extends BaseEntity {
         this.tunnelName = tunnelName;
     }
 
-    public Long getDeptId() {
+    public String getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId) {
+    public void setDeptId(String deptId) {
         this.deptId = deptId;
     }
 
@@ -520,11 +531,11 @@ public class SdDevices extends BaseEntity {
         return eqModel;
     }
 
-    public void setBrandId(Long brandId) {
+    public void setBrandId(String brandId) {
         this.brandId = brandId;
     }
 
-    public Long getBrandId() {
+    public String getBrandId() {
         return brandId;
     }
 
@@ -616,52 +627,12 @@ public class SdDevices extends BaseEntity {
         return eqPwd;
     }
 
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
+    public void setCommProtocol(String commProtocol) {
+        this.commProtocol = commProtocol;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocolUrl(String protocolUrl) {
-        this.protocolUrl = protocolUrl;
-    }
-
-    public String getProtocolUrl() {
-        return protocolUrl;
-    }
-
-    public void setProtocolVersion(String protocolVersion) {
-        this.protocolVersion = protocolVersion;
-    }
-
-    public String getProtocolVersion() {
-        return protocolVersion;
-    }
-
-    public void setProtocolName(String protocolName) {
-        this.protocolName = protocolName;
-    }
-
-    public String getProtocolName() {
-        return protocolName;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public void setDataSource(String dataSource) {
-        this.dataSource = dataSource;
-    }
-
-    public String getDataSource() {
-        return dataSource;
+    public String getCommProtocol() {
+        return commProtocol;
     }
 
     public void setDeliveryTime(Date deliveryTime) {
@@ -760,76 +731,20 @@ public class SdDevices extends BaseEntity {
         return eqStatusTime;
     }
 
-    public void setDmcontrolSeat(String dmcontrolSeat) {
-        this.dmcontrolSeat = dmcontrolSeat;
+    public void setControlPointAddress(String controlPointAddress) {
+        this.controlPointAddress = controlPointAddress;
     }
 
-    public String getDmcontrolSeat() {
-        return dmcontrolSeat;
+    public String getControlPointAddress() {
+        return controlPointAddress;
     }
 
-    public void setEqLampType(Long eqLampType) {
-        this.eqLampType = eqLampType;
+    public void setQueryPointAddress(String queryPointAddress) {
+        this.queryPointAddress = queryPointAddress;
     }
 
-    public Long getEqLampType() {
-        return eqLampType;
-    }
-
-    public void setInstructionSeat(String instructionSeat) {
-        this.instructionSeat = instructionSeat;
-    }
-
-    public String getInstructionSeat() {
-        return instructionSeat;
-    }
-
-    public void setEqControlPointAddress(String eqControlPointAddress) {
-        this.eqControlPointAddress = eqControlPointAddress;
-    }
-
-    public String getEqControlPointAddress() {
-        return eqControlPointAddress;
-    }
-
-    public void setEqFeedbackAddress1(String eqFeedbackAddress1) {
-        this.eqFeedbackAddress1 = eqFeedbackAddress1;
-    }
-
-    public String getEqFeedbackAddress1() {
-        return eqFeedbackAddress1;
-    }
-
-    public void setEqFeedbackAddress2(String eqFeedbackAddress2) {
-        this.eqFeedbackAddress2 = eqFeedbackAddress2;
-    }
-
-    public String getEqFeedbackAddress2() {
-        return eqFeedbackAddress2;
-    }
-
-    public void setEqFeedbackAddress3(String eqFeedbackAddress3) {
-        this.eqFeedbackAddress3 = eqFeedbackAddress3;
-    }
-
-    public String getEqFeedbackAddress3() {
-        return eqFeedbackAddress3;
-    }
-
-    public void setEqFeedbackAddress4(String eqFeedbackAddress4) {
-        this.eqFeedbackAddress4 = eqFeedbackAddress4;
-    }
-
-    public String getEqFeedbackAddress4() {
-        return eqFeedbackAddress4;
-    }
-
-    public void setEqFeedbackAddress5(String eqFeedbackAddress5) {
-        this.eqFeedbackAddress5 = eqFeedbackAddress5;
-    }
-
-    public String getEqFeedbackAddress5() {
-        return eqFeedbackAddress5;
+    public String getQueryPointAddress() {
+        return queryPointAddress;
     }
 
     public String getfEqId() {
@@ -846,6 +761,14 @@ public class SdDevices extends BaseEntity {
 
     public void setEqTypeName(SdEquipmentType eqTypeName) {
         this.eqTypeName = eqTypeName;
+    }
+
+    public boolean isUpdateSupport() {
+        return updateSupport;
+    }
+
+    public void setUpdateSupport(boolean updateSupport) {
+        this.updateSupport = updateSupport;
     }
 
     @Override
@@ -874,12 +797,7 @@ public class SdDevices extends BaseEntity {
                 ", secureKey='" + secureKey + '\'' +
                 ", eqUser='" + eqUser + '\'' +
                 ", eqPwd='" + eqPwd + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", protocolUrl='" + protocolUrl + '\'' +
-                ", protocolVersion='" + protocolVersion + '\'' +
-                ", protocolName='" + protocolName + '\'' +
-                ", dataType='" + dataType + '\'' +
-                ", dataSource='" + dataSource + '\'' +
+                ", commProtocol='" + commProtocol + '\'' +
                 ", deliveryTime=" + deliveryTime +
                 ", warrantyEndTime=" + warrantyEndTime +
                 ", installTime=" + installTime +
@@ -892,19 +810,12 @@ public class SdDevices extends BaseEntity {
                 ", gatewayNetstatusTime=" + gatewayNetstatusTime +
                 ", eqStatus='" + eqStatus + '\'' +
                 ", eqStatusTime=" + eqStatusTime +
-                ", dmcontrolSeat='" + dmcontrolSeat + '\'' +
-                ", eqLampType=" + eqLampType +
-                ", instructionSeat='" + instructionSeat + '\'' +
-                ", eqControlPointAddress='" + eqControlPointAddress + '\'' +
-                ", eqFeedbackAddress1='" + eqFeedbackAddress1 + '\'' +
-                ", eqFeedbackAddress2='" + eqFeedbackAddress2 + '\'' +
-                ", eqFeedbackAddress3='" + eqFeedbackAddress3 + '\'' +
-                ", eqFeedbackAddress4='" + eqFeedbackAddress4 + '\'' +
-                ", eqFeedbackAddress5='" + eqFeedbackAddress5 + '\'' +
+                ", controlPointAddress='" + controlPointAddress + '\'' +
+                ", queryPointAddress='" + queryPointAddress + '\'' +
                 ", instruction='" + instruction + '\'' +
                 ", seat='" + seat + '\'' +
                 ", qNumber='" + qNumber + '\'' +
-                ", controlStatus='" + controlStatus + '\'' +
+                ", updateSupport='" + updateSupport + '\'' +
                 '}';
     }
 }

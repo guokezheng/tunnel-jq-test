@@ -956,7 +956,6 @@ export default {
       this.record = true;
       this.taskId = row.id;
       getTaskInfoList(this.taskId).then((response) => {
-        debugger
         this.taskNews = response.data.task;
         this.patrolNews = response.data.patrol;
         this.taskOpt = response.data.opt;

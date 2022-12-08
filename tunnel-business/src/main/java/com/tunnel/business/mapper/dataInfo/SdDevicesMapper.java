@@ -237,7 +237,7 @@ public interface SdDevicesMapper
 	 * @param eqStatus
 	 * @return
 	 */
-	List<SdDevices> getDevicesNum(String param, String eqType, String eqStatus);
+	List<SdDevices> getDevicesNum(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
 
 	/**
 	 * app端设备信息

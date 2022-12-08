@@ -47,6 +47,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="protocolId"    column="protocol_id"    />
         <result property="roadId"    column="road_id"    />
         <result property="sn"    column="sn"    />
+        <result property="zxNum"    column="zxNum"    />
+        <result property="lxNum"    column="lxNum"    />
         <result property="externalDeviceId"    column="external_device_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
@@ -751,22 +753,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select eq_name,pile from sd_devices
+        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id from sd_devices t
+        left join sd_device_data d on t.eq_id = d.device_id
+        left join  sd_device_type_item i on i.id = d.item_id
+        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
+        left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
         <where>
-            <if test="param != null and param != ''">and CONCAT(eq_name,pile) like CONCAT('%',#{param},'%') </if>
-            <if test="eqType != null and eqType != ''">and eq_type in #{eqType}</if>
-            <if test="eqStatus != null and eqStatus != ''">and eq_status = #{eqStatus}</if>
+        1=1
+            <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
+            <if test="eqType != null and eqType != ''">and t.eq_type = #{eqType}</if>
+            <if test="eqStatus != null and eqStatus != ''">and d.data = #{eqStatus}</if>
 
         </where>
     </select>
 
 
     <select id="getDevicesNum" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select count(if(eq_status='1',1,null)) zxNum,count(if(eq_status='2',1,null)) lxNum from sd_devices
+        select count(if(d.data='1',1,null)) zxNum,count(if(d.data='2',1,null)) lxNum from sd_device_data d
+        left join  sd_device_type_item i on i.id = d.item_id
+        left join sd_devices t on t.eq_id = d.device_id
+        left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
         <where>
-            <if test="param != null and param != ''">and CONCAT(eq_name,pile) like CONCAT('%',#{param},'%') </if>
-            <if test="eqType != null and eqType != ''">and eq_type in #{eqType}</if>
-            <if test="eqStatus != null and eqStatus != ''">and eq_status = #{eqStatus}</if>
+            <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
+            <if test="eqType != null and eqType != ''">and t.eq_type = #{eqType}</if>
+            <if test="eqStatus != null and eqStatus != ''">and d.data = #{eqStatus}</if>
 
         </where>
     </select>

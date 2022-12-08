@@ -240,8 +240,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="countPatrolNum" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">
-        select count(id) from sd_patrol_list where task_id = #{id}
+    <select id="countPatrolNum" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">
+        select count(id) totalNum from sd_patrol_list where task_id = #{id}
     </select>
 
     <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >

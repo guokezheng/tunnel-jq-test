@@ -442,7 +442,7 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public int countPatrolNum(String id) {
+    public SdTaskList countPatrolNum(String id) {
         return sdPatrolListMapper.countPatrolNum(id);
     }
 

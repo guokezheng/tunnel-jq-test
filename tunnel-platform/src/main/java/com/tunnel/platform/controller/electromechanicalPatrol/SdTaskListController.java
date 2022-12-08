@@ -307,8 +307,8 @@ public class SdTaskListController extends BaseController
         if(taskList!=null&&taskList.size()>0){
             for(int i=0;i<taskList.size();i++){
                 if(taskList.get(i).getId()!=null){
-                    int num = sdTaskListService.countPatrolNum(taskList.get(i).getId());
-                    taskList.get(i).setTotalNum(num);
+                    SdTaskList task = sdTaskListService.countPatrolNum(taskList.get(i).getId());
+                    taskList.get(i).setTotalNum(task.getTotalNum());
                 }
             }
 

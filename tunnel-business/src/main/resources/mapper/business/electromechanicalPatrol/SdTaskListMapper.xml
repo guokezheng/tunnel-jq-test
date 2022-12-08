@@ -159,7 +159,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
-        select d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status from sd_task_list t
+        select d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
         left join sys_dept d on d.dept_id = t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
         <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>

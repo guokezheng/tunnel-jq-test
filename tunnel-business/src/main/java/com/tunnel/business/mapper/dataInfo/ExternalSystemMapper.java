@@ -1,7 +1,8 @@
 package com.tunnel.business.mapper.dataInfo;
 
-import java.util.List;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
+
+import java.util.List;
 
 /**
  * 外部系统Mapper接口
@@ -18,6 +19,15 @@ public interface ExternalSystemMapper
      * @return 外部系统
      */
     public ExternalSystem selectExternalSystemById(Long id);
+
+    /**
+     * 查询外部系统
+     *
+     * @param brandId 品牌ID
+     * @return 外部系统
+     */
+    ExternalSystem selectExternalSystemByBrandId(String brandId);
+
 
     /**
      * 查询外部系统列表
@@ -58,4 +68,5 @@ public interface ExternalSystemMapper
      * @return 结果
      */
     public int deleteExternalSystemByIds(Long[] ids);
+
 }

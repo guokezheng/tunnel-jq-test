@@ -1142,6 +1142,9 @@ export default {
       }
     },
     getFontSize(font,screenSize) {
+      if(!font){
+        return
+      }
       var screen = ''
       if(!screenSize){
         screen = this.form.devicePixel.split("*")[0];

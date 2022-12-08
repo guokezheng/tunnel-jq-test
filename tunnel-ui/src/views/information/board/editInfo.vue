@@ -26,7 +26,7 @@
                 height:boardHeight + 'px',
             }"
           >
-            <div
+            <span
               class="textBoard"
               style="line-height: 1; position: absolute; white-space: pre-wrap"
              
@@ -41,7 +41,7 @@
                 top:dataForm.COORDINATE.substring(3, 6) + 'px',
               }"
             v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
-            ></div>
+            ></span>
           </div>
         </el-card>
         <el-row >
@@ -664,6 +664,9 @@
         // 获取黑盒子长宽
         let divWidth = divContent[0].offsetWidth;
         let divHeight = divContent[0].offsetHeight;
+        console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+        console.log(textBoard[0].style,"textBoard[0].style");
+        console.log(textWidth,divWidth,"999999999999999");
         switch (alignmentNum) {
           // 左对齐
           case 1:
@@ -673,6 +676,7 @@
             // 左右居中
           case 2:
             textBoard[0].style.left = (divWidth - textWidth)/2 +'px';
+            textBoard[0].style.right = "unset";
             // divContent[0].style.display='flex';
             // divContent[0].style.justifyContent= 'center';
 
@@ -691,6 +695,7 @@
           case 5:
             console.log(divHeight,textHeight,"00000");
             textBoard[0].style.top = (divHeight - textHeight)/2 +'px';
+            textBoard[0].style.bottom = "unset";
             break;
             // 下对齐
           case 6:

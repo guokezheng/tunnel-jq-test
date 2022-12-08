@@ -25,7 +25,7 @@
           }"
           class="blackBoard"
         >
-          <div
+          <span
             style="line-height: 1; position: absolute; white-space: nowrap"
             :style="{
               color: dataForm.COLOR,
@@ -38,7 +38,7 @@
             }"
             class="textBoard"
             v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
-          ></div>
+          ></span>
          
         </div>
       </el-card>
@@ -930,6 +930,9 @@ export default {
       // 获取黑盒子长宽
       let divWidth = divContent[0].offsetWidth;
       let divHeight = divContent[0].offsetHeight;
+      console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+      console.log(textBoard[0].style,"textBoard[0].style");
+      console.log(textWidth,divWidth,"999999999999999");
       switch (alignmentNum) {
         // 左对齐
         case 1:
@@ -939,6 +942,8 @@ export default {
         // 左右居中
         case 2:
           textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
+          textBoard[0].style.right = "unset";
+
           break;
         // 右对齐
         case 3:
@@ -954,6 +959,7 @@ export default {
         case 5:
           console.log(divHeight, textHeight, "00000");
           textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
+          textBoard[0].style.bottom = "unset";
           break;
         // 下对齐
         case 6:

@@ -20,14 +20,6 @@ public interface ExternalSystemMapper
      */
     public ExternalSystem selectExternalSystemById(Long id);
 
-    /**
-     * 查询外部系统
-     *
-     * @param brandId 品牌ID
-     * @return 外部系统
-     */
-    ExternalSystem selectExternalSystemByBrandId(String brandId);
-
 
     /**
      * 查询外部系统列表
@@ -68,5 +60,7 @@ public interface ExternalSystemMapper
      * @return 结果
      */
     public int deleteExternalSystemByIds(Long[] ids);
+
+    ExternalSystem getByBrandAndDept(ExternalSystem externalSystem);
 
 }

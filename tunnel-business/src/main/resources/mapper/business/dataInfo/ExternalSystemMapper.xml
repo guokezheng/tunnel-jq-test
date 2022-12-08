@@ -43,12 +43,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="selectExternalSystemByBrandId" parameterType="java.lang.String" resultType="com.tunnel.business.domain.dataInfo.ExternalSystem">
-        <include refid="selectExternalSystemVo"/>
-        where brand_id = #{brandId}
-    </select>
-
-
     <insert id="insertExternalSystem" parameterType="ExternalSystem" useGeneratedKeys="true" keyProperty="id">
         insert into external_system
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -114,5 +108,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-
+    <select id="getByBrandAndDept" parameterType="com.tunnel.business.domain.dataInfo.ExternalSystem" resultType="com.tunnel.business.domain.dataInfo.ExternalSystem">
+        <include refid="selectExternalSystemVo"/>
+        where brand_id = #{brandId} and dept_id=#{deptId}
+    </select>
 </mapper>

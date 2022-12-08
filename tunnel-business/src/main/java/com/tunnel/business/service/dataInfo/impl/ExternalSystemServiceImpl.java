@@ -33,13 +33,13 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
     /**
      * 查询外部系统
      *
-     * @param brandId 品牌ID
+     * @param externalSystem 外部系统
      * @return 外部系统
      */
     @Override
-    public ExternalSystem selectExternalSystemByBrandId(String brandId)
+    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem)
     {
-        return externalSystemMapper.selectExternalSystemByBrandId(brandId);
+        return externalSystemMapper.getByBrandAndDept(externalSystem);
     }
 
     /**

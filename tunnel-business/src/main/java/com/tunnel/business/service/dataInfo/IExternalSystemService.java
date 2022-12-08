@@ -18,14 +18,13 @@ public interface IExternalSystemService
      */
     public ExternalSystem selectExternalSystemById(Long id);
 
-
     /**
      * 查询外部系统
      *
-     * @param brandId 品牌ID
+     * @param externalSystem 外部系统
      * @return 外部系统
      */
-    public ExternalSystem selectExternalSystemByBrandId(String brandId);
+    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem);
 
 
     /**

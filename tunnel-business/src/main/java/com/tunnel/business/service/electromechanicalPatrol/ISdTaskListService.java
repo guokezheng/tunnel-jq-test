@@ -114,7 +114,7 @@ public interface ISdTaskListService
      * @param id
      * @return
      */
-    int countPatrolNum(String id);
+    SdTaskList countPatrolNum(String id);
 
     /**
      * app端接收任务

@@ -19,6 +19,10 @@ public class ExternalSystem extends BaseEntity
     @Excel(name = "厂商品牌id")
     private String brandId;
 
+    /** 部门ID */
+    @Excel(name = "部门ID")
+    private String deptId;
+
     /** 是否映射方向（0：是，1：否） */
     @Excel(name = "是否映射方向", readConverterExp = "0=：是，1：否")
     private String isDirection;
@@ -61,6 +65,15 @@ public class ExternalSystem extends BaseEntity
     {
         return brandId;
     }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
     public void setIsDirection(String isDirection)
     {
         this.isDirection = isDirection;
@@ -121,6 +134,7 @@ public class ExternalSystem extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("brandId", getBrandId())
+            .append("deptId", getDeptId())
             .append("isDirection", getIsDirection())
             .append("username", getUsername())
             .append("password", getPassword())

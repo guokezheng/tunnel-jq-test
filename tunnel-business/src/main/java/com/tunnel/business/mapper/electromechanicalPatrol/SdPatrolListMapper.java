@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 import java.util.List;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPointList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 
 /**
  * 巡查点清单Mapper接口
@@ -103,7 +104,7 @@ public interface SdPatrolListMapper
      * @param id
      * @return
      */
-    int countPatrolNum(String id);
+    SdTaskList countPatrolNum(String id);
 
     /**
      * app 获取巡检点清单

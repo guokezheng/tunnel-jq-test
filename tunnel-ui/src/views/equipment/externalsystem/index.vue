@@ -83,13 +83,22 @@
 
     <el-table v-loading="loading" :data="systemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="系统名称" align="center" prop="systemName" />
 <!--      <el-table-column label="主键" align="center" prop="id" />-->
-      <el-table-column label="厂商品牌" align="center" prop="brandId" />
+      <el-table-column label="设备品牌" align="center" prop="brandId" >
+        <template slot-scope="scope">
+          <span>{{ getName(scope.row.brandId) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="隧道管理站" align="center" prop="brandId" >
+        <template slot-scope="scope">
+          <span>{{ getDeptName(scope.row.deptId) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="是否映射方向" align="center" prop="isDirection" />
       <el-table-column label="用户名" align="center" prop="username" />
       <el-table-column label="密码" align="center" prop="password" />
       <el-table-column label="网络状态" align="center" prop="networkStatus" />
-      <el-table-column label="系统名称" align="center" prop="systemName" />
       <el-table-column label="系统地址" align="center" prop="systemUrl" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -135,9 +144,27 @@
     <!-- 添加或修改外部系统对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
-        <el-form-item label="厂商品牌" prop="brandId">
-          <el-input v-model="form.brandId" placeholder="请输入厂商品牌" />
+        <el-form-item label="设备品牌" prop="brandId">
+          <el-select v-model="form.brandId" placeholder="请选择设备品牌" style="width: 100%">
+            <el-option
+              v-for="item in brandList"
+              :key="item.supplierId"
+              :label="item.shortName"
+              :value="item.supplierId"
+            />
+          </el-select>
         </el-form-item>
+
+
+        <el-form-item label="隧道管理站" prop="deptId">
+          <treeselect
+            v-model="form.deptId"
+            :options="deptOptions"
+            :show-count="true"
+            placeholder="请选择隧道管理站"
+          />
+        </el-form-item>
+
 <!--        <el-form-item label="是否映射方向" prop="isDirection">-->
 <!--          <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />-->
 <!--        </el-form-item>-->
@@ -180,11 +207,16 @@
 </template>
 
 <script>
-import { listSystem, getSystem, delSystem, addSystem, updateSystem, exportSystem }
-  from "@/api/equipment/externalsystem/system";
+import { listSystem, getSystem, delSystem, addSystem, updateSystem, exportSystem } from "@/api/equipment/externalsystem/system";
+import {getDevBrandList} from "@/api/equipment/eqlist/api";
+import { treeselectExcYG1,listDept } from "@/api/system/dept";
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "System",
+  components: { Treeselect },
+
   data() {
     return {
       // 遮罩层
@@ -234,12 +266,55 @@ export default {
           label: "否",
         },
       ],
+      //设备品牌
+      brandList: [],
+      deptOptions: undefined,
+      deptList: []
     };
   },
   created() {
     this.getList();
+    this.getDevBrandList()
+    this.getTreeselect();
+    this.getDeptList();
   },
   methods: {
+    getDeptList() {
+      listDept().then((response) => {
+        this.deptList = response.data;
+        console.log("deptOptions>>>>>>>",this.deptOptions);
+      });
+    },
+
+    /** 查询部门下拉树结构 */
+    getTreeselect() {
+      treeselectExcYG1().then((response) => {
+        this.deptOptions = response.data;
+        console.log("deptOptions>>>>>>>",this.deptOptions);
+      });
+    },
+    getName(num) {
+      for (var item of this.brandList) {
+        if (item.supplierId == num) {
+          return item.shortName;
+        }
+      }
+    },
+
+    getDeptName(num) {
+      for (var item of this.deptList) {
+        if (item.deptId == num) {
+          return item.deptName;
+        }
+      }
+    },
+
+    getDevBrandList() {
+      getDevBrandList().then(result => {
+        console.log("brandList:>>>", result.data)
+        this.brandList = result.data
+      })
+    },
     /** 查询外部系统列表 */
     getList() {
       this.loading = true;

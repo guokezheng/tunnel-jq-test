@@ -1,12 +1,13 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
+import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
-import com.tunnel.business.domain.dataInfo.ExternalSystem;
-import com.tunnel.business.service.dataInfo.IExternalSystemService;
+
+import java.util.List;
 
 /**
  * 外部系统Service业务层处理
@@ -27,6 +28,18 @@ public class ExternalSystemServiceImpl implements IExternalSystemService
     public ExternalSystem selectExternalSystemById(Long id)
     {
         return externalSystemMapper.selectExternalSystemById(id);
+    }
+
+    /**
+     * 查询外部系统
+     *
+     * @param externalSystem 外部系统
+     * @return 外部系统
+     */
+    @Override
+    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem)
+    {
+        return externalSystemMapper.getByBrandAndDept(externalSystem);
     }
 
     /**

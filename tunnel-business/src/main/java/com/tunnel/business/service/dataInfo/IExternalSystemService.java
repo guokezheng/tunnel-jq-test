@@ -1,7 +1,8 @@
 package com.tunnel.business.service.dataInfo;
 
-import java.util.List;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
+
+import java.util.List;
 
 /**
  * 外部系统Service接口
@@ -16,6 +17,15 @@ public interface IExternalSystemService
      * @return 外部系统
      */
     public ExternalSystem selectExternalSystemById(Long id);
+
+    /**
+     * 查询外部系统
+     *
+     * @param externalSystem 外部系统
+     * @return 外部系统
+     */
+    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem);
+
 
     /**
      * 查询外部系统列表

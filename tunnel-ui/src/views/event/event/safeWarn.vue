@@ -114,7 +114,7 @@
           />
         </el-select>-->
       </el-form-item>
-      <el-form-item label="所属隧道" prop="tunnelId">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -1298,7 +1298,7 @@
     updateList
   } from "@/api/electromechanicalPatrol/faultManage/fault";
   import {listEventType, getTodayEventCount} from "@/api/event/eventType";
-  import {listPlan} from "@/api/event/reservePlan";
+  import {listPlan, tunnelNames} from "@/api/event/reservePlan";
   import {listTunnels} from "@/api/equipment/tunnel/api";
   import {image, video} from "@/api/eventDialog/api.js";
   import {listEventFlow, getListBySId} from "@/api/event/eventFlow";
@@ -1748,7 +1748,10 @@
       /** 所属隧道 */
       getTunnel() {
         if (!this.queryParams.deptId) {
-          listTunnels().then((response) => {
+          if(this.$cache.local.get("manageStation") == "1"){
+            this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+          }
+          listTunnels(this.queryParams).then((response) => {
             console.log(response.rows, "所属隧道");
             this.tunnelList = response.rows;
           });
@@ -2208,6 +2211,13 @@
         }
       },
     },
+    watch: {
+      "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+        console.log(newVal, "0000000000000000000000");
+        this.getList();
+        this.getTunnel();
+      }
+    }
   };
 </script>
 <style scoped lang="scss">

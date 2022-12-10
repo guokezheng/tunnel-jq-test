@@ -7,7 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="ExternalSystem" id="ExternalSystemResult">
         <result property="id"    column="id"    />
         <result property="brandId"    column="brand_id"    />
-        <result property="deptId"    column="dept_id"    />
+        <result property="tunnelId"    column="tunnel_id"    />
         <result property="isDirection"    column="is_direction"    />
         <result property="username"    column="username"    />
         <result property="password"    column="password"    />
@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectExternalSystemVo">
-        select id, brand_id, dept_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time from external_system
+        select id, brand_id,tunnel_id,is_direction, username, password, network_status, system_name, system_url, remark, create_by, create_time, update_by, update_time from external_system
     </sql>
 
     <select id="selectExternalSystemList" parameterType="ExternalSystem" resultMap="ExternalSystemResult">
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into external_system
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="brandId != null">brand_id,</if>
-            <if test="deptId != null">dept_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
             <if test="isDirection != null">is_direction,</if>
             <if test="username != null">username,</if>
             <if test="password != null">password,</if>
@@ -62,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="brandId != null">#{brandId},</if>
-            <if test="deptId != null">#{deptId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
             <if test="isDirection != null">#{isDirection},</if>
             <if test="username != null">#{username},</if>
             <if test="password != null">#{password},</if>
@@ -81,7 +81,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update external_system
         <trim prefix="SET" suffixOverrides=",">
             <if test="brandId != null">brand_id = #{brandId},</if>
-            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="isDirection != null">is_direction = #{isDirection},</if>
             <if test="username != null">username = #{username},</if>
             <if test="password != null">password = #{password},</if>
@@ -107,9 +107,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-
-    <select id="getByBrandAndDept" parameterType="com.tunnel.business.domain.dataInfo.ExternalSystem" resultType="com.tunnel.business.domain.dataInfo.ExternalSystem">
-        <include refid="selectExternalSystemVo"/>
-        where brand_id = #{brandId} and dept_id=#{deptId}
-    </select>
 </mapper>

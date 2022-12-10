@@ -8,8 +8,6 @@ import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -163,5 +161,16 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
         String deptId = SecurityUtils.getDeptId();
         List<SdTunnels> jlyTunnel = sdTunnelsMapper.getJlyTunnel(deptId);
         return jlyTunnel;
+    }
+
+
+
+    /**
+     * 查询隧道列表
+     * @return 隧道
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList() {
+        return sdTunnelsMapper.selectAllSdTunnelsList();
     }
 }

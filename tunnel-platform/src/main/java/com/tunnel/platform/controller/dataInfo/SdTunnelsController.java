@@ -53,7 +53,6 @@ public class SdTunnelsController extends BaseController
     /**
      * 查询隧道列表
      */
-    // @ApiOperation("查询隧道列表")
     @GetMapping("/list")
     public TableDataInfo<List<SdTunnels>> list(SdTunnels sdTunnels)
     {
@@ -68,6 +67,15 @@ public class SdTunnelsController extends BaseController
         List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList(sdTunnels);
         return getDataTable(list);
     }
+
+
+    @GetMapping("/listAll")
+    public AjaxResult listAll() {
+        List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList();
+        return AjaxResult.success(list);
+    }
+
+
 
     /**
      * 获取隧道详细信息

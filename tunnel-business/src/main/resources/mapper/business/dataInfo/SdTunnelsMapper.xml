@@ -273,4 +273,9 @@
             OR d.dept_id IN ( SELECT dept_id FROM sys_dept WHERE 1 = 1 AND FIND_IN_SET( #{deptId}, ancestors ) > 0 ))
         </if>
     </select>
+
+    <select id="selectAllSdTunnelsList" resultMap="SdTunnelsResult">
+        select tunnel_id ,tunnel_name
+        from sd_tunnels
+    </select>
 </mapper>

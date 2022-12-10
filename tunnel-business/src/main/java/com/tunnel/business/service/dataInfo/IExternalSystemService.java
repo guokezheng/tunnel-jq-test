@@ -19,15 +19,6 @@ public interface IExternalSystemService
     public ExternalSystem selectExternalSystemById(Long id);
 
     /**
-     * 查询外部系统
-     *
-     * @param externalSystem 外部系统
-     * @return 外部系统
-     */
-    public ExternalSystem getByBrandAndDept(ExternalSystem externalSystem);
-
-
-    /**
      * 查询外部系统列表
      *
      * @param externalSystem 外部系统

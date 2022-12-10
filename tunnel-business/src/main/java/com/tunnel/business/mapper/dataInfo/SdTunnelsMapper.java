@@ -106,4 +106,6 @@ public interface SdTunnelsMapper
      * @return
      */
     List<SdTunnels> getJlyTunnel(@Param("deptId") String deptId);
+
+    List<SdTunnels> selectAllSdTunnelsList();
 }

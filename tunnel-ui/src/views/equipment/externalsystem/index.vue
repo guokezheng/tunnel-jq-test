@@ -90,9 +90,15 @@
           <span>{{ getName(scope.row.brandId) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="隧道管理站" align="center" prop="brandId" >
+     <!-- <el-table-column label="隧道管理站" align="center" prop="brandId" >
         <template slot-scope="scope">
           <span>{{ getDeptName(scope.row.deptId) }}</span>
+        </template>
+      </el-table-column>-->
+
+      <el-table-column label="所属隧道" align="center" prop="tunnelId" >
+        <template slot-scope="scope">
+          <span>{{ getTunnelName(scope.row.tunnelId) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否映射方向" align="center" prop="isDirection" />
@@ -156,14 +162,25 @@
         </el-form-item>
 
 
-        <el-form-item label="隧道管理站" prop="deptId">
+        <el-form-item label="所属隧道" prop="tunnelId">
+          <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">
+            <el-option
+              v-for="item in tunnelList"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            />
+          </el-select>
+        </el-form-item>
+
+        <!--<el-form-item label="隧道管理站" prop="deptId">
           <treeselect
             v-model="form.deptId"
             :options="deptOptions"
             :show-count="true"
             placeholder="请选择隧道管理站"
           />
-        </el-form-item>
+        </el-form-item>-->
 
 <!--        <el-form-item label="是否映射方向" prop="isDirection">-->
 <!--          <el-input v-model="form.isDirection" placeholder="请输入是否映射方向" />-->
@@ -210,6 +227,9 @@
 import { listSystem, getSystem, delSystem, addSystem, updateSystem, exportSystem } from "@/api/equipment/externalsystem/system";
 import {getDevBrandList} from "@/api/equipment/eqlist/api";
 import { treeselectExcYG1,listDept } from "@/api/system/dept";
+import {listAllTunnels} from "@/api/equipment/tunnel/api.js";
+
+
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -269,16 +289,24 @@ export default {
       //设备品牌
       brandList: [],
       deptOptions: undefined,
-      deptList: []
+      deptList: [],
+      tunnelList: []
     };
   },
   created() {
     this.getList();
     this.getDevBrandList()
     this.getTreeselect();
-    this.getDeptList();
+    // this.getDeptList();
+    this.getTunnelList();
   },
   methods: {
+    getTunnelList() {
+      listAllTunnels().then((response) => {
+        this.tunnelList = response.data;
+        console.log("tunnelList>>>>>>>",this.tunnelList);
+      });
+    },
     getDeptList() {
       listDept().then((response) => {
         this.deptList = response.data;
@@ -308,6 +336,14 @@ export default {
         }
       }
     },
+    getTunnelName(num) {
+      for (var item of this.tunnelList) {
+        if (item.tunnelId == num) {
+          return item.tunnelName;
+        }
+      }
+    },
+
 
     getDevBrandList() {
       getDevBrandList().then(result => {
@@ -344,6 +380,7 @@ export default {
       this.form = {
         id: null,
         brandId: null,
+        tunnelId: null,
         isDirection: null,
         username: null,
         password: null,

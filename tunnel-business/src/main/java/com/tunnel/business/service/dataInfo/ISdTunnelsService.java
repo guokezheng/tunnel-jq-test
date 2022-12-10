@@ -98,4 +98,7 @@ public interface ISdTunnelsService {
      * @return
      */
     List<SdTunnels> getJlyTunnel();
+
+    List<SdTunnels> selectAllSdTunnelsList();
+
 }

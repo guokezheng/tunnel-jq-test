@@ -9,6 +9,16 @@ export function listTunnels(query) {
   })
 }
 
+
+export function listAllTunnels(query) {
+  return request({
+    url: '/tunnels/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
+
 // 查询隧道详细
 export function getTunnels(tunnelId) {
   return request({

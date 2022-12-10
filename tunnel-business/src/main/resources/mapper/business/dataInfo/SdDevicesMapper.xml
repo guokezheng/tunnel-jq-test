@@ -10,8 +10,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="eqTunnelId"    column="eq_tunnel_id"    />
         <result property="eqName"    column="eq_name"    />
         <result property="eqType"    column="eq_type"    />
+        <result property="fEqType"    column="f_eq_type"    />
         <result property="eqModel"    column="eq_model"    />
         <result property="brandId"    column="brand_id"    />
+        <result property="externalSystemId"    column="external_system_id"    />
         <result property="eqDirection"    column="eq_direction"    />
         <result property="lane"    column="lane"    />
         <result property="pile"    column="pile"    />
@@ -66,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdDevicesVo">
-        select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, eq_model, brand_id,
+        select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, f_eq_type,eq_model, brand_id,external_system_id,
         eq_direction, lane, pile, pile_num, lat, lng, ip, port, secure_key, eq_user, eq_pwd, comm_protocol,
         delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
@@ -236,6 +238,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">eq_type,</if>
             <if test="eqModel != null">eq_model,</if>
             <if test="brandId != null">brand_id,</if>
+            <if test="externalSystemId != null">external_system_id,</if>
+            <if test="fEqType != null">f_eq_type,</if>
             <if test="eqDirection != null">eq_direction,</if>
             <if test="lane != null">lane,</if>
             <if test="pile != null">pile,</if>
@@ -281,6 +285,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">#{eqType},</if>
             <if test="eqModel != null">#{eqModel},</if>
             <if test="brandId != null">#{brandId},</if>
+            <if test="externalSystemId != null">#{externalSystemId},</if>
+            <if test="fEqType != null">#{fEqType},</if>
             <if test="eqDirection != null">#{eqDirection},</if>
             <if test="lane != null">#{lane},</if>
             <if test="pile != null">#{pile},</if>
@@ -329,6 +335,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqType != null">eq_type = #{eqType},</if>
             <if test="eqModel != null">eq_model = #{eqModel},</if>
             <if test="brandId != null">brand_id = #{brandId},</if>
+            <if test="externalSystemId != null">external_system_id = #{externalSystemId},</if>
+            <if test="fEqType != null">f_eq_type = #{fEqType},</if>
             <if test="eqDirection != null">eq_direction = #{eqDirection},</if>
             <if test="lane != null">lane = #{lane},</if>
             <if test="pile != null">pile = #{pile},</if>

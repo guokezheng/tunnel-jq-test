@@ -94,15 +94,29 @@ public class SdDevices extends BaseEntity {
      * 设备品牌编号
      */
     @Excel(name = "设备品牌编号")
-
     @ApiModelProperty("设备品牌编号")
     private String brandId;
+
+    /**
+     * 外部系统ID
+     */
+    @Excel(name = "外部系统ID")
+    @ApiModelProperty("外部系统ID")
+    private Long externalSystemId;
+
+
+    /**
+     * 设备大类
+     */
+    @Excel(name = "设备大类")
+    @ApiModelProperty("设备大类")
+    private String fEqType;
+
 
     /**
      * 所属道路方向(上行、下行)
      */
     @Excel(name = "所属道路方向(上行、下行)", dictType = "sd_direction")
-    //@Excel(name = "遥感检测仪工作状态", readConverterExp = "0=正常,1=异常")
     @ApiModelProperty("所属道路方向(上行、下行)")
     private String eqDirection;
 
@@ -771,6 +785,22 @@ public class SdDevices extends BaseEntity {
         this.updateSupport = updateSupport;
     }
 
+    public Long getExternalSystemId() {
+        return externalSystemId;
+    }
+
+    public void setExternalSystemId(Long externalSystemId) {
+        this.externalSystemId = externalSystemId;
+    }
+
+    public String getfEqType() {
+        return fEqType;
+    }
+
+    public void setfEqType(String fEqType) {
+        this.fEqType = fEqType;
+    }
+
     @Override
     public String toString() {
         return "SdDevices{" +
@@ -786,6 +816,8 @@ public class SdDevices extends BaseEntity {
                 ", eqTypeName=" + eqTypeName +
                 ", eqModel='" + eqModel + '\'' +
                 ", brandId=" + brandId +
+                ", externalSystemId=" + externalSystemId +
+                ", fEqType=" + fEqType +
                 ", eqDirection='" + eqDirection + '\'' +
                 ", lane='" + lane + '\'' +
                 ", pile='" + pile + '\'' +

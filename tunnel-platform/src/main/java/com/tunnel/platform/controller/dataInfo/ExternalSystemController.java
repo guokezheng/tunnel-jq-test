@@ -1,24 +1,18 @@
 package com.tunnel.platform.controller.dataInfo;
 
-import java.util.List;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 外部系统Controller
@@ -41,6 +35,17 @@ public class ExternalSystemController extends BaseController
         List<ExternalSystem> list = externalSystemService.selectExternalSystemList(externalSystem);
         return getDataTable(list);
     }
+
+
+    /**
+     * 查询外部系统列表
+     */
+    @GetMapping("/listAll")
+    public AjaxResult listAll(ExternalSystem externalSystem) {
+        List<ExternalSystem> list = externalSystemService.selectExternalSystemList(externalSystem);
+        return AjaxResult.success(list);
+    }
+
 
     /**
      * 导出外部系统列表
@@ -71,8 +76,7 @@ public class ExternalSystemController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:system:add')")
     @Log(title = "外部系统", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody ExternalSystem externalSystem)
-    {
+    public AjaxResult add(@RequestBody ExternalSystem externalSystem) {
         return toAjax(externalSystemService.insertExternalSystem(externalSystem));
     }
 

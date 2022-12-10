@@ -157,6 +157,21 @@
               </el-select>
             </el-form-item>
           </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="设备大类" prop="fEqType">
+              <el-select v-model="form.fEqType" placeholder="请选择设备大类" clearable>
+                <el-option
+                  v-for="dict in dict.type.eq_category"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+
           <el-col :span="12">
             <el-form-item label="设备名称" prop="eqName">
               <el-input v-model="form.eqName" placeholder="请输入设备名称"/>
@@ -186,6 +201,21 @@
               </el-select>
             </el-form-item>
           </el-col>
+
+          <el-col :span="12">
+            <el-form-item label="外部系统" prop="externalSystemId">
+              <el-select v-model="form.externalSystemId" placeholder="请选择外部系统">
+                <el-option
+                  v-for="item in externalSystemList"
+                  :key="item.id"
+                  :label="item.systemName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+
           <el-col :span="12">
             <el-form-item label="设备型号" prop="eqModel">
               <el-input v-model="form.eqModel" placeholder="设备型号"/>
@@ -475,18 +505,14 @@
     addDevcmd,
     updateDevcmd,
   } from "@/api/equipment/deviceCmd/api";
-  import {
-    getEqTypeStateByType,
-    listEqTypeState,
-  } from "@/api/equipment/eqTypeState/api";
-  import {
-    getToken
-  } from "@/utils/auth";
+  import {getEqTypeStateByType,listEqTypeState,} from "@/api/equipment/eqTypeState/api";
+  import { getToken} from "@/utils/auth";
+  import { listAllSystem } from "@/api/equipment/externalsystem/system";
 
   export default {
     name: "Devices",
     //字典值：设备方向，设备品牌，所属车道,使用状态，是否监控，诱导灯控制状态
-    dicts: ['sd_direction', 'brand', 'sd_lane', 'sd_use_status', 'sd_is_monitor', 'inductionlamp_control_type'],
+    dicts: ['sd_direction', 'brand', 'sd_lane', 'sd_use_status', 'sd_is_monitor', 'inductionlamp_control_type','eq_category'],
     data() {
       const validatePass = (rule, value, callback) => {
         console.log(rule, value, callback, "rule, value, callback")
@@ -676,9 +702,7 @@
         },
         // zhanshi:false,
         input: "",
-
-
-        brandList: []
+        externalSystemList: []
       };
     },
 
@@ -698,12 +722,19 @@
         }); */
 
       this.getDevBrandList()
+      this.getExternalSystemList()
     },
     methods: {
       getDevBrandList() {
         getDevBrandList().then(result => {
           console.log("brandList:>>>",result.data)
           this.brandList = result.data
+        })
+      },
+      getExternalSystemList() {
+        listAllSystem().then(result => {
+          console.log("externalSystemList:>>>",result.data)
+          this.externalSystemList = result.data
         })
       },
       getBrand(num) {
@@ -825,6 +856,8 @@
       // 表单重置
       reset() {
         this.form = {
+          brandId: null,
+          externalSystemId: null,
           eqId: null,
           fEqId: null,
           eqTunnelId: null,
@@ -832,6 +865,7 @@
           eqDirection: null,
           stakeMark: null,
           eqType: null,
+          fEqType: null,
           queryPointAddress: null,
           controlPointAddress: null,
           deviceState: null,

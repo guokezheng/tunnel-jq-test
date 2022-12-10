@@ -30,10 +30,18 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="设备类型" prop="eqTypeId">
-        <el-select v-model="queryParams.eqTypeId" placeholder="请选择设备类型">
+      <el-form-item label="设备类型" prop="eqType">
+       <!-- <el-select v-model="queryParams.eqType" placeholder="请选择设备类型">
           <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
           </el-option>
+        </el-select>-->
+        <el-select v-model="queryParams.eqType" placeholder="请选择设备类型" clearable>
+          <el-option
+            v-for="dict in dict.type.eq_category"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -101,9 +109,13 @@
           <span>{{ getName(scope.row.brandId,"brand") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" align="center" prop="eqTypeId">
-        <template slot-scope="scope">
+      <el-table-column label="设备类型" align="center" prop="eqType">
+        <!--<template slot-scope="scope">
           <span>{{ getName(scope.row.eqTypeId,'type') }}</span>
+        </template>-->
+
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.eq_category" :value="scope.row.eqType"/>
         </template>
       </el-table-column>
       <el-table-column label="协议名称" align="center" prop="protocolName"/>
@@ -157,10 +169,18 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备类型" prop="eqTypeId">
-          <el-select v-model="form.eqTypeId" placeholder="请选择设备类型" style="width: 100%">
+        <el-form-item label="设备类型" prop="eqType">
+          <!--<el-select v-model="form.eqTypeId" placeholder="请选择设备类型" style="width: 100%">
             <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
             </el-option>
+          </el-select>-->
+          <el-select v-model="form.eqType" placeholder="请选择设备类型" clearable style="width: 100%">
+            <el-option
+              v-for="dict in dict.type.eq_category"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="协议名称" prop="protocolName">
@@ -205,7 +225,7 @@
 
   export default {
     name: "Protocol",
-    dicts: ['device_protocol_type'],
+    dicts: ['device_protocol_type','eq_category'],
     data() {
       return {
         // 遮罩层
@@ -233,7 +253,7 @@
           pageNum: 1,
           pageSize: 10,
           brandId: null,
-          eqTypeId: null,
+          eqType: null,
           protocolName: null,
           protocolType: null,
           className: null,
@@ -246,7 +266,7 @@
           brandId: [
             {required: true, message: "设备品牌不能为空", trigger: "blur"},
           ],
-          eqTypeId: [
+          eqType: [
             {required: true, message: "设备类型不能为空", trigger: "blur"},
           ],
           protocolName: [
@@ -316,7 +336,7 @@
         this.form = {
           id: null,
           brandId: null,
-          eqTypeId: null,
+          eqType: null,
           protocolName: null,
           protocolType: null,
           className: null,

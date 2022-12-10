@@ -53,7 +53,7 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
     public int insertSdDevicesProtocol(SdDevicesProtocol sdDevicesProtocol) {
         SdDevicesProtocol protocol = new SdDevicesProtocol();
         protocol.setBrandId(sdDevicesProtocol.getBrandId());
-        protocol.setEqTypeId(sdDevicesProtocol.getEqTypeId());
+        protocol.setEqType(sdDevicesProtocol.getEqType());
         List<SdDevicesProtocol> list = sdDevicesProtocolMapper.selectSdDevicesProtocolList(protocol);
         if (!CollectionUtils.isEmpty(list)) {
             throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认！");

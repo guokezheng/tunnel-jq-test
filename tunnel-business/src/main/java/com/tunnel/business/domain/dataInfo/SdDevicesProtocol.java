@@ -29,7 +29,7 @@ public class SdDevicesProtocol extends BaseEntity {
      * 设备类型 ID
      */
     @Excel(name = "设备类型 ID")
-    private Long eqTypeId;
+    private String eqType;
 
     /**
      * 协议名称
@@ -76,12 +76,12 @@ public class SdDevicesProtocol extends BaseEntity {
         return brandId;
     }
 
-    public void setEqTypeId(Long eqTypeId) {
-        this.eqTypeId = eqTypeId;
+    public String getEqType() {
+        return eqType;
     }
 
-    public Long getEqTypeId() {
-        return eqTypeId;
+    public void setEqType(String eqType) {
+        this.eqType = eqType;
     }
 
     public void setProtocolName(String protocolName) {
@@ -129,7 +129,7 @@ public class SdDevicesProtocol extends BaseEntity {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("id", getId())
                 .append("brandId", getBrandId())
-                .append("eqTypeId", getEqTypeId())
+                .append("eqType", getEqType())
                 .append("protocolName", getProtocolName())
                 .append("protocolType", getProtocolType())
                 .append("className", getClassName())

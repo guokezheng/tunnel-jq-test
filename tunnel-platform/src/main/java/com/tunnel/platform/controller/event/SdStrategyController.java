@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -171,8 +172,7 @@ public class SdStrategyController extends BaseController
      */
     @Log(title = "执行手动控制策略", businessType = BusinessType.OTHER)
     @GetMapping("/handleStrategy/{id}")
-    public void handleStrategy(@PathVariable Long id)
-    {
+    public void handleStrategy(@PathVariable Long id) throws UnknownHostException {
     	sdStrategyService.handleStrategy(id);
     }
 

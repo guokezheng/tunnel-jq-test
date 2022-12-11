@@ -77,6 +77,29 @@ public class SdStrategy extends BaseEntity
     @Excel(name = "方向")
     @ApiModelProperty("方向")
     private String direction;
+
+    @ApiModelProperty("策略组")
+    private String strategyGroup;
+
+    @ApiModelProperty("事件类型")
+    private String eventType;
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getStrategyGroup() {
+        return strategyGroup;
+    }
+
+    public void setStrategyGroup(String strategyGroup) {
+        this.strategyGroup = strategyGroup;
+    }
+
     public void setId(Long id)
     {
         this.id = id;

@@ -19,6 +19,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="strategyGroup"    column="strategy_group"    />
+        <result property="eventType"    column="event_type"    />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
 
@@ -46,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null  and strategyInfo != ''"> and A.strategy_info = #{strategyInfo}</if>
             <if test="schedulerTime != null  and schedulerTime != ''"> and A.scheduler_time = #{schedulerTime}</if>
             <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
+            <if test="strategyGroup != null  and strategyGroup != ''"> and A.strategy_group = #{strategyGroup}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
@@ -86,9 +89,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="strategyName != null">strategy_name,</if>
             <if test="strategyType != null">strategy_type,</if>
+            <if test="eventType != null">event_type,</if>
             <if test="strategyState != null">strategy_state,</if>
             <if test="strategyInfo != null">strategy_info,</if>
             <if test="warningId != null">warning_id,</if>
+            <if test="strategyGroup != null">strategy_group,</if>
             <if test="schedulerTime != null">scheduler_time,</if>
             <if test="jobRelationId != null">job_relation_id,</if>
             <if test="direction != null">direction,</if>
@@ -98,9 +103,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="strategyName != null">#{strategyName},</if>
             <if test="strategyType != null">#{strategyType},</if>
- 		    <if test="strategyState != null">#{strategyState},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="strategyState != null">#{strategyState},</if>
             <if test="strategyInfo != null">#{strategyInfo},</if>
             <if test="warningId != null">#{warningId},</if>
+            <if test="strategyGroup != null">#{strategyGroup},</if>
             <if test="schedulerTime != null">#{schedulerTime},</if>
             <if test="jobRelationId != null">#{jobRelationId},</if>
             <if test="direction != null">#{direction},</if>
@@ -125,6 +132,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="strategyGroup != null">strategy_group = #{strategyGroup},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
         </trim>
         where id = #{id}
     </update>

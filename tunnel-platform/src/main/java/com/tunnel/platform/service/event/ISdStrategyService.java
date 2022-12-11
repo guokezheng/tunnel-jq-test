@@ -3,6 +3,7 @@ package com.tunnel.platform.service.event;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,7 @@ public interface ISdStrategyService {
      * @param id 控制策略
      * @return 结果
      */
-    void handleStrategy(Long id);
+    void handleStrategy(Long id) throws UnknownHostException;
 
     /**
      * 手动控制策略一键处理

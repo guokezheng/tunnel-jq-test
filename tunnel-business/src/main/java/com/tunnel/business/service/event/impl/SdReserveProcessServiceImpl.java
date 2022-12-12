@@ -251,6 +251,18 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 String[] allEquipment = rl.getEquipments().split(",");
                 //疏散标志处理
                 if (rl.getEqTypeId().equals("30")) {
+                    if(rl.getState().equals("1")){
+                        eqOperation.add("智能疏散标志控制执行：关灯;");
+                        map.put("policyInformation", eqOperation);
+                        previewData.add(map);
+                        continue;
+                    }
+                    if(rl.getState().equals("2")){
+                        eqOperation.add("智能疏散标志控制执行：常亮;");
+                        map.put("policyInformation", eqOperation);
+                        previewData.add(map);
+                        continue;
+                    }
                     SdEvent event = sdEventService.selectSdEventById(Long.parseLong(eventId));
                     SdDevices searchObject = new SdDevices();
                     searchObject.setEqTunnelId(event.getTunnelId());
@@ -259,23 +271,25 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                     //事故点整形桩号
                     int compareValue = Integer.valueOf(event.getStakeNum().replace("K", "").replace("+", "").replace(" ", ""));
                     List<SdDevices> deviceList = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(searchObject);
-                    //同一方向上的疏散标志整形桩号去重
-                    int[] allNum = deviceList.stream().filter(s -> StringUtils.isNotBlank(s.getFEqId()))
-                            .mapToInt(s -> s.getPileNum().intValue()).distinct().toArray();
-                    //查找事故点最近的疏散标志
-                    int index = Math.abs(compareValue - allNum[0]);
-                    int closest = 0;
-                    for (int i = 0; i < allNum.length; i++) {
-                        int abs = Math.abs(compareValue - allNum[i]);
-                        if (abs <= index) {
-                            index = abs;
-                            closest = allNum[i];
+                    if(deviceList.size()>0){
+                        //同一方向上的疏散标志整形桩号去重
+                        int[] allNum = deviceList.stream().filter(s -> StringUtils.isNotBlank(s.getFEqId()))
+                                .mapToInt(s -> s.getPileNum().intValue()).distinct().toArray();
+                        //查找事故点最近的疏散标志
+                        int index = Math.abs(compareValue - allNum[0]);
+                        int closest = allNum[0];
+                        for (int i = 0; i < allNum.length; i++) {
+                            int abs = Math.abs(compareValue - allNum[i]);
+                            if (abs <= index) {
+                                index = abs;
+                                closest = allNum[i];
+                            }
                         }
+                        Long pile = new Long((long) closest);
+                        allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
+                                stream().map(s -> s.getEqId()).toArray(String[]::new);
+                        rl.setEquipments(Arrays.stream(allEquipment).collect(Collectors.joining(",")));
                     }
-                    Long pile = new Long((long) closest);
-                    allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
-                            stream().map(s -> s.getEqId()).toArray(String[]::new);
-                    rl.setEquipments(Arrays.stream(allEquipment).collect(Collectors.joining(",")));
                 }
                 // 设备类型名称
                 String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));

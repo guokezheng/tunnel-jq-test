@@ -248,46 +248,75 @@ public class SdEventServiceImpl implements ISdEventService {
         //2.根据桩号遍历匹配
         try{
             Integer compareValue = Integer.parseInt(stakeNum.replace("K","").replace("+","").replace(" ",""));
-            boolean isDown = TunnelDirectionEnum.getTunnelDirection(direction).equals("下行");
+//            boolean isDown = TunnelDirectionEnum.getTunnelDirection(direction).equals("下行");
             for(SdTunnelSubarea data:subareaData){
-                Integer upLimit = isDown?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
-                Integer downLimit = isDown?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
+//                Integer upLimit = isDown?Integer.parseInt(data.getPileMin()):Integer.parseInt(data.getPileMax());
+//                Integer downLimit = isDown?Integer.parseInt(data.getPileMax()):Integer.parseInt(data.getPileMin());
+                Integer min = Integer.parseInt(data.getPileMin());
+                Integer max = Integer.parseInt(data.getPileMax());
+
+                if(min > max){
+                    Integer temp = max;
+                    max = min;
+                    min = temp;
+                }
 //                Integer upLimit = Integer.parseInt(data.getPileMax());
 //                Integer downLimit = Integer.parseInt(data.getPileMin());
-                if(upLimit >= compareValue && compareValue >= downLimit){
+                if(max >= compareValue && compareValue >= min){
                     subareaId = data.getsId();
                     return subareaId;
                 }
             }
+
+
+            Integer minAbs = compareValue;
+            for(SdTunnelSubarea data:subareaData){
+                Integer start = Integer.parseInt(data.getPileMin());
+                Integer end = Integer.parseInt(data.getPileMax());
+                Integer absStart = Math.abs(compareValue- start);
+                Integer absEnd = Math.abs(compareValue- end);
+
+                if(absStart < minAbs){
+                    minAbs = absStart;
+                    subareaId = data.getsId();
+                }
+                if(absEnd < minAbs){
+                    minAbs = absEnd;
+                    subareaId = data.getsId();
+                }
+
+            }
+
+
             //如果没有取到 取最近的分区ID
             //所有分区桩号
-            String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
-            String[] pileStr = s.split(",");
-            int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
-            //下行取反
-            if(isDown){
-                ArrayUtils.reverse(allPile);
-            }
-            int index = Math.abs(compareValue-allPile[0]);
-            int result = allPile[0];
-            int mark = 0;
-            for (int i=0;i<allPile.length;i++) {
-                int abs = Math.abs(compareValue-allPile[i]);
-                if(abs <= index){
-                    index = abs;
-                    result = allPile[i];
-                    mark = i+1;
-                }
-            }
-            String pile = String.valueOf(result);
-            List<SdTunnelSubarea> only = new ArrayList<>();
-            if(mark %2 !=0){
-                //最接近的值为桩号下限
-                only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
-            }else{
-                only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
-            }
-            subareaId = only.get(0).getsId();
+//            String s = subareaData.stream().map(p->p.getPileMin()+","+p.getPileMax()).collect(Collectors.joining(","));
+//            String[] pileStr = s.split(",");
+//            int[] allPile = Arrays.stream(pileStr).mapToInt(Integer::parseInt).sorted().toArray();
+//            //下行取反
+//            if(isDown){
+//                ArrayUtils.reverse(allPile);
+//            }
+//            int index = Math.abs(compareValue-allPile[0]);
+//            int result = allPile[0];
+//            int mark = 0;
+//            for (int i=0;i<allPile.length;i++) {
+//                int abs = Math.abs(compareValue-allPile[i]);
+//                if(abs <= index){
+//                    index = abs;
+//                    result = allPile[i];
+//                    mark = i+1;
+//                }
+//            }
+//            String pile = String.valueOf(result);
+//            List<SdTunnelSubarea> only = new ArrayList<>();
+//            if(mark %2 !=0){
+//                //最接近的值为桩号下限
+//                only = subareaData.stream().filter(area->area.getPileMin().equals(pile)).collect(Collectors.toList());
+//            }else{
+//                only = subareaData.stream().filter(area->area.getPileMax().equals(pile)).collect(Collectors.toList());
+//            }
+//            subareaId = only.get(0).getsId();
         }catch (Exception ex){
             ex.printStackTrace();
         }

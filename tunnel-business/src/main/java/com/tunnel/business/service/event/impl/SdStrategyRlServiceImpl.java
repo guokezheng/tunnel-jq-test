@@ -1,16 +1,21 @@
 package com.tunnel.business.service.event.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
+import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyRl;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
+import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdStrategyRlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 策略关联设备信息Service业务层处理
@@ -61,6 +66,10 @@ public class SdStrategyRlServiceImpl implements ISdStrategyRlService {
     @Override
     public List<SdStrategyRl> selectSdStrategyRlList(SdStrategyRl sdStrategyRl) {
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(sdStrategyRl);
+        SdStrategy strategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(sdStrategyRl.getStrategyId());
+        if(strategy.getStrategyType().equals("3")){
+            rlList = rlList.stream().filter(s-> StrUtil.isNotEmpty(s.getEndState())).collect(Collectors.toList());
+        }
         for (int i = 0; i < rlList.size(); i++) {
             SdEquipmentState sdEquipmentState = new SdEquipmentState();
             sdEquipmentState.setStateTypeId(Long.parseLong(rlList.get(i).getEqTypeId()));

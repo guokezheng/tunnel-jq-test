@@ -74,6 +74,30 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("定时任务id")
     private String jobRelationId;
 
+    @ApiModelProperty("分时控制开启时间")
+    private String timerOpen;
+
+    @ApiModelProperty("分时控制关闭时间")
+    private String timerClose;
+
+
+    public String getTimerOpen() {
+        return timerOpen;
+    }
+
+    public void setTimerOpen(String timerOpen) {
+        this.timerOpen = timerOpen;
+    }
+
+    public String getTimerClose() {
+        return timerClose;
+    }
+
+    public void setTimerClose(String timerClose) {
+        this.timerClose = timerClose;
+    }
+
+
     @Excel(name = "方向")
     @ApiModelProperty("方向")
     private String direction;

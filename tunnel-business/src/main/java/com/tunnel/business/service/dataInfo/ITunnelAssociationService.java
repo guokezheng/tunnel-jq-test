@@ -62,4 +62,10 @@ public interface ITunnelAssociationService
     public int deleteTunnelAssociationById(Long id);
 
     int updateTunnelAssociations(List<TunnelAssociation> tunnelAssociations);
+
+    List<TunnelAssociation> checkInsertUnique(TunnelAssociation tunnelAssociation);
+
+    List<TunnelAssociation> checkUpdateUnique(TunnelAssociation tunnelAssociation);
+
+
 }

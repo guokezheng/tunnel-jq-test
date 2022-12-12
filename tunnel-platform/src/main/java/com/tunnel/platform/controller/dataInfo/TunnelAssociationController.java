@@ -21,8 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/association")
-public class TunnelAssociationController extends BaseController
-{
+public class TunnelAssociationController extends BaseController {
     @Autowired
     private ITunnelAssociationService tunnelAssociationService;
 
@@ -31,8 +30,7 @@ public class TunnelAssociationController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:association:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TunnelAssociation tunnelAssociation)
-    {
+    public TableDataInfo list(TunnelAssociation tunnelAssociation) {
         startPage();
         List<TunnelAssociation> list = tunnelAssociationService.selectTunnelAssociationList(tunnelAssociation);
         return getDataTable(list);
@@ -44,8 +42,7 @@ public class TunnelAssociationController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:association:export')")
     @Log(title = "隧道关联关系", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(TunnelAssociation tunnelAssociation)
-    {
+    public AjaxResult export(TunnelAssociation tunnelAssociation) {
         List<TunnelAssociation> list = tunnelAssociationService.selectTunnelAssociationList(tunnelAssociation);
         ExcelUtil<TunnelAssociation> util = new ExcelUtil<TunnelAssociation>(TunnelAssociation.class);
         return util.exportExcel(list, "隧道关联关系数据");
@@ -56,14 +53,12 @@ public class TunnelAssociationController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:association:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
-    {
+    public AjaxResult getInfo(@PathVariable("id") Long id) {
         return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationById(id));
     }
 
     @GetMapping(value = "/getDetail/{tunnelId}")
-    public AjaxResult getDetail(@PathVariable("tunnelId") String tunnelId)
-    {
+    public AjaxResult getDetail(@PathVariable("tunnelId") String tunnelId) {
         return AjaxResult.success(tunnelAssociationService.selectTunnelAssociationsByTunnelId(tunnelId));
     }
 
@@ -73,8 +68,7 @@ public class TunnelAssociationController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:association:add')")
     @Log(title = "隧道关联关系", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TunnelAssociation tunnelAssociation)
-    {
+    public AjaxResult add(@RequestBody TunnelAssociation tunnelAssociation) {
         return toAjax(tunnelAssociationService.insertTunnelAssociation(tunnelAssociation));
     }
 
@@ -84,8 +78,7 @@ public class TunnelAssociationController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:association:edit')")
     @Log(title = "隧道关联关系", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TunnelAssociation tunnelAssociation)
-    {
+    public AjaxResult edit(@RequestBody TunnelAssociation tunnelAssociation) {
         return toAjax(tunnelAssociationService.updateTunnelAssociation(tunnelAssociation));
     }
 
@@ -94,15 +87,13 @@ public class TunnelAssociationController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:association:remove')")
     @Log(title = "隧道关联关系", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids)
-    {
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(tunnelAssociationService.deleteTunnelAssociationByIds(ids));
     }
 
     @DeleteMapping("/delDetials/{tunnelIds}")
-    public AjaxResult removeByTunnelIds(@PathVariable String[] tunnelIds)
-    {
+    public AjaxResult removeByTunnelIds(@PathVariable String[] tunnelIds) {
         return toAjax(tunnelAssociationService.deleteTunnelAssociationByTunnelIds(tunnelIds));
     }
 
@@ -119,6 +110,5 @@ public class TunnelAssociationController extends BaseController
 
         return Result.toResult(tunnelAssociationService.updateTunnelAssociations(tunnelAssociations));
     }
-
 
 }

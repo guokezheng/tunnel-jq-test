@@ -60,4 +60,9 @@ public interface TunnelAssociationMapper
     public int deleteTunnelAssociationByIds(Long[] ids);
 
     public int deleteTunnelAssociationByTunnelIds(String[] tunnelIds);
+
+    List<TunnelAssociation> checkInsertUnique(TunnelAssociation tunnelAssociation);
+
+    List<TunnelAssociation> checkUpdateUnique(TunnelAssociation tunnelAssociation);
+
 }

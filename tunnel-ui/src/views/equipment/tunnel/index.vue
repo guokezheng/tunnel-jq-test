@@ -299,7 +299,6 @@
         <template>
           <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
           <el-row v-for="(item,index) in tunnelAssociations" :key="index">
-
             <el-col :span="4">
               <el-form-item label="隧道方向" prop="tunnelDirection">
                 <el-select v-model="item.tunnelDirection" placeholder="请输入隧道方向" clearable>
@@ -328,7 +327,7 @@
 
             <el-col :span="5">
               <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId" label-width="110px">
-                <el-input v-model="item.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />
+                <el-input v-model="item.externalSystemTunnelId" placeholder="请输入外部系统隧道ID"/>
               </el-form-item>
             </el-col>
 
@@ -560,7 +559,14 @@ import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import { addAssociation, updateAssociation, getAssociationsByTunnelId, delAssociationByTunnelIds,delAssociation,updateTunnelAssociations } from "@/api/equipment/deviceassociation/association";
+import {
+  addAssociation,
+  updateAssociation,
+  getAssociationsByTunnelId,
+  delAssociationByTunnelIds,
+  delAssociation,
+  updateTunnelAssociations,
+} from "@/api/equipment/deviceassociation/association";
 import { listSystem } from "@/api/equipment/externalsystem/system";
 import {listAllTunnels} from "@/api/equipment/tunnel/api.js";
 
@@ -719,6 +725,7 @@ export default {
     },
     addFrom() {
       let item = {
+        id: null,
         tunnelId: this.forms.tunnelId,
         tunnelDirection: null,
         externalSystemId: null,
@@ -904,6 +911,7 @@ export default {
         getAssociationsByTunnelId(tunnelId).then(response => {
           if (response.data.length == 0) {
             let item = {
+              id: null,
               tunnelId: tunnelId,
               tunnelDirection: null,
               externalSystemId: null,

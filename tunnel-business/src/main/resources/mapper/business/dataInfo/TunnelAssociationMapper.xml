@@ -34,9 +34,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="selectTunnelAssociationByTunnelId" parameterType="String" resultMap="TunnelAssociationResult">
+    <select id="selectTunnelAssociationsByTunnelId" parameterType="String" resultMap="TunnelAssociationResult">
         <include refid="selectTunnelAssociationVo"/>
-        where tunnel_id = #{tunnelId} LIMIT 1
+        where tunnel_id = #{tunnelId}
     </select>
 
     <insert id="insertTunnelAssociation" parameterType="TunnelAssociation" useGeneratedKeys="true" keyProperty="id">

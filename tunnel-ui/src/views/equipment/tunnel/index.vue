@@ -243,13 +243,13 @@
     />
 
     <!-- 添加或修改隧道关联关系对话框 -->
-    <el-dialog :title="titles" :visible.sync="opens" width="500px" append-to-body>
+    <!--<el-dialog :title="titles" :visible.sync="opens" width="500px" append-to-body>
       <el-form ref="forms" :model="forms" :rules="rule" label-width="140px">
         <el-form-item label="隧道" prop="tunnelId">
           <el-input v-model="forms.tunnelId" placeholder="请输入隧道" :disabled="true"/>
         </el-form-item>
         <el-form-item label="外部系统" prop="externalSystemId">
-<!--          <el-input v-model="forms.externalSystemId" placeholder="请选择外部系统" />-->
+&lt;!&ndash;          <el-input v-model="forms.externalSystemId" placeholder="请选择外部系统" />&ndash;&gt;
           <el-select v-model="forms.externalSystemId" placeholder="请选择外部系统" class="externalSystemId" style="width: 100%">
             <el-option v-for="item in externalSystemData"
                        :key="item.id"
@@ -275,7 +275,88 @@
         <el-button type="primary" @click="submitForms">确 定</el-button>
         <el-button @click="cancels">取 消</el-button>
       </div>
+    </el-dialog>-->
+
+    <!----------------------------------------------------------------------------------------------------------------->
+
+    <el-dialog :title="titles" :visible.sync="opens" width="1500px" append-to-body>
+      <el-form ref="forms" :model="forms" :rules="rule" label-width="80px">
+        <el-row>
+          <el-col :span="5">
+            <el-form-item label="隧道名称" prop="tunnelId">
+              <el-select v-model="forms.tunnelId" placeholder="请选择隧道" disabled>
+                <el-option
+                  v-for="item in tunnelList"
+                  :key="item.tunnelId"
+                  :label="item.tunnelName"
+                  :value="item.tunnelId"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <template>
+          <div class="dialogButton addFormButton" @click="addFrom()">添加</div>
+          <el-row v-for="(item,index) in tunnelAssociations" :key="index">
+
+            <el-col :span="4">
+              <el-form-item label="隧道方向" prop="tunnelDirection">
+                <el-select v-model="item.tunnelDirection" placeholder="请输入隧道方向" clearable>
+                  <el-option
+                    v-for="dict in dict.type.sd_direction"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="5" >
+              <el-form-item label="外部系统" prop="externalSystemId">
+                <el-select v-model="item.externalSystemId" placeholder="请选择外部系统">
+                  <el-option
+                    v-for="item in externalSystemData"
+                    :key="item.id"
+                    :label="item.systemName"
+                    :value="item.id"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="5">
+              <el-form-item label="外部系统隧道ID" prop="externalSystemTunnelId" label-width="110px">
+                <el-input v-model="item.externalSystemTunnelId" placeholder="请输入外部系统隧道ID" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="5">
+              <el-form-item label="外部系统隧道方向" prop="externalSystemTunnelDirection" label-width="130px" >
+                <el-input v-model="item.externalSystemTunnelDirection" placeholder="请输入外部系统隧道方向" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="4">
+              <el-form-item label="备注" prop="remark">
+                <el-input v-model="item.remark" placeholder="请输入备注" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="1">
+              <div class="dialogButton" @click="updataDeleteForm(index)" style="margin-left: 15px">删除</div>
+            </el-col>
+          </el-row>
+        </template>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForms">确 定</el-button>
+        <el-button @click="cancels">取 消</el-button>
+      </div>
     </el-dialog>
+
 
     <!-- 添加或修改隧道对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body>
@@ -479,14 +560,14 @@ import { listDept,treeselect,treeselectExcYG1 } from "@/api/system/dept";
 import { getUserDeptId } from "@/api/system/user";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {
-  addAssociation, updateAssociation, getAssociationByTunnelId, delAssociationByTunnelIds
-} from "@/api/equipment/deviceassociation/association";
+import { addAssociation, updateAssociation, getAssociationsByTunnelId, delAssociationByTunnelIds,delAssociation,updateTunnelAssociations } from "@/api/equipment/deviceassociation/association";
 import { listSystem } from "@/api/equipment/externalsystem/system";
+import {listAllTunnels} from "@/api/equipment/tunnel/api.js";
 
 
 export default {
   name: "Tunnels",
+  dicts: ['sd_direction'],
   components: { Treeselect },
   data() {
     const validateLongitude = (rule, value, callback) => {
@@ -596,15 +677,15 @@ export default {
         tunnelId: [
           { required: true, message: "请填写隧道ID", trigger: "blur" },
         ],
-        externalSystemId: [
-          { required: true, message: "请选择外部系统", trigger: "change" },
-        ],
       },
       // selectedTunnel:{},
       // 隧道列表
       tunnelData: [],
       // 部门树选项
       deptOptions: undefined,
+      tunnelAssociations: [],
+      tunnelList: []
+
     };
   },
   created() {
@@ -617,6 +698,7 @@ export default {
     this.getDepts();
     this.getUserDept();
     this.getExternalsystem();
+    this.getTunnelList()
   },
   mounted() {
     if (window.history && window.history.pushState) {
@@ -629,6 +711,36 @@ export default {
     window.removeEventListener("popstate", this.goBack, false);
   },
   methods: {
+    getTunnelList() {
+      listAllTunnels().then((response) => {
+        this.tunnelList = response.data;
+        console.log("tunnelList>>>>>>>",this.tunnelList);
+      });
+    },
+    addFrom() {
+      let item = {
+        tunnelId: this.forms.tunnelId,
+        tunnelDirection: null,
+        externalSystemId: null,
+        externalSystemTunnelId: null,
+        externalSystemTunnelDirection: null,
+        remark: null
+      }
+      this.tunnelAssociations.push(item);
+    },
+    updataDeleteForm(index) {
+      let rowid = this.tunnelAssociations[index].id
+      if (rowid) {
+        delAssociation(rowid).then(res => {
+          if (res.code = 200) {
+            this.$modal.msgSuccess("删除成功");
+          }
+        })
+      }
+      this.tunnelAssociations.splice(index, 1)
+    },
+
+
     getExternalsystem() {
       listSystem(this.queryParams).then(response => {
         this.externalSystemData = response.rows;
@@ -789,17 +901,24 @@ export default {
       console.log("开启隧道关系配置弹窗");
       this.resets();
       if (tunnelId != null) {
-        getAssociationByTunnelId(tunnelId).then(response => {
-          if (response.data != null && response.data.tunnelId != null) {
-            this.forms = response.data;
-            this.opens = true;
-            this.titles = "修改隧道关联关系";
+        getAssociationsByTunnelId(tunnelId).then(response => {
+          if (response.data.length == 0) {
+            let item = {
+              tunnelId: tunnelId,
+              tunnelDirection: null,
+              externalSystemId: null,
+              externalSystemTunnelId: null,
+              externalSystemTunnelDirection: null,
+              remark: null
+            }
+            this.tunnelAssociations = []
+            this.tunnelAssociations.push(item);
           } else {
-            this.resets();
-            this.opens = true;
-            this.titles = "添加隧道关联关系";
-            this.forms.tunnelId = tunnelId;
+            this.tunnelAssociations = response.data;
           }
+          this.forms.tunnelId = tunnelId
+          this.opens = true;
+          this.titles = "修改隧道关联关系";
         });
       }
     },
@@ -824,17 +943,14 @@ export default {
     submitForms() {
       this.$refs["forms"].validate(valid => {
         if (valid) {
-          if (this.forms.id != null) {
-            updateAssociation(this.forms).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.opens = false;
-              this.getList();
-            });
-          } else {
-            addAssociation(this.forms).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.opens = false;
-              this.getList();
+          if (this.tunnelAssociations.length>0) {
+            console.log("》》tunnelAssociations》》》",this.tunnelAssociations)
+            updateTunnelAssociations(this.tunnelAssociations).then(response => {
+              if(response.code==200){
+                this.$modal.msgSuccess("修改成功");
+                this.opens = false;
+                this.getList();
+              }
             });
           }
         }
@@ -924,5 +1040,25 @@ export default {
 }
 ::v-deep .el-table::before {
   width: 0px !important;
+}
+
+
+.dialogButton{
+  width: 50px;
+  height: 24px;
+  border: solid 1px #ccc;
+  border-radius: 6px;
+  font-size: 12px;
+  margin-top: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.addFormButton{
+  position: absolute;
+  top: 55px;
+  left: 23%;
+
 }
 </style>

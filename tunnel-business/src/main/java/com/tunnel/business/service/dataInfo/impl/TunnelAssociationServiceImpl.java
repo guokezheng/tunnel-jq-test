@@ -1,11 +1,13 @@
 package com.tunnel.business.service.dataInfo.impl;
 
-import java.util.List;
+import com.tunnel.business.domain.dataInfo.TunnelAssociation;
+import com.tunnel.business.mapper.dataInfo.TunnelAssociationMapper;
+import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.tunnel.business.mapper.dataInfo.TunnelAssociationMapper;
-import com.tunnel.business.domain.dataInfo.TunnelAssociation;
-import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
+import org.springframework.util.ObjectUtils;
+
+import java.util.List;
 
 /**
  * 隧道关联关系Service业务层处理
@@ -29,9 +31,9 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService
     }
 
     @Override
-    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId)
+    public List<TunnelAssociation> selectTunnelAssociationsByTunnelId(String tunnelId)
     {
-        return tunnelAssociationMapper.selectTunnelAssociationByTunnelId(tunnelId);
+        return tunnelAssociationMapper.selectTunnelAssociationsByTunnelId(tunnelId);
     }
 
     /**
@@ -103,4 +105,22 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService
     {
         return tunnelAssociationMapper.deleteTunnelAssociationById(id);
     }
+
+    @Override
+    public int updateTunnelAssociations(List<TunnelAssociation> tunnelAssociations) {
+        int rows = 0;
+        for (TunnelAssociation tunnelAssociation : tunnelAssociations) {
+            Long id = tunnelAssociation.getId();
+            if (ObjectUtils.isEmpty(id)) {
+                int i = tunnelAssociationMapper.insertTunnelAssociation(tunnelAssociation);
+                rows += i;
+            } else {
+                int j = tunnelAssociationMapper.updateTunnelAssociation(tunnelAssociation);
+                rows += j;
+            }
+        }
+        return rows;
+    }
+
+
 }

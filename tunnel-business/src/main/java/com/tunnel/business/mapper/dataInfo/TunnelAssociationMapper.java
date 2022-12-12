@@ -1,7 +1,8 @@
 package com.tunnel.business.mapper.dataInfo;
 
-import java.util.List;
 import com.tunnel.business.domain.dataInfo.TunnelAssociation;
+
+import java.util.List;
 
 /**
  * 隧道关联关系Mapper接口
@@ -16,7 +17,7 @@ public interface TunnelAssociationMapper
      */
     public TunnelAssociation selectTunnelAssociationById(Long id);
 
-    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId);
+    public List<TunnelAssociation> selectTunnelAssociationsByTunnelId(String tunnelId);
 
     /**
      * 查询隧道关联关系列表

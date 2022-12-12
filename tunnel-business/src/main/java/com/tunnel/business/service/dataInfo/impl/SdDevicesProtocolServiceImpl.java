@@ -6,6 +6,7 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesProtocolMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -55,9 +56,8 @@ public class SdDevicesProtocolServiceImpl implements ISdDevicesProtocolService {
         protocol.setBrandId(sdDevicesProtocol.getBrandId());
         protocol.setEqType(sdDevicesProtocol.getEqType());
         List<SdDevicesProtocol> list = sdDevicesProtocolMapper.selectSdDevicesProtocolList(protocol);
-        if (!CollectionUtils.isEmpty(list)) {
-            throw new RuntimeException("已存在相同设备品牌和类型的数据，请确认！");
-        }
+        Assert.notEmpty(list,"已存在相同设备品牌和类型的数据，请确认");
+
         sdDevicesProtocol.setCreateTime(DateUtils.getNowDate());
         sdDevicesProtocol.setIsDel(0);
         return sdDevicesProtocolMapper.insertSdDevicesProtocol(sdDevicesProtocol);

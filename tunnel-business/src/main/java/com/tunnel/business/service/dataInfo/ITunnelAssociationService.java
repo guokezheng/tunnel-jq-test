@@ -1,7 +1,8 @@
 package com.tunnel.business.service.dataInfo;
 
-import java.util.List;
 import com.tunnel.business.domain.dataInfo.TunnelAssociation;
+
+import java.util.List;
 
 /**
  * 隧道关联关系Service接口
@@ -16,7 +17,7 @@ public interface ITunnelAssociationService
      */
     public TunnelAssociation selectTunnelAssociationById(Long id);
 
-    public TunnelAssociation selectTunnelAssociationByTunnelId(String tunnelId);
+    public List<TunnelAssociation> selectTunnelAssociationsByTunnelId(String tunnelId);
 
     /**
      * 查询隧道关联关系列表
@@ -59,4 +60,6 @@ public interface ITunnelAssociationService
      * @return 结果
      */
     public int deleteTunnelAssociationById(Long id);
+
+    int updateTunnelAssociations(List<TunnelAssociation> tunnelAssociations);
 }

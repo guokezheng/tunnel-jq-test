@@ -60,7 +60,9 @@ public enum DevicesTypeItemEnum {
     EVACUATION_SIGN_CONTROL(58, "智能疏散标志控制器"),
     GUIDANCE_LAMP_CONTROL(59, "智能诱导灯控制器"),
     HONGMENG_CONTROL(60, "鸿蒙控制器"),
-    NEI_WAI_ZHEN_DONG_YI_JIAN_CE_QI(61, "内外振动仪检测器");
+    NEI_WAI_ZHEN_DONG_YI_JIAN_CE_QI(61, "内外振动仪检测器"),
+    JACK_LIGHT_BRIGHNESS(62, "照明灯亮度"),
+    JACK_LIGHT_OPENCLOSE(63, "照明灯开与关");
 
 
     private int code;

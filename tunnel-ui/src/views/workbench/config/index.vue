@@ -304,7 +304,6 @@
                       <div
                         v-show="
                           (item.eqType != 7 &&
-                            item.eqType != 16 &&
                             item.eqType != 15 &&
                             item.eqType != 8 &&
                             item.eqType != 9 &&
@@ -319,7 +318,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                        v-show="item.eqType != '31'"
+                        v-show="item.eqType != ('31' || '16')  "
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -366,7 +365,48 @@
                               : ''
                           ">
                         </img>
-
+                        <div v-show="item.eqType == '16'"
+                        style="position: absolute;overflow:hidden;writing-mode : tb-rl;
+                            font-size:15px;color:#FFFF07;text-align: center;padding:2px"
+                            
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                            width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+                          }"
+                         
+                          :src= getTypePic(item)
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+                          >{{item.eqName}}
+                        </div>
+                        <div v-show="item.eqType == '36'"
+                        style="position: absolute;overflow:hidden;writing-mode : tb-rl;
+                            font-size:15px;color:#FFFF07;text-align: center;padding:4px"
+                            
+                        :style="{
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+                          }"
+                          
+                          :src= getTypePic(item)
+                          :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+                          >{{item.eqName}}
+                        </div>
                         <!-- 调光数值 -->
                         <label
                           style="
@@ -964,7 +1004,7 @@
                 <el-row
                   class="flex-row"
                   v-if="
-                    batchManageForm.eqDirection == '0' &&
+                    batchManageForm.eqDirection == '1' &&
                     batchManageForm.eqType == (1 || 2)
                   "
                 >
@@ -986,7 +1026,7 @@
                 <el-row
                   class="flex-row"
                   v-if="
-                    batchManageForm.eqDirection == '1' &&
+                    batchManageForm.eqDirection == '2' &&
                     batchManageForm.eqType == (1 || 2)
                   "
                 >
@@ -3877,7 +3917,10 @@ export default {
         eqDirection: this.batchManageForm.eqDirection,
         state: this.batchManageForm.state,
       };
-      batchManage(param).then((res) => {});
+      batchManage(param).then((res) => {
+        console.log(res, "000000000000000");
+        this.batchManageDialog = false;
+      });
     },
     // 新版批量操作 点击变俩按钮
     batchManage() {
@@ -3889,43 +3932,44 @@ export default {
     implementBatchManage() {
       var that = this;
       this.title = "批量操作";
+      that.eqTypeStateList2 = [];
+      let eqType = "";
       for (var item of this.selectedIconList) {
         if (item.click) {
           console.log(item, "batchManageDialog");
           this.batchManageList.push(item);
           this.batchManageDialog = true;
-          let list = [];
-          const param = {
-            stateTypeId: item.eqType,
-            isControl: 1,
-          };
-          that.eqTypeStateList2 = [];
-
-          getStateByData(param).then((response) => {
-            console.log(response, "查询设备状态图标");
-            list = response.rows;
-            for (let i = 0; i < list.length; i++) {
-              let iconUrl = [];
-              if (list[i].iFileList != null) {
-                for (let j = 0; j < list[i].iFileList.length; j++) {
-                  // let img = await that.picture(list[i].iFileList[j].url);
-                  let img = list[i].iFileList[j].url;
-                  iconUrl.push(img);
-                }
-              }
-              that.eqTypeStateList2.push({
-                stateType: list[i].stateType,
-                type: list[i].stateTypeId,
-                state: list[i].deviceState,
-                name: list[i].stateName,
-                control: list[i].isControl,
-                url: iconUrl,
-              });
-            }
-          });
-          console.log(that.eqTypeStateList2, "that.eqTypeStateList");
+          eqType = item.eqType;
         }
       }
+      let list = [];
+      const param = {
+        stateTypeId: eqType,
+        isControl: 1,
+      };
+      getStateByData(param).then((response) => {
+        console.log(response, "查询设备状态图标");
+        list = response.rows;
+        for (let i = 0; i < list.length; i++) {
+          let iconUrl = [];
+          if (list[i].iFileList != null) {
+            for (let j = 0; j < list[i].iFileList.length; j++) {
+              // let img = await that.picture(list[i].iFileList[j].url);
+              let img = list[i].iFileList[j].url;
+              iconUrl.push(img);
+            }
+          }
+          that.eqTypeStateList2.push({
+            stateType: list[i].stateType,
+            type: list[i].stateTypeId,
+            state: list[i].deviceState,
+            name: list[i].stateName,
+            control: list[i].isControl,
+            url: iconUrl,
+          });
+        }
+      });
+      console.log(that.eqTypeStateList2, "that.eqTypeStateList");
     },
     // 关闭批量操作弹窗 / 批量操作取消
     closeBatchManageDialog() {
@@ -4391,11 +4435,11 @@ export default {
     },
     // 改变站点
     changeSite(index) {
-      console.log(index, "index------------------------1");
+      // console.log(index, "index------------------------1");
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
         this.$forceUpdate();
-        console.log(3333333333);
+        // console.log(3333333333);
 
         this.getTunnelList();
         // this.srollAuto()
@@ -5460,7 +5504,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
-      console.log(this.tunnelQueryParams, "44444444444");
+      // console.log(this.tunnelQueryParams, "44444444444");
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -8782,11 +8826,10 @@ input {
 .popper-class-site {
   .el-cascader-menu__wrap {
     max-width: 245px;
-    
   }
   .el-cascader-node__postfix {
-      right: 18px !important;
-    }
+    right: 18px !important;
+  }
 }
 .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
   display: none !important;

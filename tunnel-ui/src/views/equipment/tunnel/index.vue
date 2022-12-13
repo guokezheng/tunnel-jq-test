@@ -549,7 +549,7 @@
 
 <script>
 import {
-  listTunnels,
+  listTunnels1,
   getTunnels,
   delTunnels,
   addTunnels,
@@ -778,7 +778,7 @@ export default {
       }
     },
     getTunnel() {
-      listTunnels().then((response) => {
+      listTunnels1().then((response) => {
         this.tunnelData = response.rows;
       });
     },
@@ -818,7 +818,7 @@ export default {
       if(this.manageStatin == '1'){
           this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
         }
-      listTunnels(this.queryParams).then((response) => {
+      listTunnels1(this.queryParams).then((response) => {
         this.tunnelsList = response.rows;
         this.total = response.total;
         this.loading = false;

@@ -173,4 +173,23 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     public List<SdTunnels> selectAllSdTunnelsList() {
         return sdTunnelsMapper.selectAllSdTunnelsList();
     }
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels) {
+        return sdTunnelsMapper.selectSdTunnelsList1(sdTunnels);
+    }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList1() {
+        return sdTunnelsMapper.selectAllSdTunnelsList1();
+    }
 }

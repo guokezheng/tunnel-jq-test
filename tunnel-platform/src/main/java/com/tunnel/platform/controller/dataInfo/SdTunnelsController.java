@@ -68,10 +68,38 @@ public class SdTunnelsController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 查询隧道列表
+     */
+    @GetMapping("/list1")
+    public TableDataInfo<List<SdTunnels>> list1(SdTunnels sdTunnels)
+    {
+        startPage();
+        if (null == sdTunnels.getDeptId() || "".equals(sdTunnels.getDeptId())){
+            String deptId = SecurityUtils.getDeptId();
+            if (deptId == null) {
+                throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+            }
+            sdTunnels.setDeptId(deptId);
+        }
+        List<SdTunnels> list = sdTunnelsService.selectSdTunnelsList1(sdTunnels);
+        return getDataTable(list);
+    }
+
 
     @GetMapping("/listAll")
     public AjaxResult listAll() {
         List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList();
+        return AjaxResult.success(list);
+    }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @GetMapping("/listAll1")
+    public AjaxResult listAll1() {
+        List<SdTunnels> list = sdTunnelsService.selectAllSdTunnelsList1();
         return AjaxResult.success(list);
     }
 

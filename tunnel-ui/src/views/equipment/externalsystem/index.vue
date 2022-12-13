@@ -227,7 +227,7 @@
 import { listSystem, getSystem, delSystem, addSystem, updateSystem, exportSystem } from "@/api/equipment/externalsystem/system";
 import {getDevBrandList} from "@/api/equipment/eqlist/api";
 import { treeselectExcYG1,listDept } from "@/api/system/dept";
-import {listAllTunnels} from "@/api/equipment/tunnel/api.js";
+import { listAllTunnels1} from "@/api/equipment/tunnel/api.js";
 
 
 import Treeselect from "@riophae/vue-treeselect";
@@ -302,7 +302,7 @@ export default {
   },
   methods: {
     getTunnelList() {
-      listAllTunnels().then((response) => {
+      listAllTunnels1().then((response) => {
         this.tunnelList = response.data;
         console.log("tunnelList>>>>>>>",this.tunnelList);
       });

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.event.SdJoinTypeFlowMapper">
+    
+    <resultMap type="SdJoinTypeFlow" id="SdJoinTypeFlowResult">
+        <result property="id"    column="id"    />
+        <result property="eventTypeId"    column="event_type_id"    />
+        <result property="flowId"    column="flow_id"    />
+        <result property="flowPid"    column="flow_pid"    />
+        <result property="flowName"    column="flow_name"    />
+        <result property="flowSort"    column="flow_sort"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdJoinTypeFlowVo">
+        select id, event_type_id, flow_id, flow_pid, flow_name, flow_sort, create_time, update_time from sd_join_type_flow
+    </sql>
+
+    <select id="selectSdJoinTypeFlowList" parameterType="SdJoinTypeFlow" resultMap="SdJoinTypeFlowResult">
+        SELECT
+            id,
+            event_type_id,
+            create_time,
+            update_time
+        FROM
+            sd_join_type_flow
+        WHERE
+            1 = 1
+        <if test="eventTypeId != null and eventTypeId != ''">
+            AND event_type_id = #{eventTypeId}
+        </if>
+        GROUP BY
+            event_type_id
+    </select>
+    
+    <select id="selectSdJoinTypeFlowById" parameterType="Long" resultMap="SdJoinTypeFlowResult">
+        SELECT
+            id,
+            event_type_id,
+            flow_id,
+            flow_pid,
+            flow_name,
+            flow_sort,
+            create_time,
+            update_time
+        FROM
+            sd_join_type_flow
+        where event_type_id = #{id}
+    </select>
+        
+    <insert id="insertSdJoinTypeFlow" parameterType="SdJoinTypeFlow">
+        insert into sd_join_type_flow
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="eventTypeId != null">event_type_id,</if>
+            <if test="flowId != null">flow_id,</if>
+            <if test="flowPid != null">flow_pid,</if>
+            <if test="flowName != null">flow_name,</if>
+            <if test="flowSort != null">flow_sort,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="eventTypeId != null">#{eventTypeId},</if>
+            <if test="flowId != null">#{flowId},</if>
+            <if test="flowPid != null">#{flowPid},</if>
+            <if test="flowName != null">#{flowName},</if>
+            <if test="flowSort != null">#{flowSort},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdJoinTypeFlow" parameterType="SdJoinTypeFlow">
+        update sd_join_type_flow
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventTypeId != null">event_type_id = #{eventTypeId},</if>
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="flowPid != null">flow_pid = #{flowPid},</if>
+            <if test="flowName != null">flow_name = #{flowName},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdJoinTypeFlowById" parameterType="Long">
+        delete from sd_join_type_flow where id = #{id}
+    </delete>
+
+    <delete id="deleteSdJoinTypeFlowByIds" parameterType="String">
+        delete from sd_join_type_flow where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getTypeFlowList" resultType="sdPlanFlow">
+        SELECT
+            id,
+            pid,
+            flow_name AS label,
+            sort
+        FROM
+            sd_plan_flow pf
+        WHERE
+            1 = 1
+    </select>
+</mapper>

@@ -8,6 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class WjConfidence {
 
+    @ApiModelProperty("id")
+    private Integer id;
+
     @ApiModelProperty("目标全域ID")
     private Integer targetId;
 
@@ -22,6 +25,14 @@ public class WjConfidence {
 
     @ApiModelProperty("车牌号")
     private String plate;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getTargetId() {
         return targetId;

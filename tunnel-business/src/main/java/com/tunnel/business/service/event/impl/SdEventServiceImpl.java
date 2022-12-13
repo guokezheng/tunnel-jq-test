@@ -6,18 +6,22 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdTunnelSubarea;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.CommonUtil;
@@ -25,6 +29,7 @@ import com.tunnel.business.utils.util.UUIDUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.InetAddress;
 import java.util.*;
@@ -53,6 +58,12 @@ public class SdEventServiceImpl implements ISdEventService {
     @Autowired
     private ISdDevicesService sdDevicesService;
 
+    @Autowired
+    private SdTrafficImageMapper sdTrafficImageMapper;
+
+    @Autowired
+    private RadarEventMapper radarEventMapper;
+
     /**
      * 查询事件管理
      *
@@ -79,7 +90,18 @@ public class SdEventServiceImpl implements ISdEventService {
             }
             sdEvent.getParams().put("deptId", deptId);
         }
-        return sdEventMapper.selectSdEventList(sdEvent);
+        List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+        sdEvents.stream().forEach(item -> {
+            String eventTitle = item.getEventTitle();
+            int startLength = eventTitle.indexOf(item.getTunnelName()) + item.getTunnelName().length();
+            int endLength = eventTitle.indexOf(item.getStakeNum()) + item.getStakeNum().length();
+            if(eventTitle.length() > endLength){
+                item.setPosition(eventTitle.substring(startLength,endLength));
+            }
+            item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
+            item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
+        });
+        return sdEvents;
     }
 
     /**
@@ -113,6 +135,7 @@ public class SdEventServiceImpl implements ISdEventService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
         if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
@@ -129,6 +152,11 @@ public class SdEventServiceImpl implements ISdEventService {
             eventFlow.setFlowDescription("问题忽略");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
+        }
+        //更新事件置信度
+        List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
+        for(WjConfidence item : confidenceList){
+            radarEventMapper.updateEventConfidence(item);
         }
         sdEvent.setUpdateTime(DateUtils.getNowDate());
         return sdEventMapper.updateSdEvent(sdEvent);

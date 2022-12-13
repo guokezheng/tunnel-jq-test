@@ -329,7 +329,7 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 0
+                              item.eqType == 23 && item.eqDirection == 1
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
@@ -353,7 +353,7 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 0
+                              item.eqType == 23 && item.eqDirection == 1
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
@@ -964,7 +964,7 @@
                 <el-row
                   class="flex-row"
                   v-if="
-                    batchManageForm.eqDirection == '0' &&
+                    batchManageForm.eqDirection == '1' &&
                     batchManageForm.eqType == (1 || 2)
                   "
                 >
@@ -5688,6 +5688,9 @@ export default {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
+                  if(res.eqList[i].eqType == "3"){
+                    console.log(res.eqList[i])
+                  }
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
                     let iconWidth = Number(response.rows[j].iconWidth);
                     let iconHeight = Number(response.rows[j].iconHeight);
@@ -8782,7 +8785,7 @@ input {
 .popper-class-site {
   .el-cascader-menu__wrap {
     max-width: 245px;
-    
+
   }
   .el-cascader-node__postfix {
       right: 18px !important;

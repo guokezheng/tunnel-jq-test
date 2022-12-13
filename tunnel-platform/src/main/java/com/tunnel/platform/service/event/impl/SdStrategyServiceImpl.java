@@ -619,6 +619,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             SdStrategyRl sdStrategyRl = new SdStrategyRl();
             sdStrategyRl.setEquipments(equipments);
             sdStrategyRl.setState(state);
+            if(map.get("effectiveTime")!=null){
+                sdStrategyRl.setEffectiveTime(map.get("effectiveTime").toString());
+            }
             sdStrategyRl.setEqTypeId(equipmentTypeId);
             sdStrategyRl.setStrategyId(sty.getId());
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
@@ -714,6 +717,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 openRlData.setEqTypeId(equipmentTypeId);
                 openRlData.setEquipments(equipments);
                 openRlData.setState(openState);
+                openRlData.setEndState(closeState);
                 openRlData.setStrategyId(sty.getId());
                 openRlData.setControlTime(startTime);
                 sdStrategyRlMapper.insertSdStrategyRl(openRlData);
@@ -774,6 +778,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         String jobIdStr = jobIdList.stream().collect(Collectors.joining(","));
         sty.setJobRelationId(jobIdStr);
+        sty.setTimerOpen(startTime);
+        sty.setTimerClose(endTime);
         int updateRows = sdStrategyMapper.updateSdStrategyById(sty);
         return updateRows;
     }

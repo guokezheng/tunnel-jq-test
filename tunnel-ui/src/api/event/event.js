@@ -152,3 +152,11 @@ export function eventPopFault(pageNum) {
     method: 'get',
   })
 }
+
+// 获取车道数
+export function getTunnelLane(tunnelId) {
+  return request({
+    url: '/tunnels/' + tunnelId,
+    method: 'get',
+  })
+}

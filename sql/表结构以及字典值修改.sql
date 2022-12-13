@@ -515,7 +515,13 @@ ALTER TABLE sd_emergency_vehicle
 CREATE TABLE `sd_devices_brand` (
   `supplier_id` varchar(11) DEFAULT NULL COMMENT '设备厂商编号',
   `supplier_name` varchar(100) DEFAULT NULL COMMENT '设备厂商名称',
-  `short_name` varchar(100) DEFAULT NULL COMMENT '简称'
+  `short_name` varchar(100) DEFAULT NULL COMMENT '简称',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除（1-是，0-否）',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime  DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime  DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='物联设备厂商表';
 
 -- 集团部门表
@@ -732,3 +738,17 @@ CREATE TABLE `sd_devices_protocol` (
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='设备协议配置表';
 
 -- 微波车检：新增表 sd_microwave_periodic_statistics、sd_microwave_real_data
+
+-- 设备表添加 设备大类、外部系统ID字段
+alter table sd_devices modify column brand_id varchar(30) comment '品牌ID';
+alter table sd_devices add column f_eq_type varchar(100) comment '设备大类' after eq_type;
+alter table sd_devices add column external_system_id int(11) comment '外部系统ID';
+
+-- 外部系统表添加 所属隧道ID字段
+alter table external_system add column tunnel_id varchar(100) comment '所属隧道 ID' after brand_id;
+
+-- 新增协议类型字典
+INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, create_time, update_by, update_time, remark) VALUES (107, '协议类型', 'device_protocol_type', '0', 'admin', '2022-12-07 17:06:13', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (511, 1, 'UDP', '1', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:06:50', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (512, 2, 'TCP', '2', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:11', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (513, 3, 'HTTP', '3', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:22', '', NULL, NULL);

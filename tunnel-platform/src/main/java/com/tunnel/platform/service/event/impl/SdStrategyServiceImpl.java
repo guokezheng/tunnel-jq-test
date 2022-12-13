@@ -393,7 +393,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * 修改控制策略信息
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.SUPPORTS)
     public int updateSdStrategyInfo(SdStrategyModel model) {
         //判断输入的值是否符合规范并返回策略信息
         SdStrategy sty = conditionalJudgement(model);

@@ -22,6 +22,7 @@ import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,7 +68,8 @@ public class workspaceController extends BaseController {
     private ISysDictDataService sysDictDataService;
     @Autowired
     private ISdDeviceTypeItemService sdDeviceTypeItemService;
-
+    @Autowired
+    private LightService lightService;
 
     @Value("${authorize.name}")
     private String deploymentType;
@@ -115,6 +117,9 @@ public class workspaceController extends BaseController {
         }
         SysDictData sysDictData = isopenList.get(0);
         String isopen = sysDictData.getDictValue();
+
+        long eqType = sdDevices.getEqType().longValue();
+
         if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
             //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
             sdDevices.setEqStatus("1");
@@ -141,8 +146,23 @@ public class workspaceController extends BaseController {
             sdOperationLogService.insertSdOperationLog(sdOperationLog);
             return AjaxResult.success(1);
         } else if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
-            //控制设备
-            controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+            // eqType == DevicesTypeEnum.SHUI_BENG.getCode().longValue() ||
+            if (
+                    eqType == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.YING_JI_ZHAO_MING.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.YIN_DAO_ZHAO_MING.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
+                    eqType == DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode().longValue()
+            ) {
+                //控制设备
+                controlState = ModbusTcpHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+            } else if (eqType == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || eqType == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
+                controlState = lightService.lineControl(devId, Integer.parseInt(state));
+            }
         }
 
         //添加操作记录
@@ -151,8 +171,6 @@ public class workspaceController extends BaseController {
         sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
         sdOperationLog.setEqId(sdDevices.getEqId());
         sdOperationLog.setCreateTime(new Date());
-        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
-        sdOperationLog.setOperIp(ip);
         if (data.size() > 0 && data.get(0) != null) {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }

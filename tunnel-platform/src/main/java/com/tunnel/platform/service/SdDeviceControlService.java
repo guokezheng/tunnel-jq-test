@@ -17,6 +17,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,8 @@ public class SdDeviceControlService {
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
-
+    @Autowired
+    private LightService lightService;
 
     /**
      * 批量控制设备方法参数不能为空，否则直接返回0（控制失败）
@@ -307,12 +309,41 @@ public class SdDeviceControlService {
             states[2] = frequency;
             states[3] = fireMark;
             sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
+            //控制照明 目前只有加强照明和基本照明
+        } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() || sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) {
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+
+            if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
+                controlState = lightService.lineControl(devId, Integer.parseInt(state));
+            } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
+                //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+                sdDevices.setEqStatus("1");
+                sdDevices.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(sdDevices);
+                SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+                sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+                List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+                if (sdDeviceTypeItems.size() == 0) {
+                    throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+                }
+                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+                controlState = 1;
+            }
+
+            sdOperationLog.setState(String.valueOf(controlState));
+            //通过websocket推送到前端
+            String[] states = new String[4];
+            states[0] = state;
+            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"zm");
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;
     }
 
-    private void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
+    public void updateDeviceData(SdDevices sdDevices, String value, Integer itemId) {
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(sdDevices.getEqId());
         sdDeviceData.setItemId(Long.valueOf(itemId));

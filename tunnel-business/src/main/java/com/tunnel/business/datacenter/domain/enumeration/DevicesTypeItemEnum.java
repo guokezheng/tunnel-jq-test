@@ -1,8 +1,6 @@
 package com.tunnel.business.datacenter.domain.enumeration;
 
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-
 /**
  * 设备类型数据项表
  */
@@ -31,7 +29,9 @@ public enum DevicesTypeItemEnum {
     JIA_QIANG_ZHAO_MING_OPEN_STATUS(28, "加强照明开关状态"),
     INFORMATION_BOARD_CONTENT(29, "情报板显示内容"),
     CAMERA_ERROR_CONTETN(30, "相机异常事件描述"),
-    RADAR_ERROR_CONTETN(31, "雷达异常事件描述");
+    RADAR_ERROR_CONTETN(31, "雷达异常事件描述"),
+    JACK_LIGHT_BRIGHNESS(32, "照明灯亮度"),
+    JACK_LIGHT_OPENCLOSE(33, "照明灯开与关");
 
 
     private int code;

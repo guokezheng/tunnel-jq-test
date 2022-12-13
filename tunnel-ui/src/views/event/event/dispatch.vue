@@ -133,7 +133,7 @@
                             : ''
                         "
                       />
-                      <img 
+                      <img
                       v-show="item.eqType == '31'"
                       style="position: absolute"
                         :style="{

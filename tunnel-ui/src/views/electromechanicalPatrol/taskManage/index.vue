@@ -16,6 +16,38 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
+      <el-form-item label="发布状态" prop="publishStatus">
+        <el-select
+          v-model="queryParams.publishStatus"
+          placeholder="请选择发布状态"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="dict in dict.type.publish_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="任务状态" prop="taskStatus">
+        <el-select
+          v-model="queryParams.taskStatus"
+          placeholder="请选择任务状态"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="dict in dict.type.task_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -106,7 +138,7 @@
             size="mini"
             class="tableBlueButtton"
             @click="exportTaskReport(scope.row)"
-            :style="{ display: scope.row.publishStatus==2?'':'none' }"
+            :style="{ display: scope.row.taskStatus==2?'':'none' }"
           >巡查报告</el-button
           >
           <el-button

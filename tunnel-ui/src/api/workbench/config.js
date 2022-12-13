@@ -138,6 +138,15 @@ export function controlGuidanceLampDevice(data) {
   })
 }
 
+// 疏散标志弹窗数据
+export function controlEvacuationSignDevice(data) {
+  return request({
+    url: '/workspace/controlEvacuationSignDevice',
+    method: 'post',
+    data: data
+  })
+}
+
 // 车指批量控制抽屉
 export function batchControlCarFinger(data) {
   return request({

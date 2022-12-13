@@ -1,6 +1,16 @@
 import request from '@/utils/request'
 
 // 查询隧道列表
+export function listTunnels1(query) {
+  return request({
+    url: '/tunnels/list1',
+    method: 'get',
+    params: query
+  })
+}
+
+
+// 查询隧道列表
 export function listTunnels(query) {
   return request({
     url: '/tunnels/list',
@@ -9,10 +19,17 @@ export function listTunnels(query) {
   })
 }
 
-
 export function listAllTunnels(query) {
   return request({
     url: '/tunnels/listAll',
+    method: 'get',
+    params: query
+  })
+}
+
+export function listAllTunnels1(query) {
+  return request({
+    url: '/tunnels/listAll1',
     method: 'get',
     params: query
   })

@@ -171,7 +171,7 @@
 </template>
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
-import { controlGuidanceLampDevice } from "@/api/workbench/config.js"; //提交控制信息
+import { controlGuidanceLampDevice, controlEvacuationSignDevice } from "@/api/workbench/config.js"; //提交控制信息
 import { getDevice, fireMarkList } from "@/api/equipment/tunnel/api.js"; //查诱导灯亮度、频率等
 
 export default {
@@ -315,11 +315,19 @@ export default {
         // tunnelId: this.stateForm.tunnelId,
       };
       this.$modal.msgSuccess("指令下发中，请稍后。");
-      controlGuidanceLampDevice(param).then((response) => {
-        console.log(response, "提交控制");
-        this.$modal.msgSuccess("操作成功");
-        this.$emit("dialogClose");
-      });
+      if (this.stateForm2.eqType == 30) {
+        controlEvacuationSignDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+          this.$emit("dialogClose");
+        });
+      } else if (this.stateForm2.eqType == 31) {
+        controlGuidanceLampDevice(param).then((response) => {
+          console.log(response, "提交控制");
+          this.$modal.msgSuccess("操作成功");
+          this.$emit("dialogClose");
+        });
+      }
     },
     // 关闭弹窗
     handleClosee() {

@@ -25,16 +25,16 @@ public class SanJingLight implements Light {
 
     private String jessionId;
 
-    @Value("${device.light.sansi.login}")
+    @Value("${device.light.sanjing.login}")
     private String login;
 
-    @Value("${device.light.sansi.brightness}")
+    @Value("${device.light.sanjing.brightness}")
     private String brightness;
 
-    @Value("${device.light.sansi.lineControl}")
+    @Value("${device.light.sanjing.lineControl}")
     private String lineControl;
 
-    @Value("${device.light.sansi.deviceData}")
+    @Value("${device.light.sanjing.deviceData}")
     private String deviceData;
 
     @Autowired

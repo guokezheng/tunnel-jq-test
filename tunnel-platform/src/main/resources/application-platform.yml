@@ -95,3 +95,12 @@ sso:
 
   #业务中台分配应用ID
   appId: jq_tunnel_server
+
+device:
+  light:
+    sanjing:
+      base: http://47.119.189.80:8888
+      login: ${device.light.sanjing.base}/login
+      brightness: ${device.light.sanjing.base}/api/adjustBrightness
+      lineControl: ${device.light.sanjing.base}/api/lineControl
+      deviceData: ${device.light.sanjing.base}/api/getLatestDeviceData

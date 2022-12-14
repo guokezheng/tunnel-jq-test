@@ -189,4 +189,38 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
 //        }
         return template;
     }
+
+    @Override
+    public List<SdVmsTemplate> getVMSTemplatesByDevIdAndCategory(JSONObject jsonObject) {
+        String category = "0";
+        if (jsonObject.get("category") != null && !jsonObject.get("category").toString().equals("")) {
+            category = jsonObject.get("category").toString();
+        }
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList(category);
+        List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
+        List<SdVmsTemplateContent> contents = new ArrayList<>();
+        List<SdVmsTemplate> template = new ArrayList<>();
+        for (int j = 0;j < sdVmsTemplates.size();j++) {
+            contents = new ArrayList<>();
+            SdVmsTemplate sdVmsTemplate = sdVmsTemplates.get(j);
+            if (!category.equals(sdVmsTemplate.getCategory())) {
+                continue;
+            }
+            Long id = sdVmsTemplate.getId();
+            for (int z = 0;z < sdVmsTemplateContents.size();z++) {
+                SdVmsTemplateContent sdVmsTemplateContent = sdVmsTemplateContents.get(z);
+                if (sdVmsTemplateContent.getTemplateId().equals("") || sdVmsTemplateContent.getTemplateId() == null) {
+                    continue;
+                }
+                Long templateId = Long.parseLong(sdVmsTemplateContent.getTemplateId());
+                if (id.longValue() == templateId.longValue()) {
+                    contents.add(sdVmsTemplateContent);
+                }
+            }
+            sdVmsTemplate.setTcontents(contents);
+            template.add(sdVmsTemplate);
+        }
+//        return template;
+        return null;
+    }
 }

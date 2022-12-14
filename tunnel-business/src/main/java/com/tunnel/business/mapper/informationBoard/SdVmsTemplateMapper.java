@@ -4,6 +4,7 @@ package com.tunnel.business.mapper.informationBoard;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板模板Mapper接口
@@ -64,4 +65,6 @@ public interface SdVmsTemplateMapper
     public Long selectSdVmsTemplateId();
 
     public List<SdVmsTemplate> selectTemplateList(String category);
+
+    public List<Map<String, Object>> getAllSdVmsTemplateList();
 }

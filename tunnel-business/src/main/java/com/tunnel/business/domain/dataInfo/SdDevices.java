@@ -335,6 +335,19 @@ public class SdDevices extends BaseEntity {
      **/
     private String externalDeviceId;
 
+    /**
+     * 关联设备ID（关联iot_device中device_id字段）
+     * */
+    private Long associatedDeviceId;
+
+    public Long getAssociatedDeviceId() {
+        return associatedDeviceId;
+    }
+
+    public void setAssociatedDeviceId(Long associatedDeviceId) {
+        this.associatedDeviceId = associatedDeviceId;
+    }
+
     public String getExternalDeviceId() {
         return externalDeviceId;
     }

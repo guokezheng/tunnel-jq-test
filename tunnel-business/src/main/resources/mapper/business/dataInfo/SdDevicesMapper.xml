@@ -50,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="zxNum"    column="zxNum"    />
         <result property="lxNum"    column="lxNum"    />
         <result property="externalDeviceId"    column="external_device_id"    />
+        <result property="associatedDeviceId"    column="associated_device_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
         <association property="eqTypeName" column="type_id" javaType="SdEquipmentType" resultMap="eqTypeResult"/>
     </resultMap>
@@ -71,7 +72,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
         eq_status_time, control_point_address, query_point_address, create_by, create_time,
-        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id from sd_devices
+        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id, associated_device_id
+        from sd_devices
     </sql>
 
 
@@ -272,6 +274,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="roadId != null">road_id,</if>
             <if test="sn != null">sn,</if>
             <if test="externalDeviceId != null">external_device_id,</if>
+            <if test="associatedDeviceId != null">associated_device_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="eqId != null">#{eqId},</if>
@@ -317,6 +320,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="roadId != null">#{roadId},</if>
             <if test="sn != null">#{sn},</if>
             <if test="externalDeviceId != null">#{externalDeviceId},</if>
+            <if test="associatedDeviceId != null">#{associatedDeviceId},</if>
          </trim>
     </insert>
 
@@ -365,6 +369,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="roadId != null">road_id = #{roadId},</if>
             <if test="sn != null">sn = #{sn},</if>
             <if test="externalDeviceId != null">external_device_id = #{externalDeviceId},</if>
+            <if test="associatedDeviceId != null">associated_device_id = #{associatedDeviceId},</if>
         </trim>
         where eq_id = #{eqId}
     </update>

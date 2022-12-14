@@ -351,13 +351,11 @@
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
+                              width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+                           
                           }"
-                          :width="item.iconWidth"
-                          :height="item.iconHeight"
+                       
                           :src= getTypePic(item)
                           :class="
                             item.eqName == screenEqName

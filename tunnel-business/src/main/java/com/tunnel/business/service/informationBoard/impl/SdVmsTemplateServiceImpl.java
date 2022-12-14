@@ -214,6 +214,9 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
             String devId = devIds.get(i);
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
             Long associatedDeviceId = sdDevices.getAssociatedDeviceId();
+            if (associatedDeviceId.longValue() == 0L) {
+                break;
+            }
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(associatedDeviceId);
             String devicePixel = sdIotDevice.getDevicePixel();
             for (int j = 0;j < categorys.size();j++) {

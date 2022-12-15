@@ -88,7 +88,7 @@ public class SdReservePlanController extends BaseController {
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(MultipartFile[] file,
-                                 @RequestParam("subareaId") Long subareaId,
+                                 @RequestParam("tunnelId") String tunnelId,
                                  @RequestParam("category") String category,
                                  @RequestParam("planTypeId") String planTypeId,
                                  @RequestParam("planDescription") String planDescription,
@@ -97,7 +97,7 @@ public class SdReservePlanController extends BaseController {
                                  @RequestParam("controlDirection") String controlDirection,
                                  HttpServletRequest request) {
         SdReservePlan sdReservePlan = new SdReservePlan();
-        sdReservePlan.setSubareaId(subareaId);
+        sdReservePlan.setTunnelId(tunnelId);
         sdReservePlan.setCategory(category);
         sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
         sdReservePlan.setPlanName(planName);

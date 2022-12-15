@@ -118,13 +118,13 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
             List<String> strategyNames = new ArrayList<>();
-            Long subareaId = list.get(i).getSubareaId();
-            SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
-            if (sdTunnelSubarea == null) {
-                continue;
-            }
-            list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
-            list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
+//            Long subareaId = list.get(i).getSubareaId();
+//            SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
+//            if (sdTunnelSubarea == null) {
+//                continue;
+//            }
+            //list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
+            //list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
             String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
 
             List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(list.get(i).getId());

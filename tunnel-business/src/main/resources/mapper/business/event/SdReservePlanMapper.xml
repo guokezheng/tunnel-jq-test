@@ -54,19 +54,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdReservePlanVo">
-        select id,subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time,control_direction,direction from sd_reserve_plan
+        select id,tunnel_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time,control_direction,direction from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
 #             --group_concat(DISTINCT E.strategy_id) strategy_id,
         B.event_type,
-             D.s_name,F.tunnel_name,A.control_direction,A.direction
+        F.tunnel_name,A.control_direction,A.direction
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id
-        left join sd_tunnel_subarea D on D.s_id = A.subarea_id
-        left join sd_tunnels F on D.tunnel_id = F.tunnel_id
+        left join sd_tunnels F on A.tunnel_id = F.tunnel_id
         <where>
             <if test="tunnelId != null and tunnelId!=''">and F.tunnel_id = #{tunnelId}</if>
             <if test="category != null and category!=''">and A.category = #{category}</if>
@@ -89,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSdReservePlan" parameterType="SdReservePlan" useGeneratedKeys="true" keyProperty="id">
         insert into sd_reserve_plan
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="subareaId != null">subarea_id,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
             <if test="planTypeId != null">plan_type_id,</if>
             <if test="category != null">category,</if>
             <if test="planDescription != null">plan_description,</if>
@@ -103,7 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="direction != null">direction,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="subareaId != null">#{subareaId},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
             <if test="planTypeId != null">#{planTypeId},</if>
             <if test="category != null" >#{category},</if>
             <if test="planDescription != null">#{planDescription},</if>
@@ -121,7 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSdReservePlan" parameterType="SdReservePlan">
         update sd_reserve_plan
         <trim prefix="SET" suffixOverrides=",">
-            <if test="subareaId != null">subarea_id = #{subareaId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
             <if test="planTypeId != null">plan_type_id = #{planTypeId},</if>
             <if test="category != null">category = #{category},</if>
             <if test="planDescription != null">plan_description = #{planDescription},</if>

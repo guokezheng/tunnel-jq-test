@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 预案信息Service业务层处理
@@ -125,15 +126,20 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
             list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
             String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
-            if (StrUtil.isNotBlank(strategyNamesStr)) {
-                strategyNames = Arrays.asList(strategyNamesStr.split(","));
-                for (int j = 0; j < strategyNames.size(); j++) {
-                    int num = j + 1;
-                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
-                    buffer.setLength(0);
-                }
-            }
-            list.get(i).setStrategyNames(strategyNames);
+
+            List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(list.get(i).getId());
+            List<String> processStr = processList.stream().map(s->s.getProcessName()).collect(Collectors.toList());
+                    //.joining(","));
+
+//            if (StrUtil.isNotBlank(strategyNamesStr)) {
+//                strategyNames = Arrays.asList(strategyNamesStr.split(","));
+//                for (int j = 0; j < strategyNames.size(); j++) {
+//                    int num = j + 1;
+//                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
+//                    buffer.setLength(0);
+//                }
+//            }
+            list.get(i).setStrategyNames(processStr);
 //            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
 //                String[] strategys = list.get(i).getStrategyId().split(",");
 //                int index = 0;
@@ -339,6 +345,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             if (result > 0) {
                 sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
                 sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
+                //删除策略设备信息表
+                sdStrategyRlMapper.deleteSdStrategyRlByPlanId(id);
             }
         }
         return result;

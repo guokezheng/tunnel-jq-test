@@ -18,6 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="controlDirection"    column="control_direction"    />
+        <result property="direction"    column="direction"    />
         <association property="eventType"  column="id" javaType="SdEventType" resultMap="eventTypeResult" />
         <association property="strategy"  column="id" javaType="SdStrategy" resultMap="strategyResult" />
         <association property="sdTunnelSubarea" column="subarea_id" javaType="sdTunnelSubarea" resultMap="subareaResult" />
@@ -52,22 +54,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <sql id="selectSdReservePlanVo">
-        select id,subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time from sd_reserve_plan
+        select id,subarea_id, plan_type_id, category, plan_description, plan_name, plan_file_id, create_by, create_time, update_by, update_time,control_direction,direction from sd_reserve_plan
     </sql>
 
     <select id="selectSdReservePlanList" parameterType="SdReservePlan" resultMap="SdReservePlanResult">
         select A.id, F.tunnel_id,A.subarea_id,A.plan_type_id, A.plan_description, A.plan_name, A.plan_file_id, A.category,
 #             --group_concat(DISTINCT E.strategy_id) strategy_id,
-        (select GROUP_CONCAT(process.strategy_id) from sd_reserve_process process where process.reserve_id =  A.id) as strategy_id,
         B.event_type,
-        (select GROUP_CONCAT(strategy.strategy_name) from sd_strategy strategy,sd_reserve_process process  where
-                process.strategy_id = strategy.id and process.reserve_id = A.id) as strategy_name,
-#             --group_concat(DISTINCT C.strategy_name) strategy_name,
-            C.strategy_info, C.strategy_type, D.s_name,F.tunnel_name
+             D.s_name,F.tunnel_name,A.control_direction,A.direction
         from sd_reserve_plan A
         left join sd_event_type B on A.plan_type_id = B.id
         left join sd_reserve_process E on A.id = E.reserve_id
-        left join sd_strategy C on E.strategy_id = C.id
         left join sd_tunnel_subarea D on D.s_id = A.subarea_id
         left join sd_tunnels F on D.tunnel_id = F.tunnel_id
         <where>
@@ -102,6 +99,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
+            <if test="controlDirection != null">control_direction,</if>
+            <if test="direction != null">direction,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="subareaId != null">#{subareaId},</if>
@@ -114,6 +113,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
+            <if test="controlDirection != null">#{controlDirection},</if>
+            <if test="direction != null">#{direction},</if>
          </trim>
     </insert>
 
@@ -130,6 +131,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="controlDirection != null">control_direction = #{controlDirection},</if>
+            <if test="direction != null">direction = #{direction},</if>
         </trim>
         where id = #{id}
     </update>

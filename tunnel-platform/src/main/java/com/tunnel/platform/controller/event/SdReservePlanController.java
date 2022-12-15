@@ -93,6 +93,8 @@ public class SdReservePlanController extends BaseController {
                                  @RequestParam("planTypeId") String planTypeId,
                                  @RequestParam("planDescription") String planDescription,
                                  @RequestParam("planName") String planName,
+                                 @RequestParam("direction") String direction,
+                                 @RequestParam("controlDirection") String controlDirection,
                                  HttpServletRequest request) {
         SdReservePlan sdReservePlan = new SdReservePlan();
         sdReservePlan.setSubareaId(subareaId);
@@ -100,6 +102,8 @@ public class SdReservePlanController extends BaseController {
         sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
         sdReservePlan.setPlanName(planName);
         sdReservePlan.setPlanDescription(planDescription);
+        sdReservePlan.setDirection(direction);
+        sdReservePlan.setControlDirection(controlDirection);
         return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
     }
 

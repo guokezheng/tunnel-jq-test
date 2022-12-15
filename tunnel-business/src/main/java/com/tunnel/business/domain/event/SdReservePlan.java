@@ -58,7 +58,6 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("策略对象")
     private SdStrategy strategy;
 
-
     /** 预案描述 */
     @Excel(name = "预案描述")
     @ApiModelProperty("预案描述")
@@ -88,6 +87,27 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道对象")
     private SdTunnels sdTunnels;
 
+    @ApiModelProperty("管控方向")
+    private String controlDirection;
+
+    @ApiModelProperty("隧道方向")
+    private String direction;
+
+    public String getControlDirection() {
+        return controlDirection;
+    }
+
+    public void setControlDirection(String controlDirection) {
+        this.controlDirection = controlDirection;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
 
     public String getTunnelId() {
         return tunnelId;

@@ -116,4 +116,12 @@ public class SdVmsTemplateController extends BaseController
     public AjaxResult informationBoardAcquisition(JSONObject jsonObject) {
         return AjaxResult.success(sdVmsTemplateService.informationBoardAcquisition(jsonObject));
     }
+
+    /**
+     * 根据设备ID和分类ID获取情报板模板数据集合
+     */
+    @PostMapping("/getVMSTemplatesByDevIdAndCategory")
+    public AjaxResult getVMSTemplatesByDevIdAndCategory(@RequestBody List<String> devIds) {
+        return AjaxResult.success(sdVmsTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
+    }
 }

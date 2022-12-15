@@ -3,10 +3,14 @@ package com.tunnel.business.service.informationBoard.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,12 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
 
     @Autowired
     private ISysDictDataService sysDictDataService;
+
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
+    @Autowired
+    private ISdIotDeviceService sdIotDeviceService;
 
     /**
      * 查询情报板模板
@@ -188,5 +198,50 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
 //            }
 //        }
         return template;
+    }
+
+    @Override
+    public List<Map<String, Object>> getVMSTemplatesByDevIdAndCategory(List<String> devIds) {
+        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
+        if (devIds.isEmpty()) {
+            return null;
+        } else if (categorys.isEmpty()) {
+            throw new RuntimeException("情报板模板类型数据为空！");
+        }
+        List<Map<String, Object>> listMap = new ArrayList<>();
+        List<Map<String, Object>> sdVmsTemplates = sdVmsTemplateMapper.getAllSdVmsTemplateList();
+        for (int i = 0;i < devIds.size();i++) {
+            String devId = devIds.get(i);
+            SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+            Long associatedDeviceId = sdDevices.getAssociatedDeviceId();
+            if (associatedDeviceId.longValue() == 0L) {
+                break;
+            }
+            SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(associatedDeviceId);
+            String devicePixel = sdIotDevice.getDevicePixel();
+            for (int j = 0;j < categorys.size();j++) {
+                Map<String, Object> map = new HashMap<>();
+                List<Map<String, Object>> childrenMap = new ArrayList<>();
+                SysDictData sysDictData = categorys.get(j);
+                String dictValue = sysDictData.getDictValue();
+                map.put("value", dictValue);
+                map.put("label", sysDictData.getDictLabel());
+                for (int z = 0;z < sdVmsTemplates.size();z++) {
+                    Map<String, Object> objectMap = sdVmsTemplates.get(z);
+                    if (objectMap.get("devicePixel") == null || objectMap.get("category") == null) {
+                        continue;
+                    }
+                    String pixel = objectMap.get("devicePixel").toString();
+                    String category = objectMap.get("category").toString();
+                    if (!pixel.equals("") && pixel.equals(devicePixel)
+                            && !category.equals("") && dictValue.equals(category)) {
+                        childrenMap.add(objectMap);
+                    }
+                }
+                map.put("children", childrenMap);
+                listMap.add(map);
+            }
+        }
+        return listMap;
     }
 }

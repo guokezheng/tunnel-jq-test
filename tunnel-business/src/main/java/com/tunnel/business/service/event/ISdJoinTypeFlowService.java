@@ -1,5 +1,6 @@
 package com.tunnel.business.service.event;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdPlanFlow;
 
@@ -66,4 +67,11 @@ public interface ISdJoinTypeFlowService
      * @return
      */
     List<SdPlanFlow> getTypeFlowList();
+
+    /**
+     * 校验是否已存在当前事件类型预案流程
+     * @param eventTypeId
+     * @return
+     */
+    AjaxResult checkData(String eventTypeId);
 }

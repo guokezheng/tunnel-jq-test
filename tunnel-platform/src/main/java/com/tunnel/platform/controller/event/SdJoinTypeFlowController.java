@@ -111,4 +111,14 @@ public class SdJoinTypeFlowController extends BaseController
     public List<SdPlanFlow> getTypeFlowList(){
         return sdJoinTypeFlowService.getTypeFlowList();
     }
+
+    /**
+     * 校验该事件类型预案流程是否存在
+     * @param eventTypeId
+     * @return
+     */
+    @GetMapping("/checkData")
+    public AjaxResult checkData(String eventTypeId){
+        return sdJoinTypeFlowService.checkData(eventTypeId);
+    }
 }

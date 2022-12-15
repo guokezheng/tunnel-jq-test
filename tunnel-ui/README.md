@@ -19,6 +19,9 @@ npm install gis-map-tunnel@0.1.3
 #新增精确计算
 npm install mathjs
 
+#新增树形穿梭框
+npm install --save el-tree-transfer
+
 # 启动服务
 npm run dev
 ```

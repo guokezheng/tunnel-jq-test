@@ -15,7 +15,7 @@
           placeholder="请选择事件类型"
           size="small">
           <el-option
-            v-for="item in options"
+            v-for="item in optionsData"
             :key="item.id"
             :label="item.eventType"
             :value="item.id">
@@ -48,8 +48,9 @@
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="flowList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="flowList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="事件分类" align="center" prop="dictLabel" />
       <el-table-column label="事件类型" align="center" prop="eventTypeId" >
         <template slot-scope="scope">
           <span>
@@ -90,8 +91,8 @@
     <el-dialog :title="title" :visible.sync="open" width="780px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件分类" prop="prevControlType">
-          <el-radio v-model="form.radio" label="0">交通事件</el-radio>
-          <el-radio v-model="form.radio" label="1">主动安全</el-radio>
+          <el-radio v-model="form.radio" label="0" @change="radioFun">交通事件</el-radio>
+          <el-radio v-model="form.radio" label="1" @change="radioFun">主动安全</el-radio>
         </el-form-item>
         <el-form-item label="事件类型" prop="eventTypeId">
 <!--          <el-input v-model="form.eventTypeId" placeholder="请输入事件类型" />-->
@@ -138,7 +139,7 @@
             disabled="disabled"
             size="small">
             <el-option
-              v-for="item in options"
+              v-for="item in optionsData"
               :key="item.id"
               :label="item.eventType"
               :value="item.id">
@@ -159,7 +160,7 @@
 </template>
 
 <script>
-import { listFlow, getFlow, delFlow, addFlow, updateFlow, exportFlow, getTypeFlowList} from "@/api/event/planFlow";
+import { listFlow, getFlow, delFlow, addFlow, updateFlow, exportFlow, getTypeFlowList, checkData} from "@/api/event/planFlow";
 import treeTransfer from "el-tree-transfer";
 import { listEventType } from "@/api/event/eventType";
 import Template from "@/views/information/template";
@@ -227,13 +228,15 @@ export default {
       toData:[],
       mode: "transfer",
       options: [],
-      detailData:[]
+      detailData:[],
+      optionsData:[]
     };
   },
   created() {
     this.getList();
     this.selectTypeFlowList();
     this.getEventType();
+    this.getTableEventType();
   },
   methods: {
     /** 查询事件类型预案流程关联列表 */
@@ -278,23 +281,49 @@ export default {
       })
     },
 
-    getEventType(){
-      const eventTypeParams = {
-        radio : this.radio
-      };
+    radioFun(item){
+      this.getEventType(item);
+    },
+
+    getEventType(item){
+      const eventTypeParams = {prevControlType : ""};
+      if(item != undefined){
+        eventTypeParams.prevControlType = item;
+      }else {
+        eventTypeParams.prevControlType = this.radio;
+      }
+      this.form.eventTypeId = null;
       listEventType(eventTypeParams).then(res => {
         console.log(res,"resresresres")
         this.options = res.rows;
       })
     },
 
+    getTableEventType(){
+      listEventType().then(res => {
+        console.log(res,"optionsDataoptionsData")
+        this.optionsData = res.rows;
+      })
+    },
+
+    //列表事件类型
     getOptions(eventTypeId){
-      for(var item of this.options){
+      for(var item of this.optionsData){
         if(item.id == eventTypeId){
           return item.eventType;
         }
       }
     },
+
+    // 表格的行样式
+    tableRowClassName({ row, rowIndex }) {
+      if (rowIndex % 2 == 0) {
+        return "tableEvenRow";
+      } else {
+        return "tableOddRow";
+      }
+    },
+
     // 取消按钮
     cancel() {
       this.open = false;
@@ -330,7 +359,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.ids = selection.map(item => item.eventTypeId)
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
@@ -365,20 +394,26 @@ export default {
               this.getList();
             });
           } else {
-            this.form.planFlowList = this.toData
-            addFlow(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+            checkData(this.form.eventTypeId).then(res => {
+              if(res.code == 200){
+                this.form.planFlowList = this.toData
+                addFlow(this.form).then(response => {
+                  this.$modal.msgSuccess("新增成功");
+                  this.open = false;
+                  this.getList();
+                });
+              }else {
+                this.$modal.msgError(res.msg)
+              }
+            })
           }
         }
       });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除事件类型预案流程关联编号为"' + ids + '"的数据项？').then(function() {
+      const ids = row.eventTypeId || this.ids;
+      this.$modal.confirm('是否确认删除事件类型预案流程').then(function() {
         return delFlow(ids);
       }).then(() => {
         this.getList();

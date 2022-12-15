@@ -10,16 +10,10 @@ import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
-import com.tunnel.business.domain.event.SdEvent;
-import com.tunnel.business.domain.event.SdEventFlow;
-import com.tunnel.business.domain.event.SdStrategy;
-import com.tunnel.business.domain.event.SdTunnelSubarea;
+import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
-import com.tunnel.business.mapper.event.SdEventFlowMapper;
-import com.tunnel.business.mapper.event.SdEventMapper;
-import com.tunnel.business.mapper.event.SdStrategyMapper;
-import com.tunnel.business.mapper.event.SdTunnelSubareaMapper;
+import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -63,6 +57,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private RadarEventMapper radarEventMapper;
+
+    @Autowired
+    private SdJoinTypeFlowMapper sdJoinTypeFlowMapper;
 
     /**
      * 查询事件管理
@@ -154,10 +151,13 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
         }
         //更新事件置信度
-        List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
-        for(WjConfidence item : confidenceList){
-            radarEventMapper.updateEventConfidence(item);
+        if(sdEvent.getConfidenceList() != null){
+            List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
+            for(WjConfidence item : confidenceList){
+                radarEventMapper.updateEventConfidence(item);
+            }
         }
+        updateHandle(sdEvent);
         sdEvent.setUpdateTime(DateUtils.getNowDate());
         return sdEventMapper.updateSdEvent(sdEvent);
     }
@@ -354,5 +354,22 @@ public class SdEventServiceImpl implements ISdEventService {
         return sdEventMapper.eventPopAll(subIndex);
     }
 
-
+    public int updateHandle(SdEvent sdEvent){
+        //查询预案流程树
+        List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
+        List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+        List<SdJoinTypeFlow> flowsIdData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
+        for(SdJoinTypeFlow item : flowsPidData){
+            List<SdJoinTypeFlow> list = new ArrayList<>();
+            for(SdJoinTypeFlow temp : flowsIdData){
+                if(item.getFlowId() == temp.getFlowPid()){
+                    list.add(temp);
+                }
+            }
+            if(list.size() > 0){
+                item.setChildren(list);
+            }
+        }
+        return 0;
+    }
 }

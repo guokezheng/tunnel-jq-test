@@ -59,3 +59,11 @@ export function getTypeFlowList() {
     method: 'get'
   })
 }
+
+// 校验该事件类型预案流程是否存在
+export function checkData(eventTypeId) {
+  return request({
+    url: '/system/flow/checkData?eventTypeId=' + eventTypeId,
+    method: 'get'
+  })
+}

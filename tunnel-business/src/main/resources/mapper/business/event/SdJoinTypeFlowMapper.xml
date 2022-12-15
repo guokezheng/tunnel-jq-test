@@ -13,6 +13,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="flowSort"    column="flow_sort"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="dictLabel"    column="dict_label"    />
     </resultMap>
 
     <sql id="selectSdJoinTypeFlowVo">
@@ -21,19 +22,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdJoinTypeFlowList" parameterType="SdJoinTypeFlow" resultMap="SdJoinTypeFlowResult">
         SELECT
-            id,
-            event_type_id,
-            create_time,
-            update_time
+            jtf.id,
+            jtf.event_type_id,
+            jtf.create_time,
+            sdd.dict_label
         FROM
-            sd_join_type_flow
+            sd_join_type_flow jtf
+        LEFT JOIN sd_event_type et ON jtf.event_type_id = et.id
+        LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
+            AND sdd.dict_type = 'prev_control_type'
         WHERE
             1 = 1
         <if test="eventTypeId != null and eventTypeId != ''">
-            AND event_type_id = #{eventTypeId}
+            AND jtf.event_type_id = #{eventTypeId}
         </if>
         GROUP BY
-            event_type_id
+            jtf.event_type_id
     </select>
     
     <select id="selectSdJoinTypeFlowById" parameterType="Long" resultMap="SdJoinTypeFlowResult">
@@ -94,7 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSdJoinTypeFlowByIds" parameterType="String">
-        delete from sd_join_type_flow where id in 
+        delete from sd_join_type_flow where event_type_id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -110,5 +114,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sd_plan_flow pf
         WHERE
             1 = 1
+    </select>
+
+    <select id="checkData" resultType="int" parameterType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            sd_join_type_flow jtf
+        WHERE
+            1 = 1
+        AND jtf.event_type_id = #{eventTypeId}
     </select>
 </mapper>

@@ -14,6 +14,7 @@ import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
 import com.tunnel.business.service.informationBoard.IIotBoradFontService;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
+import com.tunnel.business.service.informationBoard.ISdReleaseRecordService;
 import com.tunnel.business.utils.exception.BusinessException;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
@@ -55,6 +56,8 @@ public class BoardController extends BaseController {
     private ExecutorService executorService;
     @Autowired
     private ISdDevicesService sdDevicesService;
+    @Autowired
+    private ISdReleaseRecordService sdReleaseRecordService;
 
     /**
      *
@@ -211,7 +214,7 @@ public class BoardController extends BaseController {
                 ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
                 iotBoardReleaseLog.setReleaseStatus("1");
             }
-
+            sdReleaseRecordService.insertSdReleaseRecord(iotBoardReleaseLog);
             parameters = parameters.replaceAll("\n", "<n>");
             parameters = parameters.replaceAll("\r", "<r>");
 //            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);

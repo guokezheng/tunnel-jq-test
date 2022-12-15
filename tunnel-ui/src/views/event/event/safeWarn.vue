@@ -391,7 +391,7 @@
               <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
             </div>
             <img src="../../../assets/cloudControl/nullImg.png" v-else/>
-            
+
           </div>
         </div>
         <div class="dialogBg">
@@ -406,7 +406,7 @@
         </div>
       </div>
       <div class="dialogForm">
-        <el-form :model="eventForm" label-width="80px">
+        <el-form :model="eventForm" label-width="80px" :rules="rules">
           <el-row style="display: flex; flex-wrap: wrap">
             <el-col :span="8">
               <el-form-item label="告警来源" prop="eventSource">
@@ -556,7 +556,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="事件车辆" prop="id">
+              <el-form-item label="事件车辆" prop="plate">
                 <div class="evtCarStyle">
                   <div
                     v-for="(item, index) in eventForm.confidenceList"
@@ -594,7 +594,7 @@
       </div>
       <div class="dialogFooterButton" >
         <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2">处置</div>
+        <div v-show="detailsButtonType == 2" @click="management(eventForm.id)">处置</div>
       </div>
     </el-dialog>
     <!--    流程弹窗-->
@@ -1352,6 +1352,21 @@ export default {
     });
   },
   methods: {
+    // 处置
+    management(id){
+      const param = {
+        id: id,
+        eventState: "0",
+      };
+      updateEvent(param).then(() => {
+        this.$modal.msgSuccess("开始处理事件");
+      });
+      this.$router.push({
+        path: "/emergency/administration/dispatch",
+        query: { id: id },
+      });
+      //
+    },
     handleSizeChange(val){
       console.log(`每页 ${val} 条`);
       this.queryParams.pageSize = val
@@ -1366,6 +1381,13 @@ export default {
     },
     // 复核提交
     submitDialog() {
+      for(let item of this.eventForm.confidenceList){
+        if(!/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/.test(item.plate)){
+          this.$modal.msgWarning("请输入正确车牌号");
+          return
+        }
+
+      }
       if (this.eventForm.stakeNum1 && this.eventForm.stakeNum2) {
         this.eventForm.stakeNum =
           "K" + this.eventForm.stakeNum1 + "+" + this.eventForm.stakeNum2;

@@ -91,6 +91,7 @@
               multiple
               collapse-tags
               placeholder="请选择设备"
+              @change="qbgChange(index,items.value)"
             >
               <el-option
                 v-for="item in items.equipmentData"
@@ -101,11 +102,11 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
             <el-select
               style="width: 100%"
               v-model="items.state"
-              placeholder="请选择设备需要执行的操作"
+              placeholder="请选择执行操作"
             >
               <el-option
                 v-for="item in items.manualControlStateList"
@@ -115,6 +116,17 @@
               >
               </el-option>
             </el-select>
+          </el-col>
+          <el-col :span="6" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
+            <el-cascader
+              :props="checkStrictly"
+              v-model="items.state"
+              :options="items.templatesList"
+              :show-all-levels="false"
+              clearable
+              collapse-tags
+              :key="isResouceShow"
+              @change="handleChange"></el-cascader>
           </el-col>
           <el-col :span="4" class="buttonBox">
             <el-button
@@ -155,7 +167,7 @@
 </template>
 
 <script>
-import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
+import { listEqTypeStateIsControl,getVMSTemplatesByDevIdAndCategory } from "@/api/equipment/eqTypeState/api";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listType } from "@/api/equipment/type/api";
@@ -174,6 +186,12 @@ import {
 export default {
   data() {
     return {
+      checkStrictly: {
+        multiple: false,
+        emitPath: false,
+        checkStrictly: true,
+      },
+      templatesList:[],//模板数据
       sink: "", //删除/修改
       id: "", //策略id
       strategyForm: {
@@ -183,7 +201,7 @@ export default {
         tunnelId: null, //隧道id
         strategyName: null, //策略名称
         direction: "", //方向
-        manualControl: [{ state: "", value: "",equipmentTypeId:"",equipmentTypeData:[],equipmentData:[] }],
+        manualControl: [{ state: "", value: "",equipmentTypeId:"",equipmentTypeData:[],equipmentData:[],templatesList:[] }],
       },
       //设备类型查询参数
       queryEqTypeParams: {
@@ -246,6 +264,11 @@ export default {
             this.strategyForm.manualControl[i].value =
               attr.equipments.split(",");
             console.log(this.strategyForm.manualControl[i].value,"选择的设备")
+            getVMSTemplatesByDevIdAndCategory(this.strategyForm.manualControl[i].value).then(res=>{
+              console.log(res.data,"模板信息")
+              // this.templatesList = res.data;
+              this.$set(this.strategyForm.manualControl[i],"templatesList",res.data)
+            })
             // this.strategyForm.manualControl[i].equipmentData = attr.equipmentData;
             this.strategyForm.manualControl[i].state = attr.state;
             this.strategyForm.manualControl[i].manualControlStateList = attr.eqStateList;
@@ -283,6 +306,20 @@ export default {
         console.log(res.rows, "设备列表");
       });
       this.listEqTypeStateIsControl(index)
+      if(this.strategyForm.manualControl[index].equipmentTypeId == 16 || this.strategyForm.manualControl[index].equipmentTypeId == 36){
+      }
+    },
+    qbgChange(index,value){
+      console.log(value);
+      let data = value;
+      getVMSTemplatesByDevIdAndCategory(data).then(res=>{
+        console.log(res.data,"模板信息")
+        // this.templatesList = res.data;
+        this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
+      })
+    },
+    handleChange(e){
+      console.log(e)
     },
     // 查询设备可控状态
     listEqTypeStateIsControl(index) {
@@ -359,19 +396,22 @@ export default {
           console.log(this.strategyForm, "要提交数据");
           var manualControl = this.strategyForm.manualControl;
           //如果不是疏散标志则判断是否填写
-          if (this.strategyForm.equipmentTypeId != 30) {
-            if (
-              manualControl[0].value.length == 0 ||
-              manualControl[0].state == ""
-            ) {
-              return this.$modal.msgError("请选择设备并添加执行操作");
-            }
-          } else {
-            if (manualControl[0].state == "") {
-              return this.$modal.msgError("请选择疏散标志执行操作");
-            }
-          }
-
+          // if (this.strategyForm.equipmentTypeId != 30) {
+          //   if (
+          //     manualControl[0].value.length == 0 ||
+          //     manualControl[0].state == ""
+          //   ) {
+          //     return this.$modal.msgError("请选择设备并添加执行操作");
+          //   }
+          // } else {
+            // if(this.strategyForm.equipmentTypeId == 16 || this.strategyForm.equipmentTypeId == 36){
+            //
+            // }else{
+            //   if (manualControl[0].state == "") {
+            //     return this.$modal.msgError("请选择疏散标志执行操作");
+            //   }
+            // }
+          // }
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
@@ -399,6 +439,10 @@ export default {
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
+      let data = this.strategyForm.manualControl;
+      data.forEach(item=>{
+        item.state = item.state.toString()
+      })
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();

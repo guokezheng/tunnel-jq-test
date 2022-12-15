@@ -176,6 +176,8 @@ public class InductionlampUtil {
                         String brightness = codeInfo.substring(0, 2);
                         int brightnessParam = Integer.parseInt(brightness, 16);
                         map.put("brightness", brightnessParam);
+                        //发送控制器同步指令
+                        client.pushCode("000000000006010600020001");
                         return map;
                     } else {
                         map.put("brightness", "0");
@@ -676,6 +678,10 @@ public class InductionlampUtil {
             case PILOT_LIGHT_MODE_1 :
                 resultCode = "01060004000" + brightnessParam;
                 resultMap.put("msgInfo","灯亮度为：" + brightnessParam);
+                break;
+            case PILOT_LIGHT_MODE_2 :
+                resultCode = "010600020001";
+                resultMap.put("msgInfo","同步所有控制器");
                 break;
             default:
                 resultCode = "010600040000";

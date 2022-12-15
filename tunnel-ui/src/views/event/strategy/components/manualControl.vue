@@ -427,6 +427,10 @@ export default {
         this.strategyForm.jobRelationId = res;
         this.strategyForm.id = this.id;
       });
+      let data = this.strategyForm.manualControl;
+      data.forEach(item=>{
+        item.state = item.state.toString()
+      })
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");

@@ -11,16 +11,22 @@ import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
 import com.ruoyi.quartz.util.CronUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.instruction.EquipmentControlInstruction;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
+import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
@@ -210,13 +216,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
             //策略关联表信息
             for (int j = 0; j < rlList.size(); j++) {
+                String eqTypeId = rlList.get(j).getEqTypeId();
                 SdEquipmentType typeObject = sdEquipmentTypeMapper.selectSdEquipmentTypeById(Long.parseLong(rlList.get(j).getEqTypeId()));
                 String typeName = typeObject.getTypeName();//设备类型名称
                 //SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 SdEquipmentState state = new SdEquipmentState();
-                state.setStateTypeId(Long.parseLong(rlList.get(j).getEqTypeId()));
+                state.setStateTypeId(Long.parseLong(eqTypeId));
                 state.setDeviceState(rlList.get(j).getState());
                 state.setIsControl(1);
+                if(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
+                    String templateId = rlList.get(j).getState();
+                    SdVmsTemplateContent content = new SdVmsTemplateContent();
+                    content.setTemplateId(templateId);
+                    List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                    sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+                    continue;
+                }
                 // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
                 List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
                 if(stateObject.size()<1){

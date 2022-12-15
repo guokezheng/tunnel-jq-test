@@ -10,13 +10,19 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdDeviceNowState;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
+import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.platform.business.vms.device.DataUtils;
+import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +62,19 @@ public class SdDeviceControlService {
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
 
+    @Autowired
+    private ISdVmsTemplateService sdVmsTemplateService;
+
+    @Autowired
+    private ISdVmsTemplateContentService sdVmsTemplateContentService;
+
 
     /**
      * 批量控制设备方法参数不能为空，否则直接返回0（控制失败）
      * 控制车指必传参数：devId（设备ID）、state（变更的状态）
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
      * 控制疏散标志：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）、fireMark（设备地址标号，正常情况下为255,0为关灯）
+     * 情报板控制：devId（设备ID）、state（情报板模板内容对应sdvmstemplatecontent中的content字段）、templateId（情报板模板ID）
      * 控制方式controlType(控制方式   0：手动 1：时间控制 2：光强控制 3:预案控制)
      * */
     public Integer controlDevices(Map<String, Object> map) {
@@ -77,18 +90,18 @@ public class SdDeviceControlService {
         //根据字典中配置的设备模拟控制值进行模拟状态展示
         List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
         if (isopenList.size() == 0) {
-            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请联系管理员添加后重试");
+            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
         }
         SysDictData sysDictData = isopenList.get(0);
         String isopen = sysDictData.getDictValue();
 
         //控制车指
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备，请联系管理员");
+            throw new RuntimeException("未指定设备");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的状态信息");
         } else if (map.get("controlType") == null || map.get("controlType").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的状态信息");
         }
         String devId = map.get("devId").toString();
         String state = map.get("state").toString();
@@ -138,7 +151,7 @@ public class SdDeviceControlService {
                 sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
                 List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
                 if (sdDeviceTypeItems.size() == 0) {
-                    throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+                    throw new RuntimeException("当前设备没有设备类型数据项数据");
                 }
                 SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
                 updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
@@ -153,9 +166,9 @@ public class SdDeviceControlService {
             //控制诱导灯
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的亮度信息");
             } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的频率信息");
             }
             String brightness = map.get("brightness").toString();
             String frequency = map.get("frequency").toString();
@@ -213,11 +226,11 @@ public class SdDeviceControlService {
             //控制疏散标志
         } else if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().longValue()) {
             if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的亮度信息");
             } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的频率信息");
             } else if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的标号位置信息");
             }
             fireMark = map.get("fireMark").toString();
             String brightness = map.get("brightness").toString();
@@ -307,6 +320,70 @@ public class SdDeviceControlService {
             states[2] = frequency;
             states[3] = fireMark;
             sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"ydd");
+        } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
+                || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
+            //情报板控制需要根据模板ID获取到发送报文需要的各个元素
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            if (map.get("templateId") == null || map.get("templateId").toString().equals("")) {
+                throw new RuntimeException("没有找到需要发布的模板信息");
+            }
+            Long templateId = Long.parseLong(map.get("templateId").toString());
+            SdVmsTemplate sdVmsTemplate = sdVmsTemplateService.selectSdVmsTemplateById(templateId);
+            String parameters = "[Playlist]<r><n>ITEM_NO=2<r><n>ITEM000=300,0,1,\\C000000\\fh2424\\c255255000000谨慎驾驶\\n注意安全<r><n>ITEM001=300,0,1,\\C000000\\fh2424\\c255255000000山东高速\\n欢迎您";
+            if (sdVmsTemplate != null) {
+                SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
+                sdVmsTemplateContent.setTemplateId(map.get("templateId").toString());
+                List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentService.selectSdVmsTemplateContentList(sdVmsTemplateContent);
+                SdVmsTemplateContent templateContent = sdVmsTemplateContents.get(0);
+                String fontType = "s";
+                if (templateContent.getFontType().equals("KaiTi")) {
+                    fontType = "k";
+                } else if (templateContent.getFontType().equals("SimHei")) {
+                    fontType = "h";
+                }
+                String fontColor = "255255000000";
+                if (templateContent.getFontColor().equals("red")) {
+                    fontColor = "255000000000";
+                } else if (templateContent.getFontColor().equals("green")) {
+                    fontColor = "000255000000";
+                } else if (templateContent.getFontColor().equals("blue")) {
+                    fontColor = "000000255000";
+                }
+                //[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000=500,0,1,\C072004\fh3232\c255255000000前方事故xxxxxx米
+                parameters = "[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000="+sdVmsTemplate.getStopTime()+",1,1,\\C"
+                        +templateContent.getCoordinate()+"\\f"+fontType+templateContent.getFontSize()
+                        +templateContent.getFontSize()+templateContent.getFontSize()+"\\c"+fontColor+templateContent.getContent();
+                state = templateContent.getContent();
+            }
+
+            if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
+                //连接设备进行控制，需要组装报文
+                String commands = DataUtils.contentToGb2312_CG(sdDevices.getAssociatedDeviceId().toString(), parameters, "GUANGDIAN_V33");
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(sdDevices.getAssociatedDeviceId().toString(), "GUANGDIAN_V33", commands);
+                if (result) {
+                    controlState = 1;
+                } else {
+                    controlState = 0;
+                }
+            } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
+                //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+                sdDevices.setEqStatus("1");
+                sdDevices.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(sdDevices);
+                SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+                sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+                List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+                if (sdDeviceTypeItems.size() == 0) {
+                    throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+                }
+                SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+                updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
+                controlState = 1;
+            }
+
+            sdOperationLog.setState(String.valueOf(controlState));
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;

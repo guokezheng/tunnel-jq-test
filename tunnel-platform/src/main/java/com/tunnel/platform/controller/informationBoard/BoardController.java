@@ -9,6 +9,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.IotBoradFont;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import com.tunnel.business.domain.informationBoard.SdReleaseRecord;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
 import com.tunnel.business.service.informationBoard.IIotBoradFontService;
@@ -25,10 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -57,14 +55,14 @@ public class BoardController extends BaseController {
     private ExecutorService executorService;
     @Autowired
     private ISdDevicesService sdDevicesService;
-    
+
     /**
-     * 
+     *
      * 1分钟检测一次情报板的状态
      */
-  
+
     public void getIcyData() {
-    	
+
     	List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
     	for(int i=0;i<list.size();i++){
     		SdIotDevice iotDevice = list.get(i);
@@ -77,7 +75,7 @@ public class BoardController extends BaseController {
     			sdIotDeviceService.updateIotDevice(iotDevice);
             }
     	}
-    	
+
     }
 
 
@@ -165,8 +163,8 @@ public class BoardController extends BaseController {
 
         return ajaxResult;
     }
-    
-    
+
+
 
     /**
      * 发布单条情报板编辑信息
@@ -177,9 +175,9 @@ public class BoardController extends BaseController {
     @ResponseBody
     public AjaxResult uploadBoardEditInfo(String deviceId, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
-        
+
         List<String> paramsList = new ArrayList<String>();
-//        IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+        SdReleaseRecord iotBoardReleaseLog = new SdReleaseRecord();
         try {
         	parameters = URLDecoder.decode(parameters, "UTF-8");
             if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
@@ -193,6 +191,9 @@ public class BoardController extends BaseController {
             }
             String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
             Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
+            String releaseOldContent = releaseContentMap.get(deviceId);
+            iotBoardReleaseLog.setReleaseDev(deviceId);
+            iotBoardReleaseLog.setReleaseTime(new Date());
             if (result) {
                 if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                     String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
@@ -205,20 +206,14 @@ public class BoardController extends BaseController {
                 } else {
                     ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
                 }
+                iotBoardReleaseLog.setReleaseStatus("0");
             } else {
                 ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
+                iotBoardReleaseLog.setReleaseStatus("1");
             }
 
-
-            String releaseOldContent = releaseContentMap.get(deviceId);
-//            String userName = (String) PermissionUtils.getPrincipalProperty("userName");
-//            iotBoardReleaseLog.setDeviceId(deviceId);
-//            iotBoardReleaseLog.setReleaseBy(userName);
-//            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
             parameters = parameters.replaceAll("\n", "<n>");
             parameters = parameters.replaceAll("\r", "<r>");
-//            iotBoardReleaseLog.setReleaseNewContent(parameters);
-//            iotBoardReleaseLog.setReleaseTime(new Date());
 //            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             releaseContentMap.clear();
         } catch (BusinessException e) {
@@ -907,7 +902,7 @@ public class BoardController extends BaseController {
         }
         return fontSize;
     }
-    
+
     /**
      * 根据设备ID获取设备详情
      * @param deviceId
@@ -917,7 +912,7 @@ public class BoardController extends BaseController {
     	SdDevices sd = sdDevicesService.selectSdDevicesById(deviceId);
     	return sd;
     }
-    
+
     /**
      * 获取单条情报板基础信息
      *

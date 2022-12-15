@@ -283,6 +283,9 @@ public class workspaceController extends BaseController {
             xiankeDevices.setEqType(sdDevices.getEqType());
             xiankeDevices.setEqDirection(sdDevices.getEqDirection());
             List<SdDevices> xiankeDeviceList = sdDevicesService.selectSdDevicesList(xiankeDevices);
+            if (state.equals("3")) {
+                state = "2";
+            }
             for (int i = 0;i < xiankeDeviceList.size();i++) {
                 SdDevices dev = xiankeDeviceList.get(i);
                 if (dev.getIp() == null || dev.getIp().equals("")) {

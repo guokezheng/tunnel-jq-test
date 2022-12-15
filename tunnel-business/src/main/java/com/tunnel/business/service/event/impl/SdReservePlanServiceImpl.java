@@ -75,32 +75,32 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlanFile.setPlanFileId(plan.getPlanFileId());
             plan.setpFileList(sdReservePlanFileMapper.selectSdReservePlanFileList(sdReservePlanFile));
         }
-        Long subareaId = plan.getSubareaId();
-        SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
-        plan.setSdTunnelSubarea(sdTunnelSubarea);
-        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdTunnelSubarea.getTunnelId());
+//        Long subareaId = plan.getSubareaId();
+//        SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
+//        plan.setSdTunnelSubarea(sdTunnelSubarea);
+        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(plan.getTunnelId());
         plan.setSdTunnels(sdTunnels);
-        List<String> strategyNames = new ArrayList<>();
-        if (!"-1".equals(plan.getStrategyId()) && plan.getStrategyId() != null) {
-            String[] strategyAyy = plan.getStrategyId().split("；");
-            String things = "";
-            int index = 0;
-            for (String s : strategyAyy) {
-                if (s == null || s.equals("")) {
-                    continue;
-                }
-                index++;
-                SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
-                if (sds == null) {
-                    logger.error("策略未找到！");
-                    continue;
-                }
-                things = things + index + "、" + sds.getStrategyName();
-                strategyNames.add(things);
-            }
-
-        }
-        plan.setStrategyNames(strategyNames);
+//        List<String> strategyNames = new ArrayList<>();
+//        if (!"-1".equals(plan.getStrategyId()) && plan.getStrategyId() != null) {
+//            String[] strategyAyy = plan.getStrategyId().split("；");
+//            String things = "";
+//            int index = 0;
+//            for (String s : strategyAyy) {
+//                if (s == null || s.equals("")) {
+//                    continue;
+//                }
+//                index++;
+//                SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
+//                if (sds == null) {
+//                    logger.error("策略未找到！");
+//                    continue;
+//                }
+//                things = things + index + "、" + sds.getStrategyName();
+//                strategyNames.add(things);
+//            }
+//
+//        }
+//        plan.setStrategyNames(strategyNames);
         return plan;
     }
 

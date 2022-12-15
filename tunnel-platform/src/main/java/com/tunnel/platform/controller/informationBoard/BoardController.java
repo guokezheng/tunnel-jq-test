@@ -7,6 +7,7 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.domain.informationBoard.IotBoradFont;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
 import com.tunnel.business.domain.informationBoard.SdReleaseRecord;
@@ -180,7 +181,8 @@ public class BoardController extends BaseController {
         AjaxResult ajaxResult = new AjaxResult();
 
         List<String> paramsList = new ArrayList<String>();
-        SdReleaseRecord iotBoardReleaseLog = new SdReleaseRecord();
+        IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+        SdReleaseRecord sdReleaseRecord = new SdReleaseRecord();
         try {
         	parameters = URLDecoder.decode(parameters, "UTF-8");
             if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
@@ -195,8 +197,8 @@ public class BoardController extends BaseController {
             String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
             Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
             String releaseOldContent = releaseContentMap.get(deviceId);
-            iotBoardReleaseLog.setReleaseDev(deviceId);
-            iotBoardReleaseLog.setReleaseTime(new Date());
+            sdReleaseRecord.setReleaseDev(deviceId);
+            sdReleaseRecord.setReleaseTime(new Date());
             if (result) {
                 if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                     String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
@@ -209,15 +211,19 @@ public class BoardController extends BaseController {
                 } else {
                     ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
                 }
-                iotBoardReleaseLog.setReleaseStatus("0");
+                sdReleaseRecord.setReleaseStatus("0");
             } else {
                 ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-                iotBoardReleaseLog.setReleaseStatus("1");
+                sdReleaseRecord.setReleaseStatus("1");
             }
-            sdReleaseRecordService.insertSdReleaseRecord(iotBoardReleaseLog);
+            sdReleaseRecordService.insertSdReleaseRecord(sdReleaseRecord);
+            iotBoardReleaseLog.setDeviceId(deviceId);
+            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
             parameters = parameters.replaceAll("\n", "<n>");
             parameters = parameters.replaceAll("\r", "<r>");
-//            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+            iotBoardReleaseLog.setReleaseNewContent(parameters);
+            iotBoardReleaseLog.setReleaseTime(new Date());
+            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
             releaseContentMap.clear();
         } catch (BusinessException e) {
             ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());

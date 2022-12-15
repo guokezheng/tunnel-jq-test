@@ -277,7 +277,20 @@ public class workspaceController extends BaseController {
         if (sdDevices.getBrandId() != null && sdDevices.getBrandId().equals("0057")) {
             controlState = GuidanceLampHandle.getInstance().toControlDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency, fireMark);
         } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue() && !sdDevices.getBrandId().equals("0057")) {
-            controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency);
+            //显科的设备一个路段可能会有多个控制器，都需要下发同样的指令
+            SdDevices xiankeDevices = new SdDevices();
+            xiankeDevices.setEqTunnelId(sdDevices.getEqTunnelId());
+            xiankeDevices.setEqType(sdDevices.getEqType());
+            xiankeDevices.setEqDirection(sdDevices.getEqDirection());
+            List<SdDevices> xiankeDeviceList = sdDevicesService.selectSdDevicesList(xiankeDevices);
+            for (int i = 0;i < xiankeDeviceList.size();i++) {
+                SdDevices dev = xiankeDeviceList.get(i);
+                if (dev.getIp() == null || dev.getIp().equals("")) {
+                    continue;
+                }
+                controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(dev.getEqId(), Integer.parseInt(state), dev, brightness, frequency);
+            }
+//            controlState = GuidanceLampHandle.getInstance().toControlXianKeDev(fEqId, Integer.parseInt(state), sdDevices, brightness, frequency);
         }
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();

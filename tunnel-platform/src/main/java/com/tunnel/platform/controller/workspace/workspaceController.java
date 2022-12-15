@@ -186,13 +186,13 @@ public class workspaceController extends BaseController {
     @PostMapping("/controlGuidanceLampDevice")
     public AjaxResult controlGuidanceLampDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备，请联系管理员");
+            throw new RuntimeException("未指定设备");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的状态信息");
         } else if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的亮度信息");
         } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的频率信息");
         }
         if ("GSY".equals(deploymentType)) {
             map.put("controlType", "0");
@@ -300,13 +300,13 @@ public class workspaceController extends BaseController {
     @PostMapping("/controlEvacuationSignDevice")
     public AjaxResult controlEvacuationSignDevice(@RequestBody Map<String, Object> map) {
         if (map.get("devId") == null || map.get("devId").toString().equals("")) {
-            throw new RuntimeException("未指定设备，请联系管理员");
+            throw new RuntimeException("未指定设备");
         } else if (map.get("state") == null || map.get("state").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的状态信息");
         } else if (map.get("brightness") == null || map.get("brightness").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的亮度信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的亮度信息");
         } else if (map.get("frequency") == null || map.get("frequency").toString().equals("")) {
-            throw new RuntimeException("未指定设备需要变更的频率信息，请联系管理员");
+            throw new RuntimeException("未指定设备需要变更的频率信息");
         }
         if ("GSY".equals(deploymentType)) {
             map.put("controlType", "0");
@@ -335,7 +335,7 @@ public class workspaceController extends BaseController {
                 map.put("fireMark", "255");
             }
             if (map.get("fireMark") == null || map.get("fireMark").toString().equals("")) {
-                throw new RuntimeException("未指定设备需要变更的标号位置信息，请联系管理员");
+                throw new RuntimeException("未指定设备需要变更的标号位置信息");
             } else {
                 sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.EVACUATION_SIGN_CONTROL_MODE.getCode()));
                 fireMark = map.get("fireMark").toString();
@@ -346,7 +346,7 @@ public class workspaceController extends BaseController {
         //根据字典中配置的设备模拟控制值进行模拟状态展示
         List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
         if (isopenList.size() == 0) {
-            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请联系管理员添加后重试");
+            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
         }
         SysDictData sysDictData = isopenList.get(0);
         String isopen = sysDictData.getDictValue();

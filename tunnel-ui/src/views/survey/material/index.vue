@@ -10,10 +10,10 @@
       <!--      <el-form-item label="物资编号" prop="materialId">-->
       <!--        <el-input class="dateClass" v-model="queryParams.materialId" placeholder="请输入物资编号" clearable size="small" @keyup.enter.native="handleQuery" />-->
       <!--      </el-form-item>-->
-      <el-form-item label="物品类型" prop="materialType">
+      <el-form-item label="物资类型" prop="materialType">
         <el-select
           v-model="queryParams.materialType"
-          placeholder="请选择物品类型"
+          placeholder="请选择物资类型"
           clearable
           size="small"
         >
@@ -422,7 +422,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item
-                label="物品类型"
+                label="物资类型"
                 prop="materialType"
                 style="width: 240px"
               >

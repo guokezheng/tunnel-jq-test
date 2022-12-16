@@ -83,6 +83,7 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
             logger.error("当前人员已经存在！");
             throw new RuntimeException("当前人员已经存在！");
         }
+        sdEmergencyPer.setCreateTime(DateUtils.getNowDate());
         return sdEmergencyPerMapper.insertSdEmergencyPer(sdEmergencyPer);
     }
 

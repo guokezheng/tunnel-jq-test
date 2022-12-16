@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.event;
 
 import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdPlanFlow;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -66,4 +67,11 @@ public interface SdJoinTypeFlowMapper
      * @return
      */
     List<SdPlanFlow> getTypeFlowList();
+
+    /**
+     * 校验是否已存在当前事件类型预案流程
+     * @param eventTypeId
+     * @return
+     */
+    int checkData(@Param("eventTypeId") Long eventTypeId);
 }

@@ -1,6 +1,8 @@
 package com.tunnel.business.service.event.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.event.SdJoinTypeFlow;
 import com.tunnel.business.domain.event.SdPlanFlow;
@@ -131,5 +133,14 @@ public class SdJoinTypeFlowServiceImpl implements ISdJoinTypeFlowService
     @Override
     public List<SdPlanFlow> getTypeFlowList() {
         return sdJoinTypeFlowMapper.getTypeFlowList();
+    }
+
+    @Override
+    public AjaxResult checkData(String eventTypeId) {
+        int count = sdJoinTypeFlowMapper.checkData(Long.valueOf(eventTypeId));
+        if(count > 0){
+            return AjaxResult.error("事件类型预案流程已存在！");
+        }
+        return AjaxResult.success();
     }
 }

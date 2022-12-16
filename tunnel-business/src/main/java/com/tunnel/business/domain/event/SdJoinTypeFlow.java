@@ -45,6 +45,26 @@ public class SdJoinTypeFlow extends BaseEntity
      */
     List<SdPlanFlow> planFlowList;
 
+    private String dictLabel;
+
+    private List<SdJoinTypeFlow> children;
+
+    public List<SdJoinTypeFlow> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<SdJoinTypeFlow> children) {
+        this.children = children;
+    }
+
+    public String getDictLabel() {
+        return dictLabel;
+    }
+
+    public void setDictLabel(String dictLabel) {
+        this.dictLabel = dictLabel;
+    }
+
     public List<SdPlanFlow> getPlanFlowList() {
         return planFlowList;
     }

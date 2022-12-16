@@ -9,6 +9,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
@@ -102,22 +103,42 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
     @Transactional(rollbackFor = Exception.class)
     public int batchSdReserveProcessed(SdReserveProcessModel sdReserveProcesses) {
         List<SdReserveProcess> list = new ArrayList<>();
+        String planId = sdReserveProcesses.getReserveId().toString();
         //删除预案流程节点
         sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReserveProcesses.getReserveId());
-        for (SdReserveProcess process : sdReserveProcesses.getSdReserveProcesses()) {
-            Long[] strategyIds = process.getHandleStrategyList();
-            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(strategyIds[1]);
-            if(rlList.isEmpty()){
-                continue;
-            }
+        SpringUtils.getBean(SdStrategyRlMapper.class).deleteSdStrategyRlByPlanId(Long.valueOf(planId));
+        for (Map process : sdReserveProcesses.getSdReserveProcesses()) {
             SdReserveProcess reserveProcess = new SdReserveProcess();
-            reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
-            reserveProcess.setDeviceTypeId(Long.parseLong(rlList.get(0).getEqTypeId()));
-            reserveProcess.setProcessName(process.getProcessName());
-            reserveProcess.setProcessSort(process.getProcessSort());
-            reserveProcess.setStrategyId(process.getHandleStrategyList()[1]);
-            reserveProcess.setCreateTime(DateUtils.getNowDate());
-            reserveProcess.setCreateBy(SecurityUtils.getUsername());
+            SdStrategyRl rl = new SdStrategyRl();
+            List<String> value = (List<String>) process.get("equipments");
+            String equipments = StringUtils.join(value,",");
+            String equipmentTypeId = process.get("eqTypeId") + "";
+            String eqState = (String) process.get("state");
+            rl.setEqTypeId(equipmentTypeId);
+            rl.setEquipments(equipments);
+            rl.setState(eqState);
+            rl.setPlanId(planId);
+            rl.setRetrievalRule(process.get("retrievalRule").toString());
+            SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
+            //rl.getId();
+            reserveProcess.setProcessName(process.get("processName").toString());
+            reserveProcess.setProcessSort(Integer.parseInt(process.get("processSort").toString()));
+            reserveProcess.setDeviceTypeId(Long.valueOf(equipmentTypeId));
+            reserveProcess.setStrategyId(rl.getId());
+            reserveProcess.setReserveId(Long.valueOf(planId));
+            //SpringUtils.getBean(SdStrategyRlMapper.class).insertSdStrategyRl(rl);
+//            Long[] strategyIds = process.getHandleStrategyList();
+//            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(strategyIds[1]);
+//            if(rlList.isEmpty()){
+//                continue;
+//            }
+//            reserveProcess.setReserveId(sdReserveProcesses.getReserveId());
+//            reserveProcess.setDeviceTypeId(Long.parseLong(rl.getEqTypeId()));
+//            reserveProcess.setProcessName(process.getProcessName());
+//            reserveProcess.setProcessSort(process.getProcessSort());
+//            reserveProcess.setStrategyId(rl.getId());
+//            reserveProcess.setCreateTime(DateUtils.getNowDate());
+//            reserveProcess.setCreateBy(SecurityUtils.getUsername());
             list.add(reserveProcess);
         }
         int result = -1;

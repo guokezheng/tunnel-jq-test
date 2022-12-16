@@ -212,7 +212,7 @@
                 multiple
                 collapse-tags
                 placeholder="请选择设备"
-                @change="$forceUpdate()"
+                @change="qbgChange(index,dain.value)"
               >
                 <el-option
                   v-for="item in dain.equipmentData"
@@ -223,7 +223,7 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="6" v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
               <el-select
                 v-model="dain.state"
                 placeholder="请选择设备执行操作"
@@ -236,6 +236,17 @@
                 >
                 </el-option>
               </el-select>
+            </el-col>
+            <el-col :span="6" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
+              <el-cascader
+                :props="checkStrictly"
+                v-model="items.state"
+                :options="items.templatesList"
+                :show-all-levels="false"
+                clearable
+                collapse-tags
+                :key="isResouceShow"
+                @change="handleChange"></el-cascader>
             </el-col>
             <el-col :span="4" class="buttonBox">
               <el-button
@@ -288,7 +299,7 @@
 </template>
 
     <script>
-import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
+import { listEqTypeStateIsControl,getVMSTemplatesByDevIdAndCategory } from "@/api/equipment/eqTypeState/api";
 import {
   listType,
   listHasType,
@@ -318,6 +329,11 @@ export default {
   },
   data() {
     return {
+      checkStrictly: {
+        multiple: false,
+        emitPath: false,
+        checkStrictly: true,
+      },
       definition: [
         { warningType: "0", name: "仅预警" },
         { warningType: "1", name: "预警联动" },
@@ -527,6 +543,18 @@ export default {
       });
       this.listEqTypeStateIsControl(index)
     },
+    qbgChange(index,value){
+      console.log(value);
+      let data = value;
+      getVMSTemplatesByDevIdAndCategory(data).then(res=>{
+        console.log(res.data,"模板信息")
+        // this.templatesList = res.data;
+        this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
+      })
+    },
+    handleChange(e){
+      console.log(e)
+    },
     // 查询设备可控状态
     listEqTypeStateIsControl(index) {
       var stateTypeId = this.strategyForm.autoControl[index].equipmentTypeId;
@@ -609,12 +637,11 @@ export default {
           this.strategyForm.id = this.id;
         });
       }
-      this.strategyForm.triggers.deviceId =
-        this.strategyForm.triggers.deviceId.toString();
-      // let data = this.strategyForm.autoControl;
-      // data.forEach(item=>{
-      //   item.effectiveTime = this.strategyForm.effectiveTime
-      // })
+      this.strategyForm.triggers.deviceId = this.strategyForm.triggers.deviceId.toString();
+      let data = this.strategyForm.manualControl;
+      data.forEach(item=>{
+        item.state = item.state.toString()
+      })
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -629,10 +656,10 @@ export default {
       });
       this.strategyForm.triggers.deviceId =
         this.strategyForm.triggers.deviceId.toString();
-      // let data = this.strategyForm.autoControl;
-      // data.forEach(item=>{
-      //   item.effectiveTime = this.strategyForm.effectiveTime
-      // })
+      let data = this.strategyForm.manualControl;
+      data.forEach(item=>{
+        item.state = item.state.toString()
+      })
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();

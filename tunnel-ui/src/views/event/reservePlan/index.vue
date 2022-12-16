@@ -81,43 +81,6 @@
       </el-form-item>
     </el-form>
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          v-hasPermi="['business:plan:add']"
-          icon="el-icon-plus"
-          size="mini"
-          type="primary"
-          plain
-          @click="handleAdd()"
-          >新增
-        </el-button>
-      </el-col>
-      <div class="top-right-btn">
-        <el-tooltip class="item" content="刷新" effect="dark" placement="top">
-          <el-button
-            circle
-            icon="el-icon-refresh"
-            size="mini"
-            @click="handleQuery"
-          />
-        </el-tooltip>
-        <el-tooltip
-          :content="showSearch ? '隐藏搜索' : '显示搜索'"
-          class="item"
-          effect="dark"
-          placement="top"
-        >
-          <el-button
-            circle
-            icon="el-icon-search"
-            size="mini"
-            @click="showSearch = !showSearch"
-          />
-        </el-tooltip>
-      </div>
-    </el-row> -->
-
     <el-table
       ref="planTable"
       v-loading="loading"
@@ -137,21 +100,32 @@
       />
       <el-table-column
         align="center"
-        label="预案类别"
-        prop="category"
-        :formatter="categoryFormat"
-      />
-      <el-table-column align="center" label="预案名称" prop="planName" />
-      <el-table-column
-        align="center"
-        label="分区"
-        prop="sdTunnelSubarea.sName"
+        label="方向"
+        prop="direction"
         width="130"
+        :formatter="directionFormat"
       />
       <el-table-column
         align="center"
         label="事件类型"
-        prop="eventType.eventType"
+        prop="planTypeId"
+      >
+        <template slot-scope="scope">
+          <span>{{getPlanTypeData(scope.row.planTypeId)}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="管控方向"
+        prop="eventType.controlDirection"
+        :formatter="controlDirectionFormat"
+      >
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="预案类型"
+        prop="category"
+        :formatter="categoryFormat"
       />
       <el-table-column
         align="center"
@@ -160,27 +134,6 @@
         width="200"
         :show-overflow-tooltip="true"
       >
-        <!-- <el-table-column label="查看工作台" align="left" prop="planDescription" width="200" /> -->
-        <!-- <template slot-scope="scope">
-          <el-popover
-            :content="scope.row.planDescription"
-            placement="top-start"
-            trigger="hover"
-            width="200"
-          >
-            <div
-              slot="reference"
-              style="
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                cursor: default;
-              "
-            >
-              {{ scope.row.planDescription }}
-            </div>
-          </el-popover>
-        </template> -->
       </el-table-column>
 
       <el-table-column
@@ -256,13 +209,13 @@
             @click="chooseStrategyInfo(scope.row)"
             >配置策略
           </el-button>
-          <el-button
-            v-hasPermi="['business:plan:remove']"
-            size="mini"
-            class="tableBlueButtton"
-            @click="openWorkbench(scope.row)"
-            >预览
-          </el-button>
+<!--          <el-button-->
+<!--            v-hasPermi="['business:plan:remove']"-->
+<!--            size="mini"-->
+<!--            class="tableBlueButtton"-->
+<!--            @click="openWorkbench(scope.row)"-->
+<!--            >预览-->
+<!--          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -416,76 +369,7 @@
     </el-dialog>
 
     <!--  预览-->
-    <work-bench ref="workBench"></work-bench>
-    <!-- <el-dialog
-      :before-close="handleClose"
-      :visible.sync="workbenchOpen"
-      append-to-body
-      title="预览"
-      width="86.5%"
-    >
-      <img
-        alt=""
-        class="chedaoImage"
-        src="../../../assets/image/lane/fenghuangshan.png"
-      />
-      <div
-        v-for="(item, index) in selectedIconList"
-        :key="index"
-        :class="
-          item.eqType == 7 || item.eqType == 8 || item.eqType == 9
-            ? 'light-' + item.position.left
-            : ''
-        "
-        :style="{
-          left: item.position.left - 12 + 'px',
-          top: item.position.top + 52 + 'px',
-          'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
-        }"
-        class="icon-box mouseHover"
-      >
-        <div
-          v-show="
-            (item.eqType != 7 &&
-              item.eqType != 16 &&
-              item.eqType != 15 &&
-              item.eqType != 8 &&
-              item.eqType != 9 &&
-              item.eqType != 21 &&
-              item.display == true) ||
-            ((item.eqType == 7 ||
-              item.eqType == 8 ||
-              item.eqType == 9 ||
-              item.eqType == 21) &&
-              item.display == true &&
-              lightSwitch == 1)
-          "
-          :class="{ focus: item.focus }"
-        >
-          <img
-            v-for="(url, indexs) in item.url"
-            :key="item.deptId + indexs"
-            :height="item.iconHeight"
-            :src="url"
-            :style="item.eqType || item.eqType == 0 ? 'cursor: pointer;' : ''"
-            :width="item.iconWidth"
-            style="position: relative"
-          />
-        </div>
-      </div>
-      <el-steps :active="active" finish-status="success">
-        <el-step
-          v-for="item in previewList"
-          :key="item.strategyId"
-          :title="item.strategyName"
-        ></el-step>
-      </el-steps>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="workbenchOpenEvent">取 消</el-button>
-        <el-button type="primary" @click="closeDialogVisible">确 定</el-button>
-      </span>
-    </el-dialog> -->
-
+<!--    <work-bench ref="workBench"></work-bench>-->
     <!-- 新增弹窗 -->
     <el-dialog :title="title" :visible.sync="dialogFormVisible">
       <el-form
@@ -509,29 +393,14 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="隧道分区" prop="sId">
+        <el-form-item label="方向" prop="direction">
           <el-select
-            v-model="reservePlanDrawForm.sId"
-            placeholder="请选择所属隧道"
-            style="width: 80%"
-            @change="changePartitionSelection"
-          >
-            <el-option
-              v-for="(item, index) in eqTunnelDataList"
-              :key="index"
-              :label="item.sName"
-              :value="item.sId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="预案类别" prop="category">
-          <el-select
-            v-model="reservePlanDrawForm.category"
-            placeholder="请选择预案类别"
+            v-model="reservePlanDrawForm.direction"
+            placeholder="请选择方向"
             style="width: 80%"
           >
             <el-option
-              v-for="(item, index) in planCategory"
+              v-for="(item, index) in directionData"
               :key="index"
               :label="item.dictLabel"
               :value="item.dictValue"
@@ -550,6 +419,35 @@
               :label="item.eventType"
               :value="item.id"
             />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="管控方向" prop="controlDirection">
+          <el-select
+            v-model="reservePlanDrawForm.controlDirection"
+            placeholder="请选择管控方向"
+            style="width: 80%"
+          >
+            <el-option
+              v-for="(item, index) in controlDirectionList"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预案类型" prop="category">
+          <el-select
+            v-model="reservePlanDrawForm.category"
+            placeholder="请选择预案类型"
+            style="width: 80%"
+          >
+            <el-option
+              v-for="(item, index) in planCategory"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="预案名称" prop="planName">
@@ -607,7 +505,7 @@
     <!-- 配置策略 -->
     <el-dialog
       :before-close="handleClose"
-      :title="addTitle"
+      title="联控流程"
       :visible.sync="strategyVisible"
       append-to-body
       width="60%"
@@ -619,6 +517,29 @@
         label-width="120px"
         size="medium"
       >
+        <el-row class="myTable" style="background-color: #51aced;color:white;">
+          <el-col :span="2">
+            排序
+          </el-col>
+          <el-col :span="4">
+            操作处置名称
+          </el-col>
+          <el-col :span="4">
+            设备资源类型
+          </el-col>
+          <el-col :span="4">
+            检索规则条件
+          </el-col>
+          <el-col :span="4">
+            选择设备（可多选）
+          </el-col>
+          <el-col :span="4">
+            控制指令
+          </el-col>
+          <el-col :span="2">
+            操作
+          </el-col>
+        </el-row>
         <el-row :gutter="20">
           <el-col
             v-for="(item, index) in planTypeIdList"
@@ -626,39 +547,104 @@
             :span="24"
             class="colflex"
           >
-            <el-form-item label="节点名称" prop="processName">
-              <el-input
-                v-model="item.processName"
-                placeholder="请输入流程节点名称"
-              ></el-input>
-            </el-form-item>
-            <el-form-item label="节点顺序" prop="processSort">
-              <el-input-number
-                v-model="item.processSort"
-                :max="10"
-                :min="1"
-                label="描述文字"
-              ></el-input-number>
-            </el-form-item>
-            <el-form-item label="相关策略">
-              <el-cascader
-                v-model="item.handleStrategyList"
-                :options="options"
-                :props="checkStrictly"
-                :show-all-levels="false"
+            <el-col :span="2">
+              <div class="indexBox">
+                <i
+                  :class="index == 0 ? 'disabledClass' : ''"
+                  class="el-icon-caret-top"
+                  size="18"
+                  style="cursor: pointer"
+                  @click="moveTop(index, item)"
+                ></i>
+                <i
+                  :class="planTypeIdList.length == index + 1 ? 'disabledClass' : ''"
+                  class="el-icon-caret-bottom"
+                  style="cursor: pointer"
+                  @click="moveBottom(index, item)"
+                ></i>
+              </div>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item prop="processName">
+                <el-input
+                  v-model="item.processName"
+                  placeholder="操作处置名称"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-select
+                v-model="item.eqTypeId"
+                placeholder="设备类型"
                 clearable
+                @change="changeEquipmentType(item.eqTypeId,index)"
+              >
+                <el-option
+                  v-for="item in item.equipmentTypeData"
+                  :key="item.typeId"
+                  :label="item.typeName"
+                  :value="item.typeId"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <el-select
+                v-model="item.retrievalRule"
+                placeholder="规则条件"
+                clearable
+              >
+                <el-option
+                  v-for="item in retrievalRuleList"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <el-select
+                v-model="item.equipments"
+                multiple
                 collapse-tags
-              ></el-cascader>
-              <!-- @change="handleChangeStrategy(item.handleStrategyList)" -->
-            </el-form-item>
-            <div class="dialog-footer">
-              <el-button type="text" @click.native="addStrategy(index)"
-                >添加</el-button
+                placeholder="请选择设备"
               >
-              <el-button type="text" @click.native="deleteStrategy(index)"
-                >删除</el-button
+                <el-option
+                  v-for="item in item.equipmentData"
+                  :key="item.eqId"
+                  :label="item.eqName"
+                  :value="item.eqId"
+                  :disabled="item.disabled"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              <el-select
+                v-model="item.state"
+                placeholder="设备执行操作"
               >
-            </div>
+                <el-option
+                  v-for="(item, indx) in item.eqStateList"
+                  :key="item.deviceState"
+                  :label="item.stateName"
+                  :value="item.deviceState"
+                >
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="2" style="display: flex;height:35px;">
+              <el-button
+                type=""
+                icon="el-icon-delete"
+                circle
+                @click="removeItem(index)"
+              ></el-button>
+              <el-button
+                type=""
+                icon="el-icon-plus"
+                circle
+                @click="addItem(index)"
+              ></el-button>
+            </el-col>
           </el-col>
         </el-row>
       </el-form>
@@ -678,7 +664,9 @@
 </template>
 
 <script>
-import workBench from "./workBench";
+// import workBench from "./workBench";
+import { listEqTypeStateIsControl,getVMSTemplatesByDevIdAndCategory } from "@/api/equipment/eqTypeState/api";
+import { listDevices } from "@/api/equipment/eqlist/api";
 import {
   listPlan,
   getPlan,
@@ -714,11 +702,13 @@ import {
 
 export default {
   name: "Plan",
-  components: {
-    workBench,
-  },
+  // components: {
+  //   workBench,
+  // },
   data() {
     return {
+      directionData:[],//方向
+      controlDirectionList:[],//管控方向
       manageStatin:this.$cache.local.get("manageStation"),
       paramsData : {
         tunnelId: ""
@@ -743,8 +733,13 @@ export default {
       planTypeIdList: [
         {
           processName: "",
-          processSort: "",
-          handleStrategyList: "",
+          eqTypeId:"",
+          equipments:[],
+          state:"",
+          retrievalRule:null,//规则条件
+          equipmentTypeData:[],
+          equipmentData:[],
+          eqStateList:[],
         },
       ],
       title: "",
@@ -834,7 +829,8 @@ export default {
         strategyNames: null, //多个策略的名称，以：分割
         planFileId: null,
         tunnelId: null, //隧道
-        sId: null, //分区隧道
+        controlDirection:null,
+        direction:null,
       },
       reserveProcessDrawForm: {
         reserveId: null, //预案id
@@ -891,13 +887,19 @@ export default {
       timer: null, //步骤条定时器
       planCategory: [], //预案类别下拉
       strategyRlData: [], //返回策略设备和状态
+      currentClickData:{},
+      //设备类型查询参数
+      queryEqTypeParams: {
+        isControl: 1,
+      },
+      retrievalRuleList:[],
     };
   },
   created() {
     this.getList();
     this.getPlanType(); //事件类型下拉
     // this.getStrategyInfo();//策略下拉
-    this.getTunnelData(this.tunnelId);
+    // this.getTunnelData(this.tunnelId);
     this.lightSwitchFunc();
     this.ceshiTime();
     if(this.$cache.local.get("manageStation") == "1"){
@@ -905,18 +907,75 @@ export default {
     }
     tunnelNames(this.paramsData).then((res) => {
       this.eqTunnelData = res.rows;
-      console.log(this.eqTunnelData, "111");
       this.eqTunnelData.forEach((item) => {
         item.sdTunnelSubareas.forEach((item, index) => {
           this.eqTunnelDataList.push(item);
         });
       });
     });
-    this.getDicts("sd_reserve_plan_category").then((response) => {
+    this.getDicts("sd_emergency_plan_type").then((response) => {
       this.planCategory = response.data;
     });
+    //规则条件
+    this.getDicts("sd_device_retrieval_rule").then((response) => {
+      this.retrievalRuleList = response.data;
+    });
+    // 管控方向
+    this.getDicts("sd_control_direction").then((response) => {
+      this.controlDirectionList = response.data;
+    });
+    // 方向
+    this.getDicts("sd_direction").then((response) => {
+      this.directionData = response.data;
+    });
+    // listEventType().then((response) => {
+    //   console.log(response, "事件类型下拉");
+    //   this.planTypeData = response.rows;
+    // });
   },
   methods: {
+    /** 查询设备类型列表 */
+    getEquipmentType() {
+      for(let i = 0;i < this.planTypeIdList.length;i++){
+        listType(this.queryEqTypeParams).then((data) => {
+          console.log(data.rows,"设备类型")
+          this.$set(this.planTypeIdList[i],"equipmentTypeData",data.rows)
+          this.equipmentTypeData = data.rows;
+        });
+      }
+    },
+    getPlanTypeData(id){
+      for(var item of this.planTypeData){
+        if(item.id == id){
+          console.log(item.eventType)
+          return item.eventType
+        }
+      }
+    },
+    //  上移
+    moveTop(i, item) {
+      if (item && i) {
+        let obj = { ...this.planTypeIdList[i - 1] };
+        this.planTypeIdList.splice(i - 1, 1, item);
+        this.planTypeIdList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
+    // 下移
+    moveBottom(i, item) {
+      if (item && typeof i === "number") {
+        let obj = { ...this.planTypeIdList[i + 1] };
+        this.planTypeIdList.splice(i + 1, 1, item);
+        this.planTypeIdList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
+    controlDirectionFormat(row, column){
+      return this.selectDictLabel(this.controlDirectionList, row.controlDirection);
+    },
+    directionFormat(row, column){
+      return this.selectDictLabel(this.directionData, row.direction);
+    },
     categoryFormat(row, column) {
       return this.selectDictLabel(this.planCategory, row.category);
     },
@@ -946,12 +1005,26 @@ export default {
       };
       this.planTypeIdList.splice(index + 1, 0, obj);
     },
-    //获得预案类别
-    selectPlanType() {
-      getPlanType().then((res) => {
-        this.planCategory = res.data;
-      });
+    // 添加执行操作
+    addItem(index) {
+      let data = {
+        value: "",
+        state: "",
+        eqTypeId:"",
+        equipmentTypeData: [],
+        equipmentData: [],
+        retrievalRule:"",
+        equipments:[],
+      }
+      this.planTypeIdList.splice(index + 1,0,data)
+      this.getEquipmentType();
     },
+    //获得预案类别
+    // selectPlanType() {
+    //   getPlanType().then((res) => {
+    //     this.planCategory = res.data;
+    //   });
+    // },
     //点击了取消
     cancelsubmitUpload() {
       this.dialogFormVisible = false;
@@ -988,49 +1061,28 @@ export default {
         this.lightSwitch = response.msg;
       });
     },
-
-    getTunnelData(tunnelId) {
-      let that = this;
-      // that.upList = [];
-      // that.downList = [];
-      const params = {
-        tunnelId: tunnelId,
+    // 改变设备类型
+    changeEquipmentType(eqTypeId,index){
+      let params = {
+        eqType: eqTypeId, //设备类型
+        eqTunnelId: this.currentClickData.tunnelId, //隧道
+        eqDirection: this.currentClickData.direction, //方向
       };
-      getTunnels(tunnelId).then((response) => {
-        let res = "";
-        if (response.data) {
-          res = response.data.storeConfigure;
-          //存在配置内容
-          if (res != null && res != "" && res != undefined) {
-            res = JSON.parse(res);
-            listType({ isControl: 1 })
-              .then((response) => {
-                var arr = [];
-                for (let item1 of response.rows) {
-                  for (let item of res.eqList) {
-                    item.focus = false;
-                    if (item1.typeId == item.eqType) {
-                      item.iconWidth = Number(item1.iconWidth);
-                      item.iconHeight = Number(item1.iconHeight);
-                      arr.push(item);
-                    }
-                  }
-                }
-                this.selectedIconList = arr; //这是最终需要挂载到页面上的值
-                console.log(this.selectedIconList, "this.selectedIconList");
-              })
-              .then(() => {});
-          } else {
-            //不存在
-            that.selectedIconList = [];
-            //工作台默认背景图
-            // that.currentTunnel.lane = this.getLanUrl(response.data.lane);
-            that.upList = [];
-            that.downList = [];
-            that.leftDirection = "";
-            that.rightDirection = "";
-          }
-        }
+      listDevices(params).then((res) => {
+        this.$set(this.planTypeIdList[index],"equipmentData",res.rows)
+        console.log(res, "设备列表");
+      });
+      this.listEqTypeStateIsControl(eqTypeId,index);
+    },
+    // 查询设备可控状态
+    listEqTypeStateIsControl(eqTypeId,index) {
+      let params = {
+        stateTypeId: eqTypeId,
+        direction: this.currentClickData.direction,
+        isControl: 1,
+      };
+      listEqTypeStateIsControl(params).then((response) => {
+        this.planTypeIdList[index].eqStateList = response.rows;
       });
     },
     //关闭策略弹窗
@@ -1049,10 +1101,18 @@ export default {
           return this.$modal.msgWarning("请填写完整");
         }
       }
+      this.planTypeIdList.forEach((item,index)=>{
+        item.processSort = +index + 1;
+          item.eqStateList = "";
+          item.equipmentData = "";
+          item.equipmentTypeData = "";
+      })
       let data = {
         reserveId: this.reserveId,
         sdReserveProcesses: this.planTypeIdList,
+
       };
+
       addProcess(data).then((res) => {
         if (res.code === 200) {
           this.strategyVisible = false;
@@ -1062,15 +1122,15 @@ export default {
       });
     },
     //预览按钮
-    openWorkbench(row) {
-      this.tunnelId = row.tunnelId;
-      this.$nextTick(() => {
-        this.$refs.workBench.currentClass = "red";
-        this.$refs.workBench.id = row.id;
-        this.$refs.workBench.tunnelId = this.tunnelId;
-        this.$refs.workBench.init();
-      });
-    },
+    // openWorkbench(row) {
+    //   this.tunnelId = row.tunnelId;
+    //   this.$nextTick(() => {
+    //     this.$refs.workBench.currentClass = "red";
+    //     this.$refs.workBench.id = row.id;
+    //     this.$refs.workBench.tunnelId = this.tunnelId;
+    //     this.$refs.workBench.init();
+    //   });
+    // },
     //=========================执行相关预案开始=====================
     //执行策略
     /* executionStrategy(row){
@@ -1079,7 +1139,9 @@ export default {
      }, */
     // 选择将要执行的策略
     async chooseStrategyInfo(row) {
+      this.getEquipmentType();
       this.reserveId = row.id;
+      this.currentClickData = row;
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
       });
@@ -1088,9 +1150,13 @@ export default {
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
             {
-              processName: "",
-              processSort: "",
-              handleStrategyList: "",
+              value: "",
+              state: "",
+              eqTypeId:"",
+              equipmentTypeData: [],
+              equipmentData: [],
+              retrievalRule:"",
+              equipments:[],
             },
           ];
         } else {
@@ -1105,7 +1171,6 @@ export default {
       this.handleStrategyList = [];
       this.reserveProcessDrawForm.reserveId = row.id;
       this.strategyVisible = true;
-      // })
     },
     //执行策略id勾选事件
     handleStrategySelectionChange(selection) {
@@ -1259,38 +1324,6 @@ export default {
     // 上传到服务器
     async submitUpload() {
       console.log(this.reservePlanDrawForm.sId, "this.reservePlanDrawForm");
-      // if (!this.reservePlanDrawForm.tunnelId) {
-      //   this.$modal.msgError("请选择所属隧道！");
-      //   return;
-      // }
-      // if (!this.reservePlanDrawForm.sId) {
-      //   this.$modal.msgError("请输入所属分区！");
-      //   return;
-      // }
-      // if (!this.reservePlanDrawForm.category) {
-      //   this.$modal.msgError("请输入预案类别！");
-      //   return;
-      // }
-
-      // if (!this.reservePlanDrawForm.planTypeId) {
-      //   this.$modal.msgError("请选择事件类型！");
-      //   return;
-      // }
-      // if (!this.reservePlanDrawForm.planName) {
-      //   this.$modal.msgError("请输入预案名称！");
-      //   return;
-      // }
-      // if (!this.reservePlanDrawForm.planDescription) {
-      //   this.$modal.msgError("请输入预案描述！");
-      //   return;
-      // }
-      // if (this.fileList.length === 0) {
-      //   this.$message({
-      //     message: "请先选择文件",
-      //     type: "warning",
-      //   });
-      // }
-      // else {
       this.$refs["addform1"].validate((valid) => {
         if (valid) {
           if (this.loading) return;
@@ -1322,8 +1355,9 @@ export default {
                 ? "#^#"
                 : this.reservePlanDrawForm.planDescription
             ); // 预案描述
-            // this.fileData.append('strategyId', this.reservePlanDrawForm.strategyId==null? "-1" : this.reservePlanDrawForm.strategyId);  // 策略id
             this.fileData.append("tunnelId", this.reservePlanDrawForm.tunnelId);
+            this.fileData.append("direction", this.reservePlanDrawForm.direction);
+            this.fileData.append("controlDirection", this.reservePlanDrawForm.controlDirection);
             this.fileData.append(
               "subareaId",
               Number(this.reservePlanDrawForm.sId)
@@ -1545,12 +1579,6 @@ export default {
     },
     //关闭drawer
     handleClose(done) {
-      // this.$confirm('确认关闭？')
-      //   .then(_ => {
-      //     done();
-      //   })
-      //   .catch(_ => {});
-      // console.log(done )
       done();
       this.$refs["form1"].resetFields();
     },
@@ -1612,30 +1640,6 @@ export default {
         return "tableOddRow";
       }
     },
-    /** 提交按钮 */
-    /* submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updatePlan(this.form).then(response => {
-              if (response.code === 200) {
-                this.$modal.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
-              }
-            });
-          } else {
-            addPlan(this.form).then(response => {
-              if (response.code === 200) {
-                this.$modal.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
-              }
-            });
-          }
-        }
-      });
-    }, */
   },
   watch: {
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
@@ -1736,5 +1740,26 @@ export default {
 
 .flexWrap {
   flex-wrap: nowrap;
+}
+.myTable{
+  padding: 10px 0;
+  margin-bottom: 10px;
+  .el-form--inline .el-form-item{margin-right: 0px;}
+  .el-col{text-align: center;padding: 0px!important;}
+}
+.indexBox {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: space-evenly;
+  cursor: pointer;
+  i {
+    font-size: 15px;
+  }
+  .disabledClass {
+    pointer-events: none;
+    cursor: auto !important;
+    color: #ccc;
+  }
 }
 </style>

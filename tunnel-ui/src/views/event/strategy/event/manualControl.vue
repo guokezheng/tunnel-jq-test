@@ -116,6 +116,7 @@
               multiple
               collapse-tags
               placeholder="请选择设备"
+              @change="qbgChange(index,items.value)"
             >
               <el-option
                 v-for="item in items.equipmentData"
@@ -126,7 +127,7 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="6" v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
             <el-select
               style="width: 100%"
               v-model="items.state"
@@ -140,6 +141,17 @@
               >
               </el-option>
             </el-select>
+          </el-col>
+          <el-col :span="6" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
+            <el-cascader
+              :props="checkStrictly"
+              v-model="items.state"
+              :options="items.templatesList"
+              :show-all-levels="false"
+              clearable
+              collapse-tags
+              :key="isResouceShow"
+              @change="handleChange"></el-cascader>
           </el-col>
           <el-col :span="4" class="buttonBox">
             <el-button
@@ -180,7 +192,7 @@
 </template>
 
 <script>
-  import { listEqTypeStateIsControl } from "@/api/equipment/eqTypeState/api";
+  import { listEqTypeStateIsControl,getVMSTemplatesByDevIdAndCategory } from "@/api/equipment/eqTypeState/api";
   import { listTunnels } from "@/api/equipment/tunnel/api";
   import { listDevices } from "@/api/equipment/eqlist/api";
   import { listType } from "@/api/equipment/type/api";
@@ -199,6 +211,11 @@
   export default {
     data() {
       return {
+        checkStrictly: {
+          multiple: false,
+          emitPath: false,
+          checkStrictly: true,
+        },
         sink: "", //删除/修改
         id: "", //策略id
         strategyForm: {
@@ -313,6 +330,18 @@
         });
         this.listEqTypeStateIsControl(index)
       },
+      qbgChange(index,value){
+        console.log(value);
+        let data = value;
+        getVMSTemplatesByDevIdAndCategory(data).then(res=>{
+          console.log(res.data,"模板信息")
+          // this.templatesList = res.data;
+          this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
+        })
+      },
+      handleChange(e){
+        console.log(e)
+      },
       // 查询设备可控状态
       listEqTypeStateIsControl(index) {
         var stateTypeId = this.strategyForm.manualControl[index].equipmentTypeId;
@@ -418,7 +447,8 @@
         });
         let data = this.strategyForm.manualControl;
         data.forEach(item=>{
-          item.effectiveTime = this.strategyForm.effectiveTime
+          item.effectiveTime = this.strategyForm.effectiveTime;
+          item.state = item.state.toString()
         })
         let params = this.strategyForm;
         updateStrategyInfo(params).then((res) => {
@@ -434,7 +464,8 @@
         });
         let data = this.strategyForm.manualControl;
         data.forEach(item=>{
-          item.effectiveTime = this.strategyForm.effectiveTime
+          item.effectiveTime = this.strategyForm.effectiveTime;
+          item.state = item.state.toString()
         })
         let params = this.strategyForm;
         addStrategyInfo(params).then((res) => {

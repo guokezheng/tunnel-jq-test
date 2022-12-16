@@ -594,7 +594,9 @@
       </div>
       <div class="dialogFooterButton" >
         <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2" @click="management(eventForm.id)">处置</div>
+        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
+        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(false)">处置</div>
+        
       </div>
     </el-dialog>
     <!--    流程弹窗-->
@@ -1398,6 +1400,7 @@ export default {
       }
       // delete this.eventForm['confidenceList'];
       console.log(this.eventForm, "888888888888888888");
+      this.eventForm.searchValue = this.activeName
       updateEvent(this.eventForm).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -1433,7 +1436,11 @@ export default {
       this.processDialog = false;
       this.processType = false;
     },
-    openProcess() {
+    openProcess(type) {
+      console.log(type);
+      if(type){
+        this.processType = false
+      }
       console.log(this.processType, "this.processType");
       if (this.processType == true) {
         this.processDialog = false;
@@ -2349,6 +2356,9 @@ export default {
     background: linear-gradient(180deg, #ba8400 0%, #fed11b 100%);
   }
   div:nth-of-type(2) {
+    background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+  }
+  div:nth-of-type(3) {
     background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
   }
 }

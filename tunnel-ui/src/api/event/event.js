@@ -160,3 +160,23 @@ export function getTunnelLane(tunnelId) {
     method: 'get',
   })
 }
+
+//  处置记录
+export function eventFlowList(query) {
+  return request({
+    url: '/eventFlow/list',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 事件处置
+export function getHandle(query) {
+  return request({
+    url: '/event/getHandle',
+    method: 'get',
+    params: query
+
+  })
+}

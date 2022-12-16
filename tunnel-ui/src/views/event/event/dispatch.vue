@@ -47,11 +47,13 @@
               </div>
               <div class="evtMessRight">
                 <div class="evtMessVideo">
-                  <video :src="videoUrl" controls muted loop fluid></video>
+                  <video :src="eventForm.videoUrl" controls muted loop fluid></video>
                 </div>
-                <div class="evtMessImg">
-                  <img :src="imgUrl" v-for="item of 4"></img>
+                <div class="evtMessImg"   v-if="eventForm.iconUrlList.length>0">
+                  <img :src="item.imgUrl" v-for="(item,index) of eventForm.iconUrlList" :key="index" />
                 </div>
+                <img src="../../../assets/cloudControl/nullImg.png" v-else 
+                  style="width: 46px; margin: 0 auto; display: flex;"/>
                 <div class="evtMessTarget">
                   <div>事件目标：</div>
                   <div>
@@ -119,7 +121,7 @@
       <el-col :span="17">
         <div class="dispatchRight">
           <div class="workBenchBox">
-            <div class="tunnelBox1">
+            <div class="tunnelBox1" v-show="activeMap == 1">
               <div class="tunnelMap">
                 <el-image
                   class="back-img"
@@ -228,8 +230,20 @@
                 </div>
               </div>
             </div>
+            <div class="tunnelBox3" v-show="activeMap == 2">
+              <iframe
+                name="tuniframe"
+                id="miframe"
+                class="map3D"
+                frameborder="0"
+                align="center"
+                allowfullscreen="true"
+                allow="autoplay"
+                src="http://106.120.201.126:14712/dashboard"
+              ></iframe>
+            </div>
             <div class="tunnelBox2">
-              <div>
+              <div @click="changeActiveMap">
                 <img src="../../../assets/cloudControl/tunnelBox1.png"
                      style="transform: translate(-9px, -3px);"/>
               </div>
@@ -353,11 +367,13 @@ import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import { listEqTypeState, getStateByData } from "@/api/equipment/eqTypeState/api";
-import { dispatchExecuted, listEvent } from "@/api/event/event";
+import { dispatchExecuted, listEvent, eventFlowList, getHandle } from "@/api/event/event";
+import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
   data() {
     return {
+      activeMap:1,
       eqTypeList:[],
       directionList: [],
       eventForm: {},
@@ -415,60 +431,60 @@ export default {
         plan: "1",
       },
       eventList: [
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
-        {
-          flowTime: "2022-12-13",
-          flowDescription: "杭山东隧道上行K134+421发生事故事",
-        },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
+        // {
+        //   flowTime: "2022-12-13",
+        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
+        // },
       ],
       implementList: [
-        {
-          userName: "XXX",
-          phone: "18888888888",
-        },
-        {
-          userName: "XXX",
-          phone: "18888888888",
-        },
-        {
-          userName: "XXX",
-          phone: "18888888888",
-        },
-        {
-          userName: "XXX",
-          phone: "18888888888",
-        },
-        {
-          userName: "XXX",
-          phone: "18888888888",
-        },
+        // {
+        //   userName: "XXX",
+        //   phone: "18888888888",
+        // },
+        // {
+        //   userName: "XXX",
+        //   phone: "18888888888",
+        // },
+        // {
+        //   userName: "XXX",
+        //   phone: "18888888888",
+        // },
+        // {
+        //   userName: "XXX",
+        //   phone: "18888888888",
+        // },
+        // {
+        //   userName: "XXX",
+        //   phone: "18888888888",
+        // },
       ],
       zxList: [
         // {
@@ -579,28 +595,16 @@ export default {
     // },
   },
   async created() {
+    console.log(this.$route.query.id, "this.$route.query.id");
+
     await this.getEqTypeStateIcon();
     await this.getTunnelData();
     await this.getDispatchExecuted();
-    console.log(this.$route.query.id, "this.$route.query.id");
-    if (this.$route.query.id) {
-      const param = {
-        id: this.$route.query.id,
-      };
-      listEvent(param).then((response) => {
-        console.log(response, "事件详情");
-        this.eventForm = response.rows[0];
-        // this.eventForm.eventType = response.rows[0].eventType.eventType;
-        // this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
-      });
-    }
-    const params = {
-      isControl: 1,
-    };
-    getStateByData(params).then((res) => {
-      console.log(res.rows, "查设备状态 正红泛绿...");
-      this.eqTypeList = res.rows;
-    });
+    this.getListEvent()
+    this.stateByData()
+    this.getEventList()
+    this.evtHandle()
+    // this.getpersonnelList()
     this.getDicts("sd_direction_list").then((response) => {
       console.log(response.data, "response.data车道方向");
       this.directionList = response.data;
@@ -613,14 +617,73 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 事件处置
+    evtHandle(){
+      getHandle({eventId:this.$route.query.id}).then((res) =>{
+        console.log(res,"000000000000000000000");
+        // this.eventList = res.rows
+      })
+    },
+    // 查设备状态
+    stateByData(){
+      const params = {
+        isControl: 1,
+      };
+      getStateByData(params).then((res) => {
+        console.log(res.rows, "查设备状态 正红泛绿...");
+        this.eqTypeList = res.rows;
+      });
+    },
+    // 事件详情
+    getListEvent(){
+      if (this.$route.query.id) {
+        const param = {
+          id: this.$route.query.id,
+        };
+        listEvent(param).then((response) => {
+          console.log(response, "事件详情");
+          this.eventForm = response.rows[0];
+          this.tunnelId = response.rows[0].tunnelId
+          this.getpersonnelList()
+          // this.eventForm.eventType = response.rows[0].eventType.eventType;
+          // this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
+        });
+      }
+    },
+    /** 查询应急人员信息列表 */
+    getpersonnelList() {
+      const params = {
+        tunnelId: this.tunnelId,
+      };
+      listSdEmergencyPer(params).then((response) => {
+        console.log(99999999999999999999999999);
+        this.implementList = response.rows;
+      });
+    },
+    // 切换工作台和3D隧道
+    changeActiveMap(){
+      console.log(this.activeMap,"this.activeMap");
+      if(this.activeMap == 1){
+        this.activeMap = 2
+      }else{
+        this.activeMap = 1
+      }
+    },
+    // 处置记录
+    getEventList(){
+      eventFlowList({eventId:this.$route.query.id}).then((res) =>{
+        // console.log(res);
+        this.eventList = res.rows
+      })
+    },
     //设备执行记录
     getEqType(state, eqType) {
-      console.log(state, eqType);
+      // console.log(state, eqType);
 
       for (let i = 0; i < this.eqTypeList.length; i++) {
         let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
-          console.log(item.stateName);
+          // console.log(item.stateName);
           return item.stateName;
         }
         //  else {
@@ -1146,6 +1209,14 @@ export default {
         left: 20px;
         width: 48px;
         height: 150px;
+      }
+    }
+    .tunnelBox3{
+      width: 95%;
+      height: 100%;
+      .map3D{
+        width: 100%;
+        height: 100%;
       }
     }
   }

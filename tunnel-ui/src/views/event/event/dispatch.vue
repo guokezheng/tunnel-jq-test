@@ -1325,7 +1325,7 @@ export default {
               margin-top: 4px;
               line-height: 40px;
               padding: 0 20px;
-              background: rgba($color: #084e84, $alpha: 0.6);
+              // background: rgba($color: #084e84, $alpha: 0.6);
               border-radius: 3px;
               width: 400px;
               display: flex;

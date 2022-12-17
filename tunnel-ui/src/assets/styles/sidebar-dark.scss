@@ -1430,10 +1430,22 @@
         .DisRecords{
           border-left: solid 1px #E0E7ED;
         }
-        .IncHand .incHandBox .incHandContent .classification .type[data-v-50c3fd04]{
-          background: #fff;
-          border: 1px solid rgba(57, 173, 255, 1);
-          color: #333;
+        .IncHand .incHandBox .incHandContent {
+          .classification {
+            .type{
+              background: #fff;
+              border: 1px solid rgba(57, 173, 255, 1);
+              color: #333;
+            }
+            .yijian{
+              color: #fff;
+            }
+          }
+          .contentList{
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+            color: #333;
+          }
         }
       }
       .implement1 {

@@ -1476,9 +1476,13 @@
       .DisRecords{
         border-left: solid 1px rgba(240, 241, 242, 0.2);
       }
-      .IncHand .incHandBox .incHandContent .classification .type[data-v-50c3fd04]{
+      .IncHand .incHandBox .incHandContent .classification .type{
         background: rgba(8, 78, 132, 0.6);
         border: 1px solid rgba(57, 173, 255, 0.6);
+        color: #fff;
+      }
+      .IncHand .incHandBox .incHandContent .contentList{
+        background: rgba(8, 78, 132, 0.6);
         color: #fff;
       }
     }

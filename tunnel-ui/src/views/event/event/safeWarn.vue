@@ -2765,5 +2765,8 @@ hr {
     }
   }
 }
+.el-tabs__item{
+  color: #fff;
+}
 </style>
 

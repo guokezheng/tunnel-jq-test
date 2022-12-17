@@ -1419,6 +1419,12 @@
         }
         .oneWayTraffic,.twoWayTraffic{
           color:#333;
+          .el-radio__inner::after{
+            border: solid 2px #E0E7ED;
+          }
+        }
+        .planRight .el-radio__inner::after{
+          border: solid 2px #E0E7ED;
         }
       }
     }

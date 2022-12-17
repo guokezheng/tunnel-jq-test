@@ -22,49 +22,65 @@
               <div class="evtMessLeft">
                 <div>
                   <div>事件来源：</div>
-                  <div>{{getFrom(eventForm.eventSource)}}</div>
+                  <div>{{ getFrom(eventForm.eventSource) }}</div>
                 </div>
                 <div>
                   <div>事件类型：</div>
-                  <div>{{eventForm.simplifyName}}</div>
+                  <div>{{ eventForm.simplifyName }}</div>
                 </div>
                 <div>
                   <div>所属隧道：</div>
-                  <div>{{eventForm.tunnelName}}</div>
+                  <div>{{ eventForm.tunnelName }}</div>
                 </div>
                 <div>
                   <div>方向：</div>
-                  <div>{{getDirection(eventForm.direction)}}</div>
+                  <div>{{ getDirection(eventForm.direction) }}</div>
                 </div>
                 <div>
                   <div>影响车道：</div>
-                  <div>{{eventForm.laneNo}} 车道</div>
+                  <div>{{ eventForm.laneNo }} 车道</div>
                 </div>
                 <div>
                   <div>桩号：</div>
-                  <div>{{eventForm.stakeNum}}</div>
+                  <div>{{ eventForm.stakeNum }}</div>
                 </div>
               </div>
               <div class="evtMessRight">
                 <div class="evtMessVideo">
-                  <video :src="eventForm.videoUrl" controls muted loop fluid></video>
+                  <video
+                    :src="eventForm.videoUrl"
+                    controls
+                    muted
+                    loop
+                    fluid
+                  ></video>
                 </div>
-                <div class="evtMessImg"   v-if="eventForm.iconUrlList>0">
-                  <img :src="item.imgUrl" v-for="(item,index) of eventForm.iconUrlList" :key="index" />
+                <div class="evtMessImg" v-if="eventForm.iconUrlList > 0">
+                  <img
+                    :src="item.imgUrl"
+                    v-for="(item, index) of eventForm.iconUrlList"
+                    :key="index"
+                  />
                 </div>
-                <img src="../../../assets/cloudControl/nullImg.png" v-else 
-                  style="width: 46px; margin: 0 auto; display: flex;"/>
+                <img
+                  src="../../../assets/cloudControl/nullImg.png"
+                  v-else
+                  style="width: 46px; margin: 0 auto; display: flex"
+                />
                 <div class="evtMessTarget">
                   <div>事件目标：</div>
                   <div>
-                    <div v-for="(item,index) of eventForm.confidenceList" :key="index">
-                      {{item.plate}}/{{item.speed}}/{{item.eventConfidence}}
+                    <div
+                      v-for="(item, index) of eventForm.confidenceList"
+                      :key="index"
+                    >
+                      {{ item.plate }}/{{ item.speed }}/{{
+                        item.eventConfidence
+                      }}
                     </div>
-
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
           <div class="plan">
@@ -74,24 +90,36 @@
                 <div class="oneWayTraffic">
                   <div>单向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.oneWay" label="1" border>动态管控</el-radio>
-                    <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio>
+                    <el-radio-group
+                      v-model="reservePlan.oneWay"
+                      v-for="(item, index) of planType"
+                      :key="index"
+                    >
+                      <el-radio :label="item.dictValue" border>{{
+                        item.dictLabel
+                      }}</el-radio>
+                    </el-radio-group>
+                    <!-- <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio> -->
                   </div>
                   <div>
                     <div>预览</div>
-                    <div @click="relation(1)" :disabled="relationDisabled">关联事件</div>
-
+                    <div @click="relation(1)" :disabled="relationDisabled">
+                      关联事件
+                    </div>
                   </div>
                 </div>
                 <div class="twoWayTraffic">
                   <div>双向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.twoWay" label="2" border>全域管控</el-radio>
+                    <el-radio v-model="reservePlan.twoWay" label="2" border
+                      >全域管控</el-radio
+                    >
                   </div>
                   <div>
-                    <div >预览</div>
-                    <div @click="relation(2)" :disabled="relationDisabled">关联事件</div>
-
+                    <div>预览</div>
+                    <div @click="relation(2)" :disabled="relationDisabled">
+                      关联事件
+                    </div>
                   </div>
                 </div>
               </div>
@@ -104,16 +132,22 @@
                   <div>300米</div>
                 </div>
                 <div>
-                  <el-radio v-model="reservePlan.plan" label="1" border>动态管控</el-radio>
-                  <el-radio v-model="reservePlan.plan" label="2" border :disabled="relationDisabled">全域管控</el-radio>
+                  <el-radio v-model="reservePlan.plan" label="1" border
+                    >动态管控</el-radio
+                  >
+                  <el-radio
+                    v-model="reservePlan.plan"
+                    label="2"
+                    border
+                    :disabled="relationDisabled"
+                    >全域管控</el-radio
+                  >
                 </div>
                 <div>
                   <div>预览</div>
                   <div>关联事件</div>
-
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -144,64 +178,64 @@
                         : ''
                     "
                   >
-                    <div
-                      :class="{ focus: item.focus }"
-                    >
+                    <div :class="{ focus: item.focus }">
                       <img
                         v-show="item.eqType != ('31' || '16' || '36')"
                         v-for="(url, indexs) in item.url"
                         style="position: absolute"
                         :style="{
-                            left: indexs * 14 + 'px',
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
+                          left: indexs * 14 + 'px',
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
                         :width="item.iconWidth / 1.23"
                         :height="item.iconHeight / 1.23"
                         :key="item.eqId + indexs"
-                        :src='url'
-
+                        :src="url"
                       />
                       <img
                         v-show="item.eqType == '31'"
                         style="position: absolute"
                         :style="{
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                        :width="item.iconWidth / 1.3"
-                        :height="item.iconHeight"
-                        :src= getTypePic(item)
-                      />
-                      <!-- 情报板洞内 -->
-                      <div v-show="item.eqType == '16' || item.eqType == '36'"
-                           style="position: absolute;overflow:hidden;writing-mode : tb-rl;
-                            font-size:12px;color:#FFFF07;text-align: center;padding:2px"
-
-                           :style="{
                           cursor:
                             item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border:
-                            item.click == true ? 'solid 2px #09C3FC' : '',
-                            width:item.iconWidth / 1.3 + 'px',
-                            height:item.iconHeight / 1.3 + 'px',
-                          }"
-
-                           :src= getTypePic(item)
-
-                      >{{item.eqName}}
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth / 1.3"
+                        :height="item.iconHeight"
+                        :src="getTypePic(item)"
+                      />
+                      <!-- 情报板洞内 -->
+                      <div
+                        v-show="item.eqType == '16' || item.eqType == '36'"
+                        style="
+                          position: absolute;
+                          overflow: hidden;
+                          writing-mode: tb-rl;
+                          font-size: 12px;
+                          color: #ffff07;
+                          text-align: center;
+                          padding: 2px;
+                        "
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border: item.click == true ? 'solid 2px #09C3FC' : '',
+                          width: item.iconWidth / 1.3 + 'px',
+                          height: item.iconHeight / 1.3 + 'px',
+                        }"
+                        :src="getTypePic(item)"
+                      >
+                        {{ item.eqName }}
                       </div>
                       <!-- 情报板 门架 -->
                       <!-- <div v-show="item.eqType == '36'"
@@ -243,15 +277,22 @@
               ></iframe>
             </div>
             <div class="tunnelBox2">
-              <div >
-                <img src="../../../assets/cloudControl/tunnelBox1.png"
-                     style="transform: translate(-9px, -3px);"/>
+              <div>
+                <img
+                  src="../../../assets/cloudControl/tunnelBox1.png"
+                  style="transform: translate(-9px, -3px)"
+                />
               </div>
               <div>
-                <img src="../../../assets/cloudControl/tunnelBox2.png" @click="changeActiveMap(1)"/>
-                <img src="../../../assets/cloudControl/tunnelBox3.png" @click="changeActiveMap(2)"/>
+                <img
+                  src="../../../assets/cloudControl/tunnelBox2.png"
+                  @click="changeActiveMap(1)"
+                />
+                <img
+                  src="../../../assets/cloudControl/tunnelBox3.png"
+                  @click="changeActiveMap(2)"
+                />
                 <!-- <img src="../../../assets/cloudControl/tunnelBox4.png"/> -->
-
               </div>
             </div>
           </div>
@@ -260,46 +301,97 @@
               <div class="IncHand">
                 <div class="title">事件处置</div>
                 <div class="incHandBox">
-                  <div v-for="(item,index) of incHandList" :key="index" class="incHandContent">
+                  <div
+                    v-for="(item, index) of incHandList"
+                    :key="index"
+                    class="incHandContent"
+                  >
                     <div class="classification">
-                      <div class="type"
-                           :style="{
-                      padding:item.flowContent?item.flowContent.toString().length>2?'8px':'15px 12px':'',
-                      marginTop:item.children?item.flowContent == '设备联控' ? (item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 35 +'px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 25 +'px':''
-
-                      }"
-                      v-if="item.flowContent">{{item.flowContent}}
+                      <div
+                        class="type"
+                        :style="{
+                          padding: item.flowContent
+                            ? item.flowContent.toString().length > 2
+                              ? '8px'
+                              : '15px 12px'
+                            : '',
+                          marginTop: item.children
+                            ? item.flowContent == '设备联控'
+                              ? (item.children.length * 40 +
+                                  4 * (item.children.length - 1)) /
+                                  2 -
+                                35 +
+                                'px'
+                              : (item.children.length * 40 +
+                                  4 * (item.children.length - 1)) /
+                                  2 -
+                                25 +
+                                'px'
+                            : '',
+                        }"
+                        v-if="item.flowContent"
+                      >
+                        {{ item.flowContent }}
                       </div>
-                    
+
                       <div v-show="item.flowId == 7" class="yijian">一键</div>
                     </div>
 
-                    <div class="heng1"
-                    v-if="item.children"
-                         :style="{
-                      marginTop:item.children?item.children.length==1?'20px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 +'px':''
+                    <div
+                      class="heng1"
+                      v-if="item.children"
+                      :style="{
+                        marginTop: item.children
+                          ? item.children.length == 1
+                            ? '20px'
+                            : (item.children.length * 40 +
+                                4 * (item.children.length - 1)) /
+                                2 +
+                              'px'
+                          : '',
                       }"
-                      ></div>
-                    <div class="shu"
-                    v-if="item.children"
-                         :style="{
-                      height:item.children?item.children.length >1 ?item.children.length * 40 + (4 * item.children.length) - 40 +'px':'0px':'',
-                      borderTop: item.children && item.children.length >1 ?'solid 1px #39adff':'',
-                    }"
+                    ></div>
+                    <div
+                      class="shu"
+                      v-if="item.children"
+                      :style="{
+                        height: item.children
+                          ? item.children.length > 1
+                            ? item.children.length * 40 +
+                              4 * item.children.length -
+                              40 +
+                              'px'
+                            : '0px'
+                          : '',
+                        borderTop:
+                          item.children && item.children.length > 1
+                            ? 'solid 1px #39adff'
+                            : '',
+                      }"
                     ></div>
                     <div>
-                      <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
-                        <div style="float:left">{{ itm.flowContent }}</div>
+                      <div
+                        v-for="(itm, inx) of item.children"
+                        :key="inx"
+                        class="contentList"
+                      >
+                        <div style="float: left">{{ itm.flowContent }}</div>
                         <!-- 绿对号 -->
-                        <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" @click="changeIncHand(itm.id,1)">
+                        <img
+                          :src="incHand2"
+                          style="float: right; cursor: pointer"
+                          v-show="itm.eventState != '0'"
+                        />
                         <!-- 下发 -->
-                        <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm.id,0)">
-
+                        <img
+                          :src="incHand1"
+                          style="float: right; cursor: pointer"
+                          v-show="itm.eventState == '0'"
+                          @click="changeIncHand(itm.id, 0)"
+                        />
                       </div>
                     </div>
-
                   </div>
-
                 </div>
               </div>
               <div class="DisRecords">
@@ -310,10 +402,8 @@
                     v-for="(item, index) in eventList"
                     :key="index + item.flowTime"
                   >
-
                     <div>{{ item.flowDescription }}</div>
-                    <div>{{item.flowTime}}</div>
-
+                    <div>{{ item.flowTime }}</div>
                   </el-timeline-item>
                 </el-timeline>
               </div>
@@ -321,18 +411,22 @@
             <div class="implement1">
               <div class="phone">
                 <div class="title">调度联络</div>
-                <el-table :data="implementList" max-height="110" class="phoneTable">
+                <el-table
+                  :data="implementList"
+                  max-height="110"
+                  class="phoneTable"
+                >
                   <el-table-column
                     label="姓名"
                     align="center"
                     prop="userName"
                     width="150"
                   />
-                  <el-table-column label="联系方式" align="center" prop="phone" >
+                  <el-table-column label="联系方式" align="center" prop="phone">
                     <template slot-scope="scope">
-                      <span>{{scope.row.phone}}</span>
-                      <img :src="mesIcon"/>
-                      <img :src="phoneIcon"/>
+                      <span>{{ scope.row.phone }}</span>
+                      <img :src="mesIcon" />
+                      <img :src="phoneIcon" />
                     </template>
                   </el-table-column>
                 </el-table>
@@ -352,11 +446,15 @@
                     <div class="contentBox">
                       <div class="row1">
                         <div>{{ item.eqName }}</div>
-                        <div style="padding-left:20px;float: right;">{{ item.executeTime }}</div>
+                        <div style="padding-left: 20px; float: right">
+                          {{ item.executeTime }}
+                        </div>
                       </div>
-                      <div class="row2" >
-                        <div >{{getDirection(item.eqDirection)}} {{ getEqType(item.state, item.eqType) }}</div>
-
+                      <div class="row2">
+                        <div>
+                          {{ getDirection(item.eqDirection) }}
+                          {{ getEqType(item.state, item.eqType) }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -375,16 +473,26 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
-import { listEqTypeState, getStateByData } from "@/api/equipment/eqTypeState/api";
-import { dispatchExecuted, listEvent, eventFlowList, getHandle, updateHandle, getRelation } from "@/api/event/event";
+import {
+  listEqTypeState,
+  getStateByData,
+} from "@/api/equipment/eqTypeState/api";
+import {
+  dispatchExecuted,
+  listEvent,
+  eventFlowList,
+  getHandle,
+  updateHandle,
+  getRelation,
+} from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
   data() {
     return {
-      relationDisabled:false,
-      activeMap:1,
-      eqTypeList:[],
+      relationDisabled: false,
+      activeMap: 1,
+      eqTypeList: [],
       directionList: [],
       eventForm: {},
       timer: null,
@@ -399,6 +507,7 @@ export default {
       mesIcon: require("@/assets/cloudControl/phone1.png"),
       videoUrl: require("@/assets/Example/v1.mp4"),
       imgUrl: require("@/assets/Example/pic1.jpg"),
+      planType: [],
       videoList: [
         {
           url: require("@/assets/Example/v1.mp4"),
@@ -529,50 +638,50 @@ export default {
         // },
       ],
       incHandList: [
-      // {
-      //     flowContent: "预警",
-      //     children: [
-      //       {
-      //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-      //       },
-      //       {
-      //         flowContent: "更改入口信号灯为红色。",
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     flowContent: "分析确认",
-      //     children: [
-      //       {
-      //         flowContent: "现场确认并上报应急指挥领导小组",
-      //       },
-      //       {
-      //         flowContent: "上报智慧高速云控中心。",
-      //       },
-      //       {
-      //         flowContent: "上报智慧高速云控中心。",
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     flowContent: "设备联控",
-      //     children: [
-      //       {
-      //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-      //       },
-      //       {
-      //         flowContent: "更改入口信号灯为红色。",
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     flowContent: "应急调度",
-      //     children: [
-      //       {
-      //         flowContent: "雷视融合检测，2022/12/07 15:34:33",
-      //       },
-      //     ],
-      //   },
+        // {
+        //     flowContent: "预警",
+        //     children: [
+        //       {
+        //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+        //       },
+        //       {
+        //         flowContent: "更改入口信号灯为红色。",
+        //       },
+        //     ],
+        //   },
+        //   {
+        //     flowContent: "分析确认",
+        //     children: [
+        //       {
+        //         flowContent: "现场确认并上报应急指挥领导小组",
+        //       },
+        //       {
+        //         flowContent: "上报智慧高速云控中心。",
+        //       },
+        //       {
+        //         flowContent: "上报智慧高速云控中心。",
+        //       },
+        //     ],
+        //   },
+        //   {
+        //     flowContent: "设备联控",
+        //     children: [
+        //       {
+        //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+        //       },
+        //       {
+        //         flowContent: "更改入口信号灯为红色。",
+        //       },
+        //     ],
+        //   },
+        //   {
+        //     flowContent: "应急调度",
+        //     children: [
+        //       {
+        //         flowContent: "雷视融合检测，2022/12/07 15:34:33",
+        //       },
+        //     ],
+        //   },
       ],
     };
   },
@@ -610,14 +719,18 @@ export default {
     await this.getEqTypeStateIcon();
     // await this.getTunnelData();
     await this.getDispatchExecuted();
-    this.getListEvent()
-    this.stateByData()
-    this.getEventList()
+    this.getListEvent();
+    this.stateByData();
+    this.getEventList();
     // this.evtHandle()
     // this.getpersonnelList()
     this.getDicts("sd_direction_list").then((response) => {
       console.log(response.data, "response.data车道方向");
       this.directionList = response.data;
+    });
+    this.getDicts("sd_emergency_plan_type").then((response) => {
+      console.log(response.data, "response.data预案类型");
+      this.planType = response.data;
     });
   },
   mounted() {
@@ -628,54 +741,64 @@ export default {
   },
   methods: {
     // 关联事件
-    relation(type){
+    relation(type) {
       const params = {
-        tunnelId:this.eventForm.tunnelId,
-        category:this.reservePlan.oneWay,
-        controlDirection:type,
-        direction:this.eventForm.direction,
-        eventId:this.eventForm.id,
-      }
-      getRelation(params).then((res) =>{
-        console.log(res,"关联事件");
-        this.getListEvent()
-        this.relationDisabled = true
-      })
+        tunnelId: this.eventForm.tunnelId,
+        category: this.reservePlan.oneWay,
+        controlDirection: type,
+        direction: this.eventForm.direction,
+        eventId: this.eventForm.id,
+      };
+      getRelation(params).then((res) => {
+        console.log(res, "关联事件");
+        this.getListEvent();
+        this.relationDisabled = true;
+      });
     },
-    changeIncHand(id,type){
-      const params = {
-        id:this.$route.query.id,
-        ids:id,
-      }
-      updateHandle(params).then((res) =>{
-        console.log(res);
-        for(let item of this.incHandList){
-          for(let itm of item.children){
-            if(itm.id == id){
-              if(type == 0){
-                itm.eventState = '1'
-                this.evtHandle()
-                this.getEventList()
+    changeIncHand(id,type) {
+      var that = this
+        this.$confirm("是否确认执行?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(function () {
+        const params = {
+          id: that.$route.query.id,
+          ids: id,
+        };
+        updateHandle(params).then((res) => {
+          console.log(res,"0000000000000");
+          for (let item of this.incHandList) {
+            for (let itm of item.children) {
+              if (itm.id == id) {
+                if (type == 0) {
+                  itm.eventState = "1";
+                  this.evtHandle();
+                  this.getEventList();
+                }
               }
             }
           }
-        }
-      })
+        });
+      });
     },
     // 事件处置
-    async evtHandle(){
-      await getHandle({id:this.$route.query.id,eventTypeId:this.eventForm.eventTypeId}).then((res) =>{
-       let list =  this.handleTree(res.data, "flowId","flowPid");
-       console.log(list,"999999999999999999");
-      //  for(let item of list){
-      //   console.log(item.flowContent.toString().length,"555555555555555")
-      //  }
-       this.incHandList = list
-       this.$forceUpdate()
-      })
+    async evtHandle() {
+      await getHandle({
+        id: this.$route.query.id,
+        eventTypeId: this.eventForm.eventTypeId,
+      }).then((res) => {
+        let list = this.handleTree(res.data, "flowId", "flowPid");
+        console.log(list, "999999999999999999");
+        //  for(let item of list){
+        //   console.log(item.flowContent.toString().length,"555555555555555")
+        //  }
+        this.incHandList = list;
+        this.$forceUpdate();
+      });
     },
     // 查设备状态
-    stateByData(){
+    stateByData() {
       const params = {
         isControl: 1,
       };
@@ -685,7 +808,7 @@ export default {
       });
     },
     // 事件详情
-    async getListEvent(){
+    async getListEvent() {
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,
@@ -693,9 +816,9 @@ export default {
         listEvent(param).then((response) => {
           console.log(response, "事件详情");
           this.eventForm = response.rows[0];
-          this.getpersonnelList()
-          this.evtHandle()
-          this.getTunnelData()
+          this.getpersonnelList();
+          this.evtHandle();
+          this.getTunnelData();
         });
       }
     },
@@ -710,20 +833,20 @@ export default {
       });
     },
     // 切换工作台和3D隧道
-    changeActiveMap(type){
-      console.log(this.activeMap,"this.activeMap");
-      if(type == 1){
-        this.activeMap = 1
-      }else{
-        this.activeMap = 2
+    changeActiveMap(type) {
+      console.log(this.activeMap, "this.activeMap");
+      if (type == 1) {
+        this.activeMap = 1;
+      } else {
+        this.activeMap = 2;
       }
     },
     // 处置记录
-    getEventList(){
-      eventFlowList({eventId:this.$route.query.id}).then((res) =>{
+    getEventList() {
+      eventFlowList({ eventId: this.$route.query.id }).then((res) => {
         // console.log(res);
-        this.eventList = res.rows
-      })
+        this.eventList = res.rows;
+      });
     },
     //设备执行记录
     getEqType(state, eqType) {
@@ -1118,6 +1241,11 @@ export default {
           // color: #fff;
           padding-left: 20px;
           padding-top: 5px;
+          > div:nth-of-type(2) {
+            div {
+              margin-right: 10px;
+            }
+          }
           > div:nth-of-type(3) {
             float: right;
             width: 160px;
@@ -1136,7 +1264,7 @@ export default {
             }
             > div:nth-of-type(1) {
               background: #d8d8d8
-              linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+                linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
             }
             > div:nth-of-type(2) {
               background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
@@ -1182,7 +1310,7 @@ export default {
           }
           > div:nth-of-type(1) {
             background: #d8d8d8
-            linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+              linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
           }
           > div:nth-of-type(2) {
             background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
@@ -1262,10 +1390,10 @@ export default {
         height: 150px;
       }
     }
-    .tunnelBox3{
+    .tunnelBox3 {
       width: 95%;
       height: 100%;
-      .map3D{
+      .map3D {
         width: 100%;
         height: 100%;
       }
@@ -1507,6 +1635,6 @@ export default {
   width: 12px;
   height: 12px;
   background: #008aff;
-  border: solid 2px #012e51;
+  // border: solid 2px #012e51;
 }
 </style>

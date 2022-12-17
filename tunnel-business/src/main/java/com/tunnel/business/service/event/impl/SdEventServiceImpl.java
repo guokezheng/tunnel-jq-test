@@ -378,7 +378,9 @@ public class SdEventServiceImpl implements ISdEventService {
         List<SdReservePlan> relation = sdReservePlanMapper.getRelation(sdReservePlan);
         String concat = sdReservePlan.getEventId().toString().concat("700");
         Long relationId = Long.valueOf(concat);
+        int sort = 0;
         for(SdReservePlan item : relation){
+            sort = sort + 1;
             relationId = relationId + 1;
             SdEventHandle sdEventHandle = new SdEventHandle();
             sdEventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
@@ -386,6 +388,7 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEventHandle.setFlowPid(Long.valueOf(7));
             sdEventHandle.setFlowContent(item.getProcessName());
             sdEventHandle.setProcessId(item.getProcessId());
+            sdEventHandle.setFlowSort(sort+"");
             sdEventHandle.setUpdateTime(DateUtils.getNowDate());
             sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
         }
@@ -411,20 +414,26 @@ public class SdEventServiceImpl implements ISdEventService {
             List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
             List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
             List<SdJoinTypeFlow> flowsIdData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
+            int sort = 0;
             for(SdJoinTypeFlow item : flowsPidData){
+                sort = sort + 1;
                 SdEventHandle sdEventHandle = new SdEventHandle();
                 sdEventHandle.setEventId(sdEvent.getId());
                 sdEventHandle.setFlowId(item.getFlowId());
                 sdEventHandle.setFlowPid(item.getFlowPid());
                 sdEventHandle.setFlowContent(item.getFlowName());
+                sdEventHandle.setFlowSort(sort+"");
                 sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+                int number = 0;
                 for(SdJoinTypeFlow temp : flowsIdData){
+                    number = number + 1;
                     if(item.getFlowId() == temp.getFlowPid()){
                         SdEventHandle sdEventHandle1 = new SdEventHandle();
                         sdEventHandle1.setEventId(sdEvent.getId());
                         sdEventHandle1.setFlowId(temp.getFlowId());
                         sdEventHandle1.setFlowPid(temp.getFlowPid());
                         sdEventHandle1.setFlowContent(temp.getFlowName());
+                        sdEventHandle1.setFlowSort(number+"");
                         sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
                     }
                 }

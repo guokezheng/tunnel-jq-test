@@ -16,7 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdEventHandleVo">
-        select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, create_time, update_time from sd_event_handle
+        select id, event_id, flow_id, flow_pid, flow_content, event_state, reserve_id, process_id, flow_sort, create_time, update_time from sd_event_handle
     </sql>
 
     <select id="selectSdEventHandleList" parameterType="SdEventHandle" resultMap="SdEventHandleResult">
@@ -53,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventState != null">event_state,</if>
             <if test="reserveId != null">reserve_id,</if>
             <if test="processId != null">process_id,</if>
+            <if test="flowSort != null">flow_sort,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
          </trim>
@@ -65,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventState != null">#{eventState},</if>
             <if test="reserveId != null">#{reserveId},</if>
             <if test="processId != null">#{processId},</if>
+            <if test="flowSort != null">#{flowSort},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
          </trim>
@@ -80,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventState != null">event_state = #{eventState},</if>
             <if test="reserveId != null">reserve_id = #{reserveId},</if>
             <if test="processId != null">process_id = #{processId},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
@@ -105,6 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eventState != null">event_state = #{eventState},</if>
             <if test="reserveId != null">reserve_id = #{reserveId},</if>
             <if test="processId != null">process_id = #{processId},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>

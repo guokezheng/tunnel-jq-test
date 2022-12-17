@@ -67,10 +67,10 @@ public class SdJoinTypeFlowServiceImpl implements ISdJoinTypeFlowService
             joinTypeFlow.setCreateTime(DateUtils.getNowDate());
             count = sdJoinTypeFlowMapper.insertSdJoinTypeFlow(joinTypeFlow);
             if(item.getChildren() != null && item.getChildren().size() > 0){
-                sort = 0;
+                int number = 0;
                 for(SdPlanFlow children : item.getChildren()){
-                    sort = sort + 1;
-                    SdJoinTypeFlow joinTypeFlow1 = setJoinTypeFlowData(children, sdJoinTypeFlow, sort);
+                    number = number + 1;
+                    SdJoinTypeFlow joinTypeFlow1 = setJoinTypeFlowData(children, sdJoinTypeFlow, number);
                     joinTypeFlow1.setCreateTime(DateUtils.getNowDate());
                     count = sdJoinTypeFlowMapper.insertSdJoinTypeFlow(joinTypeFlow1);
                 }

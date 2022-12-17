@@ -54,6 +54,17 @@ public class SdEventHandle extends BaseEntity
     @ApiModelProperty("环节Id")
     private Long processId;
 
+    @ApiModelProperty("流程排序")
+    private String flowSort;
+
+    public String getFlowSort() {
+        return flowSort;
+    }
+
+    public void setFlowSort(String flowSort) {
+        this.flowSort = flowSort;
+    }
+
     public Long getReserveId() {
         return reserveId;
     }

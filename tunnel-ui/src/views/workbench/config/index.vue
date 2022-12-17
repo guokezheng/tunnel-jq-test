@@ -2008,7 +2008,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 16, 35].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -2075,6 +2075,15 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-youdao>
+    <com-board
+      class="comClass"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      v-if="this.eqInfo.clickEqType == 16 || this.eqInfo.clickEqType == 36"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-board>
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -2794,6 +2803,8 @@ import comCallPolice from "@/views/workbench/config/components/callPolice"; //�
 import comRobot from "@/views/workbench/config/components/robot"; //机器人弹窗
 import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
+import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
+
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -2857,6 +2868,7 @@ export default {
     comRobot,
     comData,
     comYoudao,
+    comBoard
   },
 
   data() {

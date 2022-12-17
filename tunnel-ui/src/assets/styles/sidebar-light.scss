@@ -99,6 +99,9 @@
     .app-container{
       background: #004375;
     }
+    .dispatchAss{
+      background: #000000 !important;
+    }
     // 外边框
     .separate{
       background: #00335A;
@@ -776,9 +779,9 @@
     }
     /*select选择框的背景颜色*/
     .el-input__inner {
-      background-color: #00152B;
-      color: #fff;
-      border: solid 1px #01AAFD;
+      background-color: #fff;
+      color: #000;
+      // border: solid 1px #01AAFD;
     }
     .el-date-editor .el-range-input{
       background-color: #00152B !important;

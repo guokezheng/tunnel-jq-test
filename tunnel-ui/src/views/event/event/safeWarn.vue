@@ -367,7 +367,7 @@
       :before-close="cancel"
       width="1000px"
       text-align="left"
-      :style="processType ? 'left: 16%' : ''"
+      :style="processType ? 'left: 13%' : ''"
       class="detailsDialog"
       :close-on-click-modal="false"
       ref="upload"
@@ -603,14 +603,52 @@
     <el-dialog
       title="预警弹窗"
       :visible.sync="processDialog"
-      width="400px"
+      width="480px"
       append-to-body
       class="animationDialog"
       :modal="false"
       :before-close="cancelProcessDialog"
       :close-on-click-modal="closeProcessDialog"
     >
-      <div style="padding: 10px; background: #f7f7f7; height: 686px"></div>
+      <div style="padding: 10px; background: #f7f7f7; height: 686px">
+        <div v-for="(item,index) of incHandList" :key="index" class="incHandContent">
+          <div class="classification">
+            <div class="type"
+                  :style="{
+            padding:item.flowContent?item.flowContent.toString().length>2?'8px':'15px 12px':'',
+            marginTop:item.children?item.flowContent == '设备联控' ? (item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 35 +'px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 25 +'px':''
+
+            }"
+            v-if="item.flowContent">{{item.flowContent}}
+            </div>
+          
+            <div v-show="item.flowContent == '设备联控'" class="yijian">一键</div>
+          </div>
+
+          <div class="heng1"
+          v-if="item.children"
+                :style="{
+            marginTop:item.children?item.children.length==1?'20px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 +'px':''
+            }"
+            ></div>
+          <div class="shu"
+          v-if="item.children"
+                :style="{
+            height:item.children?item.children.length >1 ?item.children.length * 40 + (4 * item.children.length) - 40 +'px':'0px':'',
+            borderTop: item.children && item.children.length >1 ?'solid 1px #39adff':'',
+          }"
+          ></div>
+          <div>
+            <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
+              <div style="float:left">{{ itm.flowContent }}</div>
+              <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" @click="changeIncHand(itm.id,1)">
+              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm.id,0)">
+
+            </div>
+          </div>
+
+        </div>
+      </div>
     </el-dialog>
     <!-- 添加或修改故障清单对话框 -->
     <el-dialog
@@ -939,6 +977,7 @@ import {
   toll,
   getTunnelList,
   getTunnelLane,
+  getHandle
 } from "@/api/event/event";
 import {
   addList,
@@ -978,9 +1017,59 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      eventTypeId:'',
+      evtId:'',
+      incHand1: require("@/assets/cloudControl/incHand1.png"),
+      incHand2: require("@/assets/cloudControl/incHand2.png"),
+      incHandList: [
+        {
+          flowContent: "预警",
+          children: [
+            {
+              flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+            },
+            {
+              flowContent: "更改入口信号灯为红色。",
+            },
+          ],
+        },
+        {
+          flowContent: "分析确认",
+          children: [
+            {
+              flowContent: "现场确认并上报应急指挥领导小组",
+            },
+            {
+              flowContent: "上报智慧高速云控中心。",
+            },
+            {
+              flowContent: "上报智慧高速云控中心。",
+            },
+          ],
+        },
+        {
+          flowContent: "设备联控",
+          children: [
+            {
+              flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+            },
+            {
+              flowContent: "更改入口信号灯为红色。",
+            },
+          ],
+        },
+        {
+          flowContent: "应急调度",
+          children: [
+            {
+              flowContent: "雷视融合检测，2022/12/07 15:34:33",
+            },
+          ],
+        },
+      ],
       setDisabled: {
         disabledDate(time) {
-          return time.getTime() > Date.now();  // 可选历史天、可选当前天、不可选未来天
+          return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
           // return time.getTime() > Date.now() - 8.64e7;  // 可选历史天、不可选当前天、不可选未来天
           // return time.getTime() < Date.now() - 8.64e7;  // 不可选历史天、可选当前天、可选未来天
           // return time.getTime() < Date.now(); // 不可选历史天、不可选当前天、可选未来天
@@ -1262,11 +1351,11 @@ export default {
       submitEventFormLoading: false,
       direction: "rtl",
       eventForm: {
-        stakeNum1:'',
-        stakeNum2:'',
-        stakeEndNum1:'',
-        stakeEndNum2:'',
-        iconUrlList:[]
+        stakeNum1: "",
+        stakeNum2: "",
+        stakeEndNum1: "",
+        stakeEndNum2: "",
+        iconUrlList: [],
       },
       // 遮罩层
       dloading: false,
@@ -1288,7 +1377,7 @@ export default {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
       this.queryParams.tunnelId = newVal;
-      this.queryParams.eventTypeId = ''
+      this.queryParams.eventTypeId = "";
       this.getList();
       this.getTunnelLane();
     },
@@ -1296,7 +1385,7 @@ export default {
   async created() {
     this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
 
-    this.eventList = []
+    this.eventList = [];
     this.getTreeselect();
     this.getBz();
 
@@ -1355,7 +1444,7 @@ export default {
   },
   methods: {
     // 处置
-    management(id){
+    management(id) {
       const param = {
         id: id,
         eventState: "0",
@@ -1369,26 +1458,28 @@ export default {
       });
       //
     },
-    handleSizeChange(val){
+    handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
-      this.queryParams.pageSize = val
+      this.queryParams.pageSize = val;
 
-      this.getList()
+      this.getList();
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-      this.queryParams.pageNum = val
-      this.getList()
-
+      this.queryParams.pageNum = val;
+      this.getList();
     },
     // 复核提交
     submitDialog() {
-      for(let item of this.eventForm.confidenceList){
-        if(!/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/.test(item.plate)){
+      for (let item of this.eventForm.confidenceList) {
+        if (
+          !/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/.test(
+            item.plate
+          )
+        ) {
           this.$modal.msgWarning("请输入正确车牌号");
-          return
+          return;
         }
-
       }
       if (this.eventForm.stakeNum1 && this.eventForm.stakeNum2) {
         this.eventForm.stakeNum =
@@ -1396,11 +1487,11 @@ export default {
       }
       if (this.eventForm.stakeEndNum1 && this.eventForm.stakeEndNum2) {
         this.eventForm.stakeEndNum =
-          "K" + this.eventForm.stakeEndNum1 + "+" +  this.eventForm.stakeEndNum2;
+          "K" + this.eventForm.stakeEndNum1 + "+" + this.eventForm.stakeEndNum2;
       }
       // delete this.eventForm['confidenceList'];
       console.log(this.eventForm, "888888888888888888");
-      this.eventForm.searchValue = this.activeName
+      this.eventForm.searchValue = this.activeName;
       updateEvent(this.eventForm).then((response) => {
         this.processDialog = false;
         this.closeProcessDialog = false;
@@ -1438,8 +1529,8 @@ export default {
     },
     openProcess(type) {
       console.log(type);
-      if(type){
-        this.processType = false
+      if (type) {
+        this.processType = false;
       }
       console.log(this.processType, "this.processType");
       if (this.processType == true) {
@@ -1447,18 +1538,31 @@ export default {
         this.details = true;
         this.closeProcessDialog = false;
         this.processType = false;
-
       } else {
         this.processDialog = true;
         this.details = true;
         this.closeProcessDialog = true;
         this.processType = true;
-
       }
+    },
+    // 事件处置
+    evtHandle(){
+      getHandle({id:this.evtId,eventTypeId:this.eventTypeId}).then((res) =>{
+       let list =  this.handleTree(res.data, "flowId","flowPid");
+       console.log(list,"999999999999999999");
+      //  for(let item of list){
+      //   console.log(item.flowContent.toString().length,"555555555555555")
+      //  }
+       this.incHandList = list
+       this.$forceUpdate()
+      })
     },
     //详情弹窗
     detailsButton(item, type) {
-      console.log(item,"点击弹窗");
+      console.log(item, "点击弹窗");
+      this.eventTypeId = item.eventTypeId
+      this.evtId = item.id
+      this.evtHandle()
       if (type == 1) {
         this.detailsDisabled = true;
         this.detailsButtonType = 1;
@@ -1470,12 +1574,24 @@ export default {
       this.eventForm = item;
 
       if (item.stakeNum) {
-        this.$set(this.eventForm, 'stakeNum1', item.stakeNum.split("+")[0].substr(1))
-        this.$set(this.eventForm, 'stakeNum2', item.stakeNum.split("+")[1])
+        this.$set(
+          this.eventForm,
+          "stakeNum1",
+          item.stakeNum.split("+")[0].substr(1)
+        );
+        this.$set(this.eventForm, "stakeNum2", item.stakeNum.split("+")[1]);
       }
       if (item.stakeEndNum) {
-        this.$set(this.eventForm, 'stakeEndNum1', item.stakeEndNum.split("+")[0].substr(1))
-        this.$set(this.eventForm, 'stakeEndNum2', item.stakeEndNum.split("+")[1])
+        this.$set(
+          this.eventForm,
+          "stakeEndNum1",
+          item.stakeEndNum.split("+")[0].substr(1)
+        );
+        this.$set(
+          this.eventForm,
+          "stakeEndNum2",
+          item.stakeEndNum.split("+")[1]
+        );
       }
       this.title = item.eventTitle;
     },
@@ -1483,8 +1599,8 @@ export default {
     //选事件类型
     handleEvtButton(item) {
       console.log(item);
-      this.queryParams.eventTypeId = item
-      this.getList()
+      this.queryParams.eventTypeId = item;
+      this.getList();
     },
     //导出
     handleExport() {},
@@ -1649,7 +1765,6 @@ export default {
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
-        console.log(this.queryParams,"000000000000000000000");
         listEvent(this.queryParams).then((response) => {
           console.log(response, "查询事件管理列表");
           this.eventList = response.rows;
@@ -1982,7 +2097,7 @@ export default {
       this.queryParams = { pageNum: 1, pageSize: 16 };
       this.dateRange = [];
       this.tunnelList = [];
-      this.queryParams.eventTypeId = ''
+      this.queryParams.eventTypeId = "";
       this.resetForm("queryForm");
       this.handleQuery();
     },
@@ -2191,7 +2306,7 @@ export default {
         margin-top: 2px;
         float: left;
       }
-      img{
+      img {
         // width: 100%;
         height: 100px;
         margin-top: 2px;
@@ -2288,7 +2403,7 @@ export default {
         overflow: hidden;
         // border: solid 1px blue;
       }
-      >img{
+      > img {
         width: auto;
         height: 100%;
         overflow: hidden;
@@ -2372,11 +2487,11 @@ export default {
 .animationDialog {
   z-index: 2008 !important;
   height: 100%;
-  width: 420px;
+  width: 480px;
   // transform: translateX(1330px);
   animation: mymove 0.3s linear;
   position: absolute;
-  left: 69%;
+  left: 66%;
 }
 @keyframes mymove {
   0% {
@@ -2386,9 +2501,8 @@ export default {
     left: 69%;
   }
 }
-.el-select-dropdown{
+.el-select-dropdown {
   z-index: 2010 !important;
-
 }
 .eventTypeButton {
   padding: 0px 4px;
@@ -2419,7 +2533,60 @@ export default {
     border-radius: 10px;
   }
 }
+.incHandContent {
+  display: flex;
+  color: #333333;
+  font-size: 12px;
+  padding: 10px;
+  .classification {
+    .type {
+      width: 50px;
+      height: 50px;
+      background: #F2F8FF;
+      border: 1px solid #39ADFF;
+      text-align: center;
+    }
+    .yijian {
+      width: 50px;
+      background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+      border: 1px solid #39adff;
+      // padding: 10px;
+      text-align: center;
+    }
+  }
 
+  .heng1 {
+    width: 20px;
+    height: 1px;
+    border-top: solid 1px #39adff;
+  }
+  .shu {
+    width: 20px;
+    border-left: solid 1px #39adff;
+    border-bottom: solid 1px #39adff;
+    margin-top: 20px;
+  }
+  .contentList {
+    display: block;
+    margin-top: 4px;
+    line-height: 40px;
+    padding: 0 20px;
+    background: #F2F8FF;
+    border: solid 1px #39ADFF;
+    border-radius: 3px;
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+  .contentList:nth-of-type(1) {
+    margin-top: 0;
+  }
+}
 .addClass {
   .el-select {
     width: 250px;
@@ -2571,13 +2738,13 @@ hr {
     background-size: 100%;
   }
 }
-::v-deep .el-tabs__content{
+::v-deep .el-tabs__content {
   height: calc(100% - 55px);
-  .el-tab-pane{
+  .el-tab-pane {
     height: 100%;
-    .contentListBox{
+    .contentListBox {
       height: calc(100% - 130px);
-      .contentBox{
+      .contentBox {
         height: 23%;
       }
     }

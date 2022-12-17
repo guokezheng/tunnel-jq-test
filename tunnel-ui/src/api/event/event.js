@@ -180,3 +180,12 @@ export function getHandle(query) {
 
   })
 }
+
+export function updateHandle(ids) {
+  return request({
+    url: '/event/updateHandle?ids=' + ids,
+    method: 'get',
+
+  })
+}
+

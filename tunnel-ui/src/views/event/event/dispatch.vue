@@ -49,7 +49,7 @@
                 <div class="evtMessVideo">
                   <video :src="eventForm.videoUrl" controls muted loop fluid></video>
                 </div>
-                <div class="evtMessImg"   v-if="eventForm.iconUrlList.length>0">
+                <div class="evtMessImg"   v-if="eventForm.iconUrlList>0">
                   <img :src="item.imgUrl" v-for="(item,index) of eventForm.iconUrlList" :key="index" />
                 </div>
                 <img src="../../../assets/cloudControl/nullImg.png" v-else 
@@ -264,27 +264,34 @@
                     <div class="classification">
                       <div class="type"
                            :style="{
-                      padding:item.type.toString().length>2?'8px':'15px 12px',
-                      marginTop:item.type == '设备联控' ? (item.content.length * 40 + (4 * (item.content.length - 1)))/2 - 35 +'px':(item.content.length * 40 + (4 * (item.content.length - 1)))/2 - 25 +'px'
-                      }">{{item.type}}
+                      padding:item.flowContent?item.flowContent.toString().length>2?'8px':'15px 12px':'',
+                      marginTop:item.children?item.flowContent == '设备联控' ? (item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 35 +'px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 - 25 +'px':''
+
+                      }"
+                      v-if="item.flowContent">{{item.flowContent}}
                       </div>
-                      <div v-show="item.type == '设备联控'" class="yijian">一键</div>
+                    
+                      <div v-show="item.flowContent == '设备联控'" class="yijian">一键</div>
                     </div>
 
                     <div class="heng1"
+                    v-if="item.children"
                          :style="{
-                      marginTop:item.content.length==1?'20px':(item.content.length * 40 + (4 * (item.content.length - 1)))/2 +'px'
-                      }"></div>
+                      marginTop:item.children?item.children.length==1?'20px':(item.children.length * 40 + (4 * (item.children.length - 1)))/2 +'px':''
+                      }"
+                      ></div>
                     <div class="shu"
+                    v-if="item.children"
                          :style="{
-                      height:item.content.length >1 ?item.content.length * 40 + (4 * item.content.length) - 40 +'px':'0px',
-                      borderTop: item.content.length >1 ?'solid 1px #39adff':'',
-                    }"></div>
+                      height:item.children?item.children.length >1 ?item.children.length * 40 + (4 * item.children.length) - 40 +'px':'0px':'',
+                      borderTop: item.children && item.children.length >1 ?'solid 1px #39adff':'',
+                    }"
+                    ></div>
                     <div>
-                      <div v-for="(itm,inx) of item.content" :key="inx" class="contentList">
-                        <div style="float:left">{{ itm.title }}</div>
-                        <img :src="incHand2" alt="div" style="float:right" v-show="item.type == '预警'">
-                        <img :src="incHand1"  style="float:right" v-show="item.type != '预警'">
+                      <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
+                        <div style="float:left">{{ itm.flowContent }}</div>
+                        <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" @click="changeIncHand(itm.id,1)">
+                        <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm.id,0)">
 
                       </div>
                     </div>
@@ -367,12 +374,14 @@ import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import { listEqTypeState, getStateByData } from "@/api/equipment/eqTypeState/api";
-import { dispatchExecuted, listEvent, eventFlowList, getHandle } from "@/api/event/event";
+import { dispatchExecuted, listEvent, eventFlowList, getHandle, updateHandle } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
   data() {
     return {
+      tunnelId:'',
+      eventTypeId:'',
       activeMap:1,
       eqTypeList:[],
       directionList: [],
@@ -519,50 +528,50 @@ export default {
         // },
       ],
       incHandList: [
-        {
-          type: "预警",
-          content: [
-            {
-              title: "雷视融合检测，2022/12/07 15:34:33",
-            },
-            {
-              title: "九龙峪管理站/admin，12/07 15:45:00",
-            },
-          ],
-        },
-        {
-          type: "分析确认",
-          content: [
-            {
-              title: "现场确认并上报应急指挥领导小组",
-            },
-            {
-              title: "上报智慧高速云控中心。",
-            },
-            {
-              title: "上报智慧高速云控中心。",
-            },
-          ],
-        },
-        {
-          type: "设备联控",
-          content: [
-            {
-              title: "更改隧道入口情报板“隧道事故禁止通行”。",
-            },
-            {
-              title: "更改入口信号灯为红色。",
-            },
-          ],
-        },
-        {
-          type: "应急调度",
-          content: [
-            {
-              title: "雷视融合检测，2022/12/07 15:34:33",
-            },
-          ],
-        },
+      // {
+      //     flowContent: "预警",
+      //     children: [
+      //       {
+      //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+      //       },
+      //       {
+      //         flowContent: "更改入口信号灯为红色。",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     flowContent: "分析确认",
+      //     children: [
+      //       {
+      //         flowContent: "现场确认并上报应急指挥领导小组",
+      //       },
+      //       {
+      //         flowContent: "上报智慧高速云控中心。",
+      //       },
+      //       {
+      //         flowContent: "上报智慧高速云控中心。",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     flowContent: "设备联控",
+      //     children: [
+      //       {
+      //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+      //       },
+      //       {
+      //         flowContent: "更改入口信号灯为红色。",
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     flowContent: "应急调度",
+      //     children: [
+      //       {
+      //         flowContent: "雷视融合检测，2022/12/07 15:34:33",
+      //       },
+      //     ],
+      //   },
       ],
     };
   },
@@ -603,7 +612,7 @@ export default {
     this.getListEvent()
     this.stateByData()
     this.getEventList()
-    this.evtHandle()
+    // this.evtHandle()
     // this.getpersonnelList()
     this.getDicts("sd_direction_list").then((response) => {
       console.log(response.data, "response.data车道方向");
@@ -617,11 +626,32 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    changeIncHand(id,type){
+      updateHandle(id).then((res) =>{
+        console.log(res);
+        for(let item of this.incHandList){
+          for(let itm of item.children){
+            if(itm.id == id){
+              if(type == 0){
+                itm.eventState = '1'
+                this.evtHandle()
+
+              }
+            }
+          }
+        }
+      })
+    },
     // 事件处置
     evtHandle(){
-      getHandle({eventId:this.$route.query.id}).then((res) =>{
-        console.log(res,"000000000000000000000");
-        // this.eventList = res.rows
+      getHandle({id:this.$route.query.id,eventTypeId:this.eventTypeId}).then((res) =>{
+       let list =  this.handleTree(res.data, "flowId","flowPid");
+       console.log(list,"999999999999999999");
+      //  for(let item of list){
+      //   console.log(item.flowContent.toString().length,"555555555555555")
+      //  }
+       this.incHandList = list
+       this.$forceUpdate()
       })
     },
     // 查设备状态
@@ -644,7 +674,9 @@ export default {
           console.log(response, "事件详情");
           this.eventForm = response.rows[0];
           this.tunnelId = response.rows[0].tunnelId
+          this.eventTypeId = response.rows[0].eventTypeId
           this.getpersonnelList()
+          this.evtHandle()
           // this.eventForm.eventType = response.rows[0].eventType.eventType;
           // this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
         });
@@ -1108,6 +1140,7 @@ export default {
           display: flex;
           justify-content: space-between;
           width: 100%;
+          margin: 6px 0;
           > div {
             color: #008aff;
           }

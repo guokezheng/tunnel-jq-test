@@ -54,16 +54,16 @@ public interface SysDeptMapper
     public SysDept selectDeptById(String deptId);
 
 
-
-
+    public List<SysDept> selectChildrenDeptById(String deptId);
 
     /**
-     * 根据ID查询所有子部门
+     * 根据ID查询所有子部门及自身
      *
      * @param deptId 部门ID
      * @return 部门列表
      */
-    public List<SysDept> selectChildrenDeptById(String deptId);
+    List<SysDept> selectChildrenIncludeSelfById(String deptId);
+
 
     /**
      * 根据ID查询所有子部门（正常状态）
@@ -160,4 +160,5 @@ public interface SysDeptMapper
      * @return
      */
     List<SysDept> selectTunnelDeptList(String deptId);
+
 }

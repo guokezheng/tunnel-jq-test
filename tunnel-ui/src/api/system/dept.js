@@ -33,6 +33,16 @@ export function treeselect() {
   })
 }
 
+//获取部门及其祖先树
+export function getTreeByDeptId(query){
+  return request({
+    url: '/system/dept/getTreeByDeptId',
+    method: 'get',
+    params: query
+  })
+}
+
+
 // 查询部门下拉树结构
 export function treeselectExcYG1() {
   return request({

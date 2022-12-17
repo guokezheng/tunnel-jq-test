@@ -149,6 +149,22 @@ public class SysDeptServiceImpl implements ISysDeptService
         return deptMapper.selectDeptById(deptId);
     }
 
+    @Override
+    public List<SysDept> selectChildrenDeptById(String deptId) {
+        return deptMapper.selectChildrenDeptById(deptId);
+    }
+
+    /**
+     * 根据ID查询所有子部门及自身
+     *
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    @Override
+    public List<SysDept> selectChildrenIncludeSelfById(String deptId) {
+        return deptMapper.selectChildrenIncludeSelfById(deptId);
+    }
+
     /**
      * 根据ID查询所有子部门（正常状态）
      *

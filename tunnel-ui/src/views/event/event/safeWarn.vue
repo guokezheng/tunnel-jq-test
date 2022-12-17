@@ -94,10 +94,8 @@
           placeholder="请选择归属部门"
           @select="changeMechanism"
           style="width: 300px"
-
+          v-show="manageStatin == '0'"
         />
-
-
         <!--<el-select
           v-model="queryParams.deptId"
           placeholder="请选择管理机构"

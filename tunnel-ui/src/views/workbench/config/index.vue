@@ -2763,11 +2763,7 @@ import * as echarts from "echarts";
 import { listUser, getUserDeptId } from "@/api/system/user";
 import * as deviceApi from "@/api/equipment/device/api";
 import { listLog } from "@/api/system/log";
-import {
-  listDept,
-  listDeptExcludeChild,
-  roleDeptTreeselect,
-} from "@/api/system/dept";
+import {listDept, listDeptExcludeChild, roleDeptTreeselect, getTreeByDeptId} from "@/api/system/dept";
 import bg from "@/assets/cloudControl/right_button.png";
 import hoverbg from "@/assets/cloudControl/right_button_hover2.png";
 import {
@@ -2970,11 +2966,20 @@ export default {
 
       selectSite: "",
       siteList: null,
-      siteProps: {
+      linealDeptTree: [],
+      /*siteProps: {
         value: "deptId",
         label: "deptName",
         children: "children",
+      },*/
+
+      siteProps: {
+        value: "id",
+        label: "label",
+        children: "children",
       },
+
+
       seamless: false, //情报板轮播
       /* ---------火灾报警---------------*/
       alarmBell: false, //是否启用报警铃声
@@ -4302,7 +4307,7 @@ export default {
       });
     },
     /** 查询部门列表 */
-    getDeptList() {
+    /*getDeptList() {
       var that = this;
       var id = this.userDeptId;
       var iid = "";
@@ -4357,13 +4362,58 @@ export default {
           }
           that.siteList.length == 0 ? (that.isManagementStation = true) : "";
         });
+    },*/
+    getDeptList() {
+      var userDeptId = this.userDeptId;
+      const params = {status: 0};
+      getTreeByDeptId(params).then(response => {
+          const options = response.data;
+          let childs = []
+          function a(list) {
+            list.forEach(item => {
+              if (item.id == userDeptId) {
+                childs = item.children || [];
+              } else {
+                item.children && a(item.children);
+              }
+            });
+          }
+          a(options);
+          if (childs.length==0) {
+            this.siteList = options[0].children;
+          }else{
+            this.siteList = childs
+          }
+          let arr = [];
+          this.checkData(this.siteList[0], arr);
+        }).then(() => {
+          this.getTunnelList();
+          if (this.manageStation == "1") {
+            let arr = ["6266", "5555", "555503"];
+            this.changeSite(arr);
+          }
+        });
     },
-    checkData(obj, arr) {
+
+    /*checkData(obj, arr) {
       if (obj.children && obj.children.length > 0) {
         arr.push(obj.deptId);
         this.checkData(obj.children[0], arr);
       } else {
         arr.push(obj.deptId);
+        arr.shift();
+        this.changeSite(arr);
+
+        this.$forceUpdate();
+      }
+    },*/
+
+    checkData(obj, arr) {
+      if (obj.children && obj.children.length > 0) {
+        arr.push(obj.id);
+        this.checkData(obj.children[0], arr);
+      } else {
+        arr.push(obj.id);
         arr.shift();
         this.changeSite(arr);
 
@@ -8782,7 +8832,7 @@ input {
 .popper-class-site {
   .el-cascader-menu__wrap {
     max-width: 245px;
-    
+
   }
   .el-cascader-node__postfix {
       right: 18px !important;

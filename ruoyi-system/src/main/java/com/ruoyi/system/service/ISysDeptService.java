@@ -70,6 +70,22 @@ public interface ISysDeptService
     public SysDept selectDeptById(String deptId);
 
     /**
+     * 根据ID查询所有子部门
+     *
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    public List<SysDept> selectChildrenDeptById(String deptId);
+
+    /**
+     * 根据ID查询所有子部门及自身
+     *
+     * @param deptId 部门ID
+     * @return 部门列表
+     */
+    public List<SysDept> selectChildrenIncludeSelfById(String deptId);
+
+    /**
      * 根据ID查询所有子部门（正常状态）
      *
      * @param deptId 部门ID

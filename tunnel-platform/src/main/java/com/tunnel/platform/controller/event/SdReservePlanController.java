@@ -152,6 +152,8 @@ public class SdReservePlanController extends BaseController {
                                     @RequestParam("planDescription") String planDescription,
                                     @RequestParam("planName") String planName,
                                     @RequestParam("planFileId") String planFileId,
+                                    @RequestParam("direction") String direction,
+                                    @RequestParam("controlDirection") String controlDirection,
                                     @RequestParam("removeIds") Long[] removeIds,
                                     HttpServletRequest request
     ) {
@@ -162,6 +164,8 @@ public class SdReservePlanController extends BaseController {
         sdReservePlan.setPlanName(planName);
         sdReservePlan.setPlanDescription(planDescription);
         sdReservePlan.setPlanFileId(planFileId);
+        sdReservePlan.setDirection(direction);
+        sdReservePlan.setControlDirection(controlDirection);
         return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, removeIds));
     }
 

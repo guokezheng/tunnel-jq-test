@@ -147,6 +147,7 @@ public class SdReservePlanController extends BaseController {
     @ApiOperation("修改预案信息")
     public Result updateReservePlan(MultipartFile[] file,
                                     @RequestParam("id") Long id,
+                                    @RequestParam("tunnelId") String tunnelId,
                                     @RequestParam("planTypeId") Long planTypeId,
                                     @RequestParam("category") String category,
                                     @RequestParam("planDescription") String planDescription,
@@ -166,6 +167,7 @@ public class SdReservePlanController extends BaseController {
         sdReservePlan.setPlanFileId(planFileId);
         sdReservePlan.setDirection(direction);
         sdReservePlan.setControlDirection(controlDirection);
+        sdReservePlan.setTunnelId(tunnelId);
         return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, removeIds));
     }
 

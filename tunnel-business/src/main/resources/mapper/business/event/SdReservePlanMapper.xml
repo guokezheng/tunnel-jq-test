@@ -177,4 +177,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="getRelation" resultType="com.tunnel.business.domain.event.SdReservePlan" parameterType="com.tunnel.business.domain.event.SdReservePlan">
+        SELECT
+            rp.id,
+            srp.id AS processId,
+            srp.process_name AS processName
+        FROM
+            sd_reserve_plan rp
+                LEFT JOIN sd_reserve_process srp ON rp.id = srp.reserve_id
+        WHERE
+            1 = 1
+          <if test="tunnelId != null and tunnelId != ''">
+              AND rp.tunnel_id = #{tunnelId}
+          </if>
+          <if test="direction != null and direction != ''">
+              AND rp.direction = #{direction}
+          </if>
+          <if test="controlDirection != null and controlDirection != ''">
+              AND rp.control_direction = #{controlDirection}
+          </if>
+          <if test="category != null and category != ''">
+              AND rp.category = #{category}
+          </if>
+    </select>
 </mapper>

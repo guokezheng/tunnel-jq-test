@@ -1,8 +1,10 @@
 package com.tunnel.business.service.event;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdReservePlan;
 
 import java.util.List;
 import java.util.Map;
@@ -112,4 +114,18 @@ public interface ISdEventService {
     List<SdDevices> getEventCamera(String tunnelId,String stakeNum,String direction);
 
     List<Map> eventPopAll(String subIndex);
+
+    /**
+     * 主动安全-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getHandle(SdEvent sdEvent);
+
+    /**
+     * 应急调度关联策略
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getRelation(SdReservePlan sdReservePlan);
 }

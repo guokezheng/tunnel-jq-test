@@ -93,6 +93,39 @@ public class SdReservePlan extends BaseEntity
     @ApiModelProperty("隧道方向")
     private String direction;
 
+    @ApiModelProperty("事件id")
+    private String eventId;
+
+    @ApiModelProperty("环境名称")
+    private String processName;
+
+    @ApiModelProperty("环节Id")
+    private Long processId;
+
+    public Long getProcessId() {
+        return processId;
+    }
+
+    public void setProcessId(Long processId) {
+        this.processId = processId;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
     public String getControlDirection() {
         return controlDirection;
     }

@@ -1,5 +1,6 @@
 package com.tunnel.business.service.event.impl;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -60,6 +61,12 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdJoinTypeFlowMapper sdJoinTypeFlowMapper;
+
+    @Autowired
+    private SdEventHandleMapper sdEventHandleMapper;
+
+    @Autowired
+    private SdReservePlanMapper sdReservePlanMapper;
 
     /**
      * 查询事件管理
@@ -134,7 +141,7 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        if ("1".equals(sdEvent.getEventState())) {
+        /*if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
             eventFlow.setFlowTime(sdEvent.getEventTime());
@@ -149,7 +156,7 @@ public class SdEventServiceImpl implements ISdEventService {
             eventFlow.setFlowDescription("问题忽略");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
-        }
+        }*/
         //更新事件置信度
         if(sdEvent.getConfidenceList() != null){
             List<WjConfidence> confidenceList = sdEvent.getConfidenceList();
@@ -157,7 +164,6 @@ public class SdEventServiceImpl implements ISdEventService {
                 radarEventMapper.updateEventConfidence(item);
             }
         }
-        updateHandle(sdEvent);
         sdEvent.setUpdateTime(DateUtils.getNowDate());
         return sdEventMapper.updateSdEvent(sdEvent);
     }
@@ -354,22 +360,75 @@ public class SdEventServiceImpl implements ISdEventService {
         return sdEventMapper.eventPopAll(subIndex);
     }
 
-    public int updateHandle(SdEvent sdEvent){
-        //查询预案流程树
-        List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
-        List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
-        List<SdJoinTypeFlow> flowsIdData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
-        for(SdJoinTypeFlow item : flowsPidData){
-            List<SdJoinTypeFlow> list = new ArrayList<>();
-            for(SdJoinTypeFlow temp : flowsIdData){
-                if(item.getFlowId() == temp.getFlowPid()){
-                    list.add(temp);
+    @Override
+    public AjaxResult getHandle(SdEvent sdEvent) {
+        updateHandle(sdEvent);
+        SdEventHandle sdEventHandle = new SdEventHandle();
+        sdEventHandle.setEventId(sdEvent.getId());
+        List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle);
+        return AjaxResult.success(sdEventHandles);
+    }
+
+    @Override
+    public AjaxResult getRelation(SdReservePlan sdReservePlan) {
+        SdEventHandle eventHandle = new SdEventHandle();
+        eventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
+        eventHandle.setFlowPid(Long.valueOf(7));
+        sdEventHandleMapper.deleteRelation(eventHandle);
+        List<SdReservePlan> relation = sdReservePlanMapper.getRelation(sdReservePlan);
+        String concat = sdReservePlan.getEventId().toString().concat("700");
+        Long relationId = Long.valueOf(concat);
+        for(SdReservePlan item : relation){
+            relationId = relationId + 1;
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
+            sdEventHandle.setFlowId(Long.valueOf(relationId));
+            sdEventHandle.setFlowPid(Long.valueOf(7));
+            sdEventHandle.setFlowContent(item.getProcessName());
+            sdEventHandle.setProcessId(item.getProcessId());
+            sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+            sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+        }
+        int count = 0;
+        if(relation.size() > 0){
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
+            sdEventHandle.setFlowId(Long.valueOf(7));
+            sdEventHandle.setReserveId(relation.get(0).getId());
+            sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+            count = sdEventHandleMapper.updateSdEventHandleRelation(sdEventHandle);
+        }
+        if(count == 0){
+            return AjaxResult.error("关联失败");
+        }
+        return AjaxResult.success("关联成功");
+    }
+
+    public void updateHandle(SdEvent sdEvent){
+        int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
+        if(count == 0){
+            //查询预案流程树
+            List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
+            List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+            List<SdJoinTypeFlow> flowsIdData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
+            for(SdJoinTypeFlow item : flowsPidData){
+                SdEventHandle sdEventHandle = new SdEventHandle();
+                sdEventHandle.setEventId(sdEvent.getId());
+                sdEventHandle.setFlowId(item.getFlowId());
+                sdEventHandle.setFlowPid(item.getFlowPid());
+                sdEventHandle.setFlowContent(item.getFlowName());
+                sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+                for(SdJoinTypeFlow temp : flowsIdData){
+                    if(item.getFlowId() == temp.getFlowPid()){
+                        SdEventHandle sdEventHandle1 = new SdEventHandle();
+                        sdEventHandle1.setEventId(sdEvent.getId());
+                        sdEventHandle1.setFlowId(temp.getFlowId());
+                        sdEventHandle1.setFlowPid(temp.getFlowPid());
+                        sdEventHandle1.setFlowContent(temp.getFlowName());
+                        sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+                    }
                 }
             }
-            if(list.size() > 0){
-                item.setChildren(list);
-            }
         }
-        return 0;
     }
 }

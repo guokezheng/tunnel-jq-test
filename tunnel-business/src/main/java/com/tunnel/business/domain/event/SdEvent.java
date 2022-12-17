@@ -227,6 +227,19 @@ public class SdEvent extends BaseEntity {
      */
     private List<WjConfidence> confidenceList;
 
+    /**
+     * 事件处置下发id
+     */
+    private String ids;
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
     public List<WjConfidence> getConfidenceList() {
         return confidenceList;
     }

@@ -609,11 +609,10 @@
                 placeholder="请选择设备"
               >
                 <el-option
-                  v-for="item in item.equipmentData"
-                  :key="item.eqId"
-                  :label="item.eqName"
-                  :value="item.eqId"
-                  :disabled="item.disabled"
+                  v-for="items in item.equipmentData"
+                  :key="items.eqId"
+                  :label="items.eqName"
+                  :value="items.eqId"
                 />
               </el-select>
             </el-col>
@@ -983,11 +982,11 @@ export default {
       return this.selectDictLabel(this.eqTunnelData, row.tunnelId);
     },
     workbenchOpenEvent() {
-      this.getTunnelData(this.tunnelId);
+      // this.getTunnelData(this.tunnelId);
       this.workbenchOpen = false;
     },
     closeDialogVisible() {
-      this.getTunnelData(this.tunnelId);
+      // this.getTunnelData(this.tunnelId);
       this.dialogVisible = false;
     },
     deleteStrategy(index) {
@@ -1004,6 +1003,10 @@ export default {
         handleStrategyList: "",
       };
       this.planTypeIdList.splice(index + 1, 0, obj);
+    },
+    removeItem(index) {
+      console.log(index);
+      this.planTypeIdList.splice(index, 1);
     },
     // 添加执行操作
     addItem(index) {
@@ -1087,7 +1090,7 @@ export default {
     },
     //关闭策略弹窗
     closeStrategy() {
-      this.getTunnelData(this.tunnelId);
+      // this.getTunnelData(this.tunnelId);
       this.strategyVisible = false;
     },
     // 编辑策略保存方法

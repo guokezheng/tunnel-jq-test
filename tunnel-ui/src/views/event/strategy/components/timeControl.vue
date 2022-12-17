@@ -128,7 +128,7 @@
               />
             </el-select>
           </el-col>
-          <div v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
+          <div v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36">
             <el-col :span="4">
               <el-select
                 v-model="dain.openState"
@@ -158,15 +158,14 @@
               </el-select>
             </el-col>
           </div>
-          <el-col :span="6" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
+          <el-col :span="6" v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36">
             <el-cascader
               :props="checkStrictly"
-              v-model="items.state"
-              :options="items.templatesList"
+              v-model="dain.state"
+              :options="dain.templatesList"
               :show-all-levels="false"
               clearable
               collapse-tags
-              :key="isResouceShow"
               @change="handleChange"></el-cascader>
           </el-col>
           <el-col :span="2" class="buttonBox">
@@ -359,11 +358,13 @@ export default {
     qbgChange(index,value){
       console.log(value);
       let data = value;
-      getVMSTemplatesByDevIdAndCategory(data).then(res=>{
-        console.log(res.data,"模板信息")
-        // this.templatesList = res.data;
-        this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
-      })
+      if(this.strategyForm.autoControl[index].equipmentTypeId == 16 || this.strategyForm.autoControl[index].equipmentTypeId == 36 ) {
+        getVMSTemplatesByDevIdAndCategory(data).then(res => {
+          console.log(res.data, "模板信息")
+          // this.templatesList = res.data;
+          this.$set(this.strategyForm.autoControl[index], "templatesList", res.data)
+        })
+      }
     },
     handleChange(e){
       console.log(e)

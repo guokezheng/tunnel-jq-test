@@ -150,7 +150,6 @@
               :show-all-levels="false"
               clearable
               collapse-tags
-              :key="isResouceShow"
               @change="handleChange"></el-cascader>
           </el-col>
           <el-col :span="4" class="buttonBox">
@@ -333,11 +332,13 @@
       qbgChange(index,value){
         console.log(value);
         let data = value;
-        getVMSTemplatesByDevIdAndCategory(data).then(res=>{
-          console.log(res.data,"模板信息")
-          // this.templatesList = res.data;
-          this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
-        })
+        if(this.strategyForm.manualControl[index].equipmentTypeId == 16 || this.strategyForm.manualControl[index].equipmentTypeId == 36 ){
+          getVMSTemplatesByDevIdAndCategory(data).then(res=>{
+            console.log(res.data,"模板信息")
+            // this.templatesList = res.data;
+            this.$set(this.strategyForm.manualControl[index],"templatesList",res.data)
+          })
+        }
       },
       handleChange(e){
         console.log(e)
@@ -578,7 +579,7 @@
       //表单重置方法
       resetForm() {
         this.$refs["manualControl"].resetFields();
-        this.strategyForm.manualControl = [{ state: "", value: "",equipmentTypeId:"" }];
+        this.strategyForm.manualControl = [{ state: "", value: "",equipmentTypeId:"",equipmentData:[],equipmentTypeData:[] }];
       },
       strategyFormClose() {
         this.$emit("dialogVisibleClose");

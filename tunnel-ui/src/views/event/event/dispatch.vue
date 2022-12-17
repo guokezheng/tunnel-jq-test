@@ -169,7 +169,7 @@
                     :key="index"
                     :style="{
                       left: item.position.left / 1.31 + 'px',
-                      top: item.position.top / 1.23 + 'px',
+                      top: item.position.top / 1.17 + 'px',
                       'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
                     }"
                     :class="
@@ -844,14 +844,12 @@ export default {
     // 处置记录
     getEventList() {
       eventFlowList({ eventId: this.$route.query.id }).then((res) => {
-        // console.log(res);
+        console.log(res,"处置记录");
         this.eventList = res.rows;
       });
     },
     //设备执行记录
     getEqType(state, eqType) {
-      // console.log(state, eqType);
-
       for (let i = 0; i < this.eqTypeList.length; i++) {
         let item = this.eqTypeList[i];
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {

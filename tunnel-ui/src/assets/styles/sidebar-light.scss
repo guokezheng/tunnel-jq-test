@@ -1444,6 +1444,9 @@
     > div {
       background: #012e51;
     }
+    .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
+      color: #fff;
+     }
     .plan .planBox1 {
       .el-radio--medium.is-bordered{
         background: linear-gradient(180deg, #002847 0%, #00325e 100%);
@@ -1475,6 +1478,10 @@
       background: #012e51;
       .DisRecords{
         border-left: solid 1px rgba(240, 241, 242, 0.2);
+        .el-timeline .el-timeline-item .el-timeline-item__wrapper .el-timeline-item__content{
+          color: #fff;
+          background: rgba(8, 78, 132, 0.6);
+        }
       }
       .IncHand .incHandBox .incHandContent .classification .type{
         background: rgba(8, 78, 132, 0.6);
@@ -1490,6 +1497,9 @@
       .eqRecord,.phone{
         background: #012e51;
   
+      }
+      .eqRecord .eqRecordBox .implementContent .contentBox{
+        color: #fff;
       }
     }
     

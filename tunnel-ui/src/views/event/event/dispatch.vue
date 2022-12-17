@@ -74,8 +74,8 @@
                 <div class="oneWayTraffic">
                   <div>单向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.oneWay" label="2" border>动态管控</el-radio>
-                    <el-radio v-model="reservePlan.oneWay" label="1" border>全域管控</el-radio>
+                    <el-radio v-model="reservePlan.oneWay" label="1" border>动态管控</el-radio>
+                    <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio>
                   </div>
                   <div>
                     <div>预览</div>
@@ -86,7 +86,7 @@
                 <div class="twoWayTraffic">
                   <div>双向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.twoWay" label="1" border>全域管控</el-radio>
+                    <el-radio v-model="reservePlan.twoWay" label="2" border>全域管控</el-radio>
                   </div>
                   <div>
                     <div >预览</div>
@@ -104,8 +104,8 @@
                   <div>300米</div>
                 </div>
                 <div>
-                  <el-radio v-model="reservePlan.plan" label="2" border>动态管控</el-radio>
-                  <el-radio v-model="reservePlan.plan" label="1" border :disabled="relationDisabled">全域管控</el-radio>
+                  <el-radio v-model="reservePlan.plan" label="1" border>动态管控</el-radio>
+                  <el-radio v-model="reservePlan.plan" label="2" border :disabled="relationDisabled">全域管控</el-radio>
                 </div>
                 <div>
                   <div>预览</div>
@@ -1430,7 +1430,7 @@ export default {
               height: 100%;
               width: 90%;
               font-size: 12px;
-              color:#fff;
+              // color:#fff;
               .row1 {
                 display: flex;
                 justify-content: space-between;
@@ -1476,8 +1476,8 @@ export default {
       padding-left: 20px;
       .el-timeline-item__content {
         padding: 10px;
-        color: white;
-        background: rgba($color: #084e84, $alpha: 0.6);
+        // color: white;
+        // background: rgba($color: #084e84, $alpha: 0.6);
         font-size: 12px;
         > div:nth-of-type(1) {
           text-align: left;

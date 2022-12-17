@@ -913,6 +913,7 @@ export default {
       });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
+      console.log(response.data,"事件类型")
       this.planCategory = response.data;
     });
     //规则条件
@@ -1445,9 +1446,9 @@ export default {
           that.$forceUpdate();
         }
       });
-      this.getDicts("sd_reserve_plan_category").then((response) => {
-        this.planCategory = response.data;
-      });
+      // this.getDicts("sd_reserve_plan_category").then((response) => {
+      //   this.planCategory = response.data;
+      // });
       console.log(
         this.eqTunnelDataList,
         " this.eqTunnelDataList this.eqTunnelDataList"
@@ -1473,7 +1474,7 @@ export default {
           });
         });
       });
-      this.getDicts("sd_reserve_plan_category").then((response) => {
+      this.getDicts("sd_emergency_plan_type").then((response) => {
         this.planCategory = response.data;
       });
       getPlan(id).then((response) => {

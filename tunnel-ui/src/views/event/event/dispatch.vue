@@ -167,6 +167,7 @@
                     class="icon-box active"
                     v-for="(item, index) in selectedIconList"
                     :key="index"
+                    @click="openStateSwitch(item)"
                     :style="{
                       left: item.position.left / 1.31 + 'px',
                       top: item.position.top / 1.17 + 'px',
@@ -465,6 +466,116 @@
         </div>
       </el-col>
     </el-row>
+    <com-video
+      class="comClass"
+      v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
+      @dialogClose="dialogClose"
+      :eqInfo="this.eqInfo"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+    ></com-video>
+    <com-light
+      class="comClass"
+      v-if="
+        [1, 2, 3, 4, 6, 7, 8, 9, 10, 12, 13].includes(this.eqInfo.clickEqType)
+      "
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+    ></com-light>
+    <com-covi
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 19"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-covi>
+    <com-data
+      class="comClass"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      v-if="[14, 21, 32, 33, 15, 35].includes(this.eqInfo.clickEqType)"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-data>
+    <com-wind
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 17"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-wind>
+    <com-pressure
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 28"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-pressure>
+    <com-vehicleDetec
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 20"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-vehicleDetec>
+    <com-callPolice
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 34"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-callPolice>
+    <com-robot
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 29"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-robot>
+    <com-bright
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 5 || this.eqInfo.clickEqType == 18"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-bright>
+    <com-youdao
+      class="comClass"
+      v-if="this.eqInfo.clickEqType == 31 || this.eqInfo.clickEqType == 30"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-youdao>
+    <com-board
+      class="comClass"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      v-if="this.eqInfo.clickEqType == 16 || this.eqInfo.clickEqType == 36"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-board>
   </div>
 </template>
 <script>
@@ -473,6 +584,21 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
+
+
+import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
+import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
+import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
+import comBright from "@/views/workbench/config/components/bright"; //亮度检测器等只有基本信息的弹窗
+import comWind from "@/views/workbench/config/components/wind"; //风速风向弹窗
+import comPressure from "@/views/workbench/config/components/pressure"; //压力表弹窗
+import comVehicleDetec from "@/views/workbench/config/components/vehicleDetec"; //微波车检弹窗
+import comCallPolice from "@/views/workbench/config/components/callPolice"; //声光报警弹窗
+import comRobot from "@/views/workbench/config/components/robot"; //机器人弹窗
+import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
+import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
+import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
+
 import {
   listEqTypeState,
   getStateByData,
@@ -488,8 +614,26 @@ import {
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
+  components: {
+    comVideo,
+    comLight,
+    comCovi,
+    comBright,
+    comWind,
+    comPressure,
+    comVehicleDetec,
+    comCallPolice,
+    comRobot,
+    comData,
+    comYoudao,
+    comBoard
+  },
   data() {
     return {
+      eqTypeDialogList:[],
+      directionList:[],
+      brandList:[],
+      eqInfo:{},
       relationDisabled: false,
       activeMap: 1,
       eqTypeList: [],
@@ -549,140 +693,10 @@ export default {
         twoWay: "1",
         plan: "1",
       },
-      eventList: [
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-        // {
-        //   flowTime: "2022-12-13",
-        //   flowDescription: "杭山东隧道上行K134+421发生事故事",
-        // },
-      ],
-      implementList: [
-        // {
-        //   userName: "XXX",
-        //   phone: "18888888888",
-        // },
-        // {
-        //   userName: "XXX",
-        //   phone: "18888888888",
-        // },
-        // {
-        //   userName: "XXX",
-        //   phone: "18888888888",
-        // },
-        // {
-        //   userName: "XXX",
-        //   phone: "18888888888",
-        // },
-        // {
-        //   userName: "XXX",
-        //   phone: "18888888888",
-        // },
-      ],
-      zxList: [
-        // {
-        // eqName: "更新车道指示器",
-        // executeResult: "K131+123车道指示器46-禁行",
-        // executeTime: "2022/12/09 19:10:20",
-        // },
-        // {
-        //   eqName: "更新车道指示器",
-        //   executeResult: "K131+123车道指示器46-禁行",
-        //   executeTime: "2022/12/09 19:10:20",
-        // },
-        // {
-        //   eqName: "更新车道指示器",
-        //   executeResult: "K131+123车道指示器46-禁行",
-        //   executeTime: "2022/12/09 19:10:20",
-        // },
-        // {
-        //   eqName: "更新车道指示器",
-        //   executeResult: "K131+123车道指示器46-禁行",
-        //   executeTime: "2022/12/09 19:10:20",
-        // },
-        // {
-        //   eqName: "更新车道指示器",
-        //   executeResult: "K131+123车道指示器46-禁行",
-        //   executeTime: "2022/12/09 19:10:20",
-        // },
-        // {
-        //   eqName: "更新车道指示器",
-        //   executeResult: "K131+123车道指示器46-禁行",
-        //   executeTime: "2022/12/09 19:10:20",
-        // },
-      ],
-      incHandList: [
-        // {
-        //     flowContent: "预警",
-        //     children: [
-        //       {
-        //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-        //       },
-        //       {
-        //         flowContent: "更改入口信号灯为红色。",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     flowContent: "分析确认",
-        //     children: [
-        //       {
-        //         flowContent: "现场确认并上报应急指挥领导小组",
-        //       },
-        //       {
-        //         flowContent: "上报智慧高速云控中心。",
-        //       },
-        //       {
-        //         flowContent: "上报智慧高速云控中心。",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     flowContent: "设备联控",
-        //     children: [
-        //       {
-        //         flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-        //       },
-        //       {
-        //         flowContent: "更改入口信号灯为红色。",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     flowContent: "应急调度",
-        //     children: [
-        //       {
-        //         flowContent: "雷视融合检测，2022/12/07 15:34:33",
-        //       },
-        //     ],
-        //   },
-      ],
+      eventList: [],
+      implementList: [],
+      zxList: [],
+      incHandList: [ ],
     };
   },
   computed: {
@@ -707,11 +721,6 @@ export default {
         }
       }
     },
-    // eventFlow(event) {
-    //   // console.log(event, "websockt工作台接收感知事件数据");
-    //   console.log(event, "已执行11");
-    //   var zxc = event;
-    // },
   },
   async created() {
     console.log(this.$route.query.id, "this.$route.query.id");
@@ -732,6 +741,18 @@ export default {
       console.log(response.data, "response.data预案类型");
       this.planType = response.data;
     });
+    this.getDicts("brand").then((data) => {
+      console.log(data, "设备厂商");
+      this.brandList = data.data;
+    });
+    this.getDicts("sd_direction").then((data) => {
+      console.log(data, "方向");
+      this.directionList = data.data;
+    });
+    this.getDicts("sd_monitor_state").then((data) => {
+      console.log(data, "设备类型");
+      this.eqTypeDialogList = data.data;
+    });
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -740,6 +761,18 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 关闭弹窗子组件
+    dialogClose() {
+      this.eqInfo.clickEqType = 0;
+    },
+    // 点设备弹窗
+    openStateSwitch(item){
+      console.log(item, "点击的设备");
+        this.eqInfo = {
+          clickEqType: item.eqType,
+          equipmentId: item.eqId,
+        };
+    },
     // 关联事件
     relation(type) {
       const params = {
@@ -748,6 +781,7 @@ export default {
         controlDirection: type,
         direction: this.eventForm.direction,
         eventId: this.eventForm.id,
+        planTypeId:this.eventForm.eventTypeId,
       };
       getRelation(params).then((res) => {
         console.log(res, "关联事件");
@@ -1634,5 +1668,13 @@ export default {
   height: 12px;
   background: #008aff;
   // border: solid 2px #012e51;
+}
+::v-deep .el-dialog__header{
+  padding: 0 !important;
+}
+.workbench-dialog{
+  .el-dialog__header{
+    padding: 0 !important;
+  }
 }
 </style>

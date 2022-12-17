@@ -8978,21 +8978,21 @@ input {
   .el-dialog__header {
     // background-color: #455d79;
     // color: #fff;
-    height: 30px;
-    padding: 0;
-    padding-left: 20px;
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
+    // height: 30px;
+    // padding: 0;
+    // padding-left: 20px;
+    // height: 30px;
+    // line-height: 30px;
+    // font-size: 14px;
   }
 
   .el-dialog__title {
     // color: #fff;
-    font-size: 14px;
-    line-height: 30px;
+    // font-size: 14px;
+    // line-height: 30px;
   }
   .el-dialog__headerbtn {
-    top: 6px !important;
+    // top: 6px !important;
   }
   .el-dialog__body {
     // color: #c0ccda;
@@ -9033,7 +9033,7 @@ input {
   }
 
   .el-radio-selcted {
-    padding: 5px 220px 5px 20px;
+    // padding: 5px 220px 5px 20px;
     margin: 2px 0px;
     color: #c0ccda;
     border-radius: 4px;

@@ -8,6 +8,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
 import com.tunnel.business.service.event.ISdEventService;
@@ -82,6 +83,13 @@ public class SdReserveProcessController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return AjaxResult.success(sdReserveProcessService.selectSdReserveProcessById(id));
+    }
+
+    @GetMapping(value = "/getReservePlanProcess/{id}")
+    @ApiOperation("获取预案流程节点")
+    public AjaxResult getReservePlanProcess(@PathVariable("id") Long id)
+    {
+        return AjaxResult.success(SpringUtils.getBean(SdReserveProcessMapper.class).getReservePlanProcess(id));
     }
 
     /**
@@ -195,7 +203,7 @@ public class SdReserveProcessController extends BaseController
                             .mapToInt(s->s.getPileNum().intValue()).distinct().toArray();
                     //查找事故点最近的疏散标志
                     int index = Math.abs(compareValue-allNum[0]);
-                    int closest = 0;
+                    int closest = allNum[0];
                     for (int i=0;i<allNum.length;i++) {
                         int abs = Math.abs(compareValue-allNum[i]);
                         if(abs <= index){

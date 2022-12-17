@@ -123,4 +123,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where reserve_id = #{reserveId}
         order by process_sort
     </select>
+
+    <select id="getReservePlanProcess" resultType="hashmap">
+        select process.process_name,process.process_sort,rl.eq_type_id,rl.equipments,rl.retrieval_rule,rl.state from sd_reserve_process process
+            left join sd_strategy_rl rl on rl.id = process.strategy_id
+            where process.reserve_id = #{reserveId}
+        order by process.process_sort
+    </select>
 </mapper>

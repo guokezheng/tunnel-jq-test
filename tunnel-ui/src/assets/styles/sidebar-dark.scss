@@ -103,7 +103,10 @@
     }
     .dispatchAss{
       background: #E2EEFE !important;
-
+      .title{
+        color: #333;
+        border-bottom: solid 1px #E0E7ED;
+      }
     }
     .el-table tr{
       background-color: #FFFFFF;
@@ -1391,7 +1394,57 @@
     }
    
   }
+  // 应急调度
+  .dispatchLeft{
+    > div {
+      background: #F2F9FF;
+    }
+    .evtMessage .evtMessBox .evtMessLeft > div > div[data-v-50c3fd04]:nth-of-type(2){
+      color: #333 !important;
+    }
+    .plan {
+      .planBox1 {
+        .el-radio{
+          color: #333;
+        }
+        .planRight{
+          color: #333;
+          border-left: solid 1px #E0E7ED !important;
+          > div:nth-of-type(2) > div[data-v-50c3fd04]:nth-of-type(2n){
+            color: #333;
+          }
+        }
+        .oneWayTraffic,.twoWayTraffic{
+          color:#333;
+        }
+      }
+    }
+    
+    
+  }
+  .dispatchRight{
+   
+    .rightBottom {
+      .evtManagement{
+        background: #F2F9FF;
+        .DisRecords{
+          border-left: solid 1px #E0E7ED;
+        }
+        .IncHand .incHandBox .incHandContent .classification .type[data-v-50c3fd04]{
+          background: #fff;
+          border: 1px solid rgba(57, 173, 255, 1);
+          color: #333;
+        }
+      }
+      .implement1 {
+        .eqRecord,.phone{
+          background: #F2F9FF;
   
+        }
+      }
+    }
+    
+  }
   
 }
     

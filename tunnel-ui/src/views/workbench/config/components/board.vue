@@ -518,38 +518,30 @@ export default {
 </script>
   
   <style lang="scss" scoped>
-.robotTabs {
-  padding: 0 15px;
-}
+// .robotTabs {
+//   padding: 0 15px;
+// }
 .el-row {
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
 }
-.theme-light .pagination-container {
-  background: #00152b;
-}
-.historyMiniBox {
-  width: 18%;
-  display: inline-block;
-  height: 210px;
-  margin-left: 17px;
-  margin-bottom: 5px;
-  border: solid 1px #01aafd;
-  background-color: #638ca6;
-}
-::v-deep .el-pagination__total {
-  color: #01aafd !important;
-}
-.el-pagination.is-background .btn-prev,
-.el-pagination.is-background .btn-next,
-.el-pagination.is-background .el-pager li {
-  background-color: #00152b !important;
-}
-.el-pagination.is-background .btn-prev:disabled,
-.el-pagination.is-background .btn-next:disabled {
-  color: "#01AAFD !important";
-}
+// .theme-light .pagination-container {
+//   background: #00152b;
+// }
+
+// ::v-deep .el-pagination__total {
+//   color: #01aafd !important;
+// }
+// .el-pagination.is-background .btn-prev,
+// .el-pagination.is-background .btn-next,
+// .el-pagination.is-background .el-pager li {
+//   background-color: #00152b !important;
+// }
+// .el-pagination.is-background .btn-prev:disabled,
+// .el-pagination.is-background .btn-next:disabled {
+//   color: "#01AAFD !important";
+// }
 ::v-deep .el-tabs__nav-wrap::after {
   background-color: #dfe4ed;
   opacity: 0.4;
@@ -557,127 +549,30 @@ export default {
 ::v-deep .el-tabs__active-bar {
   background-color: #01aafd;
 }
-.yuntaiBox {
-  width: 100%;
-  height: 600px;
-  padding: 20px;
-  // border: solid 1px red;
-  > .el-col:nth-of-type(1) {
-    padding-right: 10px;
-  }
-  .yuntaiVideoBox {
-    width: 100%;
-    height: 400px;
-    .yunTaiVideo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -100;
-    }
-  }
-  .yuntaiPic {
-    width: 100%;
-    height: calc(100% - 450px);
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    > div:nth-of-type(1),
-    > div:nth-of-type(3) {
-      width: 30px;
-      height: 30px;
-      // border: solid 1px white;
-      border-radius: 15px;
-      text-align: center;
-      line-height: 28px;
-      font-size: 20px;
-    }
-    > div:nth-of-type(1) {
-      margin-right: 10px;
-      cursor: pointer;
-    }
-    > div:nth-of-type(2) {
-      width: calc(100% - 60px);
-      height: 100%;
-    }
-    > div:nth-of-type(3) {
-      margin-left: 5px;
-      cursor: pointer;
-    }
-    img {
-      width: 25%;
-      height: 100%;
-      padding-right: 5px;
-    }
-  }
-  .fangxiang {
-    widows: 100%;
-    height: 40%;
-    border: solid 1px white;
-  }
-  .jiaJian {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 10px;
-    > div:nth-of-type(1),
-    > div:nth-of-type(3) {
-      width: 23px;
-      height: 23px;
-      // border: solid 1px white;
-      border-radius: 15px;
-      text-align: center;
-      font-size: 18px;
-    }
-    > div:nth-of-type(1) {
-      line-height: 18px;
-    }
-    > div:nth-of-type(3) {
-      line-height: 22px;
-    }
-  }
-  .sliderClass {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 15px;
-    > .el-slider {
-      width: 50%;
-    }
-  }
-  .switchClass {
-    width: 100%;
-    height: 45px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 22px;
-  }
+
+// ::v-deep .el-switch__label {
+//   color: #0a6591 !important;
+// }
+// ::v-deep .el-switch__label.is-active {
+//   color: #ff9900 !important;
+// }
+// ::v-deep .el-switch__core {
+//   height: 14px;
+// }
+// ::v-deep .el-switch__core:after {
+//   height: 12px;
+//   width: 12px;
+//   top: 0;
+// }
+// ::v-deep .el-switch.is-checked .el-switch__core::after {
+//   margin-left: -12px;
+// }
+
+::v-deep .el-radio-button--mini .el-radio-button__inner{
+    padding: 6px 13px !important;
 }
-::v-deep .el-switch__label {
-  color: #0a6591 !important;
-}
-::v-deep .el-switch__label.is-active {
-  color: #ff9900 !important;
-}
-::v-deep .el-switch__core {
-  height: 14px;
-}
-::v-deep .el-switch__core:after {
-  height: 12px;
-  width: 12px;
-  top: 0;
-}
-::v-deep .el-switch.is-checked .el-switch__core::after {
-  margin-left: -12px;
-}
-.paginationWorkbench {
-  position: fixed;
-  bottom: 350px !important;
-  height: 60px;
+::v-deep .el-radio-group .el-radio-button__inner{
+    background: white;
 }
 </style>
   

@@ -181,11 +181,21 @@ export function getHandle(query) {
   })
 }
 
-export function updateHandle(ids) {
+// 事件处置 下发
+export function updateHandle(query) {
   return request({
-    url: '/event/updateHandle?ids=' + ids,
+    url: '/event/updateHandle',
     method: 'get',
+    params: query
+  })
+}
 
+// 关联事件 
+export function getRelation(query) {
+  return request({
+    url: '/event/getRelation',
+    method: 'get',
+    params: query
   })
 }
 

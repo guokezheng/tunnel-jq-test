@@ -1243,7 +1243,12 @@
         color: white;
       }
     }
-    
+    // 应急调度
+  .dispatchLeft{
+    > div {
+      background: #012e51;
+    }
+  }
     
   }
       

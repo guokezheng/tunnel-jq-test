@@ -622,7 +622,9 @@
             v-if="item.flowContent">{{item.flowContent}}
             </div>
           
-            <div v-show="item.flowContent == '设备联控'" class="yijian">一键</div>
+            <div v-show="item.flowId == 7" class="yijian">一键</div>
+            <div v-show="item.flowId == 1" class="hulue">忽略</div>
+
           </div>
 
           <div class="heng1"
@@ -977,7 +979,7 @@ import {
   toll,
   getTunnelList,
   getTunnelLane,
-  getHandle
+  getHandle,
 } from "@/api/event/event";
 import {
   addList,
@@ -1017,8 +1019,8 @@ export default {
   components: { Treeselect },
   data() {
     return {
-      eventTypeId:'',
-      evtId:'',
+      eventTypeId: "",
+      evtId: "",
       incHand1: require("@/assets/cloudControl/incHand1.png"),
       incHand2: require("@/assets/cloudControl/incHand2.png"),
       incHandList: [
@@ -1383,7 +1385,7 @@ export default {
     },
   },
   async created() {
-    this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
+    // this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect");
 
     this.eventList = [];
     this.getTreeselect();
@@ -1432,7 +1434,7 @@ export default {
       console.log(response.data, "response.data事件级别");
       this.eventGradeOptions = response.data;
     });
-    this.getDicts("sd_direction_list").then((response) => {
+    this.getDicts("sd_direction").then((response) => {
       console.log(response.data, "response.data车道方向");
       this.directionList = response.data;
     });
@@ -1546,23 +1548,25 @@ export default {
       }
     },
     // 事件处置
-    evtHandle(){
-      getHandle({id:this.evtId,eventTypeId:this.eventTypeId}).then((res) =>{
-       let list =  this.handleTree(res.data, "flowId","flowPid");
-       console.log(list,"999999999999999999");
-      //  for(let item of list){
-      //   console.log(item.flowContent.toString().length,"555555555555555")
-      //  }
-       this.incHandList = list
-       this.$forceUpdate()
-      })
+    evtHandle() {
+      getHandle({ id: this.evtId, eventTypeId: this.eventTypeId }).then(
+        (res) => {
+          let list = this.handleTree(res.data, "flowId", "flowPid");
+          console.log(list, "999999999999999999");
+          //  for(let item of list){
+          //   console.log(item.flowContent.toString().length,"555555555555555")
+          //  }
+          this.incHandList = list;
+          this.$forceUpdate();
+        }
+      );
     },
     //详情弹窗
     detailsButton(item, type) {
       console.log(item, "点击弹窗");
-      this.eventTypeId = item.eventTypeId
-      this.evtId = item.id
-      this.evtHandle()
+      this.eventTypeId = item.eventTypeId;
+      this.evtId = item.id;
+      this.evtHandle();
       if (type == 1) {
         this.detailsDisabled = true;
         this.detailsButtonType = 1;
@@ -1608,6 +1612,7 @@ export default {
     handleClick(e) {
       console.log(e);
       this.getList();
+      this.getEventType()
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -2542,16 +2547,26 @@ export default {
     .type {
       width: 50px;
       height: 50px;
-      background: #F2F8FF;
-      border: 1px solid #39ADFF;
+      background: #f2f8ff;
+      border: 1px solid #39adff;
       text-align: center;
     }
     .yijian {
       width: 50px;
       background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
       border: 1px solid #39adff;
-      // padding: 10px;
+      color:#fff;
       text-align: center;
+      transform: translateY(-2px);
+    }
+    .hulue {
+      width: 50px;
+      background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
+      border: 1px solid #EBAB3A;
+      color:#fff;
+      text-align: center;
+      transform: translateY(-2px);
+
     }
   }
 
@@ -2571,8 +2586,8 @@ export default {
     margin-top: 4px;
     line-height: 40px;
     padding: 0 20px;
-    background: #F2F8FF;
-    border: solid 1px #39ADFF;
+    background: #f2f8ff;
+    border: solid 1px #39adff;
     border-radius: 3px;
     width: 300px;
     display: flex;

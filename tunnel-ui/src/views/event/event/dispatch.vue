@@ -5,7 +5,7 @@
         <div class="dispatchLeft">
           <div class="video">
             <div class="title">实时视频</div>
-            <div class="videoBox">
+            <div class="videoBox1">
               <div
                 v-for="(item, index) of videoList"
                 :key="index"
@@ -69,17 +69,17 @@
           </div>
           <div class="plan">
             <div class="title">相关预案</div>
-            <div class="planBox">
+            <div class="planBox1">
               <div class="planLeft">
                 <div class="oneWayTraffic">
                   <div>单向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.oneWay" label="1" border>动态管控</el-radio>
-                    <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio>
+                    <el-radio v-model="reservePlan.oneWay" label="2" border>动态管控</el-radio>
+                    <el-radio v-model="reservePlan.oneWay" label="1" border>全域管控</el-radio>
                   </div>
                   <div>
                     <div>预览</div>
-                    <div>关联事件</div>
+                    <div @click="relation(1)" :disabled="relationDisabled">关联事件</div>
 
                   </div>
                 </div>
@@ -89,8 +89,8 @@
                     <el-radio v-model="reservePlan.twoWay" label="1" border>全域管控</el-radio>
                   </div>
                   <div>
-                    <div>预览</div>
-                    <div>关联事件</div>
+                    <div >预览</div>
+                    <div @click="relation(2)" :disabled="relationDisabled">关联事件</div>
 
                   </div>
                 </div>
@@ -104,8 +104,8 @@
                   <div>300米</div>
                 </div>
                 <div>
-                  <el-radio v-model="reservePlan.plan" label="1" border>动态管控</el-radio>
-                  <el-radio v-model="reservePlan.plan" label="2" border>全域管控</el-radio>
+                  <el-radio v-model="reservePlan.plan" label="2" border>动态管控</el-radio>
+                  <el-radio v-model="reservePlan.plan" label="1" border :disabled="relationDisabled">全域管控</el-radio>
                 </div>
                 <div>
                   <div>预览</div>
@@ -243,14 +243,14 @@
               ></iframe>
             </div>
             <div class="tunnelBox2">
-              <div @click="changeActiveMap">
+              <div >
                 <img src="../../../assets/cloudControl/tunnelBox1.png"
                      style="transform: translate(-9px, -3px);"/>
               </div>
               <div>
-                <img src="../../../assets/cloudControl/tunnelBox2.png"/>
-                <img src="../../../assets/cloudControl/tunnelBox3.png"/>
-                <img src="../../../assets/cloudControl/tunnelBox4.png"/>
+                <img src="../../../assets/cloudControl/tunnelBox2.png" @click="changeActiveMap(1)"/>
+                <img src="../../../assets/cloudControl/tunnelBox3.png" @click="changeActiveMap(2)"/>
+                <!-- <img src="../../../assets/cloudControl/tunnelBox4.png"/> -->
 
               </div>
             </div>
@@ -271,7 +271,7 @@
                       v-if="item.flowContent">{{item.flowContent}}
                       </div>
                     
-                      <div v-show="item.flowContent == '设备联控'" class="yijian">一键</div>
+                      <div v-show="item.flowId == 7" class="yijian">一键</div>
                     </div>
 
                     <div class="heng1"
@@ -290,7 +290,9 @@
                     <div>
                       <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
                         <div style="float:left">{{ itm.flowContent }}</div>
+                        <!-- 绿对号 -->
                         <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" @click="changeIncHand(itm.id,1)">
+                        <!-- 下发 -->
                         <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm.id,0)">
 
                       </div>
@@ -316,7 +318,7 @@
                 </el-timeline>
               </div>
             </div>
-            <div class="implement">
+            <div class="implement1">
               <div class="phone">
                 <div class="title">调度联络</div>
                 <el-table :data="implementList" max-height="110" class="phoneTable">
@@ -374,14 +376,13 @@ import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 import { listEqTypeState, getStateByData } from "@/api/equipment/eqTypeState/api";
-import { dispatchExecuted, listEvent, eventFlowList, getHandle, updateHandle } from "@/api/event/event";
+import { dispatchExecuted, listEvent, eventFlowList, getHandle, updateHandle, getRelation } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
 export default {
   data() {
     return {
-      tunnelId:'',
-      eventTypeId:'',
+      relationDisabled:false,
       activeMap:1,
       eqTypeList:[],
       directionList: [],
@@ -607,7 +608,7 @@ export default {
     console.log(this.$route.query.id, "this.$route.query.id");
 
     await this.getEqTypeStateIcon();
-    await this.getTunnelData();
+    // await this.getTunnelData();
     await this.getDispatchExecuted();
     this.getListEvent()
     this.stateByData()
@@ -626,8 +627,27 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 关联事件
+    relation(type){
+      const params = {
+        tunnelId:this.eventForm.tunnelId,
+        category:this.reservePlan.oneWay,
+        controlDirection:type,
+        direction:this.eventForm.direction,
+        eventId:this.eventForm.id,
+      }
+      getRelation(params).then((res) =>{
+        console.log(res,"关联事件");
+        this.getListEvent()
+        this.relationDisabled = true
+      })
+    },
     changeIncHand(id,type){
-      updateHandle(id).then((res) =>{
+      const params = {
+        id:this.$route.query.id,
+        ids:id,
+      }
+      updateHandle(params).then((res) =>{
         console.log(res);
         for(let item of this.incHandList){
           for(let itm of item.children){
@@ -635,7 +655,7 @@ export default {
               if(type == 0){
                 itm.eventState = '1'
                 this.evtHandle()
-
+                this.getEventList()
               }
             }
           }
@@ -643,8 +663,8 @@ export default {
       })
     },
     // 事件处置
-    evtHandle(){
-      getHandle({id:this.$route.query.id,eventTypeId:this.eventTypeId}).then((res) =>{
+    async evtHandle(){
+      await getHandle({id:this.$route.query.id,eventTypeId:this.eventForm.eventTypeId}).then((res) =>{
        let list =  this.handleTree(res.data, "flowId","flowPid");
        console.log(list,"999999999999999999");
       //  for(let item of list){
@@ -665,7 +685,7 @@ export default {
       });
     },
     // 事件详情
-    getListEvent(){
+    async getListEvent(){
       if (this.$route.query.id) {
         const param = {
           id: this.$route.query.id,
@@ -673,32 +693,29 @@ export default {
         listEvent(param).then((response) => {
           console.log(response, "事件详情");
           this.eventForm = response.rows[0];
-          this.tunnelId = response.rows[0].tunnelId
-          this.eventTypeId = response.rows[0].eventTypeId
           this.getpersonnelList()
           this.evtHandle()
-          // this.eventForm.eventType = response.rows[0].eventType.eventType;
-          // this.eventForm.tunnelName = response.rows[0].tunnels.tunnelName;
+          this.getTunnelData()
         });
       }
     },
     /** 查询应急人员信息列表 */
-    getpersonnelList() {
+    async getpersonnelList() {
       const params = {
-        tunnelId: this.tunnelId,
+        tunnelId: this.eventForm.tunnelId,
       };
-      listSdEmergencyPer(params).then((response) => {
+      await listSdEmergencyPer(params).then((response) => {
         console.log(99999999999999999999999999);
         this.implementList = response.rows;
       });
     },
     // 切换工作台和3D隧道
-    changeActiveMap(){
+    changeActiveMap(type){
       console.log(this.activeMap,"this.activeMap");
-      if(this.activeMap == 1){
-        this.activeMap = 2
-      }else{
+      if(type == 1){
         this.activeMap = 1
+      }else{
+        this.activeMap = 2
       }
     },
     // 处置记录
@@ -748,7 +765,7 @@ export default {
     },
     /* 获取隧道配置信息*/
     async getTunnelData() {
-      let tunnelId = "JQ-WeiFang-JiuLongYu-HSD";
+      let tunnelId = this.eventForm.tunnelId;
       // var tunnelId = this.eventMsg.tunnelId; //"WLJD-JiNan-YanJiuYuan-FHS";
       let that = this;
 
@@ -788,7 +805,7 @@ export default {
     },
     getRealTimeData() {
       getDeviceData({
-        tunnelId: "JQ-WeiFang-JiuLongYu-HSD",
+        tunnelId: this.eventForm.tunnelId,
       }).then((response) => {
         for (let j = 0; j < this.selectedIconList.length; j++) {
           var eqId = this.selectedIconList[j].eqId;
@@ -967,13 +984,13 @@ export default {
 .dispatchLeft {
   > div {
     width: 100%;
-    background: #012e51;
+    // background: #012e51;
   }
   .video {
     height: calc(36% - 20px);
     margin-top: 0px !important;
     border-radius: 0px !important;
-    .videoBox {
+    .videoBox1 {
       width: 100%;
       height: calc(100% - 40px);
       word-wrap: break-word;
@@ -1085,7 +1102,7 @@ export default {
   .plan {
     height: 32%;
     margin-top: 10px;
-    .planBox {
+    .planBox1 {
       width: 100%;
       height: calc(100% - 40px);
       display: flex;
@@ -1098,7 +1115,7 @@ export default {
           width: 100%;
           height: 50%;
           font-size: 14px;
-          color: #fff;
+          // color: #fff;
           padding-left: 20px;
           padding-top: 5px;
           > div:nth-of-type(3) {
@@ -1115,6 +1132,7 @@ export default {
               padding: 0 15px;
               border-radius: 15px;
               line-height: 22px;
+              cursor: pointer;
             }
             > div:nth-of-type(1) {
               background: #d8d8d8
@@ -1132,9 +1150,9 @@ export default {
       .planRight {
         width: 50%;
         height: 100%;
-        border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
+        // border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
         font-size: 14px;
-        color: #fff;
+        // color: #fff;
         padding: 5px 20px 0px;
         > div:nth-of-type(2) {
           display: flex;
@@ -1179,13 +1197,13 @@ export default {
         margin-top: 4px;
         line-height: 27px;
         margin-right: 0px;
-        background: linear-gradient(180deg, #002847 0%, #00325e 100%);
+        // background: linear-gradient(180deg, #002847 0%, #00325e 100%);
         border-radius: 2px;
-        border: 1px solid #005d89;
+        // border: 1px solid #005d89;
       }
-      .el-radio {
-        color: white;
-      }
+      // .el-radio {
+      //   color: white;
+      // }
     }
   }
 }
@@ -1262,7 +1280,7 @@ export default {
       width: calc(67% - 10px);
       height: 100%;
       display: flex;
-      background: #012e51;
+      // background: #012e51;
       .IncHand {
         width: 60%;
         height: 100%;
@@ -1271,15 +1289,15 @@ export default {
           overflow: auto;
           .incHandContent {
             display: flex;
-            color: white;
+            // color: white;
             font-size: 12px;
             padding: 10px;
             .classification {
               .type {
                 width: 50px;
                 height: 50px;
-                background: rgba($color: #084e84, $alpha: 0.6);
-                border: 1px solid rgba($color: #39adff, $alpha: 0.6);
+                // background: rgba($color: #084e84, $alpha: 0.6);
+                // border: 1px solid rgba($color: #39adff, $alpha: 0.6);
                 text-align: center;
               }
               .yijian {
@@ -1370,14 +1388,14 @@ export default {
         // }
       }
     }
-    .implement {
+    .implement1 {
       width: 33%;
       height: 100%;
       margin-left: 10px;
       .phone {
         width: 100%;
         height: calc(50% - 5px);
-        background: #012e51;
+        // background: #012e51;
         .phoneTable {
           background: transparent !important;
           padding: 10px;
@@ -1391,7 +1409,7 @@ export default {
         width: 100%;
         height: calc(50% - 5px);
         margin-top: 10px;
-        background: #012e51;
+        // background: #012e51;
         .eqRecordBox {
           height: calc(100% - 40px);
           overflow: auto;
@@ -1412,6 +1430,7 @@ export default {
               height: 100%;
               width: 90%;
               font-size: 12px;
+              color:#fff;
               .row1 {
                 display: flex;
                 justify-content: space-between;
@@ -1478,12 +1497,12 @@ export default {
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
 }
-::v-deep .phoneTable tr {
-  background: #12578f !important;
-}
-::v-deep .phoneTable tr:nth-of-type(2n) {
-  background: #165484 !important;
-}
+// ::v-deep .phoneTable tr {
+//   background: #12578f !important;
+// }
+// ::v-deep .phoneTable tr:nth-of-type(2n) {
+//   background: #165484 !important;
+// }
 ::v-deep .el-radio__inner::after {
   width: 12px;
   height: 12px;

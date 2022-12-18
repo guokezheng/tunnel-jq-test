@@ -1120,7 +1120,6 @@ export default {
       let data = {
         reserveId: this.reserveId,
         sdReserveProcesses: this.planTypeIdList,
-
       };
 
       addProcess(data).then((res) => {
@@ -1173,7 +1172,8 @@ export default {
           let data = res.data;
           for(let i = 0;i < data.length;i++){
             this.planTypeIdList[i].processSort = data[i].process_sort;
-            this.planTypeIdList[i].processName = data[i].process_name;
+            this.$set(this.planTypeIdList[i],"processName",data[i].process_name)
+            // this.planTypeIdList[i].processName = data[i].process_name;
             this.planTypeIdList[i].retrievalRule = data[i].retrieval_rule;
 
             this.planTypeIdList[i].eqTypeId = data[i].eq_type_id;

@@ -148,7 +148,7 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        /*if ("1".equals(sdEvent.getEventState())) {
+        if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
             eventFlow.setFlowTime(sdEvent.getEventTime());
@@ -163,7 +163,7 @@ public class SdEventServiceImpl implements ISdEventService {
             eventFlow.setFlowDescription("问题忽略");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
-        }*/
+        }
         //更新事件置信度
         if(sdEvent.getConfidenceList() != null){
             List<WjConfidence> confidenceList = sdEvent.getConfidenceList();

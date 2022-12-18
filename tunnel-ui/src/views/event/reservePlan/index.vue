@@ -580,7 +580,7 @@
                 @change="changeEquipmentType(item.eqTypeId,index)"
               >
                 <el-option
-                  v-for="item in item.equipmentTypeData"
+                  v-for="item in equipmentTypeData"
                   :key="item.typeId"
                   :label="item.typeName"
                   :value="item.typeId"
@@ -681,7 +681,7 @@ import {
   getPlanType,
 } from "@/api/event/reservePlan";
 import { listEventType } from "@/api/event/eventType";
-import { listReservePlanFile } from "@/api/event/reservePlanFile";
+import { listReservePlanFile,getReservePlanProcess } from "@/api/event/reservePlanFile";
 import { download } from "@/utils/request";
 import {
   listStrategy,
@@ -706,6 +706,7 @@ export default {
   // },
   data() {
     return {
+      equipmentTypeData:[],
       directionData:[],//方向
       controlDirectionList:[],//管控方向
       manageStatin:this.$cache.local.get("manageStation"),
@@ -939,6 +940,7 @@ export default {
       for(let i = 0;i < this.planTypeIdList.length;i++){
         listType(this.queryEqTypeParams).then((data) => {
           console.log(data.rows,"设备类型")
+          // this.equipmentTypeData = data.rows;
           this.$set(this.planTypeIdList[i],"equipmentTypeData",data.rows)
           this.equipmentTypeData = data.rows;
         });
@@ -1067,6 +1069,9 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(eqTypeId,index){
+      // 更改设备类型后状态和设备重置
+      this.$set(this.planTypeIdList[index],"equipments","");
+      this.$set(this.planTypeIdList[index],"eqStateList","");
       let params = {
         eqType: eqTypeId, //设备类型
         eqTunnelId: this.currentClickData.tunnelId, //隧道
@@ -1086,7 +1091,8 @@ export default {
         isControl: 1,
       };
       listEqTypeStateIsControl(params).then((response) => {
-        this.planTypeIdList[index].eqStateList = response.rows;
+        // this.planTypeIdList[index].eqStateList = response.rows;
+        this.$set(this.planTypeIdList[index],"eqStateList",response.rows);
       });
     },
     //关闭策略弹窗
@@ -1149,7 +1155,7 @@ export default {
       await getTypeAndStrategy({ isControl: 1 }).then((res) => {
         this.options = res.data;
       });
-      getListByRId({ reserveId: this.reserveId }).then((res) => {
+      getReservePlanProcess(this.reserveId).then((res) => {
         this.planTypeIdList = res.data;
         if (this.planTypeIdList.length == 0) {
           this.planTypeIdList = [
@@ -1165,11 +1171,27 @@ export default {
           ];
         } else {
           let data = res.data;
-          data.forEach((item, index) => {
-            // this.planTypeIdList[index].handleStrategyList = item.strategyId;
-            this.planTypeIdList[index].processSort = item.processSort;
-            this.planTypeIdList[index].processName = item.processName;
-          });
+          for(let i = 0;i < data.length;i++){
+            this.planTypeIdList[i].processSort = data[i].process_sort;
+            this.planTypeIdList[i].processName = data[i].process_name;
+            this.planTypeIdList[i].retrievalRule = data[i].retrieval_rule;
+
+            this.planTypeIdList[i].eqTypeId = data[i].eq_type_id;
+            this.planTypeIdList[i].equipments = data[i].equipments.split(",");
+            console.log(this.planTypeIdList[i].equipments,"设备")
+            // 渲染设备列表
+            let params = {
+              eqType: data[i].eq_type_id, //设备类型
+              eqTunnelId: this.currentClickData.tunnelId, //隧道
+              eqDirection: this.currentClickData.direction, //方向
+            };
+            listDevices(params).then((res) => {
+              this.$set(this.planTypeIdList[i],"equipmentData",res.rows);
+              console.log(this.equipmentData, "设备列表");
+            });
+            // 渲染设备可控状态
+            this.listEqTypeStateIsControl(data[i].eq_type_id,i);
+          }
         }
       });
       this.handleStrategyList = [];

@@ -302,156 +302,155 @@
           @pagination="getList"
         />
       </el-tab-pane>
-      <el-tab-pane :label="strategyTypeGroup[2].dictLabel" name="three">
+<!--      <el-tab-pane :label="strategyTypeGroup[2].dictLabel" name="three">-->
 <!--        应急策略开始-->
-        <el-form
-          :model="queryParams"
-          ref="queryForm"
-          :inline="true"
-          v-show="showSearch"
-          label-width="68px"
-        >
-          <el-form-item label="隧道名称" prop="tunnelId">
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in tunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="策略名称" prop="strategyName">
-            <el-input
-              v-model="queryParams.strategyName"
-              placeholder="请输入策略名称"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="策略类型" prop="strategyType">
-            <el-select
-              v-model="queryParams.strategyType"
-              placeholder="请选择策略类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="dict in strategyTypeOptions"
-                :key="dict.dictValue"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" size="mini" @click="handleQuery"
-            >搜索</el-button
-            >
-            <el-button size="mini" @click="resetQuery" type="primary" plain
-            >重置</el-button
-            >
-            <el-button
-              type="primary"
-              plain
-              size="mini"
-              @click="openInsertStrategy('richang')"
-              v-hasPermi="['system:strategy:add']"
-            >新增</el-button
-            >
-          </el-form-item>
-        </el-form>
-        <el-table
-          v-loading="loading"
-          :data="strategyList"
-          @selection-change="handleSelectionChange"
-          :header-cell-style="{ 'text-align': 'center' }"
-          max-height="640"
-          :row-class-name="tableRowClassName"
-        >
-          <el-table-column
-            label="隧道名称"
-            align="center"
-            prop="tunnels.tunnelName"
-          />
-          <el-table-column
-            label="事件类型"
-            align="center"
-            prop="tunnels.tunnelName"
-          />
-          <el-table-column label="策略名称" align="center" prop="strategyName" />
-          <el-table-column
-            label="方向"
-            align="center"
-            prop="direction"
-            :formatter="directionFormat"
-          />
-          <el-table-column
-            label="策略类型"
-            align="center"
-            prop="strategyType"
-            :formatter="strategyTypeFormat"
-          />
-          <el-table-column label="策略信息" align="left" prop="slist">
-            <template slot-scope="scope">
-              <div v-for="(item, index) in scope.row.slist" :key="index">
-                {{ item }}
-              </div>
-            </template>
-          </el-table-column>
+<!--        <el-form-->
+<!--          :model="queryParams"-->
+<!--          ref="queryForm"-->
+<!--          :inline="true"-->
+<!--          v-show="showSearch"-->
+<!--          label-width="68px"-->
+<!--        >-->
+<!--          <el-form-item label="隧道名称" prop="tunnelId">-->
+<!--            <el-select-->
+<!--              v-model="queryParams.tunnelId"-->
+<!--              placeholder="请选择隧道"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                v-for="item in tunnelData"-->
+<!--                :key="item.tunnelId"-->
+<!--                :label="item.tunnelName"-->
+<!--                :value="item.tunnelId"-->
+<!--              />-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="策略名称" prop="strategyName">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.strategyName"-->
+<!--              placeholder="请输入策略名称"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
+<!--          <el-form-item label="策略类型" prop="strategyType">-->
+<!--            <el-select-->
+<!--              v-model="queryParams.strategyType"-->
+<!--              placeholder="请选择策略类型"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--            >-->
+<!--              <el-option-->
+<!--                v-for="dict in strategyTypeOptions"-->
+<!--                :key="dict.dictValue"-->
+<!--                :label="dict.dictLabel"-->
+<!--                :value="dict.dictValue"-->
+<!--              />-->
+<!--            </el-select>-->
+<!--          </el-form-item>-->
+<!--          <el-form-item>-->
+<!--            <el-button type="primary" size="mini" @click="handleQuery"-->
+<!--            >搜索</el-button-->
+<!--            >-->
+<!--            <el-button size="mini" @click="resetQuery" type="primary" plain-->
+<!--            >重置</el-button-->
+<!--            >-->
+<!--            <el-button-->
+<!--              type="primary"-->
+<!--              plain-->
+<!--              size="mini"-->
+<!--              @click="openInsertStrategy('richang')"-->
+<!--              v-hasPermi="['system:strategy:add']"-->
+<!--            >新增</el-button-->
+<!--            >-->
+<!--          </el-form-item>-->
+<!--        </el-form>-->
+<!--        <el-table-->
+<!--          v-loading="loading"-->
+<!--          :data="strategyList"-->
+<!--          @selection-change="handleSelectionChange"-->
+<!--          :header-cell-style="{ 'text-align': 'center' }"-->
+<!--          max-height="640"-->
+<!--          :row-class-name="tableRowClassName"-->
+<!--        >-->
+<!--          <el-table-column-->
+<!--            label="隧道名称"-->
+<!--            align="center"-->
+<!--            prop="tunnels.tunnelName"-->
+<!--          />-->
+<!--          <el-table-column-->
+<!--            label="事件类型"-->
+<!--            align="center"-->
+<!--            prop="tunnels.tunnelName"-->
+<!--          />-->
+<!--          <el-table-column label="策略名称" align="center" prop="strategyName" />-->
+<!--          <el-table-column-->
+<!--            label="方向"-->
+<!--            align="center"-->
+<!--            prop="direction"-->
+<!--            :formatter="directionFormat"-->
+<!--          />-->
+<!--          <el-table-column-->
+<!--            label="策略类型"-->
+<!--            align="center"-->
+<!--            prop="strategyType"-->
+<!--            :formatter="strategyTypeFormat"-->
+<!--          />-->
+<!--          <el-table-column label="策略信息" align="left" prop="slist">-->
+<!--            <template slot-scope="scope">-->
+<!--              <div v-for="(item, index) in scope.row.slist" :key="index">-->
+<!--                {{ item }}-->
+<!--              </div>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
 
-          <el-table-column label="状态" align="center" prop="schedulerTime">
-            <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.strategyState"
-                active-color="#39ADFF"
-                inactive-color="#ccc"
-                active-value="0"
-                inactive-value="1"
-                @change="changeStrategyState(scope.row)"
-              >
-              </el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope">
-              <el-button
-                size="mini"
-                class="tableBlueButtton"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:strategy:edit']"
-              >编辑</el-button
-              >
-              <el-button
-                size="mini"
-                class="tableDelButtton"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:strategy:remove']"
-              >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
+<!--          <el-table-column label="状态" align="center" prop="schedulerTime">-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-switch-->
+<!--                v-model="scope.row.strategyState"-->
+<!--                active-color="#39ADFF"-->
+<!--                inactive-color="#ccc"-->
+<!--                active-value="0"-->
+<!--                inactive-value="1"-->
+<!--                @change="changeStrategyState(scope.row)"-->
+<!--              >-->
+<!--              </el-switch>-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--          <el-table-column-->
+<!--            label="操作"-->
+<!--            align="center"-->
+<!--            class-name="small-padding fixed-width"-->
+<!--          >-->
+<!--            <template slot-scope="scope">-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableBlueButtton"-->
+<!--                @click="handleUpdate(scope.row)"-->
+<!--                v-hasPermi="['system:strategy:edit']"-->
+<!--              >编辑</el-button-->
+<!--              >-->
+<!--              <el-button-->
+<!--                size="mini"-->
+<!--                class="tableDelButtton"-->
+<!--                @click="handleDelete(scope.row)"-->
+<!--                v-hasPermi="['system:strategy:remove']"-->
+<!--              >删除</el-button-->
+<!--              >-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+<!--        </el-table>-->
 
-        <pagination
-          v-show="total > 0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-<!--        应急策略结束-->
-      </el-tab-pane>
+<!--        <pagination-->
+<!--          v-show="total > 0"-->
+<!--          :total="total"-->
+<!--          :page.sync="queryParams.pageNum"-->
+<!--          :limit.sync="queryParams.pageSize"-->
+<!--          @pagination="getList"-->
+<!--        />-->
+<!--      </el-tab-pane>-->
     </el-tabs>
 
     <!-- 选择策略类型弹窗 -->

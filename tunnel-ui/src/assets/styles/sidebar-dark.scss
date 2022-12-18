@@ -1435,7 +1435,6 @@
     
   }
   .dispatchRight{
-   
     .rightBottom {
       .evtManagement{
         background: #F2F9FF;
@@ -1455,9 +1454,9 @@
               border: 1px solid rgba(57, 173, 255, 1);
               color: #333;
             }
-            .yijian{
-              color: #fff;
-            }
+            // .yijian{
+            //   color: #fff;
+            // }
           }
           .contentList{
             background: #fff;
@@ -1475,10 +1474,17 @@
           color: #333;
         }
       }
-      
+    } 
+  } 
+  // 安全预警
+  .safeWarnStyle{
+    .contentText{
+      color: #0087e7;
     }
-    
+    .contentBox .video{
+      color: #0087e7;
+    }
   }
-  
+
 }
     

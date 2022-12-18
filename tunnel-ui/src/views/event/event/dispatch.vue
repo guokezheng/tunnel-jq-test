@@ -103,7 +103,7 @@
                   </div>
                   <div>
                     <div>预览</div>
-                    <div @click="relation(1)" :disabled="relationDisabled">
+                    <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
                   </div>
@@ -117,7 +117,7 @@
                   </div>
                   <div>
                     <div>预览</div>
-                    <div @click="relation(2)" :disabled="relationDisabled">
+                    <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
                   </div>
@@ -132,20 +132,19 @@
                   <div>300米</div>
                 </div>
                 <div>
-                  <el-radio v-model="reservePlan.plan" label="1" border
-                    >动态管控</el-radio
-                  >
-                  <el-radio
-                    v-model="reservePlan.plan"
-                    label="2"
-                    border
-                    :disabled="relationDisabled"
-                    >全域管控</el-radio
-                  >
+                  <el-radio-group
+                      v-model="reservePlan.plan"
+                      v-for="(item, index) of planType"
+                      :key="index"
+                    >
+                      <el-radio :label="item.dictValue" border>{{
+                        item.dictLabel
+                      }}</el-radio>
+                    </el-radio-group>
                 </div>
                 <div>
                   <div>预览</div>
-                  <div>关联事件</div>
+                  <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">关联事件</div>
                 </div>
               </div>
             </div>
@@ -238,29 +237,32 @@
                       >
                         {{ item.eqName }}
                       </div>
-                      <!-- 情报板 门架 -->
-                      <!-- <div v-show="item.eqType == '36'"
-                      style="position: absolute;overflow:hidden;writing-mode : tb-rl;
-                          font-size:15px;color:#FFFF07;text-align: center;padding:4px"
-
-                      :style="{
-                          cursor:
-                            item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border:
-                            item.click == true ? 'solid 2px #09C3FC' : '',
-                          width:item.iconWidth + 'px',
-                          height:item.iconHeight + 'px',
-                        }"
-
-                        :src= getTypePic(item)
-                        :class="
-                          item.eqName == screenEqName
-                            ? 'screenEqNameClass'
-                            : ''
-                        "
-                        >{{item.eqName}}
-                      </div> -->
+                    
                     </div>
+                  </div>
+                </div>
+                <div class="accBox">
+                  <div class="accTop">
+                    <div class="accPoint"
+                    :style="{
+                      height:160/tunnelLane + 'px',
+                      width:160/tunnelLane + 'px',
+                      left:accLeft + '%',
+                      top:accTop + '%'
+                    }"
+                    v-if="eventForm.direction == '2'"
+                    ></div>
+                  </div>
+                  <div class="accBottom">
+                    <div class="accPoint"
+                    :style="{
+                      height:160/tunnelLane + 'px',
+                      width:160/tunnelLane + 'px',
+                      left:accLeft + '%',
+                      top:accTop + '%'
+                    }"
+                    v-if="eventForm.direction == '1'"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -282,6 +284,7 @@
                 <img
                   src="../../../assets/cloudControl/tunnelBox1.png"
                   style="transform: translate(-9px, -3px)"
+                  @click="backSafeWarn()"
                 />
               </div>
               <div>
@@ -293,7 +296,7 @@
                   src="../../../assets/cloudControl/tunnelBox3.png"
                   @click="changeActiveMap(2)"
                 />
-                <!-- <img src="../../../assets/cloudControl/tunnelBox4.png"/> -->
+   
               </div>
             </div>
           </div>
@@ -335,7 +338,7 @@
                         {{ item.flowContent }}
                       </div>
 
-                      <div v-show="item.flowId == 7" class="yijian">一键</div>
+                      <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)">一键</div>
                     </div>
 
                     <div
@@ -388,7 +391,7 @@
                           :src="incHand1"
                           style="float: right; cursor: pointer"
                           v-show="itm.eventState == '0'"
-                          @click="changeIncHand(itm.id, 0)"
+                          @click="changeIncHand(itm.id,itm.flowId,itm.flowPid)"
                         />
                       </div>
                     </div>
@@ -610,6 +613,7 @@ import {
   getHandle,
   updateHandle,
   getRelation,
+  getAccidentPoint
 } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -630,6 +634,9 @@ export default {
   },
   data() {
     return {
+      accLeft:0,
+      accTop:0,
+      tunnelLane:0,
       eqTypeDialogList:[],
       directionList:[],
       brandList:[],
@@ -761,6 +768,64 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 事件点
+    async getAcc(){
+      const params = {
+        stakeNum:this.eventForm.stakeNum,
+        laneNo:this.eventForm.laneNo,
+        tunnelId:this.eventForm.tunnelId,
+      }
+      await getAccidentPoint(params).then((res) =>{
+        console.log(res,"事件点");
+        this.accLeft = res.data['tunnelLeft'] * 100
+        this.accTop = res.data['tunnelTop'] * 100
+
+      })
+    },
+    // 事件处置 一键
+    getYiJian(item){
+      console.log(item,"一键");
+      var that = this
+      let str = ''
+      let arr = []
+      for(let itm of item.children){
+        arr.push(itm.id)
+      }
+      str = arr.join(',')
+      
+      this.$confirm("是否确认执行?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+        const params = {
+          id: that.$route.query.id,
+          ids: str,
+        };
+        updateHandle(params).then((res) => {
+          console.log(res,"一键下发");
+          for (let item of that.incHandList) {
+            for (let itm of item.children) {
+              for(let it_m of arr){
+                if (itm.id == it_m) {
+                  itm.eventState = "1";
+              
+                }
+              } 
+            }
+          }
+          this.evtHandle();
+          this.getEventList();
+        });
+      });
+    },
+    // 返回安全预警
+    backSafeWarn(){
+      this.$router.push({
+        path: "/emergency/safeWarn",
+       
+      });
+    },
     // 关闭弹窗子组件
     dialogClose() {
       this.eqInfo.clickEqType = 0;
@@ -785,13 +850,16 @@ export default {
       };
       getRelation(params).then((res) => {
         console.log(res, "关联事件");
+        this.$modal.msgSuccess("关联成功");
+
         this.getListEvent();
         this.relationDisabled = true;
       });
     },
-    changeIncHand(id,type) {
+    changeIncHand(id,flowId,flowPid) {
+      console.log(id,"下发")
       var that = this
-        this.$confirm("是否确认执行?", "警告", {
+        this.$confirm(flowId==5? "是否完成?":flowId==6?"是否上报?":flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
@@ -805,11 +873,9 @@ export default {
           for (let item of this.incHandList) {
             for (let itm of item.children) {
               if (itm.id == id) {
-                if (type == 0) {
-                  itm.eventState = "1";
-                  this.evtHandle();
-                  this.getEventList();
-                }
+                itm.eventState = "1";
+                this.evtHandle();
+                this.getEventList();
               }
             }
           }
@@ -823,7 +889,7 @@ export default {
         eventTypeId: this.eventForm.eventTypeId,
       }).then((res) => {
         let list = this.handleTree(res.data, "flowId", "flowPid");
-        console.log(list, "999999999999999999");
+        console.log(list, "事件处置");
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
@@ -842,7 +908,7 @@ export default {
               for(var b = a; b < list[i].children.length - 1; b++){
                 if(Number(list[i].children[a].flowSort) > Number(list[i].children[b + 1].flowSort)){
                   const temp = list[i].children[a];
-                  console.log(temp,"temptemptemptemptemptemp")
+                  // console.log(temp,"temptemptemptemptemptemp")
                   list[i].children[a] = list[i].children[b + 1];
                   list[i].children[b + 1] = temp;
                 }
@@ -870,12 +936,16 @@ export default {
         const param = {
           id: this.$route.query.id,
         };
-        listEvent(param).then((response) => {
+        await listEvent(param).then((response) => {
           console.log(response, "事件详情");
           this.eventForm = response.rows[0];
           this.getpersonnelList();
           this.evtHandle();
           this.getTunnelData();
+          setTimeout(()=>{
+            this.getAcc()
+          },500)
+          
         });
       }
     },
@@ -948,10 +1018,14 @@ export default {
       let that = this;
 
       await getTunnels(tunnelId).then((response) => {
+        console.log(response,"response");
+        this.tunnelLane = Number(response.data.lane)
         let res = response.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
+        console.log(res,"获取隧道配置信息");
+
           let id = res.lane;
           for (let i = 0; i < that.laneUrlList.length; i++) {
             if (that.laneUrlList[i].id == id) {
@@ -1147,6 +1221,8 @@ export default {
     line-height: 40px;
     padding-left: 16px;
     font-size: 16px;
+    margin: 0;
+    text-align: left;
   }
   .el-row {
     height: 100%;
@@ -1404,7 +1480,7 @@ export default {
         width: 100%;
         position: relative;
         margin-bottom: 10px;
-        padding-bottom: 10px;
+        // padding-bottom: 10px;
         .back-img {
           width: 100% !important;
           height: 100% !important;
@@ -1414,7 +1490,7 @@ export default {
           height: 100%;
           width: 100%;
           position: absolute;
-          // z-index: 3;
+          z-index: 3;
           top: 0px;
           left: 0px;
           .icon-box {
@@ -1423,6 +1499,30 @@ export default {
             flex-direction: column;
             // align-items: center;
             width: 30px !important;
+          }
+        }
+        .accBox{
+          width: 100%;
+          height: 100%;
+          position: relative;
+          .accTop{
+            position: absolute;
+            width: calc(100% - 200px);
+            height: 160px;
+            top: 60px;
+            left: 100px;
+          }
+          .accBottom{
+            position: absolute;
+            width: calc(100% - 200px);
+            height: 160px;
+            top: 270px;
+            left: 100px;
+          }
+          .accPoint{
+            border-radius: 50px;
+            position: absolute;
+            border: solid 1px red;
           }
         }
       }
@@ -1484,11 +1584,13 @@ export default {
                 text-align: center;
               }
               .yijian {
+                color:white;
                 width: 50px;
                 background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
                 border: 1px solid #39adff;
                 // padding: 10px;
                 text-align: center;
+                cursor: pointer;
               }
             }
 

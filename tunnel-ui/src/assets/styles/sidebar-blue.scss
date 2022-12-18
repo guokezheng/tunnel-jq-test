@@ -1257,12 +1257,94 @@
         color: white;
       }
     }
-    // 应急调度
+   // 应急调度
   .dispatchLeft{
     > div {
-      background: #012e51;
+      background: #F2F9FF;
+    }
+    .evtMessage .evtMessBox .evtMessLeft > div > div:nth-of-type(2){
+      color: #333 !important;
+    }
+     .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
+      color: #333;
+     }
+    .plan {
+      .planBox1 {
+        .el-radio{
+          color: #333;
+        }
+        .planRight{
+          color: #333;
+          border-left: solid 1px #E0E7ED !important;
+          > div:nth-of-type(2) > div:nth-of-type(2n){
+            color: #333;
+          }
+        }
+        .oneWayTraffic,.twoWayTraffic{
+          color:#333;
+          .el-radio__inner::after{
+            border: solid 2px #E0E7ED;
+          }
+        }
+        .planRight .el-radio__inner::after{
+          border: solid 2px #E0E7ED;
+        }
+      }
+    }
+    
+    
+  }
+  .dispatchRight{
+    .rightBottom {
+      .evtManagement{
+        background: #F2F9FF;
+        .DisRecords{
+          border-left: solid 1px #E0E7ED;
+          .el-timeline .el-timeline-item .el-timeline-item__wrapper .el-timeline-item__content{
+            color: #333;
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+          }
+          
+        }
+        .IncHand .incHandBox .incHandContent {
+          .classification {
+            .type{
+              background: #fff;
+              border: 1px solid rgba(57, 173, 255, 1);
+              color: #333;
+            }
+            .yijian{
+              color: #fff;
+            }
+          }
+          .contentList{
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+            color: #333;
+          }
+        }
+      }
+      .implement1 {
+        .eqRecord,.phone{
+          background: #F2F9FF;
+  
+        }
+        .eqRecord .eqRecordBox .implementContent .contentBox{
+          color: #333;
+        }
+      }
+    } 
+  } 
+  // 安全预警
+  .safeWarnStyle{
+    .contentText{
+      color: #0087e7;
+    }
+    .contentBox .video{
+      color: #0087e7;
     }
   }
     
-  }
+}
       

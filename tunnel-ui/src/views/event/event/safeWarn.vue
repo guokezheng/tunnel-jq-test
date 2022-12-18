@@ -1,6 +1,6 @@
 <script src="../../../../vue.config.js"></script>
 <template>
-  <div class="app-container">
+  <div class="app-container safeWarnStyle">
     <el-tabs v-model="activeName" @tab-click="handleClick" style="100%">
       <el-tab-pane
         :label="item.title"
@@ -26,7 +26,7 @@
                     :key="index"
                     @click="handleEvtButton(item.id)"
                   >
-                    {{ item.eventType }}
+                    {{ item.simplifyName }}
                   </el-button>
                 </div>
               </el-form-item>
@@ -1826,7 +1826,7 @@ export default {
     getEventType() {
       let prevControlType = { prevControlType: this.activeName };
       listEventType(prevControlType).then((response) => {
-        console.log(response, "responseresponse");
+        console.log(response, "responseresponse1111");
         this.eventTypeData = response.rows;
       });
     },
@@ -2303,7 +2303,7 @@ export default {
       float: left;
       text-align: center;
       font-size: 14px;
-      color: #2aa6ff;
+      // color: #2aa6ff;
       video {
         width: 100%;
         height: 100px;
@@ -2321,7 +2321,7 @@ export default {
     .contentText {
       margin-top: 10px;
       font-size: 14px;
-      color: #0087e7;
+      // color: #0087e7;
       margin-right: 20px;
       width: 213px;
       float: right;

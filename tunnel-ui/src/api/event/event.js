@@ -199,3 +199,12 @@ export function getRelation(query) {
   })
 }
 
+// 关联事件 
+export function getAccidentPoint(query) {
+  return request({
+    url: '/event/getAccidentPoint',
+    method: 'get',
+    params: query
+  })
+}
+

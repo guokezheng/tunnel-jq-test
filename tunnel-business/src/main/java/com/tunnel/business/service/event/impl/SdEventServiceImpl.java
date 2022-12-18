@@ -409,7 +409,7 @@ public class SdEventServiceImpl implements ISdEventService {
             count = sdEventHandleMapper.updateSdEventHandleRelation(sdEventHandle);
         }
         if(count == 0){
-            return AjaxResult.error("关联失败，暂无此事件相关预案");
+            return AjaxResult.error("暂无此事件相关预案");
         }
         return AjaxResult.success("关联成功");
     }
@@ -457,13 +457,7 @@ public class SdEventServiceImpl implements ISdEventService {
                 sdEventHandle.setEventId(sdEvent.getId());
                 sdEventHandle.setFlowId(item.getFlowId());
                 sdEventHandle.setFlowPid(item.getFlowPid());
-                if(item.getFlowId() == Long.valueOf(2)){
-                    String name = EventDescEnum.getName(sdEvent1.getEventSource());
-                    sdEventHandle.setFlowContent(item.getFlowName().concat(name));
-                    sdEventHandle.setEventState("1");
-                }else {
-                    sdEventHandle.setFlowContent(item.getFlowName());
-                }
+                sdEventHandle.setFlowContent(item.getFlowName());
                 sdEventHandle.setFlowSort(sort+"");
                 sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
                 int number = 0;
@@ -474,7 +468,19 @@ public class SdEventServiceImpl implements ISdEventService {
                         sdEventHandle1.setEventId(sdEvent.getId());
                         sdEventHandle1.setFlowId(temp.getFlowId());
                         sdEventHandle1.setFlowPid(temp.getFlowPid());
-                        sdEventHandle1.setFlowContent(temp.getFlowName());
+                        if("2".equals(temp.getFlowId().toString())){
+                            String name = EventDescEnum.getName(sdEvent1.getEventSource());
+                            sdEventHandle1.setFlowContent(temp.getFlowName().concat(name));
+                            sdEventHandle1.setEventState("1");
+                            SdEventFlow flow = new SdEventFlow();
+                            flow.setEventId(sdEvent.getId().toString());
+                            flow.setFlowTime(DateUtils.getNowDate());
+                            flow.setFlowHandler(SecurityUtils.getUsername());
+                            flow.setFlowDescription(item.getFlowName().concat(name));
+                            SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+                        }else {
+                            sdEventHandle1.setFlowContent(temp.getFlowName());
+                        }
                         sdEventHandle1.setFlowSort(number+"");
                         sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
                     }

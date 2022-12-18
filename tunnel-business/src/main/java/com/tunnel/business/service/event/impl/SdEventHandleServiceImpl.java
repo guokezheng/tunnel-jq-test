@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * 事件处置信息Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2022-12-15
  */
@@ -32,7 +32,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 查询事件处置信息
-     * 
+     *
      * @param id 事件处置信息主键
      * @return 事件处置信息
      */
@@ -44,7 +44,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 查询事件处置信息列表
-     * 
+     *
      * @param sdEventHandle 事件处置信息
      * @return 事件处置信息
      */
@@ -56,7 +56,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 新增事件处置信息
-     * 
+     *
      * @param sdEventHandle 事件处置信息
      * @return 结果
      */
@@ -69,7 +69,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 修改事件处置信息
-     * 
+     *
      * @param sdEvent 事件处置信息
      * @return 结果
      */
@@ -88,15 +88,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
             SdEventHandle sdEventHandle1 = sdEventHandleMapper.selectSdEventHandleById(Long.valueOf(id));
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
-            if(sdEventHandle1.getFlowPid() == Long.valueOf(8)){
-                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已通知");
-            }else if(sdEventHandle1.getFlowId() == Long.valueOf(5)){
-                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已完成");
-            }else if(sdEventHandle1.getFlowId() == Long.valueOf(6)){
-                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已上报");
-            }else {
-                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已执行");
-            }
+            flow.setFlowDescription(sdEventHandle1.getFlowContent().concat(sdEvent.getRemark()));
             flow.setEventId(sdEvent.getId().toString());
             flow.setFlowTime(DateUtils.getNowDate());
             flow.setFlowHandler(SecurityUtils.getUsername());
@@ -112,7 +104,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 批量删除事件处置信息
-     * 
+     *
      * @param ids 需要删除的事件处置信息主键
      * @return 结果
      */
@@ -124,7 +116,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     /**
      * 删除事件处置信息信息
-     * 
+     *
      * @param id 事件处置信息主键
      * @return 结果
      */

@@ -380,7 +380,7 @@
       <div class="videoDialogBox">
         <div
           class="processButton"
-          @click="openProcess"
+          @click="openProcess()"
           :class="processType ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
         >预警处置</div>
         <div class="dialogBg">
@@ -595,7 +595,7 @@
       <div class="dialogFooterButton" >
         <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
         <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(false)">处置</div>
+        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
         
       </div>
     </el-dialog>
@@ -611,7 +611,7 @@
       :close-on-click-modal="closeProcessDialog"
     >
       <div style="padding: 10px; background: #f7f7f7; height: 686px;overflow:auto">
-        <div v-for="(item,index) of incHandList" :key="index" class="incHandContent">
+        <div v-for="(item,index) of incHandList" :key="index" class="incHandContent" v-if="activeName == '1'">
           <div class="classification">
             <div class="type"
                   :style="{
@@ -622,7 +622,7 @@
             v-if="item.flowContent">{{item.flowContent}}
             </div>
           
-            <div v-show="item.flowId == 7" class="yijian">一键</div>
+            <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)">一键</div>
             <div v-show="item.flowId == 1" class="hulue">忽略</div>
 
           </div>
@@ -643,12 +643,24 @@
           <div>
             <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
               <div style="float:left">{{ itm.flowContent }}</div>
-              <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" @click="changeIncHand(itm.id,1)">
-              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm.id,0)">
+              <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" >
+              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)">
 
             </div>
           </div>
 
+        </div>
+        <div v-if="activeName == '0'">
+          <el-timeline style="height: calc(100% - 40px); overflow: auto">
+            <el-timeline-item
+              placement="top"
+              v-for="(item, index) in eventWarnList"
+              :key="index + item.flowTime"
+            >
+              <div>{{ item.flowDescription }}</div>
+              <div>{{ item.flowTime }}</div>
+            </el-timeline-item>
+          </el-timeline>
         </div>
       </div>
     </el-dialog>
@@ -980,6 +992,10 @@ import {
   getTunnelList,
   getTunnelLane,
   getHandle,
+  implementProcess,
+  implementPlan,
+  updateHandle,
+  eventFlowList
 } from "@/api/event/event";
 import {
   addList,
@@ -1019,56 +1035,13 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      eventWarnList: [],
+
       eventTypeId: "",
       evtId: "",
       incHand1: require("@/assets/cloudControl/incHand1.png"),
       incHand2: require("@/assets/cloudControl/incHand2.png"),
-      incHandList: [
-        // {
-        //   flowContent: "预警",
-        //   children: [
-        //     {
-        //       flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-        //     },
-        //     {
-        //       flowContent: "更改入口信号灯为红色。",
-        //     },
-        //   ],
-        // },
-        // {
-        //   flowContent: "分析确认",
-        //   children: [
-        //     {
-        //       flowContent: "现场确认并上报应急指挥领导小组",
-        //     },
-        //     {
-        //       flowContent: "上报智慧高速云控中心。",
-        //     },
-        //     {
-        //       flowContent: "上报智慧高速云控中心。",
-        //     },
-        //   ],
-        // },
-        // {
-        //   flowContent: "设备联控",
-        //   children: [
-        //     {
-        //       flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-        //     },
-        //     {
-        //       flowContent: "更改入口信号灯为红色。",
-        //     },
-        //   ],
-        // },
-        // {
-        //   flowContent: "应急调度",
-        //   children: [
-        //     {
-        //       flowContent: "雷视融合检测，2022/12/07 15:34:33",
-        //     },
-        //   ],
-        // },
-      ],
+      incHandList: [],
       setDisabled: {
         disabledDate(time) {
           return time.getTime() > Date.now(); // 可选历史天、可选当前天、不可选未来天
@@ -1445,6 +1418,88 @@ export default {
     });
   },
   methods: {
+    // 处置记录
+    getEventList() {
+      eventFlowList({ eventId: this.eventForm.id }).then((res) => {
+        console.log(res,"处置记录");
+        this.eventWarnList = res.rows;
+      });
+    },
+    // 单点 下发
+    changeIncHand(item) {
+      console.log(item,"下发")
+      var that = this
+        this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }).then(function () {
+          if(item.flowPid == '7'){
+            let processId = item.processId
+            let eventId = that.eventForm.id
+            implementProcess(processId,eventId).then((response) =>{
+              console.log(response,"单点下发");
+              that.$modal.msgSuccess("状态修改成功");
+            })
+          }else{
+            const params = {
+              id: that.eventForm.id,
+              ids: item.id,
+            };
+            updateHandle(params).then((res) => {
+              console.log(res,"单点改状态");
+              console.log(that.incHandList,"this.incHandList");
+              for(let itt of that.incHandList) {
+                if(itt.children){
+                  for(let itm of itt.children) {
+                    if (itm.id == item.id) {
+                      itm.eventState = "1";
+                      that.$modal.msgSuccess("状态修改成功");
+                    }
+                  }
+                }
+              }
+            });
+          }
+      });
+    },
+    // 事件处置 一键
+    getYiJian(item){
+      console.log(item,"一键");
+      var that = this
+      // let str = ''
+      let arr = []
+      for(let itm of item.children){
+        arr.push(itm.id)
+      }
+      // str = arr.join(',')
+      
+      this.$confirm("是否确认执行?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(function () {
+      
+          let planId = item.reserveId
+          let eventId = that.eventForm.id
+        
+        implementPlan(planId,eventId).then((response) =>{
+          console.log(response,"一键下发成功");
+          for(let item of that.incHandList) {
+            for(let itm of item.children) {
+              for(let it_m of arr){
+                if (itm.id == it_m) {
+                  itm.eventState = "1";
+                 that.$modal.msgSuccess("一键下发成功");
+
+                }
+              } 
+            }
+          }
+        
+        })
+      });
+    },
     // 处置
     management(id) {
       const param = {
@@ -1530,25 +1585,22 @@ export default {
       this.processType = false;
     },
     openProcess(type) {
-      console.log(type,"00000000000000");
+      console.log(type, "00000000000000");
       if (type) {
-        this.processType = false;
-      }
-      console.log(this.processType, "this.processType");
-      if (this.processType == true) {
-        alert(2)
-
-        this.processDialog = false;
-        // this.details = true;
-        // this.closeProcessDialog = false;
-        this.processType = false;
+        this.processType = true;
+        this.processDialog = true;
       } else {
-        alert(1)
-        this.processType = true
-
-        this.processDialog = true
-        // this.details = true;
-        // this.closeProcessDialog = true;
+        if (this.processType == true) {
+          this.processDialog = false;
+          // this.details = true;
+          // this.closeProcessDialog = false;
+          this.processType = false;
+        } else {
+          this.processType = true;
+          this.processDialog = true;
+          // this.details = true;
+          // this.closeProcessDialog = true;
+        }
       }
     },
     // 事件处置
@@ -1580,7 +1632,7 @@ export default {
       }
       this.details = true;
       this.eventForm = item;
-
+      this.getEventList()
       if (item.stakeNum) {
         this.$set(
           this.eventForm,
@@ -1616,7 +1668,7 @@ export default {
     handleClick(e) {
       console.log(e);
       this.getList();
-      this.getEventType()
+      this.getEventType();
     },
     handleSelectionChange(val) {
       this.ids = val.map((item) => item.id);
@@ -2381,14 +2433,14 @@ export default {
     width: 25px;
     height: 100px;
     cursor: pointer;
-    background: #39ADFF;
+    background: #39adff;
     text-align: center;
     line-height: 18px;
     color: #fff;
   }
   .processButton::before {
     font-size: 14px;
-    color:#fff;
+    color: #fff;
   }
   .dialogBg {
     background: #f7f7f7;
@@ -2564,18 +2616,17 @@ export default {
       width: 50px;
       background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
       border: 1px solid #39adff;
-      color:#fff;
+      color: #fff;
       text-align: center;
       transform: translateY(-2px);
     }
     .hulue {
       width: 50px;
       background: linear-gradient(180deg, #e5a535 0%, #ffbd49 100%);
-      border: 1px solid #EBAB3A;
-      color:#fff;
+      border: 1px solid #ebab3a;
+      color: #fff;
       text-align: center;
       transform: translateY(-2px);
-
     }
   }
 
@@ -2774,7 +2825,7 @@ hr {
     }
   }
 }
-.el-tabs__item{
+.el-tabs__item {
   color: #fff;
 }
 </style>

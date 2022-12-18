@@ -199,5 +199,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           <if test="category != null and category != ''">
               AND rp.category = #{category}
           </if>
+          <if test="planTypeId != null and planTypeId != ''">
+              AND rp.plan_type_id = #{planTypeId}
+          </if>
     </select>
 </mapper>

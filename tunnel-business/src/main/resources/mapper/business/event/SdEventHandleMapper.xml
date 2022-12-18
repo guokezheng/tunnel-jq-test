@@ -116,6 +116,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteRelation" parameterType="SdEventHandle">
-        delete from sd_event_handle where event_id = #{eventId} AND flow_pid = #{flowPid}
+        delete from sd_event_handle where 1 = 1
+        <if test="eventId != null and eventId != ''">
+            AND event_id = #{eventId}
+        </if>
+        <if test="flowPid != null and flowPid != ''">
+            AND flow_pid = #{flowPid}
+        </if>
     </delete>
 </mapper>

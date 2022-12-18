@@ -433,6 +433,34 @@ export default {
     },
     // 监听穿梭框组件添加
     add(fromData,toData,obj){
+      const data = [];
+      for(var i = 0; i < toData.length; i++){
+        data.push(toData[i])
+      }
+      for(var i = 0; i < data.length; i++){
+        for(var j = i; j < data.length - 1; j++){
+          if(Number(data[i].sort) > Number(data[j + 1].sort)){
+            const temp = data[i];
+            data[i] = data[j + 1];
+            data[j + 1] = temp;
+          }
+        }
+      }
+      for(var i = 0; i < data.length; i++){
+        if(data[i].children){
+          for(var a = 0; a < data[i].children.length; a++){
+            for(var b = a; b < data[i].children.length - 1; b++){
+              if(Number(data[i].children[a].sort) > Number(data[i].children[b + 1].sort)){
+                const temp = data[i].children[a];
+                data[i].children[a] = data[i].children[b + 1];
+                data[i].children[b + 1] = temp;
+              }
+            }
+          }
+        }
+      }
+      this.toData = [];
+      this.toData = data;
       // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的        {keys,nodes,halfKeys,halfNodes}对象
       // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
       console.log("fromData:", fromData);

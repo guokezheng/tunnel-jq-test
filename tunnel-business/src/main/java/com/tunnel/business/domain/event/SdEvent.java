@@ -232,6 +232,19 @@ public class SdEvent extends BaseEntity {
      */
     private String ids;
 
+    /**
+     * 事件处置流程pid
+     */
+    private String flowPid;
+
+    public String getFlowPid() {
+        return flowPid;
+    }
+
+    public void setFlowPid(String flowPid) {
+        this.flowPid = flowPid;
+    }
+
     public String getIds() {
         return ids;
     }

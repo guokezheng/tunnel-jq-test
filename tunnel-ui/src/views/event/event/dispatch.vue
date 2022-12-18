@@ -827,6 +827,29 @@ export default {
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
+        for(var i = 0; i < list.length; i++){
+          for(var j = i; j < list.length - 1; j++){
+            if(Number(list[i].flowSort) > Number(list[j + 1].flowSort)){
+              const temp = list[i];
+              list[i] = list[j + 1];
+              list[j + 1] = temp;
+            }
+          }
+        }
+        for(var i = 0; i < list.length; i++){
+          if(list[i].children){
+            for(var a = 0; a < list[i].children.length; a++){
+              for(var b = a; b < list[i].children.length - 1; b++){
+                if(Number(list[i].children[a].flowSort) > Number(list[i].children[b + 1].flowSort)){
+                  const temp = list[i].children[a];
+                  console.log(temp,"temptemptemptemptemptemp")
+                  list[i].children[a] = list[i].children[b + 1];
+                  list[i].children[b + 1] = temp;
+                }
+              }
+            }
+          }
+        }
         this.incHandList = list;
         this.$forceUpdate();
       });

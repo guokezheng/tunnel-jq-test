@@ -426,8 +426,8 @@ public class SdEventServiceImpl implements ISdEventService {
                 sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
                 int number = 0;
                 for(SdJoinTypeFlow temp : flowsIdData){
-                    number = number + 1;
                     if(item.getFlowId() == temp.getFlowPid()){
+                        number = number + 1;
                         SdEventHandle sdEventHandle1 = new SdEventHandle();
                         sdEventHandle1.setEventId(sdEvent.getId());
                         sdEventHandle1.setFlowId(temp.getFlowId());

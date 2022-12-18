@@ -31,6 +31,7 @@
         <result property="endTime" column="end_time"/>
         <result property="stationId" column="station_id"/>
         <result property="stakeNum" column="stake_num"/>
+        <result property="stakeEndNum" column="stake_end_num"/>
         <result property="remark" column="remark"/>
         <result property="policePhone" column="police_phone"/>
         <result property="wreckerPhone" column="wrecker_phone"/>
@@ -162,7 +163,7 @@ ORDER BY MERGE.startTime DESC
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">
         select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
         A.event_location, A.event_death, A.event_injured,A.slight_injured, A.event_description, A.reserve_plan_id,
-        A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.start_time, A.end_time,ti1.img_url AS video_url,
+        A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.stake_end_num, A.start_time, A.end_time,ti1.img_url AS video_url,
         A.create_by, A.create_time, A.update_by, A.update_time,A.direction,A.small_car_num,A.truck_num,A.passenger_car_num,A.tanker_num,
         A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,
         B.event_type,C.tunnel_name, C.tunnel_station_name,B.icon_url,B.simplify_name

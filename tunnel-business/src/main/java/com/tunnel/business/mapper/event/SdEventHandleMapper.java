@@ -48,6 +48,13 @@ public interface SdEventHandleMapper
     public int updateSdEventHandle(SdEventHandle sdEventHandle);
 
     /**
+     * 设备管控下发设备成功时修改状态
+     * @param sdEventHandle
+     * @return
+     */
+    public int updateHandleState(SdEventHandle sdEventHandle);
+
+    /**
      * 删除事件处置信息
      * 
      * @param id 事件处置信息主键

@@ -89,6 +89,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateHandleState" parameterType="SdEventHandle">
+        update sd_event_handle
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flowId != null">flow_id = #{flowId},</if>
+            <if test="flowPid != null">flow_pid = #{flowPid},</if>
+            <if test="flowContent != null">flow_content = #{flowContent},</if>
+            <if test="eventState != null">event_state = #{eventState},</if>
+            <if test="reserveId != null">reserve_id = #{reserveId},</if>
+            <if test="flowSort != null">flow_sort = #{flowSort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where event_id = #{eventId} AND process_id = #{processId}
+    </update>
+
     <delete id="deleteSdEventHandleById" parameterType="Long">
         delete from sd_event_handle where id = #{id}
     </delete>

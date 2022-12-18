@@ -55,6 +55,9 @@
     }
     .btn-next,.btn-prev{
       height: 30px;
+      background-color: #326CA9;
+      color: white;
+      border: 1px solid #05AFE3;
     }
     .el-select .el-input .el-input__inner{
       height: 30px;
@@ -64,6 +67,12 @@
     }
     .el-pagination__total,.el-pagination__jump{
       color: #fff;
+    }
+    .el-input--medium .el-input__inner{
+      height: 30px;
+      background-color: #326CA9 !important;
+      color: white;
+      border: 1px solid #05AFE3;
     }
     // .el-input__inner{
     //   background-color: #326CA9;

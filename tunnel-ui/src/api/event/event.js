@@ -181,7 +181,7 @@ export function getHandle(query) {
   })
 }
 
-// 事件处置 下发
+// 事件处置 下发（改状态）
 export function updateHandle(query) {
   return request({
     url: '/event/updateHandle',
@@ -207,4 +207,22 @@ export function getAccidentPoint(query) {
     params: query
   })
 }
+
+// 一键 下发设备
+export function implementPlan(planId,eventId) {
+  return request({
+    url: '/plan/implementPlan?planId='+planId+'&eventId='+eventId,
+    method: 'get',
+  })
+}
+
+// 单点 下发设备
+export function implementProcess(processId,eventId) {
+  return request({
+    url: '/plan/implementProcess?processId='+ processId + '&eventId=' + eventId,
+    method: 'get',
+  })
+}
+
+
 

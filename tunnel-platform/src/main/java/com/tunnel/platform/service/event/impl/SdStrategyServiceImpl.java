@@ -101,7 +101,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private ISdEventFlowService sdEventFlowService;
 
-
+    @Autowired
+    private SdEventHandleMapper sdEventHandleMapper;
 
     /**
      * 查询控制策略
@@ -992,6 +993,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             issueResult = issuedDevice(rl,eventId);
             if(issueResult>0){
                 sdEventFlowService.savePlanProcessFlow(flowParam);
+                //更新事件处置记录表状态
+                updateHandleState(process.getId(),eventId);
             }
         }
         return issueResult;
@@ -1007,7 +1010,24 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int issueResult = issuedDevice(rl,eventId);
         if(issueResult>0){
             sdEventFlowService.savePlanProcessFlow(flowParam);
+            //更新事件处置记录表状态
+            updateHandleState(processId,eventId);
         }
         return issueResult;
+    }
+
+    /**
+     * 更新事件处置记录表状态
+     * @param processId
+     * @param eventId
+     */
+    public void updateHandleState(Long processId,Long eventId){
+        SdEventHandle sdEventHandle = new SdEventHandle();
+        sdEventHandle.setEventId(eventId);
+        sdEventHandle.setProcessId(processId);
+        //0:未完成 1:已完成'
+        sdEventHandle.setEventState("1");
+        sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+        sdEventHandleMapper.updateHandleState(sdEventHandle);
     }
 }

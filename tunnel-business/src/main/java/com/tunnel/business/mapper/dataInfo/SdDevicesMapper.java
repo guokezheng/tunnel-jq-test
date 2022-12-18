@@ -1,6 +1,7 @@
 package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
@@ -121,7 +122,7 @@ public interface SdDevicesMapper
 	 */
 	//public List<SdDevices> selectSdDevicesEqidList(Long eqHostId);
 
-	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") Long deptId);
+	public List<SdDevices> getAllPressureGaugesMsg(@Param("deptId") String deptId);
 
 	public List<Map<String, Object>> getDevicesStatus(@Param("tunnelId") String tunnelId);
 
@@ -169,12 +170,6 @@ public interface SdDevicesMapper
 
 	public List<Map<String,Object>> selectDeviceDataAndState(@Param("tunnelId") String tunnelId);
 
-	/**
-	 * 查询车道数
-	 * @return
-	 */
-	public int selectLaneSize();
-
 	public List<SdDevices> batchControlCarFinger(SdDevices sdDevices);
 
 	/*
@@ -203,4 +198,58 @@ public interface SdDevicesMapper
 	List<SdDevices> getDevicesList(@Param("tunnelId")String tunnelId,@Param("deviceType")String deviceType);
 
 	public List<String> getDevicesFireMarkList(SdDevices sdDevices);
+
+	/**
+	 * 批量获取设备信息
+	 * @param eqIds
+	 * @return
+	 */
+    List<SdDevices> batchGetDevicesList(String[] eqIds);
+
+	/**
+	 * 设备类型
+	 * @param tunnelId
+	 * @param eqStatus
+	 * @param faultStatus
+	 * @param falltRemoveStatue
+	 * @return
+	 */
+	List<Map<String, Object>> getEquipmentType(@Param("tunnelId") String tunnelId,
+											   @Param("eqStatus") String eqStatus,
+											   @Param("faultStatus") String faultStatus,
+											   @Param("falltRemoveStatue") String falltRemoveStatue);
+
+    List<SdDevicesBrand> getDevBrandList();
+
+	/**
+	 * app端获取设备列表
+	 * @param param
+	 * @param eqType
+	 * @param eqStatus
+	 * @return
+	 */
+    List<SdDevices> getAppDevicesList(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+
+	/**
+	 * 查询在线离线设备数量
+	 * @param param
+	 * @param eqType
+	 * @param eqStatus
+	 * @return
+	 */
+	List<SdDevices> getDevicesNum(@Param("param")String param,@Param("eqType") String eqType,@Param("eqStatus") String eqStatus);
+
+	/**
+	 * app端设备信息
+	 * @param eqId
+	 * @return
+	 */
+	List<SdDevices> getAppDevicesInfo(String eqId);
+
+	/**
+	 * app端查询设备状态
+	 * @param eqId
+	 * @return
+	 */
+    List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
 }

@@ -67,7 +67,7 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
      */
     @Override
     public List<SdXfwaterRecord> selectSdXfwaterRecordList(SdXfwaterRecord sdXfwaterRecord) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }
@@ -196,7 +196,7 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
      */
     @Override
     public List<Map<String, Object>> getAllPressureGaugesCollectedPerDay() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         return sdXfwaterRecordMapper.getAllPressureGaugesCollectedPerDay(deptId);
     }
 
@@ -220,7 +220,7 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
         List<SdDevices> devices = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         List<SdXfwaterRecord> status = new ArrayList<>();
         Date nowdate = new Date();
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         for (int i = 0; i < devices.size(); i++) {
             String equipmentId = devices.get(i).getEqId();
             SdXfwaterRecord recentRecordByEqId = sdXfwaterRecordMapper.getRecentRecordByEqId(equipmentId, deptId);
@@ -249,7 +249,7 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
         List<SdDevices> devices = sdDevicesMapper.selectDropSdDevicesList(sdDevices);
         Date nowdate = new Date();
         int count = 0;
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         for (int i = 0; i < devices.size(); i++) {
             String equipmentId = devices.get(i).getEqId();
             SdXfwaterRecord recentRecordByEqId = sdXfwaterRecordMapper.getRecentRecordByEqId(equipmentId, deptId);
@@ -295,7 +295,7 @@ public class SdXfwaterRecordServiceImpl implements ISdXfwaterRecordService {
             SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(tunnelId);
             params.put("tunnelName", sdTunnels.getTunnelName());
         }
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (statisticalType.equals("1")) {
             List<Map<String, Object>> list = new ArrayList<>();
             Map<String, Object> warn = new HashMap<>();

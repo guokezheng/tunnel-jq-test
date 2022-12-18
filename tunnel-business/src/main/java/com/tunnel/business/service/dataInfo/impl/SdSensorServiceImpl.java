@@ -40,7 +40,7 @@ public class SdSensorServiceImpl implements ISdSensorService {
      */
     @Override
     public List<SdSensor> selectSdSensorList(SdSensor sdSensor) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdSensor.getParams().put("deptId", deptId);
         return sdSensorMapper.selectSdSensorList(sdSensor);
     }

@@ -1,9 +1,11 @@
 package com.tunnel.business.service.emeResource;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 应急车辆Service接口
@@ -60,5 +62,18 @@ public interface ISdEmergencyVehicleService {
      */
     int deleteSdEmergencyVehicleById(Long id);
 
-    List<SdEmergencyOrg> getOrg();
+    List<Map<String, Object>> getOrg();
+
+    /**
+     * 同步应急车辆数据
+     * @return
+     */
+    String synVehicleData();
+
+    /**
+     * 查询车辆详情
+     * @param plateNumber
+     * @return
+     */
+    SdEmergencyVehicle getVehicleDetails(String plateNumber);
 }

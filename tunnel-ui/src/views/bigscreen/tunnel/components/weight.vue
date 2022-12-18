@@ -33,6 +33,15 @@ export default {
     },
     initChart() {
       var myChart = echarts.init(document.getElementById("EchartsBox"));
+      const chartData = [
+        { color: "#3880f5", data: 256, ratio: "99.2", value: "车辆慢行" },
+        { color: "#f2b557", data: 82, ratio: "0.17", value: "行人闯入" },
+        { color: "#60c2ce", data: 74, ratio: "0.15", value: "临时停车" },
+        { color: "#d22c5f", data: 60, ratio: "0.12", value: "火灾报警" },
+        { color: "#ed8d87", data: 60, ratio: "0.12", value: "设备故障" },
+        { color: "#00c8ff", data: 60, ratio: "0.12", value: "道路拥挤" },
+        { color: "#56b0f5", data: 60, ratio: "0.12", value: "车辆超速" },
+      ];
       var option;
       // 向上方列中拖入字段，可在代码中引用dataSet字段获取二维数组数据
       // img是内圈的4个黄色弧
@@ -44,11 +53,11 @@ export default {
         title: {
           zlevel: 0,
           subtext: "风险指标",
-          top: "43%",
-          left: "50%",
+          top: "40%",
+          left: "48%",
           textAlign: "center",
           subtextStyle: {
-            fontSize: 20,
+            fontSize: 16,
             color: "#fff",
           },
         },
@@ -85,18 +94,23 @@ export default {
             type: "pie",
             radius: ["56%", "60%"],
             center: ["50%", "50%"],
-            data: [],
+            data: chartData,
             labelLine: {
               length: 40,
               borderRadius: 34,
             },
             // 提示线设置
             label: {
-              formatter: " {per|{d}%} ",
+              formatter: function (params) {
+                console.log(params);
+                // params.percent + "
+                return params.percent + "%";
+              },
               backgroundColor: "rgba(0, 0, 0, 0)",
               borderColor: "rgba(0, 0, 0, 0)",
               borderWidth: 1,
               borderRadius: 4,
+              color: "#fff",
               rich: {
                 a: {
                   color: "#fff",
@@ -122,15 +136,7 @@ export default {
           },
         ],
       };
-      var chartData = [
-        { color: "#3880f5", data: 256, tilte: "车辆慢行" },
-        { color: "#f2b557", data: 82, ratio: "0.17", tilte: "行人闯入" },
-        { color: "#60c2ce", data: 74, ratio: "0.15", tilte: "临时停车" },
-        { color: "#d22c5f", data: 60, ratio: "0.12", tilte: "火灾报警" },
-        { color: "#ed8d87", data: 60, ratio: "0.12", tilte: "设备故障" },
-        { color: "#00c8ff", data: 60, ratio: "0.12", tilte: "道路拥挤" },
-        { color: "#56b0f5", data: 60, ratio: "0.12", tilte: "车辆超速" },
-      ];
+
       var total = 472;
       chartData.map((item) => {
         if (item.data > 0) {
@@ -147,7 +153,7 @@ export default {
               },
               {
                 value: 1, // 无颜色部分的宽度
-                name: "",
+                name: "asd",
                 itemStyle: {
                   normal: {
                     label: { show: false },

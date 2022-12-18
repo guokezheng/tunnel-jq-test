@@ -40,7 +40,7 @@ public class SdSafetyIndexServiceImpl implements ISdSafetyIndexService {
      */
     @Override
     public List<SdSafetyIndex> selectSdSafetyIndexList(SdSafetyIndex sdSafetyIndex) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdSafetyIndex.getParams().put("deptId", deptId);
         return sdSafetyIndexMapper.selectSdSafetyIndexList(sdSafetyIndex);
     }

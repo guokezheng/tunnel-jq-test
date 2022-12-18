@@ -77,7 +77,7 @@ public interface SdWarningInfoMapper
 
 	public List<SdWarningInfo> selectSdWarningList(SdWarningInfo sdWarningInfo);
 
-    public List<SdWarningInfo> getAllPressureGaugesWarningMsg(@Param("deptId") Long deptId);
+    public List<SdWarningInfo> getAllPressureGaugesWarningMsg(@Param("deptId") String deptId);
 
     public List<Map<String, Object>> selectWarningInfoMsgByYear(@Param("tunnelId") String tunnelId, @Param("year") String year, @Param("params") Map<String, Object> params);
 
@@ -87,9 +87,9 @@ public interface SdWarningInfoMapper
 
     public List<Map<String, Object>> getTheWarningDataOfToday(SdWarningInfo sdWarningInfo);
 
-    public List<String> sdWarningInfoMapper(@Param("deptId") Long deptId);
+    public List<String> sdWarningInfoMapper(@Param("deptId") String deptId);
 
-    public List<String> getTrafficIncident(@Param("deptId") Long deptId);
+    public List<String> getTrafficIncident(@Param("deptId") String deptId);
 
     public List<Map<String, Object>> statisticsSearchWarningDay(@Param("tunnelId") String tunnelId, @Param("startTime") String startTime);
 

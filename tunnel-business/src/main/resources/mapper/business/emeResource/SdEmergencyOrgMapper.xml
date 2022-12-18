@@ -24,17 +24,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <sql id="selectSdEmergencyOrg">
         select org_id,org_name, station_name, org_address, longitude, latitude, outsource_unit from sd_emergency_org
     </sql>
-    <select id="selectSdEmergencyOrgList" parameterType="SdEmergencyOrg" resultMap="SdEmergencyOrgResult">
-        <include refid="selectSdEmergencyOrgVo"/>
-        <where>  
-            <if test="orgName != null  and orgName != ''"> and org_name like concat('%', #{orgName}, '%')</if>
-            <if test="stationName != null  and stationName != ''"> and station_name like concat('%', #{stationName}, '%')</if>
-            <if test="orgAddress != null  and orgAddress != ''"> and org_address = #{orgAddress}</if>
-            <if test="longitude != null  and longitude != ''"> and longitude = #{longitude}</if>
-            <if test="latitude != null  and latitude != ''"> and latitude = #{latitude}</if>
-            <if test="outsourceUnit != null  and outsourceUnit != ''"> and outsource_unit = #{outsourceUnit}</if>
-        </where>
-    </select>
     
     <select id="selectSdEmergencyOrgByOrgId" parameterType="Long" resultMap="SdEmergencyOrgResult">
         <include refid="selectSdEmergencyOrg"/>
@@ -96,4 +85,57 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{orgId}
         </foreach>
     </delete>
+
+    <select id="selectSdEmergencyOrgList" parameterType="com.ruoyi.common.core.domain.entity.SysDept" resultType="com.ruoyi.common.core.domain.entity.SysDept">
+        SELECT DISTINCT
+            d.dept_id AS deptId,
+            d.parent_id AS parentId,
+            d.dept_name deptName,
+            d.leader,
+            d.phone,
+            d.email,
+            d.STATUS
+        FROM
+            sys_dept d
+        WHERE
+            1 = 1
+          AND d.parent_id = 'YG0'
+          AND d.del_flag = '0'
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="leader != null and leader != ''">
+            AND d.leader = #{leader}
+        </if>
+        <if test="deptName != null and deptName != ''">
+            AND INSTR(d.dept_name,#{deptName}) > 0
+        </if>
+        UNION ALL
+        SELECT DISTINCT
+            d.dept_id AS deptId,
+            d.parent_id AS parentId,
+            d.dept_name deptName,
+            d.leader,
+            d.phone,
+            d.email,
+            d.STATUS
+        FROM
+            sys_dept d
+        WHERE
+            1 = 1
+          AND INSTR(
+                      d.parent_id,
+                      ( SELECT d.dept_id FROM sys_dept d WHERE 1 = 1 AND d.parent_id = 'YG0' AND d.del_flag = '0' )
+                  ) > 0
+          AND d.del_flag = '0'
+        <if test="status != null and status != ''">
+            AND d.status = #{status}
+        </if>
+        <if test="leader != null and leader != ''">
+            AND d.leader = #{leader}
+        </if>
+        <if test="deptName != null and deptName != ''">
+            AND INSTR(d.dept_name,#{deptName}) > 0
+        </if>
+    </select>
 </mapper>

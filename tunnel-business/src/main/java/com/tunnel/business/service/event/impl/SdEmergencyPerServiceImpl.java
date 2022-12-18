@@ -50,7 +50,7 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
      */
     @Override
     public List<SdEmergencyPer> selectSdEmergencyPerList(SdEmergencyPer sdEmergencyPer) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdEmergencyPer.getParams().put("deptId", deptId);
         List<SdEmergencyPer> pers = sdEmergencyPerMapper.selectSdEmergencyPerList(sdEmergencyPer);
         List<SysDictData> dictData = sysDictDataMapper.selectDictDataByType("sd_emergency_post");
@@ -83,6 +83,7 @@ public class SdEmergencyPerServiceImpl implements ISdEmergencyPerService {
             logger.error("当前人员已经存在！");
             throw new RuntimeException("当前人员已经存在！");
         }
+        sdEmergencyPer.setCreateTime(DateUtils.getNowDate());
         return sdEmergencyPerMapper.insertSdEmergencyPer(sdEmergencyPer);
     }
 

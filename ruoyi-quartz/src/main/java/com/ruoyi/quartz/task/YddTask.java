@@ -16,6 +16,7 @@ import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -25,6 +26,10 @@ import java.util.*;
  */
 @Component("yddTask")
 public class YddTask {
+
+    @Value("${authorize.name}")
+    private String deploymentType;
+
     private static final Logger log = LoggerFactory.getLogger(YddTask.class);
 
     @Autowired
@@ -36,7 +41,7 @@ public class YddTask {
 
     public void handle() {
         //定时获取诱导灯当前状态
-        Long guidanceLampTypeId = Long.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode());
+        Long guidanceLampTypeId = Long.valueOf(DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode());
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(guidanceLampTypeId);
         List<SdDevices> guidanceLampDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -44,7 +49,8 @@ public class YddTask {
             SdDevices devices = guidanceLampDevicesList.get(i);
             if (devices.getIp() == null && devices.getPort() == null && ("").equals(devices.getIp())) {
                 continue;
-            } else {
+            } else if (deploymentType != null && deploymentType.equals("GLZ")) {
+                System.err.println("111111111111111");
                 //进行状态查询
 //                sendCommand(devices, devices.getIp(), devices.getPort());
             }
@@ -162,6 +168,20 @@ public class YddTask {
             return;
         }
         Integer port = Integer.valueOf(portAddress);
+        if (sdDevices.getBrandId() != null && !sdDevices.getBrandId().equals("0057")) {
+            Map codeMap = InductionlampUtil.getXianKeDeviceBrightness(ip, port);
+            if (codeMap == null || codeMap.isEmpty() || codeMap.get("brightness") == null || codeMap.get("brightness").toString() == "0") {
+                saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
+                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                return;
+            } else {
+                handleCodeMap(sdDevices, codeMap);
+                codeMap = InductionlampUtil.getXianKeDeviceFrequency(ip, port);
+                handleCodeMap(sdDevices, codeMap);
+                saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+            }
+            return;
+        }
         try {
             Map codeMap = InductionlampUtil.getNowOpenState(ip, port);
             String state = handleDeviceStatus(sdDevices, codeMap);

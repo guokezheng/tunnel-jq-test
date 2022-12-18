@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysDeptSgMapper">
+    
+    <resultMap type="com.ruoyi.common.core.domain.entity.SysDeptSg" id="SysDeptSgResult">
+        <result property="id"    column="id"    />
+        <result property="pid"    column="pid"    />
+        <result property="code"    column="code"    />
+        <result property="pCode"    column="p_code"    />
+        <result property="pids"    column="pids"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="sort"    column="sort"    />
+        <result property="spell"    column="spell"    />
+        <result property="hasLeaf"    column="has_leaf"    />
+        <result property="property"    column="property"    />
+        <result property="fullName"    column="full_name"    />
+        <result property="creator"    column="creator"    />
+        <result property="createDate"    column="create_date"    />
+        <result property="updater"    column="updater"    />
+        <result property="updateDate"    column="update_date"    />
+    </resultMap>
+
+    <sql id="selectSysDeptSgVo">
+        select id, pid, code, p_code, pids, name, type, sort, spell, has_leaf, property, full_name, creator, create_date, updater, update_date from sys_dept_sg
+    </sql>
+
+    <select id="selectSysDeptSgList" parameterType="com.ruoyi.common.core.domain.entity.SysDeptSg" resultMap="SysDeptSgResult">
+        <include refid="selectSysDeptSgVo"/>
+        <where>  
+            <if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="pCode != null  and pCode != ''"> and p_code = #{pCode}</if>
+            <if test="pids != null  and pids != ''"> and pids = #{pids}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="spell != null  and spell != ''"> and spell = #{spell}</if>
+            <if test="hasLeaf != null "> and has_leaf = #{hasLeaf}</if>
+            <if test="property != null  and property != ''"> and property = #{property}</if>
+            <if test="fullName != null  and fullName != ''"> and full_name like concat('%', #{fullName}, '%')</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+            <if test="updater != null  and updater != ''"> and updater = #{updater}</if>
+            <if test="updateDate != null "> and update_date = #{updateDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDeptSgById" parameterType="String" resultMap="SysDeptSgResult">
+        <include refid="selectSysDeptSgVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysDeptSg" parameterType="com.ruoyi.common.core.domain.entity.SysDeptSg">
+        insert into sys_dept_sg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="pid != null">pid,</if>
+            <if test="code != null">code,</if>
+            <if test="pCode != null">p_code,</if>
+            <if test="pids != null">pids,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="sort != null">sort,</if>
+            <if test="spell != null">spell,</if>
+            <if test="hasLeaf != null">has_leaf,</if>
+            <if test="property != null">property,</if>
+            <if test="fullName != null">full_name,</if>
+            <if test="creator != null">creator,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="updater != null">updater,</if>
+            <if test="updateDate != null">update_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="code != null">#{code},</if>
+            <if test="pCode != null">#{pCode},</if>
+            <if test="pids != null">#{pids},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="spell != null">#{spell},</if>
+            <if test="hasLeaf != null">#{hasLeaf},</if>
+            <if test="property != null">#{property},</if>
+            <if test="fullName != null">#{fullName},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="updater != null">#{updater},</if>
+            <if test="updateDate != null">#{updateDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDeptSg" parameterType="com.ruoyi.common.core.domain.entity.SysDeptSg">
+        update sys_dept_sg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="pCode != null">p_code = #{pCode},</if>
+            <if test="pids != null">pids = #{pids},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="spell != null">spell = #{spell},</if>
+            <if test="hasLeaf != null">has_leaf = #{hasLeaf},</if>
+            <if test="property != null">property = #{property},</if>
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="updater != null">updater = #{updater},</if>
+            <if test="updateDate != null">update_date = #{updateDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysDeptSgById" parameterType="String">
+        delete from sys_dept_sg where id = #{id}
+    </delete>
+
+    <delete id="deleteSysDeptSgByIds" parameterType="String">
+        delete from sys_dept_sg where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

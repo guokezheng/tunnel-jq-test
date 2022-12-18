@@ -30,6 +30,38 @@ public class SdDeviceData extends BaseEntity
     @Excel(name = "设备数据")
     private String data;
 
+    private Long deptId;
+
+    private String tunnelId;
+
+    private String searchValue;
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getTunnelId() {
+        return tunnelId;
+    }
+
+    public void setTunnelId(String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    @Override
+    public String getSearchValue() {
+        return searchValue;
+    }
+
+    @Override
+    public void setSearchValue(String searchValue) {
+        this.searchValue = searchValue;
+    }
+
     public void setId(Long id)
     {
         this.id = id;

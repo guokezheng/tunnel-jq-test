@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -274,6 +274,7 @@ import timingControl from "./components/timingControl"; //定时控制
 import autoControl from "./components/autoControl"; //自动触发
 import timeControl from "./components/timeControl"; //分时控制
 import cron from "@/components/cron/cron.vue";
+import {tunnelNames} from "@/api/event/reservePlan";
 export default {
   components: {
     manualControl,
@@ -284,6 +285,8 @@ export default {
   },
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       dialogVisible: false,
       index: 0,
       manualControlStateList: [], //当前选择设备状态选项
@@ -670,6 +673,9 @@ export default {
     /** 查询控制策略列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
         this.total = response.total;
@@ -870,6 +876,12 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+    }
+  }
 };
 </script>
   <style>
@@ -886,6 +898,6 @@ export default {
 <style scoped>
 .el-input--small .el-input__icon{
   height: 34px;
-} 
+}
 </style>
 

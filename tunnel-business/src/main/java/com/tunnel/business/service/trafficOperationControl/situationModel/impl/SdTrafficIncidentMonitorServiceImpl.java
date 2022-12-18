@@ -98,7 +98,7 @@ public class SdTrafficIncidentMonitorServiceImpl implements ISdTrafficIncidentMo
      */
     @Override
     public List<Map> getList(SdTrafficIncidentMonitor sdTrafficIncidentMonitor) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdTrafficIncidentMonitor.getParams().put("deptId", deptId);
 //        查询隧道实时车流量信息【暂时从交通流状态表中获取】 todo
         List<Map> list = sdTrafficIncidentMonitorMapper.getList(sdTrafficIncidentMonitor);

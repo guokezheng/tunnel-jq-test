@@ -128,7 +128,7 @@ public class SdDataTrafficDayServiceImpl implements ISdDataTrafficDayService {
 
     @Override
     public List<Map<String, Object>> getCarFlowNumberOfTodayGroupByTunnel() {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         List<Map<String, Object>> carFlowNumberOfTodayGroupByTunnel = sdDataTrafficDayMapper.getCarFlowNumberOfTodayGroupByTunnel(deptId);
         return carFlowNumberOfTodayGroupByTunnel;
     }

@@ -598,7 +598,7 @@ ul {
   width: 24vw;
   height: 1.9vw;
   /* border: solid 1px white; */
-  padding-left: 4vw;
+  padding-left: 1vw;
 }
 span {
   caret-color: rgba(0, 0, 0, 0);

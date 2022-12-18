@@ -95,7 +95,7 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
      */
     @Override
     public int updateSdEventType(MultipartFile[] file,SdEventType sdEventType) {
-        if (file.length > 0) {
+        if (file!=null) {
             for (int i = 0; i < file.length; i++) {
                 // 图片Base64
                 String imageBaseStr = null;
@@ -119,9 +119,10 @@ public class SdEventTypeServiceImpl implements ISdEventTypeService {
 //                String fileName = extendName;
                 sdEventType.setIconUrl(imageBaseStr);
             }
-        }else{
-            sdEventType.setIconUrl("");
         }
+//        else{
+//            sdEventType.setIconUrl("");
+//        }
         sdEventType.setUpdateTime(DateUtils.getNowDate());
         return sdEventTypeMapper.updateSdEventType(sdEventType);
     }

@@ -9,8 +9,8 @@
             sdet.event_type AS eventType,
             sdt.tunnel_name AS tunnelName,
             sde.start_time AS startTime,
-            sde.event_description AS eventDescription,
-            sde.event_title AS eventState
+            sde.event_title AS eventDescription,
+            sde.event_state AS eventState
         FROM
             sd_event sde
         LEFT JOIN sd_event_type sdet ON sde.event_type_id = sdet.id
@@ -55,7 +55,7 @@
             sd_event se
         WHERE
             1 = 1
-          AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) = DATE_FORMAT( '2022-11-08', '%Y-%m-%d' )
+          AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -71,7 +71,7 @@
             sd_fault_list sfl
         WHERE
             1 = 1
-          AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) = DATE_FORMAT( '2022-11-08', '%Y-%m-%d' )
+          AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
           <if test="tunnelId != null and tunnelId != ''">
               AND sfl.tunnel_id = #{tunnelId}
           </if>
@@ -269,12 +269,14 @@
         SELECT
             DATE_FORMAT(se.start_time,'%Y-%m-%d %H:%i:%S') AS eventTime,
             et.event_type AS eventType,
-            sdd.dict_label AS eventState
+            sdd.dict_label AS eventState,
+            t.tunnel_name AS tunnelName
         FROM
             sd_event se
             LEFT JOIN sd_event_type et ON se.event_type_id = et.id
+            LEFT JOIN sd_tunnels t ON se.tunnel_id = t.tunnel_id
             LEFT JOIN sys_dict_data sdd ON se.event_state = sdd.dict_value
-            AND sdd.dict_type = 'sd_event_state'
+            AND sdd.dict_type = #{sdEventState}
             LEFT JOIN sys_dict_data sdd1 ON et.prev_control_type = sdd1.dict_value
             AND sdd1.dict_type = #{prevControlType}
         WHERE
@@ -286,9 +288,11 @@
         SELECT
             sfl.fault_fxtime AS eventTime,
             sdd1.dict_label AS eventType,
-            sdd2.dict_label AS eventState
+            sdd2.dict_label AS eventState,
+            t.tunnel_name AS tunnelName
         FROM
             sd_fault_list sfl
+                LEFT JOIN sd_tunnels t ON sfl.tunnel_id = t.tunnel_id
                 LEFT JOIN sys_dict_data sdd1 ON sfl.fault_type = sdd1.dict_value
                 AND sdd1.dict_type = #{faultType}
                 LEFT JOIN sys_dict_data sdd2 ON sfl.fallt_remove_statue = sdd2.dict_value
@@ -389,5 +393,37 @@
         <if test="tunnelId != null and tunnelId != ''">
             AND sep.tunnel_id = #{tunnelId}
         </if>
+    </select>
+
+    <select id="getEmergencyVehicle" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            ev.plate_number AS plateNumber,
+            ev.v_type AS vType,
+            IFNULL(t.tunnel_name,'') AS tunnelName
+        FROM
+            sd_emergency_vehicle ev
+                LEFT JOIN sd_tunnels t ON ev.org_id = t.dept_id
+        WHERE
+            1 =1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND t.tunnel_id = #{tunnelId}
+        </if>
+    </select>
+
+    <select id="getAlarmInformation" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            e.event_title AS eventTitle,
+            DATE_FORMAT(e.start_time,'%Y-%m-%d %H:%i:%S') AS startTime,
+            IFNULL(e.video_url,'') AS videoUrl
+        FROM
+            sd_event e
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND e.tunnel_id = #{tunnelId}
+        </if>
+        ORDER BY
+            e.start_time DESC
+        LIMIT 50
     </select>
 </mapper>

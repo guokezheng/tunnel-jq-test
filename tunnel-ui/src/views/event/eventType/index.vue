@@ -8,27 +8,27 @@
       label-width="68px"
     >
       <el-form-item label="事件类型" prop="eventType">
-          <el-input
-            v-model="queryParams.eventType"
-            placeholder="请输入事件类型"
-            clearable
-            size="small"
-            @keyup.enter.native="handleQuery"
-          />
-<!--        <el-select-->
-<!--          v-model="queryParams.eventType"-->
-<!--          placeholder="请选择事件类型"-->
-<!--          clearable-->
-<!--          size="small"-->
-<!--          style="width: 180px"-->
-<!--        >-->
-<!--          <el-option-->
-<!--            v-for="item in eventTypeData"-->
-<!--            :key="item.id"-->
-<!--            :label="item.eventType"-->
-<!--            :value="item.eventType"-->
-<!--          />-->
-<!--        </el-select>-->
+        <el-input
+          v-model="queryParams.eventType"
+          placeholder="请输入事件类型"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+        <!--        <el-select-->
+        <!--          v-model="queryParams.eventType"-->
+        <!--          placeholder="请选择事件类型"-->
+        <!--          clearable-->
+        <!--          size="small"-->
+        <!--          style="width: 180px"-->
+        <!--        >-->
+        <!--          <el-option-->
+        <!--            v-for="item in eventTypeData"-->
+        <!--            :key="item.id"-->
+        <!--            :label="item.eventType"-->
+        <!--            :value="item.eventType"-->
+        <!--          />-->
+        <!--        </el-select>-->
       </el-form-item>
       <el-form-item label="防控类型" prop="prevControlType">
         <el-select
@@ -48,10 +48,10 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
-          >搜索</el-button
+        >搜索</el-button
         >
         <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
+        >重置</el-button
         >
         <el-button
           type="primary"
@@ -59,7 +59,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:eventType:add']"
-          >新增</el-button
+        >新增</el-button
         >
         <el-button
           type="primary"
@@ -77,7 +77,7 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['system:eventType:remove']"
-          >删除</el-button
+        >删除</el-button
         >
       </el-form-item>
     </el-form>
@@ -145,7 +145,7 @@
       <el-table-column label="事件类型ID" align="center" prop="id" />
       <el-table-column label="防控类型" align="center"  >
         <template slot-scope="scope">
-           <span>{{ getPrevControlType(scope.row.prevControlType) }}</span>
+          <span>{{ getPrevControlType(scope.row.prevControlType) }}</span>
         </template>
 
       </el-table-column>
@@ -180,7 +180,7 @@
             class="tableDelButtton"
             @click="handleDelete(scope.row)"
             v-hasPermi="['system:eventType:remove']"
-            >删除</el-button
+          >删除</el-button
           >
         </template>
       </el-table-column>
@@ -237,7 +237,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisible"  class="modifyEqTypeDialog"
-          :append-to-body="true" style="width:600px !important;margin: 0 auto;"
+                     :append-to-body="true" style="width:600px !important;margin: 0 auto;"
           >
             <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
@@ -413,6 +413,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.dialogOkDisabled = false;
       this.reset();
       var that = this;
       that.fileList = [];
@@ -450,22 +451,22 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.dialogOkDisabled = true
+      // this.dialogOkDisabled = true
+      this.fileData = new FormData(); // new formData对象
+      this.$refs.upload.submit(); // 提交调用uploadFile函数
+      this.fileData.append("eventType", this.form.eventType); //类型名称
+      this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
+      this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
 
-        this.fileData = new FormData(); // new formData对象
-        this.$refs.upload.submit(); // 提交调用uploadFile函数
-        this.fileData.append("eventType", this.form.eventType); //类型名称
-        this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
-        // this.fileData.append("uid", this.form.uid); //类型名称
+      // this.fileData.append("uid", this.form.uid); //类型名称
 
-        this.$refs["form"].validate((valid) => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if(this.fileList.length <= 0) {
             return this.$modal.msgWarning('请选择要上传的图标')
           }
           if (this.form.id != null) {
             this.fileData.append("id", this.form.id);
-
             this.fileData.append("removeIds", this.removeIds);
             this.fileData.append("iconUrl", this.form.iconUrl);
             updateEventType(this.fileData).then((response) => {

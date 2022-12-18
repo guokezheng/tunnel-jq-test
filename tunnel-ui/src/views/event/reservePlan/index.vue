@@ -7,7 +7,7 @@
       :model="queryParams"
       label-width="68px"
     >
-      <el-form-item label="所属隧道" prop="tunnelId">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择所属隧道"
@@ -703,7 +703,7 @@ import {
   getRl,
 } from "@/api/event/strategy";
 import { listType, getTypeAndStrategy } from "@/api/equipment/type/api.js";
-import { getTunnels } from "@/api/equipment/tunnel/api.js";
+import {getJlyTunnel, getTunnels} from "@/api/equipment/tunnel/api.js";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { fastLerp } from "zrender/lib/tool/color";
 import {
@@ -719,6 +719,10 @@ export default {
   },
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+      paramsData : {
+        tunnelId: ""
+      },
       deviceList: [], //需要操作的设备以及状态数据
       previewList: [], //预览数据
       checkStrictly: {
@@ -896,7 +900,10 @@ export default {
     this.getTunnelData(this.tunnelId);
     this.lightSwitchFunc();
     this.ceshiTime();
-    tunnelNames().then((res) => {
+    if(this.$cache.local.get("manageStation") == "1"){
+      this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+    }
+    tunnelNames(this.paramsData).then((res) => {
       this.eqTunnelData = res.rows;
       console.log(this.eqTunnelData, "111");
       this.eqTunnelData.forEach((item) => {
@@ -1058,6 +1065,7 @@ export default {
     openWorkbench(row) {
       this.tunnelId = row.tunnelId;
       this.$nextTick(() => {
+        this.$refs.workBench.currentClass = "red";
         this.$refs.workBench.id = row.id;
         this.$refs.workBench.tunnelId = this.tunnelId;
         this.$refs.workBench.init();
@@ -1554,6 +1562,9 @@ export default {
     /** 查询预案信息列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listPlan(this.queryParams).then((response) => {
         this.planList = response.rows;
         console.log(this.planList, "========");
@@ -1626,6 +1637,22 @@ export default {
       });
     }, */
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      tunnelNames(this.paramsData).then((res) => {
+        this.eqTunnelData = res.rows;
+        console.log(this.eqTunnelData, "111");
+        this.eqTunnelData.forEach((item) => {
+          item.sdTunnelSubareas.forEach((item, index) => {
+            this.eqTunnelDataList.push(item);
+          });
+        });
+      });
+    }
+  }
 };
 </script>
 <style>

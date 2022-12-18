@@ -76,7 +76,12 @@ public enum DictTypeEnum {
     /**
      * 故障消除状态
      */
-    fault_remove_statue("fault_remove_statue","故障消除状态");
+    fault_remove_statue("fault_remove_statue","故障消除状态"),
+
+    /**
+     * 设备系统
+     */
+    eq_system("eq_system","设备系统");
 
     DictTypeEnum(String code,String name){
         this.code = code;

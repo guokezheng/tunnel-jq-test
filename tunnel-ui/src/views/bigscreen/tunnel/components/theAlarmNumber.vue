@@ -19,12 +19,20 @@
       <div ref="echartsBox" class="box-left" id="theAlarmNumber"></div>
       <div class="box-center UnificationBox">
         <div class="progressBar progress">
-          <p>已处置：</p>
-          <span>{{ hasDisposal }}%</span>
+          <p>处理中：</p>
+          <span>{{ eventProportion[0].percentage }}%</span>
         </div>
         <div class="progressBarNot progress">
-          <p>未处置：</p>
-          <span>{{ notDDisposedOf }}%</span>
+          <p>已处理：</p>
+          <span>{{ eventProportion[1].percentage }}%</span>
+        </div>
+        <div class="progressBarNot progress">
+          <p>忽略：</p>
+          <span>{{ eventProportion[2].percentage }}%</span>
+        </div>
+        <div class="progressBarNot progress">
+          <p>未处理：</p>
+          <span>{{ eventProportion[3].percentage }}%</span>
         </div>
       </div>
       <div class="box-right">
@@ -62,7 +70,15 @@
             <el-col style="padding-right: 1vw">{{
               item.eventDescription
             }}</el-col>
-            <el-col style="width: 20vw">{{ item.eventType }}</el-col>
+            <el-col style="width: 20vw">{{
+              item.eventState == 0
+                ? "处理中"
+                : item.eventState == 1
+                ? "已处理"
+                : item.eventState == 2
+                ? 忽略
+                : "未处理"
+            }}</el-col>
           </el-row>
         </vue-seamless-scroll>
       </div>
@@ -80,6 +96,7 @@ export default {
   props: {},
   data() {
     return {
+      eventProportion: "",
       fullscreenLoading: false,
       currentData: { all: 100 },
       hasDisposal: "",
@@ -128,8 +145,14 @@ export default {
         .then((res) => {
           console.log(res.data);
           this.currentData.listData = res.data.list;
-          this.hasDisposal = res.data.eventProportion[1].percentage;
-          this.notDDisposedOf = res.data.eventProportion[3].percentage;
+          this.eventProportion = res.data.eventProportion;
+          let data = ["处理中", "已处理", "忽略", "未处理"];
+          data.forEach((items) => {
+            this.eventProportion.forEach((element) => {
+              element.name = items;
+              element.value = element.percentage;
+            });
+          });
         })
         .then((res) => {
           this.$nextTick(() => {
@@ -147,7 +170,8 @@ export default {
       // var fontColor = "#fff";
       // let noramlSize = 16;
       var datas = {
-        value: this.hasDisposal,
+        value: this.eventProportion[1].percentage,
+        name: "已处理",
         company: "%",
         ringColor: [
           {
@@ -201,8 +225,8 @@ export default {
             hoverAnimation: false,
             data: [
               {
-                value: datas.value,
-                name: "",
+                value: this.eventProportion[1].percentage,
+                name: "已处理",
                 itemStyle: {
                   normal: {
                     color: {
@@ -219,8 +243,58 @@ export default {
                 },
               },
               {
-                name: "",
-                value: 100 - datas.value,
+                value: this.eventProportion[3].percentage,
+                name: "未处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[2].percentage,
+                name: "忽略",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[0].percentage,
+                name: "处理中",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: datas.ringColor,
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
               },
             ],
           },
@@ -241,12 +315,112 @@ export default {
             },
             data: [
               {
-                name: "已处置",
-                value: this.hasDisposal,
+                value: this.eventProportion[1].percentage,
+                name: "已处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#7afcbc", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#1dcc78", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
               },
               {
-                name: "未处置",
-                value: this.notDDisposedOf,
+                value: this.eventProportion[3].percentage,
+                name: "未处理",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#f9bf1e", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#f74001", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[2].percentage,
+                name: "忽略",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#12cff6", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#80f7aa", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
+              },
+              {
+                value: this.eventProportion[0].percentage,
+                name: "处理中",
+                itemStyle: {
+                  normal: {
+                    color: {
+                      // 完成的圆环的颜色
+                      colorStops: [
+                        {
+                          offset: 0,
+                          color: "#8af7ea", // 0% 处的颜色
+                        },
+                        {
+                          offset: 1,
+                          color: "#2acfbe", // 100% 处的颜色
+                        },
+                      ],
+                    },
+                    label: {
+                      show: false,
+                    },
+                    labelLine: {
+                      show: false,
+                    },
+                  },
+                },
               },
             ],
           },
@@ -297,9 +471,13 @@ export default {
       justify-content: space-between;
       padding-right: 0.5vw;
       align-items: center;
-      height: 114px;
+      height: 205px;
       position: relative;
-      top: 33%;
+      top: 4%;
+      flex-flow: wrap;
+      .progress {
+        width: 50%;
+      }
       .title {
         margin-bottom: 0.5vw;
       }

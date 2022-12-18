@@ -52,7 +52,7 @@ public class SdMaterialServiceImpl implements ISdMaterialService {
      */
     @Override
     public List<SdMaterial> selectSdMaterialList(SdMaterial sdMaterial) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdMaterial.setDeptId(deptId);
         List<SdMaterial> sdMaterialsList = sdMaterialMapper.selectSdMaterialList(sdMaterial);
         if (sdMaterialsList.size() > 0 && sdMaterial.getStation() != null && sdMaterial.getEndStation() != null

@@ -172,6 +172,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+    <insert id="batchInsertPatrol" parameterType="sdPatrolList">
+        insert into sd_patrol_list(id,task_id,eq_fault_id,patrol_type,eq_name,position,create_time,xc_sort,xc_status)
+        values
+        <foreach collection="list"  separator="," item="patrol" index="index">
+            (
+            #{patrol.id},
+            #{patrol.taskId},
+            #{patrol.eqFaultId},
+            #{patrol.patrolType},
+            #{patrol.eqName},
+            #{patrol.position},
+            SYSDATE(),
+            #{patrol.xcSort},
+            #{patrol.xcStatus}
+            )
+        </foreach>
+    </insert>
+
     <delete id="batchDeletePatrolListByTaskId" parameterType="String">
         delete from sd_patrol_list where task_id = #{id}
     </delete>
@@ -183,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getPatrolListsInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
-    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
+    select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,p.xc_sort,
     p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,f.tunnel_id,u.tunnel_name, t.bz_id,t.walker_id,s.state_name as run_status,a.state_name as eq_status
     from sd_patrol_list p
     left join sd_task_list t on t.id = p.task_id
@@ -199,8 +217,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
 
-    <select id="countPatrolNum" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">
-        select count(id) from sd_patrol_list where task_id = #{id}
+
+
+    <select id="getDevicesPatrolLists" resultType="hashmap">
+    select p.eq_fault_id eq_id,p.patrol_type patrol_type,p.eq_name eq_name,p.position pile,p.xc_sort xc_sort,t.tunnel_name tunnel_name,q.type_name type_name,p.eq_fault_description dict_lable
+    from sd_patrol_list p
+    left join sd_devices d on p.eq_fault_id = d.eq_id
+    left join sd_tunnels t on d.eq_tunnel_id = t.tunnel_id
+    left join sd_equipment_type q on q.type_id = d.eq_type
+    where p.task_id = #{task_id}  and p.patrol_type = '0'
+    </select>
+
+
+
+    <select id="getFaultPatrolLists" resultType="hashmap" >
+    select p.eq_fault_id eq_id,p.patrol_type patrol_type,p.eq_name eq_name,p.position pile,p.xc_sort xc_sort,t.tunnel_name tunnel_name,y.dict_label type_name,p.eq_fault_description dict_lable
+    from sd_patrol_list p
+    left join sd_fault_list f on p.eq_fault_id = f.id
+    left join sd_tunnels t on f.tunnel_id = t.tunnel_id
+    left join sys_dict_data y on y.dict_value = f.fault_type
+    where p.task_id = #{task_id} and p.patrol_type = '1' and y.dict_type = 'fault_type'
+    </select>
+
+
+    <select id="countPatrolNum" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskList">
+        select count(id) totalNum from sd_patrol_list where task_id = #{id}
     </select>
 
     <select id="getPatrolInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
@@ -221,6 +262,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where task_id = #{taskId}
     </select>
 
+
+
+    <update id="savePatrol" parameterType="SdPatrolList">
+        update sd_patrol_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="eqFaultId != null">eq_fault_id = #{eqFaultId},</if>
+            <if test="patrolType != null">patrol_type = #{patrolType},</if>
+            <if test="eqName != null">eq_name = #{eqName},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="impression != null">impression = #{impression},</if>
+            <if test="network != null">network = #{network},</if>
+            <if test="power != null">power = #{power},</if>
+            <if test="eqStatus != null">eq_status = #{eqStatus},</if>
+            <if test="runStatus != null">run_status = #{runStatus},</if>
+            <if test="eqFaultCode != null">eq_fault_code = #{eqFaultCode},</if>
+            <if test="eqFaultDescription != null">eq_fault_description = #{eqFaultDescription},</if>
+            <if test="faultClstatus != null">fault_clstatus = #{faultClstatus},</if>
+            <if test="xcTime != null">xc_time = #{xcTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="xcSort != null">xc_sort = #{xcSort},</if>
+            <if test="xcStatus != null">xc_status = #{xcStatus},</if>
+            <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
 
 
 </mapper>

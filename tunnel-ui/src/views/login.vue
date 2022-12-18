@@ -88,6 +88,9 @@ import { encrypt, decrypt } from "@/utils/jsencrypt";
 import Verify from "@/components/Verifition/Verify";
 import { getCaptchaOnOff } from "@/api/login";
 import { listOrder } from "@/api/payment/order";
+import { getUserDeptId } from "@/api/system/user";
+import { listTunnels } from "@/api/equipment/tunnel/api.js";
+import { getConfigKey } from "@/api/system/config.js";
 
 export default {
   components: { Verify },
@@ -117,6 +120,7 @@ export default {
       // 注册开关
       register: false,
       redirect: undefined,
+
     };
   },
   watch: {
@@ -186,11 +190,18 @@ export default {
           .dispatch("Login", this.loginForm)
           .then(() => {
             this.$router.push({ path: this.redirect || "/" }).catch(() => {});
+            this.getManageStation();
           })
           .catch(() => {
             this.loading = false;
           });
       }
+    },
+    getManageStation() {
+       getConfigKey("sd.moduleSwitch").then((res) => {
+          console.log(res,"管理站01");
+          this.$cache.local.set("manageStation",res.msg)
+        });
     },
   },
 };

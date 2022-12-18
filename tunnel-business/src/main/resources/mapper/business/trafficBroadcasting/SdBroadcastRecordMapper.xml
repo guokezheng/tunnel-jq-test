@@ -41,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="numberOfBroadcasts != null  and numberOfBroadcasts != ''"> and a.number_of_broadcasts = #{numberOfBroadcasts}</if>
             <if test="recordingAddress != null  and recordingAddress != ''"> and a.recording_address = #{recordingAddress}</if>
         </where>
+        order by a.create_time desc
     </select>
     
     <select id="selectSdBroadcastRecordById" parameterType="Long" resultMap="SdBroadcastRecordResult">

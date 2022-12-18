@@ -18,9 +18,9 @@
             @change="changeSite"
             placeholder="请选择"
             size="mini"
-            class="siteClass"
+            :class="manageStation=='1'?'siteClassDisabled':'siteClass'"
             popper-class="popper-class-site"
-            v-show="!isManagementStation"
+            v-show="(!isManagementStation)"
           />
           <el-button-group
             class="menu-button-group"
@@ -343,11 +343,11 @@
                               : ''
                           "
                         />
-                        <img 
+                        <img
                          v-show="item.eqType == '31'"
                         style="position: absolute"
                           :style="{
-                            
+
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
@@ -421,7 +421,7 @@
                             padding-left: 5px;
                             width: 100px;
                             text-align: left;
-                            transform: translateY(5px);
+                            transform: translate(30px,5px);
                           "
                           v-if="item.eqType == 5 || item.eqType == 18"
                         >
@@ -863,7 +863,7 @@
                 <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
                   item.eventType.eventType
                 }}事件 -->
-                <div 
+                <div
                   style="width:300px;
                   overflow: hidden;
                   white-space: nowrap;
@@ -872,7 +872,7 @@
                   ">
                   {{item.eventTitle}}</div>
                 <div style="color:#D0CECE;font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
-                
+
               </el-col>
             </el-row>
           </vue-seamless-scroll>
@@ -2722,6 +2722,7 @@ import {
   setCorLight,
   updateCarFinger,
   getDeviceDataAndState,
+  getJlyTunnel,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2762,11 +2763,7 @@ import * as echarts from "echarts";
 import { listUser, getUserDeptId } from "@/api/system/user";
 import * as deviceApi from "@/api/equipment/device/api";
 import { listLog } from "@/api/system/log";
-import {
-  listDept,
-  listDeptExcludeChild,
-  roleDeptTreeselect,
-} from "@/api/system/dept";
+import {listDept, listDeptExcludeChild, roleDeptTreeselect, getTreeByDeptId} from "@/api/system/dept";
 import bg from "@/assets/cloudControl/right_button.png";
 import hoverbg from "@/assets/cloudControl/right_button_hover2.png";
 import {
@@ -2789,6 +2786,7 @@ import {
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
+import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -2818,8 +2816,10 @@ export default {
     comData,
     comYoudao,
   },
+
   data() {
     return {
+      manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
       carList: [],
@@ -2966,11 +2966,20 @@ export default {
 
       selectSite: "",
       siteList: null,
-      siteProps: {
+      linealDeptTree: [],
+      /*siteProps: {
         value: "deptId",
         label: "deptName",
         children: "children",
+      },*/
+
+      siteProps: {
+        value: "id",
+        label: "label",
+        children: "children",
       },
+
+
       seamless: false, //情报板轮播
       /* ---------火灾报警---------------*/
       alarmBell: false, //是否启用报警铃声
@@ -3158,7 +3167,8 @@ export default {
       hostIP: null,
       userDeptId: null,
       tunnelQueryParams: {
-        deptId: this.userDeptId,
+        deptId: "",
+        deptName: "",
       },
       userQueryParams: {
         userName: this.$store.state.user.name,
@@ -3479,6 +3489,8 @@ export default {
     },
   },
   created: function () {
+    this.getUserDept();
+
     this.getDicts("sd_direction").then((data) => {
       console.log(data, "方向");
       this.directionList = data.data;
@@ -3491,7 +3503,7 @@ export default {
     getLocalIP().then((response) => {
       this.hostIP = response;
     });
-    this.getUserDept();
+
     // this.getTunnelList();
     // this.selectEquipmentType()
     // this.initWebSocket()
@@ -3513,9 +3525,13 @@ export default {
       console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
     });
-    this.getDicts("sd_wj_vehicle_type").then((data) => {
+    /*this.getDicts("sd_wj_vehicle_type").then((data) => {
       console.log(data, "车型列表");
       this.vehicleTypeList = data.data;
+    });*/
+    getVehicleSelectList({}).then((response) => {
+      console.log(response, "车辆类型");
+      this.vehicleTypeList = response;
     });
     this.getTunnelState();
     // this.carchange();
@@ -3524,6 +3540,37 @@ export default {
   },
 
   watch: {
+    tunnelList: function (newVal, oldVal) {
+      console.log(newVal, "8888888888888888");
+    },
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
+
+      if (this.manageStation == "1") {
+        getJlyTunnel().then((res) => {
+          var arr = [];
+          for (let item of res.data) {
+            if (newVal == item.tunnelId) {
+              var atr = item.ancestors.slice(2);
+              arr = atr.split(",");
+              arr.push(item.deptId);
+              this.tunnelQueryParams.deptId = item.deptId;
+              this.changeSite(arr);
+            }
+          }
+        });
+      }
+      console.log(11111111111111);
+      this.getTunnelList();
+    },
+    // "$store.state.manage.manageStation": function (newVal, oldVal) {
+    //   console.log(newVal, "监听到啦监听到啦监听到啦监听到啦监听到啦");
+    //   if(newVal == )
+    //   this.manageStation == '0'
+    //   this.$cache.local.set("manageStationSelect", newVal);
+    //   this.getTunnelList()
+    // },
+
     sdEventList(event) {
       // console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
@@ -4011,8 +4058,8 @@ export default {
     // 车型通过字典表获取值
     getCheXing(num) {
       for (var item of this.vehicleTypeList) {
-        if (num == Number(item.dictValue)) {
-          return item.dictLabel;
+        if (num == Number(item.vehicleTypeCode)) {
+          return item.vehicleTypeName;
         }
       }
     },
@@ -4260,9 +4307,9 @@ export default {
       });
     },
     /** 查询部门列表 */
-    getDeptList() {
+    /*getDeptList() {
       var that = this;
-      var id = this.tunnelQueryParams.deptId;
+      var id = this.userDeptId;
       var iid = "";
       const params = {
         status: 0,
@@ -4271,6 +4318,8 @@ export default {
         .then((response) => {
           var list = that.handleTree(response.data, "deptId");
           console.log(list, "级联选择器格式");
+          let arr = [];
+          this.checkData(list[0], arr);
           function a(list) {
             list.forEach((item) => {
               if (item.deptId == id) {
@@ -4280,31 +4329,96 @@ export default {
               }
             });
           }
-
           a(list);
         })
-        .then(() => {
-          that.siteList.filter((item) => {
-            if (item.children) {
-              item.children.forEach((val) => {
-                iid ? "" : (iid = val.deptId);
-                that.tunnelQueryParams.deptId == iid
-                  ? ""
-                  : (that.tunnelQueryParams.deptId = iid);
-              });
-            } else {
-              iid ? "" : (iid = item.deptId);
-              that.tunnelQueryParams.deptId == iid
-                ? ""
-                : (that.tunnelQueryParams.deptId = iid);
-            }
-          });
-        })
+        // .then(() => {
+        //   that.siteList.filter((item) => {
+        //     if (item.children) {
+        //       item.children.forEach((val) => {
+        //         iid ? "" : (iid = val.deptId);
+        //         that.tunnelQueryParams.deptId == iid
+        //           ? ""
+        //           : (that.tunnelQueryParams.deptId = iid);
+        //       });
+        //     } else {
+        //       iid ? "" : (iid = item.deptId);
+        //       that.tunnelQueryParams.deptId == iid
+        //         ? ""
+        //         : (that.tunnelQueryParams.deptId = iid);
+        //     }
+        //     console.log(that.tunnelQueryParams.deptId,"3333333333333333333333")
+        //   });
+        // })
         .then(() => {
           // 获取隧道
+          console.log(22222222222);
+
           that.getTunnelList();
+          if (this.manageStation == "1") {
+            // that.tunnelQueryParams.deptId == "555503";
+
+            let arr = ["6266", "5555", "555503"];
+            this.changeSite(arr);
+          }
           that.siteList.length == 0 ? (that.isManagementStation = true) : "";
         });
+    },*/
+    getDeptList() {
+      var userDeptId = this.userDeptId;
+      const params = {status: 0};
+      getTreeByDeptId(params).then(response => {
+          const options = response.data;
+          let childs = []
+          function a(list) {
+            list.forEach(item => {
+              if (item.id == userDeptId) {
+                childs = item.children || [];
+              } else {
+                item.children && a(item.children);
+              }
+            });
+          }
+          a(options);
+          if (childs.length==0) {
+            this.siteList = options[0].children;
+          }else{
+            this.siteList = childs
+          }
+          let arr = [];
+          this.checkData(this.siteList[0], arr);
+        }).then(() => {
+          this.getTunnelList();
+          if (this.manageStation == "1") {
+            let arr = ["6266", "5555", "555503"];
+            this.changeSite(arr);
+          }
+        });
+    },
+
+    /*checkData(obj, arr) {
+      if (obj.children && obj.children.length > 0) {
+        arr.push(obj.deptId);
+        this.checkData(obj.children[0], arr);
+      } else {
+        arr.push(obj.deptId);
+        arr.shift();
+        this.changeSite(arr);
+
+        this.$forceUpdate();
+      }
+    },*/
+
+    checkData(obj, arr) {
+      if (obj.children && obj.children.length > 0) {
+        arr.push(obj.id);
+        this.checkData(obj.children[0], arr);
+      } else {
+        arr.push(obj.id);
+        arr.shift();
+        this.changeSite(arr);
+
+        this.$forceUpdate();
+      }
     },
     // 获取最近24小时时间数组
     getTimeData() {
@@ -4321,15 +4435,18 @@ export default {
           result.push(h);
         }
         return result.reverse();
-        console.log();
       }
 
       return hourArr;
     },
     // 改变站点
     changeSite(index) {
+      console.log(index, "index------------------------1");
       if (index) {
         this.tunnelQueryParams.deptId = index[index.length - 1];
+        this.$forceUpdate();
+        console.log(3333333333);
+
         this.getTunnelList();
         // this.srollAuto()
       }
@@ -4459,16 +4576,12 @@ export default {
 
     // 缩略图开关
     changeThumbnail(val) {
-      console.log(val, "val");
       var vehicleLane = document.getElementsByClassName("vehicleLane");
       var footer = document.getElementsByClassName("footer");
-      console.log(vehicleLane, "vehicleLane");
-      console.log(footer, "footer");
       if (!val) {
         vehicleLane[0].style.height = "87%";
         footer[1].style.height = "0%";
       } else {
-        console.log(footer);
         vehicleLane[0].style.removeProperty("height");
         this.initEharts();
       }
@@ -5128,8 +5241,10 @@ export default {
     getUserDept() {
       getUserDeptId(this.userQueryParams).then((response) => {
         console.log(response, "管理站级联");
+
         this.userDeptId = response.rows[0].deptId;
-        this.tunnelQueryParams.deptId = response.rows[0].deptId;
+        // this.tunnelQueryParams.deptId = response.rows[0].deptId;
+
         this.getDeptList();
       });
     },
@@ -5156,7 +5271,6 @@ export default {
     },
     lightSwitchFunc() {
       this.getConfigKey("lightSwitch").then((response) => {
-        console.log(response, "responseresponseresponse");
         this.lightSwitch = response.msg;
       });
     },
@@ -5269,7 +5383,6 @@ export default {
       if (boxEqList.length > 0 && this.boxTypeList.length > 0) {
         if (boxEqList.length == 1 && boxEqList[0].eqlist.length == 1) {
           //单个配置
-          // console.log(boxEqList[0].eqlist[0])
           this.openStateSwitch(boxEqList[0].eqlist[0]);
         } else {
           //超过1个设备进行批量配置
@@ -5397,6 +5510,7 @@ export default {
 
     /* 查询隧道列表 */
     getTunnelList() {
+      console.log(this.tunnelQueryParams, "44444444444");
       listTunnels(this.tunnelQueryParams).then((response) => {
         console.log(response, "查询隧道列表");
         if (!response.rows[0]) {
@@ -5417,7 +5531,7 @@ export default {
           this.dictList = this.dict.type.sd_sys_name;
           // this.robotShow = true;
         }
-        this.tunnelList = [];
+        // this.tunnelList = [];
         this.checkboxTunnel = [];
         let list = response.rows;
         if (list.length > 0) {
@@ -5427,12 +5541,27 @@ export default {
               list[i].tunnelLength = num.toString();
             }
           }
-          this.tunnelList = list;
-          this.checkboxTunnel.push(this.tunnelList[0]);
-          this.currentTunnel.id = this.tunnelList[0].tunnelId;
-          this.currentTunnel.name = this.tunnelList[0].tunnelName;
-          this.selectEquipmentType(this.currentTunnel.id);
-          this.getTunnelData(this.currentTunnel.id);
+          // this.buttonIndex = 0;
+          if (this.manageStation == "0") {
+            this.tunnelList = [];
+            this.tunnelList = list;
+            this.checkboxTunnel.push(list[0]);
+            this.currentTunnel.id = list[0].tunnelId;
+            this.currentTunnel.name = list[0].tunnelName;
+            this.selectEquipmentType(this.currentTunnel.id);
+            this.getTunnelData(this.currentTunnel.id);
+          } else {
+            for (let i = 0; i < list.length; i++) {
+              if (
+                list[i].tunnelId == this.$cache.local.get("manageStationSelect")
+              ) {
+                this.tunnelList = [];
+                this.tunnelList.push(list[i]);
+                this.checkboxTunnel.push(list[i]);
+                this.setTunnel(list[i], 0);
+              }
+            }
+          }
         }
         this.getTunnelLane();
         // this.timingControl()
@@ -5598,6 +5727,7 @@ export default {
       };
       this.carchange(tunnelId);
       getTunnels(tunnelId).then((response) => {
+        console.log(response, "获取隧道配置信息");
         that.loading = false;
         let res = response.data.storeConfigure;
         //存在配置内容
@@ -5705,7 +5835,6 @@ export default {
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29
                 ) {
-                  console.log(item, "000000000000000000000");
                   // this.dictList = this.dict.type.sd_sys_name;
                   this.robotShow = true;
                 } else {
@@ -6025,6 +6154,10 @@ export default {
     },
     /* 选择隧道*/
     setTunnel(item, index) {
+      // if(this.manageStation == "0" && item.tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+      //   this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-HSD");
+      //   return;
+      // }
       this.buttonIndex = index;
       this.tunnelNameEarlyWarn = item.tunnelName;
       this.tunnelId = item.tunnelId;
@@ -6068,10 +6201,6 @@ export default {
         this.lane = tunnel.lane;
         this.tunnelLength = length; //px长度
         this.proportion = math.divide(length / (Mileage * 1000)); //计算px和米的比例
-        console.log(
-          this.proportion,
-          "this.proportionthis.proportionthis.proportionthis.proportion"
-        );
       });
       // 首页获取隧道长度，根据隧道长度判断车辆行驶的全部距离
     },
@@ -6208,13 +6337,11 @@ export default {
           for (let itm of this.selectedIconList) {
             // console.log(itm);
             if (itm.eqId == item.eqId) {
-              console.log(itm, "0000000000000000000000000");
               itm.click = true;
               this.itemEqId.push(itm.eqId);
               this.itemEqType = itm.eqType;
               this.batchManageForm.eqType = itm.eqType;
               this.batchManageForm.eqDirection = itm.eqDirection;
-              console.log(this.batchManageForm);
               this.$forceUpdate();
               getType(itm.eqType).then((res) => {
                 console.log(res, "查询设备图标宽高");
@@ -6349,8 +6476,6 @@ export default {
         //     eqDirection: item.eqDirection,
         //     state: "", //默认状态
         //     pile: item.pile,
-        //     eqFeedbackAddress1: item.eqFeedbackAddress1,
-        //     eqFeedbackAddress2: item.eqFeedbackAddress2,
         //   };
         //   this.title = item.eqName;
         //   // this.cameraVisible = true;
@@ -8502,7 +8627,13 @@ input {
   color: #c0ccda !important;
   font-weight: bold;
 }
-
+::v-deep .siteClassDisabled {
+  pointer-events: none;
+  margin-left: 16px;
+  .el-input__suffix-inner {
+    pointer-events: none !important;
+  }
+}
 /* 级联选择器 */
 //  ::v-deep  .siteClass {
 //   line-height: unset;
@@ -8698,6 +8829,15 @@ input {
 }
 </style>
 <style lang="scss">
+.popper-class-site {
+  .el-cascader-menu__wrap {
+    max-width: 245px;
+
+  }
+  .el-cascader-node__postfix {
+      right: 18px !important;
+    }
+}
 .tipCase.el-tooltip__popper[x-placement^="left"] .popper__arrow:after {
   display: none !important;
 }

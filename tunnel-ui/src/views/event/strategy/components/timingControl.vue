@@ -7,37 +7,41 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
         <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="方向" prop="direction">
             <el-select
               clearable
               v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
+              placeholder="请选择方向"
               @change="changeEvent()"
+              style="width: 95%"
             >
               <el-option
                 v-for="dict in directionOptions"
@@ -47,48 +51,24 @@
               />
             </el-select>
           </el-form-item>
-          <!-- <el-form-item style="margin-top: -10px; margin-bottom: 0px">
-            <cron
-              v-show="showCronBox"
-              v-model.trim="strategyForm.schedulerTime"
-              ref="cron"
-              @changeValue="changeValue"
-            ></cron>
-            <span style="color: #e6a23c; font-size: 12px"
-              >corn从左到右（用空格隔开）：秒 分 小时 月份中的日期 月份
-              星期中的日期 年份</span
+        </el-col>
+        <el-col :span="24">
+          <el-form-item
+            label="cron表达式"
+            prop="schedulerTime"
+            style="width: 92%"
+          >
+            <el-input
+              v-model="strategyForm.schedulerTime"
+              placeholder="请输入cron执行表达式"
             >
-          </el-form-item> -->
-          <el-form-item style="width: 90%">
-            <el-form-item label="cron表达式" prop="schedulerTime">
-              <el-input
-                v-model="strategyForm.schedulerTime"
-                placeholder="请输入cron执行表达式"
-              >
-                <template slot="append">
-                  <el-button type="primary" @click="handleShowCron">
-                    生成表达式
-                    <i class="el-icon-time el-icon--right"></i>
-                  </el-button>
-                </template>
-              </el-input>
-            </el-form-item>
-            <!-- <el-input v-model="strategyForm.schedulerTime" auto-complete="off">
-              <el-button
-                slot="append"
-                v-if="!showCronBox"
-                icon="el-icon-arrow-up"
-                @click="showCronBox = true"
-                title="打开图形配置"
-              ></el-button>
-              <el-button
-                slot="append"
-                v-else
-                icon="el-icon-arrow-down"
-                @click="showCronBox = false"
-                title="关闭图形配置"
-              ></el-button>
-            </el-input> -->
+              <template slot="append">
+                <el-button type="primary" @click="handleShowCron">
+                  生成表达式
+                  <i class="el-icon-time el-icon--right"></i>
+                </el-button>
+              </template>
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -98,10 +78,10 @@
           :key="index"
         >
           <div>
-            <el-form-item style="width: 100%; margin-top: 20px">
+            <el-form-item style="width: 100%">
               <el-input
                 @click.native="openEqDialog2($event, index)"
-                style="width: 40%; margin-top: 20px"
+                style="width: 40%"
                 v-model="dain.typeName"
                 placeholder="请点击选择控制类型"
               />
@@ -218,7 +198,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import {
   listJob,
@@ -260,6 +240,9 @@ export default {
   data() {
     return {
       expression: "",
+      paramsData : {
+        tunnelId: ""
+      },
       openCron: false,
       id: "", //策略id
       submitChooseEqFormLoading: false,
@@ -616,7 +599,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });
@@ -659,6 +645,6 @@ export default {
   },
 };
 </script>
-  
+
   <style>
 </style>

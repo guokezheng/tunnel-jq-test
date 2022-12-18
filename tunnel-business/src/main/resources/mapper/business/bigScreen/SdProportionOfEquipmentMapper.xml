@@ -18,15 +18,13 @@
         SELECT
             count(*) AS number,
             eq_status as eqStatus,
-            concat((
-                       (
-                           ROUND(
-                                   ROUND(( count(*) / ( SELECT count(*) FROM `sd_devices` WHERE 1 = 1 AND eq_status IS NOT NULL AND eq_status != '' )), 3 ),
-                                   2
-                               )) * 100
-                   ),
-               '%'
-            ) as percentage
+            CONCAT(
+                ROUND(
+                    ROUND(( count(*) / ( SELECT count(*) FROM `sd_devices` WHERE 1 = 1 AND eq_status IS NOT NULL AND eq_status != '' )), 5 ) * 100,
+                        2
+                    ),
+                '%'
+            ) AS percentage
         FROM
             `sd_devices`
         WHERE

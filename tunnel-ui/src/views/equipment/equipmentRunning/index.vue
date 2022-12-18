@@ -128,12 +128,6 @@
       <!-- <el-table-column label="设备类型" align="center" prop="eqType" :formatter="eqTypeFormat" /> -->
       <el-table-column label="设备类型" align="center" prop="typeName.typeName"/>
       <!-- <el-table-column label="照明灯类型" align="center" prop="eqLampType" :formatter="eqLampTypeFormat" /> -->
-     <!-- <el-table-column label="点位地址1" align="center" prop="eqFeedbackAddress1" />
-      <el-table-column label="点位地址2" align="center" prop="eqFeedbackAddress2" />
-      <el-table-column label="点位地址3" align="center" prop="eqFeedbackAddress3" />
-      <el-table-column label="点位地址4" align="center" prop="eqFeedbackAddress4" />
-      <el-table-column label="点位地址5" align="center" prop="eqFeedbackAddress5" /> -->
-      <!-- <el-table-column label="控制点位地址" align="center" prop="eqControlPointAddress" /> -->
       <el-table-column label="设备状态" align="center" prop="deviceState" :formatter="deviceStateFormat" />
       <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <!-- <el-table-column label="创建者" align="center" prop="createBy" />
@@ -241,31 +235,6 @@
                       :value="parseInt(dict.dictValue)"
                     ></el-option>
                   </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="点位地址1" prop="eqFeedbackAddress1">
-                  <el-input v-model="form.eqFeedbackAddress1" placeholder="请输入点位地址1" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="点位地址2" prop="eqFeedbackAddress2">
-                  <el-input v-model="form.eqFeedbackAddress2" placeholder="请输入点位地址2" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="点位地址3" prop="eqFeedbackAddress3">
-                  <el-input v-model="form.eqFeedbackAddress3" placeholder="请输入点位地址3" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="点位地址4" prop="eqFeedbackAddress4">
-                  <el-input v-model="form.eqFeedbackAddress4" placeholder="请输入点位地址4" />
-                </el-form-item>
-              </el-col>
-              <el-col :span="12">
-                <el-form-item label="点位地址5" prop="eqFeedbackAddress5">
-                  <el-input v-model="form.eqFeedbackAddress5" placeholder="请输入点位地址5" />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -442,12 +411,8 @@ export default {
         stakeMark: null,
         eqType: null,
         eqLampType: null,
-        eqFeedbackAddress1: null,
-        eqFeedbackAddress2: null,
-        eqFeedbackAddress3: null,
-        eqFeedbackAddress4: null,
-        eqFeedbackAddress5: null,
-        eqControlPointAddress: null,
+        queryPointAddress: null,
+        controlPointAddress: null,
         deviceState: null,
         remark: null,
         createBy: null,

@@ -2,6 +2,8 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import java.util.List;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdPointList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 
 /**
  * 巡查点清单Mapper接口
@@ -67,6 +69,15 @@ public interface SdPatrolListMapper
      */
     int batchInsertPatrolList(List<SdPatrolList> sdPatrolList, String id);
 
+
+    /**
+     * 批量添加巡查点信息
+     * @param sdPatrolList
+     * @param
+     * @return
+     */
+    int batchInsertPatrol(List<SdPatrolList> sdPatrolList);
+
     /**
      * 根据任务id删除巡查点
      * @param id
@@ -93,7 +104,7 @@ public interface SdPatrolListMapper
      * @param id
      * @return
      */
-    int countPatrolNum(String id);
+    SdTaskList countPatrolNum(String id);
 
     /**
      * app 获取巡检点清单
@@ -108,4 +119,25 @@ public interface SdPatrolListMapper
      * @return
      */
     List<SdPatrolList> isFaultEnd(String taskId);
+
+    /**
+     * 修改，，获取巡检点信息
+     * @param id
+     * @return
+     */
+    List<SdPointList> getDevicesPatrolLists(String id);
+
+    /**
+     * 修改，，获取故障点信息
+     * @param id
+     * @return
+     */
+    List<SdPointList> getFaultPatrolLists(String id);
+
+    /**
+     * 巡查点检修情况保存
+     * @param sdPatrolList
+     * @return
+     */
+    int savePatrol(SdPatrolList sdPatrolList);
 }

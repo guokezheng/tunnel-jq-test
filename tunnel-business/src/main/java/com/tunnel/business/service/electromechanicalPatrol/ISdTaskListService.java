@@ -7,21 +7,22 @@ import com.ruoyi.common.core.domain.TreeSelect;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * 巡查任务Service接口
- * 
+ *
  * @author ruoyi
  * @date 2022-11-04
  */
-public interface ISdTaskListService 
+public interface ISdTaskListService
 {
     /**
      * 查询巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 巡查任务
      */
@@ -29,7 +30,7 @@ public interface ISdTaskListService
 
     /**
      * 查询巡查任务列表
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 巡查任务集合
      */
@@ -37,23 +38,23 @@ public interface ISdTaskListService
 
     /**
      * 新增巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int insertSdTaskList(SdTaskList sdTaskList, List<SdPatrolList>sdPatrolList);
+    public int insertSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 修改巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
-    public int updateSdTaskList(SdTaskList sdTaskList,List<SdPatrolList>sdPatrolList);
+    public int updateSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 批量删除巡查任务
-     * 
+     *
      * @param ids 需要删除的巡查任务主键集合
      * @return 结果
      */
@@ -61,7 +62,7 @@ public interface ISdTaskListService
 
     /**
      * 删除巡查任务信息
-     * 
+     *
      * @param id 巡查任务主键
      * @return 结果
      */
@@ -86,7 +87,7 @@ public interface ISdTaskListService
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(Long deptId);
+    List<SysDept> selectTableBzDataInfo(String deptId);
 
     /**
      * 构建前端所需要下拉树结构
@@ -106,14 +107,14 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(SdTaskList sdTaskList);
 
     /**
      * 查询任务关联的巡查点数量
      * @param id
      * @return
      */
-    int countPatrolNum(String id);
+    SdTaskList countPatrolNum(String id);
 
     /**
      * app端接收任务
@@ -134,5 +135,33 @@ public interface ISdTaskListService
      * @param taskId
      * @return
      */
-    List<SdTaskList> getTaskSiteCondition(String taskId);
+    String  getTaskSiteCondition(String taskId);
+
+    /**
+     * 获取任务关联巡检点信息
+     * @param id
+     * @return
+     */
+    Map getUpdatePatrolLists(String id);
+
+    /**
+     * 操作记录
+     * @param taskId
+     * @return
+     */
+    List<SdTaskOpt> getTaskOpt(String taskId);
+
+    /**app 端暂存本地
+     *
+     * @param sdTaskList
+     * @return
+     */
+    int saveLocal(SdTaskList sdTaskList);
+
+    /**巡查点检修情况保存
+     *
+     * @param sdPatrolList
+     * @return
+     */
+    int savePatrol(SdPatrolList sdPatrolList);
 }

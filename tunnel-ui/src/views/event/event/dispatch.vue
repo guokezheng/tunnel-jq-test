@@ -91,20 +91,6 @@
                   "
                 >
                 <!-- v-show="
-                      (item.eqType != 7 &&
-                        item.eqType != 16 &&
-                        item.eqType != 15 &&
-                        item.eqType != 9 &&
-                        item.display == true) ||
-                      ((item.eqType == 7 ||
-                        item.eqType == 8 ||
-                        item.eqType == 9 ||
-                        item.eqType == 21) &&
-                        item.display == true &&
-                        lightSwitch == 1)
-                    " -->
-                  <div
-                  v-show="
                           (item.eqType != 7 &&
                             item.eqType != 16 &&
                             item.eqType != 15 &&
@@ -117,70 +103,57 @@
                             item.eqType == 21) &&
                             item.display == true &&
                             lightSwitch == 1)
-                        "
+                        " -->
+                  <div
+
                     :class="{ focus: item.focus }"
                   >
-                    <!-- <img
-                      v-for="(url, indexs) in item.url"
-                      style="position: relative"
-                      :style="
-                        item.eqType || item.eqType == 0
-                          ? 'cursor: pointer;'
-                          : ''
-                      "
-                      :width="item.iconWidth / 1.26"
-                      :height="item.iconHeight / 1.26"
-                      :key="item.eqId + indexs"
-                      :src="url"
-                    /> -->
                     <img
-                        v-show="item.eqType != '31'"
-                          v-for="(url, indexs) in item.url"
-                          style="position: absolute"
-                          :style="{
-                            left: indexs * 14 + 'px',
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                          :width="item.iconWidth"
-                          :height="item.iconHeight"
-                          :key="item.eqId + indexs"
-                          :src='url'
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          "
-                        />
-                        <img 
-                         v-show="item.eqType == '31'"
+                      v-show="item.eqType != '31'"
+                        v-for="(url, indexs) in item.url"
                         style="position: absolute"
-                          :style="{
-                            
-                            cursor:
-                              item.eqType || item.eqType == 0 ? 'pointer' : '',
-                            border:
-                              item.click == true ? 'solid 2px #09C3FC' : '',
-                            transform:
-                              item.eqType == 23 && item.eqDirection == 0
-                                ? 'scale(-1,1)'
-                                : '',
-                          }"
-                          :width="item.iconWidth"
-                          :height="item.iconHeight"
-                          :src= getTypePic(item)
-                          :class="
-                            item.eqName == screenEqName
-                              ? 'screenEqNameClass'
-                              : ''
-                          ">
-                        </img>
+                        :style="{
+                          left: indexs * 14 + 'px',
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth"
+                        :height="item.iconHeight"
+                        :key="item.eqId + indexs"
+                        :src='url'
+                        :class="
+                          item.eqName == screenEqName
+                            ? 'screenEqNameClass'
+                            : ''
+                        "
+                      />
+                      <img 
+                      v-show="item.eqType == '31'"
+                      style="position: absolute"
+                        :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                          transform:
+                            item.eqType == 23 && item.eqDirection == 0
+                              ? 'scale(-1,1)'
+                              : '',
+                        }"
+                        :width="item.iconWidth / 1.3"
+                        :height="item.iconHeight"
+                        :src= getTypePic(item)
+                        :class="
+                          item.eqName == screenEqName
+                            ? 'screenEqNameClass'
+                            : ''
+                        " />
                   </div>
                 </div>
               </div>
@@ -246,6 +219,24 @@
                         :key="item.tunnelId"
                         :label="item.tunnelName"
                         :value="item.tunnelId"
+                      />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="8">
+                  <el-form-item label="方向" prop="direction">
+                    <el-select
+                      v-model="eventForm.direction"
+                      placeholder="请选择方向"
+                      clearable
+                      size="small"
+                      disabled
+                    >
+                      <el-option
+                        v-for="item in directionList"
+                        :key="item.dictValue"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
                       />
                     </el-select>
                   </el-form-item>
@@ -928,9 +919,10 @@ export default {
         if (eqType == item.stateTypeId && Number(item.deviceState) == state) {
           console.log(item.stateName);
           return item.stateName;
-        } else {
-          continue;
         }
+        //  else {
+        //   continue;
+        // }
       }
     },
     getDirection(num) {
@@ -969,9 +961,9 @@ export default {
       }
     },
     getEqUrl(list) {
-      let that = this;
+      // let that = this;
       // that.eqTypeStateList = [];
-      that.eqTypeStateList = [];
+      this.eqTypeStateList = [];
       for (let i = 0; i < list.length; i++) {
         let iconUrl = [];
         if (list[i].iFileList != null) {
@@ -981,7 +973,7 @@ export default {
             iconUrl.push(img);
           }
         }
-        that.eqTypeStateList.push({
+        this.eqTypeStateList.push({
           stateType: list[i].stateType,
           type: list[i].stateTypeId,
           state: list[i].deviceState,
@@ -990,7 +982,7 @@ export default {
           url: iconUrl,
         });
       }
-      for (var item of that.eqTypeStateList) {
+      for (var item of this.eqTypeStateList) {
         if (item.type == 18) {
           console.log(item, "引道照明");
         }
@@ -1013,7 +1005,9 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  // 5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 31, 32, 33, 35,
+                  5,
+                  14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -1146,6 +1140,7 @@ export default {
     // 预览按钮
     getPreview(row) {
       this.$nextTick(() => {
+        this.$refs.workBench.eventId = this.$route.query.id;
         this.$refs.workBench.id = row.id; //预案ID
         this.$refs.workBench.tunnelId = this.eventMsg.tunnelId;
         this.$refs.workBench.init();
@@ -1233,6 +1228,8 @@ export default {
       await getTunnels(tunnelId).then((response) => {
         this.startPile = response.data.startPileNum;
         this.endPile = response.data.endPileNum;
+        const rightStartPile = response.data.endPileNum;
+        const rightEndPile = response.data.startPileNum;
         console.log(this.startPile, this.endPile, "隧道开始桩号和结束桩号");
         let res = response.data.storeConfigure;
         //存在配置内容
@@ -1246,72 +1243,150 @@ export default {
           }
           listType()
             .then((response) => {
-              var arr = [];
-              for (let item1 of response.rows) {
-                for (let item of res.eqList) {
-                  item.focus = false;
-                  if (item1.typeId == item.eqType) {
-                    item.iconWidth = Number(item1.iconWidth);
-                    item.iconHeight = Number(item1.iconHeight);
-                    arr.push(item);
+              // var arr = [];
+              for (let i = 0; i < res.eqList.length; i++) {
+                res.eqList[i].focus = false;
+                for (let j = 0; j < response.rows.length; j++) {
+                  if (response.rows[j].typeId == res.eqList[i].eqType) {
+                    let iconWidth = Number(response.rows[j].iconWidth);
+                    let iconHeight = Number(response.rows[j].iconHeight);
+                    res.eqList[i].iconWidth = iconWidth;
+                    res.eqList[i].iconHeight = iconHeight;
+                    break;
                   }
                 }
               }
-              this.selectedIconList = arr; //这是最终需要挂载到页面上的值
+              this.selectedIconList = res.eqList; //这是最终需要挂载到页面上的值
+              that.getRealTimeData();
               for (let p = 0; p < this.selectedIconList.length; p++) {
                 for (let i = 0; i < this.planList1.length; i++) {
                   let axx = this.selectedIconList[p];
                   let bxx = this.planList1[i];
-                  //如果分区的最小值 == 隧道的最小值
-                  if (bxx.pileMin == this.startPile) {
-                    if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
-                      // 定义获取最大值的left
-                      var leftMax = axx.position.left;
-                      var leftMin = 0;
-                      // console.log(leftMax, "66666666666666");
-                      var deviceWidth = Number(leftMax) - Number(leftMin);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.top = deviceHeight;
-                      bxx.left = leftMin;
-                      // console.log(bxx, "bxx");
+                  // 1济南 上行
+                  if (bxx.direction == "1") {
+                    // console.log(bxx.sName);
+                    if (bxx.pileMin == rightEndPile) {
+                      console.log(bxx.pileMin, "------i-----");
+                      if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                        var leftMax = Number(1640);
+                        var leftMin = axx.position.left;
+                        console.log(leftMax, leftMin, bxx.sName);
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
+                      //如果分区的最大值 == 隧道的最大值
+                    } else if (bxx.pileMax == rightStartPile) {
+                      if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                        var leftMax = axx.position.left;
+                        var leftMin = 0;
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
                     }
-                    //如果分区的最大值 == 隧道的最大值
-                  } else if (bxx.pileMax == this.endPile) {
-                    if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
-                      console.log(axx, axx.eqName, "bxx");
-                      var leftMax = Number(1640);
-                      var leftMin = axx.position.left;
-                      console.log(leftMax, leftMin, bxx.sName);
-                      var deviceWidth = Number(leftMax) - Number(leftMin);
-                      var deviceHeight = axx.position.top;
-                      bxx.width = deviceWidth;
-                      bxx.height = deviceHeight;
-                      bxx.top = deviceHeight;
-                      bxx.left = leftMin;
-                    }
+                    // else {
+                    //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMin = axx.position.left;
+                    //     bxx.deviceHeight = axx.position.top;
+                    //   }
+                    //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMax = axx.position.left;
+                    //   }
+                    // }
                   } else {
-                    if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
-                      bxx.leftMin = axx.position.left;
-                      bxx.deviceHeight = axx.position.top;
+                    // 0博山 下行
+                    if (bxx.pileMin == this.endPile) {
+                      if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                        // 定义获取最大值的left
+                        var leftMax = axx.position.left;
+                        var leftMin = 0;
+                        var deviceWidth = Number(leftMax) - Number(leftMin);
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = Number(deviceHeight);
+                        bxx.left = leftMin;
+                      }
+                      //如果分区的最大值 == 隧道的开始值
+                    } else if (bxx.pileMax == this.startPile) {
+                      // 如果设备桩号相等
+                      if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                        // console.log(axx, axx.eqName, "bxx");
+                        // var leftMax = Number(1640);
+                        var leftMin = Number(axx.position.left);
+                        var deviceWidth = leftMin;
+                        var deviceHeight = axx.position.top;
+                        bxx.width = deviceWidth;
+                        bxx.height = deviceHeight;
+                        bxx.top = deviceHeight;
+                        bxx.left = leftMin;
+                      }
                     }
-                    if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
-                      bxx.leftMax = axx.position.left;
-                    }
+                    // else {
+                    //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMin = axx.position.left;
+                    //     bxx.deviceHeight = axx.position.top;
+                    //   }
+                    //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                    //     bxx.leftMax = axx.position.left;
+                    //   }
+                    // }
                   }
+
+                  // end
+                  //如果分区的最小值 == 隧道的最小值
+                  // if (bxx.pileMin == this.startPile) {
+                  //   if (axx.pileNum == bxx.pileMax && axx.eqType == "12") {
+                  //     // 定义获取最大值的left
+                  //     var leftMax = axx.position.left;
+                  //     var leftMin = 0;
+                  //     var deviceWidth = Number(leftMax) - Number(leftMin);
+                  //     var deviceHeight = axx.position.top;
+                  //     bxx.width = deviceWidth;
+                  //     bxx.height = deviceHeight;
+                  //     bxx.top = deviceHeight;
+                  //     bxx.left = leftMin;
+                  //   }
+                  //   //如果分区的最大值 == 隧道的最大值
+                  // } else if (bxx.pileMax == this.endPile) {
+                  //   if (axx.pileNum == bxx.pileMin && axx.eqType == "12") {
+                  //     console.log(axx, axx.eqName, "bxx");
+                  //     var leftMax = Number(1640);
+                  //     var leftMin = axx.position.left;
+                  //     console.log(leftMax, leftMin, bxx.sName);
+                  //     var deviceWidth = Number(leftMax) - Number(leftMin);
+                  //     var deviceHeight = axx.position.top;
+                  //     bxx.width = deviceWidth;
+                  //     bxx.height = deviceHeight;
+                  //     bxx.top = deviceHeight;
+                  //     bxx.left = leftMin;
+                  //   }
+                  // } else {
+                  //   if (bxx.pileMin == axx.pileNum && axx.eqType == "12") {
+                  //     bxx.leftMin = axx.position.left;
+                  //     bxx.deviceHeight = axx.position.top;
+                  //   }
+                  //   if (bxx.pileMax == axx.pileNum && axx.eqType == "12") {
+                  //     bxx.leftMax = axx.position.left;
+                  //   }
+                  // }
                 }
               }
               this.planList1.forEach((item, index) => {
-                // if (item.leftMax != undefined && item.leftMin != undefined) {
-                // var deviceWidth = Number(item.leftMax) - Number(item.leftMin);
-                // item.width = deviceWidth;
-                // item.height = item.deviceHeight;
-                // item.top = item.deviceHeight;
-                // item.left = item.leftMin;
-                // }
                 if (item.direction == "1") {
                   item.top = 0;
+                  // item.height = 200;
+                  item.show = true;
+                } else {
+                  item.top = item.top + 60;
+                  // item.height = 200;
                 }
               });
               this.planListEnd = this.planList1;
@@ -2051,5 +2126,9 @@ export default {
 }
 .handle {
   cursor: pointer;
+}
+.screenEqNameClass {
+  border: solid 2px #09c3fc;
+  border-radius: 4px;
 }
 </style>

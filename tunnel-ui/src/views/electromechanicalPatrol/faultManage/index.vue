@@ -146,6 +146,7 @@
       <el-table-column
         label="操作"
         align="center"
+        width="300px"
         class-name="small-padding fixed-width"
       >
         <template slot-scope="scope">
@@ -153,7 +154,6 @@
             size="mini"
             class="tableBlueButtton"
             @click="handleCheckDetail(scope.row)"
-            :style="{ display: scope.row.faultStatus==0?'none':'' }"
             v-hasPermi="['system:list:edit']"
           >故障详情</el-button>
           <el-button
@@ -162,6 +162,14 @@
             @click="recordQuery(scope.row)"
           >
             检修记录
+          </el-button>
+          <el-button
+            size="mini"
+            class="tableBlueButtton"
+            @click="exportFaultReport(scope.row)"
+            :style="{ display: scope.row.faultStatus==0?'':'none' }"
+          >
+            检修报告
           </el-button>
           <el-button
             size="mini"
@@ -223,7 +231,7 @@
 
           <el-col :span="8">
             <el-form-item label="故障类型" prop="faultType">
-              <el-select v-model="form.faultType" :disabled="disstate" placeholder="请选择所属隧道">
+              <el-select v-model="form.faultType" :disabled="disstate" placeholder="请选择故障类型">
                 <el-option
                   v-for="item in faultTypeOptions"
                   :key="item.dictValue"
@@ -249,8 +257,8 @@
                 size="small"
                 :disabled="disstate"
                 v-model="form.faultFxtime"
-                type="date"
-                value-format="yyyy-MM-dd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障发现时间"
               >
               </el-date-picker>
@@ -261,7 +269,7 @@
               <el-input
                 :disabled="disstate"
                 v-model="form.faultCxtime"
-                placeholder="请输入故障持续时间"
+                placeholder="请按照天/小时/分格式填写"
               />
             </el-form-item>
           </el-col>
@@ -272,8 +280,8 @@
                 size="small"
                 :disabled="disstate"
                 v-model="form.faultTbtime"
-                type="date"
-                value-format="yyyy-MM-dd"
+                type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障填报时间"
               >
               </el-date-picker>
@@ -417,9 +425,9 @@
     <el-dialog
       :visible.sync="record"
       width="70%" >
-      <div style="text-align: center;">故障检修记录</div>
-      <div class="card"   v-for="item in news" >
-        <div class="card-col" id ="firstRow">
+      <div style="text-align: center;font-size: 18px;">故障检修记录</div>
+      <div class="card" v-if="news.length>0"   v-for="item in news" >
+        <div class="card-col" style = "font-size: 16px">
           <div>
             巡检时间:
             <span>{{item.xcTime}}</span>
@@ -433,7 +441,7 @@
             <span>{{ item.walkerId }}</span>
           </div>
         </div>
-        <div class="card-col" id ="secondRow">
+        <div class="card-col" style = "font-size: 16px">
           <div>
             外观情况:
             <span>{{ item.impression }}</span>
@@ -447,7 +455,7 @@
             <span>{{item.power}}</span>
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           <div>
             设备运行状态:
             <span style="margin:6%;">设备状态:{{item.eqStatus}}</span><span> 设备运行状态:{{item.runStatus}}</span>
@@ -456,7 +464,7 @@
             (检修时检测情况)
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           <div>
             现场故障情况:
             <span>{{item.eqFaultDescription}}</span>
@@ -465,11 +473,16 @@
             (检修时检测情况)
           </div>
         </div>
-        <div class="card-cols">
+        <div class="card-cols" style = "font-size: 16px">
           现场图片:
           <div  v-for="pic in item.iFileList">
             <img :src="pic.imgUrl" :title="pic.imgName">
           </div>
+        </div>
+      </div>
+      <div v-if="news.length==0">
+        <div   style="text-align: center;margin-top: 50px;margin-bottom: 50px">
+          暂无记录
         </div>
       </div>
     </el-dialog>
@@ -491,6 +504,8 @@ import { listTunnels } from "@/api/equipment/tunnel/api";
 import {addType, listType, loadPicture, updateType} from "@/api/equipment/type/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import {editForm} from "@/api/equipment/yingJiGou/emergencyVehicles";
+import {listBz} from "@/api/electromechanicalPatrol/taskManage/task";
+import {download} from "@/utils/request";
 export default {
   name: "List",
   //字典值：故障类型、故障等级，故障消除状态
@@ -520,6 +535,8 @@ export default {
       // 是否不可点击
       disstate: false,
       // 弹出层标题
+      //巡查班组
+      bzData: {},
       title: "",
       // 是否显示弹出层
       open: false,
@@ -623,6 +640,7 @@ export default {
     };
   },
   created() {
+    this.getBz();
     this.getList();
     this.getTunnel();
     this.getEqType();
@@ -660,9 +678,13 @@ export default {
   methods: {
     eqStatusGet(e){
       getEquipmentInfo({eqId:e}).then((response) => {
-        this.$refs.faultLocation.value = "";
+        this.form.faultLocation = "";
+        this.form.eqRunStatus = "";
+        this.form.eqStatus = "";
+        debugger
         if(response.data.length!=0){
-          this.$refs.faultLocation.value = response.data[0].pile;
+          this.form.faultLocation= response.data[0].pile;
+          this.form.eqRunStatus = response.data[0].runStatus;
           this.form.eqStatus = response.data[0].eqStatus;
           //this.$refs(this.form, "eqStatus", 1);
         }
@@ -735,7 +757,7 @@ export default {
         that.fileList.push({
           name: iconName,
           url: iconUrl,
-          fId: iFileList[i].id,
+          fId: iFileList[i].businessId,
         });
       }
     },
@@ -760,6 +782,9 @@ export default {
     /** 查询故障清单列表 */
     getList() {
       this.loading = true;
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listList(this.queryParams).then((response) => {
         this.listList = response.rows;
         this.listList.forEach((item) =>{
@@ -777,10 +802,18 @@ export default {
         this.loading = false;
       });
     },
-
+    /** 巡查班组 */
+    getBz() {
+      listBz().then((response) => {
+        this.bzData = response.rows;
+      });
+    },
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
         console.log(response.rows, "所属隧道列表");
         this.eqTunnelData = response.rows;
       });
@@ -853,6 +886,11 @@ export default {
         this.title = "修改故障清单";
       });
     },
+    exportFaultReport(row) {
+      let time = parseInt(new Date().getTime() / 1000) + '';
+      let fileName = '检修报告'+time;
+      download("/fault/list/exportFaultReport", {faultId:row.id}, fileName+".docx");
+    },
     handleCheckDetail(row) {
       var that = this;
       this.isWritable = false;
@@ -913,6 +951,19 @@ export default {
           }
 
         })
+
+          this.news.forEach((taskitem) => {
+            this.bzData.forEach((opt) => {
+              if (taskitem.bzId == opt.deptId) {
+                taskitem.bzId = opt.deptName;
+              }else{
+                taskitem.bzId = "";
+              }
+              if(taskitem.bzId==null||taskitem.bzId=="null"){
+                 taskitem.bzId = "";
+              }
+          });
+        });
       });
 
     },
@@ -941,14 +992,15 @@ export default {
       this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
       this.fileData.append("faultDescription", this.form.faultDescription);
       this.fileData.append("faultStatus", 1);
+/*      if(this.fileList.length <= 0) {
+        this.fileData.append("file", -1);
+      }else{
+        console.log("================"+this.fileList)
+        return
+      }*/
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图片')
-          }
           if (this.form.id != null) {
-            /* this.fileData.append("typeId", this.form.typeId); //类型id*/
-            /* this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id*/
             this.fileData.append("removeIds", this.removeIds);
             updateList(this.fileData).then((response) => {
               this.$modal.msgSuccess("修改成功");
@@ -964,23 +1016,6 @@ export default {
           }
         }
       });
-      /*this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateList(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });*/
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
@@ -991,63 +1026,45 @@ export default {
       }
     },
     publishForm() {
-      this.fileData = new FormData(); // new formData对象
-      this.$refs.upload.submit(); // 提交调用uploadFile函数
-      this.fileData.append("tunnelId", this.form.tunnelId);
-      this.fileData.append("faultType",this.form.faultType);
-      this.fileData.append("faultSource", this.form.faultSource);
-      this.fileData.append("faultFxtime", this.form.faultFxtime);
-      this.fileData.append("faultCxtime", this.form.faultCxtime);
-      this.fileData.append("faultTbtime", this.form.faultTbtime);
-      this.fileData.append("eqId", this.form.eqId);
-      this.fileData.append("eqStatus", this.form.eqStatus);
-      this.fileData.append("faultLocation", this.form.faultLocation);
-      this.fileData.append("eqRunStatus", this.form.eqRunStatus);
-      this.fileData.append("faultCode", this.form.faultCode);
-      this.fileData.append("faultLevel", this.form.faultLevel);
-      this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
-      this.fileData.append("faultDescription", this.form.faultDescription);
-      this.fileData.append("faultStatus", 0);
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if(this.fileList.length <= 0) {
-            return this.$modal.msgWarning('请选择要上传的图片')
+        this.fileData = new FormData(); // new formData对象
+        this.$refs.upload.submit(); // 提交调用uploadFile函数
+        this.fileData.append("id", this.form.id);
+        this.fileData.append("tunnelId", this.form.tunnelId);
+        this.fileData.append("faultType",this.form.faultType);
+        this.fileData.append("faultSource", this.form.faultSource);
+        this.fileData.append("faultFxtime", this.form.faultFxtime);
+        this.fileData.append("faultCxtime", this.form.faultCxtime);
+        this.fileData.append("faultTbtime", this.form.faultTbtime);
+        this.fileData.append("eqId", this.form.eqId);
+        this.fileData.append("eqStatus", this.form.eqStatus);
+        this.fileData.append("faultLocation", this.form.faultLocation);
+        this.fileData.append("eqRunStatus", this.form.eqRunStatus);
+        this.fileData.append("faultCode", this.form.faultCode);
+        this.fileData.append("faultLevel", this.form.faultLevel);
+        this.fileData.append("falltRemoveStatue", this.form.falltRemoveStatue);
+        this.fileData.append("faultDescription", this.form.faultDescription);
+        this.fileData.append("faultStatus", 0);
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            if(this.fileList.length <= 0) {
+              return this.$modal.msgWarning('请选择要上传的图片')
+            }
+            if (this.form.id != null) {
+              this.fileData.append("removeIds", this.removeIds);
+              updateList(this.fileData).then((response) => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addList(this.fileData).then((response) => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
           }
-          if (this.form.typeId != null) {
-            /* this.fileData.append("typeId", this.form.typeId); //类型id*/
-            /* this.fileData.append("iconFileId", this.form.iconFileId); //关联文件id*/
-            this.fileData.append("removeIds", this.removeIds);
-            updateList(this.fileData).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.fileData).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-      /*this.$refs["form"].validate((valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateList(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addList(this.form).then((response) => {
-              this.$modal.msgSuccess("发布成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });*/
+        });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -1079,6 +1096,13 @@ export default {
         .catch(() => {});
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    }
+  }
 };
 
 </script>

@@ -40,7 +40,7 @@ public class SdEmergencyRescueServiceImpl implements ISdEmergencyRescueService {
      */
     @Override
     public List<SdEmergencyRescue> selectSdEmergencyRescueList(SdEmergencyRescue sdEmergencyRescue) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdEmergencyRescue.getParams().put("deptId", deptId);
         return sdEmergencyRescueMapper.selectSdEmergencyRescueList(sdEmergencyRescue);
     }

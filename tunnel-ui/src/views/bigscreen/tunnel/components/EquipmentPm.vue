@@ -56,10 +56,10 @@ export default {
             name: "离线",
             value: res.data[1].number,
           },
-          // {
-          //   name: "故障",
-          //   value: res.data[2].number,
-          // },
+          {
+            name: "故障",
+            value: res.data[2].number,
+          },
         ];
 
         var data = [];
@@ -133,7 +133,7 @@ export default {
                         params.name +
                         "\n" +
                         "\n" +
-                        "占百分比：" +
+                        "百分比：" +
                         percent +
                         "%"
                       );

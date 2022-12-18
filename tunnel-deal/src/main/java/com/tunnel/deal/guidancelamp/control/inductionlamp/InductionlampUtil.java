@@ -92,26 +92,26 @@ public class InductionlampUtil {
                             //模式类型
                             InductionlampControlStatusParam statusParam = getPilotLightMode(lux,humBig,tempB,paramList);
                             Integer modeType;
-                            if(statusDetails!=null){
-                                //获取当前设备模式类型
-                                modeType = statusDetails.getEquipmentModeType();
-                                //查看当前模式是否更改。如果更改，则重新推送  模式类型
-                                if(statusParam.getModeCode() != modeType){
-                                    //获取模式参数   亮度、次/min
-                                    Integer brightnessParam  = statusParam.getBrightnessParam();
-                                    Integer timeSecond = statusParam.getTimeSecond();
-                                    Map codeMap = getPilotLightMode(statusParam.getModeCode(),brightnessParam,timeSecond);
-                                    String pushCode = codeMap.get("code").toString();
-                                    //推送模式指令
-                                    client.pushCode(pushCode);
-                                    //关闭状态链接
-                                    client.stop();
-                                    log.info("推送模式为："+statusParam.getModeCode());
-                                    log.info("推送指令为："+pushCode);
-                                    codeMap.put("modeCode",statusParam.getModeCode());
-                                    return codeMap;
-                                }
-                            }else{
+//                            if(statusDetails!=null){
+//                                //获取当前设备模式类型
+//                                modeType = statusDetails.getEquipmentModeType();
+//                                //查看当前模式是否更改。如果更改，则重新推送  模式类型
+//                                if(statusParam.getModeCode() != modeType){
+//                                    //获取模式参数   亮度、次/min
+//                                    Integer brightnessParam  = statusParam.getBrightnessParam();
+//                                    Integer timeSecond = statusParam.getTimeSecond();
+//                                    Map codeMap = getPilotLightMode(statusParam.getModeCode(),brightnessParam,timeSecond);
+//                                    String pushCode = codeMap.get("code").toString();
+//                                    //推送模式指令
+//                                    client.pushCode(pushCode);
+//                                    //关闭状态链接
+//                                    client.stop();
+//                                    log.info("推送模式为："+statusParam.getModeCode());
+//                                    log.info("推送指令为："+pushCode);
+//                                    codeMap.put("modeCode",statusParam.getModeCode());
+//                                    return codeMap;
+//                                }
+//                            }else{
                                 //默认类型为 0
                                 modeType = 0;
                                 //获取模式参数   亮度、次/min
@@ -127,8 +127,8 @@ public class InductionlampUtil {
                                 log.info("推送指令为："+pushCode);
                                 codeMap.put("modeCode",modeType);
                                 return codeMap;
-                            }
-                            break;
+//                            }
+//                            break;
                     }
                     client.stop();
                     return null;
@@ -137,6 +137,161 @@ public class InductionlampUtil {
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getXianKeDeviceBrightness(String ip, Integer port) {
+        //获取当前是否开灯
+        String code = "000000000006010300030001";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    //响应指令:
+                    String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                    Map<String, Object> map = new HashMap<>();
+                    if (codeInfo != "" && codeInfo.startsWith("000") && codeInfo.contains("00000005")) {
+                        codeInfo = codeInfo.substring(codeInfo.indexOf("03") + 2);
+                        String brightness = codeInfo.substring(0, 2);
+                        int brightnessParam = Integer.parseInt(brightness, 16);
+                        map.put("brightness", brightnessParam);
+                        //发送控制器同步指令
+                        client.pushCode("000000000006010600020001");
+                        return map;
+                    } else {
+                        map.put("brightness", "0");
+                        return map;
+                    }
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            client.stop();
+            return null;
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getXianKeDeviceFrequency(String ip, Integer port) {
+        //获取当前是否开灯
+        String code = "000000000006010300050001";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    //响应指令:
+                    String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                    Map<String, Object> map = new HashMap<>();
+                    if (codeInfo != "" && codeInfo.startsWith("000") && codeInfo.contains("00000005")) {
+                        codeInfo = codeInfo.substring(codeInfo.indexOf("03") + 2);
+                        String frequency = codeInfo.substring(0, 2);
+                        int frequencyParam = Integer.parseInt(frequency, 16);
+                        map.put("frequency", frequencyParam);
+                        return map;
+                    } else {
+                        map.put("frequency", "0");
+                        return map;
+                    }
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            client.stop();
+            return null;
+        }
+        client.stop();
+        return null;
+    }
+
+    public static Map getXianKeDeviceDutyCycle(String ip, Integer port) {
+        //获取当前是否开灯
+        String code = "000000000006010300070001";
+        NettyClient client = new NettyClient(ip, port, code, 1);
+        try {
+            client.start(null);
+        } catch (Exception e) {
+            log.error(ip+":"+port+" 请求链接超时，请联系管理员。");
+            client.stop();
+            return null;
+        }
+        try {
+            client.pushCode(code);
+            //获取返回数据
+            ClientHandler clientHandler =  client.getClientHandler();
+            //推送数据开始时间
+            long st = System.currentTimeMillis();
+            //等待返回数据
+            while (clientHandler.FLAG){
+                long ed = System.currentTimeMillis();
+                //判断当前时间是否超时
+                if((ed-st)/1000>client.OVERTIME){
+                    clientHandler.stop();
+                    return null;
+                }
+                if(clientHandler.DOWNLOADFLAG){
+                    //响应指令:
+                    String codeInfo = clientHandler.getCode().toString().replace("\r\n","").replace(" ","");
+                    Map<String, Object> map = new HashMap<>();
+                    if (codeInfo != "" && codeInfo.startsWith("000") && codeInfo.contains("00000005")) {
+                        codeInfo = codeInfo.substring(codeInfo.indexOf("03") + 2);
+                        String dutyCycle = codeInfo.substring(0, 2);
+                        int dutyCycleParam = Integer.parseInt(dutyCycle, 16);
+                        map.put("dutyCycle", dutyCycleParam);
+                        return map;
+                    } else {
+                        map.put("dutyCycle", "0");
+                        return map;
+                    }
+                }
+                Thread.sleep(1);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            client.stop();
+            return null;
         }
         client.stop();
         return null;
@@ -510,7 +665,81 @@ public class InductionlampUtil {
         return resultMap;
     }
 
+    //显科设备亮度控制
+    public static Map getXianKePilotLightMode(Integer type,Integer brightnessParam){
+        Map resultMap = new HashMap();
+        String resultCode = "";
+        String start = "000000000006";
+        switch (type){
+            case PILOT_LIGHT_MODE_0 :
+                resultCode = "010600040000";
+                resultMap.put("msgInfo","关闭所有灯光");
+                break;
+            case PILOT_LIGHT_MODE_1 :
+                resultCode = "01060004000" + brightnessParam;
+                resultMap.put("msgInfo","灯亮度为：" + brightnessParam);
+                break;
+            case PILOT_LIGHT_MODE_2 :
+                resultCode = "010600020001";
+                resultMap.put("msgInfo","同步所有控制器");
+                break;
+            default:
+                resultCode = "010600040000";
+                resultMap.put("msgInfo","关闭所有灯光");
+                break;
+        }
+        resultCode = start + resultCode;
+        resultMap.put("code",resultCode);
+        return resultMap;
+    }
 
+    //显科设备频率控制
+    public static Map getXianKeFrequency(Integer type,Integer frequency){
+        Map resultMap = new HashMap();
+        String resultCode = "";
+        String start = "000000000006";
+        switch (type){
+            case PILOT_LIGHT_MODE_0 :
+                resultCode = "010600060000";
+                resultMap.put("msgInfo","频率为0");
+                break;
+            case PILOT_LIGHT_MODE_1 :
+                resultCode = "01060006000" + frequency;
+                resultMap.put("msgInfo","频率为：" + frequency);
+                break;
+            default:
+                resultCode = "010600060000";
+                resultMap.put("msgInfo","频率为0");
+                break;
+        }
+        resultCode = start + resultCode;
+        resultMap.put("code",resultCode);
+        return resultMap;
+    }
+
+    //显科设备占空比控制
+    public static Map getXianKeDutyCycle(Integer type,Integer dutyCycle){
+        Map resultMap = new HashMap();
+        String resultCode = "";
+        String start = "000000000006";
+        switch (type){
+            case PILOT_LIGHT_MODE_0 :
+                resultCode = "010600080000";
+                resultMap.put("msgInfo","占空比为0");
+                break;
+            case PILOT_LIGHT_MODE_1 :
+                resultCode = "01060008000" + dutyCycle;
+                resultMap.put("msgInfo","占空比为：" + dutyCycle);
+                break;
+            default:
+                resultCode = "010600080000";
+                resultMap.put("msgInfo","占空比为0");
+                break;
+        }
+        resultCode = start + resultCode;
+        resultMap.put("code",resultCode);
+        return resultMap;
+    }
 
     /**
      * 根据参数 获取模式信息

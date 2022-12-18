@@ -98,7 +98,7 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '0' && stateForm.eqType == (1 || 2)">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1' && stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -114,7 +114,7 @@
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1'&& stateForm.eqType == (1 || 2)">
+                  <el-row class="flex-row" v-if="stateForm.eqDirection == '2'&& stateForm.eqType == (1 || 2)">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -247,6 +247,8 @@ export default {
             iconUrl.push(img);
           }
         }
+        console.log(iconUrl,);
+
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
           state: list[i].deviceState,

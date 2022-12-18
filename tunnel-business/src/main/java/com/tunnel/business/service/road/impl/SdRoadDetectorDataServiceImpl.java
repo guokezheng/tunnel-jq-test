@@ -61,7 +61,7 @@ public class SdRoadDetectorDataServiceImpl implements ISdRoadDetectorDataService
      */
     @Override
     public List<SdRoadDetectorDataDTO> selectSdRoadDetectorDataList(SdRoadDetectorDataDTO sdRoadDetectorDataDTO) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         if (deptId == null) {
             throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
         }

@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-18 09:05:05
+ * @LastEditTime: 2022-11-24 14:33:34
  * @FilePath: \tunnel-ui\src\views\bigscreen\warning\components\faultList.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -14,10 +14,14 @@
     </div>
     <div class="alarmsStatisticsBox">
       <div class="listHeader">
-        <ul>
+        <ul style="padding-left: 0px">
           <li style="font-size: 0.8vw; display: flex; width: 100%">
-            <div class="headerIndex">序号</div>
-            <div class="headerName">故障信息</div>
+            <div class="headerIndex" style="width: 4vw; text-align: center">
+              序号
+            </div>
+            <div class="headerName" style="width: 28vw; text-align: center">
+              故障信息
+            </div>
           </li>
         </ul>
       </div>
@@ -34,10 +38,10 @@
             backgroundColor: (index + 1) % 2 == 0 ? '#0a5e97' : '#11629d',
           }"
         >
-          <el-col style="width: 6vw; text-align: center">{{
+          <el-col style="width: 4vw; text-align: center">{{
             index + 1
           }}</el-col>
-          <el-col style="width: 26vw">{{ item.content }}</el-col>
+          <el-col style="width: 26vw">{{ item.eventTitle }}</el-col>
         </el-row>
       </vue-seamless-scroll>
     </div>
@@ -51,12 +55,12 @@ export default {
   data() {
     return {
       faultList: [
-        { content: "隧道上行K350+1271车道车道指示器发生故障" },
-        { content: "8:00隧道PLC1离线" },
-        { content: "8:00隧道PLC2离线" },
-        { content: "8:00隧道PLC3离线" },
-        { content: "11:10隧道上行K350+227 3车道1号风机离线" },
-        { content: "11:13隧道上行K350+327 交通信号灯离线" },
+        // { content: "隧道上行K350+1271车道车道指示器发生故障" },
+        // { content: "8:00隧道PLC1离线" },
+        // { content: "8:00隧道PLC2离线" },
+        // { content: "8:00隧道PLC3离线" },
+        // { content: "11:10隧道上行K350+227 3车道1号风机离线" },
+        // { content: "11:13隧道上行K350+327 交通信号灯离线" },
       ],
     };
   },

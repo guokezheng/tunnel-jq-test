@@ -2,7 +2,7 @@
  * @Author: Praise-Sun 18053314396@163.com
  * @Date: 2022-10-27 09:52:13
  * @LastEditors: Praise-Sun 18053314396@163.com
- * @LastEditTime: 2022-11-16 17:17:28
+ * @LastEditTime: 2022-11-24 14:35:26
  * @FilePath: \tunnel-ui\src\views\bigscreen\warning\components\eventList.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -14,10 +14,14 @@
     </div>
     <div class="alarmsStatisticsBox">
       <div class="listHeader">
-        <ul>
+        <ul style="padding-left: 0px">
           <li style="font-size: 0.8vw; display: flex; width: 100%">
-            <div class="headerIndex">序号</div>
-            <div class="headerName">事件信息</div>
+            <div class="headerIndex" style="width: 4vw; text-align: center">
+              序号
+            </div>
+            <div class="headerName" style="width: 28vw; text-align: center">
+              事件信息
+            </div>
           </li>
         </ul>
       </div>
@@ -41,10 +45,10 @@
             backgroundColor: (index + 1) % 2 == 0 ? '#0a5e97' : '#11629d',
           }"
         >
-          <el-col style="width: 6vw; text-align: center">{{
+          <el-col style="width: 4vw; text-align: center">{{
             index + 1
           }}</el-col>
-          <el-col style="width: 26vw">{{ item.content }}</el-col>
+          <el-col style="width: 28vw">{{ item.eventTitle }}</el-col>
         </el-row>
       </vue-seamless-scroll>
     </div>
@@ -57,14 +61,7 @@ import vueSeamlessScroll from "vue-seamless-scroll";
 export default {
   data() {
     return {
-      faultList: [
-        { content: "10:26隧道上行K350+127发生抛洒物事件" },
-        { content: "10:16隧道上行K350+128发生停车事件" },
-        { content: "10:21隧道上行K350+138发生行人事件" },
-        { content: "10:25隧道上行K350+138发生行人事件" },
-        { content: "10:31隧道上行K350+138发生行人事件" },
-        { content: "10:33隧道上行K350+138发生行人事件" },
-      ],
+      faultList: [],
     };
   },
   computed: {
@@ -86,8 +83,8 @@ export default {
   },
   methods: {
     getList() {
-      let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
-      getTrafficIncident(tunnelId).then((res) => {
+      // let tunnelId = { tunnelId: "WLJD-JiNan-YanJiuYuan-FHS" };
+      getTrafficIncident().then((res) => {
         this.faultList = res.data;
       });
     },

@@ -43,7 +43,7 @@ public class SdTrafficFlowStateServiceImpl implements ISdTrafficFlowStateService
      */
     @Override
     public List<SdTrafficFlowState> selectSdTrafficFlowStateList(SdTrafficFlowState sdTrafficFlowState) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         sdTrafficFlowState.getParams().put("deptId", deptId);
         return sdTrafficFlowStateMapper.selectSdTrafficFlowStateList(sdTrafficFlowState);
     }
@@ -102,7 +102,7 @@ public class SdTrafficFlowStateServiceImpl implements ISdTrafficFlowStateService
      */
     @Override
     public JSONObject getChartData(String tunnelId) {
-        Long deptId = SecurityUtils.getDeptId();
+        String deptId = SecurityUtils.getDeptId();
         List<SdTrafficFlowState> list = sdTrafficFlowStateMapper.getChartData(tunnelId, deptId);
         List<String> timeList = new ArrayList<>();
         List<String> averageVelocityList = new ArrayList<>();

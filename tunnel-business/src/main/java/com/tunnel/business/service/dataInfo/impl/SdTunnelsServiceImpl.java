@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
@@ -153,5 +154,42 @@ public class SdTunnelsServiceImpl implements ISdTunnelsService {
     @Override
     public List<SdTunnels> selectTunnelList(String deptId) {
         return sdTunnelsMapper.selectTunnelList(deptId);
+    }
+
+    @Override
+    public List<SdTunnels> getJlyTunnel() {
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTunnels> jlyTunnel = sdTunnelsMapper.getJlyTunnel(deptId);
+        return jlyTunnel;
+    }
+
+
+
+    /**
+     * 查询隧道列表
+     * @return 隧道
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList() {
+        return sdTunnelsMapper.selectAllSdTunnelsList();
+    }
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels) {
+        return sdTunnelsMapper.selectSdTunnelsList1(sdTunnels);
+    }
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    @Override
+    public List<SdTunnels> selectAllSdTunnelsList1() {
+        return sdTunnelsMapper.selectAllSdTunnelsList1();
     }
 }

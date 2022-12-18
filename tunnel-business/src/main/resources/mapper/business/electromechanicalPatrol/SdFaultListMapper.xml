@@ -128,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="falltRemoveStatue != null">fallt_remove_statue = #{falltRemoveStatue},</if>
             <if test="faultDescription != null">fault_description = #{faultDescription},</if>
             <if test="faultStatus != null">fault_status = #{faultStatus},</if>
+            <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -147,7 +148,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getFaultRepairInfo" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList" >
     select p.id,p.task_id,p.eq_fault_id,p.patrol_type,p.eq_name,p.position,p.impression,p.network,p.power,p.eq_fault_code,
     p.eq_fault_description,p.fault_clstatus,p.xc_time,p.xc_status,p.img_file_id,f.fallt_remove_statue,t.bz_id,t.walker_id,
-    s.state_name as run_status,a.state_name as eq_status
+    s.state_name as run_status,a.state_name as eq_status,p.create_time
     from sd_patrol_list p
     left join sd_fault_list f on f.id = p.eq_fault_id
     left join sd_task_list t on t.id = p.task_id
@@ -160,8 +161,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <select id="getFaultList" parameterType="String" resultType="hashmap">
-        select f.fault_type,f.fault_location,f.eq_id,d.eq_name,f.fault_description,d.eq_tunnel_id,t.tunnel_name,d.pile,s.dict_label
+    <select id="getFaultList1"  resultType="hashmap">
+        select s.dict_label type_name,f.fault_location pile,f.id eq_id,d.eq_name,f.fault_description dict_label,d.eq_tunnel_id,t.tunnel_name
         from sd_fault_list f
         left join sd_devices d on f.eq_id = d.eq_id
         left join sd_tunnels t on t.tunnel_id = d.eq_tunnel_id
@@ -174,4 +175,134 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
+
+
+    <select id="batchGetFaultList" parameterType="SdFaultList" resultMap="SdFaultListResult">
+        select d.id,d.fault_location,v.eq_name,s.dict_label eq_direction,t.tunnel_name,d.fault_description from  sd_fault_list d
+        left join sd_devices v on d.eq_id = v.eq_id
+        left join sys_dict_data s on d.fault_type = s.dict_value
+        left join sd_tunnels t on t.tunnel_id = v.eq_tunnel_id
+        <where>
+            and s.dict_type= 'fault_type'
+            and d.id in
+            <foreach collection="array" separator="," index="index" item="item" open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="getEquipmentFault" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            yemont.DATE as months,
+            fl.eqFaultName AS eqSystemName,
+            IFNULL( fl.eqFaultNum, 0 ) AS eqFaultNum
+        FROM
+            (
+                SELECT
+                    DATE_FORMAT( adddate( DATE_SUB( CURDATE(), INTERVAL dayofyear( now()) - 1 DAY ), INTERVAL numlist.id - 1 MONTH ), '%Y-%m' ) AS 'date'
+                FROM
+                (
+                    SELECT
+                        @xi := @xi + 1 AS id
+                    FROM
+                        ( SELECT 1 UNION SELECT 2 UNION SELECT 3 ) xc1,
+                        ( SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 ) xc2,
+                        ( SELECT @xi := 0 ) xc0
+                ) AS numlist
+            ) yemont
+        LEFT JOIN (
+            SELECT
+                sdd.dict_label AS eqFaultName,
+                count(*) AS eqFaultNum,
+                sfl.fault_fxtime
+            FROM
+                sd_fault_list sfl
+            LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id
+            LEFT JOIN sd_equipment_type et ON sd.eq_type = et.type_id
+            LEFT JOIN sys_dict_data sdd ON et.eq_system = sdd.dict_value
+            AND sdd.dict_type = #{eqSystem}
+            WHERE
+                1 = 1
+            AND et.eq_system = #{eqSystemType}
+            AND sfl.fault_status = #{faultStatus}
+            <if test="tunnelId != null and tunnelId != ''">
+                AND sfl.tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY
+            et.eq_system
+        ) fl ON yemont.DATE = DATE_FORMAT( fl.fault_fxtime, '%Y-%m' )
+        WHERE
+        1 = 1
+        ORDER BY
+        yemont.DATE ASC
+    </select>
+
+    <select id="getEquipmentFaultStatistics" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            sdd.dict_label AS eqSystemName,
+            count(*) AS eqFaultNum,
+            sdd.dict_value AS eqSystemCode
+        FROM
+            sd_fault_list sfl
+        LEFT JOIN sd_devices sd ON sfl.eq_id = sd.eq_id
+        LEFT JOIN sd_equipment_type et ON sd.eq_type = et.type_id
+        LEFT JOIN sys_dict_data sdd ON et.eq_system = sdd.dict_value
+        AND sdd.dict_type = #{eqSystem}
+        WHERE
+            1 = 1
+        AND sfl.fault_status = #{faultStatus}
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
+        AND sfl.fallt_remove_statue = #{falltRemoveStatue}
+        GROUP BY
+        et.eq_system
+    </select>
+
+    <select id="exportFaultReport" parameterType="String" resultMap="SdFaultListResult">
+        SELECT
+            fault.id,
+            tunnel.tunnel_name AS tunnel_id,
+            fault_location,
+            z.dict_label AS fault_type,
+            fault.fault_source,
+            fault.fault_fxtime,
+            fault.fault_cxtime,
+            fault.fault_tbr,
+            fault.fault_tbtime,
+            fault.eq_id,
+            e.state_name AS eq_status,
+            s.state_name AS eq_run_status,
+            fault.fault_code,
+            x.dict_label AS fault_level,
+            c.dict_label AS fallt_remove_statue,
+            CASE
+                WHEN fault.fault_status = '0' THEN
+                    '未消除'
+                WHEN fault.fault_status = '1' THEN
+                    '已消除'
+                END AS fault_status,
+            fault_description,
+            img_file_id
+        FROM
+            sd_fault_list fault
+                LEFT JOIN sd_device_data d ON fault.eq_id = d.device_id
+                LEFT JOIN sd_device_type_item i ON i.id = d.item_id
+                LEFT JOIN sd_devices t ON t.eq_id = fault.eq_id
+                LEFT JOIN sd_equipment_state s ON s.state_type_id = i.device_type_id
+                AND s.device_state = d.DATA
+                AND s.state_type = '2'
+                LEFT JOIN sd_equipment_state e ON e.state_type_id = i.device_type_id
+                AND e.device_state = d.DATA
+                AND e.state_type = '1'
+                LEFT JOIN sys_dict_data z ON z.dict_value = fault.fault_type
+                AND z.dict_type = 'fault_type'
+                LEFT JOIN sys_dict_data x ON x.dict_value = fault.fault_level
+                AND x.dict_type = 'fault_level'
+                LEFT JOIN sys_dict_data c ON c.dict_value = fault.fallt_remove_statue
+                AND c.dict_type = 'fault_remove_statue'
+                LEFT JOIN sd_tunnels tunnel ON tunnel.tunnel_id = fault.tunnel_id
+        WHERE
+            fault.id = #{id}
+    </select>
 </mapper>

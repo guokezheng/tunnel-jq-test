@@ -98,7 +98,7 @@ public class PlcTask {
                 if (sdDevice.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
                     try {
                         boolean[] registers = Modbus4jReadUtils.readInputStatus(master, 1, 0, 100);
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 2) {
                             boolean bHong = registers[Integer.parseInt(split[0]) - 1];
                             boolean bLv = registers[Integer.parseInt(split[1]) - 1];
@@ -127,7 +127,7 @@ public class PlcTask {
                     }
                 } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.FENG_SU_FENG_XIANG.getCode().longValue()) {
                     try {
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 1) {
                             Number FS = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[0]) - 1, DataType.FOUR_BYTE_FLOAT);
                             boolean[] FX = Modbus4jReadUtils.readInputStatus(master, 1, Integer.parseInt(split[1]) - 1, 1);
@@ -164,7 +164,7 @@ public class PlcTask {
                     }
                 } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.LIANG_DU_JIAN_CE_INSIDE.getCode().longValue()) {
                     try {
-                        Integer addr = Integer.valueOf(sdDevice.getEqFeedbackAddress1());
+                        Integer addr = Integer.valueOf(sdDevice.getQueryPointAddress());
                         Number number = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, addr - 1, DataType.FOUR_BYTE_FLOAT);
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
@@ -189,7 +189,7 @@ public class PlcTask {
                     }
                 } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.LIANG_DU_JIAN_CE.getCode().longValue()) {
                     try {
-                        Integer addr = Integer.valueOf(sdDevice.getEqFeedbackAddress1());
+                        Integer addr = Integer.valueOf(sdDevice.getQueryPointAddress());
                         Number number = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, addr - 1, DataType.FOUR_BYTE_FLOAT);
                         System.out.println("------------------------------------");
                         System.out.printf("桩号:" + sdDevice.getPile() + "，模拟量：" + number);
@@ -214,7 +214,7 @@ public class PlcTask {
                     }
                 } else if (sdDevice.getEqType().longValue() == DevicesTypeEnum.CO_VI.getCode().longValue()) {
                     try {
-                        String[] split = sdDevice.getEqFeedbackAddress1().split(",");
+                        String[] split = sdDevice.getQueryPointAddress().split(",");
                         if (split.length > 1) {
                             Number CO = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[0]) - 1, DataType.FOUR_BYTE_FLOAT);
                             Number VI = Modbus4jReadUtils.readHoldingRegisterByDataType(master, 1, Integer.parseInt(split[1]) - 1, DataType.FOUR_BYTE_FLOAT);

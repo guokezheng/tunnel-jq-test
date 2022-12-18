@@ -34,6 +34,7 @@
                 (#{params.deptId},d.ancestors) ))
             </if>
         </where>
+        order by a.create_time desc
     </select>
 
     <select id="selectSdEmergencyPerById" parameterType="Long" resultMap="SdEmergencyPerResult">

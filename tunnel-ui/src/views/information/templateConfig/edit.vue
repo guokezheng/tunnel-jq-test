@@ -82,19 +82,19 @@
               >
                 <el-option
                   v-for="item in screenSizeOptions"
-                  :key="item.type"
-                  :label="item.type"
-                  :value="item.type"
+                  :key="item.dictValue"
+                  :label="item.dictValue"
+                  :value="item.dictValue"
                 >
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="addTemplateContent"
-              >新增</el-button
-            >
-          </el-col>
+<!--          <el-col :span="2">-->
+<!--            <el-button type="primary" @click="addTemplateContent"-->
+<!--              >新增222</el-button-->
+<!--            >-->
+<!--          </el-col>-->
 <!--          <el-col :span="2">-->
 <!--            <el-button type="primary" @click="chooseImageEvent()"-->
 <!--              >选择图片</el-button-->
@@ -102,47 +102,47 @@
 <!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
-        <el-dialog
-          title="选择图片"
-          :visible.sync="dialogVisible"
-          :before-close="close"
-          top="6vh"
-          width="1100px"
-          :modal="false"
-          append-to-body
-        >
-          <!-- 选择图片内容区域开始 -->
-          <div class="changeImage">
-            <el-row style="padding-left: 60px">
-              <el-checkbox-group v-model="checkList">
-                <el-col
-                  :span="8"
-                  v-for="(item, index) in imgUrl"
-                  :key="index"
-                  style="margin-top: 12px"
-                  v-show="item.pictureUrl"
-                >
-                  <el-checkbox :label="item.pictureUrl" >
-                    <div class="photo">
-                      <img
-                        :src="item.pictureUrl"
-                        @dblclick="dblEvent(item.pictureUrl)"
-                        draggable="true"
-                        v-on:dragstart="faceImagedragg($event, item)"
-                      />
-                    </div>
-                  </el-checkbox>
-                </el-col>
-              </el-checkbox-group>
-            </el-row>
-            <span slot="footer" class="dialog-footer">
-              <el-button size="small" @click="close">取消</el-button>
-              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>
-            </span>
-          </div>
+<!--        <el-dialog-->
+<!--          title="选择图片"-->
+<!--          :visible.sync="dialogVisible"-->
+<!--          :before-close="close"-->
+<!--          top="6vh"-->
+<!--          width="1100px"-->
+<!--          :modal="false"-->
+<!--          append-to-body-->
+<!--        >-->
+<!--          &lt;!&ndash; 选择图片内容区域开始 &ndash;&gt;-->
+<!--          <div class="changeImage">-->
+<!--            <el-row style="padding-left: 60px">-->
+<!--              <el-checkbox-group v-model="checkList">-->
+<!--                <el-col-->
+<!--                  :span="8"-->
+<!--                  v-for="(item, index) in imgUrl"-->
+<!--                  :key="index"-->
+<!--                  style="margin-top: 12px"-->
+<!--                  v-show="item.pictureUrl"-->
+<!--                >-->
+<!--                  <el-checkbox :label="item.pictureUrl" >-->
+<!--                    <div class="photo">-->
+<!--                      <img-->
+<!--                        :src="item.pictureUrl"-->
+<!--                        @dblclick="dblEvent(item.pictureUrl)"-->
+<!--                        draggable="true"-->
+<!--                        v-on:dragstart="faceImagedragg($event, item)"-->
+<!--                      />-->
+<!--                    </div>-->
+<!--                  </el-checkbox>-->
+<!--                </el-col>-->
+<!--              </el-checkbox-group>-->
+<!--            </el-row>-->
+<!--            <span slot="footer" class="dialog-footer">-->
+<!--              <el-button size="small" @click="close">取消</el-button>-->
+<!--              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>-->
+<!--            </span>-->
+<!--          </div>-->
 
-          <!-- 选择图片内容区域结束 -->
-        </el-dialog>
+<!--          &lt;!&ndash; 选择图片内容区域结束 &ndash;&gt;-->
+<!--        </el-dialog>-->
         <!-- 选择图片弹出框结束 -->
         <!--        <el-scrollbar style="height:15vh;width: 1130px">-->
         <el-row
@@ -160,13 +160,13 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+          <!-- <el-col :span="2">
             <el-button
               type="danger"
               icon="el-icon-delete"
               @click="delTemplateContent(res)"
             ></el-button>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item prop="fontColor" label="字体颜色">
               <el-select
@@ -225,7 +225,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="24">
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item prop="rollSpeed" label="滚动速度(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
@@ -234,8 +234,8 @@
                 style="width: 100%"
               />
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
+          </el-col> -->
+          <!-- <el-col :span="8">
             <el-form-item prop="stopTime" label="停留时间(毫秒)" label-width="40%">
               <el-input-number
                 :min="0"
@@ -244,7 +244,7 @@
                 style="width: 100%"
               />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item prop="inScreenMode" label="入屏方式">
               <el-select
@@ -257,6 +257,24 @@
                   :key="item.code"
                   :label="item.name"
                   :value="item.code"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item prop="category" label="所属类别">
+              <el-select
+                v-model="dataForm.category"
+                placeholder="请选择所属类别"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in iotTemplateCategoryList"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
                 >
                 </el-option>
               </el-select>
@@ -336,16 +354,16 @@ export default {
         id: "",
         screenSize: "1024*128",//屏幕尺寸
         inScreenMode: "1",//入屏方式
-        rollSpeed: '1000',
         stopTime: '500',
         applyType: "",//适用类型
         vmsType: "",//情报板类型
         remark: "",//备注
         imgSizeFrom: "", //尺寸大小
-        imageUrl:'',
-        height:'',
-        width:'',
-        coordinate:'',//起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        imageUrl: "",
+        height: "",
+        width: "",
+        coordinate: "",//起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        category: "",
       },
       templateContent: [],
       templateDelContent: [],
@@ -359,39 +377,36 @@ export default {
             content: '宋体'
         },
         {
-            code: 'FangSong',
-            content: '仿宋'
+            code: 'SimHei',
+            content: '黑体'
         },
-        {
-            code: 'LiSu',
-            content: '隶书'
-        },
+
       ],
       screenSizeOptions: [
-        {
-          type: "144*72",
-        },
-        {
-          type: "320*32",
-        },
-        {
-          type: "384*32",
-        },
-        {
-          type: "480*48",
-        },
-        {
-          type: "480*72",
-        },
-        {
-          type: "768*72",
-        },
-        {
-          type: "880*80",
-        },
-        {
-          type: "1024*128",
-        },
+        // {
+        //   type: "144*72",
+        // },
+        // {
+        //   type: "320*32",
+        // },
+        // {
+        //   type: "384*32",
+        // },
+        // {
+        //   type: "480*48",
+        // },
+        // {
+        //   type: "480*72",
+        // },
+        // {
+        //   type: "768*72",
+        // },
+        // {
+        //   type: "880*80",
+        // },
+        // {
+        //   type: "1024*128",
+        // },
       ],
       colorOptions: [
         {
@@ -403,8 +418,8 @@ export default {
           content: "黄色",
         },
         {
-          code: "White",
-          content: "白色",
+          code: "blue",
+          content: "蓝色",
         },
         {
           code: "GreenYellow",
@@ -527,30 +542,16 @@ export default {
           name: "24",
         },
         {
-          code: "23",
-          name: "23",
+          code: "32",
+          name: "32",
         },
         {
-          code: "22",
-          name: "22",
+          code: "16",
+          name: "16",
         },
-        {
-          code: "21",
-          name: "21",
-        },
-        {
-          code: "20",
-          name: "20",
-        },
-        {
-          code: "19",
-          name: "19",
-        },
-        {
-          code: "18",
-          name: "18",
-        }
+
       ],
+      iotTemplateCategoryList:[],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -600,14 +601,7 @@ export default {
   computed: {
     dataRule() {
       return {
-        rollSpeed: [
-          //滚动速度
-          {
-            required: true,
-            message: '请填写滚动速度',
-            trigger: "blur",
-          },
-        ],
+
         stopTime: [
           //停留时间
           {
@@ -624,7 +618,13 @@ export default {
             trigger: "blur",
           },
         ],
-
+        category: [
+          {
+            required: true,
+            message: "请选择所属类别",
+            trigger: "blur",
+          },
+        ],
       };
     },
     divStyle: function () {
@@ -656,6 +656,17 @@ export default {
   //     },
   //   },
   // },
+  mounted(){
+    // 屏幕尺寸字典数据
+    this.getDicts("screenSize").then((res) => {
+      this.screenSizeOptions = res.data;
+      console.log(this.screenSizeOptions,'this.screenSizeOptions')
+    });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+    });
+  },
   methods: {
     init() {
       this.title = !this.dataForm.id ? '新增' : '修改';
@@ -823,6 +834,8 @@ export default {
       this.loading = true;
       let templateId = "";
       let method = !this.isAdd ? "put" : "post";
+      console.log(this.dataForm,"this.dataForm");
+      console.log(this.templateContent,"this.templateContent")
       if (this.isAdd) {
         // 新增
         await addTemplate(this.dataForm, method).then((data) => {

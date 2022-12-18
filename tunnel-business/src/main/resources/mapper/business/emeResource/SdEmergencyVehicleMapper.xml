@@ -13,6 +13,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="useStatus"    column="use_status"    />
         <result property="terminalInstall"    column="terminal_install"    />
         <result property="statusDesc"    column="status_desc"    />
+        <result property="accState"    column="acc_state"    />
+        <result property="orgName"    column="dept_name"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -20,20 +22,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSdEmergencyVehicleVo">
-        select id, org_id, plate_number, v_type, v_place, use_status, terminal_install, status_desc, create_by, create_time, update_by, update_time from sd_emergency_vehicle
+        select id, org_id, plate_number, v_type, v_place, use_status, terminal_install, status_desc, acc_state, create_by, create_time, update_by, update_time from sd_emergency_vehicle
     </sql>
 
     <select id="selectSdEmergencyVehicleList" parameterType="SdEmergencyVehicle" resultMap="SdEmergencyVehicleResult">
-        <include refid="selectSdEmergencyVehicleVo"/>
-        <where>  
-            <if test="orgId != null "> and org_id = #{orgId}</if>
-            <if test="plateNumber != null  and plateNumber != ''"> and plate_number = #{plateNumber}</if>
-            <if test="vType != null  and vType != ''"> and v_type = #{vType}</if>
-            <if test="vPlace != null  and vPlace != ''"> and v_place = #{vPlace}</if>
-            <if test="useStatus != null  and useStatus != ''"> and use_status = #{useStatus}</if>
-            <if test="terminalInstall != null  and terminalInstall != ''"> and terminal_install = #{terminalInstall}</if>
-            <if test="statusDesc != null  and statusDesc != ''"> and status_desc = #{statusDesc}</if>
-        </where>
+        SELECT
+            ev.id,
+            d.dept_name,
+            ev.org_id,
+            ev.plate_number,
+            ev.v_type,
+            ev.v_place,
+            ev.use_status,
+            ev.terminal_install,
+            ev.status_desc,
+            ev.acc_state,
+            ev.create_by,
+            ev.create_time,
+            ev.update_by,
+            ev.update_time
+        FROM
+            sd_emergency_vehicle ev
+        LEFT JOIN sys_dept d ON ev.org_id = d.dept_id
+        WHERE
+        1 = 1
+        <if test="orgName != null and orgName != ''">
+            AND ev.org_id = #{orgName}
+        </if>
+        <if test="vType != null  and vType != ''">
+            AND ev.v_type = #{vType}
+        </if>
+        <if test="plateNumber != null  and plateNumber != ''">
+            AND INSTR(ev.plate_number, #{plateNumber}) > 0
+        </if>
+        <if test="useStatus != null  and useStatus != ''">
+            AND ev.use_status = #{useStatus}
+        </if>
+        <if test="accState != null  and accState != ''">
+            AND ev.acc_state = #{accState}
+        </if>
     </select>
     
     <select id="selectSdEmergencyVehicleById" parameterType="Long" resultMap="SdEmergencyVehicleResult">
@@ -41,8 +68,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="getOrg" resultType="com.tunnel.business.domain.emeResource.SdEmergencyOrg">
-        select org_id orgId,org_name orgName from sd_emergency_org
+    <select id="getOrg" resultType="hashmap">
+        SELECT DISTINCT
+        d.dept_id AS value,
+        d.parent_id AS parentId,
+        d.dept_name AS label
+        FROM
+        sys_dept d
+        WHERE
+        1 = 1
+        AND d.parent_id = 'YG0'
+        AND d.del_flag = '0'
+        UNION ALL
+        SELECT DISTINCT
+            d.dept_id AS value,
+            d.parent_id AS parentId,
+            d.dept_name AS label
+        FROM
+            sys_dept d
+        WHERE
+            1 = 1
+        AND INSTR(
+            d.parent_id,
+            ( SELECT d.dept_id FROM sys_dept d WHERE 1 = 1 AND d.parent_id = 'YG0' AND d.del_flag = '0' )
+           ) > 0
+        AND d.del_flag = '0'
     </select>
 
     <insert id="insertSdEmergencyVehicle" parameterType="SdEmergencyVehicle" useGeneratedKeys="true" keyProperty="id">
@@ -102,5 +152,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <insert id="insertSdEmergencyVehicles" parameterType="list">
+
+        insert into sd_emergency_vehicle
+        (
+        id,org_id,plate_number,v_type,v_place,use_status,terminal_install,
+        status_desc,acc_state,create_time
+        )
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.id},#{item.orgId},#{item.plateNumber},#{item.vType},#{item.vPlace},#{item.useStatus},#{item.terminalInstall},
+            #{item.statusDesc},#{item.accState},#{item.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="deleteSdVehicle">
+        delete from sd_emergency_vehicle where 1=1
     </delete>
 </mapper>

@@ -14,10 +14,14 @@
     </div>
     <div class="alarmsStatisticsBox">
       <div class="listHeader">
-        <ul>
+        <ul style="padding-left: 0px">
           <li style="font-size: 0.8vw; display: flex; width: 100%">
-            <div class="headerIndex">序号</div>
-            <div class="headerName">预警信息</div>
+            <div class="headerIndex" style="width: 4vw; text-align: center">
+              序号
+            </div>
+            <div class="headerName" style="width: 28vw; text-align: center">
+              预警信息
+            </div>
           </li>
         </ul>
       </div>
@@ -34,10 +38,10 @@
             backgroundColor: (index + 1) % 2 == 0 ? '#0a5e97' : '#11629d',
           }"
         >
-          <el-col style="width: 6vw; text-align: center">{{
+          <el-col style="width: 4vw; text-align: center">{{
             index + 1
           }}</el-col>
-          <el-col style="width: 26vw">{{ item.content }}</el-col>
+          <el-col style="width: 28vw">{{ item.eventTitle }}</el-col>
         </el-row>
       </vue-seamless-scroll>
     </div>

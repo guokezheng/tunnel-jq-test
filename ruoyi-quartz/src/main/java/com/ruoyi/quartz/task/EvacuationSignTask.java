@@ -16,6 +16,7 @@ import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -26,6 +27,10 @@ import java.util.*;
  */
 @Component("evacuationSignTask")
 public class EvacuationSignTask {
+
+    @Value("${authorize.name}")
+    private String deploymentType;
+
     private static final Logger log = LoggerFactory.getLogger(EvacuationSignTask.class);
 
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
@@ -35,7 +40,7 @@ public class EvacuationSignTask {
 
     public void handle() {
         //定时获取疏散当前状态
-        Long evacuationSignTypeId = Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode());
+        Long evacuationSignTypeId = Long.valueOf(DevicesTypeEnum.SHU_SAN_BIAO_ZHI_CONTROL.getCode());
         SdDevices sdDevices = new SdDevices();
         sdDevices.setEqType(evacuationSignTypeId);
         List<SdDevices> evacuationSignDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
@@ -44,7 +49,8 @@ public class EvacuationSignTask {
             if (devices.getIp() == null && devices.getPort() == null
                     && ("").equals(devices.getIp()) && ("").equals(devices.getPort())) {
                 continue;
-            } else {
+            } else if (deploymentType != null && deploymentType.equals("GLZ")) {
+                System.err.println("111111111111111");
                 //进行状态查询
 //                sendCommand(devices, devices.getIp(), devices.getPort());
             }
@@ -158,7 +164,7 @@ public class EvacuationSignTask {
                 BigDecimal fireMark = new BigDecimal(codeMap.get("fireMark").toString());
                 for (int i = 0;i < list.size();i++) {
                     SdDevices devices = list.get(i);
-                    BigDecimal addressMark = new BigDecimal(devices.getEqFeedbackAddress1());
+                    BigDecimal addressMark = new BigDecimal(devices.getQueryPointAddress());
                     if (fireMark.compareTo(addressMark) < 0) {
                         mode = "6";
                     } else if (fireMark.compareTo(addressMark) == 0) {

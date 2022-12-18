@@ -7,7 +7,7 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="隧道名称" prop="tunnelId">
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
           v-model="queryParams.tunnelId"
           placeholder="请选择隧道"
@@ -247,6 +247,8 @@ export default {
   components: {},
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       emergencyPostList:[],
       // 遮罩层
       loading: true,
@@ -274,6 +276,9 @@ export default {
         pageNum: 1,
         pageSize: 10,
         tunnelId: null,
+      },
+      paramsData: {
+        tunnelId : ""
       },
       // 表单参数
       form: {
@@ -316,13 +321,19 @@ export default {
   },
   methods: {
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
       });
     },
     /** 查询应急人员信息列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listSdEmergencyPer(this.queryParams).then((response) => {
         console.log(response,"应急人员表格")
         this.SdEmergencyPerList = response.rows;
@@ -462,5 +473,12 @@ export default {
       }
     },
   },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnels();
+    }
+  }
 };
 </script>

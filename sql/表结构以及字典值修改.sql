@@ -468,3 +468,287 @@ alter table sd_patrol_list modify column network  varchar(10)  comment '网络�
 alter table sd_patrol_list modify column power  varchar(10)  comment '供配电情况';
 -- 修改sd_patrol_list表字段xc_status的字段类型
 alter table sd_patrol_list modify column xc_status  varchar(10)  comment '巡查状态';
+-- 修改sd_push_history表字段push_data的字段类型
+ALTER TABLE `tunnel-jq`.`sd_push_history`
+    MODIFY COLUMN `push_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '推送数据' AFTER `data_type`;
+
+-- 触发器表添加预警类型字段
+alter table sd_trigger  add column warning_type varchar(10) comment '预警类型0：仅预警；1：预警联动';
+
+
+-- 数据字典 任务发布状态
+insert into `sys_dict_type`( `dict_name`, `dict_type`, `status`, `create_by`, `create_time` ) values( '操作类型', 'opt_type', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 1, '派单', '0', 'opt_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 2, '接收', '1', 'opt_type', 'default', '0', 'admin', sysdate() );
+insert into `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `list_class`, `status`, `create_by`, `create_time` ) values( 3, '提交', '2', 'opt_type', 'default', '0', 'admin', sysdate() );
+
+
+-- 部门表主键修改为varchar（集团部门数据对接需要）  ---------start---------------
+-- 部门表sys_dept字段修改
+alter table sys_dept DROP  column jt_dept_id ;
+alter table sys_dept DROP  column jt_pid;
+alter table sys_dept modify column dept_id varchar(50) comment '部门id';
+alter table sys_dept modify column parent_id varchar(50) comment '父部门id';
+
+-- 角色部门关联表sys_role_dept字段修改
+alter table sys_role_dept modify column dept_id varchar(50) comment '部门ID';
+
+-- 用户表sys_user字段修改
+alter table sys_user modify column dept_id varchar(50) comment '部门ID';
+
+-- sd_xfwater_record表字段修改
+ alter table sd_xfwater_record modify column dept_id varchar(50) comment '部门ID';
+
+-- 隧道表sd_tunnels字段修改
+ alter table sd_tunnels modify column dept_id varchar(50) comment '部门ID';
+
+-- iot_device字段修改
+alter table iot_device modify column manage_agency_id varchar(50) comment '管理单位/组织机构表';
+
+-- 部门表主键修改为varchar（集团部门数据对接需要）  ---------end---------------
+
+ALTER TABLE sd_emergency_vehicle
+    MODIFY COLUMN `id` bigint(20) NOT NULL COMMENT '主键' FIRST,
+    ADD COLUMN `acc_state` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '车辆运行状态 0:未启动,1:启动,2:离线,4:清障救援,5:道路巡查' AFTER `status_desc`;
+
+-- 物联设备厂商表
+CREATE TABLE `sd_devices_brand` (
+  `supplier_id` varchar(11) DEFAULT NULL COMMENT '设备厂商编号',
+  `supplier_name` varchar(100) DEFAULT NULL COMMENT '设备厂商名称',
+  `short_name` varchar(100) DEFAULT NULL COMMENT '简称',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除（1-是，0-否）',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime  DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime  DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='物联设备厂商表';
+
+-- 集团部门表
+CREATE TABLE `sys_dept_sg` (
+  `id` varchar(36) NOT NULL COMMENT '机构主键',
+  `pid` varchar(50) DEFAULT NULL COMMENT '父节点代码',
+  `code` varchar(200) DEFAULT NULL COMMENT '编码',
+  `p_code` varchar(200) DEFAULT NULL COMMENT '父节点编码',
+  `pids` varchar(2100) DEFAULT NULL COMMENT '所有上级ID，用逗号分开',
+  `name` varchar(200) DEFAULT NULL COMMENT '机构名称',
+  `type` varchar(10) DEFAULT NULL COMMENT '类别',
+  `sort` bigint(20) DEFAULT NULL COMMENT '排序字段',
+  `spell` varchar(255) DEFAULT NULL COMMENT '机构简拼',
+  `has_leaf` tinyint(1) DEFAULT NULL COMMENT '是否有叶子',
+  `property` varchar(2) DEFAULT NULL COMMENT '属性(公司 中心 站)等',
+  `full_name` varchar(255) DEFAULT NULL COMMENT '全路径名称',
+  `creator` varchar(200) DEFAULT NULL COMMENT '创建人',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `updater` varchar(200) DEFAULT NULL COMMENT '修改人',
+  `update_date` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='机构表';
+
+-- 集团用户表
+CREATE TABLE `sys_user_sg` (
+  `id` varchar(50) NOT NULL COMMENT 'id',
+  `username` varchar(50) NOT NULL COMMENT '用户名',
+  `password` varchar(100) DEFAULT NULL COMMENT '密码',
+  `real_name` varchar(50) DEFAULT NULL COMMENT '姓名',
+  `type` varchar(20) DEFAULT NULL COMMENT '人员类别',
+  `head_url` varchar(200) DEFAULT NULL COMMENT '头像',
+  `gender` varchar(2) DEFAULT NULL COMMENT '性别   0：男   1：女    2：保密',
+  `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
+  `mobile` varchar(50) DEFAULT NULL COMMENT '手机号,唯一,验证',
+  `mobile2` varchar(50) DEFAULT NULL COMMENT '备用电话',
+  `position_desc` varchar(255) DEFAULT NULL COMMENT '职务描述',
+  `dept_desc` varchar(1500) DEFAULT NULL COMMENT '所在单位描述',
+  `super_admin` tinyint(1) DEFAULT NULL COMMENT '超级管理员   0：否   1：是',
+  `has_admin` tinyint(1) DEFAULT NULL COMMENT '是否有分权权限 0：否   1：是',
+  `data_scope_type` tinyint(1) DEFAULT NULL COMMENT '数据范围规则1 本单位 2 本节点及以下 3 全部 9跨部门',
+  `dept_id` varchar(50) DEFAULT NULL COMMENT '隶属单位id',
+  `company_id` varchar(50) CHARACTER SET utf8mb4 DEFAULT NULL COMMENT '单位id',
+  `id_card` varchar(20) DEFAULT NULL COMMENT '身份证号',
+  `superior_id` varchar(50) DEFAULT NULL COMMENT '上级',
+  `office_room` varchar(255) DEFAULT NULL COMMENT '办公室',
+  `status` tinyint(4) DEFAULT NULL COMMENT '状态  0：停用   1：正常',
+  `order_id` bigint(20) DEFAULT NULL COMMENT '排序',
+  `im_status` tinyint(4) DEFAULT NULL COMMENT '即时通讯状态',
+  `out_user_id` varchar(50) DEFAULT NULL COMMENT '对外对接用户',
+  `hr_employee_id` varchar(50) DEFAULT NULL COMMENT '人资雇员id',
+  `xdl_user_id` varchar(50) DEFAULT NULL COMMENT '行动力用户账号',
+  `has_valid_date` tinyint(1) DEFAULT '0' COMMENT '是否限制使用日期',
+  `start_date` datetime DEFAULT NULL COMMENT '用户启用时间',
+  `end_date` datetime DEFAULT NULL COMMENT '用户截止时间',
+  `spell` varchar(255) DEFAULT NULL COMMENT '简拼',
+  `pinyin` varchar(255) DEFAULT NULL COMMENT '全拼音',
+  `has_delete` tinyint(1) DEFAULT '0' COMMENT '是否删除',
+  `creator` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_date` datetime DEFAULT NULL COMMENT '创建时间',
+  `updater` varchar(50) DEFAULT NULL COMMENT '更新者',
+  `update_date` datetime DEFAULT NULL COMMENT '更新时间',
+  `weather_city` varchar(30) DEFAULT NULL COMMENT '气象地区',
+  `password_update_date` datetime DEFAULT NULL COMMENT '口令更新日期(空表示初始口令)',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_username` (`username`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统用户';
+
+-- 国标公路字典
+CREATE TABLE `sd_road` (
+  `road_id` char(7) NOT NULL COMMENT '国标路线编码',
+  `road_name` varchar(150) DEFAULT NULL COMMENT '国标路线名称',
+  `tec_level` int(11) DEFAULT NULL COMMENT '技术等级',
+  `start_site` varchar(150) DEFAULT NULL COMMENT '起始计费位置地点',
+  `start_stake_num` varchar(20) DEFAULT NULL COMMENT '起始计费位置桩号',
+  `start_stake_no` decimal(30,20) DEFAULT NULL COMMENT '起始计费位置桩号（数字）',
+  `start_lat` varchar(20) DEFAULT NULL COMMENT '起始计费位置纬度',
+  `start_lng` varchar(20) DEFAULT NULL COMMENT '起始计费位置经度',
+  `start_station_id` varchar(20) DEFAULT NULL COMMENT '起点收费站编号',
+  `end_site` varchar(150) DEFAULT NULL COMMENT '终止计费位置地点',
+  `end_stake_num` varchar(20) DEFAULT NULL COMMENT '终止计费位置桩号',
+  `end_stake_no` decimal(30,20) DEFAULT NULL COMMENT '终止计费位置桩号（数字）',
+  `end_lat` varchar(20) DEFAULT NULL COMMENT '终止计费位置纬度',
+  `end_lng` varchar(20) DEFAULT NULL COMMENT '终止计费位置经度',
+  `end_station_id` varchar(20) DEFAULT NULL COMMENT '终止收费站编号',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `effect_time` datetime DEFAULT NULL COMMENT '生效时间',
+  `expired_time` datetime DEFAULT NULL COMMENT '失效时间',
+  PRIMARY KEY (`road_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='国标公路字典';
+
+-- 高速公路路段表
+CREATE TABLE `sd_section` (
+  `section_id` varchar(11) NOT NULL COMMENT '路段编码',
+  `section_name` varchar(100) NOT NULL COMMENT '路段名称',
+  `road_id` varchar(7) DEFAULT NULL COMMENT '路线编码',
+  `road_name` varchar(100) DEFAULT NULL COMMENT '路线名称',
+  `region_id` varchar(6) DEFAULT NULL COMMENT '所在地市编码',
+  `region_name` varchar(10) DEFAULT NULL COMMENT '所在地市名称',
+  `start_stake_num` varchar(10) DEFAULT NULL COMMENT '起点桩号',
+  `end_stake_num` varchar(10) DEFAULT NULL COMMENT '终点桩号',
+  `start_stake_no` double DEFAULT NULL COMMENT '开始桩号（数字）',
+  `end_stake_no` double DEFAULT NULL COMMENT '结束桩号（数字）',
+  `section_length` decimal(10,3) DEFAULT NULL COMMENT '路段长度，单位米',
+  `opma_clique_id` varchar(20) DEFAULT NULL COMMENT '所属集团公司编码',
+  `opma_clique_name` varchar(60) DEFAULT NULL COMMENT '所属集团公司名称',
+  `opma_manager_corp_id` varchar(20) DEFAULT NULL COMMENT '管养公司编码',
+  `opma_manager_corp_name` varchar(60) DEFAULT NULL COMMENT '管养公司名称',
+  `opma_manager_id` varchar(20) DEFAULT NULL COMMENT '管养单位编码',
+  `opma_manager_name` varchar(60) DEFAULT NULL COMMENT '管养单位名称',
+  `opma_xxsubcenter_id` varchar(20) DEFAULT NULL COMMENT '信息分中心编码',
+  `opma_xxsubcenter_name` varchar(60) DEFAULT NULL COMMENT '信息分中心名称',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+  `effect_time` datetime NOT NULL COMMENT '生效时间',
+  `expired_time` datetime DEFAULT NULL COMMENT '失效时间',
+  PRIMARY KEY (`section_id`,`effect_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='高速公路路段表，该表基于智慧管理中心白皮书，并按照路线、地市划分';
+
+-- 高速公路子路段表
+CREATE TABLE `sd_sub_section` (
+  `sub_section_id` varchar(11) NOT NULL COMMENT '子路段编码',
+  `section_id` varchar(11) DEFAULT NULL COMMENT '路段编码',
+  `section_name` varchar(100) DEFAULT NULL COMMENT '路段名称',
+  `road_id` varchar(7) DEFAULT NULL COMMENT '路线编码',
+  `road_name` varchar(100) DEFAULT NULL COMMENT '路线名称',
+  `region_id` varchar(6) DEFAULT NULL COMMENT '所在地市编码',
+  `region_name` varchar(10) DEFAULT NULL COMMENT '所在地市名称',
+  `start_stake_no` decimal(20,3) DEFAULT NULL COMMENT '起点桩号（数字）',
+  `start_stake_num` varchar(10) DEFAULT NULL COMMENT '起点桩号',
+  `end_stake_no` decimal(20,3) DEFAULT NULL COMMENT '终点桩号（数字）',
+  `end_stake_num` varchar(10) DEFAULT NULL COMMENT '终点桩号',
+  `section_length` decimal(10,3) DEFAULT NULL COMMENT '路段长度，单位米',
+  `opma_manager_id` varchar(7) DEFAULT NULL COMMENT '管养单位编码',
+  `opma_manager_name` varchar(100) DEFAULT NULL COMMENT '管养单位名称',
+  `opma_manager_corp_id` varchar(5) DEFAULT NULL COMMENT '管养公司编码',
+  `opma_manager_corp_name` varchar(100) DEFAULT NULL COMMENT '管养公司名称',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `effect_time` datetime DEFAULT NULL COMMENT '生效时间',
+  `expired_time` datetime DEFAULT NULL COMMENT '失效时间',
+  `stat_flag` int(11) DEFAULT NULL COMMENT '统计标志 0:不纳入统计范围 1:纳入统计范围',
+  PRIMARY KEY (`sub_section_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='高速公路子路段表';
+
+-- 设备表添加字段：
+alter table sd_devices add column sn varchar(255) comment '设备唯一标识码' ;
+alter table sd_devices add column external_device_id varchar(255) comment '外部设备ID' ;
+
+-- 隧道关联关系表：
+CREATE TABLE `tunnel_association` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `tunnel_id` varchar(255) DEFAULT NULL COMMENT '隧道id',
+  `tunnel_direction` varchar(255) DEFAULT NULL COMMENT '隧道方向',
+  `external_system_id` varchar(255) DEFAULT NULL COMMENT '外部系统ID',
+  `external_system_tunnel_id` varchar(255) DEFAULT NULL COMMENT '外部系统隧道ID',
+`external_system_tunnel_direction` varchar(255) DEFAULT NULL COMMENT '外部系统隧道方向',
+`remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=utf8mb4 COMMENT='隧道关联关系表';
+
+-- 外部系统表：
+CREATE TABLE `external_system` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `brand_id` varchar(255) DEFAULT NULL COMMENT '厂商\品牌id',
+  `is_direction` varchar(255) DEFAULT NULL COMMENT '是否映射方向（0：是，1：否）',
+  `username` varchar(255) DEFAULT NULL COMMENT '用户名',
+`password` varchar(255) DEFAULT NULL COMMENT '密码',
+`network_status` varchar(255) DEFAULT NULL COMMENT '网络状态',
+`system_name` varchar(255) DEFAULT NULL COMMENT '系统名称',
+`system_url` varchar(255) DEFAULT NULL COMMENT '系统地址',
+`remark` varchar(255) DEFAULT NULL COMMENT '备注',
+`create_by` varchar(255) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime DEFAULT NULL COMMENT '创建日期',
+`update_by` varchar(255) DEFAULT NULL COMMENT '修改人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改日期',
+	PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=140 DEFAULT CHARSET=utf8mb3 COMMENT='外部系统表';
+
+
+-- 隧道方向修改：原有隧道方向（上行1、下行0） 修改为跟集团隧道方向保持一致（上行1，下行2）
+-- 设备表--方向字段修改
+update sd_devices set eq_direction = '2' where eq_direction = '0'
+-- 字典值：设备方向 sd_direction 修改
+
+-- 添加车辆类型表
+CREATE TABLE `sd_vehicle_type` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `vehicle_type_code` varchar(50) DEFAULT NULL COMMENT '车辆类型编码',
+  `vehicle_type_name` varchar(50) DEFAULT NULL COMMENT '车辆类型名称',
+  `is_key_vehicle` varchar(1) DEFAULT '0' COMMENT '是否是重点车辆 0:否 1:是  默认为0',
+  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='车辆类型配置表';
+
+-- 新增 设备协议配置表：
+CREATE TABLE `sd_devices_protocol` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `brand_id` varchar(50) DEFAULT NULL COMMENT '厂商 ID',
+  `eq_type_id` bigint(20) DEFAULT NULL COMMENT '设备类型',
+  `protocol_name` varchar(255) DEFAULT NULL COMMENT '协议名称',
+  `protocol_type` varchar(255) DEFAULT NULL COMMENT '协议类型',
+  `class_name` varchar(255) DEFAULT NULL COMMENT '类名',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除（1-是，0-否）',
+  `create_by` varchar(50) DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(50) DEFAULT NULL COMMENT '修改者',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `note` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='设备协议配置表';
+
+-- 微波车检：新增表 sd_microwave_periodic_statistics、sd_microwave_real_data
+
+-- 设备表添加 设备大类、外部系统ID字段
+alter table sd_devices modify column brand_id varchar(30) comment '品牌ID';
+alter table sd_devices add column f_eq_type varchar(100) comment '设备大类' after eq_type;
+alter table sd_devices add column external_system_id int(11) comment '外部系统ID';
+
+-- 外部系统表添加 所属隧道ID字段
+alter table external_system add column tunnel_id varchar(100) comment '所属隧道 ID' after brand_id;
+
+-- 新增协议类型字典
+INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, create_time, update_by, update_time, remark) VALUES (107, '协议类型', 'device_protocol_type', '0', 'admin', '2022-12-07 17:06:13', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (511, 1, 'UDP', '1', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:06:50', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (512, 2, 'TCP', '2', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:11', '', NULL, NULL);
+INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (513, 3, 'HTTP', '3', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:22', '', NULL, NULL);

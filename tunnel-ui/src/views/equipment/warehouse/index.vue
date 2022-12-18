@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="所属隧道" prop="tunnelId">
+      <el-form-item label="所属隧道" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select v-model="queryParams.tunnelId" placeholder="请选择所属隧道" clearable size="small">
           <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId" />
         </el-select>
@@ -245,6 +245,8 @@ export default {
   name: "Warehouse",
   data() {
     return {
+      manageStatin:this.$cache.local.get("manageStation"),
+
       //所属隧道
       eqTunnelData: {},
       // 遮罩层
@@ -346,7 +348,10 @@ export default {
   methods: {
     /** 所属隧道 */
     getTunnel() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
         console.log(response.rows,"所属隧道列表")
         this.eqTunnelData = response.rows;
       });
@@ -354,6 +359,9 @@ export default {
     /** 查询备品备件库列表 */
     getList() {
       this.loading = true;
+      if(this.manageStatin == '1'){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
       listWarehouse(this.queryParams).then(response => {
         this.warehouseList = response.rows;
         this.total = response.total;
@@ -471,6 +479,13 @@ export default {
       return "tableOddRow";
       }
     },
+  },
+  watch: {
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "0000000000000000000000");
+      this.getList();
+      this.getTunnel();
+    }
   }
 };
 </script>

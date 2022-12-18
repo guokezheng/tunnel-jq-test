@@ -12,6 +12,7 @@ import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,9 +78,10 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                     int removeflag =  Integer.valueOf(list.get(i).getFalltRemoveStatue());
                     if(1==removeflag){//未消除  根据当前时间与故障发现时间计算时间差，单位：天、小时
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    if(list.get(0).getFaultFxtime()!=null){
-                        String  fxtime = sdf.format(list.get(0).getFaultFxtime());
+                    if(list.get(i).getFaultFxtime()!=null){
+                        String  fxtime = sdf.format(list.get(i).getFaultFxtime());
                         long time = sdf.parse(fxtime, new ParsePosition(0)).getTime();
+                        System.out.println("++==================++=time===========+"+time);
                         long nd = 1000 * 24 * 60 * 60;
                         long nh = 1000 * 60 * 60;
                         long nm = 1000 * 60;
@@ -115,12 +117,13 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Override
     public int insertSdFaultList(MultipartFile[] file, SdFaultList sdFaultList)
     {
+        System.out.println("+++++++++=+++++++++++++++++++====="+file);
         int result = -1;
         List<SdTrafficImage> list = new ArrayList<SdTrafficImage>();
         try {
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
-            if (file.length > 0) {
+            if(file!=null){
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdFaultList.setImgFileId(guid);// 文件关联ID
                 for (int i = 0; i < file.length; i++) {
@@ -168,8 +171,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
                 if (result > -1) {
                     result = sdFaultListMapper.insertSdFaultList(sdFaultList);
                 }
-
-            } else {
+            }else {
                 sdFaultList.setImgFileId(null);// 图标文件ID
                 result = sdFaultListMapper.insertSdFaultList(sdFaultList);
             }
@@ -195,12 +197,12 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         try {
             sdFaultList.setUpdateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setUpdateBy(SecurityUtils.getUsername());// 设置当前创建人
-            String guid = sdFaultList.getImgFileId();// 关联ID--guid
-            if (guid == null || guid.equals("null") || guid.equals("")) {
-                guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
-            }
-            sdFaultList.setImgFileId(guid);// 文件关联ID
-            if (file != null && file.length > 0) {
+            if (file != null) {
+                String guid = sdFaultList.getImgFileId();// 关联ID--guid
+                if (guid == null || guid.equals("null") || guid.equals("")) {
+                    guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
+                }
+                sdFaultList.setImgFileId(guid);// 文件关联ID
                 for (int i = 0; i < file.length; i++) {
                     // 图片Base64
                     String imageBaseStr = null;
@@ -315,6 +317,6 @@ public class SdFaultListServiceImpl implements ISdFaultListService
      */
     @Override
     public List<SdFaultList> getFaultList(String tunnelId, String faultLevel) {
-        return sdFaultListMapper.getFaultList(tunnelId,faultLevel);
+        return sdFaultListMapper.getFaultList1(tunnelId,faultLevel);
     }
 }

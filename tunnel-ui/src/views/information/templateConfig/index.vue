@@ -133,7 +133,7 @@
       <!-- <el-table-column label="序号" align="center" type="index" /> -->
       <el-table-column label="屏幕尺寸" align="center" prop="screenSize"  />
       <el-table-column label="入屏方式" align="center" prop="inScreenMode" :formatter="inScreenModeMatter" />
-      <el-table-column label="滚动速度/毫秒" align="center" prop="rollSpeed" />
+      <el-table-column label="滚动速度/毫秒" align="center" prop="tcontent.content" />
       <el-table-column label="停留时间/秒" align="center" prop="stopTime" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
@@ -182,6 +182,7 @@ export default {
   data () {
     return {
       screenSizeList:[],//屏幕尺寸列表
+      iotTemplateCategoryList:[],
         // 显示搜索条件
         showSearch: true,
         dataForm: {},
@@ -334,6 +335,10 @@ export default {
     this.getDicts("screenSize").then((res) => {
       this.screenSizeList = res.data;
       console.log(this.screenSizeList,'this.screenSizeList')
+    });
+    this.getDicts("iot_template_category").then((res) => {
+      this.iotTemplateCategoryList = res.data;
+      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
     });
   },
   methods: {

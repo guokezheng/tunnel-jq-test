@@ -40,6 +40,11 @@ public class SdVmsTemplateController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/getAllVmsTemplate/{category}")
+    public AjaxResult getAllVmsTemplate(@PathVariable("category") String category) {
+        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category));
+    }
+
     /**
      * 导出情报板模板列表
      */
@@ -110,5 +115,13 @@ public class SdVmsTemplateController extends BaseController
     @PostMapping("/informationBoardAcquisition")
     public AjaxResult informationBoardAcquisition(JSONObject jsonObject) {
         return AjaxResult.success(sdVmsTemplateService.informationBoardAcquisition(jsonObject));
+    }
+
+    /**
+     * 根据设备ID和分类ID获取情报板模板数据集合
+     */
+    @PostMapping("/getVMSTemplatesByDevIdAndCategory")
+    public AjaxResult getVMSTemplatesByDevIdAndCategory(@RequestBody List<String> devIds) {
+        return AjaxResult.success(sdVmsTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
     }
 }

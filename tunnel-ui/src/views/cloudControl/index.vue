@@ -749,7 +749,7 @@
         <el-form-item label="实时视频:">
           <videoPlayer
             :id="stateForm.eqId"
-            :rtsp="stateForm.eqFeedbackAddress2"
+            :rtsp="stateForm.queryPointAddress"
             :hostIP="hostIP"
             :open="cameraVisible"
           ></videoPlayer>
@@ -2596,8 +2596,7 @@ export default {
           eqDirection: item.eqDirection,
           state: "", //默认状态
           stakeMark: item.stakeMark,
-          eqFeedbackAddress1: item.eqFeedbackAddress1,
-          eqFeedbackAddress2: item.eqFeedbackAddress2,
+          queryPointAddress: item.queryPointAddress,
         };
         this.title = item.eqName;
         this.cameraVisible = true;

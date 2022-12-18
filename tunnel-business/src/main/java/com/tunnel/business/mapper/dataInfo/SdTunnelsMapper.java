@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.dataInfo;
 
 
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -99,4 +100,25 @@ public interface SdTunnelsMapper
      * @return
      */
     List<SdTunnels> selectTunnelList(String deptId);
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    List<SdTunnels> getJlyTunnel(@Param("deptId") String deptId);
+
+    List<SdTunnels> selectAllSdTunnelsList();
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels);
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    List<SdTunnels> selectAllSdTunnelsList1();
 }

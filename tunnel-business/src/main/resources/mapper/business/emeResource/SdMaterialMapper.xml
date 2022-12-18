@@ -65,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             ${params.dataScope}
         </where>
-        ORDER BY ID
+        ORDER BY s.create_time desc
     </select>
 
     <select id="selectSdMaterialById" parameterType="Long" resultMap="SdMaterialResult">

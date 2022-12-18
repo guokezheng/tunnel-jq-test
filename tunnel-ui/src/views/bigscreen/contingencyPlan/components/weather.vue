@@ -15,7 +15,7 @@
           <div class="Temperature">25°C</div>
         </div>
       </div>
-      <div class="weatherNum">
+      <!-- <div class="weatherNum">
         <div>
           <p>温度</p>
           <span>25°C~34°C</span>
@@ -28,7 +28,7 @@
           <p>空气质量</p>
           <span>良</span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

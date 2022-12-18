@@ -127,7 +127,7 @@ public class SdIcyRoadController extends BaseController
         for(int i=0;i<list.size();i++){
         	String deviceId = list.get(i).getEqId();
         	try {
-        		String ip = list.get(i).getEqFeedbackAddress1();
+        		String ip = list.get(i).getQueryPointAddress();
                 // 返回内容
                 String content = DevicesManager.getInstance().executeCommand(deviceId + "," + ip, command , "110");
                 // 协议解析

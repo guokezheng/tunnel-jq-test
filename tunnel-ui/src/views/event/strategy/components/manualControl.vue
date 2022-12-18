@@ -8,30 +8,51 @@
       label-width="100px"
     >
       <el-row>
-        <el-form-item label="隧道名称" prop="tunnelId">
-          <el-select
-            style="width: 90%"
-            v-model="strategyForm.tunnelId"
-            placeholder="请选择隧道"
-            clearable
-            @change="changeEvent()"
-          >
-            <el-option
-              v-for="item in tunnelData"
-              :key="item.tunnelId"
-              :label="item.tunnelName"
-              :value="item.tunnelId"
+        <el-col>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              style="width: 90%"
+              v-model="strategyForm.strategyName"
+              placeholder="请输入策略名称"
             />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="策略名称" prop="strategyName">
-          <el-input
-            style="width: 90%"
-            v-model="strategyForm.strategyName"
-            placeholder="请输入策略名称"
-          />
-        </el-form-item>
+          </el-form-item>
+        </el-col>
+        <el-col :span="14">
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              style="width: 100%"
+              v-model="strategyForm.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              @change="changeEvent()"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item label="方向" prop="direction">
+            <el-select
+              clearable
+              v-model="strategyForm.direction"
+              placeholder="请选择方向"
+              @change="changeEvent"
+              style="width: 95%"
+            >
+              <el-option
+                v-for="dict in directionOptions"
+                :key="dict.value"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="8">
           <el-form-item label="设备类型" prop="equipmentTypeId">
             <el-select
@@ -50,23 +71,6 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item label="方向" prop="direction">
-            <el-select
-              clearable
-              v-model="strategyForm.direction"
-              placeholder="请选择设备方向"
-              @change="changeEvent"
-            >
-              <el-option
-                v-for="dict in directionOptions"
-                :key="dict.value"
-                :label="dict.dictLabel"
-                :value="dict.dictValue"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
       </el-row>
       <el-row>
         <el-form-item
@@ -74,8 +78,10 @@
           :key="items.state + index"
         >
           <el-select
+            v-show="strategyForm.equipmentTypeId != 30"
             v-model="items.value"
             multiple
+            collapse-tags
             placeholder="请选择设备"
             style="width: 40%"
             @change="$forceUpdate()"
@@ -92,7 +98,11 @@
           <el-select
             v-model="items.state"
             placeholder="请选择设备需要执行的操作"
-            style="width: 39%; margin-left: 6%"
+            :style="
+              strategyForm.equipmentTypeId != 30
+                ? 'width: 39%;margin-left: 6%'
+                : 'width: 50%;'
+            "
           >
             <el-option
               v-for="item in manualControlStateList"
@@ -110,7 +120,12 @@
             style="margin-left: 2%"
           ></el-button>
         </el-form-item>
-        <el-form-item label="" style="">
+
+        <el-form-item
+          label=""
+          style=""
+          v-show="strategyForm.equipmentTypeId != 30"
+        >
           <a href="#" @click="addItem" style="color: #1890ff">+添加执行操作</a>
         </el-form-item>
       </el-row>
@@ -148,6 +163,9 @@ export default {
     return {
       sink: "", //删除/修改
       id: "", //策略id
+      paramsData : {
+        tunnelId: ""
+      },
       strategyForm: {
         jobRelationId: "", //时间戳
         equipmentTypeId: "", //设备类型
@@ -288,12 +306,20 @@ export default {
         if (valid) {
           console.log(this.strategyForm, "要提交数据");
           var manualControl = this.strategyForm.manualControl;
-          if (
-            manualControl[0].value.length == 0 ||
-            manualControl[0].state == ""
-          ) {
-            return this.$modal.msgError("请选择设备并添加执行操作");
+          //如果不是疏散标志则判断是否填写
+          if (this.strategyForm.equipmentTypeId != 30) {
+            if (
+              manualControl[0].value.length == 0 ||
+              manualControl[0].state == ""
+            ) {
+              return this.$modal.msgError("请选择设备并添加执行操作");
+            }
+          } else {
+            if (manualControl[0].state == "") {
+              return this.$modal.msgError("请选择疏散标志执行操作");
+            }
           }
+
           // 判断是修改还是删除
           if (this.sink == "edit") {
             this.updateStrategyInfoData();
@@ -413,7 +439,10 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      listTunnels().then((response) => {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
         console.log(this.tunnelData, "隧道列表");
       });

@@ -92,4 +92,25 @@ public interface ISdTunnelsService {
      * @return
      */
     List<SdTunnels> selectTunnelList(String deptId);
+
+    /**
+     * 查询当前登录者所属
+     * @return
+     */
+    List<SdTunnels> getJlyTunnel();
+
+    List<SdTunnels> selectAllSdTunnelsList();
+
+    /**
+     * 查询所有的隧道列表
+     * @param sdTunnels
+     * @return
+     */
+    List<SdTunnels> selectSdTunnelsList1(SdTunnels sdTunnels);
+
+    /**
+     * 外部系统获取隧道下拉
+     * @return
+     */
+    List<SdTunnels> selectAllSdTunnelsList1();
 }

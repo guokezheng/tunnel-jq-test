@@ -73,4 +73,12 @@ public interface SdDeviceDataMapper
     public SdDeviceData selectLastRecord(SdDeviceData sdDeviceData);
 
     public List<Map<String, Object>> getTodayCOVIData(@Param("deviceId") String deviceId, @Param("itemId") Long itemId, @Param("today") String today);
+
+    public List<Map<String, String>> selectCOVIDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+
+    public List<Map<String, String>> selectFSFXDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+
+    public List<Map<String, String>> selectDWDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+
+    public List<Map<String, String>> selectDNDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
 }

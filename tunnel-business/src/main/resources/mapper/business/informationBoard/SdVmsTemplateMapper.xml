@@ -55,6 +55,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectTemplateList" resultMap="SdVmsTemplateResult">
+        select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
+               a.template_type, a.vms_type, a.remark, a.category
+        from sd_vms_template a
+        where a.category = #{category}
+    </select>
+
     <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">
         <include refid="selectSdVmsTemplateVo"/>
         where a.id = #{id}
@@ -97,7 +104,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="stopTime != null">stop_time = #{stopTime},</if>
             <if test="applyType != null">apply_type = #{applyType},</if>
             <if test="isCurrency != null">is_currency = #{isCurrency},</if>
-            <if test="templateType != null">template_type = #{templateType},</if>
             <if test="vmsType != null">vms_type = #{vmsType},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="category != null">category = #{category},</if>
@@ -118,5 +124,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdVmsTemplateId" resultType="Long">
         SELECT id from sd_vms_template ORDER BY id desc LIMIT 1
+    </select>
+
+    <select id="getAllSdVmsTemplateList" resultType="hashmap">
+        select a.id value, a.screen_size devicePixel, a.category, b.id contentId, b.template_id templateId, b.content label
+        from sd_vms_template a
+            left join sd_vms_template_content b on a.id = b.template_id
+        GROUP BY b.template_id
     </select>
 </mapper>

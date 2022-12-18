@@ -2,20 +2,21 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
+import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
 
 import java.util.List;
 
 /**
  * 巡查任务Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2022-11-04
  */
-public interface SdTaskListMapper 
+public interface SdTaskListMapper
 {
     /**
      * 查询巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 巡查任务
      */
@@ -23,7 +24,7 @@ public interface SdTaskListMapper
 
     /**
      * 查询巡查任务列表
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 巡查任务集合
      */
@@ -31,15 +32,16 @@ public interface SdTaskListMapper
 
     /**
      * 新增巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
+     * @param
      * @return 结果
      */
     public int insertSdTaskList(SdTaskList sdTaskList);
 
     /**
      * 修改巡查任务
-     * 
+     *
      * @param sdTaskList 巡查任务
      * @return 结果
      */
@@ -47,7 +49,7 @@ public interface SdTaskListMapper
 
     /**
      * 删除巡查任务
-     * 
+     *
      * @param id 巡查任务主键
      * @return 结果
      */
@@ -55,7 +57,7 @@ public interface SdTaskListMapper
 
     /**
      * 批量删除巡查任务
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
@@ -73,7 +75,7 @@ public interface SdTaskListMapper
      * @param deptId
      * @return
      */
-    List<SysDept> selectTableBzDataInfo(Long deptId);
+    List<SysDept> selectTableBzDataInfo(String deptId);
 
     /**
      * 废纸巡查任务
@@ -95,7 +97,26 @@ public interface SdTaskListMapper
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(String tunnelName, SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(SdTaskList sdTaskList );
 
+    /**
+     * 操作记录
+     * @param taskId
+     * @return
+     */
+    List<SdTaskOpt> getTaskOpt(String taskId);
 
+    /**
+     * app端  暂存本地
+     * @param sdTaskList
+     * @return
+     */
+    int saveLocal(SdTaskList sdTaskList);
+
+    /**
+     * 添加操作记录
+     * @param sdTaskOpt
+     * @return
+     */
+    int insertTaskOpt(SdTaskOpt sdTaskOpt);
 }

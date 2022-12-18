@@ -324,12 +324,19 @@ export default {
     //   }
     // },
     getRoute(path) {
+      console.log(path,"path");
       var arr = [
         "/index",
         "/map/map/index",
         "/emergency/administration/dispatch",
         "/map/map3d/index",
         "/energy",
+        "/map/trafficChart",
+        "/map/emphasisCars",
+        "/map/deviceMonitor",
+        "/map/trackPlayback",
+        "/map/analyse",
+
       ];
       if (arr.includes(path)) {
         return "none";
@@ -344,6 +351,12 @@ export default {
         "/emergency/administration/dispatch",
         "/map/map3d/index",
         "/energy",
+        "/map/trafficChart",
+        "/map/emphasisCars",
+        "/map/deviceMonitor",
+        "/map/trackPlayback",
+        "/map/analyse",
+
       ];
       if (arr.includes(path)) {
         return true;

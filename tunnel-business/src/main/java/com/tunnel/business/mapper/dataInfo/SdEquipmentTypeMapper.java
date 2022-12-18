@@ -100,4 +100,10 @@ public interface SdEquipmentTypeMapper
      * @return
      */
     List<SdEquipmentType> selectList();
+
+    /**
+     * app查询设备类型
+     * @return
+     */
+    List<SdEquipmentType> getDevicesType();
 }

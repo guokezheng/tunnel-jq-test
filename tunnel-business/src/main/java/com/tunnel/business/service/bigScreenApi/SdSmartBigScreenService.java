@@ -83,4 +83,18 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getEmergencyPer(String tunnelId);
+
+    /**
+     * 查询应急车辆
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getEmergencyVehicle(String tunnelId);
+
+    /**
+     * 查询报警信息
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getAlarmInformation(String tunnelId);
 }

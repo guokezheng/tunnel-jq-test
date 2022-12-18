@@ -9,19 +9,13 @@
     >
       <el-form-item label="机构" prop="orgName">
         <!-- <el-input style="width:200px"  v-model.number="queryParams.orgId" placeholder="请输入机构名称" size="small" /> -->
-        <el-select
-          v-model="queryParams.orgId"
-          placeholder="请选择机构"
-          clearable
-          style="width: 100%"
-        >
-          <el-option
-            v-for="item in orgData"
-            :key="item.orgId"
-            :label="item.orgName"
-            :value="item.orgId"
-          />
-        </el-select>
+        <el-cascader
+          popper-class="jigou"
+          v-model="queryParams.orgName"
+          :show-all-levels="false"
+          :options="orgData"
+          :props="{ checkStrictly: true }"
+          clearable></el-cascader>
       </el-form-item>
 
       <el-form-item label="车型" prop="tunnelId">
@@ -32,10 +26,10 @@
           style="width: 100%"
         >
           <el-option
-            v-for="dict in dict.type.sd_wj_vehicle_type"
+            v-for="dict in dict.type.sd_emergency_vehicle_type"
             :key="dict.value"
             :label="dict.label"
-            :value="dict.value"
+            :value="dict.label"
           />
         </el-select>
       </el-form-item>
@@ -47,7 +41,7 @@
           size="small"
         />
       </el-form-item>
-      <el-form-item label="使用状态" prop="tunnelId">
+<!--      <el-form-item label="使用状态" prop="tunnelId">
         <el-select
           v-model="queryParams.useStatus"
           placeholder="请选择使用状态"
@@ -61,6 +55,21 @@
             :value="dict.value"
           />
         </el-select>
+      </el-form-item>-->
+      <el-form-item label="运行状态" prop="tunnelId">
+        <el-select
+          v-model="queryParams.accState"
+          placeholder="请选择车型"
+          clearable
+          style="width: 100%"
+        >
+          <el-option
+            v-for="dict in dict.type.sd_vehicle_run_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
@@ -69,14 +78,14 @@
         <el-button size="mini" @click="resetQuery" type="primary" plain
           >重置</el-button
         >
-        <el-button
+<!--        <el-button
           type="primary"
           plain
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:material:add']"
           >新增</el-button
-        >
+        >-->
         <el-button
           type="primary"
           plain
@@ -85,24 +94,6 @@
           @click="handleUpdateMaterial"
           v-hasPermi="['system:vehicle:edit']"
           >修改</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['business:SdEmergencyPer:remove']"
-          >删除</el-button
-        >
-        <el-button
-          type="primary"
-          plain
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['system:vehicle:export']"
-          >导出</el-button
         >
         <!-- <el-col :span="1.5"> -->
 
@@ -150,27 +141,19 @@
     <el-table
       v-loading="loading"
       :data="mechanismList"
-      @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
       max-height="640"
     >
-      <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />
-      <el-table-column label="车型" align="center" prop="vType">
-        <template slot-scope="scope">
-          <dict-tag
-            :options="dict.type.sd_wj_vehicle_type"
-            :value="scope.row.vType"
-          />
-        </template>
-      </el-table-column>
+      <el-table-column label="车型" align="center" prop="vType"/>
       <el-table-column label="存放地点" align="center" prop="vPlace" />
-      <el-table-column label="使用状态" align="center" prop="useStatus">
+      <el-table-column label="使用状态" align="center" prop="useStatus" />
+      <el-table-column label="运行状态" align="center" prop="accState">
         <template slot-scope="scope">
           <dict-tag
-            :options="dict.type.sd_use_status"
-            :value="scope.row.useStatus"
+            :options="dict.type.sd_vehicle_run_type"
+            :value="scope.row.accState"
           />
         </template>
       </el-table-column>
@@ -195,10 +178,9 @@
           >
           <el-button
             size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:vehicle:remove']"
-            >删除</el-button
+            class="tableBlueButtton"
+            @click="handleDetailsMaterial(scope.row)"
+          >详情</el-button
           >
         </template>
       </el-table-column>
@@ -219,54 +201,43 @@
       :before-close="cancel"
     >
       <el-form ref="form" :model="form" :rules="rules" label-width="106px">
-        <el-form-item label="机构" prop="orgId">
-          <!-- <el-input v-model="form.orgId" placeholder="请输入机构名称" /> -->
-          <el-select
-            v-model="form.orgId"
-            placeholder="请选择机构"
-            clearable
-            style="width: 100%"
-          >
-            <el-option
-              v-for="item in orgData"
-              :key="item.orgId"
-              :label="item.orgName"
-              :value="item.orgId"
-            />
-          </el-select>
+        <el-form-item label="机构" prop="orgName" v-show="model">
+          <el-input v-model="form.orgName" placeholder="请输入机构名称" :disabled="disabled"/>
         </el-form-item>
-        <el-form-item label="车牌" prop="plateNumber">
-          <el-input v-model="form.plateNumber" placeholder="请输入车牌" />
+        <el-form-item label="车牌" prop="plateNumber" v-show="updateModel">
+          <el-input v-model="form.plateNumber" placeholder="请输入车牌" :disabled="disabled"/>
         </el-form-item>
-        <el-form-item label="车型" prop="vType">
+        <el-form-item label="车型" prop="vType" v-show="model">
           <el-select
             v-model="form.vType"
             placeholder="请选择车型"
             clearable
             style="width: 100%"
+            :disabled="disabled"
           >
             <el-option
-              v-for="dict in dict.type.sd_wj_vehicle_type"
-              :key="dict.value"
+              v-for="dict in dict.type.sd_emergency_vehicle_type"
+              :key="dict.label"
               :label="dict.label"
-              :value="dict.value"
+              :value="dict.label"
             />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="存放地点" prop="vPlace">
+        <el-form-item label="存放地点" prop="vPlace" v-show="model">
           <el-input
             v-model="form.vPlace"
             placeholder="请输入存放地点"
             type="textarea"
+            :disabled="disabled"
           />
         </el-form-item>
-        <el-form-item label="使用状态" prop="useStatus">
+        <el-form-item label="使用状态" prop="useStatus" v-show="model">
           <el-select
             v-model="form.useStatus"
             placeholder="请选择使用状态"
             clearable
             style="width: 100%"
+            :disabled="disabled"
           >
             <el-option
               v-for="dict in dict.type.sd_use_status"
@@ -276,19 +247,39 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="车载终端安装" prop="terminalInstall">
-          <el-input
-            v-model="form.terminalInstall"
-            placeholder="请输入车载终端安装"
-            type="textarea"
-          />
+        <el-form-item label="运行状态" prop="accState" v-show="updateModel">
+          <el-select
+            v-model="form.accState"
+            placeholder="请选择运行状态"
+            clearable
+            style="width: 100%"
+            :disabled="upDisabled"
+          >
+            <el-option
+              v-for="dict in dict.type.sd_vehicle_run_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="技术状态描述" prop="statusDesc">
-          <el-input
-            v-model="form.statusDesc"
-            placeholder="请输入技术状态描述"
-            type="textarea"
-          />
+        <el-form-item label="资产归属" prop="ownerName" v-show="model">
+          <el-input v-model="form.ownerName" :disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="车辆型号" prop="vehicleModel" v-show="model">
+          <el-input v-model="form.vehicleModel" :disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="ETC卡类型" prop="etcTypeDesc" v-show="model">
+          <el-input v-model="form.etcTypeDesc" :disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="ETC使用情况" prop="etcStateDesc" v-show="model">
+          <el-input v-model="form.etcStateDesc" :disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="车龄" prop="carAge" v-show="model">
+          <el-input v-model="form.carAge" :disabled="disabled"/>
+        </el-form-item>
+        <el-form-item label="公里数" prop="mileage" v-show="model">
+          <el-input v-model="form.mileage" :disabled="disabled"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -306,6 +297,7 @@ import {
   handleQueryList,
   addList,
   editForm,
+  detailForm,
   updateForm,
   deleteForm,
   exportData,
@@ -314,8 +306,15 @@ import {
 import { batchDelete } from "@/api/surveyVehicle/api.js";
 
 export default {
-  dicts: ["sd_use_status", "sd_wj_vehicle_type"],
+  dicts: ["sd_use_status", "sd_emergency_vehicle_type","sd_vehicle_run_type"],
   data() {
+    const validateLongitude = (rule, value, callback) => {
+      if (value == "" || value == null && this.upDisabled == false) {
+        callback(new Error("请选择运行状态！"));
+      } else {
+        callback();
+      }
+    };
     return {
       tunnelData: [{ tunnelName: 1, tunnelId: 2 }],
       exportLoading: false,
@@ -330,6 +329,10 @@ export default {
       multiple: true,
       // 弹出层标题
       title: "",
+      model:false,
+      updateModel:true,
+      disabled:true,
+      upDisabled:false,
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -338,73 +341,34 @@ export default {
       mechanismList: [],
       // 表单校验
       rules: {
-        orgId: [{ required: true, message: "请选择机构", trigger: "orgId" }],
-        plateNumber: [
-          { required: true, message: "请输入车牌", trigger: "plateNumber" },
-          {
-            pattern:
-              /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/,
-            message: "请输入正规格式的车牌号",
-            trigger: "blur",
-          },
-        ],
-        vType: [{ required: true, message: "请选择车型", trigger: "vType" }],
-        vPlace: [
-          { required: true, message: "请输入存放地点", trigger: "vPlace" },
-        ],
-        useStatus: [
-          { required: true, message: "请选择使用状态", trigger: "tunnelId" },
-        ],
-        terminalInstall: [
-          {
-            required: true,
-            message: "请输入车载终端安装",
-            trigger: "terminalInstall",
-          },
-        ],
-        statusDesc: [
-          {
-            required: true,
-            message: "请输入技术状态描述",
-            trigger: "statusDesc",
-          },
+        accState: [
+          { validator: validateLongitude,required: false, trigger: "change" },
         ],
       },
       open: false,
-      orgData: "",
+      orgData: [],
       showSearch: true,
     };
   },
   created() {
     this.getList();
     veicleOrgId().then((res) => {
-      console.log(res.data, "机构名称");
-      this.orgData = res.data;
+      this.orgData = this.handleTree(res,"value");
+      console.log(this.orgData, "机构名称");
     });
-    this.getDicts("sd_wj_vehicle_type").then((data) => {
+    this.getDicts("sd_emergency_vehicle_type").then((data) => {
       console.log(data, "车型");
       this.vehicleTypeList = data.data;
     });
   },
   methods: {
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal
-        .confirm("是否确认导出所有数据项？")
-        .then(() => {
-          this.exportLoading = true;
-          return exportData();
-        })
-        .then((response) => {
-          this.$download.name(response.msg);
-          this.exportLoading = false;
-        })
-        .catch(() => {});
-    },
     /** 查询应急机构列表 */
-    getList(queryParams = {}) {
-      handleQueryList(queryParams).then((res) => {
+    getList() {
+      // console.log(this.queryParams)
+      if(this.queryParams.orgName){
+        this.queryParams.orgName = this.queryParams.orgName[2]?this.queryParams.orgName[2]:this.queryParams.orgName[1]?this.queryParams.orgName[1]:this.queryParams.orgName[0]?this.queryParams.orgName[0]:''
+      }
+      handleQueryList(this.queryParams).then((res) => {
         if (res.code == 200) {
           this.mechanismList = res.rows;
           this.total = res.total;
@@ -416,7 +380,8 @@ export default {
     handleQuery() {
       console.log(this.queryParams, "useStatususeStatus");
       // this.queryParams.pageNum = 1;
-      this.getList(this.queryParams);
+
+      this.getList();
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -500,7 +465,9 @@ export default {
     handleUpdateMaterial(row) {
       console.log(row, "row");
       // this.reset();
-      const id = row.id ? [row.id] : this.ids;
+      this.model = false;
+      this.upDisabled = false;
+      const id = row.id;
       this.open = true;
       this.title = "修改应急车辆";
       // console.log(scope,'row.idrow.id');
@@ -513,22 +480,22 @@ export default {
         // this.title = "修改应急资源";
       });
     },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.orgId ? [row.orgId] : this.ids;
-      var that = this;
-      this.$confirm("是否确认删除?", "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(function () {
-        batchDelete(ids).then((res) => {
-          if (res.code == 200) {
-            that.$modal.msgSuccess("删除成功");
-            that.getList();
-            that.$forceUpdate();
-          }
-        });
+    /** 详情按钮操作 */
+    handleDetailsMaterial(row) {
+      console.log(row, "row");
+      // this.reset();
+      this.model = true;
+      this.upDisabled = true;
+      this.open = true;
+      this.title = "应急车辆详情";
+      // console.log(scope,'row.idrow.id');
+      detailForm({plateNumber : row.plateNumber}).then((res) => {
+        if (res.code == 200) {
+          this.form = res.data;
+        }
+        // this.form = response.data;
+        // this.open = true;
+        // this.title = "修改应急资源";
       });
     },
     // 表格的行样式
@@ -543,5 +510,11 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+.jigou .el-scrollbar{
+  width: 215px !important;
+}
+.jigou .el-icon-arrow-right{
+  right: 15px;
+}
 </style>

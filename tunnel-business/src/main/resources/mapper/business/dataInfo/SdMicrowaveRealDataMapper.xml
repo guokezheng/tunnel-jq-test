@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper">
+    
+    <resultMap type="SdMicrowaveRealData" id="SdMicrowaveRealDataResult">
+        <result property="id"    column="id"    />
+        <result property="laneNo"    column="lane_no"    />
+        <result property="occupationTime"    column="occupation_time"    />
+        <result property="vehicleSpeed"    column="vehicle_speed"    />
+        <result property="vehicleType"    column="vehicle_type"    />
+        <result property="headway"    column="headway"    />
+        <result property="vehicleLength"    column="vehicle_length"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="direction"    column="direction"    />
+    </resultMap>
+
+    <sql id="selectSdMicrowaveRealDataVo">
+        select id, lane_no, occupation_time, vehicle_speed, vehicle_type, headway, vehicle_length, create_time, tunnel_id, device_id, direction from sd_microwave_real_data
+    </sql>
+
+    <select id="selectSdMicrowaveRealDataList" parameterType="SdMicrowaveRealData" resultMap="SdMicrowaveRealDataResult">
+        <include refid="selectSdMicrowaveRealDataVo"/>
+        <where>  
+            <if test="laneNo != null "> and lane_no = #{laneNo}</if>
+            <if test="occupationTime != null  and occupationTime != ''"> and occupation_time = #{occupationTime}</if>
+            <if test="vehicleSpeed != null  and vehicleSpeed != ''"> and vehicle_speed = #{vehicleSpeed}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="headway != null "> and headway = #{headway}</if>
+            <if test="vehicleLength != null  and vehicleLength != ''"> and vehicle_length = #{vehicleLength}</if>
+            <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+            <if test="direction != null  and direction != ''"> and direction = #{direction}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdMicrowaveRealDataById" parameterType="Long" resultMap="SdMicrowaveRealDataResult">
+        <include refid="selectSdMicrowaveRealDataVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdMicrowaveRealData" parameterType="SdMicrowaveRealData" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_microwave_real_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="laneNo != null">lane_no,</if>
+            <if test="occupationTime != null">occupation_time,</if>
+            <if test="vehicleSpeed != null">vehicle_speed,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="headway != null">headway,</if>
+            <if test="vehicleLength != null">vehicle_length,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
+            <if test="deviceId != null">device_id,</if>
+            <if test="direction != null">direction,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="laneNo != null">#{laneNo},</if>
+            <if test="occupationTime != null">#{occupationTime},</if>
+            <if test="vehicleSpeed != null">#{vehicleSpeed},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="headway != null">#{headway},</if>
+            <if test="vehicleLength != null">#{vehicleLength},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="direction != null">#{direction},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdMicrowaveRealData" parameterType="SdMicrowaveRealData">
+        update sd_microwave_real_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="laneNo != null">lane_no = #{laneNo},</if>
+            <if test="occupationTime != null">occupation_time = #{occupationTime},</if>
+            <if test="vehicleSpeed != null">vehicle_speed = #{vehicleSpeed},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="headway != null">headway = #{headway},</if>
+            <if test="vehicleLength != null">vehicle_length = #{vehicleLength},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="deviceId != null">device_id = #{deviceId},</if>
+            <if test="direction != null">direction = #{direction},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdMicrowaveRealDataById" parameterType="Long">
+        delete from sd_microwave_real_data where id = #{id}
+    </delete>
+
+    <delete id="deleteSdMicrowaveRealDataByIds" parameterType="String">
+        delete from sd_microwave_real_data where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

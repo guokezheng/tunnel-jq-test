@@ -789,10 +789,10 @@ export default {
       console.log(item,"一键");
       var that = this
       // let str = ''
-      // let arr = []
-      // for(let itm of item.children){
-      //   arr.push(itm.id)
-      // }
+      let arr = []
+      for(let itm of item.children){
+        arr.push(itm.id)
+      }
       // str = arr.join(',')
       
       this.$confirm("是否确认执行?", "警告", {
@@ -823,6 +823,17 @@ export default {
         
         implementPlan(planId,eventId).then((response) =>{
           console.log(response,"一键下发成功");
+          for(let item of that.incHandList) {
+            for(let itm of item.children) {
+              for(let it_m of arr){
+                if (itm.id == it_m) {
+                  itm.eventState = "1";
+                 that.$modal.msgSuccess("一键下发成功");
+
+                }
+              } 
+            }
+          }
           this.evtHandle();
           this.getEventList();
         })
@@ -878,6 +889,8 @@ export default {
             let eventId = that.$route.query.id
             implementProcess(processId,eventId).then((response) =>{
               console.log(response,"单点下发");
+              that.$modal.msgSuccess("状态修改成功");
+
               that.evtHandle();
               that.getEventList();
             })
@@ -888,13 +901,17 @@ export default {
             };
             updateHandle(params).then((res) => {
               console.log(res,"单点改状态");
-              for (let item_ of this.incHandList) {
-                for (let itm of item_.children) {
-                  if (itm.id == item.id) {
-                    itm.eventState = "1";
-                    this.$modal.msgSuccess("状态修改成功");
+              console.log(that.incHandList,"this.incHandList");
+              for(let itt of that.incHandList) {
+                if(itt.children){
+                  for(let itm of itt.children) {
+                    if (itm.id == item.id) {
+                      itm.eventState = "1";
+                      that.$modal.msgSuccess("状态修改成功");
+                    }
                   }
                 }
+               
               }
               that.evtHandle();
               that.getEventList();

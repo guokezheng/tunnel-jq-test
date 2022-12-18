@@ -382,7 +382,7 @@
           class="processButton"
           @click="openProcess"
           :class="processType ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-        ></div>
+        >预警处置</div>
         <div class="dialogBg">
           <div>三图一视<span>(事前、事中、事后三张抓图+录像判断)</span></div>
           <video :src="eventForm.videoUrl" controls muted loop fluid></video>
@@ -601,7 +601,7 @@
     </el-dialog>
     <!--    流程弹窗-->
     <el-dialog
-      title="预警弹窗"
+      title="预警处置"
       :visible.sync="processDialog"
       width="480px"
       append-to-body
@@ -610,7 +610,7 @@
       :before-close="cancelProcessDialog"
       :close-on-click-modal="closeProcessDialog"
     >
-      <div style="padding: 10px; background: #f7f7f7; height: 686px">
+      <div style="padding: 10px; background: #f7f7f7; height: 686px;overflow:auto">
         <div v-for="(item,index) of incHandList" :key="index" class="incHandContent">
           <div class="classification">
             <div class="type"
@@ -909,7 +909,7 @@
 
     <el-dialog :visible.sync="record" width="70%">
       <div style="text-align: center; font-size: 18px">故障检修记录</div>
-      <div class="card" v-if="news.length > 0" v-for="item in news">
+      <div class="card" v-if="news.length > 0" v-for="(item,index) in news" :key="index">
         <div class="card-col" style="font-size: 16px">
           <div>
             巡检时间:
@@ -955,7 +955,7 @@
         </div>
         <div class="card-cols" style="font-size: 16px">
           现场图片:
-          <div v-for="pic in item.iFileList">
+          <div v-for="(pic,index) in item.iFileList" :key="index">
             <img :src="pic.imgUrl" :title="pic.imgName" />
           </div>
         </div>
@@ -1024,50 +1024,50 @@ export default {
       incHand1: require("@/assets/cloudControl/incHand1.png"),
       incHand2: require("@/assets/cloudControl/incHand2.png"),
       incHandList: [
-        {
-          flowContent: "预警",
-          children: [
-            {
-              flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-            },
-            {
-              flowContent: "更改入口信号灯为红色。",
-            },
-          ],
-        },
-        {
-          flowContent: "分析确认",
-          children: [
-            {
-              flowContent: "现场确认并上报应急指挥领导小组",
-            },
-            {
-              flowContent: "上报智慧高速云控中心。",
-            },
-            {
-              flowContent: "上报智慧高速云控中心。",
-            },
-          ],
-        },
-        {
-          flowContent: "设备联控",
-          children: [
-            {
-              flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
-            },
-            {
-              flowContent: "更改入口信号灯为红色。",
-            },
-          ],
-        },
-        {
-          flowContent: "应急调度",
-          children: [
-            {
-              flowContent: "雷视融合检测，2022/12/07 15:34:33",
-            },
-          ],
-        },
+        // {
+        //   flowContent: "预警",
+        //   children: [
+        //     {
+        //       flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+        //     },
+        //     {
+        //       flowContent: "更改入口信号灯为红色。",
+        //     },
+        //   ],
+        // },
+        // {
+        //   flowContent: "分析确认",
+        //   children: [
+        //     {
+        //       flowContent: "现场确认并上报应急指挥领导小组",
+        //     },
+        //     {
+        //       flowContent: "上报智慧高速云控中心。",
+        //     },
+        //     {
+        //       flowContent: "上报智慧高速云控中心。",
+        //     },
+        //   ],
+        // },
+        // {
+        //   flowContent: "设备联控",
+        //   children: [
+        //     {
+        //       flowContent: "更改隧道入口情报板“隧道事故禁止通行”。",
+        //     },
+        //     {
+        //       flowContent: "更改入口信号灯为红色。",
+        //     },
+        //   ],
+        // },
+        // {
+        //   flowContent: "应急调度",
+        //   children: [
+        //     {
+        //       flowContent: "雷视融合检测，2022/12/07 15:34:33",
+        //     },
+        //   ],
+        // },
       ],
       setDisabled: {
         disabledDate(time) {
@@ -1530,21 +1530,25 @@ export default {
       this.processType = false;
     },
     openProcess(type) {
-      console.log(type);
+      console.log(type,"00000000000000");
       if (type) {
         this.processType = false;
       }
       console.log(this.processType, "this.processType");
       if (this.processType == true) {
+        alert(2)
+
         this.processDialog = false;
-        this.details = true;
-        this.closeProcessDialog = false;
+        // this.details = true;
+        // this.closeProcessDialog = false;
         this.processType = false;
       } else {
-        this.processDialog = true;
-        this.details = true;
-        this.closeProcessDialog = true;
-        this.processType = true;
+        alert(1)
+        this.processType = true
+
+        this.processDialog = true
+        // this.details = true;
+        // this.closeProcessDialog = true;
       }
     },
     // 事件处置
@@ -2374,12 +2378,17 @@ export default {
     position: absolute;
     top: 20px;
     right: -20px;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 100px;
     cursor: pointer;
+    background: #39ADFF;
+    text-align: center;
+    line-height: 18px;
+    color: #fff;
   }
   .processButton::before {
-    font-size: 30px;
+    font-size: 14px;
+    color:#fff;
   }
   .dialogBg {
     background: #f7f7f7;

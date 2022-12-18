@@ -1016,6 +1016,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         return issueResult;
     }
 
+    /**
+     * 更新事件处置记录表状态
+     * @param processId
+     * @param eventId
+     */
     public void updateHandleState(Long processId,Long eventId){
         SdEventHandle sdEventHandle = new SdEventHandle();
         sdEventHandle.setEventId(eventId);

@@ -299,4 +299,14 @@ public class SdEventController extends BaseController
     public AjaxResult getRelation(SdReservePlan sdReservePlan){
         return sdEventService.getRelation(sdReservePlan);
     }
+
+    /**
+     * 计算事故点
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getAccidentPoint")
+    public AjaxResult getAccidentPoint(SdEvent sdEvent){
+        return sdEventService.getAccidentPoint(sdEvent);
+    }
 }

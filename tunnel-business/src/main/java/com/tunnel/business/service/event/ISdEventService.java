@@ -128,4 +128,11 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getRelation(SdReservePlan sdReservePlan);
+
+    /**
+     * 计算事故点
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getAccidentPoint(SdEvent sdEvent);
 }

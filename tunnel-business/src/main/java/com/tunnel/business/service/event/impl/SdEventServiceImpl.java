@@ -7,12 +7,15 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
+import com.tunnel.business.datacenter.domain.enumeration.EventDescEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
@@ -26,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,6 +71,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdReservePlanMapper sdReservePlanMapper;
+
+    @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
 
     /**
      * 查询事件管理
@@ -402,14 +409,43 @@ public class SdEventServiceImpl implements ISdEventService {
             count = sdEventHandleMapper.updateSdEventHandleRelation(sdEventHandle);
         }
         if(count == 0){
-            return AjaxResult.error("关联失败");
+            return AjaxResult.error("关联失败，暂无此事件相关预案");
         }
         return AjaxResult.success("关联成功");
     }
 
+    @Override
+    public AjaxResult getAccidentPoint(SdEvent sdEvent) {
+        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdEvent.getTunnelId());
+        //隧道终点桩号
+        BigDecimal endPileNum = new BigDecimal(sdTunnels.getEndPileNum());
+        //隧道起点桩号
+        BigDecimal startPileNum = new BigDecimal(sdTunnels.getStartPileNum());
+        //隧道总长度
+        BigDecimal num = endPileNum.subtract(startPileNum);
+        //事件桩号整形
+        BigDecimal stakeNum = new BigDecimal(sdEvent.getStakeNum().replaceAll("K", "").replaceAll("\\+", ""));
+        //使用事件桩号-隧道起点桩号得出事件发送位置
+        BigDecimal eventPositionNum = stakeNum.subtract(startPileNum);
+        //隧道Left值
+        BigDecimal tunnelLeft = eventPositionNum.divide(num, 2, BigDecimal.ROUND_HALF_UP);
+        //车道数量
+        BigDecimal lane = new BigDecimal(sdTunnels.getLane());
+        //事件车道号
+        BigDecimal laneNo = new BigDecimal(sdEvent.getLaneNo());
+        //隧道Top值
+        BigDecimal tunnelTop = laneNo.subtract(new BigDecimal(1)).divide(lane,2,BigDecimal.ROUND_HALF_UP);
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelLeft", tunnelLeft);
+        map.put("tunnelTop",tunnelTop);
+        return AjaxResult.success(map);
+    }
+
     public void updateHandle(SdEvent sdEvent){
         int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
+        //judgeData(sdEvent);
         if(count == 0){
+            SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
             //查询预案流程树
             List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
             List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
@@ -421,7 +457,13 @@ public class SdEventServiceImpl implements ISdEventService {
                 sdEventHandle.setEventId(sdEvent.getId());
                 sdEventHandle.setFlowId(item.getFlowId());
                 sdEventHandle.setFlowPid(item.getFlowPid());
-                sdEventHandle.setFlowContent(item.getFlowName());
+                if(item.getFlowId() == Long.valueOf(2)){
+                    String name = EventDescEnum.getName(sdEvent1.getEventSource());
+                    sdEventHandle.setFlowContent(item.getFlowName().concat(name));
+                    sdEventHandle.setEventState("1");
+                }else {
+                    sdEventHandle.setFlowContent(item.getFlowName());
+                }
                 sdEventHandle.setFlowSort(sort+"");
                 sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
                 int number = 0;
@@ -440,4 +482,21 @@ public class SdEventServiceImpl implements ISdEventService {
             }
         }
     }
+
+    /*public int judgeData(SdEvent sdEvent){
+        SdEventHandle sdEventHandle2 = new SdEventHandle();
+        sdEventHandle2.setEventId(sdEvent.getId());
+        //查询现在预案流程是否已存在
+        List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle2);
+        List<SdEventHandle> collectPid = sdEventHandles.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+        List<Long> collect = collectPid.stream().map(SdEventHandle::getFlowId).collect(Collectors.toList());
+        //查询最新的预案流程
+        List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
+        List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+        List<Long> collect1 = flowsPidData.stream().map(SdJoinTypeFlow::getFlowId).collect(Collectors.toList());
+        if(collect1.containsAll(collect)){
+            return 0;
+        }
+        return 1;
+    }*/
 }

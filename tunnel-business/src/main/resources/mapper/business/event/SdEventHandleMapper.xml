@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
-        where event_id = #{eventId} AND process_id = {processId}
+        where event_id = #{eventId} AND process_id = #{processId}
     </update>
 
     <delete id="deleteSdEventHandleById" parameterType="Long">

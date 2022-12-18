@@ -237,6 +237,21 @@ public class SdEvent extends BaseEntity {
      */
     private String flowPid;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
+    @Override
+    public String getRemark() {
+        return remark;
+    }
+
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public String getFlowPid() {
         return flowPid;
     }

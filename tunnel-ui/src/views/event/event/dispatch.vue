@@ -102,7 +102,7 @@
                     <!-- <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio> -->
                   </div>
                   <div>
-                    <div>预览</div>
+                    <!-- <div>预览</div> -->
                     <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
@@ -116,7 +116,7 @@
                     >
                   </div>
                   <div>
-                    <div>预览</div>
+                    <!-- <div>预览</div> -->
                     <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
@@ -127,9 +127,9 @@
                 <div>上游隧道</div>
                 <div>
                   <div>隧道名称</div>
-                  <div>金家楼隧道</div>
+                  <div style="visibility:hidden">金家楼隧道</div>
                   <div>隧道间距</div>
-                  <div>300米</div>
+                  <div style="visibility:hidden">300米</div>
                 </div>
                 <div>
                   <el-radio-group
@@ -143,7 +143,7 @@
                     </el-radio-group>
                 </div>
                 <div>
-                  <div>预览</div>
+                  <!-- <div>预览</div> -->
                   <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">关联事件</div>
                 </div>
               </div>
@@ -251,7 +251,9 @@
                       top:accTop + '%'
                     }"
                     v-if="eventForm.direction == '2'"
-                    ></div>
+                    >
+                  <img :src="assIconUrl"></img>
+                  </div>
                   </div>
                   <div class="accBottom">
                     <div class="accPoint"
@@ -262,7 +264,9 @@
                       top:accTop + '%'
                     }"
                     v-if="eventForm.direction == '1'"
-                    ></div>
+                    >
+                    <img :src="assIconUrl"></img>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -391,7 +395,7 @@
                           :src="incHand1"
                           style="float: right; cursor: pointer"
                           v-show="itm.eventState == '0'"
-                          @click="changeIncHand(itm)"
+                          @click="openIssuedDialog(itm)"
                         />
                       </div>
                     </div>
@@ -469,6 +473,25 @@
         </div>
       </el-col>
     </el-row>
+    <el-dialog
+      :visible.sync="IssuedDialog"
+      width="400px"
+      text-align="left"
+      class="IssuedDialog"
+      append-to-body>
+      <div v-if="this.IssuedItem.flowId == 5">是否完成?</div>
+      <div v-else-if="this.IssuedItem.flowId == 6">是否上报?</div>
+      <div v-else-if="this.IssuedItem.flowPid == 8">{{this.IssuedItem.flowContent}}?</div>
+      <div v-else-if="this.IssuedItem.flowPid == 12 || this.IssuedItem.flowPid == 16">是否{{this.IssuedItem.flowContent}}?</div>
+
+      <div v-else>是否确认执行?</div>
+      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7"/>
+      <div style="display:flex;justify-content:right">
+        <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
+        <div class="IssuedButton2" @click="changeIncHand">确 认</div>
+      </div>
+      <!-- item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?" -->
+    </el-dialog>
     <com-video
       class="comClass"
       v-if="[23, 24, 25].includes(this.eqInfo.clickEqType)"
@@ -603,6 +626,10 @@ import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯�
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 
 import {
+  listEventType,
+ 
+} from "@/api/event/eventType";
+import {
   listEqTypeState,
   getStateByData,
 } from "@/api/equipment/eqTypeState/api";
@@ -636,6 +663,11 @@ export default {
   },
   data() {
     return {
+      assIconUrl:'',
+      IssuedItemContent:'',
+      IssuedItem:{},
+      title:'',
+      IssuedDialog:false,
       accLeft:0,
       accTop:0,
       tunnelLane:0,
@@ -770,6 +802,16 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 事件点图片
+    getAccIcon(){
+      console.log(8888888888)
+      let id = this.eventForm.eventTypeId
+      console.log(this.eventForm.eventTypeId,"this.eventForm.eventTypeId");
+      listEventType({id}).then((res) =>{
+        console.log(res);
+        this.assIconUrl = res.rows[0].iconUrl
+      })
+    },
     // 事件点
     async getAcc(){
       const params = {
@@ -781,7 +823,7 @@ export default {
         console.log(res,"事件点");
         this.accLeft = res.data['tunnelLeft'] * 100
         this.accTop = res.data['tunnelTop'] * 100
-
+        this.getAccIcon()
       })
     },
     // 事件处置 一键
@@ -858,6 +900,7 @@ export default {
           equipmentId: item.eqId,
         };
     },
+    
     // 关联事件
     relation(type) {
       const params = {
@@ -876,20 +919,32 @@ export default {
         this.relationDisabled = true;
       });
     },
-    changeIncHand(item) {
-      console.log(item,"下发")
+    // 打开下发事件弹窗
+    openIssuedDialog(item){
+      this.IssuedDialog = true
+      this.title = '警告'
+      this.IssuedItem = item
+    },
+    // 关闭下发事件弹窗
+    cancelIssuedDialog(){
+      this.IssuedDialog = false
+
+    },
+    changeIncHand() {
+      // console.log(item,"下发")
       var that = this
-        this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }).then(function () {
-          if(item.flowPid == '7'){
-            let processId = item.processId
+        // this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
+        //   confirmButtonText: "确定",
+        //   cancelButtonText: "取消",
+        //   type: "warning",
+        // }).then(function () {
+          if(this.IssuedItem.flowPid == '7'){
+            let processId = this.IssuedItem.processId
             let eventId = that.$route.query.id
             implementProcess(processId,eventId).then((response) =>{
               console.log(response,"单点下发");
               that.$modal.msgSuccess("状态修改成功");
+              this.IssuedDialog = false
 
               that.evtHandle();
               that.getEventList();
@@ -897,7 +952,8 @@ export default {
           }else{
             const params = {
               id: that.$route.query.id,
-              ids: item.id,
+              ids: this.IssuedItem.id,
+              remark:this.IssuedItemContent,
             };
             updateHandle(params).then((res) => {
               console.log(res,"单点改状态");
@@ -905,9 +961,11 @@ export default {
               for(let itt of that.incHandList) {
                 if(itt.children){
                   for(let itm of itt.children) {
-                    if (itm.id == item.id) {
+                    if (itm.id == this.IssuedItem.id) {
                       itm.eventState = "1";
                       that.$modal.msgSuccess("状态修改成功");
+                      this.IssuedDialog = false
+                      this.IssuedItemContent = ''
                     }
                   }
                 }
@@ -919,7 +977,7 @@ export default {
           }
           
         
-      });
+      // });
     },
     // 事件处置
     async evtHandle() {
@@ -1561,7 +1619,10 @@ export default {
           .accPoint{
             border-radius: 50px;
             position: absolute;
-            border: solid 1px red;
+            // border: solid 1px red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
           }
         }
       }
@@ -1672,44 +1733,6 @@ export default {
         border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
         overflow: hidden;
 
-        // .el-timeline {
-        //   padding: 10px;
-        // }
-        // .el-timeline-item {
-        //   padding-bottom: 0px !important;
-        // }
-        // // .el-timeline-item__node--normal {
-        // //   transform: translateY(10px);
-        // // }
-        // .el-timeline-item__tail {
-        //   transform: translateY(10px);
-        //   // border-left: 2px dashed #97A8AE;
-        // }
-        // .el-timeline-item__wrapper {
-        //   margin-right: 8px;
-        //   padding-left: 20px;
-        // }
-        // // 竖线
-        // .el-timeline-item__tail {
-        //   transform: translateY(30px);
-        // }
-        // .el-timeline-item__node--normal {
-        //   top: 20px !important;
-        // }
-        // // 内容框
-        // .el-timeline-item__content {
-        //   padding: 10px;
-        //   color: white;
-        //   > div:nth-of-type(1) {
-        //     text-align: left;
-        //     width: 100%;
-        //   }
-        //   > div:nth-of-type(2) {
-        //     text-align: right;
-
-        //     width: 100%;
-        //   }
-        // }
       }
     }
     .implement1 {
@@ -1841,4 +1864,41 @@ export default {
     padding: 0 !important;
   }
 }
+
+
+</style>
+<style lang="scss">
+.IssuedDialog{
+  .el-dialog{
+  margin-top: 28vh !important;
+}
+  .el-dialog__body{
+    padding-top: 20px !important;
+  }
+  .IssuedButton1{
+    width: 60px;
+    height: 20px;
+    border-radius: 15px;
+    background: #d8d8d8
+              linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    margin: 10px;
+    cursor: pointer;
+
+  }
+  .IssuedButton2{
+    width: 60px;
+    height: 20px;
+    border-radius: 15px;
+    background: linear-gradient(180deg, #ffc506 0%, #ff8300 100%);
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    margin: 10px;
+    cursor: pointer;
+  }
+}
+
 </style>

@@ -90,6 +90,10 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
             SdEventFlow flow = new SdEventFlow();
             if(sdEventHandle1.getFlowPid() == Long.valueOf(8)){
                 flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已通知");
+            }else if(sdEventHandle1.getFlowId() == Long.valueOf(5)){
+                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已完成");
+            }else if(sdEventHandle1.getFlowId() == Long.valueOf(6)){
+                flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已上报");
             }else {
                 flow.setFlowDescription(sdEventHandle1.getFlowContent()+"已执行");
             }

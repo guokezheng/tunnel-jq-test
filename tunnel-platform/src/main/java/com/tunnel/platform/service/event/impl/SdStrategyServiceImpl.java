@@ -6,6 +6,8 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.mapper.SysJobMapper;
@@ -19,6 +21,7 @@ import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.instruction.EquipmentControlInstruction;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
@@ -26,6 +29,7 @@ import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
@@ -88,6 +92,14 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Autowired
     private SysJobServiceImpl sysJobService;
 
+    @Autowired
+    private SdReserveProcessMapper sdReserveProcessMapper;
+
+    @Autowired
+    private SdDeviceControlService sdDeviceControlService;
+
+    @Autowired
+    private ISdEventFlowService sdEventFlowService;
 
 
 
@@ -288,7 +300,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      * @return 结果
      */
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.SUPPORTS)
     public int deleteSdStrategyById(Long id) {
         // 删除策略之前要先判断策略是否已经在预案管理中被引用
         SdStrategy sdStrategy = sdStrategyMapper.selectSdStrategyById(id);
@@ -887,5 +899,115 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 return timeSharingControl(model, sty);
             default : return 0;
         }
+    }
+
+    public int issuedDevice(SdStrategyRl rl,Long eventId){
+        String eqTypeId = rl.getEqTypeId();
+        String controlStatus = rl.getState();
+        SdEvent event = SpringUtils.getBean(SdEventMapper.class).selectSdEventById(eventId);
+        Map issuedParam = new HashMap();
+        int issueResult = 0;
+        //疏散标志控制逻辑
+        if(eqTypeId.equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())){
+            SdDevices searchObject = new SdDevices();
+            searchObject.setEqTunnelId(event.getTunnelId());
+            searchObject.setEqType(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode());
+            searchObject.setEqDirection(event.getDirection());
+            //事故点整形桩号
+            int compareValue = Integer.valueOf(event.getStakeNum().replace("K","").replace("+","").replace(" ",""));
+            List<SdDevices> list = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(searchObject);
+            //同一方向上的疏散标志整形桩号去重
+            int[] allNum = list.stream().filter(s-> StringUtils.isNotBlank(s.getFEqId()))
+                    .mapToInt(s->s.getPileNum().intValue()).distinct().toArray();
+            //查找事故点最近的疏散标志
+            int index = Math.abs(compareValue-allNum[0]);
+            int closest = allNum[0];
+            for (int i=0;i<allNum.length;i++) {
+                int abs = Math.abs(compareValue-allNum[i]);
+                if(abs <= index){
+                    index = abs;
+                    closest = allNum[i];
+                }
+            }
+            Long pile = new Long((long)closest);
+            list = list.stream().filter(devices->devices.getPileNum().equals(pile)).collect(Collectors.toList());
+            if(list.size()<1){
+                return 0;
+            }
+            //报警点位设备ID
+            String alarmPointEqId = list.get(0).getEqId();
+            //fireMark标号位置信息
+            String fireMark = "0";
+            //1关闭 2常亮 5报警
+            if(controlStatus.equals("5")){
+                fireMark = list.get(0).getQueryPointAddress();
+            }else if(controlStatus.equals("2")){
+                fireMark = "255";
+            }
+            //下发设备
+            issuedParam.put("brightness","50");
+            issuedParam.put("frequency","60");
+            issuedParam.put("fireMark",fireMark);
+            issuedParam.put("state",controlStatus);
+            issuedParam.put("devId",alarmPointEqId);
+            issuedParam.put("eventId",eventId);
+            issuedParam.put("controlType","4");
+            issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+            issueResult = sdDeviceControlService.controlDevices(issuedParam);
+        }else{
+            String[] split = rl.getEquipments().split(",");
+            for (String devId : split){
+                issuedParam.put("devId",devId);
+                issuedParam.put("state",controlStatus);
+                issuedParam.put("eventId",eventId);
+                issuedParam.put("controlType","4");
+                //诱导灯
+                if(eqTypeId.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                    issuedParam.put("brightness","50");
+                    issuedParam.put("frequency","60");
+                    if(controlStatus.equals("2")){
+                        issuedParam.put("fireMark","255");
+                    }
+                }
+                //情报板
+                if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()))){
+                    issuedParam.put("templateId",controlStatus);
+                }
+                issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+                issueResult = sdDeviceControlService.controlDevices(issuedParam);
+            }
+        }
+        return issueResult;
+    }
+
+    @Override
+    public int implementPlan(Long planId,Long eventId){
+        List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(planId);
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        int issueResult = 0;
+        for(SdReserveProcess process:processList){
+            SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
+            flowParam.put("content",process.getProcessName());
+            issueResult = issuedDevice(rl,eventId);
+            if(issueResult>0){
+                sdEventFlowService.savePlanProcessFlow(flowParam);
+            }
+        }
+        return issueResult;
+    }
+
+    @Override
+    public int implementProcess(Long processId,Long eventId) {
+        SdReserveProcess process = sdReserveProcessMapper.selectSdReserveProcessById(processId);
+        SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
+        Map flowParam = new HashMap();
+        flowParam.put("eventId",eventId);
+        flowParam.put("content",process.getProcessName());
+        int issueResult = issuedDevice(rl,eventId);
+        if(issueResult>0){
+            sdEventFlowService.savePlanProcessFlow(flowParam);
+        }
+        return issueResult;
     }
 }

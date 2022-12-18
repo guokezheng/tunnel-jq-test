@@ -97,6 +97,7 @@ public interface SdStrategyRlMapper
      * @return
      */
     public int batchInsertStrategyRl(List<SdStrategyRl> list);
-    
-    
+
+    public List<SdStrategyRl> selectSdStrategyRlByPlanId(Long planId);
+
 }

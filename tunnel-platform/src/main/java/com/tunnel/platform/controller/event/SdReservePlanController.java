@@ -11,6 +11,7 @@ import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
 import com.tunnel.business.service.event.ISdReservePlanFileService;
 import com.tunnel.business.service.event.ISdReservePlanService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,8 @@ public class SdReservePlanController extends BaseController {
     private ISdReservePlanFileService sdReservePlanFileService;
     @Autowired
     private ISdEquipmentFileService sdEquipmentFileService;
+    @Autowired
+    private ISdStrategyService sdStrategyService;
 
 
     /**
@@ -239,4 +242,19 @@ public class SdReservePlanController extends BaseController {
         return Result.success(sdReservePlanService.selectSdReservePlanByTunnelId(tunnelId));
     }
 
+    @Log(title = "预案一键执行")
+    @GetMapping(value = "/implementPlan")
+    public Result implementPlan(@RequestParam("planId") Long planId,
+                                @RequestParam("eventId") Long eventId) {
+        int result = sdStrategyService.implementPlan(planId,eventId);
+        return Result.success(result);
+    }
+
+    @Log(title = "环节执行")
+    @GetMapping(value = "/implementProcess")
+    public Result implementProcess(@RequestParam("processId") Long processId,
+                                   @RequestParam("eventId") Long eventId) {
+        int result = sdStrategyService.implementProcess(processId,eventId);
+        return Result.success(result);
+    }
 }

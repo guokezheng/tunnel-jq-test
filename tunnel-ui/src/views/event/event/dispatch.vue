@@ -391,7 +391,7 @@
                           :src="incHand1"
                           style="float: right; cursor: pointer"
                           v-show="itm.eventState == '0'"
-                          @click="changeIncHand(itm.id,itm.flowId,itm.flowPid)"
+                          @click="changeIncHand(itm)"
                         />
                       </div>
                     </div>
@@ -613,7 +613,9 @@ import {
   getHandle,
   updateHandle,
   getRelation,
-  getAccidentPoint
+  getAccidentPoint,
+  implementProcess,
+  implementPlan
 } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -786,37 +788,44 @@ export default {
     getYiJian(item){
       console.log(item,"一键");
       var that = this
-      let str = ''
-      let arr = []
-      for(let itm of item.children){
-        arr.push(itm.id)
-      }
-      str = arr.join(',')
+      // let str = ''
+      // let arr = []
+      // for(let itm of item.children){
+      //   arr.push(itm.id)
+      // }
+      // str = arr.join(',')
       
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-        const params = {
-          id: that.$route.query.id,
-          ids: str,
-        };
-        updateHandle(params).then((res) => {
-          console.log(res,"一键下发");
-          for (let item of that.incHandList) {
-            for (let itm of item.children) {
-              for(let it_m of arr){
-                if (itm.id == it_m) {
-                  itm.eventState = "1";
-              
-                }
-              } 
-            }
-          }
+        // const params = {
+        //   id: that.$route.query.id,
+        //   ids: str,
+        // };
+        // updateHandle(params).then((res) => {
+        //   console.log(res,"一键下发改状态");
+        //   for (let item of that.incHandList) {
+        //     for (let itm of item.children) {
+        //       for(let it_m of arr){
+        //         if (itm.id == it_m) {
+        //           itm.eventState = "1";
+        //         }
+        //       } 
+        //     }
+        //   }
+          
+        // });
+       
+          let planId = item.reserveId
+          let eventId = that.$route.query.id
+        
+        implementPlan(planId,eventId).then((response) =>{
+          console.log(response,"一键下发成功");
           this.evtHandle();
           this.getEventList();
-        });
+        })
       });
     },
     // 返回安全预警
@@ -856,30 +865,43 @@ export default {
         this.relationDisabled = true;
       });
     },
-    changeIncHand(id,flowId,flowPid) {
-      console.log(id,"下发")
+    changeIncHand(item) {
+      console.log(item,"下发")
       var that = this
-        this.$confirm(flowId==5? "是否完成?":flowId==6?"是否上报?":flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
+        this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
         }).then(function () {
-        const params = {
-          id: that.$route.query.id,
-          ids: id,
-        };
-        updateHandle(params).then((res) => {
-          console.log(res,"0000000000000");
-          for (let item of this.incHandList) {
-            for (let itm of item.children) {
-              if (itm.id == id) {
-                itm.eventState = "1";
-                this.evtHandle();
-                this.getEventList();
+          if(item.flowPid == '7'){
+            let processId = item.processId
+            let eventId = that.$route.query.id
+            implementProcess(processId,eventId).then((response) =>{
+              console.log(response,"单点下发");
+              that.evtHandle();
+              that.getEventList();
+            })
+          }else{
+            const params = {
+              id: that.$route.query.id,
+              ids: item.id,
+            };
+            updateHandle(params).then((res) => {
+              console.log(res,"单点改状态");
+              for (let item_ of this.incHandList) {
+                for (let itm of item_.children) {
+                  if (itm.id == item.id) {
+                    itm.eventState = "1";
+                    this.$modal.msgSuccess("状态修改成功");
+                  }
+                }
               }
-            }
+              that.evtHandle();
+              that.getEventList();
+            });
           }
-        });
+          
+        
       });
     },
     // 事件处置

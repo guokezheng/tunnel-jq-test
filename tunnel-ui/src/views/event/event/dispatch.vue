@@ -965,7 +965,7 @@ export default {
                       itm.eventState = "1";
                       that.$modal.msgSuccess("状态修改成功");
                       this.IssuedDialog = false
-
+                      this.IssuedItemContent = ''
                     }
                   }
                 }

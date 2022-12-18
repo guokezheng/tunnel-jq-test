@@ -797,11 +797,13 @@
       }
       .el-radio {
         color: #2c5ea2;
+        padding: 5px 150px 5px 20px;
         &:hover {
          background-color: rgba($color: #86d3f2, $alpha: 0.28);
         }
       }
       .el-radio-selcted {
+        padding: 5px 220px 5px 20px;
         color: #2c5ea2;
         background-color: rgba($color: #86d3f2, $alpha: 0.28);
       }

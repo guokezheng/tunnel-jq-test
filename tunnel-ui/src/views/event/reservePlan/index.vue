@@ -587,7 +587,7 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="2">
               <el-select
                 v-model="item.retrievalRule"
                 placeholder="规则条件"
@@ -601,12 +601,14 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="6">
               <el-select
                 v-model="item.equipments"
                 multiple
                 collapse-tags
                 placeholder="请选择设备"
+                style="width:100%;"
+                @change="qbgChange(index,item.equipments)"
               >
                 <el-option
                   v-for="items in item.equipmentData"
@@ -616,7 +618,7 @@
                 />
               </el-select>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="4" v-show="item.eqTypeId != 16 && item.eqTypeId != 36">
               <el-select
                 v-model="item.state"
                 placeholder="设备执行操作"
@@ -629,6 +631,16 @@
                 >
                 </el-option>
               </el-select>
+            </el-col>
+            <el-col :span="4" v-show="item.eqTypeId == 16 || item.eqTypeId == 36">
+              <el-cascader
+                :props="checkStrictly"
+                v-model="item.state"
+                :options="item.templatesList"
+                :show-all-levels="false"
+                clearable
+                collapse-tags
+                @change="handleChange"></el-cascader>
             </el-col>
             <el-col :span="2" style="display: flex;height:35px;">
               <el-button
@@ -706,6 +718,11 @@ export default {
   // },
   data() {
     return {
+      checkStrictly: {
+        multiple: false,
+        emitPath: false,
+        checkStrictly: true,
+      },
       equipmentTypeData:[],
       directionData:[],//方向
       controlDirectionList:[],//管控方向
@@ -715,14 +732,6 @@ export default {
       },
       deviceList: [], //需要操作的设备以及状态数据
       previewList: [], //预览数据
-      checkStrictly: {
-        multiple: false,
-        value: "id",
-        label: "name",
-        children: "children",
-        // emitPath: false,
-        checkStrictly: true,
-      },
       reserveId: "",
       //新增弹窗
       dialogFormVisible: false,
@@ -914,7 +923,7 @@ export default {
       });
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
-      console.log(response.data,"事件类型")
+      console.log(response.data,"预案类型")
       this.planCategory = response.data;
     });
     //规则条件
@@ -972,6 +981,7 @@ export default {
         this.$forceUpdate();
       }
     },
+
     controlDirectionFormat(row, column){
       return this.selectDictLabel(this.controlDirectionList, row.controlDirection);
     },
@@ -1095,6 +1105,17 @@ export default {
         this.$set(this.planTypeIdList[index],"eqStateList",response.rows);
       });
     },
+    qbgChange(index,value){
+      console.log(value);
+      let data = value;
+      if(this.planTypeIdList[index].eqTypeId == 16 || this.planTypeIdList[index].eqTypeId == 36 ){
+        getVMSTemplatesByDevIdAndCategory(data).then(res=>{
+          console.log(res.data,"模板信息")
+          // this.templatesList = res.data;
+          this.$set(this.planTypeIdList[index],"templatesList",res.data)
+        })
+      }
+    },
     //关闭策略弹窗
     closeStrategy() {
       // this.getTunnelData(this.tunnelId);
@@ -1113,9 +1134,11 @@ export default {
       }
       this.planTypeIdList.forEach((item,index)=>{
         item.processSort = +index + 1;
-          item.eqStateList = "";
-          item.equipmentData = "";
-          item.equipmentTypeData = "";
+        item.eqStateList = "";
+        item.equipmentData = "";
+        item.equipmentTypeData = "";
+        item.templatesList = "";
+        item.state = item.state.toString()
       })
       let data = {
         reserveId: this.reserveId,
@@ -1175,10 +1198,13 @@ export default {
             this.$set(this.planTypeIdList[i],"processName",data[i].process_name)
             // this.planTypeIdList[i].processName = data[i].process_name;
             this.planTypeIdList[i].retrievalRule = data[i].retrieval_rule;
-
             this.planTypeIdList[i].eqTypeId = data[i].eq_type_id;
+
             this.planTypeIdList[i].equipments = data[i].equipments.split(",");
             console.log(this.planTypeIdList[i].equipments,"设备")
+            if(data[i].eq_type_id == 16 || data[i].eq_type_id == 36){
+              this.qbgChange(i,this.planTypeIdList[i].equipments);
+            }
             // 渲染设备列表
             let params = {
               eqType: data[i].eq_type_id, //设备类型
@@ -1598,7 +1624,8 @@ export default {
     },
     /** 查询事件类型下拉列表 */
     getPlanType() {
-      listEventType().then((response) => {
+      let data = {prevControlType:0};
+      listEventType(data).then((response) => {
         console.log(response, "事件类型下拉");
         this.planTypeData = response.rows;
       });

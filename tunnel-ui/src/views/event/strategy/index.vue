@@ -524,12 +524,12 @@
       <manual-control-event
         v-show="strategyForm.strategyType == '0'"
         ref="manualControlEvent"
-        @dialogVisibleClose="closeDialog"
+        @dialogVisibleCloseEvent="closeDialogEvent"
       ></manual-control-event>
       <!-- 自动触发 -->
       <autoControl-event
         v-show="strategyForm.strategyType == '2'"
-        @dialogVisibleClose="closeDialog"
+        @dialogVisibleCloseEvent="closeDialogEvent"
         ref="autoControlEvent"
       ></autoControl-event>
     </el-dialog>
@@ -764,6 +764,11 @@ export default {
     handleClick(tab, event) {
       this.dictCode = tab.index;
       this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      this.getList();
+    },
+    closeDialogEvent() {
+      this.strategyForm.strategyType = "";
+      this.dialogVisibleEvent = false;
       this.getList();
     },
     // 每次点击取消按钮，策略类型赋空

@@ -582,7 +582,7 @@
         this.strategyForm.manualControl = [{ state: "", value: "",equipmentTypeId:"",equipmentData:[],equipmentTypeData:[] }];
       },
       strategyFormClose() {
-        this.$emit("dialogVisibleClose");
+        this.$emit("dialogVisibleCloseEvent");
       },
     },
   };

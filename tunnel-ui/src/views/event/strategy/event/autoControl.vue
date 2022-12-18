@@ -923,7 +923,7 @@ export default {
     },
     // 取消按钮
     strategyFormClose() {
-      this.$emit("dialogVisibleClose");
+      this.$emit("dialogVisibleCloseEvent");
     },
     /** cron表达式按钮操作 */
     handleShowCron() {

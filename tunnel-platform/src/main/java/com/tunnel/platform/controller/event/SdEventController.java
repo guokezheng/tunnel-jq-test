@@ -12,9 +12,11 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdEventHandle;
 import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
+import com.tunnel.business.mapper.event.SdEventHandleMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.event.ISdEventHandleService;
@@ -50,6 +52,9 @@ public class SdEventController extends BaseController
 
     @Autowired
     private ISdEventHandleService sdEventHandleService;
+
+    @Autowired
+    private SdEventHandleMapper sdEventHandleMapper;
 
     /**
      * 查询事件管理列表
@@ -219,7 +224,8 @@ public class SdEventController extends BaseController
 
     @GetMapping("/performRecovery")
     @ApiOperation("应急调度一键恢复")
-    public Result performRecovery(String eventId) {
+    public Result performRecovery(@RequestParam("eventId") String eventId,
+                                  @RequestParam("handleId") String handleId) {
         List<SdOperationLog> logData = SpringUtils.getBean(SdOperationLogMapper.class).getEventOperationLog(eventId);
         if(logData.isEmpty()){
             return Result.error("处理失败，未获取到操作记录");
@@ -256,7 +262,7 @@ public class SdEventController extends BaseController
             }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
-            flow.setFlowDescription("执行一键恢复操作");
+            flow.setFlowDescription("执行解除管控操作");
             flow.setEventId(eventId);
             flow.setFlowTime(DateUtils.getNowDate());
             flow.setFlowHandler(SecurityUtils.getUsername());
@@ -264,6 +270,13 @@ public class SdEventController extends BaseController
             json.put("eventFlow",flow);
             WebSocketService.broadcast("eventFlow",json);
             SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+            //更新事件处置记录状态
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setId(Long.valueOf(handleId));
+            //0:未完成 1:已完成'
+            sdEventHandle.setEventState("1");
+            sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+            sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
         } catch (Exception e) {
             return Result.error("操作失败，请联系管理员");
         }

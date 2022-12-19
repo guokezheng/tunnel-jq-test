@@ -12,6 +12,7 @@ import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.event.SdEventHandle;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventHandleMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.utils.json.JSONObject;
 import com.zc.common.core.websocket.WebSocketService;
@@ -29,6 +30,9 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 {
     @Autowired
     private SdEventHandleMapper sdEventHandleMapper;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
 
     /**
      * 查询事件处置信息
@@ -86,6 +90,12 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
             sdEventHandle.setUpdateTime(DateUtils.getNowDate());
             count = sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
             SdEventHandle sdEventHandle1 = sdEventHandleMapper.selectSdEventHandleById(Long.valueOf(id));
+            if("18".equals(sdEventHandle1.getFlowId().toString())){
+                SdEvent sdEvent1 = new SdEvent();
+                sdEvent1.setId(sdEvent.getId());
+                sdEvent1.setEventState("1");
+                sdEventMapper.updateSdEvent(sdEvent1);
+            }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
             flow.setFlowDescription(sdEventHandle1.getFlowContent().concat(sdEvent.getRemark()));

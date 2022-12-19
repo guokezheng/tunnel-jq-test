@@ -650,6 +650,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             if(map.get("effectiveTime")!=null){
                 sdStrategyRl.setEffectiveTime(map.get("effectiveTime").toString());
             }
+            if(map.get("disposalName")!=null){
+                sdStrategyRl.setDisposalName(map.get("disposalName").toString());
+            }
             sdStrategyRl.setEqTypeId(equipmentTypeId);
             sdStrategyRl.setStrategyId(sty.getId());
             addRows += sdStrategyRlMapper.insertSdStrategyRl(sdStrategyRl);
@@ -833,6 +836,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 String equipmentTypeId = map.get("equipmentTypeId") + "";
                 String eqState = (String) map.get("state");
                 SdStrategyRl rl = new SdStrategyRl();
+                if(map.get("disposalName")!=null){
+                    rl.setDisposalName(map.get("disposalName").toString());
+                }
                 rl.setEqTypeId(equipmentTypeId);
                 rl.setEquipments(equipments);
                 rl.setState(eqState);

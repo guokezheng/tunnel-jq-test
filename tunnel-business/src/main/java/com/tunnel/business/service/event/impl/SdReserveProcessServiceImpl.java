@@ -110,8 +110,11 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
         for (Map process : sdReserveProcesses.getSdReserveProcesses()) {
             SdReserveProcess reserveProcess = new SdReserveProcess();
             SdStrategyRl rl = new SdStrategyRl();
-            List<String> value = (List<String>) process.get("equipments");
-            String equipments = StringUtils.join(value,",");
+            String equipments = "";
+            if(StrUtil.isNotBlank(process.get("equipments").toString())){
+                List<String> value = (List<String>) process.get("equipments");
+                equipments = StringUtils.join(value,",");
+            }
             String equipmentTypeId = process.get("eqTypeId") + "";
             String eqState = (String) process.get("state");
             rl.setEqTypeId(equipmentTypeId);

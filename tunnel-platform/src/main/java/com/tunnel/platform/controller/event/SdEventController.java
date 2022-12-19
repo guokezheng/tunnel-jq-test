@@ -10,6 +10,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
 import com.tunnel.business.domain.event.SdEventHandle;
@@ -242,13 +243,13 @@ public class SdEventController extends BaseController
                 issuedParam.put("state",data.getBeforeState());
                 issuedParam.put("controlType","4");
                 //疏散标志
-                if(data.getEqTypeId()==30L){
+                if(data.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
                     issuedParam.put("fireMark","255");
                     issuedParam.put("state","2");
                 //诱导灯
-                } else if(data.getEqTypeId()==31L){
+                } else if(data.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
                 }

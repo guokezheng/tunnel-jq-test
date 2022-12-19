@@ -56,10 +56,11 @@
         <el-col :span="22">
           <el-form-item label="执行操作">
             <div class="menu">
-              <span>设备类型</span>
-              <span>指定设备</span>
-              <span>控制指令</span>
-              <span>操作</span>
+              <span class="col4">处置名称</span>
+              <span class="col4">设备类型</span>
+              <span class="col6">指定设备</span>
+              <span class="col4">控制指令</span>
+              <span class="col4">操作</span>
             </div>
           </el-form-item>
         </el-col>
@@ -68,7 +69,15 @@
         <el-form-item
           v-for="(items, index) in strategyForm.manualControl"
         >
-          <el-col :span="6">
+          <el-col :span="4">
+            <el-form-item prop="disposalName">
+              <el-input
+                v-model="items.disposalName"
+                placeholder="处置名称"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
             <el-select
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
@@ -102,7 +111,7 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6" v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
+          <el-col :span="4" v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36">
             <el-select
               style="width: 100%"
               v-model="items.state"
@@ -117,7 +126,7 @@
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="6" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
+          <el-col :span="4" v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36">
             <el-cascader
               :props="checkStrictly"
               v-model="items.state"
@@ -262,16 +271,19 @@ export default {
             let manualControl = this.strategyForm.manualControl[i];
             this.strategyForm.manualControl[i].value =
               attr.equipments.split(",");
-            console.log(this.strategyForm.manualControl[i].value,"选择的设备")
-            getVMSTemplatesByDevIdAndCategory(this.strategyForm.manualControl[i].value).then(res=>{
-              console.log(res.data,"模板信息")
-              // this.templatesList = res.data;
-              this.$set(this.strategyForm.manualControl[i],"templatesList",res.data)
-            })
+            console.log(this.strategyForm.manualControl[i].value,"选择的设备");
+
             // this.strategyForm.manualControl[i].equipmentData = attr.equipmentData;
             this.strategyForm.manualControl[i].state = attr.state;
             this.strategyForm.manualControl[i].manualControlStateList = attr.eqStateList;
             this.strategyForm.manualControl[i].equipmentTypeId = Number(attr.eqTypeId);
+            if(this.strategyForm.manualControl[i].equipmentTypeId == 16 || this.strategyForm.manualControl[i].equipmentTypeId == 36){
+              getVMSTemplatesByDevIdAndCategory(this.strategyForm.manualControl[i].value).then(res=>{
+                console.log(res.data,"模板信息")
+                // this.templatesList = res.data;
+                this.$set(this.strategyForm.manualControl[i],"templatesList",res.data)
+              })
+            }
             // this.strategyForm.manualControl[i].equipmentTypeData = ;
             this.$set(manualControl,"equipmentTypeData",this.equipmentTypeData);
             listDevices({
@@ -491,6 +503,7 @@ export default {
     addItem() {
       this.addCf();
       this.strategyForm.manualControl.push({
+        disposalName:"",
         value: "",
         state: "",
         equipmentTypeId:"",
@@ -559,7 +572,7 @@ export default {
     //表单重置方法
     resetForm() {
       this.$refs["manualControl"].resetFields();
-      this.strategyForm.manualControl = [{ state: "", value: "",equipmentTypeId:"" }];
+      this.strategyForm.manualControl = [{ state: "", value: "",equipmentTypeId:"",disposalName:"" }];
     },
     strategyFormClose() {
       this.$emit("dialogVisibleClose");
@@ -569,6 +582,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .menu {color:white;background-color: #74c5ff;display: flex;justify-content: space-around;align-items: center;}
+  .menu {color:white;background-color: #74c5ff;height:40px;
+    .col4{width: 16.66%;float: left;text-align:center;margin: 0 5px};
+    .col6{width: 25%;float: left;text-align:center;margin: 0 5px};
+  }
   .buttonBox{display: flex;justify-content: space-around;align-items: center}
 </style>

@@ -105,12 +105,12 @@ export function getSubareaByStakeNum(query) {
 }
 
 // 一键恢复
-export function performRecovery(eventId) {
-  return request({
-    url: '/event/performRecovery?eventId=' + eventId,
-    method: 'get',
-  })
-}
+// export function performRecovery(eventId) {
+//   return request({
+//     url: '/event/performRecovery?eventId=' + eventId,
+//     method: 'get',
+//   })
+// }
 
 
 // 一进页面获取已执行数据
@@ -220,6 +220,14 @@ export function implementPlan(planId,eventId) {
 export function implementProcess(processId,eventId) {
   return request({
     url: '/plan/implementProcess?processId='+ processId + '&eventId=' + eventId,
+    method: 'get',
+  })
+}
+
+// 一键 下发设备
+export function performRecovery(eventId,handleId) {
+  return request({
+    url: '/event/performRecovery?eventId='+eventId+'&handleId='+handleId,
     method: 'get',
   })
 }

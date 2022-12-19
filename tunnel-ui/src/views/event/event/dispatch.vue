@@ -642,7 +642,8 @@ import {
   getRelation,
   getAccidentPoint,
   implementProcess,
-  implementPlan
+  implementPlan,
+  performRecovery
 } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -931,53 +932,56 @@ export default {
 
     },
     changeIncHand() {
-      // console.log(item,"下发")
       var that = this
-        // this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
-        //   confirmButtonText: "确定",
-        //   cancelButtonText: "取消",
-        //   type: "warning",
-        // }).then(function () {
-          if(this.IssuedItem.flowPid == '7'){
-            let processId = this.IssuedItem.processId
-            let eventId = that.$route.query.id
-            implementProcess(processId,eventId).then((response) =>{
-              console.log(response,"单点下发");
-              that.$modal.msgSuccess("状态修改成功");
-              this.IssuedDialog = false
-
-              that.evtHandle();
-              that.getEventList();
-            })
-          }else{
-            const params = {
-              id: that.$route.query.id,
-              ids: this.IssuedItem.id,
-              remark:this.IssuedItemContent,
-            };
-            updateHandle(params).then((res) => {
-              console.log(res,"单点改状态");
-              console.log(that.incHandList,"this.incHandList");
-              for(let itt of that.incHandList) {
-                if(itt.children){
-                  for(let itm of itt.children) {
-                    if (itm.id == this.IssuedItem.id) {
-                      itm.eventState = "1";
-                      that.$modal.msgSuccess("状态修改成功");
-                      this.IssuedDialog = false
-                      this.IssuedItemContent = ''
-                    }
-                  }
+      console.log(this.IssuedItem,"this.IssuedItem");
+      if(this.IssuedItem.flowPid == '7'){
+        let processId = this.IssuedItem.processId
+        let eventId = that.$route.query.id
+        implementProcess(processId,eventId).then((response) =>{
+          console.log(response,"单点下发");
+          that.$modal.msgSuccess("状态修改成功");
+          this.IssuedDialog = false
+          this.getDispatchExecuted()
+          that.evtHandle();
+          that.getEventList();
+        })
+      }
+      else if(this.IssuedItem.flowId == '17'){
+        let eventId = that.$route.query.id
+        let handleId = this.IssuedItem.id
+        performRecovery(eventId,handleId).then((res) =>{
+          console.log(res,"解除管控");
+          this.IssuedDialog = false
+          this.IssuedItemContent = ''
+          that.evtHandle();
+          that.getEventList();
+        })
+      }
+      else{
+        const params = {
+          id: that.$route.query.id,
+          ids: this.IssuedItem.id,
+          remark:this.IssuedItemContent,
+        };
+        updateHandle(params).then((res) => {
+          console.log(res,"单点改状态");
+          console.log(that.incHandList,"this.incHandList");
+          for(let itt of that.incHandList) {
+            if(itt.children){
+              for(let itm of itt.children) {
+                if (itm.id == this.IssuedItem.id) {
+                  itm.eventState = "1";
+                  that.$modal.msgSuccess("状态修改成功");
+                  this.IssuedDialog = false
+                  this.IssuedItemContent = ''
                 }
-               
               }
-              that.evtHandle();
-              that.getEventList();
-            });
+            }
           }
-          
-        
-      // });
+          that.evtHandle();
+          that.getEventList();
+        });
+      }
     },
     // 事件处置
     async evtHandle() {

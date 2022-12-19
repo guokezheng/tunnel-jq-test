@@ -858,10 +858,11 @@
     }
     /*select选择框的背景颜色*/
     .el-input__inner {
-      background-color: #00152B;
-      color: #fff;
-      border: solid 1px #01AAFD;
+      background-color: #fff;
+      color: #333;
+      // border: solid 1px #01AAFD;
     }
+    
     .el-date-editor .el-range-input{
       background-color: #00152B !important;
       color: white;
@@ -922,10 +923,11 @@
         width: 7px;
         height: 7px;
         background-color: #01AAFD;
-        
-        
     }
-    
+    .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+      color: #fff;
+      background: #00CCFF;
+    }
     .el-button--primary{
       color: white;
       width: 88px;
@@ -953,6 +955,14 @@
     }
     .el-slider__runway {
       background-color: #006784;
+    }
+    .el-tabs {
+      .el-tabs__item{
+        color: #fff;
+      }
+      .el-tabs__item.is-active{
+        color: #39ADFF;
+      }
     }
   }
   // .batch-table{
@@ -1408,6 +1418,7 @@
      .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
       color: #333;
      }
+
     .plan {
       .planBox1 {
         .el-radio{
@@ -1439,7 +1450,7 @@
       .evtManagement{
         background: #F2F9FF;
         .DisRecords{
-          border-left: solid 1px #E0E7ED;
+          border-left: solid 1px #E0E7ED;;
           .el-timeline .el-timeline-item .el-timeline-item__wrapper .el-timeline-item__content{
             color: #333;
             background: #fff;

@@ -73,5 +73,7 @@ public interface SdOperationLogMapper
 
     public List<SdOperationLog> getEventOperationLog(String eventId);
 
+    SdOperationLog getLatestRecord(String eqId);
+
     public List<Map> getDispatchExecuted(String eventId);
 }

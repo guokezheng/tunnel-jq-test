@@ -676,7 +676,6 @@ export default {
       accTop:0,
       tunnelLane:0,
       eqTypeDialogList:[],
-      directionList:[],
       brandList:[],
       eqInfo:{},
       relationDisabled: false,
@@ -992,18 +991,18 @@ export default {
         updateHandle(params).then((res) => {
           console.log(res,"单点改状态");
           console.log(that.incHandList,"this.incHandList");
-          for(let itt of that.incHandList) {
-            if(itt.children){
-              for(let itm of itt.children) {
-                if (itm.id == this.IssuedItem.id) {
-                  itm.eventState = "1";
+          // for(let itt of that.incHandList) {
+          //   if(itt.children){
+          //     for(let itm of itt.children) {
+          //       if (itm.id == this.IssuedItem.id) {
+          //         itm.eventState = "1";
                   that.$modal.msgSuccess("状态修改成功");
                   this.IssuedDialog = false
                   this.IssuedItemContent = ''
-                }
-              }
-            }
-          }
+          //       }
+          //     }
+          //   }
+          // }
           that.evtHandle();
           that.getEventList();
         });

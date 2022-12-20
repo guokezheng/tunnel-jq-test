@@ -167,8 +167,22 @@ public class SdStrategyController extends BaseController
     	return guid;
     }
 
+    @ApiOperation("预警处置一键执行")
+    @GetMapping("/implementDisposalStrategy")
+    public Result implementDisposalStrategy(@RequestParam("strategyId") Long strategyId,
+                                            @RequestParam("eventId") Long eventId){
+        return Result.success(sdStrategyService.implementDisposalStrategy(strategyId,eventId));
+    }
+
+    @ApiOperation("预警处置执行策略")
+    @GetMapping("/implementDisposalStrategyRl")
+    public Result implementDisposalStrategyRl(@RequestParam("rlId") Long rlId,
+                                              @RequestParam("eventId") Long eventId){
+        return Result.success(sdStrategyService.implementDisposalStrategyRl(rlId,eventId));
+    }
+
     /**
-     * 手动控制策略
+     * 执行手动控制策略
      */
     @Log(title = "执行手动控制策略", businessType = BusinessType.OTHER)
     @GetMapping("/handleStrategy/{id}")

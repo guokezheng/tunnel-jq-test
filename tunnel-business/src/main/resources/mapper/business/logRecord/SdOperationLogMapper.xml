@@ -190,6 +190,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdOperationLogVo"/>
         where event_id = #{eventId} group by eq_id
     </select>
+    <select id="getLatestRecord" parameterType="String" resultMap="SdOperationLogResult">
+        <include refid="selectSdOperationLogVo"/>
+        where eq_id = #{eqId} order by create_time desc limit 0,1
+    </select>
     <select id="getDispatchExecuted" parameterType="String" resultType="Map">
         select devices.eq_name as eqName,
                devices.eq_direction as eqDirection,

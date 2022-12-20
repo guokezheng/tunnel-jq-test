@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.event;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -235,7 +236,7 @@ public class SdEventController extends BaseController
         try {
             //默认值：诱导灯、疏散标志亮度为50，频率为60，疏散标志地址标号为255
             for(SdOperationLog data:logData){
-                if(data.getBeforeState()==null){
+                if(StrUtil.isBlank(data.getBeforeState())){
                     continue;
                 }
                 issuedParam.put("eventId",eventId);
@@ -243,15 +244,24 @@ public class SdEventController extends BaseController
                 issuedParam.put("state",data.getBeforeState());
                 issuedParam.put("controlType","4");
                 //疏散标志
-                if(data.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())){
+                if(data.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
                     issuedParam.put("fireMark","255");
                     issuedParam.put("state","2");
+                }
                 //诱导灯
-                } else if(data.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+                if(data.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
+                    if(data.getBeforeState().equals("2")){
+                        issuedParam.put("fireMark","255");
+                    }
+                }
+                //情报板
+                if(data.getEqTypeId().equals(DevicesTypeEnum.MEN_JIA_VMS.getCode()) || data.getEqTypeId().equals(DevicesTypeEnum.VMS.getCode())){
+                    continue;
+                    //issuedParam.put("templateId",data.getBeforeState());
                 }
                 try {
                     issuedParam.put("operIp", InetAddress.getLocalHost().getHostAddress());

@@ -224,7 +224,7 @@ export function implementProcess(processId,eventId) {
   })
 }
 
-// 一键 下发设备
+// 一键 下发设备 交通事件
 export function performRecovery(eventId,handleId) {
   return request({
     url: '/event/performRecovery?eventId='+eventId+'&handleId='+handleId,
@@ -232,5 +232,31 @@ export function performRecovery(eventId,handleId) {
   })
 }
 
+
+// 主动安全 处置
+export function getSafetyHandle(query) {
+  return request({
+    url: '/event/getSafetyHandle',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 主动安全 一键
+export function implementDisposalStrategy(eventId,strategyId) {
+  return request({
+    url: '/strategy/implementDisposalStrategy?eventId='+eventId+'&strategyId='+strategyId,
+    method: 'get',
+  })
+}
+
+// 主动安全 单点下发
+export function implementDisposalStrategyRl(eventId,rlId) {
+  return request({
+    url: '/strategy/implementDisposalStrategyRl?eventId='+eventId+'&rlId='+rlId,
+    method: 'get',
+  })
+}
 
 

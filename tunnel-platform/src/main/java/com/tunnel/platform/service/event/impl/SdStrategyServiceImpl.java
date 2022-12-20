@@ -914,7 +914,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         //情报板
         if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
-            issuedParam.put("templateId",log.getBeforeState());
+            return;
+            //issuedParam.put("templateId",log.getBeforeState());
         }
         //issuedParam.put("controlType","0");
         int duration = Integer.valueOf(effectiveTime);
@@ -1060,6 +1061,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         int issueResult = 0;
         for(SdStrategyRl rl:rlList){
             issueResult = issuedDevice(rl,eventId,"0");
+            //更新事件处置记录表状态
+            updateHandleState(rl.getId(),eventId);
         }
         return issueResult;
     }
@@ -1067,7 +1070,10 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     @Override
     public int implementDisposalStrategyRl(Long rlId,Long eventId) {
         SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(rlId);
-        return issuedDevice(rl,eventId,"0");
+        int count = issuedDevice(rl, eventId, "0");
+        //更新事件处置记录表状态
+        updateHandleState(rl.getId(),eventId);
+        return count;
     }
 
     /**

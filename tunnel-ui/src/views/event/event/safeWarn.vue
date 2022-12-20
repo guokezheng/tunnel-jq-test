@@ -623,7 +623,7 @@
             </div>
 
             <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)">一键</div>
-            <div v-show="item.flowId == 1" class="hulue">忽略</div>
+            <div v-show="item.flowId == 1" class="hulue" @click="hulue()">忽略</div>
 
           </div>
 
@@ -995,7 +995,10 @@ import {
   implementProcess,
   implementPlan,
   updateHandle,
-  eventFlowList
+  eventFlowList,
+  getSafetyHandle,
+  implementDisposalStrategy,
+  implementDisposalStrategyRl
 } from "@/api/event/event";
 import {
   addList,
@@ -1053,6 +1056,7 @@ export default {
       detailsButtonType: 1,
       eqStatusList: [],
       directionList: [],
+      direction:'',
       fromList: [
         {
           value: "0",
@@ -1418,6 +1422,18 @@ export default {
     });
   },
   methods: {
+    // 忽略
+    hulue(){
+      const param = {
+        id:this.eventForm.id,
+        eventState:2,
+      }
+      updateEvent(param).then((res) =>{
+        console.log(res,"忽略")
+        that.$modal.msgSuccess("忽略成功");
+
+      })
+    },
     // 处置记录
     getEventList() {
       eventFlowList({ eventId: this.eventForm.id }).then((res) => {
@@ -1435,11 +1451,12 @@ export default {
           type: "warning",
         }).then(function () {
           if(item.flowPid == '7'){
-            let processId = item.processId
+            let rlId = item.processId
             let eventId = that.eventForm.id
-            implementProcess(processId,eventId).then((response) =>{
+            implementDisposalStrategyRl(eventId,rlId).then((response) =>{
               console.log(response,"单点下发");
               that.$modal.msgSuccess("状态修改成功");
+              that.evtHandle()
             })
           }else{
             const params = {
@@ -1459,6 +1476,7 @@ export default {
                   }
                 }
               }
+              that.evtHandle()
             });
           }
       });
@@ -1480,10 +1498,10 @@ export default {
         type: "warning",
       }).then(function () {
 
-          let planId = item.reserveId
+          let strategyId = item.reserveId
           let eventId = that.eventForm.id
 
-        implementPlan(planId,eventId).then((response) =>{
+          implementDisposalStrategy(eventId,strategyId).then((response) =>{
           console.log(response,"一键下发成功");
           for(let item of that.incHandList) {
             for(let itm of item.children) {
@@ -1605,7 +1623,13 @@ export default {
     },
     // 事件处置
     evtHandle() {
-      getHandle({ id: this.evtId, eventTypeId: this.eventTypeId }).then(
+      const param = {
+        tunnelId:this.tunnelId,
+        id:this.evtId,
+        eventTypeId:this.eventTypeId,
+        direction:this.direction,
+      }
+      getSafetyHandle(param).then(
         (res) => {
           let list = this.handleTree(res.data, "flowId", "flowPid");
           console.log(list, "999999999999999999");
@@ -1622,6 +1646,8 @@ export default {
       console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
+      this.tunnelId = item.tunnelId
+      this.direction = item.direction
       this.evtHandle();
       if (type == 1) {
         this.detailsDisabled = true;
@@ -2619,6 +2645,8 @@ export default {
       color: #fff;
       text-align: center;
       transform: translateY(-2px);
+      cursor: pointer;
+
     }
     .hulue {
       width: 50px;
@@ -2627,6 +2655,7 @@ export default {
       color: #fff;
       text-align: center;
       transform: translateY(-2px);
+      cursor: pointer;
     }
   }
 

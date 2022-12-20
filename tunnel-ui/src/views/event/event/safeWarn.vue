@@ -593,9 +593,12 @@
         </el-form>
       </div>
       <div class="dialogFooterButton" >
-        <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
+        <div @click="submitDialog" v-show="detailsButtonType == 2"
+        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">复核提交</div>
+        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)" 
+        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">应急调度</div>
+        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)"
+        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">处置</div>
         
       </div>
     </el-dialog>
@@ -622,8 +625,10 @@
             v-if="item.flowContent">{{item.flowContent}}
             </div>
           
-            <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)">一键</div>
-            <div v-show="item.flowId == 1" class="hulue" @click="hulue()">忽略</div>
+            <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)"
+            :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">一键</div>
+            <div v-show="item.flowId == 1" class="hulue" @click="hulue()"
+            :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">忽略</div>
 
           </div>
 
@@ -643,8 +648,9 @@
           <div>
             <div v-for="(itm,inx) of item.children" :key="inx" class="contentList">
               <div style="float:left">{{ itm.flowContent }}</div>
-              <img :src="incHand2"  style="float:right;cursor: pointer;" v-show="itm.eventState != '0'" >
-              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)">
+              <img :src="incHand2"  style="float:right;" v-show="itm.eventState != '0'" >
+              <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)"
+              :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">
 
             </div>
           </div>
@@ -2856,6 +2862,10 @@ hr {
 }
 .el-tabs__item {
   color: #fff;
+}
+.disabledButton{
+  cursor: none;
+  pointer-events: none;
 }
 </style>
 

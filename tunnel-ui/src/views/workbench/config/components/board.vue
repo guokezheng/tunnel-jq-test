@@ -55,7 +55,10 @@
                   style="position:absolute"
                   v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
             </div>
-            <div class="infoButton"></div>
+            <div class="infoButton">
+              <img src="../../../../assets/cloudControl/edit2.png" />
+              <div>X</div>
+            </div>
           </div>
         </div>
         <div class="openMIniDialogStyle"
@@ -320,7 +323,7 @@
     <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
-      width="400px"
+      width="530px"
       append-to-body
       :visible="mesModeVisible"
       :before-close="closeMesMode">
@@ -353,7 +356,7 @@
                   v-html="itm.tcontents[0].content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
                 </div>
                 <div class="downIcon">
-                  <img src="../../../../assets/cloudControl/download.png"></img>
+                  <div class="el-icon-d-arrow-left"></div>
                 </div>
               </div>
             <!-- <div class="mesModeTitle">道路通阻</div>
@@ -707,7 +710,13 @@ export default {
     },
     // 打开信息模板
     openMesMode() {
-      this.mesModeVisible = true;
+      if(this.openDialog == false){
+        this.mesModeVisible = true
+      }else{
+        this.mesModeVisible = false
+
+      }
+      
     },
     // 关闭信息模板
     closeMesMode() {
@@ -805,13 +814,13 @@ export default {
 .mesModeDialog {
   left: 53%;
   margin: unset;
-  width: 400px;
+  width: 530px;
   z-index: 2017;
   .mesModeBg {
     padding: 10px;
     background: #fff;
     width: calc(100% - 30px);
-    height: 340px;
+    height: 403px;
     margin: 10px auto;
     overflow: auto;
 
@@ -831,13 +840,28 @@ export default {
           border: 1px solid #f3f3f3;
           background: black;
           position: relative;
-          width: 630px;
+          width: 407px;
           float: left;
         }
         .downIcon {
           width: 50px;
           height: 50px;
           border-left: solid 1px #f3f3f3;
+          >div{
+            width:40px;
+            height: 40px;
+            border: solid 1px #CFD5E0;
+            border-radius: 2px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 16px;
+            color: #00162C;
+            display: block;
+            margin-top: 5px;
+            margin-left: 5px;
+            cursor: pointer;
+            background: #F2F8FF;
+          }
         }
         .menuBox {
           display: flex;
@@ -921,6 +945,28 @@ export default {
       height: 100%;
       border: solid 1px #cfd5e0;
       margin-left: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      img{
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
+      >div{
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        border: solid 1px #CFD5E0;
+        color: #333;
+        font-weight: 600;
+        background: #F2F8FF;
+        border-radius: 2px;
+        font-size: 16px;
+        cursor: pointer;
+
+      }
     }
   }
 }

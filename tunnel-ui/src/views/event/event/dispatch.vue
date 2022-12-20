@@ -102,7 +102,7 @@
                     <!-- <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio> -->
                   </div>
                   <div>
-                    <!-- <div>预览</div> -->
+                     <div @click="getPreview(1)">预览</div>
                     <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
@@ -116,7 +116,7 @@
                     >
                   </div>
                   <div>
-                     <div>预览</div>
+                     <div @click="getPreview(2)">预览</div>
                     <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
@@ -143,7 +143,7 @@
                     </el-radio-group>
                 </div>
                 <div>
-                  <!-- <div>预览</div> -->
+                  <div @click="getPreview()">预览</div>
                   <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">关联事件</div>
                 </div>
               </div>
@@ -602,6 +602,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-board>
+    <work-bench ref="workBench"></work-bench>
   </div>
 </template>
 <script>
@@ -611,7 +612,7 @@ import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 
-
+import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
 import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
 import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
@@ -640,6 +641,7 @@ import {
   getHandle,
   updateHandle,
   getRelation,
+  getReserveId,
   getAccidentPoint,
   implementProcess,
   implementPlan,
@@ -660,7 +662,8 @@ export default {
     comRobot,
     comData,
     comYoudao,
-    comBoard
+    comBoard,
+    workBench,
   },
   data() {
     return {
@@ -803,6 +806,29 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 预览按钮
+    getPreview(type) {
+      // 查预案ID
+      const params = {
+        tunnelId: this.eventForm.tunnelId,
+        category: this.reservePlan.oneWay,
+        controlDirection: type,
+        direction: this.eventForm.direction,
+        eventId: this.eventForm.id,
+        planTypeId:this.eventForm.eventTypeId,
+      };
+      getReserveId(params).then(res=>{
+        console.log(res,"获取的预案id");
+        var planId = res.data;
+        this.$nextTick(() => {
+          this.$refs.workBench.eventId = this.$route.query.id;
+          this.$refs.workBench.id = planId; //预案ID
+          this.$refs.workBench.tunnelId = this.eventForm.tunnelId;
+          this.$refs.workBench.init();
+        });
+      })
+      // this.workbenchOpen = true;
+    },
     // 事件点图片
     getAccIcon(){
       console.log(8888888888)

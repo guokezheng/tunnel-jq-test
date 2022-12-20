@@ -485,7 +485,7 @@
       <div v-else-if="this.IssuedItem.flowPid == 12 || this.IssuedItem.flowPid == 16">是否{{this.IssuedItem.flowContent}}?</div>
 
       <div v-else>是否确认执行?</div>
-      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7"/>
+      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17"/>
       <div style="display:flex;justify-content:right">
         <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
         <div class="IssuedButton2" @click="changeIncHand">确 认</div>
@@ -1428,7 +1428,7 @@ export default {
             margin-left: 14px;
           }
           > div:nth-of-type(2) {
-            color: #fff;
+            // color: #fff;
             height: 40px;
             overflow: auto;
           }
@@ -1734,7 +1734,7 @@ export default {
       .DisRecords {
         width: 40%;
         height: 100%;
-        border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
+        // border-left: solid 1px #E0E7ED;
         overflow: hidden;
 
       }

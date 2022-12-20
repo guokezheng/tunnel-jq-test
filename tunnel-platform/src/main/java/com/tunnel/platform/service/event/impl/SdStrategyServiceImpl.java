@@ -13,12 +13,14 @@ import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
 import com.ruoyi.quartz.util.CronUtils;
+import com.tunnel.business.datacenter.config.MapCache;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
 import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.instruction.EquipmentControlInstruction;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
@@ -27,10 +29,12 @@ import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
+import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
@@ -50,6 +54,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -103,6 +108,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
 
     @Autowired
     private SdEventHandleMapper sdEventHandleMapper;
+
+
 
     /**
      * 查询控制策略
@@ -451,11 +458,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
      */
     @Override
     public void handleStrategy(Long id) throws UnknownHostException {
-        ScheduledThreadPoolExecutor poolTaskExecutor = new ScheduledThreadPoolExecutor(8);
-//        EquipmentControlInstruction instruc = new EquipmentControlInstruction();
+        ScheduledExecutorService executor = SpringUtils.getBean("scheduledExecutorService");
+        //ScheduledThreadPoolExecutor poolTaskExecutor = new ScheduledThreadPoolExecutor(8);
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(id);
-        String strategyType = strategy.getStrategyType();
-        String tunnelId = strategy.getTunnelId();
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(id);//   selectSdStrategyRlList(rl);
         for(SdStrategyRl sdStrategyRl:rlList){
             String[] split = sdStrategyRl.getEquipments().split(",");
@@ -469,12 +474,11 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 issuedParam.put("state",sdStrategyRl.getState());
                 issuedParam.put("controlType",sdStrategy.getStrategyType());
                 issuedParam.put("operIp", InetAddress.getLocalHost().getHostAddress());
-                int controlState = SpringUtils.getBean(SdDeviceControlService.class).controlDevices(issuedParam);
-                //map.clear();&& controlState == 1
-                if(sdStrategyRl.getControlTime()!=null ){
-                    int duration = Integer.valueOf(sdStrategyRl.getControlTime());
+                SpringUtils.getBean(SdDeviceControlService.class).controlDevices(issuedParam);
+                if(StrUtil.isNotBlank(sdStrategyRl.getEffectiveTime())){
+                    int duration = Integer.valueOf(sdStrategyRl.getEffectiveTime());
                     String beforeState = realData.getData();
-                    poolTaskExecutor.schedule(new Runnable() {
+                    executor.schedule(new Runnable() {
                         @Override
                         public void run() {
                             issuedParam.put("state",beforeState);
@@ -482,36 +486,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                         }
                     }, duration, TimeUnit.MINUTES);
                 }
-                //map.put("controlTime", CommonUtil.formatDate(new Date())+" "+sdStrategyRl.getControlTime());
             }
         }
-//        for (int i = 0; i < ssgyRlList.size(); i++) {
-//            //设备类型
-//            Long deviceTypeId = Long.parseLong(ssgyRlList.get(i).getEqTypeId());
-//            //设备状态码
-//            String codeDeviceState = ssgyRlList.get(i).getState();
-//            String eqs = ssgyRlList.get(i).getEquipments();
-//            String[] eqss = eqs.split(",");
-//            //设备list
-//            List<String> eqId = new ArrayList<String>();
-//            for (int j = 0; j < eqss.length; j++) {
-//				if ("全选".equals(eqss[j])){
-//					continue;
-//				}
-//                eqId.add(eqss[j]);
-//            }
-//            SdEquipmentState state = new SdEquipmentState();
-//            state.setStateTypeId(deviceTypeId);
-//            state.setDeviceState(codeDeviceState);
-//            state.setStateType("2");
-//            List<SdEquipmentState> stateList = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
-//            // 状态名称
-//            String stateName = stateList.get(0).getStateName();
-//            System.out.println("手动执行策略，调用发送指令接口【方法前】=====>>>guid：" + id);
-//            //调用发送指令
-//        	instruc.controlInstruction(deviceTypeId, hostId,tunnelId, eqId, strategyType, stateName, codeDeviceState);
-//            System.out.println("手动执行策略，调用发送指令接口【结束】=====>>>guid：" + id);
-//        }
     }
 
     public void handleStrategyByIds(Long[] ids, Long warId) {
@@ -908,7 +884,54 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
     }
 
-    public int issuedDevice(SdStrategyRl rl,Long eventId){
+    /**
+     * 设置过有效时间的策略 需要执行恢复操作
+     * @param issuedParam
+     * @param effectiveTime
+     */
+    public void scheduledRecoveryState(Map issuedParam,String effectiveTime) {
+        ScheduledExecutorService executor = SpringUtils.getBean("scheduledExecutorService");
+        SdOperationLog log = SpringUtils.getBean(SdOperationLogMapper.class).getLatestRecord(issuedParam.get("devId").toString());
+        if(StrUtil.isBlank(log.getBeforeState())){
+            return;
+        }
+        String eqTypeId = issuedParam.get("eqTypeId").toString();
+        issuedParam.put("state",log.getBeforeState());
+        //疏散标志
+        if(eqTypeId.equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode().toString())) {
+            issuedParam.put("brightness","50");
+            issuedParam.put("frequency","60");
+            issuedParam.put("fireMark","255");
+            issuedParam.put("state","2");
+        }
+        //诱导灯
+        if(eqTypeId.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
+            issuedParam.put("brightness","50");
+            issuedParam.put("frequency","60");
+            if(log.getBeforeState().equals("2")){
+                issuedParam.put("fireMark","255");
+            }
+        }
+        //情报板
+        if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
+            issuedParam.put("templateId",log.getBeforeState());
+        }
+        //issuedParam.put("controlType","0");
+        int duration = Integer.valueOf(effectiveTime);
+        executor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                SpringUtils.getBean(SdDeviceControlService.class).controlDevices(issuedParam);
+            }
+        }, duration, TimeUnit.MINUTES);
+    }
+    /**
+     * 下发设备
+     * @param rl
+     * @param eventId
+     * @return
+     */
+    public int issuedDevice(SdStrategyRl rl,Long eventId,String controlType){
         String eqTypeId = rl.getEqTypeId();
         String controlStatus = rl.getState();
         SdEvent event = SpringUtils.getBean(SdEventMapper.class).selectSdEventById(eventId);
@@ -958,16 +981,20 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             issuedParam.put("state",controlStatus);
             issuedParam.put("devId",alarmPointEqId);
             issuedParam.put("eventId",eventId);
-            issuedParam.put("controlType","4");
+            issuedParam.put("controlType",controlType);
             issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             issueResult = sdDeviceControlService.controlDevices(issuedParam);
+            if(StrUtil.isNotBlank(rl.getEffectiveTime()) && issueResult > 0) {
+                issuedParam.put("eqTypeId",eqTypeId);
+                scheduledRecoveryState(issuedParam,rl.getEffectiveTime());
+            }
         }else{
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){
                 issuedParam.put("devId",devId);
                 issuedParam.put("state",controlStatus);
                 issuedParam.put("eventId",eventId);
-                issuedParam.put("controlType","4");
+                issuedParam.put("controlType",controlType);
                 //诱导灯
                 if(eqTypeId.equals(DevicesTypeEnum.YOU_DAO_DENG.getCode().toString())){
                     issuedParam.put("brightness","50");
@@ -977,11 +1004,16 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                     }
                 }
                 //情报板
-                if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()))){
+                if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
                     issuedParam.put("templateId",controlStatus);
                 }
                 issuedParam.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
                 issueResult = sdDeviceControlService.controlDevices(issuedParam);
+                if(StrUtil.isNotBlank(rl.getEffectiveTime()) && issueResult > 0) {
+                    issuedParam.put("eqTypeId",eqTypeId);
+                    scheduledRecoveryState(issuedParam,rl.getEffectiveTime());
+                }
+                //issuedParam.clear();
             }
         }
         return issueResult;
@@ -996,7 +1028,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         for(SdReserveProcess process:processList){
             SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(process.getStrategyId());
             flowParam.put("content",process.getProcessName());
-            issueResult = issuedDevice(rl,eventId);
+            issueResult = issuedDevice(rl,eventId,"4");
             if(issueResult>0){
                 sdEventFlowService.savePlanProcessFlow(flowParam);
                 //更新事件处置记录表状态
@@ -1013,13 +1045,29 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         Map flowParam = new HashMap();
         flowParam.put("eventId",eventId);
         flowParam.put("content",process.getProcessName());
-        int issueResult = issuedDevice(rl,eventId);
+        int issueResult = issuedDevice(rl,eventId,"4");
         if(issueResult>0){
             sdEventFlowService.savePlanProcessFlow(flowParam);
             //更新事件处置记录表状态
             updateHandleState(processId,eventId);
         }
         return issueResult;
+    }
+
+    @Override
+    public int implementDisposalStrategy(Long strategyId,Long eventId) {
+        List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
+        int issueResult = 0;
+        for(SdStrategyRl rl:rlList){
+            issueResult = issuedDevice(rl,eventId,"0");
+        }
+        return issueResult;
+    }
+
+    @Override
+    public int implementDisposalStrategyRl(Long rlId,Long eventId) {
+        SdStrategyRl rl = sdStrategyRlMapper.selectSdStrategyRlById(rlId);
+        return issuedDevice(rl,eventId,"0");
     }
 
     /**

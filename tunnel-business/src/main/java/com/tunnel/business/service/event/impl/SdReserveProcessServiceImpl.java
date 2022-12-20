@@ -9,6 +9,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
@@ -17,6 +18,7 @@ import com.tunnel.business.mapper.event.SdReservePlanMapper;
 import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
+import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
@@ -257,59 +259,71 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             // 预案Id
             map.put("reserveId", process.getReserveId());
             // 策略Id
-            map.put("strategyId", process.getStrategyId());
+            //map.put("strategyId", process.getStrategyId());
             // 策略名称
-            SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
-            map.put("strategyName", sdStrategy.getStrategyName());
-            map.put("strategy", sdStrategy);
+            //SdStrategy sdStrategy = SpringUtils.getBean(SdStrategyMapper.class).selectSdStrategyById(process.getStrategyId());
+            map.put("strategyName", process.getProcessName());
+            //map.put("strategy", sdStrategy);
             // 设备类型Id
             map.put("deviceTypeId", process.getDeviceTypeId());
-            List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
-            if (rlList.size() < 1) {
-                continue;
-            }
+            //List<SdStrategyRl> rlList = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlByStrategyId(process.getStrategyId());
+            SdStrategyRl rl = SpringUtils.getBean(SdStrategyRlMapper.class).selectSdStrategyRlById(process.getStrategyId());
+//            if (rlList.size() < 1) {
+//                continue;
+//            }
             List<String> eqOperation = new ArrayList<>();
             List<List> iFileList = new ArrayList<>();
             List<Map> equipmentData = new ArrayList<>();
-            for (SdStrategyRl rl : rlList) {
-                String[] allEquipment = rl.getEquipments().split(",");
-                //疏散标志处理
-                if (rl.getEqTypeId().equals("30")) {
-                    SdEvent event = sdEventService.selectSdEventById(Long.parseLong(eventId));
-                    SdDevices searchObject = new SdDevices();
-                    searchObject.setEqTunnelId(event.getTunnelId());
-                    searchObject.setEqType(30L);
-                    searchObject.setEqDirection(event.getDirection());
-                    //事故点整形桩号
-                    int compareValue = Integer.valueOf(event.getStakeNum().replace("K", "").replace("+", "").replace(" ", ""));
-                    List<SdDevices> deviceList = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(searchObject);
-                    //同一方向上的疏散标志整形桩号去重
-                    int[] allNum = deviceList.stream().filter(s -> StringUtils.isNotBlank(s.getFEqId()))
-                            .mapToInt(s -> s.getPileNum().intValue()).distinct().toArray();
-                    //查找事故点最近的疏散标志
-                    int index = Math.abs(compareValue - allNum[0]);
-                    int closest = 0;
-                    for (int i = 0; i < allNum.length; i++) {
-                        int abs = Math.abs(compareValue - allNum[i]);
-                        if (abs <= index) {
-                            index = abs;
-                            closest = allNum[i];
-                        }
+            //for (SdStrategyRl rl : rlList) {
+            String[] allEquipment = rl.getEquipments().split(",");
+            //疏散标志处理
+            if (rl.getEqTypeId().equals("30")) {
+                SdEvent event = sdEventService.selectSdEventById(Long.parseLong(eventId));
+                SdDevices searchObject = new SdDevices();
+                searchObject.setEqTunnelId(event.getTunnelId());
+                searchObject.setEqType(30L);
+                searchObject.setEqDirection(event.getDirection());
+                //事故点整形桩号
+                int compareValue = Integer.valueOf(event.getStakeNum().replace("K", "").replace("+", "").replace(" ", ""));
+                List<SdDevices> deviceList = SpringUtils.getBean(SdDevicesMapper.class).selectSdDevicesList(searchObject);
+                //同一方向上的疏散标志整形桩号去重
+                int[] allNum = deviceList.stream().filter(s -> StringUtils.isNotBlank(s.getFEqId()))
+                        .mapToInt(s -> s.getPileNum().intValue()).distinct().toArray();
+                //查找事故点最近的疏散标志
+                int index = Math.abs(compareValue - allNum[0]);
+                int closest = 0;
+                for (int i = 0; i < allNum.length; i++) {
+                    int abs = Math.abs(compareValue - allNum[i]);
+                    if (abs <= index) {
+                        index = abs;
+                        closest = allNum[i];
                     }
-                    Long pile = new Long((long) closest);
-                    allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
-                            stream().map(s -> s.getEqId()).toArray(String[]::new);
-                    rl.setEquipments(Arrays.stream(allEquipment).collect(Collectors.joining(",")));
                 }
-                // 设备类型名称
-                String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
-                // 设备类型
-                map.put("typeName", typeName);
+                Long pile = new Long((long) closest);
+                allEquipment = deviceList.stream().filter(devices -> devices.getPileNum().equals(pile)).collect(Collectors.toList()).
+                        stream().map(s -> s.getEqId()).toArray(String[]::new);
+                rl.setEquipments(Arrays.stream(allEquipment).collect(Collectors.joining(",")));
+            }
+            // 设备类型名称
+            String typeName = DevicesTypeEnum.getValue(Long.parseLong(rl.getEqTypeId()));
+            // 设备类型
+            map.put("typeName", typeName);
+            List<SdEquipmentState> sdEquipmentStates = new ArrayList<>();
+            if(rl.getEqTypeId().equals(DevicesTypeEnum.VMS.getCode().toString()) || rl.getEqTypeId().equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
+                String templateId = rl.getState();
+                SdVmsTemplateContent content = new SdVmsTemplateContent();
+                content.setTemplateId(templateId);
+                List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                eqOperation.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+            }else{
                 SdEquipmentState state = new SdEquipmentState();
                 state.setStateTypeId(Long.parseLong(rl.getEqTypeId()));
                 state.setDeviceState(rl.getState());
                 state.setIsControl(1);
-                List<SdEquipmentState> sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
+                sdEquipmentStates = SpringUtils.getBean(SdEquipmentStateMapper.class).selectDropSdEquipmentStateList(state);
+                if(sdEquipmentStates.isEmpty()){
+                    continue;
+                }
                 // 设备状态名称
                 String stateName = sdEquipmentStates.get(0).getStateName();
                 List<Map> result = sdDevicesMapper.getReserveProcessDevices(allEquipment);
@@ -324,7 +338,10 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
                 List<SdEquipmentStateIconFile> sdEquipmentStateIconFiles = SpringUtils.getBean(SdEquipmentIconFileMapper.class).selectStateIconFileList(sdEquipmentStateIconFile);
                 iFileList.add(sdEquipmentStateIconFiles);
             }
-            map.put("strategyRl", rlList);
+
+
+            //}
+            map.put("strategyRl", rl);
             map.put("equipmentData", equipmentData);
             // 策略信息
             map.put("policyInformation", eqOperation);

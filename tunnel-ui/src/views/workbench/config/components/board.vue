@@ -24,9 +24,38 @@
         />
       </div>
       <div v-show="infoType == 'info'">
-        <div style="width: 93%; height: 200px; padding: 0 15px;border: solid 1px #fff;margin:0 30px 0 15px;overflow: auto;">
-          <div v-for="item of 5" style="width:100%;height:50px;border:solid 1px red;margin: 5px 10px;">
-          
+        <div class="infoBox">
+          <div v-for="(item,index) of contentList" class="infoContent" :key="index">
+            <div class="upDown">
+              <i
+                :class="index == 0 ? 'disabledClass' : ''"
+                class="el-icon-caret-top"
+                size="18"
+                style="cursor: pointer"
+                @click="moveTop(index, item)"
+              ></i>
+              <i
+                :class="contentList.length == index + 1 ? 'disabledClass' : ''"
+                class="el-icon-caret-bottom"
+                style="cursor: pointer"
+                @click="moveBottom(index, item)"
+              ></i>
+            </div>
+            <div class="contentBox"
+              :style="{
+                color: getColorStyle(item.COLOR),
+                fontSize: getFontSize(item.FONT_SIZE),
+                fontFamily: item.FONT,
+              }">
+                  <span
+                  :style="{
+                    left:getCoordinate1(item.COORDINATE.substring(0, 3)),
+                    top:getCoordinate2(item.COORDINATE.substring(3, 6)),
+                  }"
+                  style="position:absolute"
+                  v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+            </div>
+            <div class="infoButton"></div>
           </div>
         </div>
         <div class="openMIniDialogStyle"
@@ -355,14 +384,14 @@ export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
-      openDialog:false,
+      openDialog: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraVisible: true, //摄像机弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       infoType: "info",
-      mesModeVisible:false,
+      mesModeVisible: false,
       addForm: {
         category: "",
         screenSize: "",
@@ -524,22 +553,51 @@ export default {
         {
           id: "1",
           name: "默认模板",
-          screenSize:'400*40',
+          screenSize: "400*40",
           tcontents: [
-            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
-            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+            {
+              content: "日照服务区可以做核酸",
+              fontColor: "red",
+              fontSize: "20",
+              fontType: "黑体",
+              coordinate: "000000",
+            },
+            {
+              content: "日照服务区可以做核酸",
+              fontColor: "red",
+              fontSize: "20",
+              fontType: "黑体",
+              coordinate: "000000",
+            },
           ],
         },
         {
           id: "2",
           name: "日常通用",
-          screenSize:'400*40',
+          screenSize: "400*40",
 
           tcontents: [
-            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
-            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+            {
+              content: "日照服务区可以做核酸",
+              fontColor: "red",
+              fontSize: "3232",
+              fontType: "黑体",
+              coordinate: "000000",
+            },
+            {
+              content: "日照服务区可以做核酸",
+              fontColor: "red",
+              fontSize: "3232",
+              fontType: "黑体",
+              coordinate: "000000",
+            },
           ],
         },
+      ],
+      contentList: [
+        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
+        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
+        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
       ],
     };
   },
@@ -553,65 +611,82 @@ export default {
     });
   },
   methods: {
+    //  上移
+    moveTop(i, item) {
+      if (item && i) {
+        let obj = { ...this.contentList[i - 1] };
+        this.contentList.splice(i - 1, 1, item);
+        this.contentList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
+    // 下移
+    moveBottom(i, item) {
+      if (item && typeof i === "number") {
+        let obj = { ...this.contentList[i + 1] };
+        this.contentList.splice(i + 1, 1, item);
+        this.contentList.splice(i, 1, obj);
+        this.$forceUpdate();
+      }
+    },
     // 切换模板
-    handleChange(val){
+    handleChange(val) {
       console.log(val);
     },
-    getCoordinate1(coordinate,screenSize){
-      var screen = ''
-      // if(!screenSize){
-      //   screen = this.form.devicePixel.split("*")[0];
-      // }else{
-        screen = screenSize.split("*")[0]
-      // }
+    getCoordinate1(coordinate, screenSize) {
+      var screen = "";
+      if(!screenSize){
+        screen = '400*40';
+      }else{
+      screen = screenSize.split("*")[0];
+      }
       if (screen <= 630) {
         var i = 630 / screen;
         return coordinate * i + "px";
-      }else{
-        var i = screen/630;
+      } else {
+        var i = screen / 630;
         return coordinate / i + "px";
       }
     },
-    getCoordinate2(coordinate,screenSize){
-      var screen = ''
-      // if(!screenSize){
-      //   screen = this.form.devicePixel.split("*")[1];
-      // }else{
-        screen = screenSize.split("*")[1]
-      // }
+    getCoordinate2(coordinate, screenSize) {
+      var screen = "";
+      if(!screenSize){
+        screen = '400*40';
+      }else{
+      screen = screenSize.split("*")[1];
+      }
       if (screen <= 75) {
         var i = 75 / screen;
         return coordinate * i + "px";
-      }else{
-        var i = screen/75;
+      } else {
+        var i = screen / 75;
         return coordinate / i + "px";
       }
     },
     // 转字号
-    getFontSize(font,screenSize) {
-      if(!font){
-        return
+    getFontSize(font, screenSize) {
+      if (!font) {
+        return;
       }
-      var screen = ''
-      if(!screenSize){
-        screen = this.form.devicePixel.split("*")[0];
+      var screen = "";
+      if (!screenSize) {
+        screen = "400";
+      } else {
+        screen = screenSize.split("*")[0];
+      }
+      if (screen <= 407) {
+        var i = 407 / screen;
 
-      }else{
-        screen = screenSize.split("*")[0]
-      }
-      if (screen <= 630) {
-        var i = 630 / screen;
-       
-        if(font.toString().length == 2){
+        if (font.toString().length == 2) {
           return font * i + "px";
-        }else {
+        } else {
           return font.substring(0, 2) * i + "px";
         }
-      }else{
-        var i = screen/630;
-        if(font.toString().length == 2){
+      } else {
+        var i = screen / 407;
+        if (font.toString().length == 2) {
           return font / i + "px";
-        }else {
+        } else {
           return font.substring(0, 2) / i + "px";
         }
       }
@@ -631,13 +706,12 @@ export default {
       }
     },
     // 打开信息模板
-    openMesMode(){
-      this.mesModeVisible = true
+    openMesMode() {
+      this.mesModeVisible = true;
     },
     // 关闭信息模板
-    closeMesMode(){
-      this.mesModeVisible = false
-
+    closeMesMode() {
+      this.mesModeVisible = false;
     },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
@@ -690,19 +764,18 @@ export default {
 </script>
   
   <style lang="scss" scoped>
-
 .el-row {
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
 }
-.openMIniDialogStyle{
-  position:absolute;
-  right:0;
-  width:20px;
-  height:85px;
-  background: #D8D8D8 linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
-  top:66px;
+.openMIniDialogStyle {
+  position: absolute;
+  right: 0;
+  width: 20px;
+  height: 85px;
+  background: #d8d8d8 linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+  top: 66px;
   color: #fff;
   font-size: 12px;
   line-height: 16px;
@@ -717,35 +790,35 @@ export default {
   background-color: #01aafd;
 }
 
-::v-deep .el-radio-button--mini .el-radio-button__inner{
-    padding: 6px 13px !important;
+::v-deep .el-radio-button--mini .el-radio-button__inner {
+  padding: 6px 13px !important;
 }
-::v-deep .el-radio-group .el-radio-button__inner{
-    background: white;
+::v-deep .el-radio-group .el-radio-button__inner {
+  background: white;
 }
-.boardDialog{
+.boardDialog {
   left: 20%;
   margin: unset;
   width: 620px;
   z-index: 2017;
 }
-.mesModeDialog{
+.mesModeDialog {
   left: 53%;
   margin: unset;
   width: 400px;
   z-index: 2017;
-  .mesModeBg{
+  .mesModeBg {
     padding: 10px;
     background: #fff;
     width: calc(100% - 30px);
     height: 340px;
     margin: 10px auto;
     overflow: auto;
-    
-    .mesModeBox{
+
+    .mesModeBox {
       width: 100%;
       height: 100px;
-      border: solid 1px #E1E4E6;
+      border: solid 1px #e1e4e6;
       .con {
         width: 100%;
         height: 50px;
@@ -761,7 +834,7 @@ export default {
           width: 630px;
           float: left;
         }
-        .downIcon{
+        .downIcon {
           width: 50px;
           height: 50px;
           border-left: solid 1px #f3f3f3;
@@ -782,42 +855,87 @@ export default {
           }
         }
       }
-      
-      .mesModeTitle{
+
+      .mesModeTitle {
         font-size: 14px;
-        color: rgba(0,22,44,0.7);
+        color: rgba(0, 22, 44, 0.7);
         line-height: 30px;
         height: 30px;
         width: 100%;
-        border: solid 1px #CFD5E0;
+        border: solid 1px #cfd5e0;
       }
-      .mesModeContent{
+      .mesModeContent {
         display: flex;
         width: 100%;
         height: 70px;
-        .mesModeLeft{
+        .mesModeLeft {
           width: 280px;
           height: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
         }
-        .mesModeRight{
+        .mesModeRight {
           width: calc(100% - 280px);
           height: 100%;
-          border-left: solid 1px #CFD5E0;
+          border-left: solid 1px #cfd5e0;
         }
       }
     }
   }
 }
-::v-deep .el-collapse-item__header{
-        height: 30px;
+.infoBox {
+  width: 93%;
+  height: 200px;
+  background: #fff;
+  margin: 0 30px 0 15px;
+  overflow: auto;
+  .infoContent {
+    width: 97%;
+    height: 60px;
+    margin: 5px 10px;
+    display: flex;
+    .upDown {
+      width: 30px;
+      height: 100%;
+      border: solid 1px #cfd5e0;
+      background: #f2f8ff;
+      text-align: center;
+      padding: 10px 0;
+      i {
+        display: block;
+        color: #586f85;
       }
-::v-deep .el-collapse-item__content{
-        padding-bottom: 10px;
+      i:nth-of-type(2) {
+        padding-top: 10px;
       }
-::v-deep .el-collapse-item__wrap{
+    }
+    .contentBox {
+      width: calc(100% - 150px);
+      height: 100%;
+      border: solid 1px #cfd5e0;
+      margin-left: 4px;
+    }
+    .infoButton {
+      width: 112px;
+      height: 100%;
+      border: solid 1px #cfd5e0;
+      margin-left: 4px;
+    }
+  }
+}
+.disabledClass {
+  pointer-events: none;
+  cursor: auto !important;
+  color: #f2f8ff !important;
+}
+::v-deep .el-collapse-item__header {
+  height: 30px;
+}
+::v-deep .el-collapse-item__content {
+  padding-bottom: 10px;
+}
+::v-deep .el-collapse-item__wrap {
   padding: 0 10px;
 }
 ::v-deep ::-webkit-scrollbar {

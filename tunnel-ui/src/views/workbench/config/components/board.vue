@@ -1,8 +1,7 @@
 <template>
   <div style="width: 100%; height: 100%">
     <el-dialog
-      v-dialogDrag
-      class="workbench-dialog"
+      class="workbench-dialog boardDialog"
       :title="title"
       width="620px"
       append-to-body
@@ -25,7 +24,15 @@
         />
       </div>
       <div v-show="infoType == 'info'">
-        <div style="width: 100%; height: 200px; padding: 0 15px"></div>
+        <div style="width: 93%; height: 200px; padding: 0 15px;border: solid 1px #fff;margin:0 30px 0 15px;overflow: auto;">
+          <div v-for="item of 5" style="width:100%;height:50px;border:solid 1px red;margin: 5px 10px;">
+          
+          </div>
+        </div>
+        <div class="openMIniDialogStyle"
+        :class="openDialog?'el-icon-d-arrow-left':'el-icon-d-arrow-right'"
+        @click="openMesMode"
+        >信息模板</div>
         <el-form
           ref="form"
           :model="stateForm"
@@ -281,6 +288,61 @@
         </el-form>
       </div>
     </el-dialog>
+    <el-dialog
+      class="workbench-dialog mesModeDialog"
+      title="信息模板"
+      width="400px"
+      append-to-body
+      :visible="mesModeVisible"
+      :before-close="closeMesMode">
+      <div class="mesModeBg">
+        <div class="mesModeBox">
+          <el-collapse v-model="activeNames" @change="handleChange" accordion>
+            <el-collapse-item
+              v-for="(item, index) in iotTemplateCategoryList"
+              :key="index"
+              :title="item.dictLabel"
+              :name="item.dictValue"
+            >
+            <div
+                v-for="(itm, indx) in templateList"
+                :key="indx"
+                class="con"
+                :style="{
+                  'font-size': getFontSize(itm.tcontents[0].fontSize,itm.screenSize),
+                  color: itm.tcontents[0].fontColor,
+                  fontFamily: itm.tcontents[0].fontType,
+                }"
+              >
+                <div class="templateTitle">
+                  <span
+                  :style="{
+                    left:getCoordinate1(itm.tcontents[0].coordinate.substring(0, 3),itm.screenSize),
+                    top:getCoordinate2(itm.tcontents[0].coordinate.substring(3, 6),itm.screenSize),
+                  }"
+                  style="position:absolute"
+                  v-html="itm.tcontents[0].content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                </div>
+                <div class="downIcon">
+                  <img src="../../../../assets/cloudControl/download.png"></img>
+                </div>
+              </div>
+            <!-- <div class="mesModeTitle">道路通阻</div>
+          <div class="mesModeContent">
+            <div class="mesModeLeft">
+              <div style="width:260px;height: 50px;background: #000;color: yellow;text-align: center;line-height: 50px;">谨慎驾驶</div>
+
+            </div>
+            <div class="mesModeRight"></div> -->
+
+          <!-- </div> -->
+          </el-collapse-item>
+          </el-collapse>
+          
+
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
   
@@ -293,12 +355,14 @@ export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   data() {
     return {
+      openDialog:false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraVisible: true, //摄像机弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
       infoType: "info",
+      mesModeVisible:false,
       addForm: {
         category: "",
         screenSize: "",
@@ -455,6 +519,28 @@ export default {
           name: "区域闪烁（闪后区域为黑）",
         },
       ],
+      activeNames: "0",
+      templateList: [
+        {
+          id: "1",
+          name: "默认模板",
+          screenSize:'400*40',
+          tcontents: [
+            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+          ],
+        },
+        {
+          id: "2",
+          name: "日常通用",
+          screenSize:'400*40',
+
+          tcontents: [
+            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+            { content: "日照服务区可以做核酸", fontColor: "red", fontSize: "20" ,fontType:'黑体',coordinate:'000000'},
+          ],
+        },
+      ],
     };
   },
   created() {
@@ -467,6 +553,92 @@ export default {
     });
   },
   methods: {
+    // 切换模板
+    handleChange(val){
+      console.log(val);
+    },
+    getCoordinate1(coordinate,screenSize){
+      var screen = ''
+      // if(!screenSize){
+      //   screen = this.form.devicePixel.split("*")[0];
+      // }else{
+        screen = screenSize.split("*")[0]
+      // }
+      if (screen <= 630) {
+        var i = 630 / screen;
+        return coordinate * i + "px";
+      }else{
+        var i = screen/630;
+        return coordinate / i + "px";
+      }
+    },
+    getCoordinate2(coordinate,screenSize){
+      var screen = ''
+      // if(!screenSize){
+      //   screen = this.form.devicePixel.split("*")[1];
+      // }else{
+        screen = screenSize.split("*")[1]
+      // }
+      if (screen <= 75) {
+        var i = 75 / screen;
+        return coordinate * i + "px";
+      }else{
+        var i = screen/75;
+        return coordinate / i + "px";
+      }
+    },
+    // 转字号
+    getFontSize(font,screenSize) {
+      if(!font){
+        return
+      }
+      var screen = ''
+      if(!screenSize){
+        screen = this.form.devicePixel.split("*")[0];
+
+      }else{
+        screen = screenSize.split("*")[0]
+      }
+      if (screen <= 630) {
+        var i = 630 / screen;
+       
+        if(font.toString().length == 2){
+          return font * i + "px";
+        }else {
+          return font.substring(0, 2) * i + "px";
+        }
+      }else{
+        var i = screen/630;
+        if(font.toString().length == 2){
+          return font / i + "px";
+        }else {
+          return font.substring(0, 2) / i + "px";
+        }
+      }
+    },
+    // 转颜色
+    getColorStyle(font) {
+      if (font == "黄色") {
+        return "yellow";
+      } else if (font == "红色") {
+        return "red";
+      } else if (font == "绿色") {
+        return "green";
+      } else if (font == "蓝色") {
+        return "blue";
+      } else {
+        return font;
+      }
+    },
+    // 打开信息模板
+    openMesMode(){
+      this.mesModeVisible = true
+    },
+    // 关闭信息模板
+    closeMesMode(){
+      this.mesModeVisible = false
+
+    },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
@@ -518,30 +690,25 @@ export default {
 </script>
   
   <style lang="scss" scoped>
-// .robotTabs {
-//   padding: 0 15px;
-// }
+
 .el-row {
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
 }
-// .theme-light .pagination-container {
-//   background: #00152b;
-// }
-
-// ::v-deep .el-pagination__total {
-//   color: #01aafd !important;
-// }
-// .el-pagination.is-background .btn-prev,
-// .el-pagination.is-background .btn-next,
-// .el-pagination.is-background .el-pager li {
-//   background-color: #00152b !important;
-// }
-// .el-pagination.is-background .btn-prev:disabled,
-// .el-pagination.is-background .btn-next:disabled {
-//   color: "#01AAFD !important";
-// }
+.openMIniDialogStyle{
+  position:absolute;
+  right:0;
+  width:20px;
+  height:85px;
+  background: #D8D8D8 linear-gradient(180deg, #1EACE8 0%, #0074D4 100%);
+  top:66px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+}
 ::v-deep .el-tabs__nav-wrap::after {
   background-color: #dfe4ed;
   opacity: 0.4;
@@ -550,29 +717,111 @@ export default {
   background-color: #01aafd;
 }
 
-// ::v-deep .el-switch__label {
-//   color: #0a6591 !important;
-// }
-// ::v-deep .el-switch__label.is-active {
-//   color: #ff9900 !important;
-// }
-// ::v-deep .el-switch__core {
-//   height: 14px;
-// }
-// ::v-deep .el-switch__core:after {
-//   height: 12px;
-//   width: 12px;
-//   top: 0;
-// }
-// ::v-deep .el-switch.is-checked .el-switch__core::after {
-//   margin-left: -12px;
-// }
-
 ::v-deep .el-radio-button--mini .el-radio-button__inner{
     padding: 6px 13px !important;
 }
 ::v-deep .el-radio-group .el-radio-button__inner{
     background: white;
+}
+.boardDialog{
+  left: 20%;
+  margin: unset;
+  width: 620px;
+  z-index: 2017;
+}
+.mesModeDialog{
+  left: 53%;
+  margin: unset;
+  width: 400px;
+  z-index: 2017;
+  .mesModeBg{
+    padding: 10px;
+    background: #fff;
+    width: calc(100% - 30px);
+    height: 340px;
+    margin: 10px auto;
+    overflow: auto;
+    
+    .mesModeBox{
+      width: 100%;
+      height: 100px;
+      border: solid 1px #E1E4E6;
+      .con {
+        width: 100%;
+        height: 50px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        display: flex;
+        border: 1px solid #f3f3f3;
+        .templateTitle {
+          height: 75px;
+          border: 1px solid #f3f3f3;
+          background: black;
+          position: relative;
+          width: 630px;
+          float: left;
+        }
+        .downIcon{
+          width: 50px;
+          height: 50px;
+          border-left: solid 1px #f3f3f3;
+        }
+        .menuBox {
+          display: flex;
+          // align-items: center;
+          margin: 28px 0;
+          float: right;
+          i {
+            font-size: 24px;
+            color: #666;
+          }
+          .disabledClass {
+            pointer-events: none;
+            cursor: auto !important;
+            color: #ccc;
+          }
+        }
+      }
+      
+      .mesModeTitle{
+        font-size: 14px;
+        color: rgba(0,22,44,0.7);
+        line-height: 30px;
+        height: 30px;
+        width: 100%;
+        border: solid 1px #CFD5E0;
+      }
+      .mesModeContent{
+        display: flex;
+        width: 100%;
+        height: 70px;
+        .mesModeLeft{
+          width: 280px;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .mesModeRight{
+          width: calc(100% - 280px);
+          height: 100%;
+          border-left: solid 1px #CFD5E0;
+        }
+      }
+    }
+  }
+}
+::v-deep .el-collapse-item__header{
+        height: 30px;
+      }
+::v-deep .el-collapse-item__content{
+        padding-bottom: 10px;
+      }
+::v-deep .el-collapse-item__wrap{
+  padding: 0 10px;
+}
+::v-deep ::-webkit-scrollbar {
+  width: 0px;
 }
 </style>
   

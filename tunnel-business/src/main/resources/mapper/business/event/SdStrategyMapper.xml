@@ -201,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_reserve_process B on A.id = B.reserve_id
         where B.strategy_id like concat("%",#{id},"%")
     </select>
-    
+
     <select id="getManualStrategy" resultType="hashmap" >
         SELECT
             s.id strategyId,
@@ -230,4 +230,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY rl.strategy_id
     </select>
 
+    <select id="getSafetyHandle" parameterType="sdStrategy" resultType="sdStrategy">
+        SELECT
+            s.id,
+            sr.id AS strategyRlId,
+            sr.disposal_name AS disposalName
+        FROM
+            sd_strategy s
+                LEFT JOIN sd_strategy_rl sr ON s.id = sr.strategy_id
+        WHERE
+            1 = 1
+          AND s.tunnel_id = #{tunnelId}
+          AND s.strategy_type = '0'
+          AND s.strategy_group = '2'
+          AND s.event_type = #{eventType}
+          AND s.direction = #{direction}
+    </select>
 </mapper>

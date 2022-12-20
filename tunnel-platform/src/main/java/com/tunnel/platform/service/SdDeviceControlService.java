@@ -113,7 +113,7 @@ public class SdDeviceControlService {
         //获取当前设备状态
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
+        //sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode()));
         List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
         //添加操作记录
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -141,7 +141,8 @@ public class SdDeviceControlService {
             || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue())) {
+                sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
+                sdDevices.getEqType().longValue() == DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode().longValue()) {
             if (data.size() > 0) {
                 sdOperationLog.setBeforeState(data.get(0).getData());
             }

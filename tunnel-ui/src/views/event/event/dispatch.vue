@@ -116,7 +116,7 @@
                     >
                   </div>
                   <div>
-                    <!-- <div>预览</div> -->
+                     <div>预览</div>
                     <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
                       关联事件
                     </div>
@@ -237,7 +237,7 @@
                       >
                         {{ item.eqName }}
                       </div>
-                    
+
                     </div>
                   </div>
                 </div>
@@ -300,7 +300,7 @@
                   src="../../../assets/cloudControl/tunnelBox3.png"
                   @click="changeActiveMap(2)"
                 />
-   
+
               </div>
             </div>
           </div>
@@ -485,7 +485,7 @@
       <div v-else-if="this.IssuedItem.flowPid == 12 || this.IssuedItem.flowPid == 16">是否{{this.IssuedItem.flowContent}}?</div>
 
       <div v-else>是否确认执行?</div>
-      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7"/>
+      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17"/>
       <div style="display:flex;justify-content:right">
         <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
         <div class="IssuedButton2" @click="changeIncHand">确 认</div>
@@ -627,7 +627,7 @@ import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹
 
 import {
   listEventType,
- 
+
 } from "@/api/event/eventType";
 import {
   listEqTypeState,
@@ -837,7 +837,7 @@ export default {
         arr.push(itm.id)
       }
       // str = arr.join(',')
-      
+
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -855,15 +855,15 @@ export default {
         //         if (itm.id == it_m) {
         //           itm.eventState = "1";
         //         }
-        //       } 
+        //       }
         //     }
         //   }
-          
+
         // });
-       
+
           let planId = item.reserveId
           let eventId = that.$route.query.id
-        
+
         implementPlan(planId,eventId).then((response) =>{
           console.log(response,"一键下发成功");
           for(let item of that.incHandList) {
@@ -874,7 +874,7 @@ export default {
                  that.$modal.msgSuccess("一键下发成功");
 
                 }
-              } 
+              }
             }
           }
           this.evtHandle();
@@ -886,7 +886,7 @@ export default {
     backSafeWarn(){
       this.$router.push({
         path: "/emergency/safeWarn",
-       
+
       });
     },
     // 关闭弹窗子组件
@@ -901,7 +901,7 @@ export default {
           equipmentId: item.eqId,
         };
     },
-    
+
     // 关联事件
     relation(type) {
       const params = {
@@ -1046,7 +1046,7 @@ export default {
           setTimeout(()=>{
             this.getAcc()
           },500)
-          
+
         });
       }
     },
@@ -1428,7 +1428,7 @@ export default {
             margin-left: 14px;
           }
           > div:nth-of-type(2) {
-            color: #fff;
+            // color: #fff;
             height: 40px;
             overflow: auto;
           }
@@ -1734,7 +1734,7 @@ export default {
       .DisRecords {
         width: 40%;
         height: 100%;
-        border-left: solid 1px rgba($color: #f0f1f2, $alpha: 0.2);
+        // border-left: solid 1px #E0E7ED;
         overflow: hidden;
 
       }

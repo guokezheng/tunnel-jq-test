@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="endState"    column="end_state"    />
         <result property="retrievalRule"    column="retrieval_rule"    />
         <result property="planId"    column="plan_id"    />
+        <result property="disposalName"    column="disposal_name"    />
         <association property="eqType"    column="type_id" javaType="SdEquipmentType" resultMap="TypeResult" />
     </resultMap>
 
@@ -23,11 +24,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="typeName" column="type_name"   />
 	</resultMap>
     <sql id="selectSdStrategyRlVo">
-        select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,retrieval_rule,plan_id from sd_strategy_rl
+        select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,retrieval_rule,plan_id,disposal_name from sd_strategy_rl
     </sql>
 
     <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
-        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state
+        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state,A.disposal_name
         from sd_strategy_rl A
         left join sd_equipment_type B ON A.eq_type_id = B.type_id
         <where>
@@ -65,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endState != null">end_state,</if>
             <if test="retrievalRule != null">retrieval_rule,</if>
             <if test="planId != null">plan_id,</if>
+            <if test="disposalName != null">disposal_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">#{strategyId},</if>
@@ -76,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="endState != null">#{endState},</if>
             <if test="retrievalRule != null">#{retrievalRule},</if>
             <if test="planId != null">#{planId},</if>
+            <if test="disposalName != null">#{disposalName},</if>
         </trim>
     </insert>
 
@@ -107,7 +110,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveTime != null">effective_time = #{effectiveTime},</if>
             <if test="endState != null">end_state = #{endState},</if>
             <if test="retrievalRule != null">retrieval_rule = #{retrievalRule},</if>
-            <if test="planId != null">plan_id = #{planId}</if>
+            <if test="planId != null">plan_id = #{planId},</if>
+            <if test="disposalName != null">disposal_name = #{disposalName}</if>
         </trim>
         where id = #{id}
     </update>

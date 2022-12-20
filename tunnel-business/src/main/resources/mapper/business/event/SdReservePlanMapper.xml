@@ -203,4 +203,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               AND rp.plan_type_id = #{planTypeId}
           </if>
     </select>
+
+    <select id="getReserveId" resultType="java.lang.Long" parameterType="com.tunnel.business.domain.event.SdReservePlan">
+        SELECT
+            rp.id
+        FROM
+            sd_reserve_plan rp
+        WHERE
+        1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND rp.tunnel_id = #{tunnelId}
+        </if>
+        <if test="direction != null and direction != ''">
+            AND rp.direction = #{direction}
+        </if>
+        <if test="controlDirection != null and controlDirection != ''">
+            AND rp.control_direction = #{controlDirection}
+        </if>
+        <if test="category != null and category != ''">
+            AND rp.category = #{category}
+        </if>
+        <if test="planTypeId != null and planTypeId != ''">
+            AND rp.plan_type_id = #{planTypeId}
+        </if>
+    </select>
 </mapper>

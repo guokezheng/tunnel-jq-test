@@ -145,4 +145,8 @@ public interface ISdStrategyService {
     int implementPlan(Long planId,Long eventId);
 
     int implementProcess(Long processId,Long eventId);
+
+    int implementDisposalStrategy(Long strategyId,Long eventId);
+
+    int implementDisposalStrategyRl(Long rlId,Long eventId);
 }

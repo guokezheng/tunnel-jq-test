@@ -44,6 +44,16 @@ public class SdStrategyRl extends BaseEntity
     private String retrievalRule;
     //预案ID
     private String planId;
+    //处置名称
+    private String disposalName;
+
+    public String getDisposalName() {
+        return disposalName;
+    }
+
+    public void setDisposalName(String disposalName) {
+        this.disposalName = disposalName;
+    }
 
     public String getRetrievalRule() {
         return retrievalRule;

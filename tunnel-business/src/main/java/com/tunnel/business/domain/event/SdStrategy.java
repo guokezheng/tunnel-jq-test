@@ -80,6 +80,27 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("分时控制关闭时间")
     private String timerClose;
 
+    @ApiModelProperty("处置名称")
+    private String disposalName;
+
+    @ApiModelProperty("策略关联id")
+    private Long strategyRlId;
+
+    public Long getStrategyRlId() {
+        return strategyRlId;
+    }
+
+    public void setStrategyRlId(Long strategyRlId) {
+        this.strategyRlId = strategyRlId;
+    }
+
+    public String getDisposalName() {
+        return disposalName;
+    }
+
+    public void setDisposalName(String disposalName) {
+        this.disposalName = disposalName;
+    }
 
     public String getTimerOpen() {
         return timerOpen;

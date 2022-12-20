@@ -75,6 +75,9 @@ public class SdEventServiceImpl implements ISdEventService {
     @Autowired
     private SdTunnelsMapper sdTunnelsMapper;
 
+    @Autowired
+    private SdStrategyMapper sdStrategyMapper;
+
     /**
      * 查询事件管理
      *
@@ -148,14 +151,14 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
     public int updateSdEvent(SdEvent sdEvent) {
-        if ("1".equals(sdEvent.getEventState())) {
+        /*if ("1".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
             eventFlow.setFlowTime(sdEvent.getEventTime());
             eventFlow.setFlowDescription("问题解决");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
-        }
+        }*/
         if ("2".equals(sdEvent.getEventState())) {
             SdEventFlow eventFlow = new SdEventFlow();
             eventFlow.setEventId(sdEvent.getFlowId());
@@ -406,6 +409,16 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
     @Override
+    public AjaxResult getSafetyHandle(SdEvent sdEvent) {
+        updateSecurityHandle(sdEvent);
+        //查询处置记录流程树
+        SdEventHandle sdEventHandle = new SdEventHandle();
+        sdEventHandle.setEventId(sdEvent.getId());
+        List<SdEventHandle> sdEventHandles = sdEventHandleMapper.selectSdEventHandleList(sdEventHandle);
+        return AjaxResult.success(sdEventHandles);
+    }
+
+    @Override
     public AjaxResult getRelation(SdReservePlan sdReservePlan) {
         SdEventHandle eventHandle = new SdEventHandle();
         eventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
@@ -444,6 +457,11 @@ public class SdEventServiceImpl implements ISdEventService {
     }
 
     @Override
+    public AjaxResult getReserveId(SdReservePlan sdReservePlan) {
+        return AjaxResult.success(sdReservePlanMapper.getReserveId(sdReservePlan));
+    }
+
+    @Override
     public AjaxResult getAccidentPoint(SdEvent sdEvent) {
         SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdEvent.getTunnelId());
         //隧道终点桩号
@@ -470,7 +488,58 @@ public class SdEventServiceImpl implements ISdEventService {
         return AjaxResult.success(map);
     }
 
+    /**
+     * 交通事件-添加流程树
+     * @param sdEvent
+     */
     public void updateHandle(SdEvent sdEvent){
+        int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
+        if(count == 0){
+            SdEvent sdEvent1 = sdEventMapper.selectSdEventById(sdEvent.getId());
+            //查询预案流程树
+            List<SdJoinTypeFlow> sdJoinTypeFlows = sdJoinTypeFlowMapper.selectSdJoinTypeFlowById(sdEvent.getEventTypeId());
+            List<SdJoinTypeFlow> flowsPidData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() == null).collect(Collectors.toList());
+            List<SdJoinTypeFlow> flowsIdData = sdJoinTypeFlows.stream().filter(item -> item.getFlowPid() != null).collect(Collectors.toList());
+            int sort = 0;
+            for(SdJoinTypeFlow item : flowsPidData){
+                sort = sort + 1;
+                SdEventHandle sdEventHandle = new SdEventHandle();
+                sdEventHandle.setEventId(sdEvent.getId());
+                sdEventHandle.setFlowId(item.getFlowId());
+                sdEventHandle.setFlowPid(item.getFlowPid());
+                sdEventHandle.setFlowContent(item.getFlowName());
+                sdEventHandle.setFlowSort(sort+"");
+                sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+                int number = 0;
+                for(SdJoinTypeFlow temp : flowsIdData){
+                    if(item.getFlowId() == temp.getFlowPid()){
+                        number = number + 1;
+                        SdEventHandle sdEventHandle1 = new SdEventHandle();
+                        sdEventHandle1.setEventId(sdEvent.getId());
+                        sdEventHandle1.setFlowId(temp.getFlowId());
+                        sdEventHandle1.setFlowPid(temp.getFlowPid());
+                        if("2".equals(temp.getFlowId().toString())){
+                            String name = EventDescEnum.getName(sdEvent1.getEventSource());
+                            sdEventHandle1.setFlowContent(temp.getFlowName().concat(name));
+                            sdEventHandle1.setEventState("1");
+                            SdEventFlow flow = new SdEventFlow();
+                            flow.setEventId(sdEvent.getId().toString());
+                            flow.setFlowTime(DateUtils.getNowDate());
+                            flow.setFlowHandler(SecurityUtils.getUsername());
+                            flow.setFlowDescription(item.getFlowName().concat(name));
+                            SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+                        }else {
+                            sdEventHandle1.setFlowContent(temp.getFlowName());
+                        }
+                        sdEventHandle1.setFlowSort(number+"");
+                        sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
+                    }
+                }
+            }
+        }
+    }
+
+    public void updateSecurityHandle(SdEvent sdEvent){
         int count = sdEventHandleMapper.selectSdEventHandle(sdEvent.getId());
         //judgeData(sdEvent);
         if(count == 0){
@@ -514,6 +583,36 @@ public class SdEventServiceImpl implements ISdEventService {
                         sdEventHandleMapper.insertSdEventHandle(sdEventHandle1);
                     }
                 }
+            }
+            //新增主动安全设备管控子节点
+            SdStrategy strategy = new SdStrategy();
+            strategy.setTunnelId(sdEvent.getTunnelId());
+            strategy.setEventType(sdEvent.getEventTypeId().toString());
+            strategy.setDirection(sdEvent.getDirection());
+            List<SdStrategy> safetyHandle = sdStrategyMapper.getSafetyHandle(strategy);
+            String concat = sdEvent.getId().toString().concat("7000");
+            Long relationId = Long.valueOf(concat);
+            int sort1 = 0;
+            for(SdStrategy item : safetyHandle){
+                sort1 = sort1 + 1;
+                relationId = relationId + 1;
+                SdEventHandle sdEventHandle = new SdEventHandle();
+                sdEventHandle.setEventId(Long.valueOf(sdEvent.getId()));
+                sdEventHandle.setFlowId(Long.valueOf(relationId));
+                sdEventHandle.setFlowPid(Long.valueOf(7));
+                sdEventHandle.setFlowContent(item.getDisposalName());
+                sdEventHandle.setProcessId(item.getStrategyRlId());
+                sdEventHandle.setFlowSort(sort1+"");
+                sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+                sdEventHandleMapper.insertSdEventHandle(sdEventHandle);
+            }
+            if(safetyHandle.size() > 0){
+                SdEventHandle sdEventHandle = new SdEventHandle();
+                sdEventHandle.setEventId(Long.valueOf(sdEvent.getId()));
+                sdEventHandle.setFlowId(Long.valueOf(7));
+                sdEventHandle.setReserveId(safetyHandle.get(0).getId());
+                sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+                sdEventHandleMapper.updateSdEventHandleRelation(sdEventHandle);
             }
         }
     }

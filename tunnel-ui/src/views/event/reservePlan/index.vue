@@ -547,22 +547,10 @@
             :span="24"
             class="colflex"
           >
-            <el-col :span="2">
-              <div class="indexBox">
-                <i
-                  :class="index == 0 ? 'disabledClass' : ''"
-                  class="el-icon-caret-top"
-                  size="18"
-                  style="cursor: pointer"
-                  @click="moveTop(index, item)"
-                ></i>
-                <i
-                  :class="planTypeIdList.length == index + 1 ? 'disabledClass' : ''"
-                  class="el-icon-caret-bottom"
-                  style="cursor: pointer"
-                  @click="moveBottom(index, item)"
-                ></i>
-              </div>
+            <el-col :span="2" style="text-align: center">
+              <el-form-item prop="index">
+                {{index+1}}
+              </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item prop="processName">

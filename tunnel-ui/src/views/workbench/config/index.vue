@@ -318,7 +318,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                        v-show="item.eqType != ('31' || '16')  "
+                        v-show="item.eqType != '31' && item.eqType != '16'  "
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{

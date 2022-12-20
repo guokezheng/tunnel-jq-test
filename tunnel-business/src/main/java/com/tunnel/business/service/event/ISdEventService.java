@@ -116,11 +116,18 @@ public interface ISdEventService {
     List<Map> eventPopAll(String subIndex);
 
     /**
-     * 主动安全-复核-处置获取预案流程
+     * 交通事件-复核-处置获取预案流程
      * @param sdEvent
      * @return
      */
     AjaxResult getHandle(SdEvent sdEvent);
+
+    /**
+     * 主动安全-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getSafetyHandle(SdEvent sdEvent);
 
     /**
      * 应急调度关联策略
@@ -135,4 +142,11 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getAccidentPoint(SdEvent sdEvent);
+
+    /**
+     * 查询预案id
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getReserveId(SdReservePlan sdReservePlan);
 }

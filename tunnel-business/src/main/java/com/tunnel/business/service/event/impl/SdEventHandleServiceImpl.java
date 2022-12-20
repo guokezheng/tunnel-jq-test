@@ -98,7 +98,7 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
             }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
-            flow.setFlowDescription(sdEventHandle1.getFlowContent().concat(sdEvent.getRemark()));
+            flow.setFlowDescription(sdEventHandle1.getFlowContent().concat(sdEvent.getRemark() == null ? "" : sdEvent.getRemark()));
             flow.setEventId(sdEvent.getId().toString());
             flow.setFlowTime(DateUtils.getNowDate());
             flow.setFlowHandler(SecurityUtils.getUsername());

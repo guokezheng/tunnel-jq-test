@@ -115,4 +115,11 @@ public interface SdStrategyMapper
     public List<Map<String, Object>> checkStrategyIfExist(Long id);
 
     public List<Map<String,String>> getManualStrategy();
+
+    /**
+     * 查询联控策略
+     * @param strategy
+     * @return
+     */
+    List<SdStrategy> getSafetyHandle(SdStrategy strategy);
 }

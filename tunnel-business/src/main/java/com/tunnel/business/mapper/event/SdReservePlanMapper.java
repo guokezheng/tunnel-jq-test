@@ -91,4 +91,11 @@ public interface SdReservePlanMapper
      * @return
      */
     List<SdReservePlan> getRelation(SdReservePlan sdReservePlan);
+
+    /**
+     * 查询预案id
+     * @param sdReservePlan
+     * @return
+     */
+    Long getReserveId(SdReservePlan sdReservePlan);
 }

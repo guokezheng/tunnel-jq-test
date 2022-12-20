@@ -2864,7 +2864,7 @@ hr {
   color: #fff;
 }
 .disabledButton{
-  cursor: none;
+  cursor: no-drop;
   pointer-events: none;
 }
 </style>

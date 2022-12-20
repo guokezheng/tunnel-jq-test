@@ -240,7 +240,7 @@ export const constantRoutes = [
 ]
 
 export default new Router({
-  base:"/tunnel",
+ // base:"/tunnel",
   mode: 'hash', // 去掉url中的#
   // mode: 'history', // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),

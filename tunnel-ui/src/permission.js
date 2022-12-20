@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
     // 没有token
     if(to.path === '/login' && to.query.code !== ""){
       //正式环境的单点登录
-      debugger;
+
         store.dispatch("Login1",{
           "code":to.query.code,
           "asideCollapse":to.query.asideCollapse

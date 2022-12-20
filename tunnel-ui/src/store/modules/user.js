@@ -52,7 +52,7 @@ const user = {
 
     //测试环境单点登录
     LoginTest({ commit }) {
-      debugger;
+
 
       return new Promise((resolve, reject) => {
         callBackTest().then(res => {
@@ -68,7 +68,7 @@ const user = {
 
     //正式环境单点登录
     Login1({ commit }, loginInfo) {
-      debugger;
+
 
       return new Promise((resolve, reject) => {
         callBack(loginInfo).then(res => {

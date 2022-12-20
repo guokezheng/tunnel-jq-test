@@ -26,12 +26,10 @@ export default {
     websocket({ password, path, port, interval }) {
       // 建立 websocket 连接
       this.socket.initialize({
+        url: 'ws://' + location.hostname + ':' + port + path,
         // url: "ws://10.168.65.230" + ":" + port + path,
         // url: "ws://10.168.64.171" + ":" + port + path,
         //  url: 'ws://10.168.78.127'+ ':' + port + path,
-        // url: "ws://10.168.65.230" + ":" + port + path,
-        // url: "ws://10.168.64.171" + ":" + port + path,
-        url: "ws://127.0.0.0" + ":" + port + path,
 
         password: password,
         tokenSN: this.token,
@@ -50,9 +48,7 @@ export default {
         const subEvent = params.subEvent;
         const content = params.content;
         var contentList = JSON.parse(content);
-        console.log(subEvent, "subEvent");
 
-        console.log(contentList, "contentList");
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);
@@ -78,7 +74,7 @@ export default {
               contentList.deviceStatusChangeLog
             );
             break;
-          case "eventFlow":
+            case "eventFlow":
             this.$store.commit("EVENTFLOW", contentList.eventFlow);
             break;
           default:

@@ -67,7 +67,7 @@ public class RadarTask {
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
 
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void radarTask() {
         long l = System.currentTimeMillis();
         int count = redisCache.getCacheObject("count");

@@ -914,7 +914,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
         }
         //情报板
         if(eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString())){
-            issuedParam.put("templateId",log.getBeforeState());
+            return;
+            //issuedParam.put("templateId",log.getBeforeState());
         }
         //issuedParam.put("controlType","0");
         int duration = Integer.valueOf(effectiveTime);

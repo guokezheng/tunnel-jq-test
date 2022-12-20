@@ -39,6 +39,29 @@
     //   padding: 0 10px;
     // }
   }
+  .specialPagination{
+    position:fixed;left: 30%;right: 50%;bottom: 40px;
+    .el-pager li{
+      background: white;
+      border: solid 1px #DCDFE6;
+      margin: 0 2px;
+      border-radius: 2px;
+      width: 30px;
+      height: 30px;
+    }
+    .el-pager li.active{
+      background-color: #00afe0 !important;
+      color: white !important;
+    }
+    .btn-next{
+      height: 30px;
+    }
+    .el-select .el-input .el-input__inner{
+      height: 30px;
+    }
+
+    
+  }
   .menuitem{
     height:52px;line-height:50px;overflow-y: auto;
     margin: 0px auto;
@@ -742,12 +765,22 @@
         color: #2c5ea2;
       }
       .el-dialog__header {
+        padding: 0;
+        padding-left: 20px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 14px;
         // background-color: #fff;
         color: #2c5ea2;
         border-bottom: solid 2px #00c2ff;
       }
       .el-dialog__title {
         color: #2c5ea2;
+        font-size: 14px;
+        line-height: 30px;
+      }
+      .el-dialog__headerbtn{
+        top: 6px;
       }
       .el-dialog__body {
         color: #2c5ea2;
@@ -764,11 +797,13 @@
       }
       .el-radio {
         color: #2c5ea2;
+        padding: 5px 150px 5px 20px;
         &:hover {
          background-color: rgba($color: #86d3f2, $alpha: 0.28);
         }
       }
       .el-radio-selcted {
+        padding: 5px 220px 5px 20px;
         color: #2c5ea2;
         background-color: rgba($color: #86d3f2, $alpha: 0.28);
       }
@@ -797,6 +832,8 @@
       .el-dialog__headerbtn .el-dialog__close{
         color: #00c2ff !important;
       }
+    
+    
       .el-radio__input.is-checked + .el-radio__label{
         color: #2c5ea2 !important;
       }
@@ -1220,7 +1257,94 @@
         color: white;
       }
     }
+   // 应急调度
+  .dispatchLeft{
+    > div {
+      background: #F2F9FF;
+    }
+    .evtMessage .evtMessBox .evtMessLeft > div > div:nth-of-type(2){
+      color: #333 !important;
+    }
+     .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
+      color: #333;
+     }
+    .plan {
+      .planBox1 {
+        .el-radio{
+          color: #333;
+        }
+        .planRight{
+          color: #333;
+          border-left: solid 1px #E0E7ED !important;
+          > div:nth-of-type(2) > div:nth-of-type(2n){
+            color: #333;
+          }
+        }
+        .oneWayTraffic,.twoWayTraffic{
+          color:#333;
+          .el-radio__inner::after{
+            border: solid 2px #E0E7ED;
+          }
+        }
+        .planRight .el-radio__inner::after{
+          border: solid 2px #E0E7ED;
+        }
+      }
+    }
     
     
   }
+  .dispatchRight{
+    .rightBottom {
+      .evtManagement{
+        background: #F2F9FF;
+        .DisRecords{
+          border-left: solid 1px #E0E7ED;
+          .el-timeline .el-timeline-item .el-timeline-item__wrapper .el-timeline-item__content{
+            color: #333;
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+          }
+          
+        }
+        .IncHand .incHandBox .incHandContent {
+          .classification {
+            .type{
+              background: #fff;
+              border: 1px solid rgba(57, 173, 255, 1);
+              color: #333;
+            }
+            .yijian{
+              color: #fff;
+            }
+          }
+          .contentList{
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+            color: #333;
+          }
+        }
+      }
+      .implement1 {
+        .eqRecord,.phone{
+          background: #F2F9FF;
+  
+        }
+        .eqRecord .eqRecordBox .implementContent .contentBox{
+          color: #333;
+        }
+      }
+    } 
+  } 
+  // 安全预警
+  .safeWarnStyle{
+    .contentText{
+      color: #0087e7;
+    }
+    .contentBox .video{
+      color: #0087e7;
+    }
+  }
+    
+}
       

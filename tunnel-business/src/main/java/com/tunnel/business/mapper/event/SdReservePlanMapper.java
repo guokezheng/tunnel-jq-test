@@ -84,4 +84,11 @@ public interface SdReservePlanMapper
      * @return
      */
     public List<SdReservePlan> selectSdReservePlanBySubareaId(SdReservePlan sdReservePlan);
+
+    /**
+     * 应急调度关联策略
+     * @param sdReservePlan
+     * @return
+     */
+    List<SdReservePlan> getRelation(SdReservePlan sdReservePlan);
 }

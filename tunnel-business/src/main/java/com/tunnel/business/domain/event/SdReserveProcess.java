@@ -44,7 +44,18 @@ public class SdReserveProcess extends BaseEntity
 
     private Long[] handleStrategyList;
 
-    public void setId(Long id) 
+    //策略关联设备信息对象
+    private SdStrategyRl sdStrategyRl;
+
+    public SdStrategyRl getSdStrategyRl() {
+        return sdStrategyRl;
+    }
+
+    public void setSdStrategyRl(SdStrategyRl sdStrategyRl) {
+        this.sdStrategyRl = sdStrategyRl;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

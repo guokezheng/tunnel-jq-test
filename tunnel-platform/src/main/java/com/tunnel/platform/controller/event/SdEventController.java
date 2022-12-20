@@ -12,10 +12,12 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.json.JSONObject;
 import com.tunnel.platform.service.SdDeviceControlService;
@@ -45,6 +47,9 @@ public class SdEventController extends BaseController
 {
     @Autowired
     private ISdEventService sdEventService;
+
+    @Autowired
+    private ISdEventHandleService sdEventHandleService;
 
     /**
      * 查询事件管理列表
@@ -263,5 +268,45 @@ public class SdEventController extends BaseController
             return Result.error("操作失败，请联系管理员");
         }
         return Result.success("操作成功!");
+    }
+
+    /**
+     * 主动安全-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getHandle")
+    public AjaxResult getHandle(SdEvent sdEvent){
+        return sdEventService.getHandle(sdEvent);
+    }
+
+    /**
+     * 更新事件处置
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/updateHandle")
+    public AjaxResult updateHandle(SdEvent sdEvent){
+        return sdEventHandleService.updateSdEventHandle(sdEvent);
+    }
+
+    /**
+     * 应急调度关联策略
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getRelation")
+    public AjaxResult getRelation(SdReservePlan sdReservePlan){
+        return sdEventService.getRelation(sdReservePlan);
+    }
+
+    /**
+     * 计算事故点
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getAccidentPoint")
+    public AjaxResult getAccidentPoint(SdEvent sdEvent){
+        return sdEventService.getAccidentPoint(sdEvent);
     }
 }

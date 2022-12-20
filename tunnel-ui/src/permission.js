@@ -38,23 +38,32 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     // 没有token
-    if (whiteList.indexOf(to.path) !== -1) {
-      // 在免登录白名单，直接进入
-      next()
-    }else {
-      //let str = window.location.pathname//获取当前路由
-      let str = to.path
-      if(str.indexOf("loginjqtunnel")!=-1){//单点登录
-        store.dispatch("Login1").then(() => {
+    if(to.path === '/login' && to.query.code !== ""){
+      //正式环境的单点登录
+      debugger;
+        store.dispatch("Login1",{
+          "code":to.query.code,
+          "asideCollapse":to.query.asideCollapse
+        }).then(() => {
           next({ path: '/' })
         }).catch(() => {
           next(`/loginjqtunnel?redirect=${to.fullPath}`)// 否则全部重定向到登录页
-        })
-      }else{
-        next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
-      }
+      })
       NProgress.done()
+    }else if(to.path.indexOf("loginjqtunnel")!=-1){
+      //测试环境的单点登录
+      store.dispatch("LoginTest").then(() => {
+        next({ path: '/' })
+      }).catch(() => {
+        next(`/loginjqtunnel?redirect=${to.fullPath}`)// 否则全部重定向到登录页
+      })
+    } else{
+      if (whiteList.indexOf(to.path) !== -1) {
+        // 在免登录白名单，直接进入
+        next()
+      }
     }
+
   }
 })
 

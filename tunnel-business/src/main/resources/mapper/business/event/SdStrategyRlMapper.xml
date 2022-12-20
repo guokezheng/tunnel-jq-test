@@ -9,8 +9,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="strategyId"    column="strategy_id"    />
         <result property="eqTypeId"    column="eq_type_id"    />
         <result property="controlTime" column="control_time" />
+        <result property="effectiveTime" column="effective_time" />
         <result property="equipments"    column="equipments"    />
         <result property="state"    column="state"    />
+        <result property="endState"    column="end_state"    />
+        <result property="retrievalRule"    column="retrieval_rule"    />
+        <result property="planId"    column="plan_id"    />
         <association property="eqType"    column="type_id" javaType="SdEquipmentType" resultMap="TypeResult" />
     </resultMap>
 
@@ -19,11 +23,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="typeName" column="type_name"   />
 	</resultMap>
     <sql id="selectSdStrategyRlVo">
-        select id, strategy_id, eq_type_id, control_time, equipments, state from sd_strategy_rl
+        select id, strategy_id, eq_type_id, control_time,effective_time, equipments, state,end_state,retrieval_rule,plan_id from sd_strategy_rl
     </sql>
 
     <select id="selectSdStrategyRlList" parameterType="SdStrategyRl" resultMap="SdStrategyRlResult">
-        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time
+        select A.id, A.strategy_id, A.eq_type_id, A.equipments, A.state, B.type_name, A.control_time,A.effective_time,A.end_state
         from sd_strategy_rl A
         left join sd_equipment_type B ON A.eq_type_id = B.type_id
         <where>
@@ -44,34 +48,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where strategy_id = #{strategyId}
     </select>
 
+    <select id="selectSdStrategyRlByPlanId" parameterType="Long" resultMap="SdStrategyRlResult">
+        <include refid="selectSdStrategyRlVo"></include>
+        where plan_id = #{planId}
+    </select>
+
     <insert id="insertSdStrategyRl" parameterType="SdStrategyRl" useGeneratedKeys="true" keyProperty="id">
         insert into sd_strategy_rl
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">strategy_id,</if>
             <if test="controlTime != null">control_time,</if>
+            <if test="effectiveTime != null">effective_time,</if>
             <if test="eqTypeId != null">eq_type_id,</if>
             <if test="equipments != null">equipments,</if>
             <if test="state != null">state,</if>
-         </trim>
+            <if test="endState != null">end_state,</if>
+            <if test="retrievalRule != null">retrieval_rule,</if>
+            <if test="planId != null">plan_id,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="strategyId != null">#{strategyId},</if>
             <if test="controlTime != null">#{controlTime},</if>
+            <if test="effectiveTime != null">#{effectiveTime},</if>
             <if test="eqTypeId != null">#{eqTypeId},</if>
             <if test="equipments != null">#{equipments},</if>
             <if test="state != null">#{state},</if>
-         </trim>
+            <if test="endState != null">#{endState},</if>
+            <if test="retrievalRule != null">#{retrievalRule},</if>
+            <if test="planId != null">#{planId},</if>
+        </trim>
     </insert>
 
     	<!-- 批量新增策略关联信息 -->
 	  <insert id="batchInsertStrategyRl" parameterType="java.util.List">
 	    insert into sd_strategy_rl
 	    (
-	      strategy_id, eq_type_id, equipments, state, control_time
+	      strategy_id, eq_type_id, equipments, state, end_state, control_time
 	    )
 	    values
 	    <foreach collection="list" index="index" item="item" separator=",">
 	      (
-	        #{item.strategyId}, #{item.eqTypeId}, #{item.equipments}, #{item.state}, #{item.controlTime}
+	        #{item.strategyId}, #{item.eqTypeId}, #{item.equipments}, #{item.state}, #{item.endState},#{item.controlTime}
 	      )
 	    </foreach>
 	  </insert>
@@ -86,13 +103,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="eqTypeId != null">eq_type_id = #{eqTypeId},</if>
             <if test="equipments != null">equipments = #{equipments},</if>
             <if test="state != null">state = #{state},</if>
-            <if test="controlTime != null">control_time = #{controlTime}</if>
+            <if test="controlTime != null">control_time = #{controlTime},</if>
+            <if test="effectiveTime != null">effective_time = #{effectiveTime},</if>
+            <if test="endState != null">end_state = #{endState},</if>
+            <if test="retrievalRule != null">retrieval_rule = #{retrievalRule},</if>
+            <if test="planId != null">plan_id = #{planId}</if>
         </trim>
         where id = #{id}
     </update>
 
     <delete id="deleteSdStrategyRlById" parameterType="Long">
         delete from sd_strategy_rl where id = #{id}
+    </delete>
+
+    <delete id="deleteSdStrategyRlByPlanId" parameterType="Long">
+        delete from sd_strategy_rl where plan_id = #{id}
     </delete>
 
     <delete id="deleteSdStrategyRlByIds" parameterType="String">

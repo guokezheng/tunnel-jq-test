@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="eventType != null  and eventType != ''">and event_type like concat('%', #{eventType}, '%')</if>
             <if test="prevControlType != null  and prevControlType != ''">and prev_control_type =#{prevControlType}</if>
+            <if test="id != null  and id != ''">and id = #{id}</if>
         </where> order by id
     </select>
 

@@ -60,3 +60,4 @@ spring:
           merge-sql: true
         wall:
           config:
+            multi-statement-allow: true

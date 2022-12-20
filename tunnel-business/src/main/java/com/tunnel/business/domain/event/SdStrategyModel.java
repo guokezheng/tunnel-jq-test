@@ -75,7 +75,50 @@ public class SdStrategyModel extends BaseEntity
     @ApiModelProperty("设备类型ID")
     private String equipmentTypeId;
 
-    /** 设备,以#分割 */
+    @ApiModelProperty("事件类型ID")
+    private String eventType;
+
+    @ApiModelProperty("策略组")
+    private String strategyGroup;
+
+    @ApiModelProperty("分时控制-开始时间")
+    private String startTime;
+
+    @ApiModelProperty("分时控制-结束时间")
+    private String endTime;
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getStrategyGroup() {
+        return strategyGroup;
+    }
+
+    public void setStrategyGroup(String strategyGroup) {
+        this.strategyGroup = strategyGroup;
+    }
+/** 设备,以#分割 */
     /*@ApiModelProperty("设备,以#分割")
     private String equipments;*/
 

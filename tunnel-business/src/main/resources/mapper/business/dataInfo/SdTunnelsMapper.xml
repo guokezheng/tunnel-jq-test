@@ -229,8 +229,8 @@
         left join sd_tunnel_subarea b on a.tunnel_id = b.tunnel_id
         <where>
         1=1 and a.poll= '0'
-            <if test="tunnelId != null and tunnelId != ''">a.tunnel_id = #{tunnelId}</if>
-            <if test="tunnelName != null">a.tunnelName = #{tunnelName} </if>
+            <if test="tunnelId != null and tunnelId != ''">and a.tunnel_id = #{tunnelId}</if>
+            <if test="tunnelName != null">and a.tunnelName = #{tunnelName} </if>
         </where>
     </select>
 

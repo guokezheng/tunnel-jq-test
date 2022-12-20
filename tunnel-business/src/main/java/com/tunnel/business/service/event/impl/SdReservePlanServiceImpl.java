@@ -3,18 +3,27 @@ package com.tunnel.business.service.event.impl;
 import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.common.utils.oss.OssUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.event.*;
+import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdReservePlanService;
+import com.tunnel.business.utils.json.JSONObject;
 import com.tunnel.business.utils.util.UUIDUtil;
+import com.zc.common.core.websocket.WebSocketService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +31,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 预案信息Service业务层处理
@@ -47,16 +59,12 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
     private SdEquipmentStateMapper sdEquipmentStateMapper;
     @Autowired
     private SdEquipmentTypeMapper sdEquipmentTypeMapper;
-
     @Autowired
     private ConfigurableApplicationContext configurableApplicationContext;
-
     @Autowired
     private SdTunnelSubareaMapper sdTunnelSubareaMapper;
-
     @Autowired
     private SdTunnelsMapper sdTunnelsMapper;
-
     @Autowired
     private SdReserveProcessMapper sdReserveProcessMapper;
 
@@ -74,32 +82,32 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             sdReservePlanFile.setPlanFileId(plan.getPlanFileId());
             plan.setpFileList(sdReservePlanFileMapper.selectSdReservePlanFileList(sdReservePlanFile));
         }
-        Long subareaId = plan.getSubareaId();
-        SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
-        plan.setSdTunnelSubarea(sdTunnelSubarea);
-        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(sdTunnelSubarea.getTunnelId());
+//        Long subareaId = plan.getSubareaId();
+//        SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
+//        plan.setSdTunnelSubarea(sdTunnelSubarea);
+        SdTunnels sdTunnels = sdTunnelsMapper.selectSdTunnelsById(plan.getTunnelId());
         plan.setSdTunnels(sdTunnels);
-        List<String> strategyNames = new ArrayList<>();
-        if (!"-1".equals(plan.getStrategyId()) && plan.getStrategyId() != null) {
-            String[] strategyAyy = plan.getStrategyId().split("；");
-            String things = "";
-            int index = 0;
-            for (String s : strategyAyy) {
-                if (s == null || s.equals("")) {
-                    continue;
-                }
-                index++;
-                SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
-                if (sds == null) {
-                    logger.error("策略未找到！");
-                    continue;
-                }
-                things = things + index + "、" + sds.getStrategyName();
-                strategyNames.add(things);
-            }
-
-        }
-        plan.setStrategyNames(strategyNames);
+//        List<String> strategyNames = new ArrayList<>();
+//        if (!"-1".equals(plan.getStrategyId()) && plan.getStrategyId() != null) {
+//            String[] strategyAyy = plan.getStrategyId().split("；");
+//            String things = "";
+//            int index = 0;
+//            for (String s : strategyAyy) {
+//                if (s == null || s.equals("")) {
+//                    continue;
+//                }
+//                index++;
+//                SdStrategy sds = sdStrategyMapper.selectSdStrategyById(Long.parseLong(s));
+//                if (sds == null) {
+//                    logger.error("策略未找到！");
+//                    continue;
+//                }
+//                things = things + index + "、" + sds.getStrategyName();
+//                strategyNames.add(things);
+//            }
+//
+//        }
+//        plan.setStrategyNames(strategyNames);
         return plan;
     }
 
@@ -117,23 +125,28 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
             List<String> strategyNames = new ArrayList<>();
-            Long subareaId = list.get(i).getSubareaId();
-            SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
-            if (sdTunnelSubarea == null) {
-                continue;
-            }
-            list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
-            list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
+//            Long subareaId = list.get(i).getSubareaId();
+//            SdTunnelSubarea sdTunnelSubarea = sdTunnelSubareaMapper.selectSdTunnelSubareaBySId(subareaId);
+//            if (sdTunnelSubarea == null) {
+//                continue;
+//            }
+            //list.get(i).setSdTunnelSubarea(sdTunnelSubarea);
+            //list.get(i).setTunnelId(sdTunnelSubarea.getTunnelId());
             String strategyNamesStr = list.get(i).getStrategy().getStrategyName();
-            if (StrUtil.isNotBlank(strategyNamesStr)) {
-                strategyNames = Arrays.asList(strategyNamesStr.split(","));
-                for (int j = 0; j < strategyNames.size(); j++) {
-                    int num = j + 1;
-                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
-                    buffer.setLength(0);
-                }
-            }
-            list.get(i).setStrategyNames(strategyNames);
+
+            List<SdReserveProcess> processList = sdReserveProcessMapper.selectSdReserveProcessByRid(list.get(i).getId());
+            List<String> processStr = processList.stream().map(s->s.getProcessName()).collect(Collectors.toList());
+            //.joining(","));
+
+//            if (StrUtil.isNotBlank(strategyNamesStr)) {
+//                strategyNames = Arrays.asList(strategyNamesStr.split(","));
+//                for (int j = 0; j < strategyNames.size(); j++) {
+//                    int num = j + 1;
+//                    strategyNames.set(j, buffer.append(num).append("、").append(strategyNames.get(j)).toString());
+//                    buffer.setLength(0);
+//                }
+//            }
+            list.get(i).setStrategyNames(processStr);
 //            if (StringUtils.isNotEmpty(list.get(i).getStrategyId())) {
 //                String[] strategys = list.get(i).getStrategyId().split(",");
 //                int index = 0;
@@ -339,6 +352,8 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             if (result > 0) {
                 sdReservePlanFileMapper.deleteSdReservePlanFileByPlanFileId(sdReservePlan.getPlanFileId());
                 sdReserveProcessMapper.deleteSdReserveProcessByPlanId(sdReservePlan.getId());
+                //删除策略设备信息表
+                sdStrategyRlMapper.deleteSdStrategyRlByPlanId(id);
             }
         }
         return result;
@@ -415,7 +430,6 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
             map.put("id", sdTunnelSubarea.getsId());
             map.put("SubareaName", sdTunnelSubarea.getsName());
             map.put("direction", sdTunnelSubarea.getDirection());
-
             SdReservePlan sdReservePlan = new SdReservePlan();
             sdReservePlan.setSubareaId(sdTunnelSubarea.getsId());
             List<SdReservePlan> sdReservePlans = sdReservePlanMapper.selectSdReservePlanBySubareaId(sdReservePlan);

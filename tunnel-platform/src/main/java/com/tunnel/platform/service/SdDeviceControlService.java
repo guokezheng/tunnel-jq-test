@@ -23,6 +23,8 @@ import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
+import com.tunnel.platform.business.vms.device.DataUtils;
+import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
@@ -62,6 +64,7 @@ public class SdDeviceControlService {
 
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
+
     @Autowired
     private LightService lightService;
     @Autowired
@@ -134,7 +137,11 @@ public class SdDeviceControlService {
         int controlState = 0;
         String fireMark = "";
         //控制车指
-        if (sdDevices != null && sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()) {
+        if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()
+            || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
+                sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
+                sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
+                sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue())) {
             if (data.size() > 0) {
                 sdOperationLog.setBeforeState(data.get(0).getData());
             }
@@ -151,7 +158,7 @@ public class SdDeviceControlService {
                 sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
                 List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
                 if (sdDeviceTypeItems.size() == 0) {
-                    throw new RuntimeException("当前设备没有设备类型数据项数据，请添加后重试！");
+                    throw new RuntimeException("当前设备没有设备类型数据项数据");
                 }
                 SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
                 updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));

@@ -149,3 +149,12 @@ export function getStateByData(query) {
     params: query
   })
 }
+
+
+export function getVMSTemplatesByDevIdAndCategory(data) {
+  return request({
+    url: '/system/template/getVMSTemplatesByDevIdAndCategory',
+    method: 'post',
+    data: data
+  })
+}

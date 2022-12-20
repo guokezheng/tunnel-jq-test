@@ -105,12 +105,12 @@ export function getSubareaByStakeNum(query) {
 }
 
 // 一键恢复
-export function performRecovery(eventId) {
-  return request({
-    url: '/event/performRecovery?eventId=' + eventId,
-    method: 'get',
-  })
-}
+// export function performRecovery(eventId) {
+//   return request({
+//     url: '/event/performRecovery?eventId=' + eventId,
+//     method: 'get',
+//   })
+// }
 
 
 // 一进页面获取已执行数据
@@ -152,3 +152,85 @@ export function eventPopFault(pageNum) {
     method: 'get',
   })
 }
+
+// 获取车道数
+export function getTunnelLane(tunnelId) {
+  return request({
+    url: '/tunnels/' + tunnelId,
+    method: 'get',
+  })
+}
+
+//  处置记录
+export function eventFlowList(query) {
+  return request({
+    url: '/eventFlow/list',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 事件处置
+export function getHandle(query) {
+  return request({
+    url: '/event/getHandle',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 事件处置 下发（改状态）
+export function updateHandle(query) {
+  return request({
+    url: '/event/updateHandle',
+    method: 'get',
+    params: query
+  })
+}
+
+// 关联事件 
+export function getRelation(query) {
+  return request({
+    url: '/event/getRelation',
+    method: 'get',
+    params: query
+  })
+}
+
+// 关联事件 
+export function getAccidentPoint(query) {
+  return request({
+    url: '/event/getAccidentPoint',
+    method: 'get',
+    params: query
+  })
+}
+
+// 一键 下发设备
+export function implementPlan(planId,eventId) {
+  return request({
+    url: '/plan/implementPlan?planId='+planId+'&eventId='+eventId,
+    method: 'get',
+  })
+}
+
+// 单点 下发设备
+export function implementProcess(processId,eventId) {
+  return request({
+    url: '/plan/implementProcess?processId='+ processId + '&eventId=' + eventId,
+    method: 'get',
+  })
+}
+
+// 一键 下发设备
+export function performRecovery(eventId,handleId) {
+  return request({
+    url: '/event/performRecovery?eventId='+eventId+'&handleId='+handleId,
+    method: 'get',
+  })
+}
+
+
+

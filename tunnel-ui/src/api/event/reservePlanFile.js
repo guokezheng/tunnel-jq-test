@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// ²éÑ¯Ô¤°¸ÎÄ¼þÁÐ±í
+// ï¿½ï¿½Ñ¯Ô¤ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ð±ï¿½
 export function listReservePlanFile(query) {
   return request({
     url: '/reservePlanFile/list',
@@ -9,7 +9,7 @@ export function listReservePlanFile(query) {
   })
 }
 
-// ²éÑ¯Ô¤°¸ÎÄ¼þÏêÏ¸
+// ï¿½ï¿½Ñ¯Ô¤ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ï¸
 export function getReservePlanFile(id) {
   return request({
     url: '/reservePlanFile/' + id,
@@ -17,7 +17,7 @@ export function getReservePlanFile(id) {
   })
 }
 
-// ÐÂÔöÔ¤°¸ÎÄ¼þ
+// ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½Ä¼ï¿½
 export function addReservePlanFile(data) {
   return request({
     url: '/reservePlanFile',
@@ -26,7 +26,7 @@ export function addReservePlanFile(data) {
   })
 }
 
-// ÐÞ¸ÄÔ¤°¸ÎÄ¼þ
+// ï¿½Þ¸ï¿½Ô¤ï¿½ï¿½ï¿½Ä¼ï¿½
 export function updateReservePlanFile(data) {
   return request({
     url: '/reservePlanFile',
@@ -35,10 +35,17 @@ export function updateReservePlanFile(data) {
   })
 }
 
-// É¾³ýÔ¤°¸ÎÄ¼þ
+// É¾ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½Ä¼ï¿½
 export function delReservePlanFile(id) {
   return request({
     url: '/reservePlanFile/' + id,
     method: 'delete'
+  })
+}
+// 47
+export function getReservePlanProcess(id) {
+  return request({
+    url: 'plan/process/getReservePlanProcess/' + id,
+    method: 'get'
   })
 }

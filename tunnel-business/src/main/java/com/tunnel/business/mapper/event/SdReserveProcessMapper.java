@@ -4,6 +4,7 @@ import com.tunnel.business.domain.event.SdReserveProcess;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 预案流程节点Mapper接口
@@ -80,4 +81,6 @@ public interface SdReserveProcessMapper
      * @return
      */
     public List<SdReserveProcess> selectSdReserveProcessByRid(Long reserveId);
+
+    public List<Map> getReservePlanProcess(Long reserveId);
 }

@@ -220,7 +220,8 @@
               </div>
               <div class="contentButton">
                 <div @click="detailsButton(item, 1)">详情</div>
-                <div @click="detailsButton(item, 2)">复核</div>
+                <div @click="detailsButton(item, 2)" 
+                :class="item.eventState == '1'|| item.eventState == '2'?'disabledButton':''">复核</div>
               </div>
               <div class="stateTab">
                 <img :src="safeWarn0" v-show="item.eventState == '0'" />
@@ -593,12 +594,9 @@
         </el-form>
       </div>
       <div class="dialogFooterButton" >
-        <div @click="submitDialog" v-show="detailsButtonType == 2"
-        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">复核提交</div>
-        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)" 
-        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)"
-        :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">处置</div>
+        <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
+        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)" >应急调度</div>
+        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
         
       </div>
     </el-dialog>
@@ -626,9 +624,9 @@
             </div>
           
             <div v-show="item.flowId == 7" class="yijian"  @click="getYiJian(item)"
-            :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">一键</div>
+            :class="!miniDialog?'disabledButton':''">一键</div>
             <div v-show="item.flowId == 1" class="hulue" @click="hulue()"
-            :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">忽略</div>
+            :class="!miniDialog?'disabledButton':''">忽略</div>
 
           </div>
 
@@ -650,7 +648,7 @@
               <div style="float:left">{{ itm.flowContent }}</div>
               <img :src="incHand2"  style="float:right;" v-show="itm.eventState != '0'" >
               <img :src="incHand1"  style="float:right;cursor: pointer;" v-show="itm.eventState == '0'" @click="changeIncHand(itm)"
-              :class="eventForm.eventState == '1'|| eventForm.eventState == '2'?'disabledButton':''">
+              :class="!miniDialog?'disabledButton':''">
 
             </div>
           </div>
@@ -1045,7 +1043,7 @@ export default {
   data() {
     return {
       eventWarnList: [],
-
+      miniDialog:true,
       eventTypeId: "",
       evtId: "",
       incHand1: require("@/assets/cloudControl/incHand1.png"),
@@ -1649,6 +1647,11 @@ export default {
     },
     //详情弹窗
     detailsButton(item, type) {
+      if(type == 1){
+        this.miniDialog = false
+      }else{
+        this.miniDialog = true
+      }
       console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;

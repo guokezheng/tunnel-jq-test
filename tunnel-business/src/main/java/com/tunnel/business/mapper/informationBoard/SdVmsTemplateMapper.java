@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.informationBoard;
 
 
 import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public interface SdVmsTemplateMapper
 
     public Long selectSdVmsTemplateId();
 
-    public List<SdVmsTemplate> selectTemplateList(String category);
+    public List<SdVmsTemplate> selectTemplateList(@Param("category") String category, @Param("devicePixel") String devicePixel);
 
     public List<Map<String, Object>> getAllSdVmsTemplateList();
 }

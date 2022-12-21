@@ -60,6 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                a.template_type, a.vms_type, a.remark, a.category
         from sd_vms_template a
         where a.category = #{category}
+        <if test="devicePixel != null and devicePixel != ''"> and a.screen_size = #{devicePixel}</if>
     </select>
 
     <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">

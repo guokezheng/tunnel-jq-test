@@ -163,10 +163,10 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     }
 
     @Override
-    public List<SdVmsTemplate> getAllVmsTemplate(String category) {
+    public List<SdVmsTemplate> getAllVmsTemplate(String category, String devicePixel) {
 //        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
 //        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList(category);
+        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList(category, devicePixel);
         List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
         List<SdVmsTemplateContent> contents = new ArrayList<>();
         List<SdVmsTemplate> template = new ArrayList<>();

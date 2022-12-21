@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 情报板模板Controller
@@ -40,9 +41,9 @@ public class SdVmsTemplateController extends BaseController
         return getDataTable(list);
     }
 
-    @GetMapping("/getAllVmsTemplate/{category}")
-    public AjaxResult getAllVmsTemplate(@PathVariable("category") String category) {
-        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category));
+    @GetMapping("/getAllVmsTemplate")
+    public AjaxResult getAllVmsTemplate(String category, String devicePixel) {
+        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category, devicePixel));
     }
 
     /**

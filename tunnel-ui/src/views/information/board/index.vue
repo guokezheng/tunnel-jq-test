@@ -387,7 +387,11 @@ export default {
     getActiveNames(active) {
       console.log(active);
       this.activeNames = active;
-      getAllVmsTemplate(active).then((res) => {
+      const param = {
+        devicePixel:this.form.devicePixel,
+        category : active
+      }
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
         // console.log(this.templateList,"this.templateList");
@@ -487,7 +491,11 @@ export default {
     },
     // 情报板管理右侧查询接口
     getAllVmsTemplate() {
-      getAllVmsTemplate(0).then((res) => {
+      const param = {
+        devicePixel:this.form.devicePixel,
+        category : 0
+      }
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
         // console.log(this.templateList,"this.templateList");
@@ -679,8 +687,12 @@ export default {
     handleChange(val) {
       console.log(val);
       if (val) {
+        const param = {
+        devicePixel:this.form.devicePixel,
+        category : val
+      }
         // 情报板管理右侧查询接口
-        getAllVmsTemplate(val).then((res) => {
+        getAllVmsTemplate(param).then((res) => {
           console.log(res.data, "情报板管理右侧查询接口");
           this.templateList = res.data;
           // console.log(this.templateList,"this.templateList");
@@ -1072,7 +1084,7 @@ export default {
         }
         console.log(con, "con");
         this.contentList = con;
-
+        this.getAllVmsTemplate()
         // for (var j = 0; j < con.length; j++) {
         //   this.itemStr = this.combineItemContent(
         //     protocolType,
@@ -1243,9 +1255,11 @@ export default {
     dialogClose() {
       this.showEmit = false;
       setTimeout(() => {
-        // this.$forceUpdate()
-
-        getAllVmsTemplate(0).then((res) => {
+        const param = {
+        devicePixel:this.form.devicePixel,
+        category : 0
+      }
+        getAllVmsTemplate(param).then((res) => {
           console.log(res, "情报板管理右侧查询接口");
           this.templateList = res.data;
           // console.log(this.templateList,"this.templateList");

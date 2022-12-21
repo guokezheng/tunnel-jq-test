@@ -25,7 +25,11 @@
       </div>
       <div v-show="infoType == 'info'">
         <div class="infoBox">
-          <div v-for="(item,index) of contentList" class="infoContent" :key="index">
+          <div
+            v-for="(item, index) of contentList"
+            class="infoContent"
+            :key="index"
+          >
             <div class="upDown">
               <i
                 :class="index == 0 ? 'disabledClass' : ''"
@@ -41,30 +45,47 @@
                 @click="moveBottom(index, item)"
               ></i>
             </div>
-            <div class="contentBox"
-              :style="{
-                color: getColorStyle(item.COLOR),
-                fontSize: getFontSize(item.FONT_SIZE),
-                fontFamily: item.FONT,
-              }">
-                  <span
+            <div class="contentBox">
+              <div
+                class="content"
+                :style="{
+                  color: getColorStyle(item.COLOR),
+                  fontSize: getFontSize(item.FONT_SIZE),
+                  fontFamily: item.FONT,
+                }"
+              >
+                <span
                   :style="{
-                    left:getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top:getCoordinate2(item.COORDINATE.substring(3, 6)),
+                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
+                    top: getCoordinate2(item.COORDINATE.substring(3, 6)),
                   }"
-                  style="position:absolute"
-                  v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                  style="position: absolute"
+                  v-html="
+                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                      / /g,
+                      ' &nbsp'
+                    )
+                  "
+                ></span>
+              </div>
             </div>
+
             <div class="infoButton">
-              <img src="../../../../assets/cloudControl/edit2.png" />
-              <div>X</div>
+              <img
+                src="../../../../assets/cloudControl/edit2.png"
+                @click="openQbbDrawer(item, index, 1)"
+              />
+              <div @click="delQbbDrawer(item)">X</div>
             </div>
           </div>
         </div>
-        <div class="openMIniDialogStyle"
-        :class="openDialog?'el-icon-d-arrow-left':'el-icon-d-arrow-right'"
-        @click="openMesMode"
-        >信息模板</div>
+        <div
+          class="openMIniDialogStyle"
+          :class="openDialog ? 'el-icon-d-arrow-left' : 'el-icon-d-arrow-right'"
+          @click="openMesMode"
+        >
+          信息模板
+        </div>
         <el-form
           ref="form"
           :model="stateForm"
@@ -132,7 +153,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="分辨率:">
-                    <!-- {{ '1280*720' }} -->
+                    {{ stateForm.devicePixel }}
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -326,7 +347,8 @@
       width="530px"
       append-to-body
       :visible="mesModeVisible"
-      :before-close="closeMesMode">
+      :before-close="closeMesMode"
+    >
       <div class="mesModeBg">
         <div class="mesModeBox">
           <el-collapse v-model="activeNames" @change="handleChange" accordion>
@@ -336,45 +358,57 @@
               :title="item.dictLabel"
               :name="item.dictValue"
             >
-            <div
+              <div
                 v-for="(itm, indx) in templateList"
                 :key="indx"
                 class="con"
                 :style="{
-                  'font-size': getFontSize(itm.tcontents[0].fontSize,itm.screenSize),
+                  'font-size': getFontSize(
+                    itm.tcontents[0].fontSize,
+                    itm.screenSize
+                  ),
                   color: itm.tcontents[0].fontColor,
                   fontFamily: itm.tcontents[0].fontType,
                 }"
               >
                 <div class="templateTitle">
                   <span
-                  :style="{
-                    left:getCoordinate1(itm.tcontents[0].coordinate.substring(0, 3),itm.screenSize),
-                    top:getCoordinate2(itm.tcontents[0].coordinate.substring(3, 6),itm.screenSize),
-                  }"
-                  style="position:absolute"
-                  v-html="itm.tcontents[0].content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                    :style="{
+                      left: getCoordinate1(
+                        itm.tcontents[0].coordinate.substring(0, 3),
+                        itm.screenSize
+                      ),
+                      top: getCoordinate2(
+                        itm.tcontents[0].coordinate.substring(3, 6),
+                        itm.screenSize
+                      ),
+                    }"
+                    style="position: absolute"
+                    v-html="
+                      itm.tcontents[0].content
+                        .replace(/\n|\r\n/g, '<br>')
+                        .replace(/ /g, ' &nbsp')
+                    "
+                  ></span>
                 </div>
                 <div class="downIcon">
-                  <div class="el-icon-d-arrow-left"></div>
+                  <div
+                    class="el-icon-d-arrow-left"
+                    @click="arrowLeft(itm)"
+                  ></div>
                 </div>
               </div>
-            <!-- <div class="mesModeTitle">道路通阻</div>
-          <div class="mesModeContent">
-            <div class="mesModeLeft">
-              <div style="width:260px;height: 50px;background: #000;color: yellow;text-align: center;line-height: 50px;">谨慎驾驶</div>
-
-            </div>
-            <div class="mesModeRight"></div> -->
-
-          <!-- </div> -->
-          </el-collapse-item>
+            </el-collapse-item>
           </el-collapse>
-          
-
         </div>
       </div>
     </el-dialog>
+    <editInfo
+      :boardEmitItem="this.boardEmitItem"
+      @receiveForm="receiveForm"
+      v-if="this.showEmit"
+      @dialogClose="dialogClose"
+    ></editInfo>
   </div>
 </template>
   
@@ -382,9 +416,16 @@
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import { listDevice } from "@/api/board/informationBoard.js"; //查询弹窗信息
+import { getAllVmsTemplate } from "@/api/board/template";
+import boardData from "@/views/information/board/boardData.json";
+import editInfo from "@/views/information/board/editInfo";
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components: {
+    editInfo,
+  },
   data() {
     return {
       openDialog: false,
@@ -395,6 +436,9 @@ export default {
       stateForm: {}, //弹窗表单
       infoType: "info",
       mesModeVisible: false,
+      boardEmitItem: {},
+      showEmit: false,
+      index_: 0,
       addForm: {
         category: "",
         screenSize: "",
@@ -552,68 +596,197 @@ export default {
         },
       ],
       activeNames: "0",
-      templateList: [
-        {
-          id: "1",
-          name: "默认模板",
-          screenSize: "400*40",
-          tcontents: [
-            {
-              content: "日照服务区可以做核酸",
-              fontColor: "red",
-              fontSize: "20",
-              fontType: "黑体",
-              coordinate: "000000",
-            },
-            {
-              content: "日照服务区可以做核酸",
-              fontColor: "red",
-              fontSize: "20",
-              fontType: "黑体",
-              coordinate: "000000",
-            },
-          ],
-        },
-        {
-          id: "2",
-          name: "日常通用",
-          screenSize: "400*40",
-
-          tcontents: [
-            {
-              content: "日照服务区可以做核酸",
-              fontColor: "red",
-              fontSize: "3232",
-              fontType: "黑体",
-              coordinate: "000000",
-            },
-            {
-              content: "日照服务区可以做核酸",
-              fontColor: "red",
-              fontSize: "3232",
-              fontType: "黑体",
-              coordinate: "000000",
-            },
-          ],
-        },
-      ],
+      templateList: [],
       contentList: [
-        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
-        { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
+        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
+        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
+        // { CONTENT: "日照服务区可以做核酸", COLOR: "red", FONT_SIZE: "3232",COORDINATE:'000000',FONT:'黑体' },
       ],
     };
   },
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
-
+    this.getAllVmsTemplate();
+    this.onSubmit();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   methods: {
+    // 接收子组件form表单 修改
+    receiveForm(form) {
+      // if (this.editType == 2) {
+      //   console.log(this.index, "this.index_");
+      //   console.log(form, "2222222222222");
+      //   this.templateList[this.index].tcontents[0] = {
+      //     fontColor: form.COLOR,
+      //     content: form.CONTENT,
+      //     coordinate: form.COORDINATE,
+      //     fontType: form.FONT,
+      //     fontSize: form.FONT_SIZE,
+      //     fontSpacing: form.SPEED,
+      //     stopTime: form.STAY,
+      //     inScreenMode: form.ACTION,
+      //   };
+      //   // this.templateList[this.index_] = form;
+      //   console.log(
+      //     this.templateList[this.index].tcontents[0],
+      //     "this.templateList"
+      //   );
+      //   console.log(this.templateList, "this.templateList");
+      //   this.$forceUpdate();
+      // } else {
+
+      console.log(form, "1111111111111");
+      this.contentList[this.index_] = form;
+      this.$forceUpdate();
+      console.log(this.contentList, "99999999999");
+
+      // }
+    },
+    // 编辑
+    openQbbDrawer(item, index, type) {
+      this.index_ = index;
+      console.log(item);
+      this.boardEmitItem = item;
+      // console.log(this.form.devicePixel,"this.form.devicePixel");
+      // this.boardEmitItem.screenSize = this.stateForm.devicePixel;
+      // this.boardEmitItem.deviceId = this.deviceId;
+      this.boardEmitItem.type = type;
+
+      this.showEmit = true;
+      // this.$refs.editInfo.init();
+      // this.$emit("boardEmitItem",item)
+    },
+    // 编辑
+    // editOutline(item) {
+    //   console.log(item, "item,index");
+    //   // this.index = index;
+    //   console.log(item);
+    //   this.boardEmitItem = {
+    //     FONT_SIZE: item.tcontents[0].fontSize + "px",
+    //     COLOR: item.tcontents[0].fontColor,
+    //     CONTENT: item.tcontents[0].content,
+    //     COORDINATE: item.tcontents[0].coordinate,
+    //     FONT: this.getFont(item.tcontents[0].fontType),
+    //     SPEED: item.tcontents[0].fontSpacing,
+    //     ACTION: item.inScreenMode, //出屏方式
+    //     STAY: item.stopTime, //停留时间
+    //     type: type,
+    //     screenSize: item.screenSize,
+    //     category: item.category,
+    //     id: item.id,
+    //     tcontentsId: item.tcontents[0].id,
+    //   };
+    //   // console.log(this.form.devicePixel,"this.form.devicePixel");
+    //   // this.boardEmitItem.screenSize = item.screenSize;
+    //   // this.boardEmitItem.category = item.category;
+    //   // this.boardEmitItem.deviceId = this.deviceId;
+    //   console.log(this.showEmit, "this.showEmit");
+    //   this.showEmit = true;
+    // },
+    onSubmit() {
+      // var that = this;
+      // if (
+      //   this.checkboxValue[0] == "undefined" ||
+      //   this.checkboxValue[0] == null
+      // ) {
+      //   return;
+      // }
+      // getBoardInfo(this.checkboxValue[0]).then((res) => {
+      //   console.log(res, "getBoardInfo");
+      // this.deviceId = res.data.deviceId;
+      // if (res.data.deviceId) {
+      //   this.disabledButton = false;
+      // } else {
+      //   this.disabledButton = true;
+      // }
+      // });
+
+      var response = {};
+      response = boardData;
+      var parseObject = JSON.parse(response);
+      var protocolType = parseObject.support.PROTOCOL_TYPE;
+      var contents = parseObject.content;
+
+      if (
+        typeof contents == "undefined" ||
+        typeof protocolType == "undefined"
+      ) {
+        this.$message(response.msg);
+        return;
+      }
+      // this.supplier = protocolType;
+      var currRowId = "";
+      var reg = /,/g;
+      console.log(contents, "contents");
+      for (var i = 0; i < contents.length; i++) {
+        var content = contents[i];
+        var itemId = "ITEM" + this.formatNum(i, 3);
+        if (i == 0) {
+          currRowId = itemId;
+        }
+        var con = content[itemId];
+
+        for (let item of con) {
+          item.COLOR = this.getColorStyle(item.COLOR);
+          item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+          // item.font = this.getFontStyle(item.FONT)
+        }
+        console.log(con, "con");
+        this.contentList = con;
+      }
+    },
+    formatNum(num, length) {
+      return (Array(length).join("0") + parseInt(num)).slice(-length);
+    },
+    // 删除中间模板
+    delQbbDrawer(index) {
+      console.log(index);
+      if (index > -1) {
+        this.contentList.splice(index, 1);
+        this.$forceUpdate();
+      }
+    },
+    // 信息模板转到待下发
+    arrowLeft(item) {
+      console.log(item, "item");
+      var contentList = {
+        FONT_SIZE: item.tcontents[0].fontSize + "px",
+        COLOR: item.tcontents[0].fontColor,
+        CONTENT: item.tcontents[0].content,
+        COORDINATE: item.tcontents[0].coordinate,
+        FONT: this.getFont(item.tcontents[0].fontType),
+        SPEED: item.tcontents[0].fontSpacing, //字体间距
+        ACTION: item.inScreenMode, //出屏方式
+        STAY: item.stopTime, //停留时间
+        category: item.category, //所属类别
+      };
+      this.contentList.push(contentList);
+      console.log(this.contentList, "this.contentList");
+    },
+    // 转字体
+    getFont(font) {
+      if (font == "KaiTi") {
+        return "楷体";
+      } else if (font == "SimSun") {
+        return "宋体";
+      } else if (font == "SimHei") {
+        return "黑体";
+      } else {
+        return font;
+      }
+    },
+    // 情报板管理右侧查询接口
+    getAllVmsTemplate() {
+      getAllVmsTemplate("0").then((res) => {
+        console.log(res, "情报板管理右侧查询接口");
+        this.templateList = res.data;
+        // console.log(this.templateList,"this.templateList");
+      });
+    },
     //  上移
     moveTop(i, item) {
       if (item && i) {
@@ -633,15 +806,22 @@ export default {
       }
     },
     // 切换模板
-    handleChange(val) {
-      console.log(val);
+    handleChange(active) {
+      console.log(active);
+      this.activeNames = active;
+      getAllVmsTemplate(active).then((res) => {
+        console.log(res, "情报板管理右侧查询接口");
+        this.templateList = res.data;
+        // console.log(this.templateList,"this.templateList");
+      });
     },
+
     getCoordinate1(coordinate, screenSize) {
       var screen = "";
-      if(!screenSize){
-        screen = '400*40';
-      }else{
-      screen = screenSize.split("*")[0];
+      if (!screenSize) {
+        screen = "400*40";
+      } else {
+        screen = screenSize.split("*")[0];
       }
       if (screen <= 630) {
         var i = 630 / screen;
@@ -653,10 +833,10 @@ export default {
     },
     getCoordinate2(coordinate, screenSize) {
       var screen = "";
-      if(!screenSize){
-        screen = '400*40';
-      }else{
-      screen = screenSize.split("*")[1];
+      if (!screenSize) {
+        screen = "400*40";
+      } else {
+        screen = screenSize.split("*")[1];
       }
       if (screen <= 75) {
         var i = 75 / screen;
@@ -710,13 +890,11 @@ export default {
     },
     // 打开信息模板
     openMesMode() {
-      if(this.openDialog == false){
-        this.mesModeVisible = true
-      }else{
-        this.mesModeVisible = false
-
+      if (this.openDialog == false) {
+        this.mesModeVisible = true;
+      } else {
+        this.mesModeVisible = false;
       }
-      
     },
     // 关闭信息模板
     closeMesMode() {
@@ -730,11 +908,16 @@ export default {
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
           displayH5sVideoAll(res.data.secureKey);
+          if (res.data.associatedDeviceId) {
+            const param = {
+              deviceId: res.data.associatedDeviceId,
+            };
+            listDevice(param).then((response) => {
+              console.log(response, "查询设备信息");
+              // this.stateForm.state = response.data.state;
+            });
+          }
         });
-        // await getInfo(this.eqInfo.clickEqType).then((response) => {
-        //     console.log(response, "查询设备当前状态");
-        //     this.stateForm.state = response.data.state;
-        //   });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -847,20 +1030,20 @@ export default {
           width: 50px;
           height: 50px;
           border-left: solid 1px #f3f3f3;
-          >div{
-            width:40px;
+          > div {
+            width: 40px;
             height: 40px;
-            border: solid 1px #CFD5E0;
+            border: solid 1px #cfd5e0;
             border-radius: 2px;
             text-align: center;
             line-height: 40px;
             font-size: 16px;
-            color: #00162C;
+            color: #00162c;
             display: block;
             margin-top: 5px;
             margin-left: 5px;
             cursor: pointer;
-            background: #F2F8FF;
+            background: #f2f8ff;
           }
         }
         .menuBox {
@@ -939,6 +1122,13 @@ export default {
       height: 100%;
       border: solid 1px #cfd5e0;
       margin-left: 4px;
+      position: relative;
+      .content {
+        width: calc(100% - 10px);
+        height: calc(100% - 10px);
+        background: #000;
+        margin: 5px auto;
+      }
     }
     .infoButton {
       width: 112px;
@@ -948,24 +1138,23 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-around;
-      img{
+      img {
         width: 40px;
         height: 40px;
         cursor: pointer;
       }
-      >div{
+      > div {
         width: 40px;
         height: 40px;
         text-align: center;
         line-height: 40px;
-        border: solid 1px #CFD5E0;
+        border: solid 1px #cfd5e0;
         color: #333;
         font-weight: 600;
-        background: #F2F8FF;
+        background: #f2f8ff;
         border-radius: 2px;
         font-size: 16px;
         cursor: pointer;
-
       }
     }
   }

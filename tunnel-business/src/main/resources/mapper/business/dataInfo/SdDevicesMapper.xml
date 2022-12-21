@@ -174,7 +174,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
         a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.comm_protocol,
         IFNULL(a.eq_status,"2") eqStatus,a.eq_status_time eqStatusTime,
-          a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
+        a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
+        , a.associated_device_id associatedDeviceId
      from sd_devices a
      left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
      left join sd_equipment_type t on a.eq_type = t.type_id

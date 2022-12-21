@@ -55,6 +55,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
      * 消防主机协议解析
      *
      * @param data
+     * @param clientIp
      */
     private static void protocolAnalysis(String data, String clientIp) {
         // 主机地址
@@ -62,9 +63,10 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         //拿到的报文就是纯文字的报文，直接进行解析
+        //传输格式例：火警: 1号机1回路2号地址 智能感烟 火警 层 2014-6-4 11:08:32
         if (data.contains(":")) {
             String alarmType = data.substring(0, data.indexOf(":"));
-            System.err.println("alarmType:" + alarmType);
+            log.info("alarmType:" + alarmType);
             data = data.substring(data.indexOf(":") + 2);
             String host = data.substring(0, data.indexOf("号"));
             SdDevices devices = new SdDevices();

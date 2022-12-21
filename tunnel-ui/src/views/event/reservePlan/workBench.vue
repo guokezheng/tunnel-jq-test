@@ -23,16 +23,15 @@
         v-for="(item, index) in selectedIconList"
         :key="index"
         :style="{
-          left: item.position.left + 'px',
-          top: item.position.top + 'px',
-          'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
-        }"
-        id="33333"
+                      left: item.position.left + 'px',
+                      top: item.position.top + 'px',
+                      'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
+                    }"
         :class="
-          item.eqType == 7 || item.eqType == 8 || item.eqType == 9
-            ? 'light-' + item.position.left
-            : ''
-        "
+                      item.eqType == 7 || item.eqType == 8 || item.eqType == 9
+                        ? 'light-' + item.position.left
+                        : ''
+                    "
         @click="openStateSwitch(item)"
         @mousemove="openTooltip(item, index)"
         @mouseleave="closeTooltip(item)"
@@ -57,99 +56,136 @@
           :disabled="sensorDisabledTwo(item)"
           style="position: relative; top: 0px; left: 0px"
           popper-class="tipCase"
-          id="2222"
         >
           <!-- 巡检机器人 -->
-          <!-- v-show="
-              (item.eqType != 7 &&
-                item.eqType != 16 &&
-                item.eqType != 15 &&
-                item.eqType != 8 &&
-                item.eqType != 9 &&
-                item.display == true) ||
-              ((item.eqType == 7 ||
-                item.eqType == 8 ||
-                item.eqType == 9 ||
-                item.eqType == 21) &&
-                item.display == true &&
-                lightSwitch == 1)
-            " -->
+
           <div
+            v-show="
+                          (item.eqType != 7 &&
+                            item.eqType != 15 &&
+                            item.eqType != 8 &&
+                            item.eqType != 9 &&
+                            item.display == true) ||
+                          ((item.eqType == 7 ||
+                            item.eqType == 8 ||
+                            item.eqType == 9 ||
+                            item.eqType == 21) &&
+                            item.display == true &&
+                            lightSwitch == 1)
+                        "
             :class="{ focus: item.focus }"
-            id="1111"
           >
             <img
-            v-show="item.eqType != '31'"
+              v-show="item.eqType != '31' && item.eqType != '16'  "
               v-for="(url, indexs) in item.url"
               style="position: absolute"
               :style="{
-                left: indexs * 14 + 'px',
-                cursor:
-                  item.eqType || item.eqType == 0 ? 'pointer' : '',
-                border:
-                  item.click == true ? 'solid 2px #09C3FC' : '',
-                transform:
-                  item.eqType == 23 && item.eqDirection == 0
-                    ? 'scale(-1,1)'
-                    : '',
-              }"
+                            left: indexs * 14 + 'px',
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
               :width="item.iconWidth"
               :height="item.iconHeight"
               :key="item.eqId + indexs"
               :src='url'
               :class="
-                item.eqName == screenEqName
-                  ? 'screenEqNameClass'
-                  : ''
-              "
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
             />
             <img
               v-show="item.eqType == '31'"
-            style="position: absolute"
+              style="position: absolute"
               :style="{
 
-                cursor:
-                  item.eqType || item.eqType == 0 ? 'pointer' : '',
-                border:
-                  item.click == true ? 'solid 2px #09C3FC' : '',
-                transform:
-                  item.eqType == 23 && item.eqDirection == 0
-                    ? 'scale(-1,1)'
-                    : '',
-              }"
-              :width="item.iconWidth"
-              :height="item.iconHeight"
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                              width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+
+                          }"
+
               :src= getTypePic(item)
               :class="
-                item.eqName == screenEqName
-                  ? 'screenEqNameClass'
-                  : ''
-              ">
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          ">
             </img>
+            <div v-show="item.eqType == '16'"
+                 style="position: absolute;overflow:hidden;writing-mode : tb-rl;
+                            font-size:15px;color:#FFFF07;text-align: center;padding:2px"
 
+                 :style="{
+                          cursor:
+                            item.eqType || item.eqType == 0 ? 'pointer' : '',
+                          border:
+                            item.click == true ? 'solid 2px #09C3FC' : '',
+                            width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+                          }"
+
+                 :src= getTypePic(item)
+                 :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+            >{{item.eqName}}
+            </div>
+            <div v-show="item.eqType == '36'"
+                 style="position: absolute;overflow:hidden;writing-mode : tb-rl;
+                            font-size:15px;color:#FFFF07;text-align: center;padding:4px"
+
+                 :style="{
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border:
+                              item.click == true ? 'solid 2px #09C3FC' : '',
+                            width:item.iconWidth + 'px',
+                            height:item.iconHeight + 'px',
+                          }"
+
+                 :src= getTypePic(item)
+                 :class="
+                            item.eqName == screenEqName
+                              ? 'screenEqNameClass'
+                              : ''
+                          "
+            >{{item.eqName}}
+            </div>
             <!-- 调光数值 -->
             <label
               style="
-                color: yellow;
-                position: absolute;
-                left: 30px;
-                bottom: 2px;
-                pointer-events: none;
-              "
+                            color: yellow;
+                            position: absolute;
+                            left: 30px;
+                            bottom: 2px;
+                            pointer-events: none;
+                          "
               v-if="item.eqType == 21"
-              >{{ item.lightValue }}</label
+            >{{ item.lightValue }}</label
             >
             <!-- CO/VI -->
             <label
               style="
-                font-size: 12px;
-                position: absolute;
-                color: #79e0a9;
-                text-decoration: underline;
-                padding-left: 5px;
-                width: 100px;
-                text-align: left;
-              "
+                            font-size: 12px;
+                            position: absolute;
+                            color: #79e0a9;
+                            text-decoration: underline;
+                            padding-left: 5px;
+                            width: 100px;
+                            text-align: left;
+                          "
               v-if="item.eqType == 19"
             >
               {{ item.num }}
@@ -159,14 +195,14 @@
             <!-- 风速风向 -->
             <label
               style="
-                font-size: 14px;
-                position: absolute;
-                text-decoration: underline;
-                color: #79e0a9;
-                padding-left: 5px;
-                width: 100px;
-                text-align: left;
-              "
+                            font-size: 14px;
+                            position: absolute;
+                            text-decoration: underline;
+                            color: #79e0a9;
+                            padding-left: 5px;
+                            width: 100px;
+                            text-align: left;
+                          "
               v-if="item.eqType == 17"
             >
               {{ item.num }}
@@ -175,14 +211,14 @@
             <!-- 洞内洞外 -->
             <label
               style="
-                font-size: 14px;
-                position: absolute;
-                color: #f2a520;
-                padding-left: 5px;
-                width: 100px;
-                text-align: left;
-                transform: translateY(5px);
-              "
+                            font-size: 14px;
+                            position: absolute;
+                            color: #f2a520;
+                            padding-left: 5px;
+                            width: 100px;
+                            text-align: left;
+                            transform: translate(30px,5px);
+                          "
               v-if="item.eqType == 5 || item.eqType == 18"
             >
               {{ item.num }}
@@ -192,28 +228,28 @@
         <!-- 桩号 -->
         <input
           :class="[
-            item.eqType == 7 ||
-            item.eqType == 8 ||
-            item.eqType == 9 ||
-            item.eqType == 21
-              ? 's-config-img-input'
-              : 'config-img-input',
-          ]"
+                        item.eqType == 7 ||
+                        item.eqType == 8 ||
+                        item.eqType == 9 ||
+                        item.eqType == 21
+                          ? 's-config-img-input'
+                          : 'config-img-input',
+                      ]"
           v-if="
-            (item.display == true &&
-              displayNumb == true &&
-              item.eqType != 7 &&
-              item.eqType != 8 &&
-              item.eqType != 9 &&
-              item.eqType != 21) ||
-            ((item.eqType == 7 ||
-              item.eqType == 8 ||
-              item.eqType == 9 ||
-              item.eqType == 21) &&
-              item.display == true &&
-              lightSwitch == 1 &&
-              displayNumb == true)
-          "
+                        (item.display == true &&
+                          displayNumb == true &&
+                          item.eqType != 7 &&
+                          item.eqType != 8 &&
+                          item.eqType != 9 &&
+                          item.eqType != 21) ||
+                        ((item.eqType == 7 ||
+                          item.eqType == 8 ||
+                          item.eqType == 9 ||
+                          item.eqType == 21) &&
+                          item.display == true &&
+                          lightSwitch == 1 &&
+                          displayNumb == true)
+                      "
           v-show="item.eqType || item.eqType == 0"
           type="text"
           v-model="item.pile"
@@ -394,7 +430,7 @@ export default {
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
-              // this.getRealTimeData(tunnelId);
+              this.getRealTimeData(tunnelId);
               // this.getLiPowerDevice();
               this.workbenchOpen = true;
               this.getPreview();
@@ -459,32 +495,34 @@ export default {
         console.log(this.previewList, ";;;;;;;;;");
         var deviceList = [];
         for (let i = 0; i < this.previewList.length; i++) {
-          var item = this.previewList[i].strategyRl;
-          var arr = this.previewList[i].equipmentData;
+          var item = this.previewList[i].strategyRl.equipments.split(",");
+          console.log(item)
+          var arr = this.previewList[i].iFileList;
           for (let z = 0; z < item.length; z++) {
-            var arr = this.previewList[i].iFileList[z];
+            var arr = this.previewList[i].iFileList[0];
+            console.log(item[z],"设备信息")
             if (item[z].equipments != "") {
-              if (item[z].equipments.indexOf(",")) {
+              if (item[z]) {
                 console.log(item[z].equipments, "////////////");
                 deviceList.push({
-                  list: item[z].equipments.split(","),
-                  state: item[z].state,
-                  eqId: this.previewList[i].deviceTypeId,
+                  list: item,
+                  state: this.previewList[i].strategyRl.state,
+                  eqId: this.previewList[i].strategyRl.eqTypeId,
                   file: arr,
                 });
               } else {
                 deviceList.push({
-                  list: item[z].equipments,
-                  state: item[z].state,
-                  eqId: this.previewList[i].deviceTypeId,
+                  list: item,
+                  state: this.previewList[i].strategyRl.state,
+                  eqId: this.previewList[i].strategyRl.eqTypeId,
                   file: arr,
                 });
               }
             } else {
               deviceList.push({
-                list: item[z].equipments.split(","),
-                state: item[z].state,
-                eqId: this.previewList[i].deviceTypeId,
+                list: item,
+                state: this.previewList[i].strategyRl.state,
+                eqId: this.previewList[i].strategyRl.eqTypeId,
                 file: arr,
               });
             }
@@ -502,25 +540,157 @@ export default {
       console.log(this.deviceList, "mmmmmmmmmmmmmmmmmmmm");
       for (let i = 0; i < this.selectedIconList.length; i++) {
         for (let x = 0; x < this.deviceList.length; x++) {
-          var eqType = this.selectedIconList[i].eqType;
+          let eqType = this.selectedIconList[i].eqType;
           if ((eqType ?? "") !== "") {
             if (eqType == this.deviceList[x].eqId) {
-              var brr = this.deviceList[x].list;
+              let brr = this.deviceList[x].list;
               console.log(brr, "zzzzzzzzzzzzzzzzz");
               for (let p = 0; p < brr.length; p++) {
                 if (this.selectedIconList[i].eqId == brr[p]) {
                   this.selectedIconList[i].url = [];
+                  console.log(this.deviceList[x].file)
                   let url = this.deviceList[x].file;
-                  console.log(url);
-                  url.forEach((item) => {
-                    this.selectedIconList[i].url.push(item.url);
-                  });
+                  console.log(url,"设备图标");
+                  if(url != undefined){
+                    url.forEach((item) => {
+                      this.selectedIconList[i].url.push(item.url);
+                    });
+                  }
                 }
               }
             }
           }
         }
       }
+    },
+    /* 获取实时数据PLC*/
+    getRealTimeData() {
+      getDeviceData({
+                      tunnelId: this.currentTunnel.id,
+                    }).then((response) => {
+        // for (let i = 0; i < response.data.length; i++) {
+        // debugger;
+        // 实时状态
+        // let type = response.data[i].eqType;
+        // if (type != "" && type != undefined) {
+        for (let j = 0; j < this.selectedIconList.length; j++) {
+          var eqId = this.selectedIconList[j].eqId;
+          var deviceData = response.data[eqId];
+          // console.log(deviceData,'deviceDatadeviceData')
+          if (deviceData) {
+            // let type = deviceData.eqType;
+
+            // 需要换光标的
+            for (let k = 0; k < this.eqTypeStateList.length; k++) {
+              if (
+                this.selectedIconList[j].eqType == this.eqTypeStateList[k].type
+              ) {
+                //无法控制设备状态的设备类型，比如PLC、摄像机
+                let arr = [
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                ];
+                if (arr.includes(deviceData.eqType)) {
+                  if (
+                    // 摄像机之类的只有在线 离线 故障图标
+                    this.eqTypeStateList[k].stateType == "1" &&
+                    this.eqTypeStateList[k].state == deviceData.eqStatus
+                  ) {
+                    //取设备监测状态图标
+                    this.selectedIconList[j].url = this.eqTypeStateList[k].url;
+                    if (deviceData.eqStatus == 1) {
+                      if (deviceData.eqType == 19) {
+                        this.selectedIconList[j].num =
+                          "CO:" +
+                          parseFloat(deviceData.CO).toFixed(2) +
+                          "/PPM  VI:" +
+                          parseFloat(deviceData.VI).toFixed(2) +
+                          "KM";
+                      } else if (deviceData.eqType == 17) {
+                        this.selectedIconList[j].num =
+                          parseFloat(deviceData.FS).toFixed(2) +
+                          "m/s " +
+                          deviceData.FX;
+                      } else if (deviceData.eqType == 5) {
+                        if (deviceData.DWLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DWLD).toFixed(2) + "lux";
+                        }
+                      } else if (deviceData.eqType == 18) {
+                        if (deviceData.DNLD) {
+                          this.selectedIconList[j].num =
+                            parseFloat(deviceData.DNLD).toFixed(2) + "lux";
+                        }
+                      }
+                    }
+                  }
+                } else {
+                  //可以控制设备状态的设备类型，比如车指
+                  if (deviceData.eqStatus == "1") {
+                    // 在线
+                    if (
+                      // 车指之类的包括正红反绿之类的图标 == 2
+                      this.eqTypeStateList[k].stateType == "2"
+                    ) {
+                      if (this.eqTypeStateList[k].state == deviceData.state) {
+                        //取设备运行状态图标
+                        let url = this.eqTypeStateList[k].url;
+                        this.selectedIconList[j].eqDirection =
+                          deviceData.eqDirection;
+                        if (deviceData.eqDirection == "1") {
+                          //上行车道
+                          if (url.length > 1) {
+                            this.selectedIconList[j].url = [url[1], url[0]];
+                          } else {
+                            this.selectedIconList[j].url = url;
+                          }
+                        } else {
+                          this.selectedIconList[j].url =
+                            this.eqTypeStateList[k].url;
+                        }
+                      }
+                    }
+                  } else {
+                    //如果是离线、故障等状态
+                    if (
+                      this.eqTypeStateList[k].stateType == "1" &&
+                      this.eqTypeStateList[k].state == deviceData.eqStatus
+                    ) {
+                      //取设备监测状态图标
+                      this.selectedIconList[j].url =
+                        this.eqTypeStateList[k].url;
+                    }
+                  }
+                }
+
+                // let url = this.eqTypeStateList[k].url;
+                // this.selectedIconList[j].eqDirection =
+                // deviceData.eqDirection;
+                // if (deviceData.eqDirection == "1") {
+                //   //上行车道
+                //   if (url.length > 1) {
+                //     this.selectedIconList[j].url = [url[1], url[0]];
+                //   } else {
+                //     this.selectedIconList[j].url = url;
+                //   }
+                // } else {
+                //   this.selectedIconList[j].url =
+                //     this.eqTypeStateList[k].url;
+                // }
+                // this.selectedIconList[j].state = deviceData.eqStatus;
+              }
+            }
+            // 不需要换光标的
+            // let paramType = [5,17, 18, 19, 20]; //5 洞内 6 洞外 13 风向 14 CO监测 15 能见度 16 风速 20 水池液位
+            // if (paramType.includes(parseInt(type))) {
+            //   if (deviceData.eqStatus == "null" || !deviceData.eqStatus) {
+            //     this.selectedIconList[j].value = "0";
+            //   } else {
+            //     this.selectedIconList[j].value = deviceData.eqStatus;
+            //   }
+            // }
+          }
+        }
+      });
     },
     // 关闭弹窗
     workbenchOpenEvent() {

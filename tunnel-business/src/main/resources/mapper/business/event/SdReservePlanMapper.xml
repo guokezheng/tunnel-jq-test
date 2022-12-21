@@ -70,6 +70,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null and tunnelId!=''">and F.tunnel_id = #{tunnelId}</if>
             <if test="category != null and category!=''">and A.category = #{category}</if>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>
+            <if test="direction != null "> and A.direction = #{direction}</if>
+            <if test="controlDirection != null "> and A.control_direction = #{controlDirection}</if>
             <if test="planName != null  and planName != ''"> and A.plan_name like concat('%', #{planName}, '%')</if>
             <if test="planFileId != null  and planFileId != ''"> and A.plan_file_id = #{planFileId}</if>
             <if test="params.deptId != null and params.deptId != ''">

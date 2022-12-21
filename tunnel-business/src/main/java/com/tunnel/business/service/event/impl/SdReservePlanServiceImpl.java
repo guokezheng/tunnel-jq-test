@@ -183,9 +183,18 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public int insertSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan) {
-        List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
+        SdReservePlan searchObj = new SdReservePlan();
+        searchObj.setTunnelId(sdReservePlan.getTunnelId());
+        if(sdReservePlan.getControlDirection().equals("1")){
+            searchObj.setDirection(sdReservePlan.getDirection());
+            searchObj.setControlDirection(sdReservePlan.getControlDirection());
+        }
+        searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
+        searchObj.setCategory(sdReservePlan.getCategory());
+        List<SdReservePlan> planList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
+
         if (planList.size() > 0) {
-            throw new RuntimeException("当前预案已经存在，请勿重复添加！");
+            throw new RuntimeException("当前隧道已存在同种类型预案！");
         }
         int result = -1;
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
@@ -257,6 +266,19 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      */
     @Override
     public int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
+        SdReservePlan searchObj = new SdReservePlan();
+        searchObj.setTunnelId(sdReservePlan.getTunnelId());
+        if(sdReservePlan.getControlDirection().equals("1")){
+            searchObj.setDirection(sdReservePlan.getDirection());
+            searchObj.setControlDirection(sdReservePlan.getControlDirection());
+        }
+        searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
+        searchObj.setCategory(sdReservePlan.getCategory());
+        List<SdReservePlan> findList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
+
+        if (findList.size() > 0) {
+            throw new RuntimeException("当前隧道已存在同种类型预案！");
+        }
         sdReservePlan.setPlanFileId(UUIDUtil.getRandom32BeginTimePK());
         List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
         if (planList.size() > 0 && ids == null) {

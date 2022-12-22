@@ -391,15 +391,26 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Override
     public AjaxResult getRelation(SdReservePlan sdReservePlan) {
+        //查询是否存在预案联控流程
         SdEventHandle eventHandle = new SdEventHandle();
         eventHandle.setEventId(Long.valueOf(sdReservePlan.getEventId()));
-        eventHandle.setFlowPid(Long.valueOf(7));
-        sdEventHandleMapper.deleteRelation(eventHandle);
+        eventHandle.setFlowId(Long.valueOf(7));
+        //eventHandle.setFlowPid(Long.valueOf(7));
+        //sdEventHandleMapper.deleteRelation(eventHandle);
+        List<SdEventHandle> sdEventHandle1 = sdEventHandleMapper.selectSdEventHandleList(eventHandle);
+        if(sdEventHandle1.size() > 0){
+            if(sdEventHandle1.get(0).getReserveId() != null){
+                return AjaxResult.error("已存在预案联控流程");
+            }
+        }
         List<SdReservePlan> relation = sdReservePlanMapper.getRelation(sdReservePlan);
         String concat = sdReservePlan.getEventId().toString().concat("700");
         Long relationId = Long.valueOf(concat);
         int sort = 0;
         for(SdReservePlan item : relation){
+            if(relation.size() == 1 && item.getProcessName() == null || item.getProcessName() == ""){
+                return AjaxResult.error("暂无此预案相关联控流程");
+            }
             sort = sort + 1;
             relationId = relationId + 1;
             SdEventHandle sdEventHandle = new SdEventHandle();

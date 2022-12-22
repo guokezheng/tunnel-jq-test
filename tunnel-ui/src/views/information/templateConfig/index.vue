@@ -361,7 +361,7 @@ export default {
     getList () {
       this.indexStart = (this.page - 1) * this.limit + 1;
       this.loading = true;
-      getTemplates(this.queryParams).then((res) => {
+      getTemplates(this.queryParams).then((res) => { 
       // listTemplate(this.queryParams).then((res) => {
         this.dataList = res.rows;
         console.log(this.dataList)

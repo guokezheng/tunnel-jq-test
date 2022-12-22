@@ -4799,6 +4799,9 @@ export default {
           xAxis: [
             {
               name: "小时",
+              nameTextStyle: {
+                fontFamily:'PingFang',
+              },
               type: "category",
               axisTick: {
                 show: false,
@@ -4811,6 +4814,7 @@ export default {
                 textStyle: {
                   color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                   fontSize: 10,
+                  fontFamily:'PingFang'
                 },
               },
               axisLine: {
@@ -7920,6 +7924,8 @@ export default {
       font-weight: bold;
       display: flex;
       align-items: center;
+      font-family: PingFang;
+
       p:nth-of-type(2) {
         text-transform: uppercase;
         // font-weight: lighter;

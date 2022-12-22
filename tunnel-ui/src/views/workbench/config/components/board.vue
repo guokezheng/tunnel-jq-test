@@ -914,7 +914,7 @@ export default {
             };
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
-              // this.stateForm.state = response.data.state;
+              // this.stateForm = response.data.state;
             });
           }
         });

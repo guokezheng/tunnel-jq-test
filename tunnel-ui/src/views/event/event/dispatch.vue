@@ -95,7 +95,7 @@
                       v-for="(item, index) of planType"
                       :key="index"
                     >
-                      <el-radio :label="item.dictValue" border>{{
+                      <el-radio :disabled="disabledRadio" :label="item.dictValue" border>{{
                         item.dictLabel
                       }}</el-radio>
                     </el-radio-group>
@@ -103,7 +103,7 @@
                   </div>
                   <div>
                      <div @click="getPreview(1)">预览</div>
-                    <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
+                    <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">
                       关联事件
                     </div>
                   </div>
@@ -111,13 +111,13 @@
                 <div class="twoWayTraffic">
                   <div>双向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.twoWay" label="2" border
+                    <el-radio v-model="reservePlan.twoWay" label="2" border :disabled="disabledRadio"
                       >全域管控</el-radio
                     >
                   </div>
                   <div>
                      <div @click="getPreview(2)">预览</div>
-                    <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
+                    <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">
                       关联事件
                     </div>
                   </div>
@@ -137,14 +137,14 @@
                       v-for="(item, index) of planType"
                       :key="index"
                     >
-                      <el-radio :label="item.dictValue" border>{{
+                      <el-radio :disabled="disabledRadio" :label="item.dictValue" border>{{
                         item.dictLabel
                       }}</el-radio>
                     </el-radio-group>
                 </div>
                 <div>
                   <div @click="getPreview()">预览</div>
-                  <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">关联事件</div>
+                  <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">关联事件</div>
                 </div>
               </div>
             </div>
@@ -342,7 +342,8 @@
                         {{ item.flowContent }}
                       </div>
 
-                      <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)">一键</div>
+                      <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
+                      :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div>
                     </div>
 
                     <div
@@ -387,15 +388,16 @@
                         <!-- 绿对号 -->
                         <img
                           :src="incHand2"
-                          style="float: right; cursor: pointer"
+                          style="float: right; "
                           v-show="itm.eventState != '0'"
                         />
                         <!-- 下发 -->
                         <img
                           :src="incHand1"
-                          style="float: right; cursor: pointer"
+                          style="float: right; "
                           v-show="itm.eventState == '0'"
                           @click="openIssuedDialog(itm)"
+                          :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
                         />
                       </div>
                     </div>
@@ -485,7 +487,7 @@
       <div v-else-if="this.IssuedItem.flowPid == 12 || this.IssuedItem.flowPid == 16">是否{{this.IssuedItem.flowContent}}?</div>
 
       <div v-else>是否确认执行?</div>
-      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17"/>
+      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17 && this.IssuedItem.flowId !=18"/>
       <div style="display:flex;justify-content:right">
         <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
         <div class="IssuedButton2" @click="changeIncHand">确 认</div>
@@ -667,6 +669,8 @@ export default {
   },
   data() {
     return {
+      iconDisabled:false,
+      disabledRadio:false,
       assIconUrl:'',
       IssuedItemContent:'',
       IssuedItem:{},
@@ -861,31 +865,14 @@ export default {
       for(let itm of item.children){
         arr.push(itm.id)
       }
-      // str = arr.join(',')
+     
 
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-        // const params = {
-        //   id: that.$route.query.id,
-        //   ids: str,
-        // };
-        // updateHandle(params).then((res) => {
-        //   console.log(res,"一键下发改状态");
-        //   for (let item of that.incHandList) {
-        //     for (let itm of item.children) {
-        //       for(let it_m of arr){
-        //         if (itm.id == it_m) {
-        //           itm.eventState = "1";
-        //         }
-        //       }
-        //     }
-        //   }
-
-        // });
-
+      
           let planId = item.reserveId
           let eventId = that.$route.query.id
 
@@ -943,6 +930,7 @@ export default {
 
         this.getListEvent();
         this.relationDisabled = true;
+        this.disabledRadio = true
       });
     },
     // 打开下发事件弹窗
@@ -991,20 +979,15 @@ export default {
         updateHandle(params).then((res) => {
           console.log(res,"单点改状态");
           console.log(that.incHandList,"this.incHandList");
-          // for(let itt of that.incHandList) {
-          //   if(itt.children){
-          //     for(let itm of itt.children) {
-          //       if (itm.id == this.IssuedItem.id) {
-          //         itm.eventState = "1";
-                  that.$modal.msgSuccess("状态修改成功");
-                  this.IssuedDialog = false
-                  this.IssuedItemContent = ''
-          //       }
-          //     }
-          //   }
-          // }
+          that.$modal.msgSuccess("状态修改成功");
+          this.IssuedDialog = false
+          this.IssuedItemContent = ''
           that.evtHandle();
           that.getEventList();
+          if(this.IssuedItem.flowId == '18'){
+            this.iconDisabled = true
+           
+          }
         });
       }
     },
@@ -1043,6 +1026,15 @@ export default {
           }
         }
         this.incHandList = list;
+        for(let item of this.incHandList){
+          for(let itm of item.children){
+            if(itm.flowId == 18 && itm.eventState == '1'){
+              this.iconDisabled = true
+              this.relationDisabled = true
+              this.disabledRadio = true
+            }
+          }
+        }
         this.$forceUpdate();
       });
     },
@@ -1719,7 +1711,6 @@ export default {
                 border: 1px solid #39adff;
                 // padding: 10px;
                 text-align: center;
-                cursor: pointer;
               }
             }
 

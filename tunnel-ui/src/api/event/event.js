@@ -190,7 +190,7 @@ export function updateHandle(query) {
   })
 }
 
-// 关联事件 
+// 关联事件
 export function getRelation(query) {
   return request({
     url: '/event/getRelation',
@@ -199,7 +199,7 @@ export function getRelation(query) {
   })
 }
 
-// 关联事件 
+// 关联事件
 export function getAccidentPoint(query) {
   return request({
     url: '/event/getAccidentPoint',
@@ -231,6 +231,15 @@ export function performRecovery(eventId,handleId) {
     method: 'get',
   })
 }
+
+export function getReserveId(query) {
+  return request({
+    url: '/event/getReserveId',
+    method: 'get',
+    params: query
+  })
+}
+
 
 
 // 主动安全 处置

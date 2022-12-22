@@ -460,7 +460,7 @@ export default {
           this.strategyForm.id = this.id;
         });
       }
-      let data = this.strategyForm.manualControl;
+      let data = this.strategyForm.autoControl;
       data.forEach(item=>{
         item.state = item.state.toString()
       })
@@ -476,7 +476,7 @@ export default {
       await getGuid().then((res) => {
         this.strategyForm.jobRelationId = res;
       });
-      let data = this.strategyForm.manualControl;
+      let data = this.strategyForm.autoControl;
       data.forEach(item=>{
         item.state = item.state.toString()
       })

@@ -306,6 +306,8 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index){
+      this.strategyForm.manualControl[index].state = "";
+      this.strategyForm.manualControl[index].value = null;
       let params = {
         eqType: this.strategyForm.manualControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
@@ -330,6 +332,7 @@ export default {
           this.$set(this.strategyForm.manualControl[index], "templatesList", res.data)
         })
       }
+      this.$forceUpdate()
     },
     handleChange(e){
       console.log(e)

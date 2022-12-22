@@ -95,15 +95,15 @@
                       v-for="(item, index) of planType"
                       :key="index"
                     >
-                      <el-radio :label="item.dictValue" border>{{
+                      <el-radio :disabled="disabledRadio" :label="item.dictValue" border>{{
                         item.dictLabel
                       }}</el-radio>
                     </el-radio-group>
                     <!-- <el-radio v-model="reservePlan.oneWay" label="2" border>全域管控</el-radio> -->
                   </div>
                   <div>
-                    <!-- <div>预览</div> -->
-                    <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
+                     <div @click="getPreview(1)">预览</div>
+                    <div @click="relation(1)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">
                       关联事件
                     </div>
                   </div>
@@ -111,13 +111,13 @@
                 <div class="twoWayTraffic">
                   <div>双向行车</div>
                   <div>
-                    <el-radio v-model="reservePlan.twoWay" label="2" border
+                    <el-radio v-model="reservePlan.twoWay" label="2" border :disabled="disabledRadio"
                       >全域管控</el-radio
                     >
                   </div>
                   <div>
-                    <!-- <div>预览</div> -->
-                    <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">
+                     <div @click="getPreview(2)">预览</div>
+                    <div @click="relation(2)" :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">
                       关联事件
                     </div>
                   </div>
@@ -137,14 +137,14 @@
                       v-for="(item, index) of planType"
                       :key="index"
                     >
-                      <el-radio :label="item.dictValue" border>{{
+                      <el-radio :disabled="disabledRadio" :label="item.dictValue" border>{{
                         item.dictLabel
                       }}</el-radio>
                     </el-radio-group>
                 </div>
                 <div>
-                  <!-- <div>预览</div> -->
-                  <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;':''">关联事件</div>
+                  <div @click="getPreview()">预览</div>
+                  <div :style="relationDisabled? 'cursor: not-allowed;pointer-events: none;background:#ccc':''">关联事件</div>
                 </div>
               </div>
             </div>
@@ -237,7 +237,7 @@
                       >
                         {{ item.eqName }}
                       </div>
-                    
+
                     </div>
                   </div>
                 </div>
@@ -300,7 +300,7 @@
                   src="../../../assets/cloudControl/tunnelBox3.png"
                   @click="changeActiveMap(2)"
                 />
-   
+
               </div>
             </div>
           </div>
@@ -342,7 +342,8 @@
                         {{ item.flowContent }}
                       </div>
 
-                      <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)">一键</div>
+                      <div v-show="item.flowId == 7" class="yijian" @click="getYiJian(item)"
+                      :style="iconDisabled?'cursor: not-allowed;pointer-events: none;background:#ccc;border:solid 1px #ccc':'cursor: pointer'">一键</div>
                     </div>
 
                     <div
@@ -387,15 +388,16 @@
                         <!-- 绿对号 -->
                         <img
                           :src="incHand2"
-                          style="float: right; cursor: pointer"
+                          style="float: right; "
                           v-show="itm.eventState != '0'"
                         />
                         <!-- 下发 -->
                         <img
                           :src="incHand1"
-                          style="float: right; cursor: pointer"
+                          style="float: right; "
                           v-show="itm.eventState == '0'"
                           @click="openIssuedDialog(itm)"
+                          :style="iconDisabled?'cursor: not-allowed;pointer-events: none;':'cursor: pointer'"
                         />
                       </div>
                     </div>
@@ -485,7 +487,7 @@
       <div v-else-if="this.IssuedItem.flowPid == 12 || this.IssuedItem.flowPid == 16">是否{{this.IssuedItem.flowContent}}?</div>
 
       <div v-else>是否确认执行?</div>
-      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17"/>
+      <el-input v-model="IssuedItemContent" v-show="this.IssuedItem.flowPid != 7 && this.IssuedItem.flowId !=17 && this.IssuedItem.flowId !=18"/>
       <div style="display:flex;justify-content:right">
         <div class="IssuedButton1" @click="cancelIssuedDialog">取 消</div>
         <div class="IssuedButton2" @click="changeIncHand">确 认</div>
@@ -602,6 +604,7 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-board>
+    <work-bench ref="workBench"></work-bench>
   </div>
 </template>
 <script>
@@ -611,7 +614,7 @@ import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
 
-
+import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
 import comLight from "@/views/workbench/config/components/light"; //各种带单选框的弹窗
 import comCovi from "@/views/workbench/config/components/covi"; //covi弹窗
@@ -627,7 +630,7 @@ import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹
 
 import {
   listEventType,
- 
+
 } from "@/api/event/eventType";
 import {
   listEqTypeState,
@@ -640,6 +643,7 @@ import {
   getHandle,
   updateHandle,
   getRelation,
+  getReserveId,
   getAccidentPoint,
   implementProcess,
   implementPlan,
@@ -660,10 +664,13 @@ export default {
     comRobot,
     comData,
     comYoudao,
-    comBoard
+    comBoard,
+    workBench,
   },
   data() {
     return {
+      iconDisabled:false,
+      disabledRadio:false,
       assIconUrl:'',
       IssuedItemContent:'',
       IssuedItem:{},
@@ -673,7 +680,6 @@ export default {
       accTop:0,
       tunnelLane:0,
       eqTypeDialogList:[],
-      directionList:[],
       brandList:[],
       eqInfo:{},
       relationDisabled: false,
@@ -803,6 +809,29 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    // 预览按钮
+    getPreview(type) {
+      // 查预案ID
+      const params = {
+        tunnelId: this.eventForm.tunnelId,
+        category: this.reservePlan.oneWay,
+        controlDirection: type,
+        direction: this.eventForm.direction,
+        eventId: this.eventForm.id,
+        planTypeId:this.eventForm.eventTypeId,
+      };
+      getReserveId(params).then(res=>{
+        console.log(res,"获取的预案id");
+        var planId = res.data;
+        this.$nextTick(() => {
+          this.$refs.workBench.eventId = this.$route.query.id;
+          this.$refs.workBench.id = planId; //预案ID
+          this.$refs.workBench.tunnelId = this.eventForm.tunnelId;
+          this.$refs.workBench.init();
+        });
+      })
+      // this.workbenchOpen = true;
+    },
     // 事件点图片
     getAccIcon(){
       console.log(8888888888)
@@ -836,34 +865,17 @@ export default {
       for(let itm of item.children){
         arr.push(itm.id)
       }
-      // str = arr.join(',')
-      
+     
+
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-        // const params = {
-        //   id: that.$route.query.id,
-        //   ids: str,
-        // };
-        // updateHandle(params).then((res) => {
-        //   console.log(res,"一键下发改状态");
-        //   for (let item of that.incHandList) {
-        //     for (let itm of item.children) {
-        //       for(let it_m of arr){
-        //         if (itm.id == it_m) {
-        //           itm.eventState = "1";
-        //         }
-        //       } 
-        //     }
-        //   }
-          
-        // });
-       
+      
           let planId = item.reserveId
           let eventId = that.$route.query.id
-        
+
         implementPlan(planId,eventId).then((response) =>{
           console.log(response,"一键下发成功");
           for(let item of that.incHandList) {
@@ -874,7 +886,7 @@ export default {
                  that.$modal.msgSuccess("一键下发成功");
 
                 }
-              } 
+              }
             }
           }
           this.evtHandle();
@@ -886,7 +898,7 @@ export default {
     backSafeWarn(){
       this.$router.push({
         path: "/emergency/safeWarn",
-       
+
       });
     },
     // 关闭弹窗子组件
@@ -901,7 +913,7 @@ export default {
           equipmentId: item.eqId,
         };
     },
-    
+
     // 关联事件
     relation(type) {
       const params = {
@@ -918,6 +930,7 @@ export default {
 
         this.getListEvent();
         this.relationDisabled = true;
+        this.disabledRadio = true
       });
     },
     // 打开下发事件弹窗
@@ -966,20 +979,15 @@ export default {
         updateHandle(params).then((res) => {
           console.log(res,"单点改状态");
           console.log(that.incHandList,"this.incHandList");
-          // for(let itt of that.incHandList) {
-          //   if(itt.children){
-          //     for(let itm of itt.children) {
-          //       if (itm.id == this.IssuedItem.id) {
-          //         itm.eventState = "1";
-                  that.$modal.msgSuccess("状态修改成功");
-                  this.IssuedDialog = false
-                  this.IssuedItemContent = ''
-          //       }
-          //     }
-          //   }
-          // }
+          that.$modal.msgSuccess("状态修改成功");
+          this.IssuedDialog = false
+          this.IssuedItemContent = ''
           that.evtHandle();
           that.getEventList();
+          if(this.IssuedItem.flowId == '18'){
+            this.iconDisabled = true
+           
+          }
         });
       }
     },
@@ -1018,6 +1026,15 @@ export default {
           }
         }
         this.incHandList = list;
+        for(let item of this.incHandList){
+          for(let itm of item.children){
+            if(itm.flowId == 18 && itm.eventState == '1'){
+              this.iconDisabled = true
+              this.relationDisabled = true
+              this.disabledRadio = true
+            }
+          }
+        }
         this.$forceUpdate();
       });
     },
@@ -1046,7 +1063,7 @@ export default {
           setTimeout(()=>{
             this.getAcc()
           },500)
-          
+
         });
       }
     },
@@ -1694,7 +1711,6 @@ export default {
                 border: 1px solid #39adff;
                 // padding: 10px;
                 text-align: center;
-                cursor: pointer;
               }
             }
 

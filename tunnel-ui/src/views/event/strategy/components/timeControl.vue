@@ -390,7 +390,7 @@ export default {
     },
     // 编辑操作
     updateStrategyInfoData() {
-      let data = this.strategyForm.manualControl;
+      let data = this.strategyForm.autoControl;
       data.forEach(item=>{
         item.state = item.state.toString()
       })
@@ -408,7 +408,7 @@ export default {
       //     this.strategyForm.autoControl[i].controlTime
       //   );
       // }
-      let data = this.strategyForm.manualControl;
+      let data = this.strategyForm.autoControl;
       data.forEach(item=>{
         item.state = item.state.toString()
       })
@@ -437,7 +437,8 @@ export default {
         eqDirection: this.strategyForm.direction, //方向
       };
       listDevices(params).then((res) => {
-        this.equipmentData = res.rows;
+        this.$set(this.strategyForm.autoControl[index],"equipmentData",res.rows)
+        // this.equipmentData = res.rows;
         console.log(this.equipmentData, "设备列表");
       });
       this.listEqTypeStateIsControl(index);
@@ -485,29 +486,29 @@ export default {
     // 改变设备类型或者方向
     changeEvent(value) {
       //给设备名称重新赋值
-      let params = {
-        eqType: this.strategyForm.equipmentTypeId, //设备类型
-        eqTunnelId: this.strategyForm.tunnelId, //隧道
-        eqDirection: this.strategyForm.direction, //方向
-      };
-      listDevices(params).then((res) => {
-        this.equipmentData = res.rows;
-        console.log(this.equipmentData, "设备列表");
-      });
-      // 如果改变隧道||设备类型||方向，重置设备和执行状态
-      if (
-        this.strategyForm.autoControl.length >= 1 ||
-        this.strategyForm.autoControl[0].value != ""
-      ) {
-        this.strategyForm.autoControl = [
-          {
-            value: "",
-            state: "",
-            type: "",
-            controlTime: "",
-          },
-        ];
-      }
+      // let params = {
+      //   eqType: this.strategyForm.equipmentTypeId, //设备类型
+      //   eqTunnelId: this.strategyForm.tunnelId, //隧道
+      //   eqDirection: this.strategyForm.direction, //方向
+      // };
+      // listDevices(params).then((res) => {
+      //   this.equipmentData = res.rows;
+      //   console.log(this.equipmentData, "设备列表");
+      // });
+      // // 如果改变隧道||设备类型||方向，重置设备和执行状态
+      // if (
+      //   this.strategyForm.autoControl.length >= 1 ||
+      //   this.strategyForm.autoControl[0].value != ""
+      // ) {
+      //   this.strategyForm.autoControl = [
+      //     {
+      //       value: "",
+      //       state: "",
+      //       type: "",
+      //       controlTime: "",
+      //     },
+      //   ];
+      // }
       if (value == "1") {
         this.listEqTypeStateIsControl();
       }

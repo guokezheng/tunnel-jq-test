@@ -965,6 +965,10 @@ export default {
   top: 0;
   right: 0;
 }
+.right-menu{
+  position: absolute;
+  right: 0;
+}
 .theme-light .navbar {
   background-color: unset;
 }

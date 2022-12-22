@@ -199,7 +199,7 @@ export default {
   methods: {
     changeNavSelect(val) {
       this.$store.dispatch("manage/changeTunnelId", val);
-      this.$cache.local.set("manageStationSelect",val)
+      this.$cache.local.set("manageStationSelect",val) 
       // if(val != 'JQ-WeiFang-JiuLongYu-HSD'){
       //   this.$cache.local.set("manageStation",'0')
       //   // this.manageStation = '0'
@@ -222,7 +222,7 @@ export default {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft + 150;
       console.log(wrap.scrollLeft);
-      if (wrap.scrollLeft == 320) {
+      if (wrap.scrollLeft == 782) {
         this.rightIcon = false;
         this.leftIcon = true;
       } else {

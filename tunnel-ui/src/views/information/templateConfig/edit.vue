@@ -18,9 +18,11 @@
         v-on:drop="faceDrop"
         v-on:dragover="allowDrop"
         v-bind:style="divStyle"
+        class="blackBoard"
       >
 
         <div
+        class="textBoard"
           v-for="(res, index) in templateContent"
           :key="index"
           v-drag
@@ -63,6 +65,27 @@
         </div>
       </div>
     </el-card>
+    <el-row>
+        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+        <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
+          >下对齐</el-button
+        >
+        <el-button type="info" plain @click="alignment(5)" size="mini"
+          >上下居中</el-button
+        >
+        <el-button type="info" plain @click="alignment(4)" size="mini"
+          >上对齐</el-button
+        > -->
+        <el-button type="info" plain @click="alignment(3)" size="mini"
+          >右对齐</el-button
+        >
+        <el-button type="info" plain @click="alignment(2)" size="mini"
+          >左右居中</el-button
+        >
+        <el-button type="info" plain @click="alignment(1)" size="mini"
+          >左对齐</el-button
+        >
+      </el-row>
     <el-card>
       <el-form
         :model="dataForm"
@@ -695,6 +718,63 @@ export default {
           this.$refs["dataForm"] && this.$refs["dataForm"].clearValidate();
         }
       });
+    },
+    // 文字对齐方式
+    alignment(alignmentNum) {
+      console.log(alignmentNum,"alignmentNum");
+      var divContent = document.getElementsByClassName("blackBoard");
+      var textBoard = document.getElementsByClassName("textBoard");
+      console.log(textBoard,"textBoard");
+      // 获取文字长宽
+      // let textWidth = textBoard[0].offsetWidth;
+      // let textHeight = textBoard[0].offsetHeight;
+      // // 获取黑盒子长宽
+      // let divWidth = divContent[0].offsetWidth;
+      // let divHeight = divContent[0].offsetHeight;
+      // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+      // console.log(textBoard[0].style,"textBoard[0].style");
+      // console.log(textWidth,divWidth,"999999999999999");
+      // switch (alignmentNum) {
+      //   // 左对齐
+      //   case 1:
+      //     textBoard[0].style.left = "0px";
+      //     textBoard[0].style.removeProperty("right");
+      //     break;
+      //   // 左右居中
+      //   case 2:
+      //     textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
+      //     textBoard[0].style.right = "unset";
+
+      //     break;
+      //   // 右对齐
+      //   case 3:
+      //     textBoard[0].style.right = "0px";
+      //     textBoard[0].style.removeProperty("left");
+      //     break;
+      //   // 上对齐
+      //   case 4:
+      //     textBoard[0].style.top = "0px";
+      //     textBoard[0].style.removeProperty("bottom");
+      //     break;
+      //   // 上下对齐
+      //   case 5:
+      //     console.log(divHeight, textHeight, "00000");
+      //     textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
+      //     textBoard[0].style.bottom = "unset";
+      //     break;
+      //   // 下对齐
+      //   case 6:
+      //     textBoard[0].style.removeProperty("top");
+      //     textBoard[0].style.bottom = "0px";
+      //     break;
+      // }
+      // var textLeft = this.addZero(textBoard[0].offsetLeft);
+      // var textTop = this.addZero(textBoard[0].offsetTop);
+      // this.templateContent = textLeft + textTop;
+      // console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
+    },
+    addZero(num) {
+      return ("000" + num).slice(-3);
     },
     del(index) {
       this.obj = index;

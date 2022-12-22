@@ -595,7 +595,7 @@
       </div>
       <div class="dialogFooterButton" >
         <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
-        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)" >应急调度</div>
+        <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
         <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
 
       </div>

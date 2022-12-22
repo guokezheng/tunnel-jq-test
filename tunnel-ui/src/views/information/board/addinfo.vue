@@ -44,7 +44,7 @@
       </el-card>
       <el-row>
         <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <el-button type="info" plain @click="alignment(6)" size="mini"
+        <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
         >
         <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -52,7 +52,7 @@
         >
         <el-button type="info" plain @click="alignment(4)" size="mini"
           >上对齐</el-button
-        >
+        > -->
         <el-button type="info" plain @click="alignment(3)" size="mini"
           >右对齐</el-button
         >

@@ -98,6 +98,7 @@ FROM
 								A.event_state = '3'
 								AND TO_DAYS( A.start_time ) = TO_DAYS( NOW( ) )
 								) a
+                                AND B.is_usable = '1'
 								UNION
 							SELECT
 								id,
@@ -112,7 +113,7 @@ FROM
 								concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS eventTitle,
 								fault.create_time AS startTime,
 								'故障' AS simplifyName,
-								( SELECT icon_url FROM sd_event_type WHERE id = '200' ) AS iconUrl
+								( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
 							FROM
 								sd_fault_list fault
 								LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
@@ -131,7 +132,7 @@ ORDER BY MERGE.startTime DESC
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="string">
-        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as eventTitle,fault.create_time as startTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200') as iconUrl from sd_fault_list fault
+        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as eventTitle,fault.create_time as startTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl from sd_fault_list fault
             left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
             left join sd_devices devices on devices.eq_id = fault.eq_id
             left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
@@ -175,6 +176,7 @@ ORDER BY MERGE.startTime DESC
         AND ti1.img_type = '1'
         <where>
             1=1
+            AND B.is_usable = '1'
             <if test="id != null  and id != ''">and A.id = #{id}</if>
             <!-- <if test="tunnelStationName != null  and tunnelStationName != ''">and C.id = #{id}</if>-->
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
@@ -384,6 +386,7 @@ ORDER BY MERGE.startTime DESC
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
         where
         TO_DAYS(A.start_time) = TO_DAYS(NOW())
+        AND B.is_usable = '1'
         <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
         <if test="params.deptId != null and params.deptId != ''">
             AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
@@ -406,6 +409,7 @@ ORDER BY MERGE.startTime DESC
         <foreach collection="list" item="eventId" open="(" separator="," close=")">
             #{eventId}
         </foreach>
+        AND B.is_usable = '1'
     </select>
 
 </mapper>

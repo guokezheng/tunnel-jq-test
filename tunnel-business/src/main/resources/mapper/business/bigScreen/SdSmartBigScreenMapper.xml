@@ -19,6 +19,7 @@
             sde.start_time <![CDATA[ > ]]> DATE_ADD( curdate(), INTERVAL - DAY ( curdate())+ 1 DAY )
         AND sde.start_time <![CDATA[ < ]]> last_day(
         curdate())
+        AND sdet.is_usable = '1'
         <if test="tunnelId != null and tunnelId != ''">
             AND sde.tunnel_id = #{tunnelId}
         </if>
@@ -139,6 +140,7 @@
                     YEAR ( se.start_time )= YEAR (CURDATE())
                     AND MONTH ( se.start_time )= MONTH (CURDATE())
                     AND sdd.dict_value = #{dictValue}
+                    AND et.is_usable = '1'
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
@@ -178,6 +180,7 @@
                     YEAR ( se.start_time )= YEAR (CURDATE())
                     AND MONTH ( se.start_time )= MONTH (CURDATE())
                     AND sdd.dict_value = #{dictValue}
+                    AND et.is_usable = '1'
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
@@ -233,6 +236,7 @@
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
+            AND et.is_usable = '1'
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
@@ -248,6 +252,7 @@
         AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
+            AND et.is_usable = '1'
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -281,6 +286,7 @@
             AND sdd1.dict_type = #{prevControlType}
         WHERE
             sdd1.dict_value IN ( #{dictValue1}, #{dictValue2} )
+            AND et.is_usable = '1'
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -314,6 +320,7 @@
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
+            AND et.is_usable = '1'
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>
@@ -330,6 +337,7 @@
             AND sdd.dict_type = #{prevControlType}
         WHERE
             sdd.dict_value = #{dictValue}
+            AND et.is_usable = '1'
             <if test="tunnelId != null and tunnelId != ''">
                 AND se.tunnel_id = #{tunnelId}
             </if>

@@ -67,6 +67,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_reserve_process E on A.id = E.reserve_id
         left join sd_tunnels F on A.tunnel_id = F.tunnel_id
         <where>
+            1 = 1
+            AND B.is_usable = '1'
             <if test="tunnelId != null and tunnelId!=''">and F.tunnel_id = #{tunnelId}</if>
             <if test="category != null and category!=''">and A.category = #{category}</if>
             <if test="planTypeId != null "> and A.plan_type_id = #{planTypeId}</if>

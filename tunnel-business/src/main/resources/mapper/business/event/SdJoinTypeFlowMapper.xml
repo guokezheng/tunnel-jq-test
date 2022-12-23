@@ -33,6 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND sdd.dict_type = 'prev_control_type'
         WHERE
             1 = 1
+            AND et.is_usable = '1'
         <if test="eventTypeId != null and eventTypeId != ''">
             AND jtf.event_type_id = #{eventTypeId}
         </if>

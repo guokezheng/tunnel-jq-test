@@ -752,3 +752,59 @@ INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, crea
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (511, 1, 'UDP', '1', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:06:50', '', NULL, NULL);
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (512, 2, 'TCP', '2', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:11', '', NULL, NULL);
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (513, 3, 'HTTP', '3', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:22', '', NULL, NULL);
+
+
+CREATE TABLE `sd_plan_flow` (
+                                `id` bigint(20) NOT NULL COMMENT 'id',
+                                `pid` bigint(20) DEFAULT NULL COMMENT 'pid父级',
+                                `flow_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节名称',
+                                `sort` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '排序',
+                                `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+                                PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='事件环节表';
+
+-- 图片信息表新增img_type字段
+ALTER TABLE sd_traffic_image`
+    ADD COLUMN `img_type` varchar(1) NULL COMMENT '文件类型0：图片、1：视频' AFTER `business_id`;
+
+-- 同步历史记录表修改push_data字段
+ALTER TABLE `sd_push_history`
+    MODIFY COLUMN `push_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '推送数据' AFTER `data_type`;
+
+-- 事件管理表新增stake_end_num字段
+ALTER TABLE sd_event`
+    ADD COLUMN `stake_end_num` varchar(50) NULL COMMENT '事件终点桩号' AFTER `stake_num`;
+
+-- 新增事件类型预案流程关联表
+CREATE TABLE `sd_join_type_flow`  (
+                                      `id` bigint(20) NOT NULL COMMENT 'id',
+                                      `event_type_id` bigint(20) NULL COMMENT '事件类型id',
+                                      `flow_id` bigint(20) NULL COMMENT '环节id',
+                                      `flow_pid` bigint(20) NULL DEFAULT NULL COMMENT '环节pid',
+                                      `flow_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节名称',
+                                      `flow_sort` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节排序',
+                                      `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+                                      `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+                                      PRIMARY KEY (`id`)
+) COMMENT = '事件类型预案流程关联表';
+
+CREATE TABLE `sd_event_handle` (
+                                   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+                                   `event_id` bigint(20) DEFAULT NULL COMMENT '事件id',
+                                   `flow_id` bigint(20) DEFAULT NULL COMMENT '流程id',
+                                   `flow_pid` bigint(20) DEFAULT NULL COMMENT '流程pid',
+                                   `flow_content` varchar(100) CHARACTER SET utf8 DEFAULT NULL COMMENT '事件流程内容',
+                                   `event_state` varchar(1) DEFAULT '0' COMMENT '事件状态 0:未完成 1:已完成',
+                                   `plan_id` bigint(20) DEFAULT NULL COMMENT '预案id',
+                                   `strategy_id` bigint(20) DEFAULT NULL COMMENT '策略id',
+                                   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=latin1 COMMENT='事件处置信息表';
+
+-- 事件类型表新增字段
+ALTER TABLE `sd_event_type`
+    ADD COLUMN `is_usable` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 1 COMMENT '是否可用 0：禁用 1：启用' AFTER `icon_url`;

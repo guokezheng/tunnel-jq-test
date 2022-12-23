@@ -1,5 +1,6 @@
 package com.tunnel.deal.guidancelamp.control;
 
+import com.tunnel.deal.guidancelamp.control.util.MyDecoder;
 import com.tunnel.deal.guidancelamp.protocol.RpcRequest;
 import com.tunnel.deal.guidancelamp.protocol.StringUtil;
 import com.tunnel.deal.guidancelamp.protocol.decoder.DynamicDecoderDec;
@@ -12,10 +13,12 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.Charset;
 
 public class NettyClient {
 
@@ -66,6 +69,19 @@ public class NettyClient {
         //设置socket工厂
         bootstrap.channel(NioSocketChannel.class);
         switch (type){
+            case  PUSH_TYPE_STR:
+                //设置管道
+                bootstrap.handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel ch) throws Exception {
+                        ch.pipeline().addLast(new MyDecoder());// 字符串解码器
+                        ch.pipeline().addLast(new StringEncoder(Charset.forName("GBK")));// 字符串编码器
+                        // 业务处理器
+                        clientHandler = new ClientHandler(group);
+                        ch.pipeline().addLast(clientHandler);
+                    }
+                });
+                break;
             case  PUSH_DYNAMIC_INDUCTION_DEC:
                 //设置管道
                 bootstrap.handler(new ChannelInitializer<Channel>() {

@@ -154,7 +154,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushHexCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -207,7 +207,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushHexCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -258,7 +258,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushHexCode(code);
+//            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间

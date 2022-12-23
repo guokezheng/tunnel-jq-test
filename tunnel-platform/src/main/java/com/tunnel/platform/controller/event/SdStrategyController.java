@@ -80,6 +80,12 @@ public class SdStrategyController extends BaseController
         return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
     }
 
+    @GetMapping(value = "/workTriggerInfo")
+    @ApiOperation("工作台阈值触发抽屉")
+    public Result<List<Map>> workTriggerInfo() {
+        return Result.success(sdStrategyService.workTriggerInfo());
+    }
+
     @GetMapping(value = "/switch")
     @ApiOperation("控制策略开关")
     public Result strategySwitch(@RequestParam("strategyId") Long strategyId,@RequestParam("change") String change) {

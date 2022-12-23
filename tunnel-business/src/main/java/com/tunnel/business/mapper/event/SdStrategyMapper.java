@@ -88,6 +88,8 @@ public interface SdStrategyMapper
      * @return
      */
     public Long[] getStrategyRefJobIds(Long[] ids);
+
+    List<Map> workTriggerInfo();
     /**
      * 批量删除控制策略
      * 

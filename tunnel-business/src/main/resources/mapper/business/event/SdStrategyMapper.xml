@@ -222,12 +222,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY strategy.strategy_type
     </select>
 
-    <select id="getTimeSharingInfo"  parameterType="String" resultType="Map" >
-        SELECT strategy.strategy_name,rl.strategy_id,strategy.strategy_state,GROUP_CONCAT(rl.control_time SEPARATOR '-') as time
-        FROM sd_strategy_rl rl
-            inner join sd_strategy strategy on rl.strategy_id = strategy.id
-        where strategy.tunnel_id = #{tunnelId} and strategy.strategy_type = '3'
-        GROUP BY rl.strategy_id
+    <select id="getTimeSharingInfo"  parameterType="String" resultType="hashmap" >
+        SELECT id as strategy_id,strategy_name,strategy_state,concat(timer_open,'-',timer_close) as time FROM sd_strategy
+            where strategy_type = '3' and strategy_group = '1' and tunnel_id = #{tunnelId}
     </select>
 
     <select id="getSafetyHandle" parameterType="sdStrategy" resultType="sdStrategy">
@@ -245,5 +242,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND s.strategy_group = '2'
           AND s.event_type = #{eventType}
           AND s.direction = #{direction}
+    </select>
+    <select id="workTriggerInfo"  resultType="hashmap">
+        select strategy.id,concat(item.item_name,'预警')as name,concat(
+        case when tri.compare_pattern = '0' then '<![CDATA[>]]>'
+            when tri.compare_pattern = '1' then '<![CDATA[>=]]>'
+            when tri.compare_pattern = '2' then '<![CDATA[<]]>'
+            when tri.compare_pattern = '3' then '<![CDATA[<=]]>'
+            when tri.compare_pattern = '4' then '<![CDATA[=]]>'
+        end,tri.compare_value) str from sd_strategy strategy
+        inner join sd_trigger tri on tri.relate_id = strategy.id
+        left join sd_device_type_item item on (item.id = tri.element_id
+        and tri.device_type_id = item.device_type_id)
     </select>
 </mapper>

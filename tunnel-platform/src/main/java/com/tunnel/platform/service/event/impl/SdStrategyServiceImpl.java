@@ -142,28 +142,39 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     public int updateControlTime(Long strategyId, String controlTime) {
         String[] timeParam = controlTime.split("-");
         SdStrategy strategy = sdStrategyMapper.selectSdStrategyById(strategyId);
+        strategy.setTimerOpen(timeParam[0]);
+        strategy.setTimerClose(timeParam[1]);
         String[] relationId = strategy.getJobRelationId().split(",");
         List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlByStrategyId(strategyId);
         if(rlList.size() < 2){
             return 0;
         }
         //排序保证修改顺序
-        rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
+        //rlList = rlList.stream().sorted((Comparator.comparing(SdStrategyRl::getId))).collect(Collectors.toList());
+        List<String> openRl = new ArrayList<>();
+        List<String> closeRl = new ArrayList<>();
         try {
-            int updateRows = 0;
-            for (int i=0;i<timeParam.length;i++) {
-                SdStrategyRl rl = rlList.get(i);
-                rl.setControlTime(timeParam[i]);
-                updateRows += sdStrategyRlMapper.updateSdStrategyRl(rl);
+            for(SdStrategyRl rl:rlList){
+                if(StrUtil.isNotBlank(rl.getEndState())){
+                    openRl.add(rl.getId().toString());
+                    rl.setControlTime(timeParam[0]);
+                }else{
+                    closeRl.add(rl.getId().toString());
+                    rl.setControlTime(timeParam[1]);
+                }
+                sdStrategyRlMapper.updateSdStrategyRl(rl);
+            }
+            for (int i=0;i<relationId.length;i++) {
                 Long jobId = Long.valueOf(relationId[i]);
                 SysJob job = sysJobService.selectJobById(jobId);
-                job.setCronExpression(CronUtil.CronDate(timeParam[i]));
-                updateRows += sysJobService.updateJob(job);
-                if(updateRows < 2){
-                    return 0;
+                if(openRl.contains(job.getInvokeTarget().split("'")[1])){
+                    job.setCronExpression(CronUtil.CronDate(timeParam[0]));
+                }else{
+                    job.setCronExpression(CronUtil.CronDate(timeParam[1]));
                 }
-                updateRows = 0;
+                sysJobService.updateJob(job);
             }
+            sdStrategyMapper.updateSdStrategyById(strategy);
         } catch (Exception e) {
             throw new RuntimeException("数据处理异常");
         }
@@ -203,6 +214,46 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             }
         }
         return 1;
+    }
+
+    @Override
+    public List<Map> workTriggerInfo() {
+        List<Map> result = sdStrategyMapper.workTriggerInfo();
+        for(Map map : result){
+            String strategyId = map.get("id").toString();
+            SdStrategyRl rl = new SdStrategyRl();
+            rl.setStrategyId(Long.valueOf(strategyId));
+            List<SdStrategyRl> rlList = sdStrategyRlMapper.selectSdStrategyRlList(rl);
+            //策略关联表信息
+            List<String> sList = new ArrayList<>();
+            for (int j = 0; j < rlList.size(); j++) {
+                String eqTypeId = rlList.get(j).getEqTypeId();
+                SdEquipmentType typeObject = sdEquipmentTypeMapper.selectSdEquipmentTypeById(Long.parseLong(rlList.get(j).getEqTypeId()));
+                String typeName = typeObject.getTypeName();//设备类型名称
+                //SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
+                SdEquipmentState state = new SdEquipmentState();
+                state.setStateTypeId(Long.parseLong(eqTypeId));
+                state.setDeviceState(rlList.get(j).getState());
+                state.setIsControl(1);
+                if(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
+                    String templateId = rlList.get(j).getState();
+                    SdVmsTemplateContent content = new SdVmsTemplateContent();
+                    content.setTemplateId(templateId);
+                    List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                    sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
+                    continue;
+                }
+                // SdEquipmentState stateObject = sdEquipmentStateMapper.selectSdEquipmentStateById(Long.parseLong(rlList.get(j).getState()));
+                List<SdEquipmentState> stateObject = sdEquipmentStateMapper.selectDropSdEquipmentStateList(state);
+                if(stateObject.size()<1){
+                    continue;
+                }
+                String stateName = stateObject.get(0).getStateName();//设备状态名称
+                sList.add(typeName + "控制执行：" + stateName + "；");
+            }
+            map.put("plan",sList);
+        }
+        return result;
     }
 
 

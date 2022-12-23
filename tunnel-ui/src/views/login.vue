@@ -144,7 +144,7 @@ export default {
       });
     },
     // 验证码
-    capctchaCheckSuccess(params) {
+    capctchaCheckSuccess(params) { 
       this.loginForm.code = params.captchaVerification;
       this.loading = true;
       if (this.loginForm.rememberMe) {

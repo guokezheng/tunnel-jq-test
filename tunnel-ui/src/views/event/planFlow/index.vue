@@ -88,7 +88,7 @@
     />
 
     <!-- 添加或修改事件类型预案流程关联对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="780px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="880px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="事件分类" prop="prevControlType">
           <el-radio v-model="form.radio" label="0" @change="radioFun">交通事件</el-radio>
@@ -517,8 +517,14 @@ export default {
   }
 };
 </script>
-<style  lang="scss">
+<style  lang="scss" scoped>
+
+::v-deep ::-webkit-scrollbar {
+  width: 0px;
+}
+</style>
+<style  lang="scss" >
 .treeList .transfer-main{
-  height: calc(100% - 70px) !important;;
+  height: calc(100% - 84px) !important;;
 }
 </style>

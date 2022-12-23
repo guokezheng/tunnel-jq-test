@@ -162,21 +162,20 @@ export default {
     "$store.state.manage.manageStation": function (newVal, oldVal) {
       console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
       this.$cache.local.set("manageStation",newVal);
+      
       //this.manageStationSelect = "JQ-WeiFang-JiuLongYu-HSD";
       this.manageStation = newVal
       this.$forceUpdate();
     },
-    // manageStationSelect(val){
-    //   console.log(val,"watch")
-    //   console.log(val,"0000000000");
-    //   this.$store.dispatch("manage/changeTunnelId", val);
-    //   this.$cache.local.set("manageStationSelect",val)
-    //   if(val != 'JQ-WeiFang-JiuLongYu-HSD'){
-    //     this.$cache.local.set("manageStation",'0')
-    //     this.manageStation = '0'
-    //   }
-    //   this.$forceUpdate()
-    // }
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal){
+      console.log(newVal,"newVal")
+      this.$cache.local.set("manageStationSelect",newVal);
+
+      if(newVal == "JQ-WeiFang-JiuLongYu-HSD"){
+        window.location = "http://10.7.187.28:82/WorkBench?userId=8"
+      }
+    }
+   
   },
   mounted() {
     // 当前导航栏子元素数量
@@ -195,6 +194,17 @@ export default {
       this.manageStationSelect = res.data[0].tunnelId;
       this.$cache.local.set("manageStationSelect",res.data[0].tunnelId)
     });
+    var test = window.location.href;
+    if(test.substr(test.length-1,1) == 1){
+      this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-JJL") 
+    }else if(test.substr(test.length-1,1) == 2){
+      this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-MAS") 
+    }
+    
+    // let tunnelId = this.$cache.local.get("manageStationSelect") 
+    // if(tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+    //    window.location = "http://10.7.187.28:82/WorkBench?userId=8"
+    //   }
   },
   methods: {
     changeNavSelect(val) {
@@ -206,7 +216,6 @@ export default {
       // }
     },
     prevScroll() {
-      console.log(111);
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft - 150;
       console.log(wrap.scrollLeft);

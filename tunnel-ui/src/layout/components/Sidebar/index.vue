@@ -189,6 +189,7 @@ export default {
     console.log(this.sidebarRouters, "sidebarRouters");
   },
   created() {
+    console.log(this.$store.state.settings.token,"55555555555");
     getJlyTunnel().then((res) => {
       this.manageStationList = res.data;
       this.manageStationSelect = res.data[0].tunnelId;
@@ -196,15 +197,26 @@ export default {
     });
     var test = window.location.href;
     if(test.substr(test.length-1,1) == '1'){
+      console.log("qweqweqweqweqewqewqewqeqew")
+      this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-JJL");
+
       this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-JJL") 
+      console.log(this.$cache.local.get("manageStationSelect"));
+
+      //this.changeNavSelect("JQ-WeiFang-JiuLongYu-JJL")
     }else if(test.substr(test.length-1,1) == '2'){
-      this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-MAS") 
+      console.log("马鞍山隧道")
+      this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS")
+
+      // this.$store.dispatch("manage/changeTunnelId", "JQ-WeiFang-JiuLongYu-MAS");
+      // this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-MAS") 
+      console.log(this.$cache.local.get("manageStationSelect"));
     }
     
-    let tunnelId = this.$cache.local.get("manageStationSelect") 
-    if(tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
-       window.location = "http://10.7.187.28:82/WorkBench?userId=8"
-      }
+    // let tunnelId = this.$cache.local.get("manageStationSelect") 
+    // if(tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+    //    window.location = "http://10.7.187.28:82/WorkBench?userId=8"
+    //   }
   },
   methods: {
     changeNavSelect(val) {

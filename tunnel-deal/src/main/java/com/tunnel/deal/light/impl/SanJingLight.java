@@ -34,9 +34,6 @@ public class SanJingLight implements Light {
     @Value("${device.light.sanjing.lineControl}")
     private String lineControl;
 
-    @Value("${device.light.sanjing.deviceData}")
-    private String deviceData;
-
     @Autowired
     private ISdDevicesService sdDevicesService;
 
@@ -59,7 +56,7 @@ public class SanJingLight implements Light {
      * @return
      * @throws IOException
      */
-    public String login(String username, String password) {
+    public String login(String username, String password, String baseUrl) {
         if (null != jessionId) {
             return jessionId;
         }
@@ -67,9 +64,9 @@ public class SanJingLight implements Light {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
-
-        String url = login + "?username=" + username + "&password=" + password;
-
+        // String url = login + "?username=" + username + "&password=" + password;
+        // http://47.119.189.80:8888/login
+        String url = baseUrl + "/login?username=" + username + "&password=" + password;
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
@@ -111,30 +108,34 @@ public class SanJingLight implements Light {
         String eqTunnelId = device.getEqTunnelId();
         String eqDirection = device.getEqDirection();
         Long externalSystemId = device.getExternalSystemId();
-        Assert.hasText(eqTunnelId,"未配置该设备所属隧道，请联系管理员！");
-        Assert.hasText(eqDirection,"未配置该设备所属方向，请联系管理员！");
-        Assert.notNull(externalSystemId,"未配置该设备关联的外部系统，请联系管理员！");
+        String step = device.getExternalDeviceId();
+        Assert.hasText(eqTunnelId, "未配置该设备所属隧道，请联系管理员！");
+        Assert.hasText(eqDirection, "未配置该设备所属方向，请联系管理员！");
+        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统，请联系管理员！");
+        Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
 
         //确定隧道洞编号
-        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId,eqDirection,externalSystemId);
-        String step = device.getExternalDeviceId();
-        Assert.hasText(eqTunnelId,"未配置该设备关联的隧道洞编号，请联系管理员！");
-        Assert.hasText(step,"未配置该设备关联的段号，请联系管理员！");
+        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号，请联系管理员！");
 
         //确定段号
         // String eqName = device.getEqName();
         // Integer step = TunnelStepEnum.getValue(eqName);
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
-        login(externalSystem.getUsername(), externalSystem.getPassword());
+        String baseUrl = externalSystem.getSystemUrl();
+        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+
+        login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         // 示例 "tunnelId=1&step=0&bright=98"
+        String url = baseUrl + "/api/adjustBrightness";
         String content = "tunnelId=" + externalSystemTunnelId + "&step=" + step + "&bright=" + bright;
         RequestBody body = RequestBody.create(mediaType, content);
         Request request = new Request.Builder()
-                .url(brightness)
+                .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Cookie", jessionId)
@@ -160,26 +161,30 @@ public class SanJingLight implements Light {
         String eqDirection = device.getEqDirection();
         Long externalSystemId = device.getExternalSystemId();
         String step = device.getExternalDeviceId();
-        Assert.hasText(eqTunnelId,"未配置该设备所属隧道，请联系管理员！");
-        Assert.hasText(eqDirection,"未配置该设备所属方向，请联系管理员！");
-        Assert.notNull(externalSystemId,"未配置该设备关联的外部系统，请联系管理员！");
-        Assert.hasText(step,"未配置该设备关联的段号，请联系管理员！");
+        Assert.hasText(eqTunnelId, "未配置该设备所属隧道，请联系管理员！");
+        Assert.hasText(eqDirection, "未配置该设备所属方向，请联系管理员！");
+        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统，请联系管理员！");
+        Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
 
         //确定隧道洞编号
-        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId,eqDirection,externalSystemId);
+        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号，请联系管理员！");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
-        login(externalSystem.getUsername(), externalSystem.getPassword());
+        String baseUrl = externalSystem.getSystemUrl();
+        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+
+        login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
 
-        if (openClose==2) {
+        if (openClose == 2) {
             openClose = 0;
         }
-
-        String url = lineControl + "?tunnelId=" + externalSystemTunnelId + "&step=" + step + "&openClose=" + openClose;
+        String url = baseUrl + "/api/lineControl?tunnelId=" + externalSystemTunnelId + "&step=" + step + "&openClose=" + openClose;
+        // String url = lineControl + "?tunnelId=" + externalSystemTunnelId + "&step=" + step + "&openClose=" + openClose;
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)

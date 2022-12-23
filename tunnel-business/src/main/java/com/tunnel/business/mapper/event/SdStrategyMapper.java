@@ -89,7 +89,7 @@ public interface SdStrategyMapper
      */
     public Long[] getStrategyRefJobIds(Long[] ids);
 
-    List<Map> workTriggerInfo();
+    List<Map> workTriggerInfo(String tunnelId);
     /**
      * 批量删除控制策略
      * 

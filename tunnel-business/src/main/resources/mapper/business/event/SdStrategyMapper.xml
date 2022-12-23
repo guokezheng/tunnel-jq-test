@@ -243,7 +243,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND s.event_type = #{eventType}
           AND s.direction = #{direction}
     </select>
-    <select id="workTriggerInfo"  resultType="hashmap">
+    <select id="workTriggerInfo"  parameterType="String" resultType="hashmap">
         select strategy.id,concat(item.item_name,'预警')as name,concat(
         case when tri.compare_pattern = '0' then '<![CDATA[>]]>'
             when tri.compare_pattern = '1' then '<![CDATA[>=]]>'
@@ -253,6 +253,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         end,tri.compare_value) str from sd_strategy strategy
         inner join sd_trigger tri on tri.relate_id = strategy.id
         left join sd_device_type_item item on (item.id = tri.element_id
-        and tri.device_type_id = item.device_type_id)
+        and tri.device_type_id = item.device_type_id) where strategy.tunnel_id = #{tunnelId}
     </select>
 </mapper>

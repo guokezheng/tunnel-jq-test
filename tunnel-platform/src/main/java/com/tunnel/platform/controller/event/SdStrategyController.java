@@ -80,10 +80,10 @@ public class SdStrategyController extends BaseController
         return Result.toResult(sdStrategyService.updateControlTime(strategyId,controlTime));
     }
 
-    @GetMapping(value = "/workTriggerInfo")
+    @GetMapping(value = "/workTriggerInfo/{tunnelId}")
     @ApiOperation("工作台阈值触发抽屉")
-    public Result<List<Map>> workTriggerInfo() {
-        return Result.success(sdStrategyService.workTriggerInfo());
+    public Result<List<Map>> workTriggerInfo(@PathVariable("tunnelId") String tunnelId) {
+        return Result.success(sdStrategyService.workTriggerInfo(tunnelId));
     }
 
     @GetMapping(value = "/switch")

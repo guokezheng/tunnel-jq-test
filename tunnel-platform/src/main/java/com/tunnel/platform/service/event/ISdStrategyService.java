@@ -44,7 +44,7 @@ public interface ISdStrategyService {
      */
     int strategySwitch(Long strategyId,String change);
 
-    List<Map> workTriggerInfo();
+    List<Map> workTriggerInfo(String tunnelId);
 
     /**
      * 查询控制策略

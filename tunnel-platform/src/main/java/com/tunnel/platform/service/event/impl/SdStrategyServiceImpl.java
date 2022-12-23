@@ -217,8 +217,8 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
     }
 
     @Override
-    public List<Map> workTriggerInfo() {
-        List<Map> result = sdStrategyMapper.workTriggerInfo();
+    public List<Map> workTriggerInfo(String tunnelId) {
+        List<Map> result = sdStrategyMapper.workTriggerInfo(tunnelId);
         for(Map map : result){
             String strategyId = map.get("id").toString();
             SdStrategyRl rl = new SdStrategyRl();

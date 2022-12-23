@@ -228,4 +228,6 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> getAppDevicesStatus(String eqId);
+
+    List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId);
 }

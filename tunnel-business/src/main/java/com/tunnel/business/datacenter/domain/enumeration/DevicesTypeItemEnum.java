@@ -26,7 +26,7 @@ public enum DevicesTypeItemEnum {
     FLAME_DETECTOR_ALARM(25, "火焰探测器报警"),
     SHOU_BAO_ALARM(26, "手报报警"),
     FENG_JI_STATUS(27, "风机状态"),
-    JIA_QIANG_ZHAO_MING_OPEN_STATUS(28, "加强照明开关状态"),
+    JACK_LIGHT_OPENCLOSE(28, "加强照明开关状态"),
     INFORMATION_BOARD_CONTENT(29, "情报板显示内容"),
     CAMERA_ERROR_CONTETN(30, "相机异常事件描述"),
     RADAR_ERROR_CONTETN(31, "雷达异常事件描述"),
@@ -62,7 +62,16 @@ public enum DevicesTypeItemEnum {
     HONGMENG_CONTROL(60, "鸿蒙控制器"),
     NEI_WAI_ZHEN_DONG_YI_JIAN_CE_QI(61, "内外振动仪检测器"),
     JACK_LIGHT_BRIGHNESS(62, "照明灯亮度"),
-    JACK_LIGHT_OPENCLOSE(63, "照明灯开与关");
+    WENSHI_DU_CHUAN_GAN_QI(63, "温湿度传感器"),
+    SHUI_JIN_CHUAN_GAN_QI(64, "水浸传感器"),
+    DI_PIN_XUN_JIAN_GUI(65, "低频巡检柜"),
+    DIAN_BAN_RE(66, "电伴热"),
+    JING_SHI_DENG_DAI(67, "警示灯带"),
+    DELINEATOR_CONTROL_MODE(68, "轮廓标控制模式"),
+    DELINEATOR_BRIGHNESS(69, "轮廓标亮度"),
+    DELINEATOR_FREQUENCY(70, "轮廓标频率"),
+    DELINEATOR_IS_OPEN(71, "轮廓标是否开灯"),
+    DELINEATOR_CONTROL(72, "轮廓标控制器");
 
 
     private int code;

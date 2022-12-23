@@ -145,7 +145,7 @@ public class InductionlampUtil {
     public static Map getXianKeDeviceBrightness(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300030001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -198,7 +198,7 @@ public class InductionlampUtil {
     public static Map getXianKeDeviceFrequency(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300050001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -207,7 +207,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间
@@ -249,7 +249,7 @@ public class InductionlampUtil {
     public static Map getXianKeDeviceDutyCycle(String ip, Integer port) {
         //获取当前是否开灯
         String code = "000000000006010300070001";
-        NettyClient client = new NettyClient(ip, port, code, 1);
+        NettyClient client = new NettyClient(ip, port, code, 3);
         try {
             client.start(null);
         } catch (Exception e) {
@@ -258,7 +258,7 @@ public class InductionlampUtil {
             return null;
         }
         try {
-            client.pushCode(code);
+            client.pushHexCode(code);
             //获取返回数据
             ClientHandler clientHandler =  client.getClientHandler();
             //推送数据开始时间

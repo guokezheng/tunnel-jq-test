@@ -809,4 +809,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public List<SdDevices> getAppDevicesStatus(String eqId) {
        return  sdDevicesMapper.getAppDevicesStatus(eqId);
     }
+
+    @Override
+    public List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
+        return devicesList;
+    }
 }

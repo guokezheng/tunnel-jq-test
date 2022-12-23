@@ -32,27 +32,29 @@ public class YddTask {
 
     private static final Logger log = LoggerFactory.getLogger(YddTask.class);
 
-    @Autowired
-    private ISdDevicesService sdDevicesService;
+//    @Autowired
+//    private ISdDevicesService sdDevicesService;
 
     private static SdDeviceDataMapper deviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static RadarEventService radarEventService = SpringUtils.getBean(RadarEventService.class);
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
+    private static ISdDevicesService sdDevicesService = SpringUtils.getBean(ISdDevicesService.class);
 
     public void handle() {
         //定时获取诱导灯当前状态
         Long guidanceLampTypeId = Long.valueOf(DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode());
-        SdDevices sdDevices = new SdDevices();
-        sdDevices.setEqType(guidanceLampTypeId);
-        List<SdDevices> guidanceLampDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+        Long lunKuoBiaoTypeId = DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode();
+//        SdDevices sdDevices = new SdDevices();
+//        sdDevices.setEqType(guidanceLampTypeId);
+//        List<SdDevices> guidanceLampDevicesList = sdDevicesService.selectSdDevicesList(sdDevices);
+        List<SdDevices> guidanceLampDevicesList = sdDevicesService.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
         for (int i = 0;i < guidanceLampDevicesList.size();i++) {
             SdDevices devices = guidanceLampDevicesList.get(i);
             if (devices.getIp() == null && devices.getPort() == null && ("").equals(devices.getIp())) {
                 continue;
             } else if (deploymentType != null && deploymentType.equals("GLZ")) {
-                System.err.println("111111111111111");
                 //进行状态查询
-//                sendCommand(devices, devices.getIp(), devices.getPort());
+                sendCommand(devices, devices.getIp(), devices.getPort());
             }
         }
     }
@@ -130,12 +132,64 @@ public class YddTask {
         } else if (mode.equals("4")) {
             mode = "3";
         }
-        saveDataIntoSdDeviceData(sdDevices, mode, DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+        //当前数据库中，控制器一定有子级设备，而且状态是一致的
+        SdDevices dev = new SdDevices();
+        dev.setFEqId(sdDevices.getEqId());
+        List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                }
+            }
+        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.DELINEATOR_CONTROL_MODE.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, "2", DevicesTypeItemEnum.DELINEATOR_CONTROL_MODE.getCode());
+                }
+            }
+        }
         sendDataToWanJi(sdDevices, "lightOn", mode);
         String brightness = codeMap.get("brightness").toString();
-        saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
+                }
+            }
+        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.DELINEATOR_BRIGHNESS.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.DELINEATOR_BRIGHNESS.getCode());
+                }
+            }
+        }
         String frequency = codeMap.get("frequency").toString();
-        saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
+                }
+            }
+        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
+            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.DELINEATOR_FREQUENCY.getCode());
+            if (!list.isEmpty()) {
+                for (int i = 0; i < list.size(); i++) {
+                    SdDevices devo = list.get(i);
+                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.DELINEATOR_FREQUENCY.getCode());
+                }
+            }
+        }
         String[] states = new String[3];
         states[0] = mode;
         states[1] = brightness;
@@ -171,14 +225,19 @@ public class YddTask {
         if (sdDevices.getBrandId() != null && !sdDevices.getBrandId().equals("0057")) {
             Map codeMap = InductionlampUtil.getXianKeDeviceBrightness(ip, port);
             if (codeMap == null || codeMap.isEmpty() || codeMap.get("brightness") == null || codeMap.get("brightness").toString() == "0") {
-                saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
-                saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
+                    saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.GUIDANCE_LAMP_IS_OPEN.getCode());
+                    saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
+                } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
+                    saveDataIntoSdDeviceData(sdDevices, "0", DevicesTypeItemEnum.DELINEATOR_IS_OPEN.getCode());
+                    saveDataIntoSdDeviceData(sdDevices, "1", DevicesTypeItemEnum.DELINEATOR_CONTROL_MODE.getCode());
+                }
                 return;
             } else {
+                Map frequencyCodeMap = InductionlampUtil.getXianKeDeviceFrequency(ip, port);
+                codeMap.put("frequency", frequencyCodeMap.get("frequency").toString());
+                codeMap.put("mode","2");
                 handleCodeMap(sdDevices, codeMap);
-                codeMap = InductionlampUtil.getXianKeDeviceFrequency(ip, port);
-                handleCodeMap(sdDevices, codeMap);
-                saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
             }
             return;
         }

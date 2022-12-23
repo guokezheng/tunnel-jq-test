@@ -819,4 +819,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         and t.eq_id = #{eqId}
     </select>
 
+    <select id="selectSdDevicesListByEqTypes" resultMap="SdDevicesResult">
+        select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
+        a.eq_direction,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
+        a.control_point_address, a.query_point_address, a.create_by,
+        a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
+        ,c.tunnel_name
+        from sd_devices a
+        left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
+        left join sd_equipment_type d on a.eq_type = d.type_id
+        left join sys_dept e on e.dept_id = c.dept_id
+        where a.eq_type = #{guidanceLampTypeId} or a.eq_type = #{lunKuoBiaoTypeId}
+    </select>
+
 </mapper>

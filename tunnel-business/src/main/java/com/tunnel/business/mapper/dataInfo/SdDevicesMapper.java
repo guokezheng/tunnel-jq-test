@@ -252,4 +252,6 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
+
+	public List<SdDevices> selectSdDevicesListByEqTypes(@Param("guidanceLampTypeId") Long guidanceLampTypeId, @Param("lunKuoBiaoTypeId") Long lunKuoBiaoTypeId);
 }

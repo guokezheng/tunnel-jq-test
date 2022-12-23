@@ -65,6 +65,20 @@
       width: calc(100% - 30px);
       margin: 15px auto;
       padding: 15px 20px !important;
+      color: #fff;
+      .el-table__body-wrapper::-webkit-scrollbar {
+        background-color: #012E51;
+        width: 0px;
+        height: 10px;
+      }
+    
+      /* table滚动条的滑块*/
+      // .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      //   background-color: #00c2ff;
+      // }
+      // ::-webkit-scrollbar {
+      //   width: 0px;
+      // }
       .el-form-item__label{
         color: #fff;
       }
@@ -99,6 +113,31 @@
       }
       .el-upload__tip{
         color: #fff !important;
+      }
+      .show-title{
+        background: #012E51 !important;
+        color: #fff !important;
+      }
+      .right-button{
+        background: #012E51 !important;
+      }
+      .pagination-container {
+        position: static !important;
+        margin-top: 0px !important;
+        .el-pagination__total,
+        .el-pagination__jump {
+          color: #fff !important;
+        }
+        .el-input__inner {
+          background: #fff !important;
+          color: #606266 !important;
+        }
+        .el-pagination.is-background .btn-prev,
+        .el-pagination.is-background .btn-next,
+        .el-pagination.is-background .el-pager li {
+          background: #fff !important;
+          color: #606266 !important;
+        }
       }
     }
   }
@@ -1156,14 +1195,21 @@
       -moz-border-radius: 5px;
       border-radius: 5px;
   }
+  // 隔行变色
   .allTable{
     .el-table__body-wrapper tbody{
       tr:nth-of-type(even){
-        background-color: #004375;
+        background-color: #004375 !important;
+        color: #fff !important;
+
       }
       tr:nth-of-type(odd){
-        background-color: #00487F;
+        background-color: #00487F !important;
+        color: #fff !important;
       }
+    }
+    .el-table--enable-row-hover .el-table__body tr:hover > td{
+      background: #165484 !important;
     }
   }
   .explain-table {

@@ -355,7 +355,7 @@
             style="width: 100%; background: #fff"
             border
             height="358px"
-            class="dialogTable"
+            class="dialogTable allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -1765,27 +1765,27 @@ h1 {
         .el-table {
           font-size: 12px;
         }
-        .el-table--enable-row-hover .el-table__body tr:hover > td {
-          background: #fff !important;
-        }
-        .pagination-container {
-          position: static !important;
-          margin-top: 0px !important;
-          .el-pagination__total,
-          .el-pagination__jump {
-            color: #606266 !important;
-          }
-          .el-input__inner {
-            background: #fff !important;
-            color: #606266 !important;
-          }
-          .el-pagination.is-background .btn-prev,
-          .el-pagination.is-background .btn-next,
-          .el-pagination.is-background .el-pager li {
-            background: #fff !important;
-            color: #606266 !important;
-          }
-        }
+        // .el-table--enable-row-hover .el-table__body tr:hover > td {
+        //   background: #fff !important;
+        // }
+        // .pagination-container {
+        //   position: static !important;
+        //   margin-top: 0px !important;
+        //   .el-pagination__total,
+        //   .el-pagination__jump {
+        //     color: #606266 !important;
+        //   }
+        //   .el-input__inner {
+        //     background: #fff !important;
+        //     color: #606266 !important;
+        //   }
+        //   .el-pagination.is-background .btn-prev,
+        //   .el-pagination.is-background .btn-next,
+        //   .el-pagination.is-background .el-pager li {
+        //     background: #fff !important;
+        //     color: #606266 !important;
+        //   }
+        // }
       }
     }
   }

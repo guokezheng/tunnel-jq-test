@@ -195,16 +195,16 @@ export default {
       this.$cache.local.set("manageStationSelect",res.data[0].tunnelId)
     });
     var test = window.location.href;
-    if(test.substr(test.length-1,1) == 1){
+    if(test.substr(test.length-1,1) == '1'){
       this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-JJL") 
-    }else if(test.substr(test.length-1,1) == 2){
+    }else if(test.substr(test.length-1,1) == '2'){
       this.$cache.local.set("manageStationSelect","JQ-WeiFang-JiuLongYu-MAS") 
     }
     
-    // let tunnelId = this.$cache.local.get("manageStationSelect") 
-    // if(tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
-    //    window.location = "http://10.7.187.28:82/WorkBench?userId=8"
-    //   }
+    let tunnelId = this.$cache.local.get("manageStationSelect") 
+    if(tunnelId == "JQ-WeiFang-JiuLongYu-HSD"){
+       window.location = "http://10.7.187.28:82/WorkBench?userId=8"
+      }
   },
   methods: {
     changeNavSelect(val) {

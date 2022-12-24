@@ -97,8 +97,8 @@ FROM
 							WHERE
 								A.event_state = '3'
 								AND TO_DAYS( A.start_time ) = TO_DAYS( NOW( ) )
-								) a
                                 AND B.is_usable = '1'
+								) a
 								UNION
 							SELECT
 								id,

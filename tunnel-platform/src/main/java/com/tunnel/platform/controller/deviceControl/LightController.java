@@ -1,14 +1,12 @@
 package com.tunnel.platform.controller.deviceControl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
-import com.tunnel.platform.service.deviceControl.LightService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import com.tunnel.platform.service.deviceControl.LightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -16,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -127,29 +128,5 @@ public class LightController {
         int controlResult = lightService.lineControl(deviceId, openClose, controlType, operIp);
         return AjaxResult.success(controlResult);
     }
-
-
-    /**
-     * 获取设备状态数据
-     *
-     * @param tunnelId
-     * @throws IOException
-     */
-    @GetMapping(value = "/getLatestDeviceData")
-    public AjaxResult getLatestDeviceData(String tunnelId) throws IOException {
-        String responseBody = lightService.getLatestDeviceData(tunnelId);
-
-        JSONObject jsonObject = JSON.parseObject(responseBody);
-
-        int code = (int) jsonObject.get("code");
-        String msg = (String) jsonObject.get("msg");
-        if (code == 0) {
-            Object data = jsonObject.get("data");
-            return AjaxResult.success(data);
-        }
-
-        return AjaxResult.error(msg);
-    }
-
 
 }

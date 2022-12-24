@@ -114,6 +114,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                             devices.put("state", data.getData());
                         }
                     }
+                //加强照明
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    }
+                //基本照明
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode())) {
+                        devices.put("state", data.getData());
+                    }
                 } else if (data != null) {
                     devices.put("state", data.getData());
                 }

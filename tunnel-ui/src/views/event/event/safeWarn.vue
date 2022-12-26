@@ -1657,7 +1657,16 @@ export default {
       this.evtId = item.id;
       this.tunnelId = item.tunnelId
       this.direction = item.direction
-      this.evtHandle();
+      const param = {
+        id:item.id,
+        eventState:0,
+      }
+      updateEvent(param).then((res) =>{
+        console.log(res,"处理中")
+        this.$modal.msgSuccess("正在处理");
+        this.evtHandle();
+
+      })
       if (type == 1) {
         this.detailsDisabled = true;
         this.detailsButtonType = 1;

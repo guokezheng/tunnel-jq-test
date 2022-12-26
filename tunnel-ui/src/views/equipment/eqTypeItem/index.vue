@@ -405,7 +405,7 @@ export default {
 </script>
 <style scoped>
  .deviceTypeId{
-  width: 359px;
+  width: 100%;
  }
 
 

@@ -110,6 +110,7 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
     deviceIds:devicelds,
     protocolType:protocolType,
     parameters:encodeURI(parameters)
+
   }
   return request({
     url: '/parser/board/uploadBoardEditInfo',

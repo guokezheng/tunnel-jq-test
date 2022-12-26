@@ -44,7 +44,7 @@
       </el-card>
       <el-row>
         <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
+        <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
         >
         <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -52,7 +52,7 @@
         >
         <el-button type="info" plain @click="alignment(4)" size="mini"
           >上对齐</el-button
-        > -->
+        >
         <el-button type="info" plain @click="alignment(3)" size="mini"
           >右对齐</el-button
         >
@@ -276,10 +276,10 @@
                 >
                   <el-option
                     v-for="item in screenSizeOptions"
-                    :key="item.type"
-                    :label="item.type"
-                    :value="item.type"
-                    @click.native="changeScreenSize(item.type)"
+                    :key="item.device_pixel"
+                    :label="item.device_pixel"
+                    :value="item.device_pixel"
+                    @click.native="changeScreenSize(item.device_pixel)"
                   >
                   </el-option>
                 </el-select>
@@ -323,6 +323,10 @@ import {
   getTemplateContent,
   getGalleryList,
 } from "@/api/board/template";
+import {
+  devicessize,
+ 
+} from "@/api/information/api.js";
 export default {
   data() {
     return {
@@ -377,6 +381,7 @@ export default {
         screenSize: "",
         COORDINATE: "",
         FONT_SIZE: "",
+        CONTENT:"山东高速欢迎你"
       },
       templateContent: [],
       templateDelContent: [],
@@ -460,12 +465,12 @@ export default {
         },
       ],
       screenSizeOptions: [
-        {
-          type: "400*40",
-        },
-        {
-          type: "128*64",
-        },
+        // {
+        //   type: "400*40",
+        // },
+        // {
+        //   type: "128*64",
+        // },
       ],
       colorOptions: [
         {
@@ -705,6 +710,9 @@ export default {
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
+  created(){
+    this.getdevicessize()
+  },
   methods: {
     init(devicePixel, type) {
       if (devicePixel) {
@@ -752,6 +760,13 @@ export default {
         }
       });
       this.$forceUpdate();
+    },
+    // 查分辨率
+    getdevicessize() {
+      devicessize().then((res) => {
+        console.log(res, "查分辨率");
+        this.screenSizeOptions = res.data;
+      });
     },
     changeScreenSize(size){
       console.log(size,"00000000000000000000");

@@ -464,6 +464,7 @@
                         <div>
                           {{ getDirection(item.eqDirection) }}
                           {{ getEqType(item.state, item.eqType) }}
+                          {{ getExecuteResult(item.executeResult) }}
                         </div>
                       </div>
                     </div>
@@ -1326,6 +1327,13 @@ export default {
         });
       }
     },
+    getExecuteResult(num){
+      if(num == '1'){
+        return "执行成功"
+      }else{
+        return "执行失败"
+      }
+    }
   },
 };
 </script>

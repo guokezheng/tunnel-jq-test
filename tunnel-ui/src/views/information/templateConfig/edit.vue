@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible.sync="visible" top="6vh" width="1200px">
+  <el-dialog :title="title" :visible.sync="visible" top="6vh" width="1200px" before-close="visible = false">
     <el-card class="box-card" style="margin-top: 2vh;">
       <span v-if="dataForm.applyType == ''" style="color: red"
         >请先选择屏幕尺寸，以方便查看具体预览</span>
@@ -67,7 +67,7 @@
     </el-card>
     <el-row>
         <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
+        <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
         >
         <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -75,7 +75,7 @@
         >
         <el-button type="info" plain @click="alignment(4)" size="mini"
           >上对齐</el-button
-        > -->
+        >
         <el-button type="info" plain @click="alignment(3)" size="mini"
           >右对齐</el-button
         >
@@ -726,51 +726,51 @@ export default {
       var textBoard = document.getElementsByClassName("textBoard");
       console.log(textBoard,"textBoard");
       // 获取文字长宽
-      // let textWidth = textBoard[0].offsetWidth;
-      // let textHeight = textBoard[0].offsetHeight;
-      // // 获取黑盒子长宽
-      // let divWidth = divContent[0].offsetWidth;
-      // let divHeight = divContent[0].offsetHeight;
-      // console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-      // console.log(textBoard[0].style,"textBoard[0].style");
-      // console.log(textWidth,divWidth,"999999999999999");
-      // switch (alignmentNum) {
-      //   // 左对齐
-      //   case 1:
-      //     textBoard[0].style.left = "0px";
-      //     textBoard[0].style.removeProperty("right");
-      //     break;
-      //   // 左右居中
-      //   case 2:
-      //     textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
-      //     textBoard[0].style.right = "unset";
+      let textWidth = textBoard[0].offsetWidth;
+      let textHeight = textBoard[0].offsetHeight;
+      // 获取黑盒子长宽
+      let divWidth = divContent[0].offsetWidth;
+      let divHeight = divContent[0].offsetHeight;
+      console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
+      console.log(textBoard[0].style,"textBoard[0].style");
+      console.log(textWidth,divWidth,"999999999999999");
+      switch (alignmentNum) {
+        // 左对齐
+        case 1:
+          textBoard[0].style.left = "0px";
+          textBoard[0].style.removeProperty("right");
+          break;
+        // 左右居中
+        case 2:
+          textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
+          textBoard[0].style.right = "unset";
 
-      //     break;
-      //   // 右对齐
-      //   case 3:
-      //     textBoard[0].style.right = "0px";
-      //     textBoard[0].style.removeProperty("left");
-      //     break;
-      //   // 上对齐
-      //   case 4:
-      //     textBoard[0].style.top = "0px";
-      //     textBoard[0].style.removeProperty("bottom");
-      //     break;
-      //   // 上下对齐
-      //   case 5:
-      //     console.log(divHeight, textHeight, "00000");
-      //     textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
-      //     textBoard[0].style.bottom = "unset";
-      //     break;
-      //   // 下对齐
-      //   case 6:
-      //     textBoard[0].style.removeProperty("top");
-      //     textBoard[0].style.bottom = "0px";
-      //     break;
-      // }
-      // var textLeft = this.addZero(textBoard[0].offsetLeft);
-      // var textTop = this.addZero(textBoard[0].offsetTop);
-      // this.templateContent = textLeft + textTop;
+          break;
+        // 右对齐
+        case 3:
+          textBoard[0].style.right = "0px";
+          textBoard[0].style.removeProperty("left");
+          break;
+        // 上对齐
+        case 4:
+          textBoard[0].style.top = "0px";
+          textBoard[0].style.removeProperty("bottom");
+          break;
+        // 上下对齐
+        case 5:
+          console.log(divHeight, textHeight, "00000");
+          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
+          textBoard[0].style.bottom = "unset";
+          break;
+        // 下对齐
+        case 6:
+          textBoard[0].style.removeProperty("top");
+          textBoard[0].style.bottom = "0px";
+          break;
+      }
+      var textLeft = this.addZero(textBoard[0].offsetLeft);
+      var textTop = this.addZero(textBoard[0].offsetTop);
+      this.templateContent = textLeft + textTop;
       // console.log(this.dataForm.COORDINATE, "this.dataForm.COORDINATE");
     },
     addZero(num) {
@@ -955,51 +955,51 @@ export default {
     },
     /*********************************************业务代码***********************************************/
     //文字对齐方式
-    alignment(alignmentNum) {
-      let that = this;
-      let boardSize = this.dataForm.screenSize;
-      if (!boardSize || boardSize === "") {
-        boardSize = "768*72";
-      }
-      let width = boardSize.split("*")[0];
-      let height = boardSize.split("*")[1];
-      //获取内容
-      let contentWidth = document.getElementById("templateDivText").offsetWidth;
-      let contentHeight =
-        document.getElementById("templateDivText").offsetHeight;
-      switch (alignmentNum) {
-        case "1":
-          this.startTxt_x = "000";
-          break;
-        case "2":
-          this.startTxt_x = this.formatNum(
-            (width - contentWidth) / 2 < 0 ? 0 : (width - contentWidth) / 2,
-            3
-          );
-          break;
-        case "3":
-          this.startTxt_x = this.formatNum(
-            width - contentWidth <= 0 ? 0 : width - contentWidth,
-            3
-          );
-          break;
-        case "4":
-          this.startTxt_y = "000";
-          break;
-        case "5":
-          this.startTxt_y = this.formatNum(
-            (height - contentHeight) / 2 < 0 ? 0 : (height - contentHeight) / 2,
-            3
-          );
-          break;
-        case "6":
-          this.startTxt_y = this.formatNum(
-            height - contentHeight <= 0 ? 0 : height - contentHeight,
-            3
-          );
-          break;
-      }
-    },
+    // alignment(alignmentNum) {
+    //   let that = this;
+    //   let boardSize = this.dataForm.screenSize;
+    //   if (!boardSize || boardSize === "") {
+    //     boardSize = "768*72";
+    //   }
+    //   let width = boardSize.split("*")[0];
+    //   let height = boardSize.split("*")[1];
+    //   //获取内容
+    //   let contentWidth = document.getElementById("templateDivText").offsetWidth;
+    //   let contentHeight =
+    //     document.getElementById("templateDivText").offsetHeight;
+    //   switch (alignmentNum) {
+    //     case "1":
+    //       this.startTxt_x = "000";
+    //       break;
+    //     case "2":
+    //       this.startTxt_x = this.formatNum(
+    //         (width - contentWidth) / 2 < 0 ? 0 : (width - contentWidth) / 2,
+    //         3
+    //       );
+    //       break;
+    //     case "3":
+    //       this.startTxt_x = this.formatNum(
+    //         width - contentWidth <= 0 ? 0 : width - contentWidth,
+    //         3
+    //       );
+    //       break;
+    //     case "4":
+    //       this.startTxt_y = "000";
+    //       break;
+    //     case "5":
+    //       this.startTxt_y = this.formatNum(
+    //         (height - contentHeight) / 2 < 0 ? 0 : (height - contentHeight) / 2,
+    //         3
+    //       );
+    //       break;
+    //     case "6":
+    //       this.startTxt_y = this.formatNum(
+    //         height - contentHeight <= 0 ? 0 : height - contentHeight,
+    //         3
+    //       );
+    //       break;
+    //   }
+    // },
     /*增加新的内容*/
     addTemplateContent() {
       if (this.templateContent.length >= 7) {

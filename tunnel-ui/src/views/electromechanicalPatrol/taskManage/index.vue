@@ -244,7 +244,7 @@
                  ></el-option>
                </el-select>
 
-           </div>
+        </div>
           <div>
             <span>任务名称</span>
             <el-input
@@ -460,7 +460,7 @@
             style="width: 100%; background: #fff"
             border
             height="358px"
-            class="dialogTable"
+            class="dialogTable allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -540,7 +540,7 @@
               {{ pat.xcTime }}
             </div>
           </div>
-          <div style="background-color: white; padding: 10px">
+          <div style=" padding: 10px">
             <div class="test">
               设备描述：<span>{{ pat.eqFaultDescription }}</span>
             </div>
@@ -1370,7 +1370,7 @@ export default {
       this.fileData.append("taskStatus","0");
       this.fileData.append("tunnelId", this.form.tunnelId);
       this.fileData.append("taskName", this.form.taskName);
-     //判断是否选择点
+      //判断是否选择点
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return

@@ -99,3 +99,11 @@ export function updateState(query) {
     params: query
   })
 }
+
+// 触发控制
+export function workTriggerInfo(id) {
+  return request({
+    url: '/strategy/workTriggerInfo/' + id,
+    method: 'get'
+  })
+}

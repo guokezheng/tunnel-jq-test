@@ -45,12 +45,38 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" @click="resetQuery"  type="primary" plain >重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['device:protocol:add']"
+        >新增
+        </el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['device:protocol:edit']"
+        >修改
+        </el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['device:protocol:remove']"
+        >删除
+        </el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -86,7 +112,7 @@
         >删除
         </el-button>
       </el-col>
-      <!--<el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -97,11 +123,11 @@
           v-hasPermi="['device:protocol:export']"
         >导出
         </el-button>
-      </el-col>-->
+      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ID" align="center" prop="id"/>
       <el-table-column label="设备品牌" align="center" prop="brandId">

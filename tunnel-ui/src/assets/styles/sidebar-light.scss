@@ -64,21 +64,61 @@
       background: #012E51;
       width: calc(100% - 30px);
       margin: 15px auto;
-      padding: 15px 20px !important;
+      padding: 15px 20px ;
       color: #fff;
-      .el-table__body-wrapper::-webkit-scrollbar {
-        background-color: #012E51;
+      ::-webkit-scrollbar {
         width: 0px;
-        height: 10px;
       }
-    
-      /* table滚动条的滑块*/
-      // .el-table__body-wrapper::-webkit-scrollbar-thumb {
-      //   background-color: #00c2ff;
-      // }
-      // ::-webkit-scrollbar {
-      //   width: 0px;
-      // }
+      .el-checkbox{
+        color: #fff;
+
+      }
+      .el-radio-button__inner{
+        color: #fff;
+
+      }
+      .el-table{
+        background: #012E51 ;
+        
+      }
+      .el-table--group, .el-table--border{
+        border: none !important;
+      }
+      .el-card{
+        color: #fff;
+
+      }
+      .card{
+        background: #084E84 !important;
+        .test{
+          color: #fff;
+
+        }
+        .card-col{
+          color: #fff;
+          div{
+            span{
+              color: #fff;
+
+            }
+          }
+        }
+        .card-col1{
+          .row{
+            background: #084E84 !important;
+            .row-card1{
+            background: #084E84 !important;
+
+            }
+          }
+          
+        }
+        .card-cols .col-test{
+          color: #fff;
+
+        }
+      }
+      
       .el-form-item__label{
         color: #fff;
       }
@@ -897,6 +937,7 @@
       color: #fff;
       width: 100%;
       margin: 0;
+      padding: 0 !important;
       // background-color: #fff;
       // border-left: solid 2px #00c2ff;
       // border-right: solid 2px #00c2ff;
@@ -931,7 +972,7 @@
       // border: solid 1px #01AAFD;
     }
     .el-date-editor .el-range-input{
-      background-color: #00152B !important;
+      background-color: #fff !important;
       color: white;
 
     }
@@ -1054,7 +1095,7 @@
     }
     
     .el-dialog__header{
-      display: none;
+      // display: none;
     }
     // 表格隔行变色
     .tableEvenRow{
@@ -1076,7 +1117,7 @@
       background: transparent;
     }
     .el-table{
-      background: transparent;
+      background: #071930 !important;
       .el-table__body{
         width: 100%;
       }

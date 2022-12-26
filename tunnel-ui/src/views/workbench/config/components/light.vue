@@ -77,6 +77,13 @@
           </el-col>
         </el-row>
         <div class="lineClass"></div>
+        <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+          <el-slider
+            v-model="stateForm.brightness"
+            :max="100"
+            class="sliderClass"
+          ></el-slider>
+        </el-form-item>
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">
@@ -98,7 +105,13 @@
                       : '',
                   ]"
                 >
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '1' && stateForm.eqType == (1 || 2)">
+                  <el-row
+                    class="flex-row"
+                    v-if="
+                      stateForm.eqDirection == '1' &&
+                      stateForm.eqType == (1 || 2)
+                    "
+                  >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -114,7 +127,13 @@
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqDirection == '2'&& stateForm.eqType == (1 || 2)">
+                  <el-row
+                    class="flex-row"
+                    v-if="
+                      stateForm.eqDirection == '2' &&
+                      stateForm.eqType == (1 || 2)
+                    "
+                  >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -136,7 +155,7 @@
                       :height="iconHeight"
                       :src="item.url[0]"
                     />
-                  
+
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
@@ -171,7 +190,7 @@
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
-import { getDevice } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
 import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
 
@@ -180,7 +199,9 @@ export default {
   data() {
     return {
       title: "",
-      stateForm: {}, //弹窗表单
+      stateForm: {
+        brightness: 0,
+      }, //弹窗表单
       eqTypeStateList: [],
       visible: false,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -211,11 +232,9 @@ export default {
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
             this.stateForm.state = response.data.state;
-            console.log(this.stateForm.state, "this.stateForm.state");
             this.getEqTypeStateIcon();
           });
         });
-        
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -247,7 +266,7 @@ export default {
             iconUrl.push(img);
           }
         }
-        console.log(iconUrl,);
+        console.log(iconUrl);
 
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
@@ -284,21 +303,28 @@ export default {
       }
     },
     handleOK() {
-      console.log(this.stateForm.state,"单选框点击绑定")
+      console.log(this.stateForm.state, "单选框点击绑定");
       const param = {
         devId: this.stateForm.eqId, //设备id
-        state :this.stateForm.state
+        state: this.stateForm.state,
       };
 
       controlDevice(param).then((response) => {
-        if(response.data == 0){
+        if (response.data == 0) {
           this.$modal.msgError("控制失败");
-        }else if(response.data == 1){
+        } else if (response.data == 1) {
           this.$modal.msgSuccess("控制成功");
-
         }
 
         this.$emit("dialogClose");
+      });
+      const params = {
+        bright: this.stateForm.brightness,
+        controlType: 0,
+        deviceId: this.eqInfo.equipmentId,
+      };
+      setBrightness(params).then((res) => {
+        console.log(res, "亮度");
       });
     },
     // 关闭弹窗
@@ -343,6 +369,22 @@ export default {
   width: 240px;
   height: 40px;
   line-height: 40px;
+}
+::v-deep.sliderClass {
+  .el-slider__runway {
+    width: 100%;
+    // background-color: #006784;
+    margin: 12px 0;
+  }
+  .el-slider__bar {
+    background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
+  }
+  .el-slider__button {
+    width: 10px;
+    height: 10px;
+    border: solid 1px #fff;
+    background-color: #ff9300;
+  }
 }
 </style>
   

@@ -864,7 +864,7 @@
     }
     
     .el-date-editor .el-range-input{
-      background-color: #00152B !important;
+      background-color: #fff !important;
       color: white;
 
     }
@@ -1092,7 +1092,7 @@
       color: #003a5d;
     }
     .el-dialog__header{
-      display: none;
+      // display: none;
     }
     //鼠标停留在table
     .el-table--enable-row-hover .el-table__body tr:hover > td {

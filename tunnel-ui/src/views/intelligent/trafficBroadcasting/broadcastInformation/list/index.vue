@@ -17,12 +17,35 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['broadcastInformation:list:add']"
+        >新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['broadcastInformation:list:edit']"
+        >修改</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['broadcastInformation:list:remove']"
+        >删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -56,9 +79,9 @@
         >删除</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="listList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="广播名称" align="center" prop="broadcastName" />
       <el-table-column label="广播位置" align="center" prop="broadcastLocation" />

@@ -52,11 +52,15 @@
                   color: getColorStyle(item.COLOR),
                   fontSize: getFontSize(item.FONT_SIZE),
                   fontFamily: item.FONT,
+                 
+
                 }"
               >
+              <!-- width:getDevicePixel(addForm.devicePixel,0),
+                  height:getDevicePixel(addForm.devicePixel,1), -->
                 <span
                   :style="{
-                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
+                    left: getCoordinate1(item.COORDINATE.substring(0, 3)) ,
                     top: getCoordinate2(item.COORDINATE.substring(3, 6)),
                   }"
                   style="position: absolute"
@@ -143,7 +147,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="设备厂商:">
-                    {{ getBrandName(stateForm.brandName) }}
+                    {{ getBrandName(stateForm.supplierName) }}
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -153,7 +157,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="分辨率:">
-                    {{ stateForm.devicePixel }}
+                    {{ addForm.devicePixel }}
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -172,7 +176,7 @@
           <el-button
             type="primary"
             size="mini"
-            @click="addInfo()"
+            @click="openDialogVisible(1)"
             style="width: 80px"
             class="submitButton"
             >添加信息</el-button
@@ -190,11 +194,47 @@
         <div
           style="
             width: calc(100% - 30px);
-            height: 60px;
+            min-height: 60px;
             border: solid 1px white;
             margin: 0 auto 10px;
+            background: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
           "
-        ></div>
+        >
+          <div
+          style="{
+            backgroundColor: #000000;
+            color: yellow;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+          }"
+         
+          :style="{
+            width: boardWidth + 'px',
+            height: boardHeight + 'px',
+          }"
+          class="blackBoard"
+        >
+          <span
+            style="line-height: 1; position: absolute; white-space: nowrap"
+            :style="{
+              color: addForm.COLOR,
+              fontSize: addForm.FONT_SIZE,
+              fontFamily: addForm.FONT,
+              letterSpacing: addForm.SPEED + 'px',
+              zIndex: '1000',
+              left: addForm.COORDINATE?addForm.COORDINATE.substring(0, 3) + 'px':'',
+              top: addForm.COORDINATE?addForm.COORDINATE.substring(3, 6) + 'px':'',
+            }"
+            class="textBoard"
+            v-html="addForm.CONTENT?addForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp'):''"
+          ></span>
+         
+        </div>
+        </div>
         <el-form
           ref="form"
           :model="addForm"
@@ -229,12 +269,14 @@
                   v-model="addForm.screenSize"
                   placeholder="请选择分辨率"
                   style="width: 90%"
+
                 >
                   <el-option
                     v-for="(item, index) in screenSizeOptions"
                     :key="index"
                     :label="item.type"
                     :value="item.type"
+                    @click.native="changeScreenSize(item.type)"
                   >
                   </el-option>
                 </el-select>
@@ -242,7 +284,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="内容位置">
-                <el-radio-group v-model="addForm.COORDINATE" size="mini">
+                <el-radio-group v-model="addForm.position" size="mini">
                   <el-radio-button label="左"></el-radio-button>
                   <el-radio-button label="中"></el-radio-button>
                   <el-radio-button label="右"></el-radio-button>
@@ -344,7 +386,7 @@
     <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
-      width="530px"
+      width="520px"
       append-to-body
       :visible="mesModeVisible"
       :before-close="closeMesMode"
@@ -407,8 +449,12 @@
       :boardEmitItem="this.boardEmitItem"
       @receiveForm="receiveForm"
       v-if="this.showEmit"
-      @dialogClose="dialogClose"
+      @dialogClose="dialogClose1"
     ></editInfo>
+    <addinfo
+      ref="addinfo"
+      @addInfo="addInfo"
+    ></addinfo>
   </div>
 </template>
   
@@ -417,18 +463,22 @@ import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { listDevice } from "@/api/board/informationBoard.js"; //查询弹窗信息
-import { getAllVmsTemplate } from "@/api/board/template";
+import { getAllVmsTemplate, uploadBoardEditInfo } from "@/api/board/template";
 import boardData from "@/views/information/board/boardData.json";
 import editInfo from "@/views/information/board/editInfo";
+import addinfo from "@/views/information/board//addinfo";
 
+import { getBoardEditInfo } from "@/api/information/api.js";
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   components: {
     editInfo,
+    addinfo
   },
   data() {
     return {
       openDialog: false,
+      associatedDeviceId:'',
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraVisible: true, //摄像机弹窗
@@ -439,16 +489,20 @@ export default {
       boardEmitItem: {},
       showEmit: false,
       index_: 0,
+      boardWidth:400,
+      boardHeight:40,
+      
       addForm: {
-        category: "",
-        screenSize: "",
-        COORDINATE: "中",
-        CONTENT: "",
-        FONT: "",
-        FONT_SIZE: "",
-        COLOR: "",
-        ACTION: "",
-        STAY: "",
+        category: "0",
+        screenSize: "400*40",
+        COORDINATE: "000000",
+        CONTENT: "山东高速欢迎你",
+        FONT: "黑体",
+        FONT_SIZE: "32px",
+        COLOR: "yellow",
+        ACTION: 1,
+        STAY: 500,
+        position:1,
       },
       iotTemplateCategoryList: [],
       screenSizeOptions: [
@@ -607,14 +661,98 @@ export default {
   created() {
     console.log(this.eqInfo.equipmentId, "equipmentIdequipmentId");
     this.getmessage();
-    this.getAllVmsTemplate();
-    this.onSubmit();
+    // this.getAllVmsTemplate();
+    // this.onSubmit();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   methods: {
+    // 信息发布
+    releaseInfo(){
+      console.log(this.contentList, "this.contentListthis.contentList");
+      var content = "";
+      var playList = "[Playlist]<r><n>";
+      var Item_Start = "ITEM_NO=";
+      var Item_Content = "ITEM";
+      content += playList;
+      var length = parseInt(this.contentList.length);
+      var Item_No = Item_Start + length + "<r><n>";
+      var value = "";
+      content += Item_No;
+      for (var i = 0; i < this.contentList.length; i++) {
+        value = ("000" + i).slice(-3);
+        content += Item_Content + value + "=";
+        content += this.contentList[i].STAY + ",";
+        content += this.contentList[i].ACTION + ",";
+        content += this.contentList[i].SPEED + "," + "\\";
+        content += "C" + this.contentList[i].COORDINATE + "\\";
+        content += "f" + this.getFontValue(this.contentList[i].FONT);
+        content +=
+          this.contentList[i].FONT_SIZE.substring(0, 2) +
+          this.contentList[i].FONT_SIZE.substring(0, 2) +
+          "\\";
+        content += "c" + this.getColorValue(this.contentList[i].COLOR);
+        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, '<r><n>');
+        
+        if (i + 1 != this.contentList.length) {
+          content += "<r><n>";
+        }
+        console.log(content, "content");
+      }
+      let protocolType = "GUANGDIAN_V33";
+      let deviceld = this.associatedDeviceId.toString();
+      uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+        console.log(response, "返回结果");
+      });
+    },
+    getFontValue(font) {
+      if (font == "黑体") return "h";
+      if (font == "楷体") return "k";
+      if (font == "仿宋") return "f";
+      if (font == "隶书") return "l";
+      return "s";
+    },
+    getColorValue(color) {
+      if (color == "蓝色") return "000000255000";
+      if (color == "绿色") return "000255000000";
+      if (color == "透明色") return "t";
+      if (color == "红色") return "255000000000";
+      return "255255000000"; //黄色
+    },
+    // 转分辨率
+    getDevicePixel(devicePixel,num){
+      if(devicePixel){
+        return devicePixel.split("*")[num] + 'px';
+
+      }
+    },
+    // 打开添加信息弹窗
+    openDialogVisible(type) {
+      // this.devicePixel = this.form.devicePixel
+      if (type == 1) {
+        this.$refs.addinfo.init(this.addForm.devicePixel, type);
+      } else {
+        this.$refs.addinfo.init(this.devicePixelMode, type);
+      }
+      console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
+    },
+    // 接收子组件新增待发模板
+    addInfo(form) {
+      console.log(form, "待发新增");
+      this.contentList.push(form);
+      console.log(this.contentList, "this.contentListthis.contentList");
+      this.$forceUpdate();
+    },
+    // 新增 修改分辨率
+    changeScreenSize(size){
+      console.log(size,"00000000000000000000");
+      this.boardWidth = size.split("*")[0];
+      this.boardHeight = size.split("*")[1];
+
+      this.$forceUpdate()
+    },
     // 接收子组件form表单 修改
     receiveForm(form) {
       // if (this.editType == 2) {
@@ -652,7 +790,7 @@ export default {
       console.log(item);
       this.boardEmitItem = item;
       // console.log(this.form.devicePixel,"this.form.devicePixel");
-      // this.boardEmitItem.screenSize = this.stateForm.devicePixel;
+      this.boardEmitItem.screenSize = this.addForm.devicePixel;
       // this.boardEmitItem.deviceId = this.deviceId;
       this.boardEmitItem.type = type;
 
@@ -688,36 +826,24 @@ export default {
     //   this.showEmit = true;
     // },
     onSubmit() {
-      // var that = this;
-      // if (
-      //   this.checkboxValue[0] == "undefined" ||
-      //   this.checkboxValue[0] == null
-      // ) {
-      //   return;
-      // }
-      // getBoardInfo(this.checkboxValue[0]).then((res) => {
-      //   console.log(res, "getBoardInfo");
-      // this.deviceId = res.data.deviceId;
-      // if (res.data.deviceId) {
-      //   this.disabledButton = false;
-      // } else {
-      //   this.disabledButton = true;
-      // }
-      // });
-
+      // getBoardEditInfo(this.associatedDeviceId).then((response) => {
+      //   console.log(response, "getBoardInfo");
+     
+      
       var response = {};
       response = boardData;
       var parseObject = JSON.parse(response);
+      console.log(parseObject,"parseObject")
       var protocolType = parseObject.support.PROTOCOL_TYPE;
       var contents = parseObject.content;
 
-      if (
-        typeof contents == "undefined" ||
-        typeof protocolType == "undefined"
-      ) {
-        this.$message(response.msg);
-        return;
-      }
+      // if (
+      //   typeof contents == "undefined" ||
+      //   typeof protocolType == "undefined"
+      // ) {
+      //   this.$message(response.msg);
+      //   return;
+      // }
       // this.supplier = protocolType;
       var currRowId = "";
       var reg = /,/g;
@@ -738,6 +864,7 @@ export default {
         console.log(con, "con");
         this.contentList = con;
       }
+    // })
     },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
@@ -780,10 +907,15 @@ export default {
       }
     },
     // 情报板管理右侧查询接口
-    getAllVmsTemplate() {
-      getAllVmsTemplate("0").then((res) => {
+    allVmsTemplate() {
+      const param = {
+        devicePixel:this.addForm.devicePixel,
+        category : 0
+      }
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
+        this.$forceUpdate()
         // console.log(this.templateList,"this.templateList");
       });
     },
@@ -809,7 +941,11 @@ export default {
     handleChange(active) {
       console.log(active);
       this.activeNames = active;
-      getAllVmsTemplate(active).then((res) => {
+      const param = {
+        devicePixel:this.addForm.devicePixel,
+        category : active
+      }
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
         // console.log(this.templateList,"this.templateList");
@@ -817,48 +953,52 @@ export default {
     },
 
     getCoordinate1(coordinate, screenSize) {
+      console.log(this.addForm.devicePixel,"this.addForm.devicePixel");
       var screen = "";
       if (!screenSize) {
-        screen = "400*40";
+        screen = this.addForm.devicePixel.split("*")[0];
       } else {
         screen = screenSize.split("*")[0];
       }
-      if (screen <= 630) {
-        var i = 630 / screen;
+
+      if (screen <= 368) {
+        var i = 368 / screen;
         return coordinate * i + "px";
       } else {
-        var i = screen / 630;
+        var i = screen / 368;
         return coordinate / i + "px";
       }
     },
     getCoordinate2(coordinate, screenSize) {
       var screen = "";
       if (!screenSize) {
-        screen = "400*40";
+        screen = this.addForm.devicePixel.split("*")[1];
       } else {
         screen = screenSize.split("*")[1];
       }
-      if (screen <= 75) {
-        var i = 75 / screen;
+
+      if (screen <= 50) {
+        var i = 50 / screen;
         return coordinate * i + "px";
       } else {
-        var i = screen / 75;
+        var i = screen / 50;
         return coordinate / i + "px";
       }
     },
     // 转字号
     getFontSize(font, screenSize) {
+      // console.log(font, screenSize)
       if (!font) {
         return;
       }
       var screen = "";
       if (!screenSize) {
-        screen = "400";
+        screen = this.addForm.devicePixel.split("*")[0];
       } else {
         screen = screenSize.split("*")[0];
       }
-      if (screen <= 407) {
-        var i = 407 / screen;
+      if (screen <= 368) {
+        var i = 368 / screen;
 
         if (font.toString().length == 2) {
           return font * i + "px";
@@ -866,7 +1006,7 @@ export default {
           return font.substring(0, 2) * i + "px";
         }
       } else {
-        var i = screen / 407;
+        var i = screen / 368;
         if (font.toString().length == 2) {
           return font / i + "px";
         } else {
@@ -907,14 +1047,18 @@ export default {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          displayH5sVideoAll(res.data.secureKey);
+          this.associatedDeviceId = res.data.associatedDeviceId
+          this.onSubmit();
+
+          // displayH5sVideoAll(res.data.secureKey);
           if (res.data.associatedDeviceId) {
             const param = {
               deviceId: res.data.associatedDeviceId,
             };
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
-              // this.stateForm = response.data.state;
+              this.addForm = response.rows[0];
+              this.allVmsTemplate()
             });
           }
         });
@@ -922,9 +1066,9 @@ export default {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    addInfo() {
-      this.infoType = "add";
-    },
+    // addInfo() {
+    //   this.infoType = "add";
+    // },
     getDirection(num) {
       for (var item of this.directionList) {
         if (item.dictValue == num) {
@@ -950,6 +1094,10 @@ export default {
     // 关闭弹窗
     handleClosee() {
       this.$emit("dialogClose");
+    },
+    dialogClose1() {
+      this.showEmit = false;
+      
     },
   },
 };
@@ -1013,7 +1161,7 @@ export default {
       border: solid 1px #e1e4e6;
       .con {
         width: 100%;
-        height: 50px;
+        height: 80px;
         margin-bottom: 10px;
         overflow: hidden;
         display: flex;
@@ -1023,7 +1171,7 @@ export default {
           border: 1px solid #f3f3f3;
           background: black;
           position: relative;
-          width: 407px;
+          width: 395px;
           float: left;
         }
         .downIcon {
@@ -1099,7 +1247,7 @@ export default {
   overflow: auto;
   .infoContent {
     width: 97%;
-    height: 60px;
+    height: 80px;
     margin: 5px 10px;
     display: flex;
     .upDown {
@@ -1122,12 +1270,14 @@ export default {
       height: 100%;
       border: solid 1px #cfd5e0;
       margin-left: 4px;
-      position: relative;
       .content {
         width: calc(100% - 10px);
         height: calc(100% - 10px);
         background: #000;
         margin: 5px auto;
+        overflow: hidden;
+      position: relative;
+
       }
     }
     .infoButton {

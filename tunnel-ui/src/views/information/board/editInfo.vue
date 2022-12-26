@@ -769,6 +769,7 @@
         }else{
           const tcontent = {
           content: this.dataForm.CONTENT,
+          text:this.dataForm.CONTENT,
           coordinate: this.dataForm.COORDINATE,
           createBy: null,
           createTime: null,

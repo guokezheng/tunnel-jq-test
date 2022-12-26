@@ -532,7 +532,8 @@ export default {
           this.contentList[i].FONT_SIZE.substring(0, 2) +
           "\\";
         content += "c" + this.getColorValue(this.contentList[i].COLOR);
-        content += this.contentList[i].CONTENT;
+        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, '<r><n>');
+        
         if (i + 1 != this.contentList.length) {
           content += "<r><n>";
         }
@@ -543,12 +544,40 @@ export default {
       uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
         console.log(response, "返回结果");
       });
-      // [Playlist]<r><n>
-      // ITEM_NO=3<r><n>
-      // ITEM000=500,1,1,\C010006\fs1616\c000255000000欢迎行驶山东高速 咨询求援请拨打96659<r><n>
-      // ITEM001=300,1,1,\C000000\fh3232\c255255000000欢迎拨打山东高速96659服务热线<r><n>
-      // ITEM002=300,1,1,\C024000\fh3232\c255255000000安全第一  平安有你
+    
     },
+    getContentInfo(content) {
+        // var content = this.boardEidtContentArea;
+        content = content.replace(/\\C.{6}/, "").trim();
+        content = content.replace(/C.{6}/, "").trim();
+        content = content.replace(/\\B.{3}/, "").trim();
+        content = content.replace(/\\y.{1}/, "").trim();
+        content = content.replace(/c.{12}/, "").trim();
+        content = content.replace(/\\b.{12}/, "").trim();
+        content = content.replace(/\\s.{12}/, "").trim();
+        content = content.replace(/\\S.{2}/, "").trim();
+        content = content.replace(/S.{2}/, "").trim();
+        content = content.replace(/f.{5}/, "").trim();
+        content = content.replace(/\\r.{12}/, "").trim();
+        content = content.replace(/\\K.{12}/, "").trim();
+        content = content.replace(/b.{12}/, "").trim();
+        content = content.replace(/\\F.{6}/, "").trim();
+        content = content.replace(/T.{12}/, "").trim();
+        content = content.replace(/\\M.{2}/, "").trim();
+        content = content.replace(/\\W/, "").trim();
+        content = content.replace(/\\\\n/, "").trim();
+        content = content.replace(/n/, "").trim();
+        content = content.replace(/N/, "").trim();
+        content = content.replace(/\\A/, "").trim();
+        content = content.replace(/A/, "").trim();
+        content = content.replace(/\\/, "").trim();
+        content = content.replace(/\\N.{2}/, "").trim();
+        if (content.indexOf('\\') != -1 && content.indexOf(',') != -1 &&
+          content.indexOf(',') != content.lastIndexOf(',')) {
+          return content.substring(content.indexOf('\\') + 1, content.length);
+        }
+        return content;
+      },
     // 接收子组件新增待发模板
     addInfo(form) {
       console.log(form, "待发新增");
@@ -1035,21 +1064,22 @@ export default {
           this.disabledButton = true;
         }
       });
-      // this.checkboxValue[0]
+      this.checkboxValue[0]
       // 获取情报板修改页面信息
-      // getBoardEditInfo(1)
-      //   .then((response) => {
-      //     if (response.code != 200) {
-      //       this.$message(response.msg);
-      //       return;
-      //     }
-      //     if (response.data[0] == undefined) {
-      //       this.$message(response.msg);
-      //       return;
-      //     }
-      var response = {};
-      response = boardData;
-      var parseObject = JSON.parse(response);
+      getBoardEditInfo(this.checkboxValue[0])
+        .then((response) => {
+          console.log(response,"response");
+          if (response.code != 200) {
+            this.$message(response.msg);
+            return;
+          }
+          if (response.data[0] == undefined) {
+            this.$message(response.msg);
+            return;
+          }
+      // var response = {};
+      // response = boardData;
+      var parseObject = JSON.parse(response.data[0]);
       var protocolType = parseObject.support.PROTOCOL_TYPE;
       var contents = parseObject.content;
       // console.log(parseObject,"parseObject")
@@ -1125,7 +1155,7 @@ export default {
       //   that.disContentList = [];
       //   that.loadingDialog = false;
       //   // this.$message(error);
-      // });
+      });
     },
     openQbbDrawer(item, index, type) {
       this.index_ = index;

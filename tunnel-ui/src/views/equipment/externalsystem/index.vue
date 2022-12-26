@@ -81,7 +81,7 @@
 <!--      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>-->
 <!--    </el-row>-->
 
-    <el-table v-loading="loading" :data="systemList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="systemList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="系统名称" align="center" prop="systemName" />
 <!--      <el-table-column label="主键" align="center" prop="id" />-->

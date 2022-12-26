@@ -166,3 +166,13 @@ export function getJlyTunnel() {
     method: 'get'
   })
 }
+
+// 加强照明 弹窗
+export function setBrightness(query) {
+  return request({
+    url: '/light/setBrightness',
+    method: 'get',
+    params: query
+
+  })
+}

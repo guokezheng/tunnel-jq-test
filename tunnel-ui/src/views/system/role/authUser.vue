@@ -22,12 +22,33 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
+        <el-button  size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="openSelectUser"
+          v-hasPermi="['system:role:add']"
+        >添加用户</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="cancelAuthUserAll"
+          v-hasPermi="['system:role:remove']"
+        >批量取消授权</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleClose"
+        >关闭</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -59,9 +80,9 @@
         >关闭</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+    </el-row> -->
 
-    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
       <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
@@ -81,8 +102,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            type="text"
-            icon="el-icon-circle-close"
+            class="tableDelButtton"
             @click="cancelAuthUser(scope.row)"
             v-hasPermi="['system:role:remove']"
           >取消授权</el-button>

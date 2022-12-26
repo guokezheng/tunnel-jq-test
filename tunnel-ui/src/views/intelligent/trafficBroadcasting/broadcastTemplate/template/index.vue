@@ -11,12 +11,35 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button type="primary" plain size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['broadcastTemplate:template:add']"
+        >新增</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['broadcastTemplate:template:edit']"
+        >修改</el-button>
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['broadcastTemplate:template:remove']"
+        >删除</el-button>
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
+    <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -49,20 +72,11 @@
           v-hasPermi="['broadcastTemplate:template:remove']"
         >删除</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['broadcastTemplate:template:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
 
-    <el-table v-loading="loading" :data="templateList" @selection-change="handleSelectionChange">
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row> -->
+
+    <el-table v-loading="loading" :data="templateList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="广播内容" align="center" prop="broadcastContent"
                         class="cell el-tooltip" :show-overflow-tooltip="true" />

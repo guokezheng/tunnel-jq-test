@@ -126,7 +126,7 @@
             <p class="zoom-title" style="font-size: 14px;">统计图表</p>
             <el-switch v-model="displayThumbnail" @change="changeThumbnail"></el-switch>
           </div> -->
-          <!-- <el-button
+          <el-button
             class="flex-row"
             type="primary"
             size="mini"
@@ -134,7 +134,7 @@
             @click="strategyPage"
           >
             控制策略
-          </el-button> -->
+          </el-button>
           <el-button
             class="flex-row"
             type="primary"
@@ -318,7 +318,7 @@
                         :class="{ focus: item.focus }"
                       >
                         <img
-                        v-show="item.eqType != '31' && item.eqType != '16'  "
+                        v-show="item.eqType != '31'  "
                           v-for="(url, indexs) in item.url"
                           style="position: absolute"
                           :style="{
@@ -364,8 +364,7 @@
                           ">
                         </img>
                         <div v-show="item.eqType == '16'"
-                        style="position: absolute;overflow:hidden;writing-mode : tb-rl;
-                            font-size:15px;color:#FFFF07;text-align: center;padding:2px"
+                        class="boardBox1"
 
                         :style="{
                           cursor:
@@ -382,11 +381,10 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          >{{item.eqName}}
+                          ><span>{{item.eqName}}</span>
                         </div>
                         <div v-show="item.eqType == '36'"
-                        style="position: absolute;overflow:hidden;writing-mode : tb-rl;
-                            font-size:15px;color:#FFFF07;text-align: center;padding:4px"
+                        class="boardBox2"
 
                         :style="{
                             cursor:
@@ -403,7 +401,7 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          >{{item.eqName}}
+                          ><span>{{item.eqName}}</span>
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -744,27 +742,24 @@
                 >相关预案</span
               >
             </div>
-            <div v-for="(item, index) in isDrawerCList" :key="index">
-              <div
-                v-for="(itm, inx) in item.slist"
-                :key="inx"
-                style="
+            <div v-for="(item, index) in isDrawerCList" :key="index"
+            style="
                   display: flex;
                   padding: 4px;
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
-                "
-              >
+                ">
+             
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
-                  {{ item.strategyName }}
+                  {{ item.name }}
                 </div>
                 <div style="width: 66px; margin-right: 5px; padding-left: 5px">
-                  {{ " >200" }}
+                  {{ item.str }}
                 </div>
-                <div class="reservePlan">{{ itm }}</div>
+                <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-          </div>
+          
         </el-drawer>
       </div>
 
@@ -813,14 +808,13 @@
               <p>Key vehicles</p>
             </div>
           </div>
-          <!-- <div id="focusCar"></div> -->
-          <div class="realTimeTable">
+          <div id="focusCar"></div>
+          <!-- <div class="realTimeTable">
             <ul>
               <li>
                 <div>车牌号</div>
                 <div>速度</div>
                 <div>车道</div>
-                <!--                <div>车型</div>-->
               </li>
             </ul>
             <vue-seamless-scroll
@@ -848,12 +842,10 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-                <!-- <div style="width: 94px; text-align: center" v-if="item.vehicleType">
-                  {{ getCheXing(item.vehicleType) }}
-                </div> -->
+              
               </div>
             </vue-seamless-scroll>
-          </div>
+          </div> -->
         </div>
         <div class="footerRight footMiniBox" style="cursor: pointer">
           <div class="footTitle">
@@ -1089,142 +1081,205 @@
       append-to-body
       v-dialogDrag
     >
-      <el-form
-        :model="queryParams"
-        ref="queryForm"
-        label-width="68px"
-        size="mini"
-      >
-        <el-row>
-          <el-form-item
-            label="设备类型"
-            prop="eqTypeId"
-            style="display: inline-block"
-          >
-            <el-select
-              v-model="queryParams.eqTypeId"
-              placeholder="请选择设备类型"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in eqTypeData"
-                :key="item.typeId"
-                :label="item.typeName"
-                :value="item.typeId"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item
-            label="隧道名称"
-            prop="tunnelId"
-            style="display: inline-block; margin-left: 20px"
-          >
-            <el-select
-              v-model="queryParams.tunnelId"
-              placeholder="请选择隧道"
-              clearable
-              size="small"
-            >
-              <el-option
-                v-for="item in eqTunnelData"
-                :key="item.tunnelId"
-                :label="item.tunnelName"
-                :value="item.tunnelId"
-              />
-            </el-select>
-          </el-form-item>
-        </el-row>
-        <el-row>
-          <el-form-item label="创建时间" style="display: inline-block">
-            <el-date-picker
-              v-model="dateRange"
-              size="small"
-              style="width: 360px"
-              value-format="yyyy-MM-dd HH-mm-ss"
-              type="datetimerange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['00:00:00', '23:59:59']"
-              class="dateRange"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item style="display: inline-block; margin-left: 20px">
-            <el-button
-              type="cyan"
-              icon="el-icon-search"
-              size="mini"
-              class="submitButton"
-              @click="handleQuery"
-              >搜索</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="resetQuery"
-              style="color: white"
-              >重置
-            </el-button>
-          </el-form-item>
-        </el-row>
-      </el-form>
-      <el-table
-        v-loading="loading"
-        :data="logList"
-        min-height="200"
-        max-height="400"
-        :default-sort="{ prop: 'createTime', order: 'descending' }"
-        @selection-change="handleSelectionChange"
-        empty-text="暂无操作日志"
-      >
-        <!-- <el-table-column type="selection" width="55" align="center" /> -->
-        <el-table-column
-          label="隧道名称"
-          align="center"
-          prop="tunnelName.tunnelName"
+    <el-tabs  v-model="operationActive">
+          <el-tab-pane label="系统日志" name="xitong"></el-tab-pane>
+          <el-tab-pane label="操作日志" name="caozuo"></el-tab-pane>
+
+    </el-tabs>
+    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'xitong'"
+             label-width="68px" style="margin-top: 10px">
+      <el-form-item label="登录地址" prop="ipaddr">
+        <el-input
+          v-model="operationParam.ipaddr"
+          placeholder="请输入登录地址"
+          clearable
+          style="width: 240px;"
+          size="small"
+          @keyup.enter.native="handleQuery"
         />
-        <el-table-column
-          label="设备类型"
-          align="center"
-          prop="typeName.typeName"
+      </el-form-item>
+      <el-form-item label="用户名称" prop="userName">
+        <el-input
+          v-model="operationParam.userName"
+          placeholder="请输入用户名称"
+          clearable
+          style="width: 240px;"
+          size="small"
+          @keyup.enter.native="handleQuery"
         />
-        <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
-        <el-table-column
-          label="操作状态"
-          align="center"
-          prop="stateName.stateName"
-        />
-        <el-table-column
-          label="控制方式"
-          align="center"
-          prop="controlType"
-          :formatter="controlTypeFormat"
-        />
-        <!-- <el-table-column label="用户名称" align="center" prop="userName" /> -->
-        <el-table-column
-          label="创建时间"
-          align="center"
-          prop="createTime"
-          width="220"
-          sortable
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select
+          v-model="operationParam.status"
+          placeholder="登录状态"
+          clearable
+          size="small"
+          style="width: 240px"
         >
-          <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createTime) }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
+          <el-option
+            v-for="dict in dict.type.sys_common_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="登录时间">
+        <el-date-picker
+          v-model="dateRange"
+          size="small"
+          style="width: 360px"
+          value-format="yyyy-MM-dd HH-mm-ss"
+          type="datetimerange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" size="mini" @click="handleQueryOperationParam">搜索</el-button>
+        <el-button size="mini" @click="resetQuery" type="primary" plain>重置</el-button>
+      </el-form-item>
+    </el-form>
+    <el-form :model="operationParam" ref="operationParam" :inline="true" v-show="operationActive == 'caozuo'"
+               label-width="68px" style="margin-top: 10px">
+      <el-form-item label="设备类型" prop="eqTypeId">
+        <el-select
+          v-model="operationParam.eqTypeId"
+          placeholder="请选择设备类型"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="item in eqTypeData"
+            :key="item.typeId"
+            :label="item.typeName"
+            :value="item.typeId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStation == '0'">
+        <el-select
+          v-model="operationParam.tunnelId"
+          placeholder="请选择隧道"
+          clearable
+          size="small"
+        >
+          <el-option
+            v-for="item in eqTunnelData"
+            :key="item.tunnelId"
+            :label="item.tunnelName"
+            :value="item.tunnelId"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="控制方式" prop="controlType">
+        <el-select v-model="operationParam.controlType" placeholder="请选择控制方式" clearable size="small">
+          <el-option
+            v-for="dict in dict.type.sd_control_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="创建时间">
+        <el-date-picker
+          v-model="dateRange"
+          size="small"
+          style="width: 360px"
+          value-format="yyyy-MM-dd HH-mm-ss"
+          type="datetimerange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :default-time="['00:00:00', '23:59:59']"
+        ></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" size="mini" @click="handleQueryOperationParam"
+        >搜索</el-button
+        >
+        <el-button size="mini" @click="resetQuery" type="primary" plain
+        >重置</el-button
+        >
+      </el-form-item>
+    </el-form>
+    <el-table ref="tables" v-loading="loading" :data="operationList1" @selection-change="handleSelectionChange"
+            :row-class-name="tableRowClassName" v-show="operationActive == 'xitong'"
+            :default-sort="{prop: 'loginTime', order: 'descending'}" max-height="430" >
+      <!-- <el-table-column type="selection" align="center" /> -->
+      <el-table-column label="访问编号" align="center" prop="infoId" />
+      <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
+      <el-table-column label="登录地址" align="center" prop="ipaddr" width="130" :show-overflow-tooltip="true" />
+      <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
+      <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
+      <el-table-column label="操作系统" align="center" prop="os" />
+      <el-table-column label="登录状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作信息" align="center" prop="msg" />
+      <el-table-column label="登录日期" align="center" prop="loginTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.loginTime) }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+      <el-table v-loading="loading" :data="operationList2" max-height="430" :default-sort="{ prop: 'createTime', order: 'descending' }"
+        @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="operationActive == 'caozuo'" >
+      <el-table-column label="序号" align="center" prop="id" display="none"/>
+
+      <el-table-column
+        label="隧道名称"
+        align="center"
+        prop="tunnelName.tunnelName"
+      />
+      <el-table-column
+        label="设备类型"
+        align="center"
+        prop="typeName.typeName"
+      />
+      <el-table-column label="设备名称" align="center" prop="eqName.eqName" />
+      <el-table-column
+        label="操作状态"
+        align="center"
+        prop="stateName.stateName"
+      />
+      <el-table-column label="控制方式" align="center" prop="controlType" :formatter="controlTypeFormat"/>
+      <el-table-column label="操作结果" align="center" prop="state" :formatter="stateFormat"/>
+      <el-table-column label="操作地址" align="center" prop="operIp" />
+      <el-table-column
+        label="创建时间"
+        align="center"
+        prop="createTime"
+        width="180"
+        sortable
+      >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
       <pagination
-        v-show="total > 0"
-        :total="total"
-        :page.sync="queryParams.pageNum"
-        :limit.sync="queryParams.pageSize"
-        @pagination="getList"
+        v-show="total1 > 0 && operationActive == 'xitong'"
+        :total="total1"
+        :page.sync="operationParam.pageNum"
+        :limit.sync="operationParam.pageSize"
+        @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-      <!-- <div slot="footer">
-        <el-button type="primary" @click="cancel">关 闭</el-button>
-      </div> -->
+      <pagination
+        v-show="total2 > 0 && operationActive == 'caozuo'"
+        :total="total2"
+        :page.sync="operationParam.pageNum"
+        :limit.sync="operationParam.pageSize"
+        @pagination="getOperationList(operationActive)"
+        class="paginationWorkbench"
+      />
+     
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2386,10 +2441,12 @@
       class="workbench-dialog explain-table icon-dialog"
       :title="title"
       :visible.sync="explainVisible"
-      width="560px"
+      width="1000px"
       append-to-body
     >
-      <el-table
+      <img src="@/assets/logo/equipment_log/all.png" 
+      style="width:1000px;height:auto;padding:20px"/>
+      <!-- <el-table
         ref="multipleTable"
         :data="eqIcon"
         tooltip-effect="dark"
@@ -2417,7 +2474,7 @@
         </el-table-column>
         <el-table-column prop="explain" label="含义说明" show-overflow-tooltip>
         </el-table-column>
-      </el-table>
+      </el-table> -->
       <div slot="footer">
         <el-button type="primary" size="mini" @click="cancel">关 闭</el-button>
       </div>
@@ -2428,9 +2485,68 @@
       class="workbench-dialog explain-table strategyClass eventDiglog"
       :title="title"
       :visible.sync="strategyVisible"
-      width="70%"
+      width="1000px"
       append-to-body
     >
+    <el-tabs  v-model="strategyActive" @tab-click="handleClick">
+          <el-tab-pane :label="strategyTypeGroup[0].dictLabel" name="richang"></el-tab-pane>
+          <el-tab-pane :label="strategyTypeGroup[1].dictLabel" name="yujing"></el-tab-pane>
+    </el-tabs>
+    <el-form
+          :model="queryParams"
+          ref="queryForm"
+          :inline="true"
+          
+          label-width="68px"
+        >
+          <el-form-item label="隧道名称" prop="tunnelId">
+            <el-select
+              v-model="queryParams.tunnelId"
+              placeholder="请选择隧道"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="item in tunnelData"
+                :key="item.tunnelId"
+                :label="item.tunnelName"
+                :value="item.tunnelId"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="策略名称" prop="strategyName">
+            <el-input
+              v-model="queryParams.strategyName"
+              placeholder="请输入策略名称"
+              clearable
+              size="small"
+              @keyup.enter.native="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="策略类型" prop="strategyType">
+            <el-select
+              v-model="queryParams.strategyType"
+              placeholder="请选择策略类型"
+              clearable
+              size="small"
+            >
+              <el-option
+                v-for="dict in strategyTypeOptions"
+                :key="dict.dictValue"
+                :label="dict.dictLabel"
+                :value="dict.dictValue"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="mini" @click="handlestrategyQuery"
+            >搜索</el-button
+            >
+            <el-button size="mini" @click="resetQuery" type="primary" plain
+            >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
       <el-table
         ref="multipleTable"
         :data="strategyList"
@@ -2474,7 +2590,14 @@
           </template>
         </el-table-column>
       </el-table>
-
+      <pagination
+          v-show="total > 0"
+          :total="total"
+          :page.sync="queryParams.pageNum"
+          :limit.sync="queryParams.pageSize"
+          @pagination="handlestrategyQuery"
+          class="paginationWorkbench"
+        />
       <div slot="footer">
         <el-button type="primary" @click="strategyCancel">关 闭</el-button>
       </div>
@@ -2787,6 +2910,7 @@ import {
   listStrategy,
   getStrategy,
   handleStrategy,
+  workTriggerInfo
 } from "@/api/event/strategy";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
@@ -2836,6 +2960,7 @@ import {
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
 import { getVehicleSelectList } from "@/api/surveyType/api"; //车辆类型
+import { list } from "@/api/monitor/logininfor";
 
 let configData = {}; //配置信息
 let wrapperClientX = 0;
@@ -2869,6 +2994,38 @@ export default {
 
   data() {
     return {
+      // 查询参数
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        tunnelId: null,
+        strategyName: null,
+        strategyType: null,
+        strategyInfo: null,
+        schedulerTime: null,
+        jobTime: null,
+        strategyGroup:1,
+      },
+      dictCode:"0",
+      strategyTypeGroup:[],
+      strategyActive:'richang',
+      total2:0,
+      total1:0,
+      operationList1:[],
+      operationList2:[],
+      operationParam:{
+        ipaddr:'',
+        userName:"",
+        status:'',
+        eqTypeId:'',
+        tunnelId:'',
+        controlType:'',
+        pageNum:1,
+        pageSize:10,
+      },
+     
+      dateRange:[],
+      operationActive:'xitong',
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
@@ -2937,7 +3094,13 @@ export default {
       // checked4: false,
       // checked5: false,
       // checked6: false,
-      isDrawerCList: [],
+      isDrawerCList: [
+        // {
+        //   str:'>12',
+        //   name:'CO预警',
+        //   plan:['射流风机控制执行：正转']
+        // }
+      ],
 
       value1: new Date(),
       // wheel:'wheel.prevent',
@@ -2967,6 +3130,12 @@ export default {
         controlType: null,
         state: null,
         description: null,
+        strategyName: null,
+        strategyType: null,
+        strategyInfo: null,
+        schedulerTime: null,
+        jobTime: null,
+        strategyGroup:1,
       },
       // 操作日志表格数据
       logList: [],
@@ -3545,6 +3714,8 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
+    
+    
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -3562,6 +3733,11 @@ export default {
     this.getTunnel();
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
+    });
+    // 策略组信息
+    this.getDicts("sd_strategy_group").then((response) => {
+      this.strategyTypeGroup = response.data;
+      console.log(this.strategyTypeGroup,"this.strategyTypeGroup")
     });
     this.getDicts("sd_operation_log_state").then((response) => {
       this.operationStateOptions = response.data;
@@ -3613,14 +3789,6 @@ export default {
       console.log(11111111111111);
       this.getTunnelList();
     },
-    // "$store.state.manage.manageStation": function (newVal, oldVal) {
-    //   console.log(newVal, "监听到啦监听到啦监听到啦监听到啦监听到啦");
-    //   if(newVal == )
-    //   this.manageStation == '0'
-    //   this.$cache.local.set("manageStationSelect", newVal);
-    //   this.getTunnelList()
-    // },
-
     sdEventList(event) {
       // console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
@@ -3860,7 +4028,7 @@ export default {
     this.initEnergyConsumption();
     this.getTimeData();
     // this.vehicleEcharts()
-    // this.specialEcharts()
+    this.specialEcharts()
     let that = this;
     window.onresize = () => {
       return (() => {
@@ -3897,6 +4065,38 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    
+    // 操作日志 搜索
+    handleQueryOperationParam(){
+      this.operationParam.pageNum = 1;
+      this.getOperationList(this.operationActive);
+    },
+    getOperationList(inx){
+      if(this.manageStation == '1'){
+          this.operationParam.tunnelId = this.$cache.local.get("manageStationSelect")
+        }
+      this.loading = true;
+      // if ( inx == 'xitong' ) {
+        console.log(this.operationParam,"this.queryParams");
+        list(this.addDateRange(this.operationParam, this.dateRange)).then(response => {
+          console.log(response,"系统日志")
+            this.operationList1 = response.rows;
+            this.total1 = response.total;
+            // this.loading = false;
+          }
+        );
+      // } else if (inx == 'caozuo' ) {
+        
+        listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
+          (response) => {
+            console.log(response, "操作日志")
+            this.operationList2 = response.rows;
+            this.total2 = response.total;
+            this.loading = false;
+          }
+        );
+      // }
+    },
     carShowChange(val) {
       this.carShow = val;
     },
@@ -4216,12 +4416,11 @@ export default {
       this.drawerA = false;
       this.drawerB = false;
 
-      listStrategy({
-        strategyType: 2,
-        tunnelId: this.currentTunnel.id,
-      }).then((response) => {
+      workTriggerInfo(
+        this.currentTunnel.id,
+      ).then((response) => {
         console.log(response, "自动触发抽屉");
-        this.isDrawerCList = response.rows;
+        this.isDrawerCList = response.data;
       });
     },
     zoomSwitchChange(val) {
@@ -4287,24 +4486,27 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
-      this.getList();
+      // this.getList();
     },
     /** 查询操作日志列表 */
-    getList() {
-      this.loading = true;
-      listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
-        (response) => {
-          console.log(response, "操作日志列表");
-          this.logList = response.rows;
-          this.total = response.total;
-          this.loading = false;
-        }
-      );
-    },
+    // getList() {
+    //   this.loading = true;
+    //   listLog(this.addDateRange(this.queryParams, this.dateRange)).then(
+    //     (response) => {
+    //       console.log(response, "操作日志列表");
+    //       this.logList = response.rows;
+    //       this.total = response.total;
+    //       this.loading = false;
+    //     }
+    //   );
+    // },
     /** 重置按钮操作 */
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.resetForm("operationParam1");
+
+      
       this.handleQuery();
     },
     // 控制方式   3：手动 1：时间控制 2：光强控制字典翻译
@@ -4650,7 +4852,7 @@ export default {
         // that.initechartsB(res.data)
       });
       // that.initeChartsEnd()
-      // that.loadFocusCar()
+      that.loadFocusCar()
     },
     // 获取最近七天数组
     dateFormat(dateData) {
@@ -4762,8 +4964,15 @@ export default {
             padding: [10, 20, 0, -40],
           },
           splitLine: {
-            show: false,
-          },
+              show: true,
+              lineStyle: {
+                //分割线的样式
+                color: ["#4E6B83"],
+                width: 1,
+                type: "dashed",
+              },
+            },
+
           axisLabel: {
             formatter: "{value}",
             textStyle: {
@@ -4777,6 +4986,7 @@ export default {
             //   color:'#0a88bd'
             // }
           },
+
           // offset:20,
         },
         series: [
@@ -4891,11 +5101,14 @@ export default {
               axisTick: {
                 show: false,
               },
+              max : 200,
+              min : 0,
+              splitNumber : 5,
               splitLine: {
                 show: true,
                 lineStyle: {
                   //分割线的样式
-                  color: ["rgba(0,0,0,0.3)"],
+                  color: ["#4E6B83"],
                   width: 1,
                   type: "dashed",
                 },
@@ -5026,7 +5239,9 @@ export default {
           xAxis: {
             type: "category",
             boundaryGap: false,
-            data: this.keyVehiclesXData,
+            // data: this.keyVehiclesXData,
+            data: [1,2,3,4,5,6,7,8,9],
+
             axisLabel: {
               textStyle: {
                 color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
@@ -5055,6 +5270,7 @@ export default {
                 fontSize: 10,
               },
             },
+            
             axisLine: {
               show: false,
             },
@@ -5065,7 +5281,7 @@ export default {
               show: true,
               lineStyle: {
                 //分割线的样式
-                color: ["rgba(0,0,0,0.3)"],
+                color: ["#4E6B83"],
                 width: 1,
                 type: "dashed",
               },
@@ -5105,7 +5321,9 @@ export default {
                   ]),
                 },
               },
-              data: this.keyVehiclesYData,
+              // data: this.keyVehiclesYData,
+              data: [65,43,23,65,34,45,23,87,45],
+
             },
           ],
         };
@@ -7072,19 +7290,35 @@ export default {
       this.loading = true;
       this.strategyVisible = true;
       this.title = "控制策略";
-      if (this.currentTunnel.id) {
-        listStrategy({
-          strategyType: 0,
-          tunnelId: this.currentTunnel.id,
-        }).then((response) => {
-          this.strategyList = response.rows;
-          this.loading = false;
-        });
-      }
+      this.queryParams.pageNum = 1;
+      this.handlestrategyQuery();
+      
+      // if (this.currentTunnel.id) {
+      //   listStrategy({
+      //     strategyType: 0,
+      //     tunnelId: this.currentTunnel.id,
+      //   }).then((response) => {
+      //     this.strategyList = response.rows;
+      //     this.loading = false;
+      //   });
+      // }
+    },
+    handleClick(tab, event) {
+      this.dictCode = tab.index;
+      this.queryParams.strategyGroup = Number(tab.index) + Number(1);
+      this.handlestrategyQuery();
     },
     // 关闭控制策略对话框
     strategyCancel() {
       this.strategyVisible = false;
+    },
+    handlestrategyQuery(){
+      this.loading = true;
+      listStrategy(this.queryParams).then((response) => {
+        this.strategyList = response.rows;
+        this.total = response.total;
+        this.loading = false;
+      });
     },
     // 发送控制指令
     handleController(row) {
@@ -7107,7 +7341,8 @@ export default {
       // });
       this.title = "操作日志";
       this.operationLogDialog = true;
-      this.getList();
+      this.getOperationList("xitong");
+      // this.getList();
     },
     /* 打开图标说明对话框*/
     iconExplain() {
@@ -7945,7 +8180,7 @@ export default {
 .footer {
   width: 100%;
   height: 25%;
-  padding: 0px 30px;
+  padding: 0px 16px;
   // margin-top: 10px;
   display: flex;
   padding-bottom: 5px;
@@ -8810,6 +9045,10 @@ input {
     padding: 0 15px;
     margin-bottom: 60px;
   }
+  .el-tabs{
+    padding: 0 15px;
+
+  }
 }
 ::v-deep .eventDiglog .el-button--medium {
   height: 22px !important;
@@ -9227,8 +9466,9 @@ input {
 
 .strategyClass {
   .el-table .cell {
-    height: auto;
+    min-height: 38px;
     white-space: nowrap;
+    line-height: 38px;
   }
 
   // .el-table__body {
@@ -9434,4 +9674,54 @@ input {
   border-radius: 50%;
   position: absolute;
 }
+.boardBox1{
+  position: absolute;
+  overflow:hidden;
+  writing-mode : tb-rl;
+  white-space: nowrap;
+  font-size:15px;
+  color:#FFFF07;
+  text-align: center;
+  padding:2px;
+}
+.boardBox1 span {
+      display: inline-block;
+      /*inline样式不能使用动画*/
+      animation: boardBox1 10s linear infinite; /*滚动动画*/
+  }
+  @keyframes boardBox1 {
+      from {
+          transform: translateY(120px); /*div多宽就写多宽*/
+      }
+
+      to {
+          transform: translateY(-100%);
+      }
+  }
+  .boardBox2{
+    position: absolute;
+    overflow:hidden;
+    writing-mode : tb-rl;
+    white-space: nowrap;
+    font-size:15px;
+    color:#FFFF07;
+    text-align: center;
+    padding:4px
+  }
+  .boardBox2 span {
+      display: inline-block;
+      /*inline样式不能使用动画*/
+      animation: boardBox2 10s linear infinite; /*滚动动画*/
+  }
+  @keyframes boardBox2 {
+      from {
+          transform: translateY(240px); /*div多宽就写多宽*/
+      }
+
+      to {
+          transform: translateY(-100%);
+      }
+  }
+
+
 </style>

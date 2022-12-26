@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.electromechanicalPatrol;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -97,7 +98,7 @@ public interface SdTaskListMapper
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(SdTaskList sdTaskList );
+    List<SdTaskList> getTaskList(@Param("taskStatus")String taskStatus,@Param("taskName")String taskName,@Param("startTime") String startTime, @Param("endTime")String endTime );
 
     /**
      * 操作记录
@@ -119,4 +120,17 @@ public interface SdTaskListMapper
      * @return
      */
     int insertTaskOpt(SdTaskOpt sdTaskOpt);
+
+    /**
+     * 获取任务状态
+     * @return
+     */
+    List<SdTaskList> getTaskStatus();
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    List<SdTaskList> getTaskToDo(String deptId);
 }

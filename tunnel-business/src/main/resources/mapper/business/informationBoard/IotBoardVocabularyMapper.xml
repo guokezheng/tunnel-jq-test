@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="word != null  and word != ''"> and word like concat('%', #{word}, '%')</if>
             <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
         </where>
+        order by creat_time desc
     </select>
     
     <select id="selectIotBoardVocabularyById" parameterType="Long" resultMap="IotBoardVocabularyResult">

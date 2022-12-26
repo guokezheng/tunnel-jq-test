@@ -233,6 +233,30 @@
             >
             </el-date-picker>
           </div>
+          <div>
+            <span>所属隧道</span>
+               <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
+                 <el-option
+                   v-for="item in eqTunnelData"
+                   :key="item.tunnelId"
+                   :label="item.tunnelName"
+                   :value="item.tunnelId"
+                 ></el-option>
+               </el-select>
+
+           </div>
+          <div>
+            <span>任务名称</span>
+            <el-input
+              type="text"
+              placeholder="请输入内容"
+              v-model="form.taskName"
+              style="width: 92%;margin-left: 8%;"
+            >
+            </el-input>
+
+          </div>
+
         </div>
         <div class="describe">
           <span>任务描述</span>
@@ -602,7 +626,7 @@
         <div class="table-row" v-if="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
-          <div style="width: 20%">凤凰山隧道 / {{item.optPersonId}}</div>
+          <div style="width: 20%">{{item.tunnelName}} / {{item.optPersonId}}</div>
           <div style="width: 30%">{{item.optTime}}</div>
         </div>
         <div v-if="taskOpt.length==0">
@@ -652,7 +676,7 @@ import {
   getDevicesList,
   abolishList, addTask, getFaultList, updateTask,
 } from "@/api/electromechanicalPatrol/taskManage/task";
-import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
+import {getEquipmentInfo, getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
 import {download} from "@/utils/request";
@@ -709,7 +733,7 @@ export default {
       dialogTotal: 0,
       pageNum: 1,
       pageSize: 10,
-
+      taskName:"",
       tunnelId: "",
       defaultProps: {
         value: "id",
@@ -719,6 +743,8 @@ export default {
       treeData: [],
       tableData1: [],
       tableData2: [],
+      //所属隧道
+      eqTunnelData: {},
       options1value: "", //设备清单绑定
       options2value: "", //故障清单绑定
       boxList: [],//巡检点list
@@ -792,7 +818,8 @@ export default {
         optType:"",
         optPersonId:"",
         optTime:"",
-        optDescription:""
+        optDescription:"",
+        tunnelName:""
       },
       //巡查点参数
       patrolNews: {
@@ -827,8 +854,8 @@ export default {
   created() {
     this.getBz();
     this.getList();
-
-    this.getTreeSelect();
+    this.getTunnel();
+    /*this.getTreeSelect();*/
     //外观情况
     this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
@@ -862,6 +889,13 @@ export default {
       let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
       _this.gettime = yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
       return  _this.gettime;
+    },
+
+    tunnelSelectGet(e){
+        treeselect(this.form.tunnelId).then((response) => {
+          this.treeData = response.data;
+          console.log(response.data, "隧道部门树");
+        });
     },
 
     //  上移
@@ -914,6 +948,16 @@ export default {
     onSiteInspectionSelection(selection) {
       this.dialogSelection = selection;
       console.log("=============="+this.dialogSelection, "this.dialogSelection");
+    },
+    /** 所属隧道 */
+    getTunnel() {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
+        console.log(response.rows, "所属隧道列表");
+        this.eqTunnelData = response.rows;
+      });
     },
     // 获取设备table
     getTable(deviceType) {
@@ -1106,12 +1150,13 @@ export default {
       });
     },
     /** 隧道部门树 */
-    getTreeSelect() {
+    /*getTreeSelect() {
+      alert(this.form.tunnelId);
       treeselect().then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-    },
+    },*/
 
     // 表单重置
     reset() {
@@ -1128,6 +1173,7 @@ export default {
         walkerId: null,
         taskEndtime: null,
         taskCxtime: null,
+        taskName:"",
         siteDescription: null,
         createBy: null,
         createTime: null,
@@ -1322,10 +1368,19 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","2");
       this.fileData.append("taskStatus","0");
-      //判断是否选择点
+      this.fileData.append("tunnelId", this.form.tunnelId);
+      this.fileData.append("taskName", this.form.taskName);
+     //判断是否选择点
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return
+      }
+      //判断两个字段是否填写
+      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
+        return this.$modal.msgWarning('请选择隧道名称')
+      }
+      if (this.form.taskName == "") {
+        return this.$modal.msgWarning('请填写任务名称')
       }
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
@@ -1401,11 +1456,19 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","0");
       this.fileData.append("taskStatus","");
-
+      this.fileData.append("tunnelId", this.form.tunnelId);
+      this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
+      }
+      //判断两个字段是否填写
+      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
+        return this.$modal.msgWarning('请选择隧道名称')
+      }
+      if (this.form.taskName == "") {
+        return this.$modal.msgWarning('请填写任务名称')
       }
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");

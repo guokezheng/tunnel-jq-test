@@ -32,6 +32,27 @@ public class SdTaskList extends BaseEntity
     @Excel(name = "计划完成时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date endPlantime;
 
+    /** 隧道id */
+    @Excel(name = "隧道id")
+    private String tunnelId;
+
+
+    /** 任务名称 */
+    @Excel(name = "任务名称")
+    private String taskName;
+
+
+
+    private String time;
+
+    public String getTime() {
+        return this.time;
+    }
+
+    public void setTime(final String time) {
+        this.time = time;
+    }
+
     /** 派单人员 */
     @Excel(name = "派单人员")
     private String dispatcher;
@@ -73,6 +94,14 @@ public class SdTaskList extends BaseEntity
     /** 现场情况描述 */
     @Excel(name = "现场情况描述")
     private String siteDescription;
+
+    private String dictLabel;
+
+
+    private String dictValue;
+
+
+
     /*是否超时*/
     private String ifchaosgu;
 
@@ -86,6 +115,39 @@ public class SdTaskList extends BaseEntity
 
     /*巡检点数量*/
     private Integer totalNum;
+
+
+    public String getTunnelId() {
+        return this.tunnelId;
+    }
+
+    public void setTunnelId(final String tunnelId) {
+        this.tunnelId = tunnelId;
+    }
+
+    public String getTaskName() {
+        return this.taskName;
+    }
+
+    public void setTaskName(final String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getDictLabel() {
+        return this.dictLabel;
+    }
+
+    public void setDictLabel(final String dictLabel) {
+        this.dictLabel = dictLabel;
+    }
+
+    public String getDictValue() {
+        return this.dictValue;
+    }
+
+    public void setDictValue(final String dictValue) {
+        this.dictValue = dictValue;
+    }
 
     public Integer getTotalNum() {
         return this.totalNum;

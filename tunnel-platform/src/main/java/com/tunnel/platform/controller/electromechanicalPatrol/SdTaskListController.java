@@ -188,9 +188,9 @@ public class SdTaskListController extends BaseController
      * 获取单位隧道所树形结构
      * @return
      */
-    @GetMapping("/treeselect")
+    @PostMapping("/treeselect")
     @ApiOperation("获取隧道树形结构")
-    public Result treeselect()
+    public Result treeselect(@RequestBody String tunnelId)
     {
         String deptId = String.valueOf(SecurityUtils.getDeptId());
         if (deptId == null) {
@@ -200,7 +200,7 @@ public class SdTaskListController extends BaseController
         List<SysDeptTunnel>deptTunnels = new ArrayList<>();
 
         List<SysDept> depts = deptService.selectTunnelDeptList(deptId);
-        List<SdTunnels> tunnels = tunnelsService.selectTunnelList(deptId);
+        List<SdTunnels> tunnels = tunnelsService.selectTunnelList(deptId,tunnelId);
         if(depts!=null&&depts.size()>0){
             for(int i = 0;i<depts.size();i++){
                 SysDeptTunnel deptTunnel = new SysDeptTunnel();
@@ -296,6 +296,16 @@ public class SdTaskListController extends BaseController
     }
 
     /**
+     * app端获取任务状态
+     * @return
+     */
+    @PostMapping("/app/getTaskStatus")
+    public Result getTaskStatus(){
+        List<SdTaskList> taskList = sdTaskListService.getTaskStatus();
+        return Result.success(taskList);
+    }
+
+    /**
      * app  巡查任务列表
      * @param
      * @param sdTaskList
@@ -303,7 +313,44 @@ public class SdTaskListController extends BaseController
      */
     @PostMapping("/app/getTaskList")
     public Result getTaskList(SdTaskList sdTaskList){
-        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList);
+        String startTime = "";//开始时间
+        String endTime = "";//结束时间
+        if(sdTaskList.getTime()!=null&&!"".equals(sdTaskList.getTime())){//不为空\
+            //  0：最近1周；1：最近3周；2：最近1月；3：最近3月
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar c = Calendar.getInstance();
+            Date date = new Date();
+            endTime = format.format(date);//结束时间
+            if("0".equals(sdTaskList.getTime())){//最近一周
+                c.setTime(new Date());
+                c.add(Calendar.DATE, - 7);
+                Date d = c.getTime();
+                startTime = format.format(d);
+            }else if("1".equals(sdTaskList.getTime())){//最近3周
+                c.setTime(new Date());
+                c.add(Calendar.DATE, - 21);
+                Date d = c.getTime();
+                startTime = format.format(d);
+            }else if("2".equals(sdTaskList.getTime())){//最近1月
+                c.setTime(new Date());
+                c.add(Calendar.MONTH, -1);
+                Date m = c.getTime();
+                startTime = format.format(m);
+            }else if("3".equals(sdTaskList.getTime())){//最近3月
+                c.setTime(new Date());
+                c.add(Calendar.MONTH, -3);
+                Date m3 = c.getTime();
+                startTime = format.format(m3);
+            }else{
+
+                String [] s= sdTaskList.getTime().split(",",0);
+                startTime = s[0];
+                endTime = s[1];
+            }
+        }
+
+
+        List<SdTaskList> taskList = sdTaskListService.getTaskList(sdTaskList.getTaskStatus(),sdTaskList.getTaskName(),startTime,endTime);
         if(taskList!=null&&taskList.size()>0){
             for(int i=0;i<taskList.size();i++){
                 if(taskList.get(i).getId()!=null){
@@ -519,5 +566,20 @@ public class SdTaskListController extends BaseController
     {
         return toAjax(sdTaskListService.savePatrol(sdPatrolList));
     }
+
+    /**
+     * app端首页待处理任务单
+     * @return
+     */
+    @PostMapping("/app/taskToDo")
+    public Result taskToDo(){
+        String deptId = SecurityUtils.getDeptId();
+        List<SdTaskList> taskList = sdTaskListService.getTaskToDo(deptId);
+        Map<String, Object> map=new HashMap<String, Object>();
+        map.put("task",taskList);
+        map.put("num", taskList.size());
+        return Result.success(map);
+    }
+
 
 }

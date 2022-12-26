@@ -798,7 +798,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesInfo" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile
+        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile,d.install_time
         from sd_devices d
         left join sd_equipment_type t on d.eq_type = t.type_id
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id

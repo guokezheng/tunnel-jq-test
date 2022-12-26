@@ -76,8 +76,8 @@ export function listBz(query) {
 export function treeselect(query) {
   return request({
     url: '/task/list/treeselect',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
   })
 }
 

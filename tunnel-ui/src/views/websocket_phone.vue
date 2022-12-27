@@ -5,7 +5,7 @@
 
 <script>
   import {mapState} from "vuex";
-  import {onMessage} from "@/api/equipment/deviceBrand/brand";
+  import {onMessage} from "@/api/equipment/phone/phone";
 
   export default {
     name: "Websocket",

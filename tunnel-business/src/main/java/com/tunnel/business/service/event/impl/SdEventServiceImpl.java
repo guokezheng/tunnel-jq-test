@@ -21,6 +21,7 @@ import com.tunnel.business.mapper.event.*;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
@@ -77,6 +78,9 @@ public class SdEventServiceImpl implements ISdEventService {
 
     @Autowired
     private SdStrategyMapper sdStrategyMapper;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
 
     /**
      * 查询事件管理
@@ -166,6 +170,8 @@ public class SdEventServiceImpl implements ISdEventService {
             eventFlow.setFlowDescription("问题忽略");
             eventFlow.setFlowHandler(SecurityUtils.getUsername());
             sdEventFlowMapper.insertSdEventFlow(eventFlow);
+            //主动安全-状态更新为已忽略时推送值高速云
+            radarEventServiceImpl.sendDataToOtherSystem(null,sdEventMapper.selectSdEventById(sdEvent.getId()));
         }
         //更新事件置信度
         if(sdEvent.getConfidenceList() != null){

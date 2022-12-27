@@ -121,6 +121,27 @@ public class SdFaultList extends BaseEntity
     @ApiModelProperty("默认图标")
     private List<SdTrafficImage> iFileList;
 
+    @ApiModelProperty("上报区分")
+    private String faultEscalationType;
+
+    @ApiModelProperty("设备类型")
+    private String eqType;
+
+    public String getEqType() {
+        return eqType;
+    }
+
+    public void setEqType(String eqType) {
+        this.eqType = eqType;
+    }
+
+    public String getFaultEscalationType() {
+        return faultEscalationType;
+    }
+
+    public void setFaultEscalationType(String faultEscalationType) {
+        this.faultEscalationType = faultEscalationType;
+    }
 
     public List<SdTrafficImage> getiFileList() {
         return this.iFileList;

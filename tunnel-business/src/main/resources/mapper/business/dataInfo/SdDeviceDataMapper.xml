@@ -69,6 +69,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateKafkaDeviceData" parameterType="SdDeviceData">
+        update sd_device_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data != null">data = #{data},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId} AND item_id = #{itemId}
+    </update>
+
     <delete id="deleteSdDeviceDataById" parameterType="Long">
         delete from sd_device_data where id = #{id}
     </delete>

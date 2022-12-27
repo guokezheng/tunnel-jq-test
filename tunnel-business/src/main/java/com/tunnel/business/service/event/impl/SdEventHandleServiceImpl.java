@@ -13,6 +13,7 @@ import com.tunnel.business.domain.event.SdEventHandle;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
 import com.tunnel.business.mapper.event.SdEventHandleMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.utils.json.JSONObject;
 import com.zc.common.core.websocket.WebSocketService;
@@ -33,6 +34,9 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
 
     @Autowired
     private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
 
     /**
      * 查询事件处置信息
@@ -95,6 +99,8 @@ public class SdEventHandleServiceImpl implements ISdEventHandleService
                 sdEvent1.setId(sdEvent.getId());
                 sdEvent1.setEventState("1");
                 sdEventMapper.updateSdEvent(sdEvent1);
+                //交通事件、主动安全 事件状态更新为已处理时推送至高速云
+                radarEventServiceImpl.sendDataToOtherSystem(null,sdEventMapper.selectSdEventById(sdEvent.getId()));
             }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();

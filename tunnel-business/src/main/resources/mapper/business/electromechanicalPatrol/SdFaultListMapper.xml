@@ -27,10 +27,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="imgFileId"    column="img_file_id"    />
+        <result property="faultEscalationType"    column="fault_escalation_type"    />
     </resultMap>
 
     <sql id="selectSdFaultListVo">
-        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id from sd_fault_list
+        select id, tunnel_id, fault_location, fault_type, fault_source, fault_fxtime, fault_cxtime, fault_tbr, fault_tbtime, eq_id, eq_status, eq_run_status, fault_code, fault_level, fallt_remove_statue, fault_description, fault_status,img_file_id, fault_escalation_type from sd_fault_list
     </sql>
 
     <select id="selectSdFaultListList" parameterType="SdFaultList" resultMap="SdFaultListResult">
@@ -84,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
             <if test="imgFileId != null">img_file_id,</if>
+            <if test="faultEscalationType != null">fault_escalation_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -106,6 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="imgFileId != null">#{imgFileId},</if>
+            <if test="faultEscalationType != null">#{faultEscalationType},</if>
          </trim>
     </insert>
 
@@ -129,6 +132,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultDescription != null">fault_description = #{faultDescription},</if>
             <if test="faultStatus != null">fault_status = #{faultStatus},</if>
             <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
+            <if test="faultEscalationType != null">fault_escalation_type = #{faultEscalationType},</if>
         </trim>
         where id = #{id}
     </update>
@@ -304,5 +308,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 LEFT JOIN sd_tunnels tunnel ON tunnel.tunnel_id = fault.tunnel_id
         WHERE
             fault.id = #{id}
+    </select>
+
+    <select id="selectEqRunStatus" resultType="java.lang.String">
+        SELECT
+            dd.data
+        FROM
+            sd_device_data dd
+                LEFT JOIN sd_device_type_item dti ON dd.item_id = dti.id
+        WHERE
+            1 = 1
+          AND dd.device_id = #{deviceId}
+          AND dti.device_type_id = #{deviceType}
+    </select>
+
+    <select id="selectDeviceFault" resultType="sdFaultList">
+        SELECT
+            fl.eq_id AS eqId,
+            d.eq_type AS eqType
+        FROM
+            sd_fault_list fl
+                LEFT JOIN sd_devices d ON fl.eq_id = d.eq_id
+        WHERE
+            1 = 1
+          AND fl.fault_escalation_type = '1'
     </select>
 </mapper>

@@ -81,4 +81,12 @@ public interface SdDeviceDataMapper
     public List<Map<String, String>> selectDWDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
 
     public List<Map<String, String>> selectDNDataList(@Param("deptId") String deptId, @Param("tunnelId") String tunnelId,@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+
+    /**
+     * 修改设备实时数据（华为kafka）
+     *
+     * @param sdDeviceData 设备实时数据（华为kafka）
+     * @return 结果
+     */
+    public int updateKafkaDeviceData(SdDeviceData sdDeviceData);
 }

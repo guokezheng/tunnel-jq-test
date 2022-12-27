@@ -808,3 +808,7 @@ CREATE TABLE `sd_event_handle` (
 -- 事件类型表新增字段
 ALTER TABLE `sd_event_type`
     ADD COLUMN `is_usable` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 1 COMMENT '是否可用 0：禁用 1：启用' AFTER `icon_url`;
+
+-- 设备故障表新增字段
+ALTER TABLE `sd_fault_list`
+    ADD COLUMN `fault_escalation_type` varchar(1) NULL DEFAULT 0 COMMENT '上报区分 0：人为填报 1：设备上报' AFTER `eq_run_status`;

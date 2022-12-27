@@ -332,5 +332,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE
             1 = 1
           AND fl.fault_escalation_type = '1'
+          AND fl.tunnel_id = "JQ-WeiFang-JiuLongYu-HSD"
     </select>
 </mapper>

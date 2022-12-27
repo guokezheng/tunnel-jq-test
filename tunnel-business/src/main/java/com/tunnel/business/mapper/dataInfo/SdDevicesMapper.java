@@ -25,7 +25,7 @@ public interface SdDevicesMapper
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
 
-
+	SdDevices getDevicesListByExternalId(String externalId);
 	/**
 	 * 查询设备详情
 	 *

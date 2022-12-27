@@ -404,6 +404,17 @@ public class SdDevices extends BaseEntity {
      **/
     private String runStatus;
 
+    //摄像机类型
+    private String camType;
+
+    public String getCamType() {
+        return camType;
+    }
+
+    public void setCamType(String camType) {
+        this.camType = camType;
+    }
+
     public String getRunStatus() {
         return this.runStatus;
     }

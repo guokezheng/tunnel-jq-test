@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/requestThree'
 
 // 查询供配电单元列表
 export function listPower(query) {

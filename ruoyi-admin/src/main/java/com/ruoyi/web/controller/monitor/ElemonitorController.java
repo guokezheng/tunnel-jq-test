@@ -16,12 +16,12 @@ public class ElemonitorController {
     public Result getToken()
     {
         String token = "123456789";
-        String url = "";
+        String url = "10.7.187.220:8080/login";
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("username", "admin");
         map.put("password", "admin HSD123!@#");
-        //JSONObject json = JSONObject.parseObject(HttpUtils.sendPost(url,JSONObject.toJSONString(map)));
-        //token =  (String)json.get("token");//获取token数据
+        JSONObject json = JSONObject.parseObject(HttpUtils.sendPost(url,JSONObject.toJSONString(map)));
+        token =  (String)json.get("token");//获取token数据
         return Result.success(token);
     }
 }

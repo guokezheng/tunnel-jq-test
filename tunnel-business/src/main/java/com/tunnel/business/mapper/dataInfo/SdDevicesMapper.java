@@ -254,4 +254,12 @@ public interface SdDevicesMapper
     List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
 
 	public List<SdDevices> selectSdDevicesListByEqTypes(@Param("guidanceLampTypeId") Long guidanceLampTypeId, @Param("lunKuoBiaoTypeId") Long lunKuoBiaoTypeId);
+
+	/**
+	 * 查询紧急电话和广播
+	 * @param devices
+	 * @return
+	 */
+	SdDevices selectPhoneSpk(SdDevices devices);
+
 }

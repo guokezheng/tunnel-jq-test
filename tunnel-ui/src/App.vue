@@ -10,11 +10,13 @@
   <div id="app">
     <router-view />
     <websocket />
+    <websocket_phone/>
   </div>
 </template>
 
 <script>
 import websocket from "@/views/websocket";
+import websocket_phone from "@/views/websocket_phone";
 export default {
   name: "App",
   data() {
@@ -24,6 +26,7 @@ export default {
   },
   components: {
     websocket,
+    websocket_phone
   },
   watch: {
     $route(to, from) {

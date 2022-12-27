@@ -5,9 +5,9 @@
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
-      label-width="40px"
+      label-width="70px"
     >
-      <el-form-item label="图片名称" prop="pictureName">
+      <el-form-item label="图片名称" prop="pictureName" >
         <el-input
           v-model="queryParams.pictureName"
           placeholder="请输入图片名称"

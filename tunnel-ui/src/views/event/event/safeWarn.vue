@@ -1989,9 +1989,9 @@ export default {
         if (this.form.faultDescription == "null") {
           this.form.faultDescription = "";
         }
-        console.log(
+        /*console.log(
           "that.form.iFileList====================" + that.form.iFileList.length
-        );
+        );*/
         that.planRoadmapUrl(that.form.iFileList);
         this.disstate = false;
 
@@ -2163,16 +2163,19 @@ export default {
     async planRoadmapUrl(iFileList) {
       let that = this;
       that.fileList = [];
-      for (let i = 0; i < iFileList.length; i++) {
-        let iconName = iFileList[i].imgName;
-        // let iconUrl = await that.picture(iFileList[i].url);
-        let iconUrl = iFileList[i].imgUrl;
-        that.fileList.push({
-          name: iconName,
-          url: iconUrl,
-          fId: iFileList[i].businessId,
-        });
+      if(iFileList!=null){
+        for (let i = 0; i < iFileList.length; i++) {
+          let iconName = iFileList[i].imgName;
+          // let iconUrl = await that.picture(iFileList[i].url);
+          let iconUrl = iFileList[i].imgUrl;
+          that.fileList.push({
+            name: iconName,
+            url: iconUrl,
+            fId: iFileList[i].businessId,
+          });
+        }
       }
+
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {

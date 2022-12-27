@@ -220,3 +220,8 @@ url:
   syn: "http://10.166.154.213:30001/equipment/CarInfo/list"
   edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
   detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
+
+video-platform:
+  ip: "10.166.147.60"
+  port: "9021"
+  deptId: "10000037"

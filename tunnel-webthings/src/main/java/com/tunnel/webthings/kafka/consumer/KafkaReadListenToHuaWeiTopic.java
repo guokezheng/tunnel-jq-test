@@ -621,7 +621,20 @@ public class KafkaReadListenToHuaWeiTopic {
         jsonObject.put("devType",sdDevices.getEqType());
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus",sdDevices.getEqStatus());
-        jsonObject.put("netstatus",sdDevices.getGatewayNetstatus());
+        if("1".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","连通");
+            jsonObject.put("devStatusRemark","正常");
+        }else if("2".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","离线");
+            jsonObject.put("devStatusRemark","离线");
+        }else if("3".equals(sdDevices.getEqStatus())){
+            jsonObject.put("devStatusRemark","故障");
+        }else {
+            jsonObject.put("netstatus","1");
+            jsonObject.put("netStatusRemark","连通");
+        }
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
         jsonObject.put("expands",sdDevices);
         return jsonObject;

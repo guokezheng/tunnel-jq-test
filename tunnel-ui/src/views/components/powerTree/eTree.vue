@@ -1,7 +1,7 @@
 <!--公用供配电单元树-->
 <template>
   <div>
-    <el-row v-if="filter">
+    <el-row v-if="filter" class="eTreeInput">
       <el-input
         v-model="deptName"
         placeholder="请输入变电站名称"

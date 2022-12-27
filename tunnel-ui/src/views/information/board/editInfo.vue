@@ -650,6 +650,7 @@
         this.itemPropertyMap = new HashMap();
 
         this.dataForm = this.boardEmitItem
+        this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')
       },
       alignment(alignmentNum) {
         console.log(alignmentNum,"alignmentNum");

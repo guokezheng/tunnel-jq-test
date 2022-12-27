@@ -14,7 +14,13 @@ export default {
   // 注册组件
   components: {},
   // 计算属性
-  computed: {},
+  computed: {
+    sideTheme: {
+      get() {
+        return this.$store.state.settings.sideTheme;
+      },
+    },
+  },
   // 生周期函数
   mounted() {
     this.initEChartsFn()
@@ -84,7 +90,7 @@ export default {
           itemWidth: 6,
           itemGap: 20,
           textStyle: {
-            color: '#556677'
+            color: this.sideTheme == "theme-light" ? "#fff" : "#000"
           },
           data: ['最大值', '最小值', '平均值']
         },
@@ -124,7 +130,7 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: '#000000'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               }
             },
             axisTick: {
@@ -133,7 +139,7 @@ export default {
             axisLabel: {
               interval: 0,
               textStyle: {
-                color: '#556677'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               },
               // 默认x轴字体大小
               fontSize: 12,
@@ -197,7 +203,7 @@ export default {
             type: 'value',
             name: '',
             nameTextStyle: {
-              color: '#000000'
+              color: this.sideTheme == "theme-light" ? "#fff" : "#000"
             },
             axisTick: {
               show: true
@@ -205,12 +211,12 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: '#DCE2E8'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               }
             },
             axisLabel: {
               textStyle: {
-                color: '#556677'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               }
             },
             splitLine: {

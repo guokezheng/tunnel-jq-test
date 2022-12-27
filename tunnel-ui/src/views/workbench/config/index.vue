@@ -2488,9 +2488,9 @@
       width="1000px"
       append-to-body
     >
-    <el-tabs  v-model="strategyActive" @tab-click="handleClick">
-          <el-tab-pane :label="strategyTypeGroup[0].dictLabel" name="richang"></el-tab-pane>
-          <el-tab-pane :label="strategyTypeGroup[1].dictLabel" name="yujing"></el-tab-pane>
+    <el-tabs  v-model="strategyActive" @tab-click="handleClick" >
+          <el-tab-pane label="日常策略" name="richang"></el-tab-pane>
+          <el-tab-pane label="预警策略" name="yujing"></el-tab-pane>
     </el-tabs>
     <el-form
           :model="queryParams"
@@ -2994,6 +2994,8 @@ export default {
 
   data() {
     return {
+      strategyTypeOptions: [],
+
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -3110,6 +3112,7 @@ export default {
       operationLogDialog: false, //操作日志弹窗
       //设备类型
       eqTypeData: {},
+      tunnelData:[],
       //所属隧道
       eqTunnelData: {},
       // 日期范围
@@ -3731,6 +3734,12 @@ export default {
     this.lightSwitchFunc();
     this.getEqType();
     this.getTunnel();
+    listTunnels().then((response) => {
+        this.tunnelData = response.rows;
+      });
+    this.getDicts("sd_strategy_type").then((response) => {
+      this.strategyTypeOptions = response.data;
+    });
     this.getDicts("sd_control_type").then((response) => {
       this.controlTypeOptions = response.data;
     });

@@ -4,9 +4,9 @@
       style="
         width: 100%;
         padding: 10px 0;
-        background: #f5f7fa;
         text-align: center;
       "
+      class="treeTitleBox"
     >
       <el-row v-if="filter">
         <el-input

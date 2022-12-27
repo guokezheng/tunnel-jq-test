@@ -826,13 +826,13 @@ export default {
     //   this.showEmit = true;
     // },
     onSubmit() {
-      // getBoardEditInfo(this.associatedDeviceId).then((response) => {
-      //   console.log(response, "getBoardInfo");
+      getBoardEditInfo(this.associatedDeviceId).then((response) => {
+        console.log(response, "getBoardInfo");
      
       
-      var response = {};
-      response = boardData;
-      var parseObject = JSON.parse(response);
+      // var response = {};
+      // response = boardData;
+      var parseObject = JSON.parse(response.data[0]);
       console.log(parseObject,"parseObject")
       var protocolType = parseObject.support.PROTOCOL_TYPE;
       var contents = parseObject.content;
@@ -864,7 +864,7 @@ export default {
         console.log(con, "con");
         this.contentList = con;
       }
-    // })
+    })
     },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);

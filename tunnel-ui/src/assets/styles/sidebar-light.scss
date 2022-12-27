@@ -39,6 +39,41 @@
     //   padding: 0 10px;
     // }
   }
+  .box-card{
+    .treeTitleBox{
+      background: #326CA9;
+    }
+    .tree{
+      background: #326CA9;
+    }
+    
+  }
+  .elemonitorTab, .el-tabs--border-card{
+    background: #326CA9 ;
+    border: solid 1px #326CA9;
+
+  }
+  .leftTree{
+    
+    .tree{
+    background: #326CA9 ;
+
+    }
+  }
+  .state_style_center_s_zc_t, .state_style_center_s_yc_t, .state_style_center_s_lx_t{
+    color: #fff;
+  }
+  .shiDu_value, .wenDu_value{
+    color: #fff;
+  }
+  .industryModel_tit{
+    color: #fff;
+
+  }
+  .menJin_switch_name{
+    color: #fff;
+
+  }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;

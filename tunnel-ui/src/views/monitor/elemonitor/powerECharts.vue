@@ -14,7 +14,13 @@ export default {
   // 注册组件
   components: {},
   // 计算属性
-  computed: {},
+  computed: {
+    sideTheme: {
+      get() {
+        return this.$store.state.settings.sideTheme;
+      },
+    },
+  },
   // 生周期函数
   mounted() {
     this.getInitFn()
@@ -121,7 +127,7 @@ export default {
           left: '75%',
           top: '0%',
           textStyle: {
-            color: '#000',
+            color: this.sideTheme == "theme-light" ? "#fff" : "#000",
             fontSize: 15
           },
           data: xItem
@@ -139,12 +145,12 @@ export default {
             type: 'category',
             axisLine: {
               show: false,
-              color: '#A582EA'
+              color: this.sideTheme == "theme-light" ? "#fff" : "#000"
             },
 
             axisLabel: {
               // interval:0, // x轴刻度间距
-              color: '#000',
+              color: this.sideTheme == "theme-light" ? "#fff" : "#000",
               width: 100
             },
             splitLine: {
@@ -163,7 +169,7 @@ export default {
           {
             name: ' V',
             nameTextStyle: {
-              color: '#000',
+              color: this.sideTheme == "theme-light" ? "#fff" : "#000",
               fontSize: 15
             },
             type: 'value',
@@ -179,14 +185,14 @@ export default {
             axisLine: {
               show: true,
               lineStyle: {
-                color: '#e5e6e7'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               }
             },
             axisLabel: {
               show: true,
               margin: 10,
               textStyle: {
-                color: '#000'
+                color: this.sideTheme == "theme-light" ? "#fff" : "#000"
               }
             },
             axisTick: {

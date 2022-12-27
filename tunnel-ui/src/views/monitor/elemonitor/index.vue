@@ -8,7 +8,7 @@
         </el-card>
       </el-col>
       <el-col :span="20" :xs="24">
-        <el-tabs type="border-card" v-model="activeName" @tab-click="clickzhhuji">
+        <el-tabs type="border-card" v-model="activeName" @tab-click="clickzhhuji" class="elemonitorTab">
           <el-tab-pane label="日原始数据" name="first">
             <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
               <el-form-item label="日期" prop="date">

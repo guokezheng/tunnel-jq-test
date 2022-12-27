@@ -1,6 +1,6 @@
 <template>
   <!-- 全景数据 运行环境 -->
-  <div style="padding:0.5vh 0.5vw;">
+  <div style="padding:0.5vh 0.5vw;font-size: 14px;">
     <el-row :gutter="10">
       <el-col :span="4">
         <!-- 左侧树形组件 -->
@@ -682,7 +682,7 @@ export default {
 }
 .box-card-left {
   width: 100%;
-  height: 88vh;
+  height: 85vh;
 }
 .operatingEnvironment_center {
   margin: 1vh 0;
@@ -747,7 +747,7 @@ export default {
   // justify-content: space-between;
   .shiPing_list {
     width: 17vw;
-    height: 24.5vh;
+    height: 19vh;
   }
 }
 .menJin_top_men {
@@ -755,7 +755,8 @@ export default {
   border-bottom: 1px solid #eee;
 }
 .menJin {
-  height: 33vh;
+  height: 28.4vh;
+  overflow: auto;
 }
 .menJin_switch {
   width: 100%;
@@ -791,7 +792,7 @@ export default {
     margin-left: 8px;
   }
   .menJin_switch_btn {
-    margin-left: 35%;
+    margin-left: 15%;
   }
 }
 </style>

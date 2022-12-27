@@ -228,6 +228,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
+          this.stateForm.brightness = Number(res.data.brightness)
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");

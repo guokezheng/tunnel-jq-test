@@ -380,6 +380,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sn != null">sn = #{sn},</if>
             <if test="externalDeviceId != null">external_device_id = #{externalDeviceId},</if>
             <if test="associatedDeviceId != null">associated_device_id = #{associatedDeviceId},</if>
+            <if test="camType != null">cam_type = #{camType},</if>
         </trim>
         where eq_id = #{eqId}
     </update>
@@ -580,10 +581,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where host = #{host} and eq_loop = #{loop} and address = #{address}
     </select>
 
-    <select id="selectDeviceByHost" resultType="String">
-        select a.eq_id from sd_firefighting_components_address a
-        where host = #{host} and eq_id = #{eqId}
-    </select>
 
     <select id="getDevicesByTypeAndTunnel" parameterType="SdDevices" resultType="hashmap">
         select a.eq_id as eqId, a.eq_tunnel_id as eqTunnelId, a.eq_name as eqName, a.eq_type as eqType,
@@ -663,6 +660,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where f_eq_id = #{fEqId}
     </select>
 
+    <select id="getDevicesListByExternalId" parameterType="String" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"/>
+        where external_device_id = #{externalId}
+    </select>
 
     <select id="getEquipmentInfo" parameterType="String" resultType="hashmap">
         SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,e.device_state eqStatus

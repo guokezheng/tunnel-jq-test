@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/requestThree'
 
 // 查询电路列表
 export function listCircuit(query) {

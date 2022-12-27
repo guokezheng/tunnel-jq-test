@@ -107,6 +107,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
             <if test="secureKey != null  and secureKey != ''">and a.secure_key = #{secureKey}</if>
+            <if test="externalSystemId != null  and externalSystemId != ''">and a.external_system_id = #{externalSystemId}</if>
+            <if test="externalDeviceId != null  and externalDeviceId != ''">and a.external_device_id = #{externalDeviceId}</if>
             <if test="deptId != null ">
                 AND (b.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
@@ -390,6 +392,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_id = #{eqId}
     </update>
 
+    <update id="updateSdDevicesByExternalSystemId">
+        update sd_devices
+        set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
+        where external_system_id = #{externalSystemId}
+    </update>
+
     <update id="updateSdDevicesByFEqId">
         update sd_devices
         set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
@@ -612,6 +620,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFireComponentsList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select * from sd_devices where f_eq_id = #{fEqId}
+    </select>
+
+    <select id="selectDevicesListByExternalSystemId" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select * from sd_devices where external_system_id = #{externalSystemId}
     </select>
 
     <select id="selectDeviceDataAndUnit" resultType="hashmap">

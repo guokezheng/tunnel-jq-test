@@ -7,28 +7,33 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventType;
+import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +54,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
     private static SdEventMapper sdEventMapper = SpringUtils.getBean(SdEventMapper.class);
     private static SdDeviceDataMapper sdDeviceDataMapper = SpringUtils.getBean(SdDeviceDataMapper.class);
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
+    private static ExternalSystemMapper externalSystemMapper = SpringUtils.getBean(ExternalSystemMapper.class);
     private EventLoopGroup group;
 
     /**
@@ -61,65 +67,79 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
         // 主机地址
         if ("".equals(data) || data == null) {
             return;
+        } else if (!data.contains("火警") || !data.contains("模块或探头故障") || !data.contains("模块或探头恢复")
+                || !data.contains("全部声光启动") || !data.contains("全部声光停止")) {
+            return;
         }
         //拿到的报文就是纯文字的报文，直接进行解析
-        //传输格式例：火警: 1号机1回路2号地址 智能感烟 火警 层 2014-6-4 11:08:32
+        //传输格式例：火警: 1号机1回路3地址 点型感烟   001层 西核彩桥F102     2022-12-27 08:42:18
+        //         事件:+空格+机号+回路号+地址号+空格+设备类型+空格+层号+空格+地理位置+空格+年月日+空格+时分秒
         if (data.contains(":")) {
             String alarmType = data.substring(0, data.indexOf(":"));
             log.info("alarmType:" + alarmType);
             data = data.substring(data.indexOf(":") + 2);
             String host = data.substring(0, data.indexOf("号"));
-            SdDevices devices = new SdDevices();
-            devices.setIp(clientIp);
-            List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(devices);
-            SdDevices sdDevices = devicesList.get(0);
-            if (data.contains("复位")) {
-                log.info("主机{}进行了复位", sdDevices.getEqId());
-                //复位清除设备报警状态
-                SdDevices dev = new SdDevices();
-                dev.setFEqId(sdDevices.getEqId());
-                List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(dev);
-                SdDeviceData sdDeviceData = new SdDeviceData();
-                for (int j = 0;j < fireComponentsList.size();j++) {
-                    String eqId = fireComponentsList.get(j).getEqId();
-                    sdDeviceData.setDeviceId(eqId);
-                    List<SdDeviceData> dataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-                    for (int s = 0;s < dataList.size();s++) {
-                        SdDeviceData deviceData = dataList.get(s);
-                        deviceData.setData("0");
-                        deviceData.setUpdateTime(new Date());
-                        sdDeviceDataMapper.updateSdDeviceData(deviceData);
-                        sendData.pushDevicesDataNowTime(deviceData);
-                    }
-                }
-                //复位清除预警
-                SdEvent sdEvent = new SdEvent();
-                sdEvent.setEventTypeId(101L);
-                List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
-                for (int i = 0; i < sdEvents.size(); i++) {
-                    SdEvent event = sdEvents.get(i);
-                    event.setEventState("1");
-                    event.setEndTime(new Date().toString());
-                    sdEventMapper.updateSdEvent(event);
-                }
-                sdEvent.setEventTypeId(102L);
-                sdEvents = sdEventMapper.selectSdEventList(sdEvent);
-                for (int i = 0; i < sdEvents.size(); i++) {
-                    SdEvent event = sdEvents.get(i);
-                    event.setEventState("1");
-                    event.setEndTime(new Date().toString());
-                    sdEventMapper.updateSdEvent(event);
-                }
-            }
-            String fireComponentHosteqId = devicesList.get(0).getEqId();
+            //查询外部系统ID
+            ExternalSystem externalSystem = new ExternalSystem();
+            externalSystem.setSystemName("火灾报警系统");
+            externalSystem.setSystemUrl(clientIp);
+            List<ExternalSystem> externalSystems = externalSystemMapper.selectExternalSystemList(externalSystem);
+            ExternalSystem system = externalSystems.get(0);
+//            SdDevices devices = new SdDevices();
+//            devices.setExternalSystemId(system.getId());
+//            List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(devices);
+//            SdDevices sdDevices = devicesList.get(0);
+//            if (data.contains("复位")) {
+//                log.info("主机{}进行了复位", sdDevices.getEqId());
+//                //复位清除设备报警状态
+//                SdDevices dev = new SdDevices();
+//                dev.setFEqId(sdDevices.getEqId());
+//                List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(dev);
+//                SdDeviceData sdDeviceData = new SdDeviceData();
+//                for (int j = 0;j < fireComponentsList.size();j++) {
+//                    String eqId = fireComponentsList.get(j).getEqId();
+//                    sdDeviceData.setDeviceId(eqId);
+//                    List<SdDeviceData> dataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+//                    for (int s = 0;s < dataList.size();s++) {
+//                        SdDeviceData deviceData = dataList.get(s);
+//                        deviceData.setData("0");
+//                        deviceData.setUpdateTime(new Date());
+//                        sdDeviceDataMapper.updateSdDeviceData(deviceData);
+//                        sendData.pushDevicesDataNowTime(deviceData);
+//                    }
+//                }
+//                //复位清除预警
+//                SdEvent sdEvent = new SdEvent();
+//                sdEvent.setEventTypeId(101L);
+//                List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+//                for (int i = 0; i < sdEvents.size(); i++) {
+//                    SdEvent event = sdEvents.get(i);
+//                    event.setEventState("1");
+//                    event.setEndTime(new Date().toString());
+//                    sdEventMapper.updateSdEvent(event);
+//                }
+//                sdEvent.setEventTypeId(102L);
+//                sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+//                for (int i = 0; i < sdEvents.size(); i++) {
+//                    SdEvent event = sdEvents.get(i);
+//                    event.setEventState("1");
+//                    event.setEndTime(new Date().toString());
+//                    sdEventMapper.updateSdEvent(event);
+//                }
+//            }
+//            String fireComponentHosteqId = devicesList.get(0).getEqId();
+            Long systemId = system.getId();
             data = data.substring(data.indexOf("机") + 1);
             String loop = data.substring(0, data.indexOf("回"));
             data = data.substring(data.indexOf("路") + 1);
             String address = data.substring(0, data.indexOf("号"));
             data = data.substring(data.indexOf("址") + 2);
             String sourceDevice = data.substring(0, data.indexOf(" "));
+            //剩层号后的内容
             data = data.substring(data.indexOf(" ") + 1);
-            String alarmTime = data.substring(data.indexOf("层") + 2, data.length() - 4);
+            //剩地理位置后的内容
+            data = data.substring(data.indexOf(" ") + 1);
+            String alarmTime = data.substring(data.indexOf(" ") + 1);
             Date now = new Date();
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -127,26 +147,21 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             } catch (Exception e) {
                 log.error("火灾报警日期转换出现异常：" + e.getMessage());
             }
-            //根据火灾报警主机ID和回路确定是哪一批设备
-            devices.setIp(null);
-            devices.setFEqId(fireComponentHosteqId);
-            devices.setSecureKey(loop);
+            //根据火灾报警主机外部系统ID和回路确定是哪一批设备
+            SdDevices devices = new SdDevices();
+            devices.setExternalSystemId(systemId);
+            devices.setExternalDeviceId(loop);
             List<SdDevices> devicesLists = sdDevicesMapper.selectSdDevicesList(devices);
             //遍历确定是哪个部件
             String alarmComponentEqId = "";
+            SdDevices sdDevices = new SdDevices();
             for (int i = 0; i < devicesLists.size(); i++) {
                 SdDevices component = devicesLists.get(i);
                 String eqFeedbackAddress1 = component.getQueryPointAddress();
-                String[] componentAddress = eqFeedbackAddress1.split(",");
-                for (int j = 0; j < componentAddress.length; j++) {
-                    if (componentAddress[j].equals(address)) {
-                        log.info("找到部件");
-                        alarmComponentEqId = component.getEqId();
-                        sdDevices = component;
-                        break;
-                    }
-                }
-                if (!alarmComponentEqId.equals("")) {
+                if (eqFeedbackAddress1.equals(address)) {
+                    log.info("找到部件");
+                    alarmComponentEqId = component.getEqId();
+                    sdDevices = component;
                     break;
                 }
             }
@@ -154,12 +169,16 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             Long itemId = 0L;
             //查询当前属于什么事件类型
             SdEventType sdEventType = new SdEventType();
+            sdEventType.setEventType("火灾");
             if (sourceDevice.equals("手报")) {
-                sdEventType.setEventType(sourceDevice);
+                sourceDevice = "智能手动报警按钮报警";
                 itemId = Long.valueOf(DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
-            } else if (sourceDevice.equals("火焰报警器")) {
-                sdEventType.setEventType("火灾");
+            } else if (sourceDevice.equals("探测器")) {
+                sourceDevice = "火焰探测器报警";
                 itemId = Long.valueOf(DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
+            } else if (sourceDevice.equals("声光")) {
+                sourceDevice = "声光报警器报警";
+                itemId = Long.valueOf(DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
             }
             Long eventTypeId = 0L;
             if (sdEventType.getEventType() != null) {
@@ -192,7 +211,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             if (alarmType.contains("故障")) {
                 sdEvent.setEventTitle(sourceDevice + "故障事件");
             } else {
-                sdEvent.setEventTitle(sourceDevice + "，声光报警器报警事件");
+                sdEvent.setEventTitle(sourceDevice + "，火灾报警事件");
             }
             sdEvent.setEventSource("1");
             sdEvent.setEventState("0");
@@ -213,7 +232,9 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
         InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
         String clientIp = ipSocket.getAddress().getHostAddress();
         log.info("客户端ip地址：{}", clientIp);
-        String fireAlarmData = (String) msg;
+        ByteBuf btf = (ByteBuf) msg;
+        String fireAlarmData = btf.toString(Charset.forName("GBK"));
+//        String fireAlarmData = msg.toString();
         //先进行判空操作
         if (null == fireAlarmData || fireAlarmData.isEmpty()) {
             log.error("收到的消息为空！");
@@ -259,33 +280,50 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void changeFireAlarmHostAndComponentStatus(String ip, String status, String isAlarm) {
-        SdDevices hostDevice = new SdDevices();
+        //火灾报警主机已经迁移到外部系统表，通过此处修改
+        ExternalSystem externalSystem = new ExternalSystem();
+        externalSystem.setSystemName("火灾报警系统");
+        externalSystem.setSystemUrl(ip);
+        List<ExternalSystem> systemList = externalSystemMapper.selectExternalSystemList(externalSystem);
+        if (systemList.isEmpty()) {
+            return;
+        }
+        ExternalSystem system = systemList.get(0);
+//        SdDevices hostDevice = new SdDevices();
         SdDevices fireComponentDevice = new SdDevices();
-        hostDevice.setIp(ip);
-        Long fireHostEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.FIRE_ALARM_HOST.getCode()));
-        hostDevice.setEqType(fireHostEqTypeId);
-        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(hostDevice);
-        for (int i = 0; i < devicesList.size(); i++) {
-            SdDevices devices = devicesList.get(i);
-            devices.setEqStatus(status);
-            devices.setEqStatusTime(new Date());
-            sdDevicesMapper.updateSdDevices(devices);
-            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-                sendData.pushDevicesStatusToOtherSystem(devices, "1", "off");
-            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
-                sendData.pushDevicesStatusToOtherSystem(devices, "1", "on");
-            }
-            String feqId = devices.getEqId();
-            fireComponentDevice.setFEqId(feqId);
-            fireComponentDevice.setEqStatus(status);
-            fireComponentDevice.setEqStatusTime(new Date());
-            sdDevicesMapper.updateSdDevicesByFEqId(fireComponentDevice);
-            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
-                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "off");
-            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
-                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "on");
-            }
-            List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(fireComponentDevice);
+//        hostDevice.setIp(ip);
+//        Long fireHostEqTypeId = Long.parseLong(String.valueOf(DevicesTypeEnum.FIRE_ALARM_HOST.getCode()));
+//        hostDevice.setEqType(fireHostEqTypeId);
+//        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(hostDevice);
+//        for (int i = 0; i < devicesList.size(); i++) {
+//            SdDevices devices = devicesList.get(i);
+//            devices.setEqStatus(status);
+//            devices.setEqStatusTime(new Date());
+//            sdDevicesMapper.updateSdDevices(devices);
+        system.setNetworkStatus(status);
+        system.setUpdateTime(new Date());
+        externalSystemMapper.updateExternalSystem(system);
+//            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+//                sendData.pushDevicesStatusToOtherSystem(devices, "1", "off");
+//            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
+//                sendData.pushDevicesStatusToOtherSystem(devices, "1", "on");
+//            }
+//            String feqId = devices.getEqId();
+//            fireComponentDevice.setFEqId(feqId);
+        Long systemId = system.getId();
+        fireComponentDevice.setExternalSystemId(systemId);
+        fireComponentDevice.setEqStatus(status);
+        fireComponentDevice.setEqStatusTime(new Date());
+//            sdDevicesMapper.updateSdDevicesByFEqId(fireComponentDevice);
+        sdDevicesMapper.updateSdDevicesByExternalSystemId(fireComponentDevice);
+        //等推送内容确定后再修改
+//            if (status.equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+//                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "off");
+//            } else if (status.equals(DevicesStatusEnum.DEVICE_ON_LINE.getCode())) {
+//                sendData.pushDevicesStatusToOtherSystem(fireComponentDevice, "2", "on");
+//            }
+
+            List<SdDevices> fireComponentsList = sdDevicesMapper.selectDevicesListByExternalSystemId(fireComponentDevice);
             for (int j = 0; j < fireComponentsList.size(); j++) {
                 SdDevices fireComponent = fireComponentsList.get(j);
                 if ("1".equals(isAlarm)) {
@@ -299,8 +337,13 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                     }
                 } else {
                     //添加正常数据到device_data
-                    saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
-                    saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
+                    if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHENG_GUANG_BAO_JING.getCode().longValue()) {
+                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHENG_GUANG_ALARM.getCode());
+                    } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.SHOU_BAO.getCode().longValue()) {
+                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.SHOU_BAO_ALARM.getCode());
+                    } else if (fireComponent.getEqType().longValue() == DevicesTypeEnum.HUO_YAN_TAN_CE_QI.getCode().longValue()) {
+                        saveDataIntoSdDeviceData(fireComponent, isAlarm, DevicesTypeItemEnum.FLAME_DETECTOR_ALARM.getCode());
+                    }
                 }
                 //声光报警器数据推送到万基
                 Map<String, Object> map = new HashMap<>();
@@ -310,9 +353,9 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 jsonObject.put("runStatus", status);
                 jsonObject.put("alarmSource", "0");
                 map.put("deviceData", jsonObject);
-                radarEventService.sendBaseDeviceStatus(map);
+//                radarEventService.sendBaseDeviceStatus(map);
             }
-        }
+//        }
     }
 
     private void saveDataIntoSdDeviceData(SdDevices sdDevices, String value, Integer itemId) {

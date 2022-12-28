@@ -1,6 +1,16 @@
 package com.tunnel.deal.vehicleinspection;
 
 
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
+import com.tunnel.business.domain.dataInfo.SdMicrowaveRealData;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdMicrowavePeriodicStatisticsMapper;
+import com.tunnel.business.mapper.dataInfo.SdMicrowaveRealDataMapper;
+import com.tunnel.business.utils.util.RadixUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,16 +19,21 @@ import io.netty.channel.EventLoop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.InetSocketAddress;
 import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 @ChannelHandler.Sharable
 @Component
 public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(MicrowaveNettyClientHandler.class);
+
+    private static SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
 
     /**
      * 建立连接时
@@ -49,6 +64,15 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
             String host = ipSocket.getHostString();
 
             log.error("与设备" + host + ":" + port + "连接断开!");
+            SdDevices sdDevices = new SdDevices();
+            sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
+            sdDevices.setIp(host);
+            sdDevices.setPort(String.valueOf(port));
+            List<SdDevices> devices = sdDevicesMapper.selectSdDevicesList(sdDevices);
+            SdDevices dev = devices.get(0);
+            dev.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            dev.setEqStatusTime(new Date());
+            sdDevicesMapper.updateSdDevices(dev);
             MicrowaveNettyClient.channels.remove(host+":"+String.valueOf(port));
             final EventLoop eventLoop = ctx.channel().eventLoop();
         }
@@ -78,47 +102,125 @@ public class MicrowaveNettyClientHandler extends ChannelInboundHandlerAdapter {
         byteBuf.release();
 
         //log.info("接收到 " + host + ":" + port + "的数据");
-//        int rplen = OpsProtocol.parseHead(buffers);
-        // 断帧处理
-//        if(rplen == -1) {
-//            byte[] prerp = NettyClient.channels.get(host + ":" + port).getBuffer();
-//
-//            if(prerp == null) {
-//                log.info("错误的报文");
-//                return;
-//            }
-//            else {
-//                byte[] buffers2 = new byte[prerp.length+buffers.length];
-//                System.arraycopy(prerp, 0, buffers2, 0, prerp.length);
-//                System.arraycopy(buffers, 0, buffers2, prerp.length, buffers.length);
-//                buffers = buffers2;
-//
-//                rplen = OpsProtocol.parseHead(buffers2);
-//            }
-//        }
-//        if(rplen > buffers.length) {
-//            NettyClient.channels.get(host + ":" + port).setBuffer(buffers);
-//        }
-
-//        int cur = 0;
-
-//        while (cur < buffers.length) {
-//            // 粘桢处理
-//            byte[] bytes = new byte[buffers.length-cur];
-//            System.arraycopy(buffers, cur, bytes, 0, buffers.length-cur);
-//            StrcApduHead apduHead = new StrcApduHead();
-//            Head head = new Head();
-//            EnumFunName en = OpsProtocol.parseHead(bytes, head, apduHead);
-//
-//            //……
-//            // 解析报文，发送报文
-//            ctx.channel().writeAndFlush(send2);
-//            //……
-//
-//            cur += apduHead.getLength();
-//        }
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqType(DevicesTypeEnum.WEI_BO_CHE_JIAN.getCode());
+        sdDevices.setIp(host);
+        sdDevices.setPort(String.valueOf(port));
+        List<SdDevices> devices = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        SdDevices dev = devices.get(0);
+        dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+        dev.setEqStatusTime(new Date());
+        sdDevicesMapper.updateSdDevices(dev);
+        //周期统计数据
+        if(receiveStr.startsWith("FFF9") || receiveStr.startsWith("fff9")){
+            dataAnalySis(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+        }
+        //单车数据
+        if(receiveStr.startsWith("FFF8") || receiveStr.startsWith("fff8")){
+            dataAnalySingle(receiveStr, dev.getEqId(), dev.getEqTunnelId());
+        }
 
         MicrowaveNettyClient.channels.get(host + ":" + port).setActiveTime(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private static void dataAnalySis(String firstContent, String id, String tunnelId) {
+        String strArr[] = firstContent.split("FFF9");
+//		List<SdMicrowavePeriodicStatistics> list = new ArrayList<SdMicrowavePeriodicStatistics>();
+        for(int i=0;i<strArr.length;i++){
+            String str = strArr[i];
+            if(str.length()>4){
+                str = "FFF9" + str;
+/*    			String xxt = str.substring(0, 2); // 信息头
+    			String bsf = str.substring(2, 4); // 标识符
+    			String sjcd = str.substring(4, 6);// 数据长度
+    			String time = str.substring(6, 14);// 时间
+				//按位截取=======================================
+*/    			String roadId = RadixUtil.hexToDecimal(str.substring(14, 16)); // 车道号
+                String totalNum = RadixUtil.hexToDecimal(str.substring(16, 20));// 总车流量
+                String smallNum = RadixUtil.hexToDecimal(str.substring(20, 24)); // 小车流量
+                String mediumNum = RadixUtil.hexToDecimal(str.substring(24, 28)); // 中车流量
+                String largeNum = RadixUtil.hexToDecimal(str.substring(28, 32)); // 大车流量
+                //String car4 = str.substring(32, 36);// 预留
+                //String car5 = str.substring(36, 40);
+                String avgSpeed = RadixUtil.hexToDecimal(str.substring(40, 42));// 平均车速
+                String smallSpeed = RadixUtil.hexToDecimal(str.substring(42, 44));//小车车速
+                String mediumSpeed = RadixUtil.hexToDecimal(str.substring(44, 46));//中型车车速
+                String largeSpeed = RadixUtil.hexToDecimal(str.substring(46, 48));//大型车车速
+                //String speed4 = str.substring(48, 50);//预留
+                //String speed5 = str.substring(50, 52);
+//    			String avgHeadway = str.substring(52, 56);//平均车间据
+                Object avgHeadway = new BigDecimal((double) Integer.parseInt(str.substring(52, 56), 16) / 10)
+                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
+//    			String avgLength = str.substring(56, 60);//平均车长
+                Object avgLength = new BigDecimal((double) Integer.parseInt(str.substring(56, 60), 16))
+                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
+//    			String avgOccupancy = RadixUtil.hexToDecimal(str.substring(60, 64)); // 平均压占率
+                Object avgOccupancy = new BigDecimal((double) Integer.parseInt(str.substring(60, 64), 16) / 10)
+                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
+
+                Date nowDate = new Date();
+                SdMicrowavePeriodicStatistics data = new SdMicrowavePeriodicStatistics();//创建车流量对象
+                data.setDeviceId(id);//设备id
+                data.setTunnelId(tunnelId);
+                data.setLaneNo(Long.valueOf(roadId) + 1);//车道号
+                data.setCreateTime(nowDate);
+                data.setTrafficFlowTotal(totalNum);
+                data.setSmallVehicleNum(smallNum);
+                data.setSmallVehicleSpeed(smallSpeed);
+                data.setMidVehicleNum(mediumNum);
+                data.setMidVehicleSpeed(mediumSpeed);
+                data.setHeavyVehicleNum(largeNum);
+                data.setHeavyVehicleSpeed(largeSpeed);
+                data.setAvgLength(avgLength.toString());
+                data.setAvgHeadway(avgHeadway.toString());
+                data.setAvgSpeed(avgSpeed);
+                data.setAvgOccupancy(avgOccupancy.toString());
+                SpringUtils.getBean(SdMicrowavePeriodicStatisticsMapper.class).insertSdMicrowavePeriodicStatistics(data);
+//            	list.add(data);
+            }
+        }
+        //redis初始化
+//        redisService = (RedisService) SpringContextUtils.getBean(RedisService.class);
+//        redisService.setCacheObject(id,list);
+
+    }
+
+    private static void dataAnalySingle(String firstContent, String id, String tunnelId) {
+        String strArr[] = firstContent.split("FFF8");
+//		List<SdMicrowaveRealData> list = new ArrayList<SdMicrowaveRealData>();
+        for(int i=0;i<strArr.length;i++){
+            String str = strArr[i];
+            if(str.length()>4){
+                str = "FFF8" + str;
+                //按位截取=======================================
+//    			String xxt = str.substring(0, 2); // 信息头
+//    			String bsf = str.substring(2, 4); // 标识符
+//    			String sjcd = str.substring(4, 6);// 数据长度
+//    			String time = str.substring(6, 14);// 时间
+                String roadId = RadixUtil.hexToDecimal(str.substring(14, 16)); // 车道号
+                String occupationTime = RadixUtil.hexToDecimal(str.substring(16, 20));// 压占时间
+                String speed = RadixUtil.hexToDecimal(str.substring(20, 22));// 车速
+                String vehicleType = RadixUtil.hexToDecimal(str.substring(22, 24));//车种  添加枚举
+                //String spacing = RadixUtil.hexToDecimal(str.substring(24, 28));// 车间距
+                Object spacing = new BigDecimal((double) Integer.parseInt(str.substring(24, 28), 16) / 10)
+                        .setScale(1, RoundingMode.HALF_UP).doubleValue();
+                String length = RadixUtil.hexToDecimal(str.substring(28, 32));// 车长
+                Date nowDate = new Date();
+                SdMicrowaveRealData realData = new SdMicrowaveRealData();//创建车流量对象
+                realData.setDeviceId(id);//设备id
+                realData.setLaneNo(Long.valueOf(roadId) + 1);//车道号
+                realData.setCreateTime(nowDate);
+//				realData.setDirection();
+				realData.setTunnelId(tunnelId);
+                realData.setOccupationTime(occupationTime);
+                realData.setVehicleLength(length);
+                realData.setVehicleSpeed(speed);
+                realData.setHeadway(spacing.toString());
+                realData.setDeviceId(id);
+                realData.setVehicleType(vehicleType);
+                SpringUtils.getBean(SdMicrowaveRealDataMapper.class).insertSdMicrowaveRealData(realData);
+            }
+        }
     }
 
 }

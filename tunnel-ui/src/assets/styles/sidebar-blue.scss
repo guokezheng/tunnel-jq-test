@@ -90,6 +90,25 @@
       }
     }
     #app {
+      .el-dialog{
+        .evtCarStyle{
+          border: solid 1px #cfd5e0;
+  
+        }
+        .evtNum{
+          border: solid 1px #cfd5e0;
+  
+        }
+        .show-left,.show-right{
+          border: 1px solid black;
+          
+        }
+        .pagination-container{
+          position: static !important;
+          margin-top: 0px !important;
+        }
+        
+      }
       .el-select .el-input .el-select__caret{
         height: 33px;
       }
@@ -144,6 +163,8 @@
       }
       // 翻页组件
       .pagination-container {
+       
+
         background-color: transparent;
         .el-pagination__total {
           color: #606266;

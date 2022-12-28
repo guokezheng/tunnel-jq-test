@@ -77,13 +77,13 @@
           </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+        <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
             v-model="stateForm.brightness"
             :max="100"
             class="sliderClass"
           ></el-slider>
-        </el-form-item>
+        </el-form-item> -->
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">

@@ -49,10 +49,24 @@
     
   }
   .elemonitorTab, .el-tabs--border-card{
-    background: #326CA9 ;
+    background: #012E51 ;
     border: solid 1px #326CA9;
 
   }
+  .popup-result {
+    border: solid 1px #05AFE3 !important;
+    .title{
+      background: #012E51 !important;
+      color: #fff;
+    }
+    table{
+      span{
+    border: solid 1px #05AFE3 !important;
+        
+      }
+    }
+  }
+  
   .leftTree{
     
     .tree{
@@ -103,6 +117,85 @@
       color: #fff;
       ::-webkit-scrollbar {
         width: 0px;
+      }
+      .el-tabs--border-card > .el-tabs__header{
+        background: #326CA9 !important;
+        .el-tabs__item{
+          color: #fff;
+
+        }
+      }
+      .el-input--medium .el-input__inner{
+        background: #012E51 !important;
+        border: solid 1px #05AFE3;
+        color: #fff;
+      }
+      .el-input--small .el-input__inner{
+        background: #012E51 !important;
+        border: solid 1px #05AFE3;
+        color: #fff;
+      }
+      .el-textarea__inner{
+        background: #012E51 !important;
+        border: solid 1px #05AFE3;
+        color: #fff;
+      }
+      .el-upload--picture-card{
+        background: #012E51 !important;
+        color: white;
+        border: 1px solid #05AFE3;
+      }
+      .wl-transfer .transfer-left, .wl-transfer .transfer-right{
+        border: solid 1px #05AFE3;
+
+      }
+      .wl-transfer .transfer-title{
+        border-bottom: solid 1px #05AFE3;
+
+      }
+      .el-input-group__append, .el-input-group__prepend{
+        background: #326CA9 !important;
+        color: white;
+        border: 1px solid #05AFE3;
+      }
+      .vue-treeselect__control{
+        background: #012E51 !important;
+        color: white !important;
+        border: 1px solid #05AFE3 !important;
+      }
+      .el-input-number__increase, .el-input-number__decrease{
+        background: #012E51 !important;
+        color: white !important;
+        border-left: 1px solid #05AFE3;
+
+      }
+      .el-input-number__increase{
+        border-bottom: 1px solid #05AFE3;
+
+      }
+      .popup-main{
+        background: #012E51 !important;
+
+      }
+      .show-left,.show-right{
+        border: 1px solid #05AFE3;
+        
+      }
+      .el-table--border .el-table__cell{
+        border-right: rgba(225, 228, 230, 0.16) solid 1px !important;
+      }
+      .show-title{
+        border-bottom: #fff;
+      }
+      hr{
+        border: solid 1px #05AFE3;
+      }
+      .evtCarStyle{
+        border: solid 1px #05AFE3;
+      }
+      .evtNum{
+        border: solid 1px #05AFE3;
+
       }
       .el-checkbox{
         color: #fff;
@@ -1273,6 +1366,7 @@
   }
   // 隔行变色
   .allTable{
+    background: #00487F;
     .el-table__body-wrapper tbody{
       tr:nth-of-type(even){
         background-color: #004375 !important;

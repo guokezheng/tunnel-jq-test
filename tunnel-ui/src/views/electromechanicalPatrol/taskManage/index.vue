@@ -376,7 +376,7 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; background: #fff"
+            style="width: 100%; "
             border
             height="358px"
             class="dialogTable allTable"
@@ -457,7 +457,7 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; background: #fff"
+            style="width: 100%; "
             border
             height="358px"
             class="dialogTable allTable"
@@ -1778,7 +1778,7 @@ h1 {
     .show-left,
     .show-right {
       height: 478px;
-      border: 1px solid black;
+      // border: 1px solid black;
       border-radius: 3px;
       .show-title {
         font-weight: 400;
@@ -1787,7 +1787,7 @@ h1 {
         color: #5e7f89;
         border-radius: 3px;
         line-height: 30px;
-        border-bottom: 1px solid rgb(204, 204, 204);
+        // border-bottom: 1px solid rgb(204, 204, 204);
         padding-left: 10px;
       }
     }

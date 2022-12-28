@@ -5,7 +5,7 @@
 
 <script>
   import {mapState} from "vuex";
-  import {onMessage} from "@/api/equipment/phone/phone";
+  import {onMessage} from "@/api/equipment/deviceBrand/brand";
 
   export default {
     name: "Websocket",
@@ -31,8 +31,8 @@
         this.socket.onopen = () => {
         };
         this.socket.onmessage = (message) => {
-          console.log("电话广播websocket>>>>>>>>>>>>",message)
-          console.log("电话广播websocket>>>>>>>>>>>>",this.isJson(message))
+          // console.log("电话广播websocket>>>>>>>>>>>>",message)
+          // console.log("电话广播websocket>>>>>>>>>>>>",this.isJson(message))
           if (this.isJson(message)) {
             onMessage(message).then(response => {
               console.log(response)

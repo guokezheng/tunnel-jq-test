@@ -407,7 +407,7 @@
                     <el-input v-model="form.lane"  placeholder="请输入车道数量"  @keyup.native="number"/>
                   </el-form-item> -->
             <el-form-item label="车道数目" prop="lane">
-              <el-select v-model="form.lane" placeholder="请选择车道数目">
+              <el-select v-model="form.lane" placeholder="请选择车道数目" style="width:100%">
                 <el-option label="1车道" value="1"></el-option>
                 <el-option label="2车道" value="2"></el-option>
                 <el-option label="3车道" value="3"></el-option>
@@ -419,7 +419,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="隧道长度" prop="tunnelLength">
-              <el-col :span="22">
+              <el-col :span="24">
                 <el-input
                   v-model="form.tunnelLength"
                   placeholder="请输入隧道长度"
@@ -442,7 +442,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="开始桩号" prop="startPile">
-              <el-col :span="22">
+              <el-col :span="24">
                 <el-input
                   v-model="form.startPile"
                   @blur="setPileInt('start')"
@@ -463,7 +463,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="结束桩号" prop="endPile">
-              <el-col :span="22">
+              <el-col :span="24">
                 <el-input v-model="form.endPile"
                           @blur="setPileInt('end')"
                           placeholder="请输入结束桩号"
@@ -509,7 +509,7 @@
 
           <el-col :span="12">
             <el-form-item label="是否启用" prop="poll">
-              <el-select v-model="form.poll" placeholder="请选择是否启用">
+              <el-select v-model="form.poll" placeholder="请选择是否启用" style="width:100%">
                 <el-option
                   v-for="dict in pollOptions"
                   :key="dict.dictValue"

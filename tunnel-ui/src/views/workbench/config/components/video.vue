@@ -24,15 +24,15 @@
           @click="handleClosee"
         />
       </div>
-      <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
-      <div style="width: 100%; height: 200px; padding: 0 15px">
-        <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
-          muted
-          autoplay
-          disablePictureInPicture="true"
-          controlslist="nodownload noremoteplayback noplaybackrate"
-          loopstyle="width:100%;height:100%;"></video> -->
-        <video
+      <div style="width: 100%; height: 200px;padding:0 15px">
+
+        <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
+       
+        <!-- <video
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -41,7 +41,7 @@
           disablePictureInPicture="true"
           controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video>
+        ></video> -->
       </div>
       <el-form
         ref="form"
@@ -289,17 +289,11 @@
         <el-col :span="18">
           <div class="yuntaiVideoBox">
              
-            <video
-              class="yunTaiVideo"
-              id="tt"
-              :src="videoMoNi"
-              controls
-              muted
-              autoplay
-              disablePictureInPicture="true"
-              controlslist="nodownload noremoteplayback noplaybackrate"
-              loopstyle="width:100%;height:100%;"
-            ></video>
+            <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
           </div>
           <div class="yuntaiPic">
             <div @click="clickLeft()"><</div>
@@ -375,16 +369,25 @@
 
 <script>
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import flvjs from 'flv.js'
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+
+import { getLocalIP } from "@/api/event/vedioRecord";
+
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components:{
+    videoPlayer,
+
+  },
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
-      cameraVisible: true, //摄像机弹窗
+      cameraPlayer: false, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
@@ -397,7 +400,13 @@ export default {
       dateRange: [], //选择时间数组
       total: 0, // 总条数
       src: require("@/assets/images/warningPhoto.png"),
-      videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoMoNi: '',
+      // videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoForm:{
+        liveUrl:'',
+      },
+      hostIP: null,
+      cameraVisible:true,
       videoList: [
         {
           pic: require("@/assets/images/ruoyi-login-background.jpg"),
@@ -468,6 +477,7 @@ export default {
         chuXue: true,
       },
       picPage:1,
+      player: null,
     };
   },
   created() {
@@ -476,17 +486,64 @@ export default {
     if(this.videoList.length > 4){
       this.picList = this.videoList.slice(0,4)
     }
+    getLocalIP().then((response) => {
+      console.log(response,"responseresponse");
+      this.hostIP = response;
+    });
   },
   methods: {
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
+        videoStreaming().then((response) =>{
+          console.log(response,"视频流");
+          
+// if(this.player != null){
+//                 this.player.pause();
+//                 this.player.unload();
+//                 this.player.detachMediaElement();
+//                 this.player.destroy();
+//                 this.player = null
+//             }
+//             if (flvjs.isSupported()) {
+//                 let video = this.$refs.player;
+//                 if (video) {
+//                     this.player = flvjs.createPlayer({
+//                         type: "flv",
+//                         isLive: true,
+//                         hasAudio:false,
+//                         hasVideo:true,
+//                         url:'http://10.166.147.73:8081/live/52054.flv'
+//                     },
+//                     {
+//                         enableWorker: false,
+//                         enableStashBuffer: false, // false 延时低
+//                         stashInitialSize: undefined,
+//                         isLive: false,
+//                     }
+//                     );
+//                     this.player.attachMediaElement(video);
+//                     try {
+//                         this.player.load();
+//                         this.player.play();
+//                     } catch (error) {
+//                         alert("播放失败")
+//                         console.log(error);
+//                     };
+//                 }
+//             }
+
+
+          this.videoForm = response.data
+          this.cameraPlayer = true
+        })
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          displayH5sVideoAll(res.data.secureKey);
+          // displayH5sVideoAll(res.data.secureKey);
         });
+        
         // await getInfo(this.eqInfo.clickEqType).then((response) => {
         //     console.log(response, "查询设备当前状态");
         //     this.stateForm.state = response.data.state;

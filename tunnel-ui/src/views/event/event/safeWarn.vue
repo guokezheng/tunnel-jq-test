@@ -391,7 +391,8 @@
             <div   v-if="eventForm.iconUrlList.length>0" >
               <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
             </div>
-            <img src="../../../assets/cloudControl/nullImg.png" v-else/>
+            <img src="../../../assets/cloudControl/nullImg.png" v-else 
+              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index"/>
 
           </div>
         </div>
@@ -596,7 +597,7 @@
       <div class="dialogFooterButton" >
         <div @click="submitDialog" v-show="detailsButtonType == 2">复核提交</div>
         <div v-show="detailsButtonType == 2 && activeName == '0'" @click="management(eventForm.id)">应急调度</div>
-        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1)">处置</div>
+        <div v-show="detailsButtonType == 2 && activeName == '1'" @click="openProcess(1,eventForm.id)">处置</div>
 
       </div>
     </el-dialog>
@@ -1002,7 +1003,7 @@ import {
   eventFlowList,
   getSafetyHandle,
   implementDisposalStrategy,
-  implementDisposalStrategyRl
+  implementDisposalStrategyRl,
 } from "@/api/event/event";
 import {
   addList,
@@ -1043,7 +1044,7 @@ export default {
   data() {
     return {
       eventWarnList: [],
-      miniDialog:true,
+      miniDialog: true,
       eventTypeId: "",
       evtId: "",
       incHand1: require("@/assets/cloudControl/incHand1.png"),
@@ -1060,7 +1061,7 @@ export default {
       detailsButtonType: 1,
       eqStatusList: [],
       directionList: [],
-      direction:'',
+      direction: "",
       fromList: [
         {
           value: "0",
@@ -1427,72 +1428,81 @@ export default {
   },
   methods: {
     // 忽略
-    hulue(){
+    hulue() {
       const param = {
-        id:this.eventForm.id,
-        eventState:2,
-      }
-      updateEvent(param).then((res) =>{
-        console.log(res,"忽略")
+        id: this.eventForm.id,
+        eventState: 2,
+      };
+      updateEvent(param).then((res) => {
+        console.log(res, "忽略");
         that.$modal.msgSuccess("忽略成功");
-
-      })
+      });
     },
     // 处置记录
     getEventList() {
       eventFlowList({ eventId: this.eventForm.id }).then((res) => {
-        console.log(res,"处置记录");
+        console.log(res, "处置记录");
         this.eventWarnList = res.rows;
       });
     },
     // 单点 下发
     changeIncHand(item) {
-      console.log(item,"下发")
-      var that = this
-        this.$confirm(item.flowId==5? "是否完成?":item.flowId==6?"是否上报?":item.flowPid == 8?"是否通知？":"是否确认执行?", "警告", {
+      console.log(item, "下发");
+      var that = this;
+      this.$confirm(
+        item.flowId == 5
+          ? "是否完成?"
+          : item.flowId == 6
+          ? "是否上报?"
+          : item.flowPid == 8
+          ? "是否通知？"
+          : "是否确认执行?",
+        "警告",
+        {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
-        }).then(function () {
-          if(item.flowPid == '7'){
-            let rlId = item.processId
-            let eventId = that.eventForm.id
-            implementDisposalStrategyRl(eventId,rlId).then((response) =>{
-              console.log(response,"单点下发");
-              that.$modal.msgSuccess("状态修改成功");
-              that.evtHandle()
-            })
-          }else{
-            const params = {
-              id: that.eventForm.id,
-              ids: item.id,
-            };
-            updateHandle(params).then((res) => {
-              console.log(res,"单点改状态");
-              console.log(that.incHandList,"this.incHandList");
-              for(let itt of that.incHandList) {
-                if(itt.children){
-                  for(let itm of itt.children) {
-                    if (itm.id == item.id) {
-                      itm.eventState = "1";
-                      that.$modal.msgSuccess("状态修改成功");
-                    }
+        }
+      ).then(function () {
+        if (item.flowPid == "7") {
+          let rlId = item.processId;
+          let eventId = that.eventForm.id;
+          implementDisposalStrategyRl(eventId, rlId).then((response) => {
+            console.log(response, "单点下发");
+            that.$modal.msgSuccess("状态修改成功");
+            that.evtHandle();
+          });
+        } else {
+          const params = {
+            id: that.eventForm.id,
+            ids: item.id,
+          };
+          updateHandle(params).then((res) => {
+            console.log(res, "单点改状态");
+            console.log(that.incHandList, "this.incHandList");
+            for (let itt of that.incHandList) {
+              if (itt.children) {
+                for (let itm of itt.children) {
+                  if (itm.id == item.id) {
+                    itm.eventState = "1";
+                    that.$modal.msgSuccess("状态修改成功");
                   }
                 }
               }
-              that.evtHandle()
-            });
-          }
+            }
+            that.evtHandle();
+          });
+        }
       });
     },
     // 事件处置 一键
-    getYiJian(item){
-      console.log(item,"一键");
-      var that = this
+    getYiJian(item) {
+      console.log(item, "一键");
+      var that = this;
       // let str = ''
-      let arr = []
-      for(let itm of item.children){
-        arr.push(itm.id)
+      let arr = [];
+      for (let itm of item.children) {
+        arr.push(itm.id);
       }
       // str = arr.join(',')
 
@@ -1501,25 +1511,22 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
+        let strategyId = item.reserveId;
+        let eventId = that.eventForm.id;
 
-          let strategyId = item.reserveId
-          let eventId = that.eventForm.id
-
-          implementDisposalStrategy(eventId,strategyId).then((response) =>{
-          console.log(response,"一键下发成功");
-          for(let item of that.incHandList) {
-            for(let itm of item.children) {
-              for(let it_m of arr){
+        implementDisposalStrategy(eventId, strategyId).then((response) => {
+          console.log(response, "一键下发成功");
+          for (let item of that.incHandList) {
+            for (let itm of item.children) {
+              for (let it_m of arr) {
                 if (itm.id == it_m) {
                   itm.eventState = "1";
-                 that.$modal.msgSuccess("一键下发成功");
-
+                  that.$modal.msgSuccess("一键下发成功");
                 }
               }
             }
           }
-
-        })
+        });
       });
     },
     // 处置
@@ -1606,11 +1613,20 @@ export default {
       this.processDialog = false;
       this.processType = false;
     },
-    openProcess(type) {
+    openProcess(type,id) {
       console.log(type, "00000000000000");
-      if (type) {
+      if (type && id) {
         this.processType = true;
         this.processDialog = true;
+        const param = {
+          id: id,
+          eventState: 0,
+        };
+        updateEvent(param).then((res) => {
+          console.log(res, "处理中");
+          this.$modal.msgSuccess("正在处理");
+          this.evtHandle();
+        });
       } else {
         if (this.processType == true) {
           this.processDialog = false;
@@ -1628,45 +1644,44 @@ export default {
     // 事件处置
     evtHandle() {
       const param = {
-        tunnelId:this.tunnelId,
-        id:this.evtId,
-        eventTypeId:this.eventTypeId,
-        direction:this.direction,
-      }
-      getSafetyHandle(param).then(
-        (res) => {
-          let list = this.handleTree(res.data, "flowId", "flowPid");
-          console.log(list, "999999999999999999");
-          //  for(let item of list){
-          //   console.log(item.flowContent.toString().length,"555555555555555")
-          //  }
-          this.incHandList = list;
-          this.$forceUpdate();
-        }
-      );
+        tunnelId: this.tunnelId,
+        id: this.evtId,
+        eventTypeId: this.eventTypeId,
+        direction: this.direction,
+      };
+      getSafetyHandle(param).then((res) => {
+        let list = this.handleTree(res.data, "flowId", "flowPid");
+        console.log(list, "999999999999999999");
+        //  for(let item of list){
+        //   console.log(item.flowContent.toString().length,"555555555555555")
+        //  }
+        this.incHandList = list;
+        this.$forceUpdate();
+      });
     },
     //详情弹窗
     detailsButton(item, type) {
-      if(type == 1){
-        this.miniDialog = false
-      }else{
-        this.miniDialog = true
+      if (type == 1) {
+        this.miniDialog = false;
+      } else {
+        this.miniDialog = true;
       }
       console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
-      this.tunnelId = item.tunnelId
-      this.direction = item.direction
-      const param = {
-        id:item.id,
-        eventState:0,
-      }
-      updateEvent(param).then((res) =>{
-        console.log(res,"处理中")
-        this.$modal.msgSuccess("正在处理");
-        this.evtHandle();
+      this.tunnelId = item.tunnelId;
+      this.direction = item.direction;
 
-      })
+      // const param = {
+      //   id:item.id,
+      //   eventState:0,
+      // }
+      // updateEvent(param).then((res) =>{
+      //   console.log(res,"处理中")
+      //   this.$modal.msgSuccess("正在处理");
+      //   this.evtHandle();
+
+      // })
       if (type == 1) {
         this.detailsDisabled = true;
         this.detailsButtonType = 1;
@@ -1676,7 +1691,7 @@ export default {
       }
       this.details = true;
       this.eventForm = item;
-      this.getEventList()
+      this.getEventList();
       if (item.stakeNum) {
         this.$set(
           this.eventForm,
@@ -2163,7 +2178,7 @@ export default {
     async planRoadmapUrl(iFileList) {
       let that = this;
       that.fileList = [];
-      if(iFileList!=null){
+      if (iFileList != null) {
         for (let i = 0; i < iFileList.length; i++) {
           let iconName = iFileList[i].imgName;
           // let iconUrl = await that.picture(iFileList[i].url);
@@ -2175,7 +2190,6 @@ export default {
           });
         }
       }
-
     },
     /* 请求图片base64地址*/
     picture(fileUrl) {
@@ -2544,7 +2558,7 @@ export default {
   .evtCarStyle {
     width: calc(100% - 12px);
     height: 100px;
-    border: solid 1px #cfd5e0;
+    // border: solid 1px #cfd5e0;
     padding: 10px;
     overflow-y: auto;
     padding-bottom: 0;
@@ -2554,7 +2568,7 @@ export default {
       .evtNum {
         width: 35px;
         height: 35px;
-        border: solid 1px #ccc;
+        // border: solid 1px #ccc;
         text-align: center;
         line-height: 35px;
       }
@@ -2667,7 +2681,6 @@ export default {
       text-align: center;
       transform: translateY(-2px);
       cursor: pointer;
-
     }
     .hulue {
       width: 50px;
@@ -2878,7 +2891,7 @@ hr {
 .el-tabs__item {
   color: #fff;
 }
-.disabledButton{
+.disabledButton {
   cursor: no-drop;
   pointer-events: none;
 }

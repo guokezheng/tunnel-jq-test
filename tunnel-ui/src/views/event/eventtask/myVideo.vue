@@ -71,7 +71,8 @@
             }
         },
         created(){
-          //console.info("123");
+          console.log("123");
+          console.log(this.rtsp,this.id,this.hostIP,this.open,"0000000000000")
         },
         methods: {
             fullScreen () {

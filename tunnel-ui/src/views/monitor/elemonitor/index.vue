@@ -38,7 +38,7 @@
             </div>
             <div style="margin-top:1.5vh;">
               <br />
-              <el-table v-loading="loading" :data="tableDtaList" style="overflow-x: auto;overflow-y: auto;" height="39vh">
+              <el-table v-loading="loading" :data="tableDtaList" style="overflow-x: auto;overflow-y: auto;" height="35vh">
                 <el-table-column label="回路名称" align="center" prop="huiLuName" min-width="200" />
                 <el-table-column label="采集时间" align="center" prop="aTime" min-width="200" />
                 <el-table-column v-if="labelA !== ''" :label="`${labelA}`" align="center" prop="aValue" min-width="200" />

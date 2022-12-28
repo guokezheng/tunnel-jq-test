@@ -177,58 +177,63 @@ public class BoardController extends BaseController {
      */
     @GetMapping("/uploadBoardEditInfo")
     @ResponseBody
-    public AjaxResult uploadBoardEditInfo(String deviceId, String protocolType,String parameters) {
+    public AjaxResult uploadBoardEditInfo(String deviceIds, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
-
-        List<String> paramsList = new ArrayList<String>();
-        IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
-        SdReleaseRecord sdReleaseRecord = new SdReleaseRecord();
-        try {
-        	parameters = URLDecoder.decode(parameters, "UTF-8");
-            if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
-                parameters = parameters.replaceAll("—", "-");
-                parameters = parameters.replaceAll("\\\\n", "\\\\A");
-            } else if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
-                parameters = parameters.replaceAll("—", "-");
-                parameters = parameters.replaceAll("\\\\n", "\\\\N");
-            } else {
-                parameters = parameters.replaceAll("—", "-");
-            }
-            String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
-            Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
-            String releaseOldContent = releaseContentMap.get(deviceId);
-            sdReleaseRecord.setReleaseDev(deviceId);
-            sdReleaseRecord.setReleaseTime(new Date());
-            if (result) {
-                if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
-                    String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
-                    result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, XKcommands);
-                    if (result) {
-                        ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
-                    } else {
-                        ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-                    }
+        String[] devices = deviceIds.split(",");
+        for (int i = 0;i < devices.length;i++) {
+            String deviceId = devices[i];
+            List<String> paramsList = new ArrayList<String>();
+            IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
+            SdReleaseRecord sdReleaseRecord = new SdReleaseRecord();
+            try {
+                parameters = URLDecoder.decode(parameters, "UTF-8");
+                if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
+                    parameters = parameters.replaceAll("—", "-");
+                    parameters = parameters.replaceAll("\\\\n", "\\\\A");
+                } else if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
+                    parameters = parameters.replaceAll("—", "-");
+                    parameters = parameters.replaceAll("\\\\n", "\\\\N");
                 } else {
-                    ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
+                    parameters = parameters.replaceAll("—", "-");
                 }
-                sdReleaseRecord.setReleaseStatus("0");
-            } else {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-                sdReleaseRecord.setReleaseStatus("1");
+                parameters = parameters.replaceAll("<r><n>","\r\n");
+                parameters = parameters.replaceAll("<br>","\\\\n");
+                String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
+                Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
+                String releaseOldContent = releaseContentMap.get(deviceId);
+                sdReleaseRecord.setReleaseDev(deviceId);
+                sdReleaseRecord.setReleaseTime(new Date());
+                if (result) {
+                    if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
+                        String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
+                        result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, XKcommands);
+                        if (result) {
+                            ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
+                        } else {
+                            ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
+                        }
+                    } else {
+                        ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
+                    }
+                    sdReleaseRecord.setReleaseStatus("0");
+                } else {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
+                    sdReleaseRecord.setReleaseStatus("1");
+                }
+                sdReleaseRecordService.insertSdReleaseRecord(sdReleaseRecord);
+                iotBoardReleaseLog.setDeviceId(deviceId);
+                iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
+                parameters = parameters.replaceAll("\n", "<n>");
+                parameters = parameters.replaceAll("\r", "<r>");
+                iotBoardReleaseLog.setReleaseNewContent(parameters);
+                iotBoardReleaseLog.setReleaseTime(new Date());
+                iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
+                releaseContentMap.clear();
+            } catch (BusinessException e) {
+                ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());
+            } catch (Exception e) {
+                ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
             }
-            sdReleaseRecordService.insertSdReleaseRecord(sdReleaseRecord);
-            iotBoardReleaseLog.setDeviceId(deviceId);
-            iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
-            parameters = parameters.replaceAll("\n", "<n>");
-            parameters = parameters.replaceAll("\r", "<r>");
-            iotBoardReleaseLog.setReleaseNewContent(parameters);
-            iotBoardReleaseLog.setReleaseTime(new Date());
-            iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
-            releaseContentMap.clear();
-        } catch (BusinessException e) {
-            ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());
-        } catch (Exception e) {
-            ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
         }
         return ajaxResult;
     }

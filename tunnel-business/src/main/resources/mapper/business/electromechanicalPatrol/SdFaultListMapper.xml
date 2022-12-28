@@ -133,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="faultStatus != null">fault_status = #{faultStatus},</if>
             <if test="imgFileId != null">img_file_id = #{imgFileId},</if>
             <if test="faultEscalationType != null">fault_escalation_type = #{faultEscalationType},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where id = #{id}
     </update>
@@ -324,6 +325,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectDeviceFault" resultType="sdFaultList">
         SELECT
+            fl.id,
             fl.eq_id AS eqId,
             d.eq_type AS eqType
         FROM

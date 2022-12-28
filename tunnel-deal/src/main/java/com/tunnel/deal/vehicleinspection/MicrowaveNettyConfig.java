@@ -72,7 +72,7 @@ public class MicrowaveNettyConfig {
                     }
 
                     // connect
-                    MicrowaveNettyClient.getChannel(mapParam);
+//                    MicrowaveNettyClient.getChannel(mapParam);
                 }
                 catch (Exception e) {
                     log.error("Netty client start fail : {}", e.getMessage());

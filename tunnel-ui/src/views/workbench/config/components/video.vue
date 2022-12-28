@@ -150,7 +150,7 @@
         </el-tabs>
       </el-form>
       <div slot="footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoYunTai()"
@@ -158,15 +158,15 @@
           class="submitButton"
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
-        >
-        <el-button
+        > -->
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoViewing()"
           style="width: 80px"
           class="submitButton"
           >录像查看</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -288,7 +288,6 @@
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">
-             
             <videoPlayer
             v-if="videoForm.liveUrl "
             :rtsp="videoForm.liveUrl"
@@ -495,43 +494,8 @@ export default {
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
-        videoStreaming().then((response) =>{
+        videoStreaming(this.eqInfo.equipmentId).then((response) =>{
           console.log(response,"视频流");
-          
-// if(this.player != null){
-//                 this.player.pause();
-//                 this.player.unload();
-//                 this.player.detachMediaElement();
-//                 this.player.destroy();
-//                 this.player = null
-//             }
-//             if (flvjs.isSupported()) {
-//                 let video = this.$refs.player;
-//                 if (video) {
-//                     this.player = flvjs.createPlayer({
-//                         type: "flv",
-//                         isLive: true,
-//                         hasAudio:false,
-//                         hasVideo:true,
-//                         url:'http://10.166.147.73:8081/live/52054.flv'
-//                     },
-//                     {
-//                         enableWorker: false,
-//                         enableStashBuffer: false, // false 延时低
-//                         stashInitialSize: undefined,
-//                         isLive: false,
-//                     }
-//                     );
-//                     this.player.attachMediaElement(video);
-//                     try {
-//                         this.player.load();
-//                         this.player.play();
-//                     } catch (error) {
-//                         alert("播放失败")
-//                         console.log(error);
-//                     };
-//                 }
-//             }
 
 
           this.videoForm = response.data

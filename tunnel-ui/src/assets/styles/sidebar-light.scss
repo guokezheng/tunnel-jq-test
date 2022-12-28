@@ -109,17 +109,29 @@
         top: 8px;
       }
     }
+    ::-webkit-scrollbar-track {
+      background-color: #022A54;
+    }
+  
+    ::-webkit-scrollbar {
+      width: 4px !important;
+      background-color: #022A54;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      background-color: #05AFE3;
+    }
     .el-dialog__body{
       background: #012E51;
       width: calc(100% - 30px);
       margin: 15px auto;
       padding: 15px 20px ;
       color: #fff;
-      ::-webkit-scrollbar {
-        width: 0px;
-      }
+    
+     
       .el-tabs--border-card > .el-tabs__header{
         background: #326CA9 !important;
+        border-bottom: solid 1px #05AFE3;
         .el-tabs__item{
           color: #fff;
 

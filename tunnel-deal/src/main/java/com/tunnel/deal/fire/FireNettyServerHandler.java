@@ -67,8 +67,9 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
         // 主机地址
         if ("".equals(data) || data == null) {
             return;
-        } else if (!data.contains("火警") || !data.contains("模块或探头故障") || !data.contains("模块或探头恢复")
-                || !data.contains("全部声光启动") || !data.contains("全部声光停止")) {
+        }
+        if (!data.contains("火警") && !data.contains("模块或探头故障") && !data.contains("模块或探头恢复")
+                && !data.contains("全部声光启动") && !data.contains("全部声光停止")) {
             return;
         }
         //拿到的报文就是纯文字的报文，直接进行解析
@@ -85,6 +86,9 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             externalSystem.setSystemUrl(clientIp);
             List<ExternalSystem> externalSystems = externalSystemMapper.selectExternalSystemList(externalSystem);
             ExternalSystem system = externalSystems.get(0);
+            if (externalSystems.isEmpty()) {
+                return;
+            }
 //            SdDevices devices = new SdDevices();
 //            devices.setExternalSystemId(system.getId());
 //            List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(devices);
@@ -136,10 +140,10 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             data = data.substring(data.indexOf("址") + 2);
             String sourceDevice = data.substring(0, data.indexOf(" "));
             //剩层号后的内容
-            data = data.substring(data.indexOf(" ") + 1);
+//            data = data.substring(data.indexOf(" ") + 1);
             //剩地理位置后的内容
-            data = data.substring(data.indexOf(" ") + 1);
-            String alarmTime = data.substring(data.indexOf(" ") + 1);
+//            data = data.substring(data.indexOf(" ") + 1);
+            String alarmTime = data.substring(data.length() - 19);
             Date now = new Date();
             try {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -241,7 +245,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         log.info("收到火灾报警消息：" + fireAlarmData);
-        protocolAnalysis(fireAlarmData, clientIp);
+        protocolAnalysis(fireAlarmData.replaceAll("活", ""), clientIp);
         ctx.flush();
     }
 

@@ -48,7 +48,41 @@
     }
     
   }
-  .elemonitorTab, .el-tabs--border-card{
+  .dianliTable{
+    .el-table__header-wrapper th, .el-table__fixed-header-wrapper th{
+      border-bottom: solid 1px #326CA9 !important;
+      border-left: solid 1px #326CA9 !important;
+      border-right: solid 1px #326CA9 !important;
+
+    }
+    
+  }
+  .dianliTable, .el-table--border{
+    border: solid 1px #326CA9 !important;
+  }
+  .elemonitorTab{
+    background: transparent !important;
+    border: solid 1px #326CA9;
+    .el-tabs__header{
+      background: #004375 !important;
+      color: #fff !important;
+      border-bottom: solid 1px #326CA9 ;
+      .el-tabs__item.is-active{
+      background: #326CA9 !important;
+      border-right-color: #326CA9;
+      border-left-color: #326CA9;
+
+      color: #fff;
+
+      }
+    }
+    .el-input__inner{
+      background: #004375 !important;
+      border: solid 1px #05AFE3;
+      color: #fff;
+    }
+  }
+  .el-tabs--border-card{
     background: #012E51 ;
     border: solid 1px #326CA9;
 
@@ -66,11 +100,14 @@
       }
     }
   }
-  
+  .el-tree{
+    background: #004375;
+    color: #fff;
+  }
   .leftTree{
     
     .tree{
-    background: #326CA9 ;
+    background: #326CA9 !important;
 
     }
   }
@@ -98,6 +135,24 @@
     border: solid 1px #05AFE3;
     color: #fff;
   }
+  .el-card{
+    .el-input--mini .el-input__inner{
+      background: #004375 !important;
+      border: solid 1px #05AFE3;
+      color: #fff;
+    }
+    .el-input-number__decrease, .el-input-number__increase{
+      background: #004375 !important;
+      border: solid 1px #05AFE3;
+      color: #fff;
+    }
+  }
+  .topNavSelect{
+    .el-input--mini .el-input__inner{
+      background: transparent !important;
+      
+    }
+  }
   .el-textarea__inner{
     background: #004375 !important;
     border: solid 1px #05AFE3;
@@ -113,7 +168,9 @@
     color: white !important;
     border: 1px solid #05AFE3 !important;
   }
-  .el-table{
+  .vue-treeselect__single-value{
+    color: #fff;
+  }
     ::-webkit-scrollbar-track {
       background-color: #022A54;
     }
@@ -126,7 +183,6 @@
     ::-webkit-scrollbar-thumb {
       background-color: #05AFE3;
     }
-  }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -221,6 +277,10 @@
         background: #012E51 !important;
         color: white !important;
         border-left: 1px solid #05AFE3;
+
+      }
+      .vue-treeselect__single-value{
+        // color: white !important;
 
       }
       .el-input-number__increase{
@@ -447,6 +507,45 @@
     background-color: #00598f;
   }
   #app {
+    .el-textarea__inner{
+      border: solid 1px #65bfff !important;
+    }
+    .eventTypeButton{
+      border: solid 1px #65bfff;
+      background: #65bfff;
+      color: #fff;
+
+    }
+   .infoBoardBox{
+    background: #004375;
+    .el-checkbox{
+      color: #fff;
+
+    }
+    .templateBox{
+      .el-collapse-item__header, .el-collapse-item__content{
+      background: #004375;
+        color: #fff;
+      }
+      .con .menuBox i{
+        color: #fff;
+  
+      }
+     }
+     .contentBox .listBox .menuBox i{
+      color: #fff;
+
+     }
+   }
+   .infoBoardButton .el-button{
+    border: solid 1px #65bfff;
+    background: #65bfff;
+    color: #fff;
+   }
+   
+    .bigTitle{
+      color: #fff !important;
+    }
     .el-select .el-input .el-select__caret{
       height: 33px;
     }
@@ -472,7 +571,7 @@
     }
     .el-table {
       color: white;
-      background-color: #326CA9;//没有数据时暂无数据显示背景色
+      background-color: #004375;//没有数据时暂无数据显示背景色
     }
     .el-table .el-table__cell{
       height: 40px;
@@ -561,7 +660,7 @@
     }
     .el-range-editor--small .el-range-input{
       background-color: #004375;
-
+      color: #fff;
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       background-color: #00518D;

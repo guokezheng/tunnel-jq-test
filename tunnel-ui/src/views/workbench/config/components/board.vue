@@ -688,12 +688,13 @@ export default {
         content += this.contentList[i].ACTION + ",";
         content += this.contentList[i].SPEED + "," + "\\";
         content += "C" + this.contentList[i].COORDINATE + "\\";
+       content += 'S00\\';
+        content += "c" + this.getColorValue(this.contentList[i].COLOR)+"\\";
         content += "f" + this.getFontValue(this.contentList[i].FONT);
+
         content +=
           this.contentList[i].FONT_SIZE.substring(0, 2) +
-          this.contentList[i].FONT_SIZE.substring(0, 2) +
-          "\\";
-        content += "c" + this.getColorValue(this.contentList[i].COLOR);
+          this.contentList[i].FONT_SIZE.substring(0, 2);
         content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, '<r><n>');
         
         if (i + 1 != this.contentList.length) {
@@ -1149,26 +1150,30 @@ export default {
   z-index: 2017;
   .mesModeBg {
     padding: 10px;
-    background: #fff;
+    background: #012E51;
     width: calc(100% - 30px);
     height: 403px;
     margin: 10px auto;
     overflow: auto;
-
+    .el-collapse-item__header{
+    background: #012E51;
+      color:#fff
+    }
     .mesModeBox {
       width: 100%;
-      height: 100px;
-      border: solid 1px #e1e4e6;
+      // height: 100px;
+      border: solid 1px #01aafd;
       .con {
         width: 100%;
         height: 80px;
         margin-bottom: 10px;
         overflow: hidden;
         display: flex;
-        border: 1px solid #f3f3f3;
+        border: 1px solid #01aafd;
+        align-items: center;
         .templateTitle {
           height: 75px;
-          border: 1px solid #f3f3f3;
+          // border: 1px solid #01aafd;
           background: black;
           position: relative;
           width: 395px;
@@ -1177,7 +1182,7 @@ export default {
         .downIcon {
           width: 50px;
           height: 50px;
-          border-left: solid 1px #f3f3f3;
+          // border-left: solid 1px #f3f3f3;
           > div {
             width: 40px;
             height: 40px;
@@ -1242,9 +1247,10 @@ export default {
 .infoBox {
   width: 93%;
   height: 200px;
-  background: #fff;
+  // background: #fff;
   margin: 0 30px 0 15px;
   overflow: auto;
+  border:solid 1px #01aafd;
   .infoContent {
     width: 97%;
     height: 80px;
@@ -1253,8 +1259,8 @@ export default {
     .upDown {
       width: 30px;
       height: 100%;
-      border: solid 1px #cfd5e0;
-      background: #f2f8ff;
+      border: solid 1px #01aafd;
+      // background: #01aafd;
       text-align: center;
       padding: 10px 0;
       i {
@@ -1268,7 +1274,7 @@ export default {
     .contentBox {
       width: calc(100% - 150px);
       height: 100%;
-      border: solid 1px #cfd5e0;
+      border: solid 1px #01aafd;
       margin-left: 4px;
       .content {
         width: calc(100% - 10px);
@@ -1283,7 +1289,7 @@ export default {
     .infoButton {
       width: 112px;
       height: 100%;
-      border: solid 1px #cfd5e0;
+      border: solid 1px #01aafd;
       margin-left: 4px;
       display: flex;
       align-items: center;
@@ -1316,15 +1322,22 @@ export default {
 }
 ::v-deep .el-collapse-item__header {
   height: 30px;
+  background: #012E51;
+  color:#fff;
+  border-bottom: solid 1px #01aafd;
+
 }
 ::v-deep .el-collapse-item__content {
   padding-bottom: 10px;
 }
 ::v-deep .el-collapse-item__wrap {
   padding: 0 10px;
+  background: #012E51;
+  border-bottom: solid 1px #01aafd;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px;
 }
+
 </style>
   

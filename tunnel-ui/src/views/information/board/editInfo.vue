@@ -44,14 +44,16 @@
             ></span>
           </div>
         </el-card>
-        <el-row >
-            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+        <el-row class="infoBoardButton" >
             <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
             <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
             <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
             <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
             <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
+        
+            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+           
           </el-row>
         <el-card>
           <el-form
@@ -969,5 +971,9 @@
     max-width: 300px;
     width: 100%;
     // height: 80px;
+  }
+  .infoBoardButton{
+    display:flex; 
+    justify-content: center;
   }
   </style>

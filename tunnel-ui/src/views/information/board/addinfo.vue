@@ -42,9 +42,8 @@
          
         </div>
       </el-card>
-      <el-row>
-        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <el-button type="info" plain @click="alignment(6)" size="mini"
+      <el-row class="infoBoardButton">
+          <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
         >
         <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -62,6 +61,8 @@
         <el-button type="info" plain @click="alignment(1)" size="mini"
           >左对齐</el-button
         >
+        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+        
       </el-row>
       <el-card>
         <el-form
@@ -748,7 +749,7 @@ export default {
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
-            COORDINATE: "063004",
+            COORDINATE: "000000",
             STATE: "true",
             STAY: "500",
             screenSize: devicePixel,
@@ -1086,4 +1087,8 @@ export default {
   width: 100%;
   // height: 80px;
 }
+.infoBoardButton{
+    display:flex; 
+    justify-content: center;
+  }
 </style>

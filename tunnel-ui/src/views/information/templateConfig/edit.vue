@@ -65,7 +65,7 @@
         </div>
       </div>
     </el-card>
-    <el-row>
+    <el-row class="infoBoardButton">
         <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
         <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
@@ -1098,4 +1098,8 @@ export default {
   width: 100%;
   // height: 80px;
 }
+.infoBoardButton{
+    display:flex; 
+    justify-content: center;
+  }
 </style>

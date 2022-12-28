@@ -340,7 +340,7 @@
           </el-table-column>
         </el-table>
         <pagination
-          v-show="total > 0 && activeName == '2'"
+          v-if="total > 0 && activeName == '2'"
           :total="total"
           :page.sync="queryParams.pageNum"
           :limit.sync="queryParams.pageSize"
@@ -348,7 +348,7 @@
           :page-size="16"
         />
         <el-pagination
-          v-show="total>0 && (activeName == '0' || activeName == '1')"
+          v-if="total>0 && (activeName == '0' || activeName == '1')"
           class="specialPagination"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -1863,6 +1863,7 @@ export default {
         console.log(this.queryParams.tunnelId, "666666666666666666666");
       }
       if (this.activeName == "2") {
+        this.queryParams.pageSize = 10
         listList(this.queryParams).then((response) => {
           this.eventList = response.rows;
           this.eventList.forEach((item) => {
@@ -1883,6 +1884,7 @@ export default {
         if (!this.dateRange) {
           this.dateRange = [];
         }
+        this.queryParams.pageSize = 16
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
@@ -2633,12 +2635,13 @@ export default {
   z-index: 2010 !important;
 }
 .eventTypeButton {
-  padding: 0px 4px;
-  border: solid 1px #65bfff;
+  height: 24px;
+  line-height: 22px;
+  // border: solid 1px #65bfff;
   border-radius: 2px;
-  color: #189fff;
+  // color: #189fff;
   cursor: pointer;
-  padding: 8px 5px;
+  padding: 0px 10px;
 }
 .butBox {
   width: 280px;

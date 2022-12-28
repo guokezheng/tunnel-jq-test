@@ -90,6 +90,14 @@
       }
     }
     #app {
+      .eventTypeButton{
+        border: solid 1px #65bfff;
+        color: #189fff;
+        background: #fff;
+      }
+      .infoBoardBox{
+        background: #fff;
+      }
       .el-dialog{
         .evtCarStyle{
           border: solid 1px #cfd5e0;

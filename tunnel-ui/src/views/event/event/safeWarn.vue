@@ -42,6 +42,7 @@
                   placeholder="请选择归属部门"
                   @select="changeMechanism"
                   style="width: 300px"
+                  size="small"
                 />
               </el-form-item>
               <el-form-item
@@ -338,16 +339,16 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- <pagination
-          v-show="total > 0"
+        <pagination
+          v-show="total > 0 && activeName == '2'"
           :total="total"
           :page.sync="queryParams.pageNum"
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
           :page-size="16"
-        /> -->
+        />
         <el-pagination
-          v-show="total>0"
+          v-show="total>0 && (activeName == '0' || activeName == '1')"
           class="specialPagination"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"

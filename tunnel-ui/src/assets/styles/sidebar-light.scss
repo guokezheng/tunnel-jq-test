@@ -88,6 +88,45 @@
     color: #fff;
 
   }
+  .el-input--medium .el-input__inner{
+    background: #004375 !important;
+    border: solid 1px #05AFE3;
+    color: #fff;
+  }
+  .el-input--small .el-input__inner{
+    background: #004375 !important;
+    border: solid 1px #05AFE3;
+    color: #fff;
+  }
+  .el-textarea__inner{
+    background: #004375 !important;
+    border: solid 1px #05AFE3;
+    color: #fff;
+  }
+  .el-upload--picture-card{
+    background: #004375 !important;
+    color: white;
+    border: 1px solid #05AFE3;
+  }
+  .vue-treeselect__control{
+    background: #004375 !important;
+    color: white !important;
+    border: 1px solid #05AFE3 !important;
+  }
+  .el-table{
+    ::-webkit-scrollbar-track {
+      background-color: #022A54;
+    }
+  
+    ::-webkit-scrollbar {
+      width: 16px !important;
+      background-color: #022A54;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      background-color: #05AFE3;
+    }
+  }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -504,18 +543,25 @@
     // }
     // 输入框背景色
     .el-input--small .el-input__inner{
-      background-color: #F2F8FF;
+      background-color: #004375;
+    border: solid 1px #05AFE3;
+
     }
     // 下拉框背景色
     .el-input--medium .el-input__inner{
-      background-color: #F2F8FF;
+      background-color: #004375;
+    border: solid 1px #05AFE3;
+
     }
     // 时间框背景色
     .el-range-editor.el-input__inner{
-      background-color: #F2F8FF;
+      background-color: #004375;
+    border: solid 1px #05AFE3;
+
     }
     .el-range-editor--small .el-range-input{
-      background-color: #F2F8FF;
+      background-color: #004375;
+
     }
     .el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
       background-color: #00518D;
@@ -1110,9 +1156,9 @@
     }
     /*select选择框的背景颜色*/
     .el-input__inner {
-      background-color: #fff;
-      color: #000;
-      // border: solid 1px #01AAFD;
+      background-color: #0A6591;
+      color: #fff;
+      border: solid 1px #01AAFD;
     }
     .el-date-editor .el-range-input{
       background-color: #fff !important;

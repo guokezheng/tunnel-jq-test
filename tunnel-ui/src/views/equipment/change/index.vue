@@ -223,6 +223,7 @@
             type="datetime"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择更换时间"
+            style="width:100%"
           >
           </el-date-picker>
         </el-form-item>
@@ -230,7 +231,7 @@
           <el-input v-model="form.stakeMark" placeholder="请输入桩号" />
         </el-form-item>
         <el-form-item label="方向" prop="eqDirection">
-          <el-select v-model="form.eqDirection" placeholder="请选择方向">
+          <el-select v-model="form.eqDirection" placeholder="请选择方向" style="width:100%">
             <el-option label="上行" value="0" />
             <el-option label="下行" value="1" />
           </el-select>

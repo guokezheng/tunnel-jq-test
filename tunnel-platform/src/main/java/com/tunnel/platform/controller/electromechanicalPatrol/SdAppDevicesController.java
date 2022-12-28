@@ -4,8 +4,10 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.Result;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdEquipmentTypeService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +34,9 @@ public class SdAppDevicesController extends BaseController
 
     @Autowired
     private ISdEquipmentTypeService equipmentTypeService;
+
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
 
 
 
@@ -78,6 +83,18 @@ public class SdAppDevicesController extends BaseController
         return Result.success(eqList);
     }
 
-
+    /**
+     * app端获取操控日志
+     * @param time
+     * @return
+     */
+    @PostMapping("/app/logList")
+    public Result getLogList(String time){
+        Map<String,Object>map = new HashMap<>();
+        List<SdOperationLog> list = sdOperationLogService.selectAppOperationLogList(time);
+        map.put("list",list);
+        map.put("num",list.size());
+        return Result.success(list);
+    }
 
 }

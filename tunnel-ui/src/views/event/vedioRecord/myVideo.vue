@@ -55,7 +55,7 @@
             }
         },
         created(){
-          console.info("123");
+        //   console.info("123");
         },
         methods: {
             fullScreen () {
@@ -77,7 +77,7 @@
                         this.player = flvjs.createPlayer({
                             type: 'flv',
                             isLive: true,
-                            url: `ws://${this.hostIP}:8091/rtsp/${this.id}/?url=${this.rtsp}`,
+                            url: this.rtsp,
                             enableStashBuffer: false
                         });
                         this.player.attachMediaElement(video);

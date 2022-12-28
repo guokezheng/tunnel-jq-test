@@ -331,6 +331,7 @@ public class KafkaReadListenToHuaWeiTopic {
             sdFaultList.setFaultType("6");
             sdFaultList.setFaultFxtime(DateUtils.parseDate(startTime));
             sdFaultList.setFaultCxtime(alwaysTime);
+            sdFaultList.setEqType(deviceType.toString());
             sdFaultList.setEqStatus("3");
             sdFaultList.setFaultCode(faultCode);
             sdFaultList.setFaultLevel(faultLevel);
@@ -339,27 +340,32 @@ public class KafkaReadListenToHuaWeiTopic {
             sdFaultList.setFaultDescription(faultDetail);
             //故障状态暂时为 已发布
             sdFaultList.setFaultStatus("0");
+            //区分上报类型 0：人为填报 1：设备上报
+            sdFaultList.setFaultEscalationType("1");
             //查询设备运行状态
             sdFaultList.setEqRunStatus(sdFaultListMapper.selectEqRunStatus(deviceId,deviceType));
             SdFaultList sdFaultList1 = sdFaultListMapper.selectSdFaultListById(id);
             if(sdFaultList1 == null){
+                sdFaultList.setCreateTime(DateUtils.getNowDate());
                 sdFaultListMapper.insertSdFaultList(sdFaultList);
             }else {
+                sdFaultList.setUpdateTime(DateUtils.getNowDate());
                 sdFaultListMapper.updateSdFaultList(sdFaultList);
             }
             newFaultList.add(sdFaultList);
         }
-        int count = 0;
-        for(SdFaultList item : sdFaultLists){
+
+        for(int i = sdFaultLists.size() - 1; i >= 0; i--){
+            SdFaultList sdFaultList = sdFaultLists.get(i);
             for(SdFaultList temp : newFaultList){
-                if(item.getEqId().equals(temp.getEqId()) && item.getEqType().equals(temp.getEqType())){
-                    sdFaultListsCopy.remove(count);
+                if(sdFaultList.getEqId().equals(temp.getEqId()) && sdFaultList.getEqType().equals(temp.getEqType())){
+                    sdFaultListsCopy.remove(i);
                 }
             }
-            count++;
         }
         for(SdFaultList item : sdFaultListsCopy){
             item.setFalltRemoveStatue("0");
+            item.setUpdateTime(DateUtils.getNowDate());
             sdFaultListMapper.updateSdFaultList(item);
         }
     }
@@ -605,6 +611,7 @@ public class KafkaReadListenToHuaWeiTopic {
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus","1");
         jsonObject.put("netstatus","1");
+        jsonObject.put("source","suidao");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
         jsonObject.put("expands",object.toString());
         return jsonObject;
@@ -621,6 +628,7 @@ public class KafkaReadListenToHuaWeiTopic {
         jsonObject.put("devType",sdDevices.getEqType());
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus",sdDevices.getEqStatus());
+        jsonObject.put("source","suidao");
         if("1".equals(sdDevices.getEqStatus())){
             jsonObject.put("netstatus",sdDevices.getEqStatus());
             jsonObject.put("netStatusRemark","连通");

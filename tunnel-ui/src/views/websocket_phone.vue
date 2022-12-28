@@ -31,8 +31,8 @@
         this.socket.onopen = () => {
         };
         this.socket.onmessage = (message) => {
-          console.log("电话广播websocket>>>>>>>>>>>>",message)
-          console.log("电话广播websocket>>>>>>>>>>>>",this.isJson(message))
+          // console.log("电话广播websocket>>>>>>>>>>>>",message)
+          // console.log("电话广播websocket>>>>>>>>>>>>",this.isJson(message))
           if (this.isJson(message)) {
             onMessage(message).then(response => {
               console.log(response)

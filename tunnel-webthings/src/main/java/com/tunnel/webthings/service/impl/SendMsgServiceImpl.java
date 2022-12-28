@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -14,6 +15,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -78,6 +80,9 @@ public class SendMsgServiceImpl implements SendMsgService {
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
 
+    @Autowired
+    private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
 
     /**
      * 发送指令数据
@@ -101,21 +106,17 @@ public class SendMsgServiceImpl implements SendMsgService {
 
     @Override
     public AjaxResult devicestatus(String devId) {
-        JSONObject jsonObject = new JSONObject();
         SdDevices sdDevices = devicesMapper.selectSdDevicesById(devId);
         sdDevices.setEqStatus("1");
         sdDevices.setEqStatusTime(new Date());
         sdDevices.setUpdateTime(new Date());
-        jsonObject.put("deviceStatus", sdDevices);
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
+        JSONObject jsonObject = devStatus(sdDevices);
         kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
         return AjaxResult.success("1");
     }
 
     @Override
     public AjaxResult devicesdata(String devId,String state) {
-        JSONObject jsonObject = new JSONObject();
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);
         List<SdDeviceData> data = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
@@ -124,10 +125,9 @@ public class SendMsgServiceImpl implements SendMsgService {
                 SdDeviceData deviceData = data.get(i);
                 deviceData.setUpdateTime(new Date());
                 deviceData.setData(state);
-                jsonObject.put("deviceData", deviceData);
-                jsonObject.put("devNo", "S00063700001980001");
-                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
-                kafkaTemplate.send("wq_devStatusTopic", jsonObject.toString());
+                JSONObject jsonObject = definitionParam(deviceData.getDeviceId(), deviceData.getData(), deviceData.getItemId());
+                JSONObject object = devReaStatus(sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(deviceData.getItemId()).getDeviceTypeId(), jsonObject);
+                kafkaTemplate.send("wq_devStatusTopic", object.toString());
             }
         }
         return AjaxResult.success("1");
@@ -216,9 +216,6 @@ public class SendMsgServiceImpl implements SendMsgService {
 
     @Override
     public int pushDevicesStatusToOtherSystem(SdDevices sdDevices, String role, String status) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "S00063700001980001");
-        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
         if (role.equals("1")) {
             SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
             if (status.equals("off")) {
@@ -226,7 +223,7 @@ public class SendMsgServiceImpl implements SendMsgService {
             } else if (status.equals("on")) {
                 devices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
             }
-            jsonObject.put("deviceStatus", devices);
+            JSONObject jsonObject = devStatus(devices);
             kafkaTemplate.send(devStatusTopic, jsonObject.toString());
         } else if (role.equals("2")) {
             List<SdDevices> devicesList = devicesMapper.selectFireComponentsList(sdDevices);
@@ -237,8 +234,8 @@ public class SendMsgServiceImpl implements SendMsgService {
                 } else if (status.equals("on")) {
                     dev.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
                 }
-                jsonObject.put("deviceStatus", dev);
-                kafkaTemplate.send(devStatusTopic, jsonObject.toString());
+                JSONObject object = devStatus(dev);
+                kafkaTemplate.send(devStatusTopic, object.toString());
             }
         }
         return 0;
@@ -330,4 +327,68 @@ public class SendMsgServiceImpl implements SendMsgService {
         return StrUtil.join("", devNos);
     }
 
+    /**
+     * 上传物联中台数据格式
+     * @param sdDevices
+     * @return
+     */
+    public JSONObject devStatus(SdDevices sdDevices){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("devNo", "SDEV00063700001980003");
+        jsonObject.put("devType",sdDevices.getEqType());
+        jsonObject.put("loginTime", DateUtils.getNowDate());
+        jsonObject.put("devStatus",sdDevices.getEqStatus());
+        jsonObject.put("source","");
+        if("1".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","连通");
+            jsonObject.put("devStatusRemark","正常");
+        }else if("2".equals(sdDevices.getEqStatus())){
+            jsonObject.put("netstatus",sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark","离线");
+            jsonObject.put("devStatusRemark","离线");
+        }else if("3".equals(sdDevices.getEqStatus())){
+            jsonObject.put("devStatusRemark","故障");
+        }else {
+            jsonObject.put("netstatus","1");
+            jsonObject.put("netStatusRemark","连通");
+        }
+        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        jsonObject.put("expands",sdDevices);
+        return jsonObject;
+    }
+
+    /**
+     * 重新定义参数名
+     * @param deviceId
+     * @param deviceData
+     * @param deviceItemId
+     * @return
+     */
+    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("deviceId",deviceId);
+        jsonObject.put("deviceData",deviceData);
+        jsonObject.put("deviceItemId",deviceItemId);
+        return jsonObject;
+    }
+
+    /**
+     * 实时设备运行状态上传高速云共通方法
+     * @param eqType
+     * @param object
+     * @return
+     */
+    public JSONObject devReaStatus(Long eqType, JSONObject object){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("devNo", "SRUN00063700001980002");
+        jsonObject.put("devType",eqType);
+        jsonObject.put("loginTime",DateUtils.getNowDate());
+        jsonObject.put("devStatus","1");
+        jsonObject.put("netstatus","1");
+        jsonObject.put("source","");
+        jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+        jsonObject.put("expands",object.toString());
+        return jsonObject;
+    }
 }

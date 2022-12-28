@@ -15,7 +15,7 @@ public class ElemonitorController {
     @GetMapping("/getToken")
     public Result getToken()
     {
-        String token = "123456789";
+        String token = "";
         String url = "10.7.187.220:8080/login";
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("username", "admin");

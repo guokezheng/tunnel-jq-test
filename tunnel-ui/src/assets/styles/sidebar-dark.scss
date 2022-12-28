@@ -109,6 +109,25 @@
         border-bottom: solid 1px #E0E7ED;
       }
     }
+    .el-dialog{
+      .evtCarStyle{
+        border: solid 1px #cfd5e0;
+
+      }
+      .evtNum{
+        border: solid 1px #cfd5e0;
+
+      }
+      .show-left,.show-right{
+        border: 1px solid black;
+        
+      }
+      .pagination-container{
+        position: static !important;
+        margin-top: 0px !important;
+      }
+      
+    }
     .el-table tr{
       background-color: #FFFFFF;
     }

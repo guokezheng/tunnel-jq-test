@@ -246,6 +246,7 @@
           <el-select
             v-model="form.environmentType"
             placeholder="请选择环境类型"
+            style="width:100%"
           >
             <el-option
               v-for="dict in dict.type.environment"
@@ -307,7 +308,7 @@
 
         <el-form-item label="方向" prop="direction">
           <!-- <el-input v-model="form.direction" placeholder="请输入方向" /> -->
-          <el-select v-model="form.direction" placeholder="请选择方向">
+          <el-select v-model="form.direction" placeholder="请选择方向" style="width:100%">
             <el-option
               v-for="dict in dict.type.direction"
               :key="dict.value"

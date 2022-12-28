@@ -129,3 +129,12 @@ export function exportDevicesTemplate(query) {
     params: query
   })
 }
+
+// 视频流
+export function videoStreaming() {
+  return request({
+    url: 'integrated/video/videoStreaming/JQ-WeiFang-JiuLongYu-HSD-CAMBOX-033',
+    method: 'get',
+  })
+}
+

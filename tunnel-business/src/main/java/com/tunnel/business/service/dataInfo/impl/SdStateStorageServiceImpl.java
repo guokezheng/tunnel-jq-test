@@ -3,7 +3,6 @@ package com.tunnel.business.service.dataInfo.impl;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
 import com.tunnel.business.mapper.dataInfo.SdStateStorageMapper;
-import com.tunnel.business.service.dataInfo.IInductionlampControlStatusDetailsService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdStateStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,6 @@ public class SdStateStorageServiceImpl implements ISdStateStorageService {
     private SdStateStorageMapper sdStateStorageMapper;
     @Autowired
     private ISdDevicesService iSdDevicesService;
-    @Autowired
-    private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
 
     /**
      * 查询隧道数据存储表

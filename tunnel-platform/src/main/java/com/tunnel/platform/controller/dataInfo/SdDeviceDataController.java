@@ -174,8 +174,8 @@ public class SdDeviceDataController extends BaseController
     }
 
     @GetMapping(value = "/energyConsumptionDetection/{tunnelId}")
-    public AjaxResult energyConsumptionDetection(@PathVariable("tunneldId") String tunneldId)
+    public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {
-        return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunneldId));
+        return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunnelId));
     }
 }

@@ -94,9 +94,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--根据隧道id查询当前设备的监测状态、实时数据或状态-->
     <select id="getDeviceDataByTunnelId" parameterType="String" resultType="java.util.Map">
-		select d.eq_id eqId,d.eq_name eqName,d.eq_tunnel_id eqTunnelId,d.eq_type eqType,
-        ifnull(d.eq_status,2) eqStatus,d.eq_direction eqDirection,i.item_code itemCode,i.item_name itemName,
-        i.unit,a.data,concat(a.data,ifnull(i.unit,'')) dataUnit
+		select
+            d.eq_id eqId,
+            d.eq_name eqName,
+            d.eq_tunnel_id eqTunnelId,
+            d.eq_type eqType,
+            ifnull(d.eq_status,2) eqStatus,
+            d.eq_direction eqDirection,
+            d.external_device_id externalDeviceId,
+            i.item_code itemCode,
+            i.item_name itemName,
+            i.unit,
+            a.data,
+            concat(a.data,ifnull(i.unit,'')) dataUnit
         from sd_devices d
         left join sd_device_type_item i on d.eq_type = i.device_type_id
         left join sd_device_data a on a.device_id = d.eq_id and a.item_id = i.id

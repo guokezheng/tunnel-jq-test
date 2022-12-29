@@ -183,6 +183,16 @@
     ::-webkit-scrollbar-thumb {
       background-color: #05AFE3;
     }
+    .addUserDialog{
+      .el-dialog__body{
+        color: #000 !important;
+      }
+    }
+    .addRoleDialog{
+      .tree-border{
+        border: solid 1px #05AFE3;
+      }
+    }
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -1537,10 +1547,22 @@
         background-color: #00487F !important;
         color: #fff !important;
       }
+      
+    }
+    .el-table__header-wrapper th, .el-table__fixed-header-wrapper th{
+      background: #00487F;
+      color: #fff;
+
     }
     .el-table--enable-row-hover .el-table__body tr:hover > td{
       background: #165484 !important;
+      color: #fff;
     }
+    
+  }
+  .allTable,.el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
+    background: #165484 !important;
+
   }
   .explain-table {
     .el-table th.el-table__cell.is-leaf, .el-table td.el-table__cell{

@@ -1336,7 +1336,7 @@ export default {
   border-bottom: solid 1px #01aafd;
 }
 ::v-deep ::-webkit-scrollbar {
-  width: 0px;
+  width: 0px !important;
 }
 
 </style>

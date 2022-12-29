@@ -176,3 +176,12 @@ export function setBrightness(query) {
 
   })
 }
+
+// 工作台 能耗图表
+export function energyConsumptionDetection(tunneld) {
+  return request({
+    url: '/system/data/energyConsumptionDetection/' + tunneld,
+    method: 'get'
+
+  })
+}

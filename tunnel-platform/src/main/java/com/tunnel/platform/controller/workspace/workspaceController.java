@@ -1,6 +1,6 @@
 package com.tunnel.platform.controller.workspace;
 
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
@@ -8,12 +8,16 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
@@ -22,12 +26,20 @@ import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -44,6 +56,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/workspace")
 public class workspaceController extends BaseController {
+
+    private static final Logger log = LoggerFactory.getLogger(workspaceController.class);
+
     @Autowired
     private ISdEventService sdEventService;
     @Autowired
@@ -74,6 +89,18 @@ public class workspaceController extends BaseController {
     @Value("${authorize.name}")
     private String deploymentType;
 
+    @Autowired
+    private HongMengDevService hongMengDevService;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     //3d测试
     @PostMapping("/test")
     public String test() {
@@ -92,16 +119,27 @@ public class workspaceController extends BaseController {
             throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
         }
 
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
         if ("GSY".equals(deploymentType)) {
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType())){
+                Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+                Integer code = Integer.valueOf(hongMap.get("code"));
+                String msg = hongMap.get("msg").toString();
+                if(code == 200){
+                    return AjaxResult.success(1);
+                }else {
+                    return AjaxResult.success(msg,0);
+                }
+            }
             map.put("controlType", "0");
             map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success(1);
         }
 
-        String devId = map.get("devId").toString();
-        String state = map.get("state").toString();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         //获取当前设备状态
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);
@@ -117,7 +155,6 @@ public class workspaceController extends BaseController {
         }
         SysDictData sysDictData = isopenList.get(0);
         String isopen = sysDictData.getDictValue();
-
         long eqType = sdDevices.getEqType().longValue();
 
         if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
@@ -547,4 +584,108 @@ public class workspaceController extends BaseController {
         return controlState;
     }
 
+    public void updateHua(String deviceId, String devStatus){
+        //查询设备信息
+        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
+        //查询设备类型数据项表
+        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+        sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+        SdDeviceTypeItem deviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem).get(0);
+        //状态匹配
+        devStatus = devStatusCync(deviceTypeItem.getId(), devStatus);
+        //修改地址
+        String url = getUrl(deviceTypeItem.getId());
+        HttpHeaders requestHeaders = new HttpHeaders();
+        //设置JSON格式数据
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("deviceId",deviceId);
+        jsonObject.put("runStatus",devStatus);
+        HttpEntity<String> requestEntity = new HttpEntity<>(jsonObject.toString(), requestHeaders);
+        try {
+            ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity("http://10.7.187.28:60400/qxsd-iot"+url, requestEntity, String.class);
+            log.info("返回值 --> {}", stringResponseEntity.getBody());
+        } catch (Exception e) {
+            log.error("设备控制失败！{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 设备运行状态与数据库匹配
+     * @param itemId
+     * @param runStatus
+     * @return
+     */
+    public String devStatusCync(Long itemId,String runStatus){
+        if(DevicesTypeItemEnum.FENG_JI_STATUS.getCode() == itemId){
+            if("3".equals(runStatus)){
+                return "00";
+            }
+        }
+        if(DevicesTypeItemEnum.XIN_HAO_DENG.getCode() == itemId){
+            if("4".equals(runStatus)){
+                return "00";
+            }
+            if("2".equals(runStatus)){
+                return "01";
+            }
+            if("1".equals(runStatus)){
+                return "02";
+            }
+        }
+        if(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode() == itemId){
+            if("1".equals(runStatus)){
+                return "02";
+            }
+            if("2".equals(runStatus)){
+                return "01";
+            }
+            if("4".equals(runStatus)){
+                return "00";
+            }
+            if("5".equals(runStatus)){
+                return "04";
+            }
+        }
+        if(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId){
+            if("4".equals(runStatus)){
+                return "00";
+            }
+        }
+        if(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == itemId){
+            if("5".equals(runStatus)){
+                return "04";
+            }
+            if("4".equals(runStatus)){
+                return "00";
+            }
+        }
+        if(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode() == itemId){
+            if("3".equals(runStatus)){
+                return "00";
+            }
+        }
+        return "0" + runStatus;
+    }
+
+    /**
+     * 获取相关设备修改地址
+     * @param itemId
+     * @return
+     */
+    public String getUrl(Long itemId){
+        if(itemId == DevicesTypeItemEnum.FENG_JI_STATUS.getCode()){
+            return "/deviceCtrl/fan/alterFanRunStatus";
+        }
+        if(itemId == DevicesTypeItemEnum.XIN_HAO_DENG.getCode() || itemId == DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode()){
+            return "/deviceCtrl/trafficLight/alterTrafficLightRunStatus";
+        }
+        if(itemId == DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() || itemId == DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()){
+            return "/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus";
+        }
+        if(itemId == DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode()){
+            return "/deviceCtrl/rollDoor/alterRollDoorRunStatus";
+        }
+        return null;
+    }
 }

@@ -77,13 +77,18 @@
           </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+        <el-row>
+          <el-col :span="15">
+            <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
             v-model="stateForm.brightness"
             :max="100"
             class="sliderClass"
           ></el-slider>
         </el-form-item> -->
+          </el-col>
+        </el-row>
+
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">
@@ -228,7 +233,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          this.stateForm.brightness = Number(res.data.brightness)
+          this.stateForm.brightness = Number(res.data.brightness);
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");

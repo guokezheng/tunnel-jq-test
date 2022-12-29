@@ -71,7 +71,7 @@
           },
           lighting:{
             src:require('@/assets/logo/equipment_log/加强照明-离线.png'),
-            src1:require('@/assets/logo/equipment_log/加强照明-开启.png'),
+            src1:require('@/assets/logo/equipment_log/加强照明-在线.png'),
             click:true,
           },
           lighting3:{

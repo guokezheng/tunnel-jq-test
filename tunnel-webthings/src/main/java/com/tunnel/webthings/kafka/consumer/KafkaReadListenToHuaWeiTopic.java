@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
@@ -88,7 +89,7 @@ public class KafkaReadListenToHuaWeiTopic {
     public void trafficLightRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
         if(record.value() != null && record.value() != ""){
             //获取交通信号灯itemId
-            Long itemId = Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode());
+            Long itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode());
             //解析交通信号灯数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
@@ -381,12 +382,13 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             Integer runStatus = 0;
-            if(DevicesTypeItemEnum.XIN_HAO_DENG.getCode() == itemId && jsonObject1.getInteger("runStatus") == 4){
-                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode()),jsonObject1.getInteger("runStatus"));
-                itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode());
-            }else if(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId && jsonObject1.getInteger("runStatus") == 4){
+            SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
+            if(DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == sdDevices1.getEqType()){
                 runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()),jsonObject1.getInteger("runStatus"));
                 itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode());
+            }else if(DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() == sdDevices1.getEqType()){
+                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode()),jsonObject1.getInteger("runStatus"));
+                itemId = Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode());
             }else {
                 runStatus = devStatusCync(itemId,jsonObject1.getInteger("runStatus"));
             }
@@ -405,7 +407,6 @@ public class KafkaReadListenToHuaWeiTopic {
                 deviceData.setUpdateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
             }
-            SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectDev = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(itemId).getDeviceTypeId() : sdDevices1.getEqType(), objectDev);
             //将设备运行状态上传至高速云
             kafkaTemplate.send("wq_devStatusTopic",jsonObjectDev.toString());
@@ -692,6 +693,15 @@ public class KafkaReadListenToHuaWeiTopic {
         }
         if(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode() == itemId){
             if(runStatus == 4){
+                return 5;
+            }
+            if(runStatus == 0){
+                return 4;
+            }
+            if(runStatus == 1){
+                return 2;
+            }
+            if(runStatus == 2){
                 return 1;
             }
         }
@@ -703,6 +713,9 @@ public class KafkaReadListenToHuaWeiTopic {
         if(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == itemId){
             if(runStatus == 4){
                 return 5;
+            }
+            if(runStatus == 0){
+                return 4;
             }
         }
         if(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode() == itemId){

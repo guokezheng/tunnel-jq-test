@@ -260,10 +260,16 @@ public interface SdDevicesMapper
 	public List<SdDevices> selectSdDevicesListByEqTypes(@Param("guidanceLampTypeId") Long guidanceLampTypeId, @Param("lunKuoBiaoTypeId") Long lunKuoBiaoTypeId);
 
 	/**
-	 * 查询紧急电话和广播
+	 * 根据类型和外部设备ID查询紧急电话和广播
 	 * @param devices
 	 * @return
 	 */
 	SdDevices selectPhoneSpk(SdDevices devices);
 
+	/**
+	 * 查询左洞或者右洞的设备
+	 * @param sdDevices
+	 * @return
+	 */
+    List<SdDevices> getSpkList(SdDevices sdDevices);
 }

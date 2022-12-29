@@ -75,7 +75,8 @@ export default {
           text: 'V',
           textStyle: {
             align: 'center',
-            fontSize: 16
+            fontSize: 16,
+            color: this.sideTheme == "theme-light" ? "#fff" : "#000"
           },
           top: '5%',
           left: '6%',

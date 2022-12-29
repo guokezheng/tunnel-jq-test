@@ -1,11 +1,14 @@
 package com.tunnel.platform.service;
 
 import cn.hutool.json.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -25,6 +28,7 @@ import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
+import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
 import org.slf4j.Logger;
@@ -72,6 +76,9 @@ public class SdDeviceControlService {
     @Autowired
     private ISdVmsTemplateContentService sdVmsTemplateContentService;
 
+    @Autowired
+    private HongMengDevService hongMengDevService;
+
     /**
      * 批量控制设备方法参数不能为空，否则直接返回0（控制失败）
      * 控制车指必传参数：devId（设备ID）、state（变更的状态）
@@ -87,6 +94,19 @@ public class SdDeviceControlService {
             return 0;
         }
         if ("GSY".equals(deploymentType)) {
+            //解析map
+            String deviceId = map.get("devId").toString();
+            String deviceState = map.get("state").toString();
+            SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType())){
+                Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
+                Integer code = Integer.valueOf(hongMap.get("code"));
+                if(code == 200){
+                    return 1;
+                }else {
+                    return 0;
+                }
+            }
             return sdOptDeviceService.optSingleDevice(map);
         }
 

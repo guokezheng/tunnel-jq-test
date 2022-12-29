@@ -109,7 +109,7 @@
             </div>
             <div>
               <br />
-              <el-table v-loading="loading" :data="zhuRiDataList" style="overflow-x: auto;overflow-y: auto;height:40vh;">
+              <el-table v-loading="loading" :data="zhuRiDataList" style="overflow-x: auto;overflow-y: auto;height:36vh;" class='dianliTable'>
                 <el-table-column width="200" label="日期" prop="time" align="center"></el-table-column>
                 <el-table-column width="200" :label="tabTitName" align="center">
                   <el-table-column width="200" label="最大值" align="center">

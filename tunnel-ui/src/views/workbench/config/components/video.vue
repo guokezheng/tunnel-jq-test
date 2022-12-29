@@ -150,7 +150,7 @@
         </el-tabs>
       </el-form>
       <div slot="footer">
-        <!-- <el-button
+        <el-button
           type="primary"
           size="mini"
           @click="videoYunTai()"
@@ -158,7 +158,7 @@
           class="submitButton"
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
-        > -->
+        >
         <!-- <el-button
           type="primary"
           size="mini"

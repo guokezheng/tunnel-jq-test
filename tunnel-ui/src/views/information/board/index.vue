@@ -7,12 +7,12 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div class="container" style="background-color: #004375; height: 100%">
+  <div class="container infoBoardBox " style=" height: 100%">
     <el-row
       :gutter="20"
       style="height: 100%; margin-left: 0px; margin-right: 0px"
     >
-      <el-col :span="4" style="background-color: white">
+      <el-col :span="4">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="所属单位">
@@ -123,7 +123,7 @@
       </el-col>
       <el-col
         :span="10"
-        style="background-color: white; border-left: 1px solid #f3f3f3"
+        style=" border-left: 1px solid #f3f3f3"
       >
         <p class="bigTitle">待下发信息</p>
         <div class="contentBox">
@@ -185,7 +185,7 @@
       </el-col>
       <el-col
         :span="10"
-        style="background-color: white; border-left: 1px solid #f3f3f3"
+        style=" border-left: 1px solid #f3f3f3"
       >
         <p class="bigTitle">信息模板</p>
         <div class="templateBox">

@@ -489,7 +489,7 @@ export default {
     padding: 5px 10px;
     min-width: 160px;
     .el-scrollbar__view {
-      width: 88% !important;
+      width: 100% !important;
       color: white;
     }
     .el-select-dropdown__item.selected,
@@ -497,7 +497,8 @@ export default {
       color: white;
       height: 50px;
       line-height: 50px;
-      padding: 0 27px;
+      // padding: 0 27px;
+      text-align: center;
     }
     .el-select-dropdown__item.hover,
     .el-select-dropdown__item:hover {

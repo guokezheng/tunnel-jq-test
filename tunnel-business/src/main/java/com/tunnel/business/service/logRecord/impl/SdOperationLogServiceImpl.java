@@ -10,6 +10,9 @@ import com.zc.common.core.websocket.WebSocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -130,5 +133,52 @@ public class SdOperationLogServiceImpl implements ISdOperationLogService {
     @Override
     public List<Map> getDispatchExecuted(String eventId) {
         return sdOperationLogMapper.getDispatchExecuted(eventId);
+    }
+
+    /**
+     * app端获取操作日志
+     * @param time
+     * @return
+     */
+    @Override
+    public List<SdOperationLog> selectAppOperationLogList(String time) {
+        String start = "";
+        String end = "";
+        if("0".equals(time)){//最近一小时
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 1);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            start = df.format(calendar.getTime());
+            end = df.format(new Date());
+        }else if("1".equals(time)){//最近一天
+            Date today = new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String yesterday = simpleDateFormat.format(today);//获取昨天日期
+            start = simpleDateFormat.format(today);
+            end = simpleDateFormat .format(new Date());
+        }else if("2".equals(time)){//最近一周
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar c = Calendar.getInstance();
+            Date date = new Date();
+            end = format.format(date);//结束时间
+            c.setTime(new Date());
+            c.add(Calendar.DATE, - 7);
+            Date d = c.getTime();
+            start = format.format(d);
+        }else if("3".equals(time)){//最近一月
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar c = Calendar.getInstance();
+            Date date = new Date();
+            end = format.format(date);//结束时间
+            c.setTime(new Date());
+            c.add(Calendar.MONTH, -1);
+            Date m = c.getTime();
+            start = format.format(m);
+        }
+        String deptId = SecurityUtils.getDeptId();
+        if (deptId == null) {
+            throw new RuntimeException("当前账号没有配置所属部门，请联系管理员进行配置！");
+        }
+        return sdOperationLogMapper.selectAppOperationLogList(start,end,deptId);
     }
 }

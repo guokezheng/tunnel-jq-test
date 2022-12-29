@@ -827,4 +827,10 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
         return devicesList;
     }
+
+
+    @Override
+    public List<SdDevices> getSpkList(SdDevices sdDevices){
+        return sdDevicesMapper.getSpkList(sdDevices);
+    }
 }

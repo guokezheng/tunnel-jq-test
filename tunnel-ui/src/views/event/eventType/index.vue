@@ -245,7 +245,8 @@
             v-model="form.isUsable"
             clearable
             placeholder="请选择是否可用"
-            size="small">
+            size="small"
+            style="width: 100%">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -254,7 +255,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="默认图标" label-width="100px" prop="iconUrl">
+        <el-form-item label="默认图标"  prop="iconUrl">
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"

@@ -254,7 +254,7 @@
                       @click="clickRobot"
                     >
                       <img
-                        src="../../../assets/logo/equipment_log/robot_zaixian.png"
+                        src="../../../assets/logo/equipment_log/机器人-在线.png"
                         class="robotAnimation"
                       />
                     </div>
@@ -749,7 +749,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-             
+
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -759,7 +759,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-          
+
         </el-drawer>
       </div>
 
@@ -842,7 +842,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-              
+
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1279,7 +1279,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-     
+
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2444,7 +2444,7 @@
       width="1000px"
       append-to-body
     >
-      <img src="@/assets/logo/equipment_log/all.png" 
+      <img src="@/assets/logo/equipment_log/all.png"
       style="width:1000px;height:auto;padding:20px"/>
       <!-- <el-table
         ref="multipleTable"
@@ -2496,7 +2496,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          
+
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -3025,7 +3025,7 @@ export default {
         pageNum:1,
         pageSize:10,
       },
-     
+
       dateRange:[],
       operationActive:'xitong',
       manageStation: this.$cache.local.get("manageStation"),
@@ -3216,15 +3216,6 @@ export default {
       railingList: [
         {
           position: {
-            top: 325,
-            left: 150,
-          },
-          height: 2,
-          image: require("@/assets/logo/equipment_log/railing.png"),
-          tunnelName: "刘长山隧道",
-        },
-        {
-          position: {
             top: 85,
             left: 0,
           },
@@ -3376,7 +3367,7 @@ export default {
       upList: [],
       downList: [],
       devicesList: [],
-      eqIcon: icon,
+      // eqIcon: icon,
       //各状态对应图标列表（灵活性差，后期最好在类型状态管理中动态添加）
       eqTypeStateList: [],
       eqTypeStateList2: [],
@@ -3717,8 +3708,8 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
-    
-    
+
+
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -4074,7 +4065,7 @@ export default {
     // this.srollAuto()
   },
   methods: {
-    
+
     // 操作日志 搜索
     handleQueryOperationParam(){
       this.operationParam.pageNum = 1;
@@ -4095,7 +4086,7 @@ export default {
           }
         );
       // } else if (inx == 'caozuo' ) {
-        
+
         listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
           (response) => {
             console.log(response, "操作日志")
@@ -4515,7 +4506,7 @@ export default {
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
 
-      
+
       this.handleQuery();
     },
     // 控制方式   3：手动 1：时间控制 2：光强控制字典翻译
@@ -5279,7 +5270,7 @@ export default {
                 fontSize: 10,
               },
             },
-            
+
             axisLine: {
               show: false,
             },
@@ -7301,7 +7292,7 @@ export default {
       this.title = "控制策略";
       this.queryParams.pageNum = 1;
       this.handlestrategyQuery();
-      
+
       // if (this.currentTunnel.id) {
       //   listStrategy({
       //     strategyType: 0,

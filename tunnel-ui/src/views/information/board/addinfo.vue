@@ -10,7 +10,7 @@
       <el-card class="box-card" style="margin-top: 2vh">
         <div
           style="
-            backgroundColor: #000000;
+            backgroundcolor: #000000;
             color: yellow;
             margin: 0 auto;
             overflow: hidden;
@@ -37,14 +37,17 @@
               top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
             class="textBoard"
-            v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
+            v-html="
+              dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                / /g,
+                ' &nbsp'
+              )
+            "
           ></span>
-         
         </div>
       </el-card>
-      <el-row>
-        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <el-button type="info" plain @click="alignment(6)" size="mini"
+      <!-- <el-row class="infoBoardButton">
+          <el-button type="info" plain @click="alignment(6)" size="mini"
           >下对齐</el-button
         >
         <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -62,7 +65,8 @@
         <el-button type="info" plain @click="alignment(1)" size="mini"
           >左对齐</el-button
         >
-      </el-row>
+        
+      </el-row> -->
       <el-card>
         <el-form
           :model="dataForm"
@@ -89,6 +93,27 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+            </el-col>
+            <el-col class="infoBoardButton" :span="18">
+              <el-button type="info" plain @click="alignment(6)" size="mini"
+                >下对齐</el-button
+              >
+              <el-button type="info" plain @click="alignment(5)" size="mini"
+                >上下居中</el-button
+              >
+              <el-button type="info" plain @click="alignment(4)" size="mini"
+                >上对齐</el-button
+              >
+              <el-button type="info" plain @click="alignment(3)" size="mini"
+                >右对齐</el-button
+              >
+              <el-button type="info" plain @click="alignment(2)" size="mini"
+                >左右居中</el-button
+              >
+              <el-button type="info" plain @click="alignment(1)" size="mini"
+                >左对齐</el-button
+              >
+              <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>
             <!-- <el-col :span="2">
               <el-button type="primary" @click="addTemplateContent">
@@ -160,6 +185,7 @@
                 ></el-input>
               </el-form-item>
             </el-col>
+
             <!-- <el-col :span="2">
               <el-button
                 type="danger"
@@ -323,10 +349,7 @@ import {
   getTemplateContent,
   getGalleryList,
 } from "@/api/board/template";
-import {
-  devicessize,
- 
-} from "@/api/information/api.js";
+import { devicessize } from "@/api/information/api.js";
 export default {
   data() {
     return {
@@ -381,7 +404,7 @@ export default {
         screenSize: "",
         COORDINATE: "",
         FONT_SIZE: "",
-        CONTENT:"山东高速欢迎你"
+        CONTENT: "山东高速欢迎你",
       },
       templateContent: [],
       templateDelContent: [],
@@ -710,8 +733,8 @@ export default {
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
-  created(){
-    this.getdevicessize()
+  created() {
+    this.getdevicessize();
   },
   methods: {
     init(devicePixel, type) {
@@ -748,7 +771,7 @@ export default {
             FONT: "黑体",
             SPEED: "1",
             ACTION: "1",
-            COORDINATE: "063004",
+            COORDINATE: "000000",
             STATE: "true",
             STAY: "500",
             screenSize: devicePixel,
@@ -768,16 +791,16 @@ export default {
         this.screenSizeOptions = res.data;
       });
     },
-    changeScreenSize(size){
-      console.log(size,"00000000000000000000");
+    changeScreenSize(size) {
+      console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
 
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     keyDown(ev) {
       console.log(ev.keyCode, "ev.keyCode");
-      
+
       let arr = [];
       let content = "";
       const input = document.getElementById("textContent");
@@ -788,9 +811,9 @@ export default {
       for (var i = 0; i < arr.length; i++) {
         content += arr[i];
         if (i == input.selectionStart - 1) {
-          if(ev.keyCode == 13){
+          if (ev.keyCode == 13) {
             content += "<br>";
-          }else if(ev.keyCode == 32){
+          } else if (ev.keyCode == 32) {
             content += "&nbsp";
           }
         }
@@ -945,9 +968,12 @@ export default {
       // 获取黑盒子长宽
       let divWidth = divContent[0].offsetWidth;
       let divHeight = divContent[0].offsetHeight;
-      console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-      console.log(textBoard[0].style,"textBoard[0].style");
-      console.log(textWidth,divWidth,"999999999999999");
+      console.log(
+        document.getElementsByClassName("textBoard"),
+        "document.getElementsByClassName('textBoard')"
+      );
+      console.log(textBoard[0].style, "textBoard[0].style");
+      console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
         // 左对齐
         case 1:
@@ -1085,5 +1111,9 @@ export default {
   max-width: 300px;
   width: 100%;
   // height: 80px;
+}
+.infoBoardButton {
+  display: flex;
+  justify-content: left;
 }
 </style>

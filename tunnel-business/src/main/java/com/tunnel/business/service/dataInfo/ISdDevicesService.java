@@ -3,7 +3,6 @@ package com.tunnel.business.service.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
-import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -230,4 +229,7 @@ public interface ISdDevicesService {
     List<SdDevices> getAppDevicesStatus(String eqId);
 
     List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId);
+
+    List<SdDevices> getSpkList(SdDevices sdDevices);
+
 }

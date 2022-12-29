@@ -133,8 +133,32 @@ export function exportDevicesTemplate(query) {
 // 视频流
 export function videoStreaming(tunnelId) {
   return request({
-    url: 'integrated/video/videoStreaming/' + tunnelId,
+    url: '/integrated/video/videoStreaming/' + tunnelId,
     method: 'get',
   })
 }
 
+// 广播控制
+export function playVoice(query) {
+  return request({
+    url: '/phoneSpk/playVoice',
+    method: 'post',
+    params: query
+  })
+}
+
+// 广播文件列表
+export function getAudioFileList() {
+  return request({
+    url: '/phoneSpk/getAudioFileList',
+    method: 'get',
+  })
+}
+
+// 查询左洞或右洞扬声器
+export function getSpkList() {
+  return request({
+    url: '/devices/getSpkList',
+    method: 'get',
+  })
+}

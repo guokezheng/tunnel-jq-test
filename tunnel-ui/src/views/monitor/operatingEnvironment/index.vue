@@ -164,7 +164,7 @@
           <el-row :gutter="10">
             <!-- 摄像头 -->
             <el-col :span="16">
-              <el-card>
+              <el-card class="menJin">
                 <div class="tit_wenDuHeRiQi">
                   <div class="tit_wenDuHeRiQi_tit">高压室摄像头</div>
                   <button class="state_style_header_btn">回放</button>
@@ -214,7 +214,7 @@ import LoopTree from '@/views/components/powerTree/eTree.vue'
 import { powerTreeselect } from '@/api/configcenter/power'
 import { getTypeListApi, getTypeListXqApi, getSelectListEqApi, getSelectListDataEqApi, fixIndustryModelApi, getCameraListApi } from '@/api/panoramicData/index.js'
 import {getToken} from "@/api/panoramicData/indexToken";
-/*import video from '@/components/videoPlayer/myVideo.vue'*/
+import videos from '../../components/videoPlayer/myVideo.vue'
 export default {
   name: 'operatingEnvironment',
   data() {
@@ -296,7 +296,7 @@ export default {
 
   props: {},
   // 注册组件
-  components: { echartsEnvironment, LoopTree, echartsIndustry/*, video*/ },
+  components: { echartsEnvironment, LoopTree, echartsIndustry, videos },
   // 计算属性
   computed: {},
   // 生周期函数
@@ -566,6 +566,7 @@ export default {
   color: #2c91df;
   border-radius: 3px;
   cursor: pointer;
+  font-size: 14px;
 }
 .state_style_center {
   margin-top: 1vh;
@@ -690,7 +691,7 @@ export default {
 }
 .box-card-left {
   width: 100%;
-  height: 85vh;
+  height: 85.4vh;
 }
 .operatingEnvironment_center {
   margin: 1vh 0;
@@ -756,14 +757,18 @@ export default {
   .shiPing_list {
     width: 17vw;
     height: 19vh;
+    // overflow: auto;
   }
 }
 .menJin_top_men {
   padding-bottom: 3vh;
   border-bottom: 1px solid #eee;
 }
+.el-empty{
+  padding: 0 !important;
+}
 .menJin {
-  height: 28.4vh;
+  height: 28vh;
   overflow: auto;
 }
 .menJin_switch {
@@ -772,6 +777,7 @@ export default {
   display: flex;
   align-items: center;
   border-bottom: 1px solid #eee;
+  // overflow: auto;
   .menJin_switch_img {
     width: 1.5vw;
     height: 3vh;

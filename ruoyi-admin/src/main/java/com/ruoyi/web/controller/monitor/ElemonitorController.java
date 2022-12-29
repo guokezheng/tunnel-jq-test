@@ -4,14 +4,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.Result;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.system.service.ISElemonitorService;
+import com.ruoyi.system.service.ISysLogininforService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class ElemonitorController {
+
+    @Autowired
+    private ISElemonitorService elemonitorService;
+
     @GetMapping("/getToken")
     public Result getToken()
     {
@@ -23,5 +31,15 @@ public class ElemonitorController {
         JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
         token =  json.get("token").toString();//获取token数据
         return Result.success(token);
+    }
+
+
+    @GetMapping("/getThreeUrl")
+    public Result getThreeUrl()
+    {
+        String tunnelId ="JQ-WeiFang-JiuLongYu-HSD";
+        String sysName = "能源管控平台";
+        List<Map> externalSystem=elemonitorService.getExternalSystemEnergy(tunnelId,sysName);
+        return Result.success(externalSystem);
     }
 }

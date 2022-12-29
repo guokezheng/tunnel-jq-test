@@ -110,10 +110,11 @@
                       : '',
                   ]"
                 >
+
                   <el-row
                     class="flex-row"
                     v-if="
-                      stateForm.eqDirection == '1' &&( stateForm.eqType == 1 || stateForm.eqType == 2)
+                      stateForm.eqDirection == '1' && (stateForm.eqType == 1||stateForm.eqType ==2)
                       
                     "
                   >
@@ -126,7 +127,7 @@
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
-                      v-if="item.url.length > 1"
+                      v-if="item.url[1]"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
@@ -136,25 +137,25 @@
                     class="flex-row"
                     v-if="
                       stateForm.eqDirection == '2' &&
-                      ( stateForm.eqType == 1 || stateForm.eqType == 2)
+                       (stateForm.eqType == 1||stateForm.eqType == 2)
                     "
                   >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
+                      v-if="item.url.length > 1"
                     />
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
-                      v-if="item.url.length > 1"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                  <el-row class="flex-row" v-if="stateForm.eqType != 1 && stateForm.eqType != 2 ">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"

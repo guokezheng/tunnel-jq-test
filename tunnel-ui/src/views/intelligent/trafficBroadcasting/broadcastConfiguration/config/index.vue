@@ -1,8 +1,8 @@
 <template>
   <div style="height: 100%;padding: 1.5rem 0;margin-right: 1.5rem">
-    <el-row :gutter="32">
-      <el-col :xs="24" :sm="24" :lg="8" style="height: 50rem">
-        <el-card class="box-card" style="margin-left: 2rem; border:solid 2px #c0c0c0;height: 100%">
+    <el-row :gutter="32" style="height:100%">
+      <el-col :xs="24" :sm="24" :lg="8" style="height: 100%">
+        <el-card class="box-card" style="margin-left: 2rem; border:solid 2px #c0c0c0;height: 100%;overflow: auto;">
           <div slot="header" class="clearfix">
             <span>广播终端</span>
             <el-button
@@ -53,7 +53,7 @@
         </el-card>
       </el-col>
 
-      <el-col :xs="24" :sm="24" :lg="16" style="height: 24rem;margin-bottom: 2rem;">
+      <el-col :xs="24" :sm="24" :lg="16" style="height: calc(50% - 1rem);margin-bottom: 2rem;">
         <el-card class="box-card" style="height: 100%;  overflow: auto; border:solid 2px #c0c0c0;">
           <div slot="header" class="clearfix">
             <span>广播模板</span>
@@ -90,7 +90,7 @@
         </el-card>
       </el-col>
 
-      <el-col :xs="24" :sm="24" :lg="16" style="height: 24rem">
+      <el-col :xs="24" :sm="24" :lg="16" style="height: calc(50% - 1rem)">
         <el-card class="box-card" style="margin-bottom: 2.875rem; height: 100%; overflow: auto; border:solid 2px #c0c0c0;">
           <div slot="header" class="clearfix">
             <span>广播发布</span>

@@ -272,4 +272,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         }
     }
 
+    @Override
+    public List<Long> energyConsumptionDetection(String tunnelId) {
+        List<Long> list = Arrays.asList(1450L, 1650L, 1500L, 1430L, 1580L, 1530L, 1580L, 1460L, 1400L, 1540L);
+        return list;
+    }
+
 }

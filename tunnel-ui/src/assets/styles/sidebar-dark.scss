@@ -87,6 +87,15 @@
     }
   }
   #app {
+    .eventTypeButton{
+      border: solid 1px #65bfff;
+      color: #189fff;
+      background: #fff;
+
+    }
+    .infoBoardBox{
+      background: #fff;
+    }
     .el-select .el-input .el-select__caret{
       height: 33px;
     }
@@ -1305,6 +1314,7 @@
   .bottomEventForm, .el-card{
     background-color: #fff;
     border: 1px solid #e6ebf5;
+    
   } 
   
   .tunnelBox{

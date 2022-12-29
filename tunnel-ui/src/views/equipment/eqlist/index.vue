@@ -125,7 +125,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="所属隧道" prop="eqTunnelId">
-              <el-select v-model="form.eqTunnelId" @change="getPlcs()" placeholder="请选择所属隧道">
+              <el-select v-model="form.eqTunnelId" @change="getPlcs()" placeholder="请选择所属隧道" style="width:100%">
                 <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName"
                            :value="item.tunnelId"></el-option>
               </el-select>
@@ -133,7 +133,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备类型" prop="eqType">
-              <el-select v-model="form.eqType" placeholder="请选择设备类型" @change="changeEqType(form.eqType)">
+              <el-select v-model="form.eqType" placeholder="请选择设备类型" @change="changeEqType(form.eqType)" style="width:100%">
                 <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
                 </el-option>
               </el-select>
@@ -152,7 +152,9 @@
             <el-form-item label="plc主机" prop="fEqId" v-if="showPlc">
               <el-select v-model="form.fEqId" placeholder="请选择plc主机"
                          @click.native="onChangePlc(form.eqTunnelId)"
-                         @change="changePlc(form.fEqId)">
+                         @change="changePlc(form.fEqId)"
+                         style="width:100%">
+                         
                 <el-option v-for="item in eqHostData" :key="item.eqId" :label="item.eqName" :value="item.eqId"/>
               </el-select>
             </el-form-item>
@@ -160,7 +162,7 @@
 
           <el-col :span="12">
             <el-form-item label="设备大类" prop="fEqType">
-              <el-select v-model="form.fEqType" placeholder="请选择设备大类" clearable>
+              <el-select v-model="form.fEqType" placeholder="请选择设备大类" clearable style="width:100%">
                 <el-option
                   v-for="dict in dict.type.eq_category"
                   :key="dict.value"
@@ -179,7 +181,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备方向" prop="eqDirection">
-              <el-select v-model="form.eqDirection" placeholder="请选择设备方向" clearable>
+              <el-select v-model="form.eqDirection" placeholder="请选择设备方向" clearable style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sd_direction"
                   :key="dict.value"
@@ -191,7 +193,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备品牌" prop="brandId">
-              <el-select v-model="form.brandId" placeholder="请选择设备品牌">
+              <el-select v-model="form.brandId" placeholder="请选择设备品牌" style="width:100%">
                 <el-option
                   v-for="item in brandList"
                   :key="item.supplierId"
@@ -204,7 +206,7 @@
 
           <el-col :span="12">
             <el-form-item label="外部系统" prop="externalSystemId">
-              <el-select v-model="form.externalSystemId" placeholder="请选择外部系统">
+              <el-select v-model="form.externalSystemId" placeholder="请选择外部系统" style="width:100%">
                 <el-option
                   v-for="item in externalSystemList"
                   :key="item.id"
@@ -224,7 +226,7 @@
 
           <el-col :span="12">
             <el-form-item label="所属车道" prop="lane">
-              <el-select v-model="form.lane" placeholder="请选择所属车道">
+              <el-select v-model="form.lane" placeholder="请选择所属车道" style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sd_lane"
                   :key="dict.value"
@@ -291,7 +293,8 @@
                 type="date"
                 placeholder="请选择出场时间"
                 :picker-options="optionsDisable"
-                value-format="yyyy-MM-dd">
+                value-format="yyyy-MM-dd"
+                style="width:100%">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -302,7 +305,8 @@
                 type="date"
                 placeholder="请选择维保截至时间"
                 :picker-options="optionsDisable"
-                value-format="yyyy-MM-dd">
+                value-format="yyyy-MM-dd"
+                style="width:100%">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -313,7 +317,8 @@
                 type="date"
                 placeholder="请选择设备安装时间"
                 :picker-options="optionsDisable"
-                value-format="yyyy-MM-dd">
+                value-format="yyyy-MM-dd"
+                style="width:100%">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -327,7 +332,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="使用状态" prop="useStatus">
-              <el-select v-model="form.useStatus" placeholder="请选择使用状态" clearable>
+              <el-select v-model="form.useStatus" placeholder="请选择使用状态" clearable style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sd_use_status"
                   :key="dict.value"
@@ -339,7 +344,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="是否监控" prop="isMonitor">
-              <el-select v-model="form.isMonitor" placeholder="请选择是否监控" clearable>
+              <el-select v-model="form.isMonitor" placeholder="请选择是否监控" clearable style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sd_is_monitor"
                   :key="dict.value"

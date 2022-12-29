@@ -178,7 +178,7 @@
 
     <!-- 添加或修改备品备件库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px" style="max-height:600px;overflow:auto">
         <el-form-item label="所属隧道" prop="eqTunnelId">
           <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">
             <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>

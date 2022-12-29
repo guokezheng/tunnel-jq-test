@@ -3,17 +3,17 @@
      <!-- 车指 -->
      <div class="vehicleLaneBox" >
        <div class="vehicleLaneMiniBox " v-for="item in 3">
-          <img :src="pic.vehicleLane.click == true?pic.vehicleLane.src:pic.vehicleLane.src1" 
+          <img :src="pic.vehicleLane.click == true?pic.vehicleLane.src:pic.vehicleLane.src1"
                   class="vehicleLane"  v-for="item in 3"/>
        </div>
      </div>
      <div class="vehicleLaneBox2">
        <div class="vehicleLaneMiniBox " v-for="item in 3">
-          <img :src="pic.vehicleLane.click == true?pic.vehicleLane.src:pic.vehicleLane.src1" 
+          <img :src="pic.vehicleLane.click == true?pic.vehicleLane.src:pic.vehicleLane.src1"
                   class="vehicleLane"  v-for="item in 3"/>
        </div>
      </div>
-     
+
      <img :src="pic.fan.click == true?pic.fan.src1:pic.fan.src" class="fan fan1"/>
      <img :src="pic.fan.click == true?pic.fan.src1:pic.fan.src" class="fan fan2"/>
      <img :src="pic.fan.click == true?pic.fan.src1:pic.fan.src" class="fan fan3"/>
@@ -38,11 +38,11 @@
      <img :src="pic.door.click == true?pic.door.src:pic.door.src1" class="door door3"/>
      <img :src="pic.door.click == true?pic.door.src:pic.door.src1" class="door door4"/>
      <div class="youdaoBox " >
-        <img :src="pic.youdao.click == true?pic.youdao.src:pic.youdao.src1" 
+        <img :src="pic.youdao.click == true?pic.youdao.src:pic.youdao.src1"
                 class="youdao"  v-for="item in 20"/>
      </div>
      <div class="youdaoBox2 " >
-        <img :src="pic.youdao2.click == true?pic.youdao2.src:pic.youdao2.src1" 
+        <img :src="pic.youdao2.click == true?pic.youdao2.src:pic.youdao2.src1"
                 class="youdao"  v-for="item in 20"/>
      </div>
      <img :src="pic.shusan.click == true?pic.shusan.src1:pic.shusan.src" class="shusan shusan1"/>
@@ -64,64 +64,49 @@
           {id:1},
         ],
         pic:{
-          // vehicleLane:{
-          //   src:require('@/assets/logo/equipment_log/lane_tongxing_1.png'),
-          //   src1:require('@/assets/logo/equipment_log/lane_jinxing.png'),
-          //   click:true,
-          // },
-          // vehicleLane2:{
-          //   src:require('@/assets/logo/equipment_log/lane_tongxing_2.png'),
-          //   src1:require('@/assets/logo/equipment_log/lane_jinxing.png'),
-          //   click:true,
-          // },
           fan:{
-            src:require('@/assets/logo/equipment_log/fengji_fanzhuanqidong.gif'),
-            src1:require('@/assets/logo/equipment_log/fengji_zidong.png'),
+            src:require('@/assets/logo/equipment_log/风机-反转.gif'),
+            src1:require('@/assets/logo/equipment_log/风机-停止.png'),
             click:true,
           },
           lighting:{
-            src:require('@/assets/logo/equipment_log/light_jiaqiang_buliang.png'),
-            src1:require('@/assets/logo/equipment_log/light_jiaqiang_liang.png'),
+            src:require('@/assets/logo/equipment_log/加强照明-离线.png'),
+            src1:require('@/assets/logo/equipment_log/加强照明-开启.png'),
             click:true,
           },
           lighting3:{
-            src:require('@/assets/logo/equipment_log/light_jiben_buliang.png'),
-            src1:require('@/assets/logo/equipment_log/light_jiben_liang.png'),
+            src:require('@/assets/logo/equipment_log/基本照明-离线.png'),
+            src1:require('@/assets/logo/equipment_log/基本照明-开启.png'),
             click:true,
           },
           phone:{
-            src:require('@/assets/logo/equipment_log/dianhua_zaixian.png'),
-            src1:require('@/assets/logo/equipment_log/dianhua_lixian.png'),
+            src:require('@/assets/logo/equipment_log/紧急电话-在线.png'),
+            src1:require('@/assets/logo/equipment_log/紧急电话-离线.png'),
             click:true,
           },
           traffLights:{
-            src:require('@/assets/logo/equipment_log/xinhaodeng_hong.png'),
-            src1:require('@/assets/logo/equipment_log/xinhaodeng_lv.png'),
+            src:require('@/assets/logo/equipment_log/交通信号灯-红.png'),
+            src1:require('@/assets/logo/equipment_log/交通信号灯-黄.png'),
             click:true,
           },
           door:{
-            src:require('@/assets/logo/equipment_log/juanlianmen_lixian.png'),
-            src1:require('@/assets/logo/equipment_log/juanlianmen_guanbi.png'),
+            src:require('@/assets/logo/equipment_log/卷帘门-全开.png'),
+            src1:require('@/assets/logo/equipment_log/卷帘门-全关.png'),
             click:true,
           },
           youdao:{
-            src:require('@/assets/logo/equipment_log/light_yindao_buliang.png'),
-            src1:require('@/assets/logo/equipment_log/light_yindao_liang.png'),
+            // src:require('@/assets/logo/equipment_log/light_yindao_buliang.png'),
+            // src1:require('@/assets/logo/equipment_log/light_yindao_liang.png'),
             click:true,
           },
-          // youdao2:{
-          //   src:require('@/assets/logo/equipment_log/youdao_buliang.png'),
-          //   src1:require('@/assets/logo/equipment_log/yudao_liang.png'),
-          //   click:true,
-          // },
           shusan:{
-            src:require('@/assets/logo/equipment_log/dianguang_quan.png'),
-            src1:require('@/assets/logo/equipment_log/dianguang_lixian.png'),
+            src:require('@/assets/logo/equipment_log/疏散标志-在线.png'),
+            src1:require('@/assets/logo/equipment_log/疏散标志-离线.png'),
             click:true,
           },
           board:{
-            src:require('@/assets/logo/equipment_log/qingbaoban_kong.png'),
-            src1:require('@/assets/logo/equipment_log/qingbaoban.png'),
+            // src:require('@/assets/logo/equipment_log/qingbaoban_kong.png'),
+            // src1:require('@/assets/logo/equipment_log/qingbaoban.png'),
             click:true,
           }
         },
@@ -418,7 +403,7 @@
       top: 280px;
       left: 400px;
     }
-    
+
     .shusan1{
       top: 252px;
       left: 300px;

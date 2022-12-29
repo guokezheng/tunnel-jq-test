@@ -75,4 +75,11 @@ public interface ISdOperationLogService {
     AjaxResult operationLog(SdOperationLog sdOperationLog);
 
     List<Map> getDispatchExecuted(String eventId);
+
+    /**
+     * app获取操作日志
+     * @param time
+     * @return
+     */
+    List<SdOperationLog> selectAppOperationLogList(String time);
 }

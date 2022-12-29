@@ -117,13 +117,13 @@
             <div>上游相机:</div>
             <!-- <div>{{'1000米'}}</div> -->
             <img
-              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              src="../../assets/logo/equipment_log/固定摄像机-正常.png"
               class="icon"
               @click="openVideoDialog(video1)"
              v-show="video1"
             />
             <img
-              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              src="../../assets/logo/equipment_log/固定摄像机-正常.png"
               class="icon" style="margin-left:10px"
               @click="openVideoDialog(video2)"
               v-show="video2"

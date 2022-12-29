@@ -131,9 +131,9 @@ export function exportDevicesTemplate(query) {
 }
 
 // 视频流
-export function videoStreaming() {
+export function videoStreaming(tunnelId) {
   return request({
-    url: 'integrated/video/videoStreaming/JQ-WeiFang-JiuLongYu-HSD-CAMBOX-033',
+    url: 'integrated/video/videoStreaming/' + tunnelId,
     method: 'get',
   })
 }

@@ -89,6 +89,12 @@ public class workspaceController extends BaseController {
     @Value("${authorize.name}")
     private String deploymentType;
 
+    /**
+     * 高速云端是否可控
+     */
+    @Value("${platform.control}")
+    private String platformControl;
+
     @Autowired
     private HongMengDevService hongMengDevService;
 
@@ -124,7 +130,7 @@ public class workspaceController extends BaseController {
         SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
 
         if ("GSY".equals(deploymentType)) {
-            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType())){
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
                 Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
                 Integer code = Integer.valueOf(hongMap.get("code"));
                 String msg = hongMap.get("msg").toString();

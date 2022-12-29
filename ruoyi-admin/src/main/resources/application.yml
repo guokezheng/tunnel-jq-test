@@ -204,7 +204,10 @@ authorize:
     jly_glz_dept_id: 10703
     #设备控制接口
   #control_device_url:
-
+#高速云端可控权限
+platform:
+  #control: AGREE #同意
+  control: DISAGREE #不同意
 
 #物联中台事件topic
 eventTopic: "wq_tunnelEvent"

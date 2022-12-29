@@ -80,6 +80,12 @@ public class SdDeviceControlService {
     private HongMengDevService hongMengDevService;
 
     /**
+     * 高速云端是否可控
+     */
+    @Value("${platform.control}")
+    private String platformControl;
+
+    /**
      * 批量控制设备方法参数不能为空，否则直接返回0（控制失败）
      * 控制车指必传参数：devId（设备ID）、state（变更的状态）
      * 控制诱导灯：devId（设备ID）、state（变更的状态）、brightness（亮度）、frequency（频率）
@@ -98,7 +104,7 @@ public class SdDeviceControlService {
             String deviceId = map.get("devId").toString();
             String deviceState = map.get("state").toString();
             SdDevices devicesHong = sdDevicesService.selectSdDevicesById(deviceId);
-            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType())){
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(devicesHong.getEqTunnelId()) && DevicesHongTypeEnum.contains(devicesHong.getEqType()) && "AGREE".equals(platformControl)){
                 Map<String, String> hongMap = hongMengDevService.updateHua(deviceId, deviceState);
                 Integer code = Integer.valueOf(hongMap.get("code"));
                 if(code == 200){

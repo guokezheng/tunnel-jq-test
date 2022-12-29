@@ -20,12 +20,8 @@ public class ElemonitorController {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("username", "admin");
         map.put("password", "HSD123!@#");
-        try {
-            JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
-            token =  (String)json.get("token");//获取token数据
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
+        token =  json.get("token").toString();//获取token数据
         return Result.success(token);
     }
 }

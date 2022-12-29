@@ -68,6 +68,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_fan_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
     public void fanRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢风机数据： --> {}",record.value());
         if(record.value() != null && record.value() != ""){
             //获取风机itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.FENG_JI_STATUS.getCode());
@@ -87,6 +88,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_trafficLight_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
     public void trafficLightRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢信号灯数据： --> {}",record.value());
         if(record.value() != null && record.value() != ""){
             //获取交通信号灯itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode());
@@ -106,6 +108,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_laneIndicator_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
     public void laneIndicatorRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢车指数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取车指itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode());
@@ -113,8 +116,6 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
             saveOrUpdataRealTime(objects,itemId);
-            //将车道指示器数据推送至高速云
-            //kafkaTemplate.send("wq_devStatusTopic",objects.toString());
         }
         consumer.commitSync();
     }
@@ -127,6 +128,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_rollDoor_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
     public void rollDoorRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢卷帘门数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取卷帘门itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode());
@@ -146,6 +148,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_covi_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
     public void coviBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢COVI数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取co/vi的itemId
             Long coId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
@@ -166,6 +169,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_anemoclinograph_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
     public void anemoclinographBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢风速风向数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取风速风向的itemId
             Long fsId = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
@@ -186,6 +190,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_illuminance_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
     public void illuminanceBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢洞内亮度数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取洞内亮度itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
@@ -205,6 +210,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_brightDetector_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
     public void brightDetectorBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢洞外亮度数据： --> {}",record.value());
         if(record.value() != null & record.value() != ""){
             //获取洞外亮度itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
@@ -224,6 +230,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_devStatus"}, containerFactory = "kafkaThreeContainerFactory")
     public void receiveDevStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢实时设备数据： --> {}",record.value());
         if(record.value() != null && record.value() != ""){
             //解析实时设备状态
             JSONArray objects = JSONObject.parseArray(record.value().toString());
@@ -241,7 +248,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     @KafkaListener(topics = {"rhy_iot_receive_devFault"}, containerFactory = "kafkaThreeContainerFactory")
     public void receiveDevFault(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info(record.value().toString());
+        log.info("监听到瑞华赢实时设备故障数据： --> {}",record.value());
         if(record.value() != null && record.value() != ""){
             //解析实时设备状态
             JSONArray objects = JSONObject.parseArray(record.value().toString());

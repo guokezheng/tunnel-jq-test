@@ -48,15 +48,15 @@ let laneImage = [
   {
     id: "6",
     name: "杭山东隧道",
-    url: require('@/assets/image/lane/hsd.jpg'),
-    width: 1620,
+    url: require('@/assets/image/lane/hsd1229.png'),
+    width: 1728,
     num: 3,
     direction: 0
   },
   {
     id: "7",
     name: "金家楼隧道",
-    url: require('@/assets/image/lane/jjl.jpg'),
+    url: require('@/assets/image/lane/jjl1229.png'),
     width: 1620,
     num: 3,
     direction: 0
@@ -64,7 +64,7 @@ let laneImage = [
   {
     id: "8",
     name: "马鞍山隧道",
-    url: require('@/assets/image/lane/mas.jpg'),
+    url: require('@/assets/image/lane/mas1229.png'),
     width: 2270,
     num: 3,
     direction: 0

@@ -113,8 +113,8 @@
                   <el-row
                     class="flex-row"
                     v-if="
-                      stateForm.eqDirection == '1' &&
-                      stateForm.eqType == (1 || 2)
+                      stateForm.eqDirection == '1' &&( stateForm.eqType == 1 || stateForm.eqType == 2)
+                      
                     "
                   >
                     <img
@@ -136,7 +136,7 @@
                     class="flex-row"
                     v-if="
                       stateForm.eqDirection == '2' &&
-                      stateForm.eqType == (1 || 2)
+                      ( stateForm.eqType == 1 || stateForm.eqType == 2)
                     "
                   >
                     <img

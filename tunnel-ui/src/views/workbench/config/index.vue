@@ -425,6 +425,8 @@
                             padding-left: 5px;
                             width: 100px;
                             text-align: left;
+                            transform: translate(30px,5px);
+
                           "
                           v-if="item.eqType == 19"
                         >
@@ -442,6 +444,8 @@
                             padding-left: 5px;
                             width: 100px;
                             text-align: left;
+                            transform: translate(30px,5px);
+
                           "
                           v-if="item.eqType == 17"
                         >
@@ -515,7 +519,7 @@
             :value="index"
             @click="displayControl(index, item.label)"
             class="leftButtonS"
-            :style="topNav ? 'width:125px' : 'width:100px'"
+            :style="topNav ? 'width:100px' : 'width:100px'"
           >
             <div>{{ item.label }}</div>
           </div>
@@ -546,7 +550,7 @@
 
         <!-- 一键车道控制模块 -->
         <el-drawer
-          title="车道指示灯-车道控制"
+          title="一键控制"
           :visible.sync="drawerA"
           :modal="false"
           :append-to-body="true"
@@ -555,7 +559,7 @@
           <div style="width: 100%; height: 100%; position: relative">
             <div class="jianbianLine"></div>
             <div class="chezhiDrawerDirection">
-              {{ directionList[0].dictLabel }}
+              {{ directionList[0].dictLabel }}-车道指示器
             </div>
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
@@ -608,7 +612,7 @@
             </div>
 
             <div class="chezhiDrawerDirection">
-              {{ directionList[1].dictLabel }}
+              {{ directionList[1].dictLabel }}-车道指示器
             </div>
             <div class="chezhiDrawerInfo">
               <div class="chezhiName">车道:</div>
@@ -655,6 +659,96 @@
                 class="chezhiControlButton"
                 @click="chezhiControl(1)"
                 :disabled="chezhiDisabled"
+              >
+                控制
+              </el-button>
+            </div>
+            <div class="chezhiDrawerDirection" style="margin:10px 0">
+              {{ directionList[0].dictLabel }} -广播
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">播放次数:</div>
+              <el-input-number
+                v-model.number="phoneForm1.loopCount"
+                controls-position="right"
+                @change="handleChangePhone(1)"
+                size="small"
+              />
+              <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
+              
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">音量:</div>
+
+              <el-slider
+                v-model="phoneForm1.volume"
+                :max="100"
+                class="sliderClass"
+              ></el-slider>
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">播放文件:</div>
+              <el-select
+                v-model="phoneForm1.fileNames"
+                placeholder="请选择播放文件"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in fileNamesList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.fileName"
+                />
+              </el-select>
+              <el-button
+                class="chezhiControlButton"
+                size="mini"
+                @click="phoneControl(directionList[0].dictValue)"
+              >
+                控制
+              </el-button>
+            </div>
+            <div class="chezhiDrawerDirection" style="margin:10px 0">
+              {{ directionList[1].dictLabel }} -广播
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">播放次数:</div>
+              <el-input-number
+                v-model.number="phoneForm2.loopCount"
+                controls-position="right"
+                @change="handleChangePhone(2)"
+                size="small"
+              />
+              <el-checkbox v-model="phoneForm2.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">音量:</div>
+              <el-slider
+                v-model="phoneForm2.volume"
+                :max="100"
+                class="sliderClass"
+              ></el-slider>
+            </div>
+            <div class="phoneBox">
+              <div class="chezhiName">播放文件:</div>
+              <el-select
+                v-model="phoneForm2.fileNames"
+                placeholder="请选择播放文件"
+                clearable
+                size="small"
+              >
+                <el-option
+                  v-for="item in fileNamesList"
+                  :key="item.name"
+                  :label="item.name"
+                  :value="item.fileName"
+                />
+              </el-select>
+              <el-button
+                class="chezhiControlButton"
+                size="mini"
+                @click="phoneControl(directionList[1].dictValue)"
               >
                 控制
               </el-button>
@@ -749,7 +843,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-
+             
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -759,7 +853,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-
+          
         </el-drawer>
       </div>
 
@@ -842,7 +936,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-
+              
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1279,7 +1373,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-
+     
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2139,6 +2233,15 @@
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-board>
+    <com-radio
+      class="comClass"
+      :brandList="this.brandList"
+      :directionList="this.directionList"
+      :eqTypeDialogList="this.eqTypeDialogList"
+      v-if="this.eqInfo.clickEqType == 22"
+      :eqInfo="this.eqInfo"
+      @dialogClose="dialogClose"
+    ></com-radio>
     <!--摄像机对话框-->
     <!-- <el-dialog v-dialogDrag class="workbench-dialog batch-table video-dialog" :title="title" :visible="cameraVisible"
       width="860px" append-to-body @opened="loadFlv" :before-close="handleClosee">
@@ -2444,7 +2547,7 @@
       width="1000px"
       append-to-body
     >
-      <img src="@/assets/logo/equipment_log/all.png"
+      <img src="@/assets/logo/equipment_log/all.png" 
       style="width:1000px;height:auto;padding:20px"/>
       <!-- <el-table
         ref="multipleTable"
@@ -2496,7 +2599,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-
+          
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -2869,6 +2972,8 @@ import {
   listDevices,
   getDevices,
   updateDevices,
+  getAudioFileList,
+  playVoiceGroup,
 } from "@/api/equipment/eqlist/api";
 import {
   listType,
@@ -2878,7 +2983,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
-import { getTemplateInfo } from "@/api/board/template.js";
+import { getTemplateInfo,  } from "@/api/board/template.js";
 import {
   listTunnels,
   getTunnels,
@@ -2893,6 +2998,7 @@ import {
   updateCarFinger,
   getDeviceDataAndState,
   getJlyTunnel,
+  energyConsumptionDetection,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -2910,7 +3016,7 @@ import {
   listStrategy,
   getStrategy,
   handleStrategy,
-  workTriggerInfo
+  workTriggerInfo,
 } from "@/api/event/strategy";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
@@ -2927,8 +3033,8 @@ import comCallPolice from "@/views/workbench/config/components/callPolice"; //�
 import comRobot from "@/views/workbench/config/components/robot"; //机器人弹窗
 import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
-import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
-
+import comBoard from "@/views/workbench/config/components/board"; //情报板弹窗
+import comRadio from "@/views/workbench/config/components/radio"; //广播弹窗
 
 import { getLocalIP } from "@/api/event/vedioRecord";
 import { getHosts } from "@/api/equipment/plc/api";
@@ -2936,7 +3042,12 @@ import * as echarts from "echarts";
 import { listUser, getUserDeptId } from "@/api/system/user";
 import * as deviceApi from "@/api/equipment/device/api";
 import { listLog } from "@/api/system/log";
-import {listDept, listDeptExcludeChild, roleDeptTreeselect, getTreeByDeptId} from "@/api/system/dept";
+import {
+  listDept,
+  listDeptExcludeChild,
+  roleDeptTreeselect,
+  getTreeByDeptId,
+} from "@/api/system/dept";
 import bg from "@/assets/cloudControl/right_button.png";
 import hoverbg from "@/assets/cloudControl/right_button_hover2.png";
 import {
@@ -2989,11 +3100,25 @@ export default {
     comRobot,
     comData,
     comYoudao,
-    comBoard
+    comBoard,
+    comRadio,
   },
 
   data() {
     return {
+      fileNamesList: [],
+      phoneForm1: {
+        loopCount: 1,
+        loop: false,
+        volume: 0,
+        fileNames: [],
+      },
+      phoneForm2: {
+        loopCount: 1,
+        loop: false,
+        volume: 0,
+        fileNames: [],
+      },
       strategyTypeOptions: [],
 
       // 查询参数
@@ -3006,28 +3131,28 @@ export default {
         strategyInfo: null,
         schedulerTime: null,
         jobTime: null,
-        strategyGroup:1,
+        strategyGroup: 1,
       },
-      dictCode:"0",
-      strategyTypeGroup:[],
-      strategyActive:'richang',
-      total2:0,
-      total1:0,
-      operationList1:[],
-      operationList2:[],
-      operationParam:{
-        ipaddr:'',
-        userName:"",
-        status:'',
-        eqTypeId:'',
-        tunnelId:'',
-        controlType:'',
-        pageNum:1,
-        pageSize:10,
+      dictCode: "0",
+      strategyTypeGroup: [],
+      strategyActive: "richang",
+      total2: 0,
+      total1: 0,
+      operationList1: [],
+      operationList2: [],
+      operationParam: {
+        ipaddr: "",
+        userName: "",
+        status: "",
+        eqTypeId: "",
+        tunnelId: "",
+        controlType: "",
+        pageNum: 1,
+        pageSize: 10,
       },
 
-      dateRange:[],
-      operationActive:'xitong',
+      dateRange: [],
+      operationActive: "xitong",
       manageStation: this.$cache.local.get("manageStation"),
       heightRatio: "",
       lane: "",
@@ -3112,7 +3237,7 @@ export default {
       operationLogDialog: false, //操作日志弹窗
       //设备类型
       eqTypeData: {},
-      tunnelData:[],
+      tunnelData: [],
       //所属隧道
       eqTunnelData: {},
       // 日期范围
@@ -3138,7 +3263,7 @@ export default {
         strategyInfo: null,
         schedulerTime: null,
         jobTime: null,
-        strategyGroup:1,
+        strategyGroup: 1,
       },
       // 操作日志表格数据
       logList: [],
@@ -3200,7 +3325,6 @@ export default {
         label: "label",
         children: "children",
       },
-
 
       seamless: false, //情报板轮播
       /* ---------火灾报警---------------*/
@@ -3708,8 +3832,11 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
+    getAudioFileList().then((res) => {
+      console.log(res, "广播一键文件列表");
+      this.fileNamesList = res.data
 
-
+    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -3726,8 +3853,8 @@ export default {
     this.getEqType();
     this.getTunnel();
     listTunnels().then((response) => {
-        this.tunnelData = response.rows;
-      });
+      this.tunnelData = response.rows;
+    });
     this.getDicts("sd_strategy_type").then((response) => {
       this.strategyTypeOptions = response.data;
     });
@@ -3737,7 +3864,7 @@ export default {
     // 策略组信息
     this.getDicts("sd_strategy_group").then((response) => {
       this.strategyTypeGroup = response.data;
-      console.log(this.strategyTypeGroup,"this.strategyTypeGroup")
+      console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
     this.getDicts("sd_operation_log_state").then((response) => {
       this.operationStateOptions = response.data;
@@ -4025,10 +4152,10 @@ export default {
     },
   },
   mounted() {
-    this.initEnergyConsumption();
+    // this.initEnergyConsumption();
     this.getTimeData();
     // this.vehicleEcharts()
-    this.specialEcharts()
+    this.specialEcharts();
     let that = this;
     window.onresize = () => {
       return (() => {
@@ -4065,36 +4192,74 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    phoneControl(direction) {
+      if (direction == 1) {
+        const param = {
+          lib:"YeastarHost",
+          loop: this.phoneForm1.loop,
+          loopCount:this.phoneForm1.loopCount,
+          volume:this.phoneForm1.volume,
+          fileNames:Array(this.phoneForm1.fileNames),
+          direction:direction,
+          tunnelId:this.currentTunnel.id,
+        };
+        console.log(param, "param");
+        playVoiceGroup(param).then((res) =>{
 
+        })
+      }else{
+        const param = {
+          lib:"YeastarHost",
+          loop: this.phoneForm2.loop,
+          loopCount:this.phoneForm2.loopCount,
+          volume:this.phoneForm2.volume,
+          fileNames:Array(this.phoneForm2.fileNames),
+          direction:direction,
+          tunnelId:this.currentTunnel.id,
+        };
+        console.log(param, "param");
+        playVoiceGroup(param).then((res) =>{
+
+        })
+      }
+      // console.log(direction,"广播一键控制方向");
+
+     
+    },
+    // 广播播放控制次数
+    handleChangePhone(num) {},
     // 操作日志 搜索
-    handleQueryOperationParam(){
+    handleQueryOperationParam() {
       this.operationParam.pageNum = 1;
       this.getOperationList(this.operationActive);
     },
-    getOperationList(inx){
-      if(this.manageStation == '1'){
-          this.operationParam.tunnelId = this.$cache.local.get("manageStationSelect")
-        }
+    getOperationList(inx) {
+      if (this.manageStation == "1") {
+        this.operationParam.tunnelId = this.$cache.local.get(
+          "manageStationSelect"
+        );
+      }
       this.loading = true;
       // if ( inx == 'xitong' ) {
-        console.log(this.operationParam,"this.queryParams");
-        list(this.addDateRange(this.operationParam, this.dateRange)).then(response => {
-          console.log(response,"系统日志")
-            this.operationList1 = response.rows;
-            this.total1 = response.total;
-            // this.loading = false;
-          }
-        );
+      console.log(this.operationParam, "this.queryParams");
+      list(this.addDateRange(this.operationParam, this.dateRange)).then(
+        (response) => {
+          console.log(response, "系统日志");
+          this.operationList1 = response.rows;
+          this.total1 = response.total;
+          // this.loading = false;
+        }
+      );
       // } else if (inx == 'caozuo' ) {
 
-        listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
-          (response) => {
-            console.log(response, "操作日志")
-            this.operationList2 = response.rows;
-            this.total2 = response.total;
-            this.loading = false;
-          }
-        );
+      listLog(this.addDateRange(this.operationParam, this.dateRange)).then(
+        (response) => {
+          console.log(response, "操作日志");
+          this.operationList2 = response.rows;
+          this.total2 = response.total;
+          this.loading = false;
+        }
+      );
       // }
     },
     carShowChange(val) {
@@ -4395,6 +4560,9 @@ export default {
       this.drawerA = true;
       this.drawerB = false;
       this.drawerCVisible = false;
+      this.phoneForm1 = {}
+      this.phoneForm2 = {}
+
     },
     isDrawerB() {
       this.drawerB = true;
@@ -4416,9 +4584,7 @@ export default {
       this.drawerA = false;
       this.drawerB = false;
 
-      workTriggerInfo(
-        this.currentTunnel.id,
-      ).then((response) => {
+      workTriggerInfo(this.currentTunnel.id).then((response) => {
         console.log(response, "自动触发抽屉");
         this.isDrawerCList = response.data;
       });
@@ -4505,7 +4671,6 @@ export default {
       this.dateRange = [];
       this.resetForm("queryForm");
       this.resetForm("operationParam1");
-
 
       this.handleQuery();
     },
@@ -4621,12 +4786,13 @@ export default {
     },*/
     getDeptList() {
       var userDeptId = this.userDeptId;
-      const params = {status: 0};
-      getTreeByDeptId(params).then(response => {
+      const params = { status: 0 };
+      getTreeByDeptId(params)
+        .then((response) => {
           const options = response.data;
-          let childs = []
+          let childs = [];
           function a(list) {
-            list.forEach(item => {
+            list.forEach((item) => {
               if (item.id == userDeptId) {
                 childs = item.children || [];
               } else {
@@ -4635,14 +4801,15 @@ export default {
             });
           }
           a(options);
-          if (childs.length==0) {
+          if (childs.length == 0) {
             this.siteList = options[0].children;
-          }else{
-            this.siteList = childs
+          } else {
+            this.siteList = childs;
           }
           let arr = [];
           this.checkData(this.siteList[0], arr);
-        }).then(() => {
+        })
+        .then(() => {
           this.getTunnelList();
           if (this.manageStation == "1") {
             let arr = ["6266", "5555", "555503"];
@@ -4852,7 +5019,7 @@ export default {
         // that.initechartsB(res.data)
       });
       // that.initeChartsEnd()
-      that.loadFocusCar()
+      that.loadFocusCar();
     },
     // 获取最近七天数组
     dateFormat(dateData) {
@@ -4864,9 +5031,18 @@ export default {
         d = now.getDate(); //日期
       return (m < 10 ? "0" + m : m) + "." + (d < 10 ? "0" + d : d);
     },
-
+    getEnergyConsumption(id) {
+      let yData = [];
+      energyConsumptionDetection(id).then((res) => {
+        yData = res.data;
+        console.log(yData, "yData");
+        this.$nextTick(() => {
+          this.initEnergyConsumption(yData);
+        });
+      });
+    },
     // 能耗监测echarts
-    initEnergyConsumption(sevenDaysBefore) {
+    initEnergyConsumption(yData) {
       // 获取最近10天
       var sevenDaysBefore = ["", "", "", "", "", "", "", "", "", ""];
       var now = new Date(); //获取当前时间
@@ -4899,127 +5075,129 @@ export default {
       sevenDaysBefore[0] = this.dateFormat(
         nowMs - 1000 * 60 * 60 * 24 * parseInt(9)
       ); //前几天，n就取几，整数
-      var energyConsumption = echarts.init(
-        document.getElementById("energyConsumption")
-      );
-      // var areaList = ['姚家峪隧道', '毓秀山隧道', '洪河隧道', '滨莱高速', '望海石隧道','中庄隧道','马公祠隧道', '乐疃隧道','樵岭前隧道','佛羊岭隧道','迎春坡隧道','龙山寨隧道'];
-      var safetyArr = [
-        1450, 1650, 1500, 1430, 1580, 1530, 1580, 1460, 1400, 1540,
-      ];
-      var option = {
-        // backgroundColor: '#00043A',
-        tooltip: {
-          trigger: "axis",
-          show: true,
-          axisPointer: {
-            // 坐标轴指示器，坐标轴触发有效
-            type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+      if (yData) {
+        var energyConsumption = echarts.init(
+          document.getElementById("energyConsumption")
+        );
+        // var areaList = ['姚家峪隧道', '毓秀山隧道', '洪河隧道', '滨莱高速', '望海石隧道','中庄隧道','马公祠隧道', '乐疃隧道','樵岭前隧道','佛羊岭隧道','迎春坡隧道','龙山寨隧道'];
+        // var safetyArr = [
+        //   1450, 1650, 1500, 1430, 1580, 1530, 1580, 1460, 1400, 1540,
+        // ];
+        var option = {
+          // backgroundColor: '#00043A',
+          tooltip: {
+            trigger: "axis",
+            show: true,
+            axisPointer: {
+              // 坐标轴指示器，坐标轴触发有效
+              type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
+            },
+            formatter: "{b}<br>能耗： {c} ",
           },
-          formatter: "{b}<br>能耗： {c} ",
-        },
-        legend: {
-          show: false,
-        },
-        grid: {
-          left: "10%",
-          right: "10%",
-          bottom: "8%",
-          top: "20%",
-          containLabel: true,
-        },
-        xAxis: [
-          {
-            // name:'日',
-            type: "category",
-            // boundaryGap : false,
+          legend: {
+            show: false,
+          },
+          grid: {
+            left: "10%",
+            right: "10%",
+            bottom: "8%",
+            top: "20%",
+            containLabel: true,
+          },
+          xAxis: [
+            {
+              // name:'日',
+              type: "category",
+              // boundaryGap : false,
+              axisLabel: {
+                textStyle: {
+                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                  fontSize: 10,
+                },
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                },
+              },
+
+              axisTick: {
+                show: false,
+              },
+              // splitLine:{
+              //   show:true,
+              //   lineStyle:{
+              //     color:'#195384'
+              //   }
+              // },
+              data: sevenDaysBefore,
+            },
+          ],
+          yAxis: {
+            name: "kw-h",
+            nameTextStyle: {
+              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+              padding: [10, 20, 0, -40],
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                //分割线的样式
+                color: ["#4E6B83"],
+                width: 1,
+                type: "dashed",
+              },
+            },
+
             axisLabel: {
+              formatter: "{value}",
               textStyle: {
                 color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                 fontSize: 10,
               },
             },
             axisLine: {
-              show: true,
-              lineStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-              },
-            },
-
-            axisTick: {
               show: false,
+              // lineStyle:{
+              //   color:'#0a88bd'
+              // }
             },
-            // splitLine:{
-            //   show:true,
-            //   lineStyle:{
-            //     color:'#195384'
-            //   }
-            // },
-            data: sevenDaysBefore,
-          },
-        ],
-        yAxis: {
-          name: "kw-h",
-          nameTextStyle: {
-            color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-            padding: [10, 20, 0, -40],
-          },
-          splitLine: {
-              show: true,
-              lineStyle: {
-                //分割线的样式
-                color: ["#4E6B83"],
-                width: 1,
-                type: "dashed",
-              },
-            },
 
-          axisLabel: {
-            formatter: "{value}",
-            textStyle: {
-              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-              fontSize: 10,
-            },
+            // offset:20,
           },
-          axisLine: {
-            show: false,
-            // lineStyle:{
-            //   color:'#0a88bd'
-            // }
-          },
-
-          // offset:20,
-        },
-        series: [
-          {
-            type: "bar",
-            barWidth: 12, //柱图宽度
-            itemStyle: {
-              normal: {
-                barBorderRadius: [6, 6, 0, 0],
-                color: {
-                  type: "linear",
-                  x: 0,
-                  y: 0,
-                  x2: 0,
-                  y2: 1,
-                  colorStops: [
-                    {
-                      offset: 0,
-                      color: "#499eff", // 0% 处的颜色
-                    },
-                    {
-                      offset: 1,
-                      color: "#838eff", // 100% 处的颜色
-                    },
-                  ],
-                  globalCoord: true, // 缺省为 false
+          series: [
+            {
+              type: "bar",
+              barWidth: 12, //柱图宽度
+              itemStyle: {
+                normal: {
+                  barBorderRadius: [6, 6, 0, 0],
+                  color: {
+                    type: "linear",
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [
+                      {
+                        offset: 0,
+                        color: "#499eff", // 0% 处的颜色
+                      },
+                      {
+                        offset: 1,
+                        color: "#838eff", // 100% 处的颜色
+                      },
+                    ],
+                    globalCoord: true, // 缺省为 false
+                  },
                 },
               },
+              data: yData,
             },
-            data: safetyArr,
-          },
-        ],
-      };
+          ],
+        };
+      }
       energyConsumption.setOption(option);
       window.addEventListener("resize", function () {
         energyConsumption.resize();
@@ -5060,7 +5238,7 @@ export default {
             {
               name: "小时",
               nameTextStyle: {
-                fontFamily:'PingFang',
+                fontFamily: "PingFang",
               },
               type: "category",
               axisTick: {
@@ -5074,7 +5252,7 @@ export default {
                 textStyle: {
                   color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                   fontSize: 10,
-                  fontFamily:'PingFang'
+                  fontFamily: "PingFang",
                 },
               },
               axisLine: {
@@ -5101,9 +5279,9 @@ export default {
               axisTick: {
                 show: false,
               },
-              max : 200,
-              min : 0,
-              splitNumber : 5,
+              max: 200,
+              min: 0,
+              splitNumber: 5,
               splitLine: {
                 show: true,
                 lineStyle: {
@@ -5240,7 +5418,7 @@ export default {
             type: "category",
             boundaryGap: false,
             // data: this.keyVehiclesXData,
-            data: [1,2,3,4,5,6,7,8,9],
+            data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
 
             axisLabel: {
               textStyle: {
@@ -5322,8 +5500,7 @@ export default {
                 },
               },
               // data: this.keyVehiclesYData,
-              data: [65,43,23,65,34,45,23,87,45],
-
+              data: [65, 43, 23, 65, 34, 45, 23, 87, 45],
             },
           ],
         };
@@ -5826,6 +6003,10 @@ export default {
             this.currentTunnel.name = list[0].tunnelName;
             this.selectEquipmentType(this.currentTunnel.id);
             this.getTunnelData(this.currentTunnel.id);
+            // this.$nextTick(()=>{
+            //   this.initEnergyConsumption(this.currentTunnel.id)
+
+            // })
           } else {
             for (let i = 0; i < list.length; i++) {
               if (
@@ -5840,6 +6021,9 @@ export default {
           }
         }
         this.getTunnelLane();
+        this.$nextTick(() => {
+          this.getEnergyConsumption(this.currentTunnel.id);
+        });
         // this.timingControl()
       });
     },
@@ -6450,6 +6634,9 @@ export default {
         (this.currentTunnel.name = item.tunnelName),
         this.selectEquipmentType(this.currentTunnel.id);
       this.getTunnelData(this.currentTunnel.id);
+      this.$nextTick(() => {
+        this.getEnergyConsumption(this.currentTunnel.id);
+      });
     },
     onActivated(key) {},
     onDragging(key) {},
@@ -7312,7 +7499,7 @@ export default {
     strategyCancel() {
       this.strategyVisible = false;
     },
-    handlestrategyQuery(){
+    handlestrategyQuery() {
       this.loading = true;
       listStrategy(this.queryParams).then((response) => {
         this.strategyList = response.rows;
@@ -7804,7 +7991,7 @@ export default {
 
   .eqTypeListClass {
     float: left;
-    width: 8%;
+    width: 6%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -7980,25 +8167,25 @@ export default {
   top: 6px;
   left: 7px;
 }
-::v-deep .rtl .el-checkbox__input {
-  transform: translateX(28px);
-}
-::v-deep .rtl .el-checkbox__label {
-  transform: translateX(-25px);
-  width: 26px;
-  height: 26px;
-  background: #2fc83a;
-  line-height: 26px;
-  color: white;
-}
-::v-deep .rtl {
-  .checkbox {
-    margin-right: 20px !important;
-  }
-  .el-checkbox__input.is-checked + .el-checkbox__label {
-    background: #bd0a0a;
-  }
-}
+// ::v-deep .rtl .el-checkbox__input {
+//   transform: translateX(28px);
+// }
+// ::v-deep .rtl .el-checkbox__label {
+//   transform: translateX(-25px);
+//   width: 26px;
+//   height: 26px;
+//   background: #2fc83a;
+//   line-height: 26px;
+//   color: white;
+// }
+// ::v-deep .rtl {
+//   .checkbox {
+//     margin-right: 20px !important;
+//   }
+//   .el-checkbox__input.is-checked + .el-checkbox__label {
+//     background: #bd0a0a;
+//   }
+// }
 //title
 ::v-deep .el-drawer__header {
   // background-color: #00C9FE;
@@ -8612,7 +8799,7 @@ export default {
 .content {
   clear: both;
   text-align: center;
-  width: 88%;
+  width: 90%;
   height: 100%;
   display: flex;
   align-items: center;
@@ -9045,9 +9232,8 @@ input {
     padding: 0 15px;
     margin-bottom: 60px;
   }
-  .el-tabs{
+  .el-tabs {
     padding: 0 15px;
-
   }
 }
 ::v-deep .eventDiglog .el-button--medium {
@@ -9224,6 +9410,36 @@ input {
   height: 30px;
   padding-left: 10px;
   line-height: 30px;
+}
+.phoneBox {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px 0 5px;
+  display: flex;
+  align-items: center;
+  .phoneCheckBox {
+    margin-left: 10px;
+    width: 100px;
+  }
+  .chezhiName {
+    width: 80px;
+    margin-left: 5px;
+  }
+  .chezhiControlButton {
+    width: 50px;
+    height: 32px;
+    padding: 0;
+    // border:solid 1px #A3B7CF;
+    border-radius: 2px;
+    margin-left: 8px;
+    text-align: center;
+    line-height: 31px;
+    cursor: pointer;
+    color: white;
+  }
+  .chezhiControlButton:hover {
+    color: white;
+  }
 }
 .chezhiDrawerInfo {
   width: 100%;
@@ -9674,54 +9890,69 @@ input {
   border-radius: 50%;
   position: absolute;
 }
-.boardBox1{
+.sliderClass {
+  width: 150px;
+  .el-slider__runway {
+    width: 100%;
+    // background-color: #006784;
+    margin: 12px 0;
+  }
+  .el-slider__bar {
+    background: linear-gradient(90deg, #00aded 0%, #007cdd 100%);
+  }
+  .el-slider__button {
+    width: 10px;
+    height: 10px;
+    border: solid 1px #fff;
+    background-color: #ff9300;
+  }
+}
+.boardBox1 {
   position: absolute;
-  overflow:hidden;
-  writing-mode : tb-rl;
+  overflow: hidden;
+  writing-mode: tb-rl;
   white-space: nowrap;
-  font-size:15px;
-  color:#FFFF07;
+  font-size: 15px;
+  color: #ffff07;
   text-align: center;
-  padding:2px;
+  padding: 2px;
 }
 .boardBox1 span {
-      display: inline-block;
-      /*inline样式不能使用动画*/
-      animation: boardBox1 10s linear infinite; /*滚动动画*/
-  }
-  @keyframes boardBox1 {
-      from {
-          transform: translateY(120px); /*div多宽就写多宽*/
-      }
-
-      to {
-          transform: translateY(-100%);
-      }
-  }
-  .boardBox2{
-    position: absolute;
-    overflow:hidden;
-    writing-mode : tb-rl;
-    white-space: nowrap;
-    font-size:15px;
-    color:#FFFF07;
-    text-align: center;
-    padding:4px
-  }
-  .boardBox2 span {
-      display: inline-block;
-      /*inline样式不能使用动画*/
-      animation: boardBox2 10s linear infinite; /*滚动动画*/
-  }
-  @keyframes boardBox2 {
-      from {
-          transform: translateY(240px); /*div多宽就写多宽*/
-      }
-
-      to {
-          transform: translateY(-100%);
-      }
+  display: inline-block;
+  /*inline样式不能使用动画*/
+  animation: boardBox1 10s linear infinite; /*滚动动画*/
+}
+@keyframes boardBox1 {
+  from {
+    transform: translateY(120px); /*div多宽就写多宽*/
   }
 
+  to {
+    transform: translateY(-100%);
+  }
+}
+.boardBox2 {
+  position: absolute;
+  overflow: hidden;
+  writing-mode: tb-rl;
+  white-space: nowrap;
+  font-size: 15px;
+  color: #ffff07;
+  text-align: center;
+  padding: 4px;
+}
+.boardBox2 span {
+  display: inline-block;
+  /*inline样式不能使用动画*/
+  animation: boardBox2 10s linear infinite; /*滚动动画*/
+}
+@keyframes boardBox2 {
+  from {
+    transform: translateY(240px); /*div多宽就写多宽*/
+  }
 
+  to {
+    transform: translateY(-100%);
+  }
+}
 </style>

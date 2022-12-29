@@ -101,7 +101,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             d.eq_type eqType,
             ifnull(d.eq_status,2) eqStatus,
             d.eq_direction eqDirection,
-            d.external_device_id externalDeviceId,
             i.item_code itemCode,
             i.item_name itemName,
             i.unit,

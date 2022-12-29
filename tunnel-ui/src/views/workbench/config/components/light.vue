@@ -115,7 +115,7 @@
                     class="flex-row"
                     v-if="
                       stateForm.eqDirection == '1' && (stateForm.eqType == 1||stateForm.eqType ==2)
-                      
+
                     "
                   >
                     <img
@@ -192,7 +192,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
@@ -327,7 +327,7 @@ export default {
       });
       const params = {
         bright: this.stateForm.brightness,
-        controlType: 0,
+        controlType: "0",
         deviceId: this.eqInfo.equipmentId,
       };
       setBrightness(params).then((res) => {
@@ -341,7 +341,7 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .videoTabs {
   padding: 0 15px;
@@ -394,4 +394,3 @@ export default {
   }
 }
 </style>
-  

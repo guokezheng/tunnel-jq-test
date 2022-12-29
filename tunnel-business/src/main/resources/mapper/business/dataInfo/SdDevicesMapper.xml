@@ -170,14 +170,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--查询设备详情-->
     <select id="queryDeviceById" parameterType="String" resultType="java.util.Map">
-        select a.eq_id eqId,a.eq_name eqName, a.f_eq_id fEqId,b.tunnel_id tunnelId, b.tunnel_name tunnelName,
-        a.eq_type eqType,t.type_name typeName,s.dept_id deptId, s.dept_name deptName,
-        a.eq_model eqModel, a.brand_id brandId,a.query_point_address,
-        a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
-        a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.comm_protocol,
-        IFNULL(a.eq_status,"2") eqStatus,a.eq_status_time eqStatusTime,
-        a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
-        , a.associated_device_id associatedDeviceId, c.supplier_name supplierName
+        select
+        a.eq_id eqId,
+        a.eq_name eqName,
+        a.f_eq_id fEqId,
+        b.tunnel_id tunnelId,
+        b.tunnel_name tunnelName,
+        a.eq_type eqType,
+        t.type_name typeName,
+        s.dept_id deptId,
+        s.dept_name deptName,
+        a.eq_model eqModel,
+        a.brand_id brandId,
+        a.query_point_address,
+        a.eq_direction eqDirection,
+        a.lane, a.pile,
+        a.pile_num pileNum,
+        a.lat, a.lng,
+        a.ip,
+        a.port,
+        a.secure_key secureKey,
+        a.eq_user eqUser,
+        a.eq_pwd eqPwd,
+        a.comm_protocol,
+        IFNULL(a.eq_status,"2") eqStatus,
+        a.eq_status_time eqStatusTime,
+        a.create_by createBy,
+        a.create_time createTime,
+        a.update_by updateBy,
+        a.update_time updateTime,
+        a.remark ,
+        a.associated_device_id associatedDeviceId,
+        a.external_device_id externalDeviceId,
+        c.supplier_name supplierName
      from sd_devices a
      left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
      left join sd_equipment_type t on a.eq_type = t.type_id
@@ -857,8 +882,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_type = #{eqType} and external_device_id=#{externalDeviceId}
     </select>
 
-    <select id="getSpkList" parameterType="com.tunnel.business.domain.dataInfo.SdDevices"
-            resultType="com.tunnel.business.domain.dataInfo.SdDevices">
+    <select id="getSpkList" parameterType="com.tunnel.business.domain.dataInfo.SdDevices" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
         select eq_id,
                f_eq_id,
                eq_tunnel_id,

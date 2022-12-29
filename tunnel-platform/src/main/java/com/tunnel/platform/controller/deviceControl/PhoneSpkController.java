@@ -29,7 +29,7 @@ public class PhoneSpkController {
     }
 
     /**
-     * 单个广播播放音频
+     * 播放音频
      *
      * @param map
      * @return
@@ -37,6 +37,16 @@ public class PhoneSpkController {
     @PostMapping(value = "/playVoice")
     public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
         return phoneSpkService.playVoice(map);
+    }
+
+    /**
+     * 左洞或右洞整体播放
+     * @param map
+     * @return
+     */
+    @PostMapping(value = "/playVoiceGroup")
+    public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) {
+        return phoneSpkService.playVoiceGroup(map);
     }
 
     @PostMapping(value = "/hungUp")

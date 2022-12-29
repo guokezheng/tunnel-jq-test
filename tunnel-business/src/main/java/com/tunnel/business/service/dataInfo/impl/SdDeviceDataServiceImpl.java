@@ -1,15 +1,20 @@
 package com.tunnel.business.service.dataInfo.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     private SdDeviceDataMapper sdDeviceDataMapper;
     @Autowired
     private SdDevicesMapper sdDevicesMapper;
+    @Autowired
+    private IExternalSystemService externalSystemService;
 
     /**
      * 查询设备实时数据（存储模拟量）
@@ -273,9 +280,53 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
     }
 
     @Override
-    public List<Long> energyConsumptionDetection(String tunnelId) {
-        List<Long> list = Arrays.asList(1450L, 1650L, 1500L, 1430L, 1580L, 1530L, 1580L, 1460L, 1400L, 1540L);
-        return list;
+    public Map<String, Object> energyConsumptionDetection(String tunnelId) {
+        ExternalSystem externalSystem = new ExternalSystem();
+        externalSystem.setTunnelId(tunnelId);
+        externalSystem.setSystemName("能源管控平台");
+        List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
+        if (externalSystems.isEmpty()) {
+            return null;
+        }
+        ExternalSystem system = externalSystems.get(0);
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setExternalSystemId(system.getId());
+        List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        SdDevices devices = sdDevicesList.get(0);
+        String eqId = devices.getEqId();
+        eqId = eqId.substring(eqId.lastIndexOf("-")+1);
+        String url = system.getSystemUrl() + "login";
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("username", "admin");
+        map.put("password", "HSD123!@#");
+        JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
+        String token =  json.get("token").toString();
+        //获取能耗数据
+        url = system.getSystemUrl() + "sjfx/getEnergyByStatisticsType";
+        String[] str = new String[]{"day","month","year"};
+        Map<String, Object> allDataList = new HashMap<>();
+        for (int j = 0;j < str.length;j++) {
+            String type = str[j];
+            String params = "powerCode=" + eqId + "&type="+type;
+            json = JSONObject.parseObject(HttpUtils.sendGetWithAuth(url, params, Constants.UTF8, token));
+            JSONArray data = json.getJSONArray("data");
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (int i = 0;i < data.size(); i++) {
+                Map<String, Object> maps = new HashMap<>();
+                String value = "0";
+                if (data.getJSONObject(i).get("value") != null) {
+                    value = data.getJSONObject(i).get("value").toString();
+                }
+                String rt = data.getJSONObject(i).get("rt").toString();
+                maps.put("value", value);
+                maps.put("rt", rt);
+                list.add(maps);
+            }
+            allDataList.put(type, list);
+        }
+
+//        List<Long> list = Arrays.asList(1450L, 1650L, 1500L, 1430L, 1580L, 1530L, 1580L, 1460L, 1400L, 1540L);
+        return allDataList;
     }
 
 }

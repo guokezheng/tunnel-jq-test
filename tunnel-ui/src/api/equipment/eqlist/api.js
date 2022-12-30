@@ -155,10 +155,12 @@ export function playVoiceGroup(query) {
 }
 
 // 广播文件列表
-export function getAudioFileList() {
+export function getAudioFileList(query) {
   return request({
     url: '/phoneSpk/getAudioFileList',
     method: 'get',
+    params: query
+
   })
 }
 

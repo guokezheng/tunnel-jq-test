@@ -158,8 +158,8 @@ export function playVoiceGroup(query) {
 export function getAudioFileList(query) {
   return request({
     url: '/phoneSpk/getAudioFileList',
-    method: 'get',
-    params: query
+    method: 'post',
+    data: query
 
   })
 }

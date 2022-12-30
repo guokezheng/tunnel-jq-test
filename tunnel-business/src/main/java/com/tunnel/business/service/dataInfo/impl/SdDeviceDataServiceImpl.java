@@ -300,6 +300,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         map.put("username", "admin");
         map.put("password", "HSD123!@#");
         JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
+        if (json.isEmpty()) {
+            return null;
+        }
         String token =  json.get("token").toString();
         //获取能耗数据
         url = system.getSystemUrl() + "sjfx/getEnergyByStatisticsType";
@@ -309,6 +312,9 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             String type = str[j];
             String params = "powerCode=" + eqId + "&type="+type;
             json = JSONObject.parseObject(HttpUtils.sendGetWithAuth(url, params, Constants.UTF8, token));
+            if (json.isEmpty()) {
+                continue;
+            }
             JSONArray data = json.getJSONArray("data");
             List<Map<String, Object>> list = new ArrayList<>();
             for (int i = 0;i < data.size(); i++) {

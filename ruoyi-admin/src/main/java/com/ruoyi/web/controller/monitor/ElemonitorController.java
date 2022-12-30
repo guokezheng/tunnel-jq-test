@@ -29,6 +29,9 @@ public class ElemonitorController {
         map.put("username", "admin");
         map.put("password", "HSD123!@#");
         JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
+        if (json.isEmpty()) {
+            return null;
+        }
         token =  json.get("token").toString();//获取token数据
         return Result.success(token);
     }

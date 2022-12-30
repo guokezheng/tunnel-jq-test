@@ -666,7 +666,7 @@
             <div class="chezhiDrawerDirection" style="margin:10px 0">
               {{ directionList[0].dictLabel }} -广播
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">播放次数:</div>
               <el-input-number
                 v-model.number="phoneForm1.loopCount"
@@ -677,7 +677,7 @@
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
               
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
 
               <el-slider
@@ -686,7 +686,7 @@
                 class="sliderClass"
               ></el-slider>
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">播放文件:</div>
               <el-select
                 v-model="phoneForm1.fileNames"
@@ -712,7 +712,7 @@
             <div class="chezhiDrawerDirection" style="margin:10px 0">
               {{ directionList[1].dictLabel }} -广播
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">播放次数:</div>
               <el-input-number
                 v-model.number="phoneForm2.loopCount"
@@ -722,7 +722,7 @@
               />
               <el-checkbox v-model="phoneForm2.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
               <el-slider
                 v-model="phoneForm2.volume"
@@ -730,7 +730,7 @@
                 class="sliderClass"
               ></el-slider>
             </div>
-            <div class="phoneBox">
+            <div class="phoneBox1">
               <div class="chezhiName">播放文件:</div>
               <el-select
                 v-model="phoneForm2.fileNames"
@@ -5032,87 +5032,190 @@ export default {
       return (m < 10 ? "0" + m : m) + "." + (d < 10 ? "0" + d : d);
     },
     getEnergyConsumption(id) {
-      let yData = [];
       energyConsumptionDetection(id).then((res) => {
-        yData = res.data;
-        console.log(yData, "yData");
+        console.log(res,"能耗监测")
+        let xDataN = []
+        let xDataY = []
+        let xDataR = []
+
+        // let yDataN = []
+        // let yDataY = []
+        // let yDataR = []
+        let xData = []
+        let yData = []
+        yData.push({
+          name: "年",
+              type: "line",
+              color: "#59c5f9",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              smooth: true,
+              // 渐变色
+              areaStyle: {
+                normal: {
+                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: "#59c5f9",
+                    },
+                    {
+                      offset: 1,
+                      color: "rgba(89,197,249,0.3)",
+                    },
+                  ]),
+                },
+              },
+              data: res.data.year.map(item => item.value),
+        })
+        yData.push({
+          name: '月',
+              type: 'line',
+              color: '#db72a7',
+              symbol: 'circle',
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white"
+                }
+              },
+              smooth: true,
+              stack: 'Total',
+              areaStyle: {},
+              emphasis: {
+                focus: 'series'
+              },
+              //渐变色
+              areaStyle: {
+                normal: {
+                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+                  color: new echarts.graphic.LinearGradient(
+                    0, 0, 0, 1,
+                    [{
+                        offset: 0,
+                        color: '#db72a7'
+                      },
+                      {
+                        offset: 1,
+                        color: 'rgba(219,114,167,0.3)'
+                      }
+                    ]
+                  )
+                }
+              },
+              data: res.data.month.map(item => item.value),
+        })
+        yData.push({
+          name: "日",
+              type: "line",
+              color: "#FDB400",
+              symbol: "circle",
+              symbolSize: [7, 7],
+              itemStyle: {
+                normal: {
+                  borderColor: "white",
+                },
+              },
+              smooth: true,
+              // 渐变色
+              areaStyle: {
+                normal: {
+                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: "#FDB400",
+                    },
+                    {
+                      offset: 1,
+                      color: "rgba(253,180,0,0.3)",
+                    },
+                  ]),
+                },
+              },
+              data: res.data.day.map(item => item.value),
+        })
+        for(let item of res.data.year){
+          xData.push(item.rt)
+          xDataN.push(item.rt)
+
+          // yDataN.push(item.value)
+
+        }
+        for(let item of res.data.month){
+          xDataY.push(item.rt)
+          // yDataY.push(item.value)
+        }
+        for(let item of res.data.day){
+          xDataR.push(item.rt)
+          // yDataR.push(item.value)
+        }
+        // let xData = []
+      console.log(xData,yData,xDataN,xDataY,xDataR,"能耗年月日")
         this.$nextTick(() => {
-          this.initEnergyConsumption(yData);
+          this.initEnergyConsumption(xData,yData,xDataN,xDataY,xDataR);
         });
       });
     },
     // 能耗监测echarts
-    initEnergyConsumption(yData) {
-      // 获取最近10天
-      var sevenDaysBefore = ["", "", "", "", "", "", "", "", "", ""];
-      var now = new Date(); //获取当前时间
-      var nowMs = now.getTime(); //获取当前时间的毫秒数
-      sevenDaysBefore[9] = this.dateFormat(nowMs - 1000 * 60 * 60); //前几天，n就取几，整数
-      sevenDaysBefore[8] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(1)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[7] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(3)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[6] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(2)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[5] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(4)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[4] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(5)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[3] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(6)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[2] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(7)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[1] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(8)
-      ); //前几天，n就取几，整数
-      sevenDaysBefore[0] = this.dateFormat(
-        nowMs - 1000 * 60 * 60 * 24 * parseInt(9)
-      ); //前几天，n就取几，整数
-      if (yData) {
+    initEnergyConsumption(xData,yData,xDataN,xDataY,xDataR) {
         var energyConsumption = echarts.init(
           document.getElementById("energyConsumption")
         );
-        // var areaList = ['姚家峪隧道', '毓秀山隧道', '洪河隧道', '滨莱高速', '望海石隧道','中庄隧道','马公祠隧道', '乐疃隧道','樵岭前隧道','佛羊岭隧道','迎春坡隧道','龙山寨隧道'];
-        // var safetyArr = [
-        //   1450, 1650, 1500, 1430, 1580, 1530, 1580, 1460, 1400, 1540,
-        // ];
-        var option = {
-          // backgroundColor: '#00043A',
+       
+      var option = {
           tooltip: {
             trigger: "axis",
-            show: true,
-            axisPointer: {
-              // 坐标轴指示器，坐标轴触发有效
-              type: "shadow", // 默认为直线，可选为：'line' | 'shadow'
-            },
-            formatter: "{b}<br>能耗： {c} ",
           },
           legend: {
-            show: false,
+            show: true,
+            icon: "rect",
+            itemWidth: 10,
+            itemHeight: 10,
+            selectedMode: 'single', // 单选
+            selected: {
+            年: true,
+            月: false,
+            日: false,
           },
+            x: 'center',
+            data: ['年', '月', '日'],
+            textStyle: { //图例文字的样式
+              color: this.sideTheme!='theme-blue'?'#fff':'#003a5d',
+              fontSize: 12
+            }
+          },
+          calculable: true,
           grid: {
-            left: "10%",
-            right: "10%",
-            bottom: "8%",
-            top: "20%",
-            containLabel: true,
+            top: "24%",
+            bottom: "20%",
+            left: "14%",
+            right: "14%",
           },
           xAxis: [
             {
-              // name:'日',
+              // name: "小时",
+              nameTextStyle: {
+                fontFamily: "PingFang",
+              },
               type: "category",
-              // boundaryGap : false,
+              axisTick: {
+                show: false,
+              },
+              splitLine: {
+                show: false,
+              },
+              boundaryGap: false,
               axisLabel: {
                 textStyle: {
                   color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                   fontSize: 10,
+                  fontFamily: "PingFang",
                 },
               },
               axisLine: {
@@ -5121,83 +5224,66 @@ export default {
                   color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                 },
               },
-
+              data: xData,
+            },
+          ],
+          yAxis: [
+            {
+              name: "kwh",
+              nameTextStyle: {
+                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                fontSize: 10,
+                padding: [0, 20, 0, 0],
+              },
+              type: "value",
+              minInterval: 1,
+              // min: 0,
+              // max: 200,
               axisTick: {
                 show: false,
               },
-              // splitLine:{
-              //   show:true,
-              //   lineStyle:{
-              //     color:'#195384'
-              //   }
-              // },
-              data: sevenDaysBefore,
-            },
-          ],
-          yAxis: {
-            name: "kw-h",
-            nameTextStyle: {
-              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-              padding: [10, 20, 0, -40],
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
-                //分割线的样式
-                color: ["#4E6B83"],
-                width: 1,
-                type: "dashed",
-              },
-            },
-
-            axisLabel: {
-              formatter: "{value}",
-              textStyle: {
-                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                fontSize: 10,
-              },
-            },
-            axisLine: {
-              show: false,
-              // lineStyle:{
-              //   color:'#0a88bd'
-              // }
-            },
-
-            // offset:20,
-          },
-          series: [
-            {
-              type: "bar",
-              barWidth: 12, //柱图宽度
-              itemStyle: {
-                normal: {
-                  barBorderRadius: [6, 6, 0, 0],
-                  color: {
-                    type: "linear",
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [
-                      {
-                        offset: 0,
-                        color: "#499eff", // 0% 处的颜色
-                      },
-                      {
-                        offset: 1,
-                        color: "#838eff", // 100% 处的颜色
-                      },
-                    ],
-                    globalCoord: true, // 缺省为 false
-                  },
+              // max: 200,
+              // min: 0,
+              splitNumber: 5,
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  //分割线的样式
+                  color: ["#4E6B83"],
+                  width: 1,
+                  type: "dashed",
                 },
               },
-              data: yData,
+              axisLine: {
+                show: false,
+              },
+              axisLabel: {
+                textStyle: {
+                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                  fontSize: 10,
+                },
+              },
             },
           ],
+          series:yData
+        
         };
-      }
+     
+        energyConsumption.on('legendselectchanged', obj => {
+        var options = energyConsumption.getOption()
+        //这里是选择切换什么样的x轴，那么他会进行对Y值的切换
+        if (obj.name == '年'){
+          options.xAxis[0].data = xDataN
+        }else if (obj.name == '月'){
+          options.xAxis[0].data = xDataY
+        }else if (obj.name == '日'){
+          options.xAxis[0].data = xDataR
+        }
+
+        energyConsumption.setOption(options, true)
+      })
+
+      // }
       energyConsumption.setOption(option);
       window.addEventListener("resize", function () {
         energyConsumption.resize();
@@ -9411,7 +9497,7 @@ input {
   padding-left: 10px;
   line-height: 30px;
 }
-.phoneBox {
+.phoneBox1 {
   width: 100%;
   height: 40px;
   padding: 0 10px 0 5px;
@@ -9439,6 +9525,16 @@ input {
   }
   .chezhiControlButton:hover {
     color: white;
+  }
+  .el-input-number__increase,.el-input-number__decrease{
+    background: #2D69A5;
+    border-left:solid 1px #05AFE3 !important;
+    color:#fff;
+  }
+  
+  .el-input-number__increase{
+    border-bottom:solid 1px #05AFE3 !important;
+
   }
 }
 .chezhiDrawerInfo {

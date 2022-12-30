@@ -143,7 +143,14 @@ export function playVoice(query) {
   return request({
     url: '/phoneSpk/playVoice',
     method: 'post',
-    params: query
+    data: query
+  })
+}
+export function playVoiceGroup(query) {
+  return request({
+    url: '/phoneSpk/playVoiceGroup',
+    method: 'post',
+    data: query
   })
 }
 

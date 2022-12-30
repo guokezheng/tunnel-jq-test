@@ -110,11 +110,12 @@
                       : '',
                   ]"
                 >
+
                   <el-row
                     class="flex-row"
                     v-if="
-                      stateForm.eqDirection == '1' &&
-                      stateForm.eqType == (1 || 2)
+                      stateForm.eqDirection == '1' && (stateForm.eqType == 1||stateForm.eqType ==2)
+
                     "
                   >
                     <img
@@ -126,7 +127,7 @@
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
-                      v-if="item.url.length > 1"
+                      v-if="item.url[1]"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
@@ -136,25 +137,25 @@
                     class="flex-row"
                     v-if="
                       stateForm.eqDirection == '2' &&
-                      stateForm.eqType == (1 || 2)
+                       (stateForm.eqType == 1||stateForm.eqType == 2)
                     "
                   >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
+                      v-if="item.url.length > 1"
                     />
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
-                      v-if="item.url.length > 1"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                  <el-row class="flex-row" v-if="stateForm.eqType != 1 && stateForm.eqType != 2 ">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -191,7 +192,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
@@ -326,7 +327,7 @@ export default {
       });
       const params = {
         bright: this.stateForm.brightness,
-        controlType: 0,
+        controlType: "0",
         deviceId: this.eqInfo.equipmentId,
       };
       setBrightness(params).then((res) => {
@@ -340,7 +341,7 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .videoTabs {
   padding: 0 15px;
@@ -393,4 +394,3 @@ export default {
   }
 }
 </style>
-  

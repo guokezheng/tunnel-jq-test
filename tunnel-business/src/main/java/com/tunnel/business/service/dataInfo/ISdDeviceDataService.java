@@ -78,5 +78,5 @@ public interface ISdDeviceDataService {
 
     List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData);
 
-    List<Long> energyConsumptionDetection(String tunnelId);
+    Map<String, Object> energyConsumptionDetection(String tunnelId);
 }

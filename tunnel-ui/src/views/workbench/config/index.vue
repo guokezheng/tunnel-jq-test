@@ -6397,9 +6397,9 @@ export default {
                   arr.push(item.associated_device_id)
                 }
               }
-              getBoardContent(arr).then((resp) => {
-                console.log(res,"00000000000")
-                })
+              // getBoardContent(arr).then((resp) => {
+              //   console.log(res,"00000000000")
+              //   })
 
               console.log(arr,"情报板id")
               that.getRealTimeData();

@@ -77,13 +77,18 @@
           </el-col>
         </el-row>
         <div class="lineClass"></div>
-        <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+        <el-row>
+          <el-col :span="15">
+            <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
             v-model="stateForm.brightness"
             :max="100"
             class="sliderClass"
           ></el-slider>
         </el-form-item> -->
+          </el-col>
+        </el-row>
+
         <div style="margin-top: 10px">
           <el-form-item label="配置状态:">
             <div class="wrap">
@@ -105,11 +110,12 @@
                       : '',
                   ]"
                 >
+
                   <el-row
                     class="flex-row"
                     v-if="
-                      stateForm.eqDirection == '1' &&
-                      stateForm.eqType == (1 || 2)
+                      stateForm.eqDirection == '1' && (stateForm.eqType == 1||stateForm.eqType ==2)
+
                     "
                   >
                     <img
@@ -121,7 +127,7 @@
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
-                      v-if="item.url.length > 1"
+                      v-if="item.url[1]"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
@@ -131,25 +137,25 @@
                     class="flex-row"
                     v-if="
                       stateForm.eqDirection == '2' &&
-                      stateForm.eqType == (1 || 2)
+                       (stateForm.eqType == 1||stateForm.eqType == 2)
                     "
                   >
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[1]"
+                      v-if="item.url.length > 1"
                     />
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
                       :src="item.url[0]"
-                      v-if="item.url.length > 1"
                     />
                     <div style="margin: 0 0 0 10px; display: inline-block">
                       {{ item.name }}
                     </div>
                   </el-row>
-                  <el-row class="flex-row" v-if="stateForm.eqType != 1">
+                  <el-row class="flex-row" v-if="stateForm.eqType != 1 && stateForm.eqType != 2 ">
                     <img
                       :width="iconWidth"
                       :height="iconHeight"
@@ -186,7 +192,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
@@ -228,7 +234,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          this.stateForm.brightness = Number(res.data.brightness)
+          this.stateForm.brightness = Number(res.data.brightness);
           // 查询设备当前状态 --------------------------------
           getDevice(this.eqInfo.equipmentId).then((response) => {
             console.log(response, "查询设备当前状态");
@@ -321,7 +327,7 @@ export default {
       });
       const params = {
         bright: this.stateForm.brightness,
-        controlType: 0,
+        controlType: "0",
         deviceId: this.eqInfo.equipmentId,
       };
       setBrightness(params).then((res) => {
@@ -335,7 +341,7 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .videoTabs {
   padding: 0 15px;
@@ -388,4 +394,3 @@ export default {
   }
 }
 </style>
-  

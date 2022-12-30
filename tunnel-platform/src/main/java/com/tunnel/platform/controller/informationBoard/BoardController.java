@@ -7,15 +7,9 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
-import com.tunnel.business.domain.informationBoard.IotBoradFont;
-import com.tunnel.business.domain.informationBoard.SdIotDevice;
-import com.tunnel.business.domain.informationBoard.SdReleaseRecord;
+import com.tunnel.business.domain.informationBoard.*;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
-import com.tunnel.business.service.informationBoard.IIotBoradFontService;
-import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
-import com.tunnel.business.service.informationBoard.ISdReleaseRecordService;
+import com.tunnel.business.service.informationBoard.*;
 import com.tunnel.business.utils.exception.BusinessException;
 import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
@@ -59,6 +53,8 @@ public class BoardController extends BaseController {
     private ISdDevicesService sdDevicesService;
     @Autowired
     private ISdReleaseRecordService sdReleaseRecordService;
+    @Autowired
+    private IIotDeviceAccessService iotDeviceAccessService;
 
     /**
      *
@@ -103,6 +99,9 @@ public class BoardController extends BaseController {
 
             JSONArray resultObj = JSONArray.parseArray(jsonResult);
             items.put("content", resultObj);
+            IotDeviceAccess deviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
+            items.put("devicePixel", deviceAccess.getDevicePixel());
+
             paramsList.add(items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         } catch (BusinessException e) {

@@ -213,8 +213,8 @@ import echartsIndustry from './echartsIndustry.vue'
 import LoopTree from '@/views/components/powerTree/eTree.vue'
 import { powerTreeselect } from '@/api/configcenter/power'
 import { getTypeListApi, getTypeListXqApi, getSelectListEqApi, getSelectListDataEqApi, fixIndustryModelApi, getCameraListApi } from '@/api/panoramicData/index.js'
-import {getToken} from "@/api/panoramicData/indexToken";
-/*import video from '@/components/videoPlayer/myVideo.vue'*/
+import {getToken,getThreeUrl} from "@/api/panoramicData/indexToken";
+import videos from '../../components/videoPlayer/myVideo.vue'
 export default {
   name: 'operatingEnvironment',
   data() {
@@ -296,7 +296,7 @@ export default {
 
   props: {},
   // 注册组件
-  components: { echartsEnvironment, LoopTree, echartsIndustry/*, video*/ },
+  components: { echartsEnvironment, LoopTree, echartsIndustry, videos },
   // 计算属性
   computed: {},
   // 生周期函数
@@ -349,13 +349,10 @@ export default {
       if (res.data[0].code) {
         this.getTypeFn()
       }
-
-      let item = localStorage.getItem("cmts");
-      if(item == 'undefined'){
         getToken().then((res) => {
           localStorage.setItem("cmts", res.data);
         })
-      }
+
     },
     // 获取
     getTypeFn() {

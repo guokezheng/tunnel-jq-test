@@ -133,3 +133,10 @@ device:
       brightness: ${device.light.sanjing.base}/api/adjustBrightness
       lineControl: ${device.light.sanjing.base}/api/lineControl
       deviceData: ${device.light.sanjing.base}/api/getLatestDeviceData
+  hongmeng:
+    url: http://10.7.187.28:60400/qxsd-iot
+    dev:
+      fan: ${device.hongmeng.url}/deviceCtrl/fan/alterFanRunStatus
+      trafficLight: ${device.hongmeng.url}/deviceCtrl/trafficLight/alterTrafficLightRunStatus
+      laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
+      rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus

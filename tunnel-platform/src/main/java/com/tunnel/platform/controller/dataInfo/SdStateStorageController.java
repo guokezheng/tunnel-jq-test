@@ -8,10 +8,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.domain.dataInfo.InductionlampControlStatusDetails;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdStateStorage;
-import com.tunnel.business.service.dataInfo.IInductionlampControlStatusDetailsService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdStateStorageService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
@@ -39,8 +37,6 @@ public class SdStateStorageController extends BaseController {
     private ISdTunnelsService sdTunnelsService;
     @Autowired
     private ISdDevicesService sdDevicesService;
-    @Autowired
-    private IInductionlampControlStatusDetailsService iInductionlampControlStatusDetailsService;
     /**
      * 模拟获取隧道设备状态
      */
@@ -73,38 +69,6 @@ public class SdStateStorageController extends BaseController {
                 json.put("state", "");
             } else {
                 json.put("state", sdStateStorage.getState());
-            }
-            //诱导灯设备增加亮度和频率
-            Long yddType = Long.parseLong(String.valueOf(DevicesTypeEnum.YOU_DAO_DENG.getCode()));
-            if (sdDevice.getEqType().longValue() == yddType.longValue()) {
-                InductionlampControlStatusDetails inductionlampControlStatusDetails = new InductionlampControlStatusDetails();
-                inductionlampControlStatusDetails.setEquipmentId(sdDevice.getEqId());
-                List<InductionlampControlStatusDetails> statusDetails = iInductionlampControlStatusDetailsService.selectInductionlampControlStatusDetailsList(inductionlampControlStatusDetails);
-                if (statusDetails.size() == 0) {
-                    json.put("brightness", "50");
-                    json.put("frequency", "69");
-                    if (sdStateStorage == null) {
-                        sdStateStorage = new SdStateStorage();
-                    }
-                    sdStateStorage.setBrightness("50");
-                    sdStateStorage.setFrequency("69");
-                    sdStateStorage.setTunnelId(tunnelId);
-                    if (sdStateStorage == null || sdStateStorage.getState() == null || sdStateStorage.getState().equals("")) {
-                        sdStateStorage.setState("2");
-                    }
-                    sdStateStorage.setDeviceId(sdDevice.getEqId());
-                    if (null == sdStateStorage.getId()) {
-                        sdStateStorageService.insertSdStateStorage(sdStateStorage);
-                    } else {
-                        sdStateStorageService.updateSdStateStorage(sdStateStorage);
-                    }
-                } else {
-                    json.put("brightness", statusDetails.get(0).getBrightness());
-                    json.put("frequency", statusDetails.get(0).getFrequency());
-                }
-            } else {
-                json.put("brightness", "");
-                json.put("frequency", "");
             }
             devList.add(json);
         }

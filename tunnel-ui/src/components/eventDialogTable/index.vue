@@ -9,10 +9,7 @@
     >
       <div class="title">
         事件预警
-        <!-- <img
-            src="../../assets/cloudControl/dialogHeader.png"
-            style="height: 30px"
-          /> -->
+      
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -66,9 +63,7 @@
                 />
               </el-col>
               <el-col :span="2">
-                <!-- <div>
-                  {{ item.simplifyName }}
-                </div> -->
+            
                 <div v-if="searchValue == 2 || searchValue == 3">
                   {{ item.simplifyName }}
                 </div>
@@ -85,19 +80,7 @@
                   {{ getStartTime(item.startTime) }}
                 </div>
               </el-col>
-              <!-- <el-col :span="2">
-                <el-button size="mini" type="text" @click="handleSee(item.id)"
-                  >查看
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleIgnore(item.id)"
-                  >忽略
-                </el-button>
-              </el-col> -->
+            
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -120,124 +103,8 @@
         <p v-if="loading" class="loading">
           <span></span>
         </p>
-
-        <!-- <div class="listContent">
-          <div v-for="(item, index) of list" :key="index" >
-            <el-row style="color: white">
-              <el-col :span="2">
-                <img
-                  :src="item.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
-                />
-              </el-col>
-              <el-col :span="2">
-                <div v-if="searchValue != 3">
-                  {{ item.eventType.simplifyName }}
-                </div>
-                <div v-else-if="searchValue == 3">{{ item.simplifyName }}</div>
-              </el-col>
-              <el-col :span="16">
-                <div class="overflowText">{{ item.eventTitle }}</div>
-                <div style="float: right; margin-right: 16px">
-                  {{ item.startTime }}
-                </div>
-              </el-col>
-              <el-col :span="2">
-                <el-button size="mini" type="text" @click="handleSee(item.id)"
-                  >查看
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleIgnore(item.id)"
-                  >忽略
-                </el-button>
-              </el-col>
-            </el-row>
-            <div class="lineBT">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-        </div> -->
       </div>
-
-      <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-        <el-tab-pane
-          :label="item.dictLabel"
-          :name="item.dictValue"
-          v-for="(item, index) in tabList"
-          :key="index"
-        > -->
-
-      <!-- <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
-              <el-table-column
-                label="隧道名称"
-                align="center"
-                prop="tunnels.tunnelName"
-              />
-              <el-table-column label="事件桩号" align="center" prop="stakeNum" />
-  
-              <el-table-column
-                label="事件类型"
-                align="center"
-                prop="eventType.eventType"
-              />
-              <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
-              <el-table-column
-                label="事件经度"
-                align="center"
-                prop="eventLongitude"
-              />
-              <el-table-column
-                label="事件纬度"
-                align="center"
-                prop="eventLatitude"
-              />
-              <el-table-column label="开始时间" align="center" prop="startTime">
-                <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.startTime, '{h}:{i}:{s}') }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="结束时间" align="center" prop="endTime" >
-                <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.endTime, '{h}:{i}:{s}') }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="操作"
-                align="center"
-                class-name="small-padding fixed-width"
-              >
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    type="text"
-                    icon="el-icon-thumb"
-                    @click="handleSee(scope.row.id)"
-                    >查 看
-                  </el-button>
-                  <el-button
-                    size="mini"
-                    type="text"
-                    icon="el-icon-delete"
-                    @click="handleIgnore(scope.row)"
-                    >忽略
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table> -->
-      <!-- </el-tab-pane> -->
-      <!-- </el-tabs> -->
     </el-dialog>
-    <!-- <evtdialog
-        ref="evtdialog"
-        class="eventClass"
-        @fMethod="fatherMethod"
-      ></evtdialog> -->
   </div>
 </template>
     
@@ -581,6 +448,11 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
+  .el-dialog__body{
+    padding: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
   .title {
     padding-left: 20px;
     height: 30px;

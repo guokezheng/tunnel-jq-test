@@ -58,7 +58,7 @@ public class KafkaReadListenToDevStatusTopic {
      */
     @KafkaListener(topics = {"wq_devStatusTopic"}, containerFactory = "kafkaTwoContainerFactory")
     public void devStatusData(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("{}", record.value());
+        log.info("高速云端监听到平台数据： --> {}",record.value());
         if (authorizeName != null && !authorizeName.equals("") && authorizeName.equals("GSY")) {
             if (record.value() != null || !record.value().toString().equals("")) {
                 System.out.println(record.value());

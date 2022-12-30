@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 // 全景数据 - 运行环境接口
 
-// 查看环境监测状态（水侵、烟感、声光报警、气体）
+// 查token
 export function getToken() {
   return request({
     url: '/getToken',
@@ -9,3 +9,10 @@ export function getToken() {
   })
 }
 
+// 查外部系统的url
+export function getThreeUrl() {
+  return request({
+    url: '/getThreeUrl',
+    method: 'get',
+  })
+}

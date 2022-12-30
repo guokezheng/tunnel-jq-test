@@ -79,13 +79,13 @@
         <div class="lineClass"></div>
         <el-row>
           <el-col :span="15">
-            <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+            <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
             v-model="stateForm.brightness"
             :max="100"
             class="sliderClass"
           ></el-slider>
-        </el-form-item> -->
+        </el-form-item>
           </el-col>
         </el-row>
 

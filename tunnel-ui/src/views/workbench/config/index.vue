@@ -675,7 +675,7 @@
                 size="small"
               />
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
-
+              
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -843,7 +843,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-
+             
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -853,7 +853,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-
+          
         </el-drawer>
       </div>
 
@@ -936,7 +936,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-
+              
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1373,7 +1373,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-
+     
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2599,7 +2599,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-
+          
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -4224,7 +4224,7 @@ export default {
       }
       // console.log(direction,"广播一键控制方向");
 
-
+     
     },
     // 广播播放控制次数
     handleChangePhone(num) {},
@@ -4390,6 +4390,7 @@ export default {
         isControl: 1,
       };
       getStateByData(param).then((response) => {
+        console.log(response, "查询设备状态图标");
         // this.chezhiStateList = response.rows;
         this.chezhiStateList = [];
         for (let i = 0; i < response.rows.length; i++) {
@@ -5166,7 +5167,7 @@ export default {
         var energyConsumption = echarts.init(
           document.getElementById("energyConsumption")
         );
-
+       
       var option = {
           tooltip: {
             trigger: "axis",
@@ -5265,9 +5266,9 @@ export default {
             },
           ],
           series:yData
-
+        
         };
-
+     
         energyConsumption.on('legendselectchanged', obj => {
         var options = energyConsumption.getOption()
         //这里是选择切换什么样的x轴，那么他会进行对Y值的切换
@@ -6587,7 +6588,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,22
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -8237,8 +8238,8 @@ export default {
 //多选框选中样式
 ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
   background-color: white;
-  width: 26px;
-  height: 26px;
+  width: 14px;
+  height: 14px;
   border: solid 1px #fff;
   // box-shadow: 1px 1px 2px #dcad76;
 }
@@ -8249,8 +8250,8 @@ export default {
   border: 2px solid #dcad76; // 是改这里的颜色
   border-left: 0;
   border-top: 0;
-  top: 6px;
-  left: 7px;
+  top: 0px;
+  left: 2px;
 }
 // ::v-deep .rtl .el-checkbox__input {
 //   transform: translateX(28px);
@@ -9530,7 +9531,7 @@ input {
     border-left:solid 1px #05AFE3 !important;
     color:#fff;
   }
-
+  
   .el-input-number__increase{
     border-bottom:solid 1px #05AFE3 !important;
 

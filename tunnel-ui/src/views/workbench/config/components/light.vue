@@ -334,14 +334,7 @@ export default {
 
         this.$emit("dialogClose");
       });
-      const params = {
-        bright: this.stateForm.brightness,
-        controlType: "0",
-        deviceId: this.eqInfo.equipmentId,
-      };
-      setBrightness(params).then((res) => {
-        console.log(res, "亮度");
-      });
+     
     },
     // 关闭弹窗
     handleClosee() {

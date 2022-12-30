@@ -83,7 +83,7 @@
         <el-radio-button label="trend">车流量实时趋势</el-radio-button>
       </el-radio-group>
       <div v-show="tab == 'data'" style="margin-bottom: 10px">
-        <el-table :data="dataList" min-height="150" empty-text="暂无操作日志" class="allTable">
+        <el-table :data="dataList" min-height="150" empty-text="暂无操作日志" >
           <el-table-column label="车道" align="center" prop="lane" width="76" />
           <el-table-column
             label="车流量(辆/分钟)"

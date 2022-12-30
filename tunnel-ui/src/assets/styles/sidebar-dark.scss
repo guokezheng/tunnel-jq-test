@@ -981,6 +981,10 @@
       background-color: #00152B;
       color: white;
     }
+    // 表格鼠标移入行选中
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: #326CA9;
+   }
     .el-slider__runway {
       background-color: #006784;
     }

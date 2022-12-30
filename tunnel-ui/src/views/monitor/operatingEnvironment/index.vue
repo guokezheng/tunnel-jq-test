@@ -352,9 +352,7 @@ export default {
         getToken().then((res) => {
           localStorage.setItem("cmts", res.data);
         })
-        getThreeUrl().then((res) => {
-          localStorage.setItem("cmurl", res.data);
-        })
+
     },
     // 获取
     getTypeFn() {

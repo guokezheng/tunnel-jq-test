@@ -556,7 +556,8 @@
           :append-to-body="true"
           class="drawerTop"
         >
-          <div style="width: 100%; height: 100%; position: relative">
+          <div style="
+          width: 100%; height: 100%; position: relative">
             <div class="jianbianLine"></div>
             <div class="chezhiDrawerDirection">
               {{ directionList[0].dictLabel }}-车道指示器
@@ -675,7 +676,7 @@
                 size="small"
               />
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
-              
+
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -843,7 +844,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-             
+
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -853,7 +854,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-          
+
         </el-drawer>
       </div>
 
@@ -936,7 +937,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-              
+
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1373,7 +1374,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-     
+
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2547,7 +2548,7 @@
       width="1000px"
       append-to-body
     >
-      <img src="@/assets/logo/equipment_log/all.png" 
+      <img src="@/assets/logo/equipment_log/all.png"
       style="width:1000px;height:auto;padding:20px"/>
       <!-- <el-table
         ref="multipleTable"
@@ -2599,7 +2600,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          
+
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -4224,7 +4225,7 @@ export default {
       }
       // console.log(direction,"广播一键控制方向");
 
-     
+
     },
     // 广播播放控制次数
     handleChangePhone(num) {},
@@ -4390,7 +4391,6 @@ export default {
         isControl: 1,
       };
       getStateByData(param).then((response) => {
-        console.log(response, "查询设备状态图标");
         // this.chezhiStateList = response.rows;
         this.chezhiStateList = [];
         for (let i = 0; i < response.rows.length; i++) {
@@ -5167,7 +5167,7 @@ export default {
         var energyConsumption = echarts.init(
           document.getElementById("energyConsumption")
         );
-       
+
       var option = {
           tooltip: {
             trigger: "axis",
@@ -5266,9 +5266,9 @@ export default {
             },
           ],
           series:yData
-        
+
         };
-     
+
         energyConsumption.on('legendselectchanged', obj => {
         var options = energyConsumption.getOption()
         //这里是选择切换什么样的x轴，那么他会进行对Y值的切换
@@ -9531,7 +9531,7 @@ input {
     border-left:solid 1px #05AFE3 !important;
     color:#fff;
   }
-  
+
   .el-input-number__increase{
     border-bottom:solid 1px #05AFE3 !important;
 

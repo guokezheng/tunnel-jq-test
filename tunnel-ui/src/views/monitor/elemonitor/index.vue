@@ -379,9 +379,6 @@ export default {
        getToken().then((res) => {
           localStorage.setItem("cmts", res.data);
         })
-        getThreeUrl().then((res) => {
-          localStorage.setItem("cmurl", res.data[0].system_url);
-        })
 
     },
     /*日期插件 时间变更*/

@@ -184,4 +184,9 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
     public List<Map<String, Object>> getDevicesSize() {
         return sdIotDeviceMapper.getDevicesSize();
     }
+
+    @Override
+    public List<Long> selectIotDevicesByTunnelId(String tunnelId) {
+        return sdIotDeviceMapper.selectIotDevicesByTunnelId(tunnelId);
+    }
 }

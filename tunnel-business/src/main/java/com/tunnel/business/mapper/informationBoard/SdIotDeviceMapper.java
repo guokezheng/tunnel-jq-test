@@ -128,4 +128,6 @@ public interface SdIotDeviceMapper {
 	public List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice iotDevice);
 
     public List<Map<String, Object>> getDevicesSize();
+
+    public List<Long> selectIotDevicesByTunnelId(String tunnelId);
 }

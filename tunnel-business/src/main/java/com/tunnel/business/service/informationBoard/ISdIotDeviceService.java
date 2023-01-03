@@ -117,4 +117,6 @@ public interface ISdIotDeviceService {
 
     public List<Map<String, Object>> getDevicesSize();
 
+    List<Long> selectIotDevicesByTunnelId(String tunnelId);
+
 }

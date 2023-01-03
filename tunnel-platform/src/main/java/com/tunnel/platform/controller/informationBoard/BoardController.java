@@ -15,16 +15,12 @@ import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * 情报板操作Controller
@@ -42,6 +38,7 @@ public class BoardController extends BaseController {
     public static Map<String, String> releaseContentMap = new HashMap<String, String>();//发布内容存储
     public static Map<String, List<String>> modifyResultMap = new HashMap<String, List<String>>();//返回修改内容存储
     private static int fontSizeList[] = {64, 48, 40, 32, 24, 16};//字体大小集合
+    public static Map<String, Object> nowContentMap = new HashMap<String, Object>();
     @Autowired
     private ISdIotDeviceService sdIotDeviceService;
     @Autowired
@@ -103,11 +100,14 @@ public class BoardController extends BaseController {
             items.put("devicePixel", deviceAccess.getDevicePixel());
 
             paramsList.add(items.toString());
+            nowContentMap.put(deviceId.toString(), items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
         } catch (BusinessException e) {
-        	return AjaxResult.error(-1, e.getMessage());
+//        	return AjaxResult.error(-1, e.getMessage());
+            return null;
         } catch (Exception e) {
-        	return AjaxResult.error(-1, e.getMessage());
+//        	return AjaxResult.error(-1, e.getMessage());
+            return null;
         }
         return ajaxResult;
     }
@@ -250,6 +250,20 @@ public class BoardController extends BaseController {
 
         executorService.execute(new Task(deviceId));
 
+    }
+
+    @GetMapping("/addBoardContent/{tunnelId}")
+    public Map<String, Object> addBoardContent(@PathVariable String tunnelId) throws ExecutionException, InterruptedException {
+        Map<String, Object> map = new HashMap<>();
+        List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
+        for (int i = 0;i < deviceIds.size();i++) {
+            String devId = deviceIds.get(i).toString();
+            if (nowContentMap != null && !nowContentMap.isEmpty() && nowContentMap.get(devId) != null) {
+                Object result = nowContentMap.get(devId);
+                map.put(devId, result);
+            }
+        }
+        return map;
     }
 
     /**

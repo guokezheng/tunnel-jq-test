@@ -314,6 +314,15 @@ public class SdDevicesController extends BaseController {
     @Log(title = "设备管理", businessType = BusinessType.IMPORT)
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception {
+        if(file!=null){
+            String str1 = file.getOriginalFilename();
+            String str = str1.substring(str1.indexOf(".") + 1);
+            System.out.println("文件类型为============"+str);
+            if(!"xls".equals(str)&&!"xlsx".equals(str)){
+                String message = "抱歉，导入失败，仅允许导入“xls”或“xlsx”格式文件！";
+                return AjaxResult.success(message);
+            }
+        }
         ExcelUtil<SdDevices> util = new ExcelUtil<SdDevices>(SdDevices.class);
         List<SdDevices> userList = util.importExcel(file.getInputStream());
         String operName = SecurityUtils.getUsername();

@@ -1101,11 +1101,21 @@
         this.upload.open = false;
         this.upload.isUploading = false;
         this.$refs.upload.clearFiles();
-        this.$alert(response.msg, "导入结果", {
-          customClass: 'el-message-box_style',
-          dangerouslyUseHTMLString: true
+        if(response.msg!=null&&response.msg!=""){
+          this.$alert(response.msg, "导入结果", {
+            customClass: 'el-message-box_style',
+            dangerouslyUseHTMLString: true
 
-        });
+          });
+        }else{
+          const msg = "恭喜您，数据已全部导入成功！";
+          this.$alert(msg, "导入结果", {
+            customClass: 'el-message-box_style',
+            dangerouslyUseHTMLString: true
+
+          });
+        }
+
         this.$forceUpdate()
         this.getList();
       },

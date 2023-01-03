@@ -154,7 +154,7 @@
                          @click.native="onChangePlc(form.eqTunnelId)"
                          @change="changePlc(form.fEqId)"
                          style="width:100%">
-                         
+
                 <el-option v-for="item in eqHostData" :key="item.eqId" :label="item.eqName" :value="item.eqId"/>
               </el-select>
             </el-form-item>
@@ -176,7 +176,7 @@
 
           <el-col :span="12">
             <el-form-item label="设备名称" prop="eqName">
-              <el-input v-model="form.eqName" placeholder="请输入设备名称"/>
+              <el-input v-model="form.eqName" maxlength="50" placeholder="请输入设备名称"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -220,7 +220,7 @@
 
           <el-col :span="12">
             <el-form-item label="设备型号" prop="eqModel">
-              <el-input v-model="form.eqModel" placeholder="设备型号"/>
+              <el-input v-model="form.eqModel" maxlength="20" placeholder="设备型号"/>
             </el-form-item>
           </el-col>
 
@@ -238,52 +238,52 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备桩号" prop="pile">
-              <el-input v-model="form.pile" placeholder="请输入桩号"/>
+              <el-input v-model="form.pile" maxlength="20" placeholder="请输入桩号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备整形桩号" prop="pileNum">
-              <el-input v-model="form.pileNum" placeholder="请输入设备整形桩号"/>
+              <el-input v-model="form.pileNum" maxlength="6" placeholder="请输入设备整形桩号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="纬度" prop="lat">
-              <el-input v-model="form.lat" placeholder="请输入纬度"/>
+              <el-input v-model="form.lat" maxlength="20" placeholder="请输入纬度"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="经度" prop="lng">
-              <el-input v-model="form.lng" placeholder="请输入经度"/>
+              <el-input v-model="form.lng" maxlength="20" placeholder="请输入经度"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备IP" prop="ip">
-              <el-input v-model="form.ip" placeholder="请输入设备IP"/>
+              <el-input v-model="form.ip" maxlength="20" placeholder="请输入设备IP"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备端口号" prop="port">
-              <el-input v-model="form.port" placeholder="请输入设备端口号"/>
+              <el-input v-model="form.port" maxlength="20" placeholder="请输入设备端口号"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备密钥" prop="secureKey">
-              <el-input v-model="form.secureKey" placeholder="请输入设备密钥"/>
+              <el-input v-model="form.secureKey" maxlength="50" placeholder="请输入设备密钥"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备用户名" prop="eqUser">
-              <el-input v-model="form.eqUser" placeholder="请输入设备用户名"/>
+              <el-input v-model="form.eqUser" maxlength="50" placeholder="请输入设备用户名"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="设备密码" prop="eqPwd">
-              <el-input v-model="form.eqPwd" placeholder="请输入设备密码"/>
+              <el-input v-model="form.eqPwd" maxlength="50" placeholder="请输入设备密码"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="协议类型" prop="protocol">
-              <el-input v-model="form.protocol" placeholder="请输入协议类型"/>
+              <el-input v-model="form.protocol" maxlength="50" placeholder="请输入协议类型"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -324,7 +324,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="预期寿命" prop="useLife">
-              <el-input v-model="form.useLife" placeholder="请输入预期寿命"/>
+              <el-input v-model="form.useLife" maxlength="10" placeholder="请输入预期寿命"/>
             </el-form-item>
           </el-col>
           <el-col :span="1">
@@ -371,12 +371,12 @@
 
           <el-col :span="12" v-if="showOrhide">
             <el-form-item label="点位地址" prop="queryPointAddress">
-              <el-input v-model="form.queryPointAddress" placeholder="请输入点位地址"/>
+              <el-input v-model="form.queryPointAddress" maxlength="50" placeholder="请输入点位地址"/>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
-              <el-input v-model="form.remark" placeholder="请输入备注"/>
+              <el-input v-model="form.remark" maxlength="200" placeholder="请输入备注"/>
             </el-form-item>
           </el-col>
           <!-- <el-col :span="12">

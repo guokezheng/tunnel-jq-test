@@ -62,6 +62,10 @@ public class SdSparePartsWarehouseServiceImpl implements ISdSparePartsWarehouseS
     @Override
     public int insertSdSparePartsWarehouse(SdSparePartsWarehouse sdSparePartsWarehouse) {
         sdSparePartsWarehouse.setCreateTime(DateUtils.getNowDate());
+        List<SdSparePartsWarehouse> list = sdSparePartsWarehouseMapper.selectSdSparePartsWarehouseList(sdSparePartsWarehouse);
+        if(list.size()>0){
+            throw new RuntimeException("当前数据已存在，请勿重复录入。");
+        }
         return sdSparePartsWarehouseMapper.insertSdSparePartsWarehouse(sdSparePartsWarehouse);
     }
 

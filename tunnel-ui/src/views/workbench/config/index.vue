@@ -371,8 +371,8 @@
                             item.eqType || item.eqType == 0 ? 'pointer' : '',
                           border:
                             item.click == true ? 'solid 2px #09C3FC' : '',
-                            width:item.iconWidth + 'px',
-                            height:item.iconHeight + 'px',
+                          width:item.iconWidth + 'px',
+                          height:item.iconHeight + 'px',
                           }"
 
                           :src= getTypePic(item)
@@ -381,7 +381,10 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          ><span>{{item.eqName}}</span>
+                          >
+                          <!-- width:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'width') + 'px':item.iconWidth + 'px',
+                            height:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'height') + 'px':item.iconHeight + 'px', -->
+                          <span>{{item.eqName}}</span>
                         </div>
                         <div v-show="item.eqType == '36'"
                         class="boardBox2"
@@ -693,6 +696,7 @@
                 placeholder="请选择播放文件"
                 clearable
                 size="small"
+                @click.native="clickFileNames((directionList[1].dictValue))"
               >
                 <el-option
                   v-for="item in fileNamesList"
@@ -737,6 +741,7 @@
                 placeholder="请选择播放文件"
                 clearable
                 size="small"
+                @click.native="clickFileNames((directionList[1].dictValue))"
               >
                 <el-option
                   v-for="item in fileNamesList"
@@ -1077,7 +1082,7 @@
               <el-radio
                 v-if="batchManageForm.eqType == item.type && item.control == 1"
                 class="el-radio flex-row"
-                :label="item.name"
+                :label="item.state"
                 style="align-items: center"
                 :class="[
                   String(batchManageForm.state) == String(item.state)
@@ -1088,8 +1093,8 @@
                 <el-row
                   class="flex-row"
                   v-if="
-                    batchManageForm.eqDirection == '1' &&
-                    batchManageForm.eqType == (1 || 2)
+                    batchManageForm.eqDirection == '1' &&(
+                    batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
                   "
                 >
                   <img
@@ -1111,27 +1116,31 @@
                   class="flex-row"
                   v-if="
                     batchManageForm.eqDirection == '2' &&
-                    batchManageForm.eqType == (1 || 2)
+                    (batchManageForm.eqType == 1 || batchManageForm.eqType == 2)
+
                   "
                 >
                   <img
                     :width="iconWidth"
                     :height="iconHeight"
                     :src="item.url[1]"
+
                   />
                   <img
                     :width="iconWidth"
                     :height="iconHeight"
                     :src="item.url[0]"
                     v-if="item.url.length > 1"
+
                   />
                   <div style="margin: 0 0 0 10px; display: inline-block">
                     {{ item.name }}
                   </div>
                 </el-row>
+                
                 <el-row
                   class="flex-row"
-                  v-if="batchManageForm.eqType != (1 || 2)"
+                  v-if="batchManageForm.eqType != 1 && batchManageForm.eqType != 2"
                 >
                   <img
                     :width="iconWidth"
@@ -2983,7 +2992,7 @@ import {
   hasListByBigType,
   loadPicture,
 } from "@/api/equipment/type/api.js";
-import { getTemplateInfo,  } from "@/api/board/template.js";
+import { getTemplateInfo } from "@/api/board/template.js";
 import {
   listTunnels,
   getTunnels,
@@ -2999,6 +3008,7 @@ import {
   getDeviceDataAndState,
   getJlyTunnel,
   energyConsumptionDetection,
+  getBoardContent,
 } from "@/api/equipment/tunnel/api.js";
 import {
   listEqTypeState,
@@ -3067,6 +3077,7 @@ import {
   getDeviceBase,
   getNewBoardEditInfo,
   templateList,
+  batchControlDevice,
 } from "@/api/workbench/config";
 import BatteryIcon from "@/components/BatteryIcon";
 import { listEvent, getWarnEvent } from "@/api/event/event";
@@ -3832,11 +3843,7 @@ export default {
       console.log(data, "方向");
       this.directionList = data.data;
     });
-    getAudioFileList().then((res) => {
-      console.log(res, "广播一键文件列表");
-      this.fileNamesList = res.data
 
-    });
     // this.flvPlayer()
     this.trafficFlowLane();
     this.getEqTypeStateIcon();
@@ -4192,39 +4199,108 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    // 点击侧边栏文件列表下拉框
+    clickFileNames(direction) {
+      const params ={
+        tunnelId:this.tunnelId,
+        direction:direction,
+      }
+      getAudioFileList(params).then((res) => {
+        console.log(res, "广播一键文件列表");
+        this.fileNamesList = res.data;
+      });
+    },
+    getBoardStyle(id, type) {
+     
+      // getBoardContent(id).then((res) => {
+      //   if (type == "width") {
+      //     return JSON.parse(res.data[0]).devicePixel.split("*")[1] / 2;
+      //   }else if(type == 'content'){
+      //     return JSON.parse(res.data[0]).devicePixel.split("*")[0] / 2;
+      //   }
+      // });
+    },
+    getBoardText(id){
+      getBoardContent(id).then((res) => {
+        console.log(res, "情报板图标样式");
+        console.log(JSON.parse(res.data[0]));
+        var contents = JSON.parse(res.data[0]).content;
+
+        console.log(contents, "contents");
+        for (var i = 0; i < contents.length; i++) {
+          var content = contents[i];
+          var itemId = "ITEM" + this.formatNum(i, 3);
+          if (i == 0) {
+            currRowId = itemId;
+          }
+          var con = content[itemId];
+
+          for (let item of con) {
+            item.COLOR = this.getColorStyle(item.COLOR);
+            item.FONT = this.getFont(item.FONT)
+          }
+          console.log(con, "con");
+          this.contentList = con;
+        }
+        return ""
+      });
+    },
+    formatNum(num, length) {
+      return (Array(length).join("0") + parseInt(num)).slice(-length);
+    },
+    // 转字体
+    getFont(font) {
+      if (font == "KaiTi") {
+        return "楷体";
+      } else if (font == "SimSun") {
+        return "宋体";
+      } else if (font == "SimHei") {
+        return "黑体";
+      } else {
+        return font;
+      }
+    },
+    // 转颜色
+    getColorStyle(font) {
+      if (font == "黄色") {
+        return "yellow";
+      } else if (font == "红色") {
+        return "red";
+      } else if (font == "绿色") {
+        return "green";
+      } else if (font == "蓝色") {
+        return "blue";
+      } else {
+        return font;
+      }
+    },
     phoneControl(direction) {
       if (direction == 1) {
         const param = {
-          lib:"YeastarHost",
+          lib: "YeastarHost",
           loop: this.phoneForm1.loop,
-          loopCount:this.phoneForm1.loopCount,
-          volume:this.phoneForm1.volume,
-          fileNames:Array(this.phoneForm1.fileNames),
-          direction:direction,
-          tunnelId:this.currentTunnel.id,
+          loopCount: this.phoneForm1.loopCount,
+          volume: this.phoneForm1.volume,
+          fileNames: Array(this.phoneForm1.fileNames),
+          direction: direction,
+          tunnelId: this.currentTunnel.id,
         };
         console.log(param, "param");
-        playVoiceGroup(param).then((res) =>{
-
-        })
-      }else{
+        playVoiceGroup(param).then((res) => {});
+      } else {
         const param = {
-          lib:"YeastarHost",
+          lib: "YeastarHost",
           loop: this.phoneForm2.loop,
-          loopCount:this.phoneForm2.loopCount,
-          volume:this.phoneForm2.volume,
-          fileNames:Array(this.phoneForm2.fileNames),
-          direction:direction,
-          tunnelId:this.currentTunnel.id,
+          loopCount: this.phoneForm2.loopCount,
+          volume: this.phoneForm2.volume,
+          fileNames: Array(this.phoneForm2.fileNames),
+          direction: direction,
+          tunnelId: this.currentTunnel.id,
         };
         console.log(param, "param");
-        playVoiceGroup(param).then((res) =>{
-
-        })
+        playVoiceGroup(param).then((res) => {});
       }
       // console.log(direction,"广播一键控制方向");
-
-     
     },
     // 广播播放控制次数
     handleChangePhone(num) {},
@@ -4293,13 +4369,14 @@ export default {
     // 批量操作 弹窗确定
     batchManageOK() {
       const param = {
-        eqId: this.itemEqId,
+        eqId: this.itemEqId.toString(),
         eqDirection: this.batchManageForm.eqDirection,
         state: this.batchManageForm.state,
       };
-      batchManage(param).then((res) => {
+      batchControlDevice(param).then((res) => {
         console.log(res, "000000000000000");
         this.batchManageDialog = false;
+        this.closeBatchManageDialog();
       });
     },
     // 新版批量操作 点击变俩按钮
@@ -4560,9 +4637,8 @@ export default {
       this.drawerA = true;
       this.drawerB = false;
       this.drawerCVisible = false;
-      this.phoneForm1 = {}
-      this.phoneForm2 = {}
-
+      this.phoneForm1 = {};
+      this.phoneForm2 = {};
     },
     isDrawerB() {
       this.drawerB = true;
@@ -5033,255 +5109,252 @@ export default {
     },
     getEnergyConsumption(id) {
       energyConsumptionDetection(id).then((res) => {
-        console.log(res,"能耗监测")
-        let xDataN = []
-        let xDataY = []
-        let xDataR = []
+        console.log(res, "能耗监测");
+        let xDataN = [];
+        let xDataY = [];
+        let xDataR = [];
 
         // let yDataN = []
         // let yDataY = []
         // let yDataR = []
-        let xData = []
-        let yData = []
+        let xData = [];
+        let yData = [];
         yData.push({
           name: "年",
-              type: "line",
-              color: "#59c5f9",
-              symbol: "circle",
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white",
+          type: "line",
+          color: "#59c5f9",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          // 渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#59c5f9",
                 },
-              },
-              smooth: true,
-              // 渐变色
-              areaStyle: {
-                normal: {
-                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                      offset: 0,
-                      color: "#59c5f9",
-                    },
-                    {
-                      offset: 1,
-                      color: "rgba(89,197,249,0.3)",
-                    },
-                  ]),
+                {
+                  offset: 1,
+                  color: "rgba(89,197,249,0.3)",
                 },
-              },
-              data: res.data.year.map(item => item.value),
-        })
+              ]),
+            },
+          },
+          data: res.data.year.map((item) => item.value),
+        });
         yData.push({
-          name: '月',
-              type: 'line',
-              color: '#db72a7',
-              symbol: 'circle',
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white"
-                }
-              },
-              smooth: true,
-              stack: 'Total',
-              areaStyle: {},
-              emphasis: {
-                focus: 'series'
-              },
-              //渐变色
-              areaStyle: {
-                normal: {
-                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(
-                    0, 0, 0, 1,
-                    [{
-                        offset: 0,
-                        color: '#db72a7'
-                      },
-                      {
-                        offset: 1,
-                        color: 'rgba(219,114,167,0.3)'
-                      }
-                    ]
-                  )
-                }
-              },
-              data: res.data.month.map(item => item.value),
-        })
+          name: "月",
+          type: "line",
+          color: "#db72a7",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          stack: "Total",
+          areaStyle: {},
+          emphasis: {
+            focus: "series",
+          },
+          //渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#db72a7",
+                },
+                {
+                  offset: 1,
+                  color: "rgba(219,114,167,0.3)",
+                },
+              ]),
+            },
+          },
+          data: res.data.month.map((item) => item.value),
+        });
         yData.push({
           name: "日",
-              type: "line",
-              color: "#FDB400",
-              symbol: "circle",
-              symbolSize: [7, 7],
-              itemStyle: {
-                normal: {
-                  borderColor: "white",
+          type: "line",
+          color: "#FDB400",
+          symbol: "circle",
+          symbolSize: [7, 7],
+          itemStyle: {
+            normal: {
+              borderColor: "white",
+            },
+          },
+          smooth: true,
+          // 渐变色
+          areaStyle: {
+            normal: {
+              //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: "#FDB400",
                 },
-              },
-              smooth: true,
-              // 渐变色
-              areaStyle: {
-                normal: {
-                  //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色，
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    {
-                      offset: 0,
-                      color: "#FDB400",
-                    },
-                    {
-                      offset: 1,
-                      color: "rgba(253,180,0,0.3)",
-                    },
-                  ]),
+                {
+                  offset: 1,
+                  color: "rgba(253,180,0,0.3)",
                 },
-              },
-              data: res.data.day.map(item => item.value),
-        })
-        for(let item of res.data.year){
-          xData.push(item.rt)
-          xDataN.push(item.rt)
+              ]),
+            },
+          },
+          data: res.data.day.map((item) => item.value),
+        });
+        for (let item of res.data.year) {
+          xData.push(item.rt);
+          xDataN.push(item.rt);
 
           // yDataN.push(item.value)
-
         }
-        for(let item of res.data.month){
-          xDataY.push(item.rt)
+        for (let item of res.data.month) {
+          xDataY.push(item.rt);
           // yDataY.push(item.value)
         }
-        for(let item of res.data.day){
-          xDataR.push(item.rt)
+        for (let item of res.data.day) {
+          xDataR.push(item.rt);
           // yDataR.push(item.value)
         }
         // let xData = []
-      console.log(xData,yData,xDataN,xDataY,xDataR,"能耗年月日")
+        // console.log(xData,yData,xDataN,xDataY,xDataR,"能耗年月日")
         this.$nextTick(() => {
-          this.initEnergyConsumption(xData,yData,xDataN,xDataY,xDataR);
+          this.initEnergyConsumption(xData, yData, xDataN, xDataY, xDataR);
         });
       });
     },
     // 能耗监测echarts
-    initEnergyConsumption(xData,yData,xDataN,xDataY,xDataR) {
-        var energyConsumption = echarts.init(
-          document.getElementById("energyConsumption")
-        );
-       
+    initEnergyConsumption(xData, yData, xDataN, xDataY, xDataR) {
+      var energyConsumption = echarts.init(
+        document.getElementById("energyConsumption")
+      );
+
       var option = {
-          tooltip: {
-            trigger: "axis",
-          },
-          legend: {
-            show: true,
-            icon: "rect",
-            itemWidth: 10,
-            itemHeight: 10,
-            selectedMode: 'single', // 单选
-            selected: {
+        tooltip: {
+          trigger: "axis",
+        },
+        legend: {
+          show: true,
+          icon: "rect",
+          itemWidth: 10,
+          itemHeight: 10,
+          selectedMode: "single", // 单选
+          selected: {
             年: true,
             月: false,
             日: false,
           },
-            x: 'center',
-            data: ['年', '月', '日'],
-            textStyle: { //图例文字的样式
-              color: this.sideTheme!='theme-blue'?'#fff':'#003a5d',
-              fontSize: 12
-            }
+          x: "center",
+          data: ["年", "月", "日"],
+          textStyle: {
+            //图例文字的样式
+            color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+            fontSize: 12,
           },
-          calculable: true,
-          grid: {
-            top: "24%",
-            bottom: "20%",
-            left: "14%",
-            right: "14%",
-          },
-          xAxis: [
-            {
-              // name: "小时",
-              nameTextStyle: {
-                fontFamily: "PingFang",
-              },
-              type: "category",
-              axisTick: {
-                show: false,
-              },
-              splitLine: {
-                show: false,
-              },
-              boundaryGap: false,
-              axisLabel: {
-                textStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                  fontSize: 10,
-                  fontFamily: "PingFang",
-                },
-              },
-              axisLine: {
-                show: true,
-                lineStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                },
-              },
-              data: xData,
+        },
+        calculable: true,
+        grid: {
+          top: "24%",
+          bottom: "20%",
+          left: "14%",
+          right: "14%",
+        },
+        xAxis: [
+          {
+            // name: "小时",
+            nameTextStyle: {
+              fontFamily: "PingFang",
             },
-          ],
-          yAxis: [
-            {
-              name: "kwh",
-              nameTextStyle: {
+            type: "category",
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+            boundaryGap: false,
+            axisLabel: {
+              textStyle: {
                 color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
                 fontSize: 10,
-                padding: [0, 20, 0, 0],
-              },
-              type: "value",
-              minInterval: 1,
-              // min: 0,
-              // max: 200,
-              axisTick: {
-                show: false,
-              },
-              // max: 200,
-              // min: 0,
-              splitNumber: 5,
-              splitLine: {
-                show: true,
-                lineStyle: {
-                  //分割线的样式
-                  color: ["#4E6B83"],
-                  width: 1,
-                  type: "dashed",
-                },
-              },
-              axisLine: {
-                show: false,
-              },
-              axisLabel: {
-                textStyle: {
-                  color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
-                  fontSize: 10,
-                },
+                fontFamily: "PingFang",
               },
             },
-          ],
-          series:yData
-        
-        };
-     
-        energyConsumption.on('legendselectchanged', obj => {
-        var options = energyConsumption.getOption()
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+              },
+            },
+            data: xData,
+          },
+        ],
+        yAxis: [
+          {
+            name: "kwh",
+            nameTextStyle: {
+              color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+              fontSize: 10,
+              padding: [0, 20, 0, 0],
+            },
+            type: "value",
+            minInterval: 1,
+            // min: 0,
+            // max: 200,
+            axisTick: {
+              show: false,
+            },
+            // max: 200,
+            // min: 0,
+            splitNumber: 5,
+            splitLine: {
+              show: true,
+              lineStyle: {
+                //分割线的样式
+                color: ["#4E6B83"],
+                width: 1,
+                type: "dashed",
+              },
+            },
+            axisLine: {
+              show: false,
+            },
+            axisLabel: {
+              textStyle: {
+                color: this.sideTheme != "theme-blue" ? "#fff" : "#003a5d",
+                fontSize: 10,
+              },
+            },
+          },
+        ],
+        series: yData,
+      };
+
+      energyConsumption.on("legendselectchanged", (obj) => {
+        var options = energyConsumption.getOption();
         //这里是选择切换什么样的x轴，那么他会进行对Y值的切换
-        if (obj.name == '年'){
-          options.xAxis[0].data = xDataN
-        }else if (obj.name == '月'){
-          options.xAxis[0].data = xDataY
-        }else if (obj.name == '日'){
-          options.xAxis[0].data = xDataR
+        if (obj.name == "年") {
+          options.xAxis[0].data = xDataN;
+        } else if (obj.name == "月") {
+          options.xAxis[0].data = xDataY;
+        } else if (obj.name == "日") {
+          options.xAxis[0].data = xDataR;
         }
 
-        energyConsumption.setOption(options, true)
-      })
+        energyConsumption.setOption(options, true);
+      });
 
       // }
       energyConsumption.setOption(option);
@@ -6279,21 +6352,56 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
+          // console.log(res,"eqList")
           listType("")
             .then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
+
                     let iconWidth = Number(response.rows[j].iconWidth);
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
+                  
+                    // if(res.eqList[i].eqType == 16 || res.eqList[i].eqType == 36){
+            
+                    //   console.log(res.eqList[i].associated_device_id,"res.eqList[i].associated_device_id")
+                    //   getBoardContent(res.eqList[i].associated_device_id).then((resp) => {
+                    //     console.log(resp.data,"0000000000000000")
+                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[1]
+                    //     res.eqList[i].iconWidth = resp.data[0].devicePixel.split("*")[0]
+                    //     console.log(res.eqList[i].iconWidth,"res.eqList[i]")
+                    //   // if (type == "width") {
+                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[1] / 2;
+                    //   // }else if(type == 'content'){
+                    //   //   return JSON.parse(res.data[0]).devicePixel.split("*")[0] / 2;
+                    //   // }
+                    // });
+                    // }else{
+                    //   let iconWidth = Number(response.rows[j].iconWidth);
+                    //   let iconHeight = Number(response.rows[j].iconHeight);
+                    //   res.eqList[i].iconWidth = iconWidth;
+                    //   res.eqList[i].iconHeight = iconHeight;
+                  
+                    // }
                     break;
                   }
                 }
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
+              let arr = []
+              for(let item of that.selectedIconList){
+                if(item.eqType == 16 || item.eqType == 36){
+                  arr.push(item.associated_device_id)
+                }
+              }
+              // getBoardContent(arr).then((resp) => {
+              //   console.log(res,"00000000000")
+              //   })
+
+              console.log(arr,"情报板id")
               that.getRealTimeData();
               // that.selectedIconList.forEach((item, indx) => {
               //   // if(item.eqName=='固定摄像机（枪机）'){
@@ -6588,7 +6696,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,22
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -9526,15 +9634,15 @@ input {
   .chezhiControlButton:hover {
     color: white;
   }
-  .el-input-number__increase,.el-input-number__decrease{
-    background: #2D69A5;
-    border-left:solid 1px #05AFE3 !important;
-    color:#fff;
+  .el-input-number__increase,
+  .el-input-number__decrease {
+    background: #2d69a5;
+    border-left: solid 1px #05afe3 !important;
+    color: #fff;
   }
-  
-  .el-input-number__increase{
-    border-bottom:solid 1px #05AFE3 !important;
 
+  .el-input-number__increase {
+    border-bottom: solid 1px #05afe3 !important;
   }
 }
 .chezhiDrawerInfo {

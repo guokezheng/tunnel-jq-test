@@ -174,7 +174,10 @@ export default {
   },
   created() {
     this.getMessage();
-    getAudioFileList().then((res) =>{
+    const param ={
+      deviceId:this.eqInfo.equipmentId,
+    }
+    getAudioFileList(param).then((res) =>{
       console.log(res,"文件列表");
       this.fileNamesList = res.data
     })

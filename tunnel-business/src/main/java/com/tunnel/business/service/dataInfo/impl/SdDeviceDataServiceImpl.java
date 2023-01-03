@@ -281,12 +281,13 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
     @Override
     public Map<String, Object> energyConsumptionDetection(String tunnelId) {
+        Map<String, Object> allDataList = new HashMap<>();
         ExternalSystem externalSystem = new ExternalSystem();
         externalSystem.setTunnelId(tunnelId);
         externalSystem.setSystemName("能源管控平台");
         List<ExternalSystem> externalSystems = externalSystemService.selectExternalSystemList(externalSystem);
         if (externalSystems.isEmpty()) {
-            return null;
+            return allDataList;
         }
         ExternalSystem system = externalSystems.get(0);
         SdDevices sdDevices = new SdDevices();
@@ -299,16 +300,33 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("username", "admin");
         map.put("password", "HSD123!@#");
-        JSONObject json = JSONObject.parseObject(HttpUtils.sendPostByApplicationJson(url,JSONObject.toJSONString(map)));
+        String result = "";
+        try {
+            result = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
+        } catch (Exception e) {
+            return allDataList;
+        }
+        if (result == "" || result.equals("")) {
+            return allDataList;
+        }
+        JSONObject json = JSONObject.parseObject(result);
+        if (json == null || json.isEmpty() || json.get("token") == null) {
+            return allDataList;
+        }
         String token =  json.get("token").toString();
         //获取能耗数据
         url = system.getSystemUrl() + "sjfx/getEnergyByStatisticsType";
         String[] str = new String[]{"day","month","year"};
-        Map<String, Object> allDataList = new HashMap<>();
         for (int j = 0;j < str.length;j++) {
+            if (token == null || token.equals("")) {
+                break;
+            }
             String type = str[j];
             String params = "powerCode=" + eqId + "&type="+type;
             json = JSONObject.parseObject(HttpUtils.sendGetWithAuth(url, params, Constants.UTF8, token));
+            if (json == null || json.isEmpty() || json.getJSONArray("data") == null) {
+                continue;
+            }
             JSONArray data = json.getJSONArray("data");
             List<Map<String, Object>> list = new ArrayList<>();
             for (int i = 0;i < data.size(); i++) {

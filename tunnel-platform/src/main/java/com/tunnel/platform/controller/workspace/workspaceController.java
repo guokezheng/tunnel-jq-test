@@ -42,10 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 工作台
@@ -568,6 +565,27 @@ public class workspaceController extends BaseController {
             controlDevices = sdDeviceControlService.controlDevices(map);
         }
         return AjaxResult.success(controlDevices);
+    }
+
+    /**
+     * 批量控制设备
+     * @param deviceMap
+     * @return
+     */
+    @PostMapping("/batchControlDevice")
+    public AjaxResult batchControlDevice(@RequestBody Map<String, Object> deviceMap){
+        List<String> eqIdList = Arrays.asList(deviceMap.get("eqId").toString().split(","));
+        String state = deviceMap.get("state").toString();
+        Map<String, Object> map = new HashMap<>();
+        map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+        int count = 0;
+        for(String devId : eqIdList){
+            map.put("devId", devId);
+            map.put("state", state);
+            map.put("controlType", "0");
+            count = sdDeviceControlService.controlDevices(map);
+        }
+        return AjaxResult.success(count);
     }
 
     @GetMapping("/getDeviceDataAndState")

@@ -8,10 +8,9 @@ import qs from 'qs'
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 // 创建axios实例
-let cmurl = localStorage.getItem("cmurl")
 const service = axios.create({
   // axios中请求配置有baseURL选项，表示请求URL公共部分
-  baseURL: cmurl,
+  baseURL: "http://10.7.187.220:8000/ruoyi-admin/",
   // 超时
   timeout: 10000
 })
@@ -19,11 +18,8 @@ const service = axios.create({
 let item = localStorage.getItem("cmts")
 // request拦截器
 service.interceptors.request.use(config => {
-  // 是否需要设置 token
-  const isToken = (config.headers || {}).isToken === false
-  if (item && !isToken) {
-    config.headers['Authorization'] = 'Bearer ' + item // 让每个请求携带自定义token 请根据实际情况自行修改
-  }
+
+  config.headers['Authorization'] = 'Bearer ' + item // 让每个请求携带自定义token 请根据实际情况自行修改
   // get请求映射params参数
   if (config.method === 'get' && config.params) {
     let url = config.url + '?';

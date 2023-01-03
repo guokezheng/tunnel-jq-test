@@ -185,3 +185,12 @@ export function energyConsumptionDetection(tunneld) {
 
   })
 }
+
+// 情报板 设备图标样式
+export function getBoardContent(query) {
+  return request({
+    url: '/parser/board/addBoardContent/' + query,
+    method: 'get',
+
+  })
+}

@@ -179,3 +179,12 @@ export function timeStrategySwitch(strategyId,change) {
     method: 'get',
   })
 }
+
+// 批量控制弹窗
+export function batchControlDevice(data) {
+  return request({
+    url: '/workspace/batchControlDevice',
+    method: 'post',
+    data: data
+  })
+}

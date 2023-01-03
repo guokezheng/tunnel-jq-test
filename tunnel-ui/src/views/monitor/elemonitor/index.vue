@@ -147,6 +147,7 @@ import {
   getTypeListApi
 } from '@/api/panoramicData/index.js'
 import {
+  getThreeUrl,
   getToken,
 } from '@/api/panoramicData/indexToken.js'
 export default {
@@ -375,12 +376,9 @@ export default {
       this.endDate = myDate.toISOString().slice(0, 10)
       this.startDate = new Date(myDate - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
       // this.dateTime = myDate
-      let item = localStorage.getItem("cmts");
-      if(item == 'undefined'){
-        getToken().then((res) => {
+       getToken().then((res) => {
           localStorage.setItem("cmts", res.data);
         })
-      }
 
     },
     /*日期插件 时间变更*/

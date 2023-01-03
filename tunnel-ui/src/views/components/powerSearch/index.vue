@@ -176,7 +176,7 @@ export default {
   padding: 10px 20px;
 }
 
-::v-deep .el-table tr:focus> {
+::v-deep .el-table tr:focus {
   background-color: #99a9bf !important;
 }
 

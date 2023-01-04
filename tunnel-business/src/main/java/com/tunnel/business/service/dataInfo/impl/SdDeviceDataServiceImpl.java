@@ -209,6 +209,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
             } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
+            } else if (deviceData == null) {
+                today = simpleDateFormat.format(new Date());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode()), today);
             map.put("todayLDInsideData", todayLDData);
@@ -225,6 +227,8 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
                 today = simpleDateFormat.format(deviceData.getUpdateTime());
             } else if (deviceData != null && deviceData.getCreateTime() != null) {
                 today = simpleDateFormat.format(deviceData.getCreateTime());
+            } else if (deviceData == null) {
+                today = simpleDateFormat.format(new Date());
             }
             todayLDData = sdDeviceDataMapper.getTodayCOVIData(deviceId, Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode()), today);
             map.put("todayLDOutsideData", todayLDData);

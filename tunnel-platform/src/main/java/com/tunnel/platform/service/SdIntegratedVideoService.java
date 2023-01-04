@@ -54,7 +54,8 @@ public class SdIntegratedVideoService {
         ResponseEntity<Map> exchange = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Map.class);
         Map body = exchange.getBody();
         if(body.isEmpty()) {
-            throw new RuntimeException("接口调用失败");
+            return null;
+            //throw new RuntimeException("接口调用失败");
         }
         return body.get("token").toString();
     }
@@ -187,7 +188,9 @@ public class SdIntegratedVideoService {
      */
     public Map getVideoStreaming(String eqId){
         SdDevices devices = SpringUtil.getBean(SdDevicesMapper.class).selectSdDevicesById(eqId);
-        Optional.ofNullable(devices.getExternalDeviceId()).orElseThrow(()->new RuntimeException("打开相机实时流查无此设备"+eqId));
+        if(devices.getExternalDeviceId() == null){
+            return null;
+        }
         String url = "http://"+ip+":"+ipPort+"/videoInfo/api/videoStreaming";
         HttpHeaders headers = new HttpHeaders();
 
@@ -209,7 +212,7 @@ public class SdIntegratedVideoService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> exchange = restTemplate.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
         JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
-        Optional.ofNullable(object).orElseThrow(()->new RuntimeException("打开相机实时流接口调用失败"));
+        //Optional.ofNullable(object).orElseThrow(()->new RuntimeException("打开相机实时流接口调用失败"));
         return object;
     }
 

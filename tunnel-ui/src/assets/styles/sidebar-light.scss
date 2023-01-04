@@ -193,6 +193,7 @@
         border: solid 1px #05AFE3;
       }
     }
+  
   .el-dialog{
     background-color: #00152B !important;
     border-bottom: solid 2px white;
@@ -233,7 +234,9 @@
       padding: 15px 20px ;
       color: #fff;
     
-     
+      .el-table--enable-row-hover .el-table__body tr:hover > td.el-table__cell{
+        background-color: rgba($color: #fff, $alpha: 0.2) !important;
+      }
       .el-tabs--border-card > .el-tabs__header{
         background: #326CA9 !important;
         border-bottom: solid 1px #05AFE3;

@@ -105,7 +105,7 @@ public class SdSparePartsWarehouse extends BaseEntity
     private String remake;
 
     /** 备注1 */
-    @Excel(name = "备注1")
+    /*@Excel(name = "备注1")*/
     @ApiModelProperty("备注1")
     private String remake1;
 

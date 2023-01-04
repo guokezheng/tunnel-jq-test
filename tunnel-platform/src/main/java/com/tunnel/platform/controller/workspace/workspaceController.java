@@ -42,10 +42,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 工作台
@@ -570,6 +567,27 @@ public class workspaceController extends BaseController {
         return AjaxResult.success(controlDevices);
     }
 
+    /**
+     * 批量控制设备
+     * @param deviceMap
+     * @return
+     */
+    @PostMapping("/batchControlDevice")
+    public AjaxResult batchControlDevice(@RequestBody Map<String, Object> deviceMap){
+        List<String> eqIdList = Arrays.asList(deviceMap.get("eqId").toString().split(","));
+        String state = deviceMap.get("state").toString();
+        Map<String, Object> map = new HashMap<>();
+        map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+        int count = 0;
+        for(String devId : eqIdList){
+            map.put("devId", devId);
+            map.put("state", state);
+            map.put("controlType", "0");
+            count = sdDeviceControlService.controlDevices(map);
+        }
+        return AjaxResult.success(count);
+    }
+
     @GetMapping("/getDeviceDataAndState")
     public AjaxResult selectDeviceDataAndState(String tunnelId) {
         return AjaxResult.success(sdDevicesService.getDeviceAndState(tunnelId));
@@ -588,110 +606,5 @@ public class workspaceController extends BaseController {
         Assert.hasText(operIp, "IP参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
-    }
-
-    public void updateHua(String deviceId, String devStatus){
-        //查询设备信息
-        SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
-        //查询设备类型数据项表
-        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-        sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
-        SdDeviceTypeItem deviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem).get(0);
-        //状态匹配
-        devStatus = devStatusCync(deviceTypeItem.getId(), devStatus);
-        //修改地址
-        String url = getUrl(deviceTypeItem.getId());
-        HttpHeaders requestHeaders = new HttpHeaders();
-        //设置JSON格式数据
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceId",deviceId);
-        jsonObject.put("runStatus",devStatus);
-        HttpEntity<String> requestEntity = new HttpEntity<>(jsonObject.toString(), requestHeaders);
-        try {
-            ResponseEntity<String> stringResponseEntity = restTemplate.postForEntity("http://10.7.187.28:60400/qxsd-iot"+url, requestEntity, String.class);
-            log.info("返回值 --> {}", stringResponseEntity.getBody());
-        } catch (Exception e) {
-            log.error("设备控制失败！{}", e.getMessage());
-        }
-    }
-
-    /**
-     * 设备运行状态与数据库匹配
-     * @param itemId
-     * @param runStatus
-     * @return
-     */
-    public String devStatusCync(Long itemId,String runStatus){
-        if(DevicesTypeItemEnum.FENG_JI_STATUS.getCode() == itemId){
-            if("3".equals(runStatus)){
-                return "00";
-            }
-        }
-        if(DevicesTypeItemEnum.XIN_HAO_DENG.getCode() == itemId){
-            if("4".equals(runStatus)){
-                return "00";
-            }
-            if("2".equals(runStatus)){
-                return "01";
-            }
-            if("1".equals(runStatus)){
-                return "02";
-            }
-        }
-        if(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode() == itemId){
-            if("1".equals(runStatus)){
-                return "02";
-            }
-            if("2".equals(runStatus)){
-                return "01";
-            }
-            if("4".equals(runStatus)){
-                return "00";
-            }
-            if("5".equals(runStatus)){
-                return "04";
-            }
-        }
-        if(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId){
-            if("4".equals(runStatus)){
-                return "00";
-            }
-        }
-        if(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == itemId){
-            if("5".equals(runStatus)){
-                return "04";
-            }
-            if("4".equals(runStatus)){
-                return "00";
-            }
-        }
-        if(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode() == itemId){
-            if("3".equals(runStatus)){
-                return "00";
-            }
-        }
-        return "0" + runStatus;
-    }
-
-    /**
-     * 获取相关设备修改地址
-     * @param itemId
-     * @return
-     */
-    public String getUrl(Long itemId){
-        if(itemId == DevicesTypeItemEnum.FENG_JI_STATUS.getCode()){
-            return "/deviceCtrl/fan/alterFanRunStatus";
-        }
-        if(itemId == DevicesTypeItemEnum.XIN_HAO_DENG.getCode() || itemId == DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode()){
-            return "/deviceCtrl/trafficLight/alterTrafficLightRunStatus";
-        }
-        if(itemId == DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() || itemId == DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()){
-            return "/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus";
-        }
-        if(itemId == DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode()){
-            return "/deviceCtrl/rollDoor/alterRollDoorRunStatus";
-        }
-        return null;
     }
 }

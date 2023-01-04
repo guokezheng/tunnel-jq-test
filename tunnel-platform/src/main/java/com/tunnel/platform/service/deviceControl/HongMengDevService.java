@@ -2,11 +2,17 @@ package com.tunnel.platform.service.deviceControl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.ServletUtils;
+import com.ruoyi.common.utils.ip.IpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,6 +43,12 @@ public class HongMengDevService {
 
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Autowired
+    private SdDeviceDataMapper sdDeviceDataMapper;
+
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -56,12 +70,18 @@ public class HongMengDevService {
     private String rollDoorUrl;
 
     public Map<String, String> updateHua(String deviceId, String devStatus){
+        String oldStatus = devStatus;
         //查询设备信息
         SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
         //查询设备类型数据项表
         SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
         sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
         SdDeviceTypeItem deviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem).get(0);
+        //查询实时数据表
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(deviceId);
+        sdDeviceData.setItemId(deviceTypeItem.getId());
+        List<SdDeviceData> sdDeviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
         //状态匹配
         devStatus = devStatusCync(deviceTypeItem.getId(), devStatus);
         //修改地址
@@ -79,9 +99,26 @@ public class HongMengDevService {
             JSONObject jsonObject1 = JSONObject.parseObject(stringResponseEntity.getBody());
             map.put("code",jsonObject1.getString("code"));
             map.put("msg",jsonObject1.getString("msg"));
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(deviceTypeItem.getDeviceTypeId());
+            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+            sdOperationLog.setEqId(sdDevices.getEqId());
+            sdOperationLog.setCreateTime(new Date());
+            if (sdDeviceDataList.size() > 0 && sdDeviceDataList.get(0) != null) {
+                sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
+            }
+            sdOperationLog.setOperationState(oldStatus);
+            sdOperationLog.setControlType("0");
+            if(jsonObject1.getInteger("code") == 200){
+                sdOperationLog.setState("1");
+            }else {
+                sdOperationLog.setState("0");
+            }
+            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
             return map;
         } catch (Exception e) {
-            log.error("设备控制失败！{}", e.getMessage());
+            log.error(IpUtils.getIpAddr(ServletUtils.getRequest()) + "设备控制失败！{}", e.getMessage());
         }
         return map;
     }

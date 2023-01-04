@@ -79,13 +79,13 @@
         <div class="lineClass"></div>
         <el-row>
           <el-col :span="15">
-            <!-- <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
+            <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
             v-model="stateForm.brightness"
             :max="100"
             class="sliderClass"
           ></el-slider>
-        </el-form-item> -->
+        </el-form-item>
           </el-col>
         </el-row>
 
@@ -320,19 +320,21 @@ export default {
         if (response.data == 0) {
           this.$modal.msgError("控制失败");
         } else if (response.data == 1) {
+          const params = {
+            bright: this.stateForm.brightness,
+            controlType: "0",
+            deviceId: this.eqInfo.equipmentId,
+          };
+          setBrightness(params).then((res) => {
+            console.log(res, "亮度");
           this.$modal.msgSuccess("控制成功");
+
+          });
         }
 
         this.$emit("dialogClose");
       });
-      const params = {
-        bright: this.stateForm.brightness,
-        controlType: "0",
-        deviceId: this.eqInfo.equipmentId,
-      };
-      setBrightness(params).then((res) => {
-        console.log(res, "亮度");
-      });
+     
     },
     // 关闭弹窗
     handleClosee() {

@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="getTriggerInfo"  resultType="hashmap" parameterType="String">
         SELECT strategy.id,strategy.tunnel_id,main.compare_pattern,strategy.strategy_type,main.compare_value,main.device_type_id,device.device_id,
-               rl.state alterState,main.element_id,main.warning_type,eq.pile,eq.eq_direction,eq.eq_type,eq.lane,rl.equipments
+               rl.state alterState,main.element_id,main.warning_type,eq.pile,eq.eq_direction,eq.eq_type,eq.lane,rl.equipments,strategy.event_type
          FROM sd_strategy strategy
               left join sd_strategy_rl rl on rl.strategy_id = strategy.id
               left join sd_trigger main on main.relate_id = strategy.id

@@ -381,7 +381,7 @@ public class SdEventServiceImpl implements ISdEventService {
         devices.setEqType(23L);
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
         try {
-            int param = Integer.valueOf(stakeNum.replace("K","").replace("+","").replace(" ",""));
+            int param = Integer.valueOf(stakeNum.replaceAll("[a-zA-Z]", "").replace("+","").replace(" ",""));
             List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());
             pileNum.add(param);
             pileNum = pileNum.stream().sorted().collect(Collectors.toList());

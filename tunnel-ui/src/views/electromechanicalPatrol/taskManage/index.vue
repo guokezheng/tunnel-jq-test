@@ -1412,7 +1412,9 @@ export default {
         }
 
       }
-      this.isClick = true;
+      setTimeout(() => {
+        this.isClick = true;
+      }, 500)
     },
 //废止
     abolish() {
@@ -1495,7 +1497,9 @@ export default {
         }
 
       }
-      this.isClick = true;
+        setTimeout(() => {
+          this.isClick = true;
+        }, 500)
     },
   },
 };

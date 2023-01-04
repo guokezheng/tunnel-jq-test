@@ -392,7 +392,7 @@
             <div   v-if="eventForm.iconUrlList.length>0" >
               <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
             </div>
-            <img src="../../../assets/cloudControl/nullImg.png" v-else 
+            <img src="../../../assets/cloudControl/nullImg.png" v-else
               v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index"/>
 
           </div>
@@ -2321,7 +2321,9 @@ export default {
           }
         }
       });
-      this.isClick = true;
+      setTimeout(() => {
+        this.isClick = true;
+      }, 500)
     },
     publishForm() {
       this.fileData = new FormData(); // new formData对象
@@ -2366,7 +2368,9 @@ export default {
           }
         }
       });
-      this.isClick = true;
+      setTimeout(() => {
+        this.isClick = true;
+      }, 500)
     },
     // 表单重置
     resetEvent() {

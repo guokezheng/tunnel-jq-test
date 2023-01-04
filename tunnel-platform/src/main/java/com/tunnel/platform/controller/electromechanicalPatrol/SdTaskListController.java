@@ -90,7 +90,6 @@ public class SdTaskListController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(SdTaskList sdTaskList)
     {
-
         startPage();
         List<SdTaskList> list = sdTaskListService.selectSdTaskListList(sdTaskList);
         return getDataTable(list);

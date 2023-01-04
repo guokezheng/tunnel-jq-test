@@ -168,9 +168,9 @@ export default {
 
       this.$cache.local.set("manageStationSelect", newVal);
 
-      // if (newVal == "JQ-WeiFang-JiuLongYu-HSD") {
-      //   window.location = "http://10.7.187.28:82/WorkBench?userId=8";
-      // }
+      if (newVal == "JQ-WeiFang-JiuLongYu-HSD") {
+        window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+      }
     },
   },
   mounted() {

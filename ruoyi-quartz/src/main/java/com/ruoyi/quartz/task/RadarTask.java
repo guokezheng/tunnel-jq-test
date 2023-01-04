@@ -69,7 +69,7 @@ public class RadarTask {
 
     @Scheduled(fixedRate = 100)
     public void radarTask() {
-        long l = System.currentTimeMillis();
+        /*long l = System.currentTimeMillis();
         int count = redisCache.getCacheObject("count");
         SdRadarDetectData cacheObject = redisCache.getCacheObject("radar:" + count);
         redisCache.setCacheObject("count", count + 1);
@@ -85,7 +85,7 @@ public class RadarTask {
         object.put("radarDataList", list);
         WebSocketService.broadcast("radarDataList", object.toString());
         long l1 = System.currentTimeMillis();
-        log.info("耗时：" + (l1-l));
+        log.info("耗时：" + (l1-l));*/
     }
 
     public void controlDevice(SdRadarDetectData cacheObject){

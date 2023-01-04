@@ -11,6 +11,8 @@ import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -57,7 +59,10 @@ public class PhoneSpkService {
     private SdOptDeviceService sdOptDeviceService;
     @Autowired
     private RestTemplate restTemplate;
-
+    @Autowired
+    private SdEventMapper sdEventMapper;
+    @Autowired
+    private SdEventTypeMapper sdEventTypeMapper;
     /**
      * 从Spring容器中获取设备协议中配置的Class对象
      *
@@ -69,14 +74,14 @@ public class PhoneSpkService {
 
         String brandId = device.getBrandId();
         String fEqType = device.getfEqType();
-        Assert.hasText(brandId, "未设置该设备的品牌，请联系管理员！");
-        Assert.hasText(fEqType, "未设置该设备所属大类，请联系管理员！");
+        Assert.hasText(brandId, "未设置该设备的品牌");
+        Assert.hasText(fEqType, "未设置该设备所属大类");
 
         SdDevicesProtocol protocol = new SdDevicesProtocol();
         protocol.setBrandId(brandId);
         protocol.setEqType(fEqType);
         List<SdDevicesProtocol> protocolList = sdDevicesProtocolService.selectSdDevicesProtocolList(protocol);
-        Assert.notEmpty(protocolList, "未查询到该设备的相关协议配置，请联系管理员");
+        Assert.notEmpty(protocolList, "未查询到该设备的相关协议配置");
 
         SdDevicesProtocol sdDevicesProtocol = protocolList.get(0);
         String className = sdDevicesProtocol.getClassName();
@@ -161,36 +166,94 @@ public class PhoneSpkService {
                 itemId = DevicesTypeItemEnum.GUANG_BO.getCode();
             }
             SdDevices device = sdDevicesMapper.selectPhoneSpk(devices);
-            String data = PhoneSpkEnum.getValue(attribute);
 
-            sdDeviceControlService.updateDeviceData(device, data, itemId);
+            if (null != device) {
+                System.out.println(device);
+            }
+
+            // TODO: 2022/12/30 有的device=null，后期排查下
+            if (null != device) {
+                String data = PhoneSpkEnum.getValue(attribute);
+                sdDeviceControlService.updateDeviceData(device, data, itemId);
+
+
+                /*SdEventType sdEventType = new SdEventType();
+                sdEventType.setEventType("紧急电话");
+                List<SdEventType> sdEventTypes = sdEventTypeMapper.selectSdEventTypeList(sdEventType);
+                Long eventTypeId = sdEventTypes.get(0).getId();
+                //存储事件到事件表
+                SdEvent sdEvent = new SdEvent();
+                sdEvent.setTunnelId(device.getEqTunnelId());
+                sdEvent.setEventTypeId(eventTypeId);
+
+                sdEvent.setEventTitle("紧急电话告警事件");
+                sdEvent.setEventSource("2");
+                sdEvent.setEventState("0");
+                sdEvent.setStakeNum(device.getPile());
+                sdEvent.setStartTime(new Date().toString());
+                sdEventMapper.insertSdEvent(sdEvent);*/
+            }
         }
     }
+
 
     /**
      * 获取音频文件列表
      *
      * @return
      */
-    public AjaxResult getAudioFileList() {
+    public AjaxResult getAudioFileList(Map<String, Object> map) {
+        String deviceId = (String) map.get("deviceId");
+
+        Long externalSystemId = null;
+        if (StringUtils.isNotBlank(deviceId)) {
+            SdDevices devices = sdDevicesMapper.selectSdDevicesById(deviceId);
+            externalSystemId = devices.getExternalSystemId();
+            Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
+        } else {
+            String tunnelId = (String) map.get("tunnelId");
+            String direction = (String) map.get("direction");
+            Assert.hasText(tunnelId, "隧道ID参数必传");
+            Assert.hasText(direction, "隧道方向参数必传");
+
+            SdDevices device = new SdDevices();
+            device.setEqTunnelId(tunnelId);
+            device.setEqDirection(direction);
+            device.setEqType(DevicesTypeEnum.LS.getCode());
+            List<SdDevices> spkList = sdDevicesMapper.getSpkList(device);
+            Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
+
+            for (SdDevices devices : spkList) {
+                externalSystemId = devices.getExternalSystemId();
+                if (null != externalSystemId) {
+                    break;
+                }
+            }
+            Assert.notNull(externalSystemId, "该方向隧道的广播设备未配置 关联的外部系统");
+        }
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
+        String systemUrl = externalSystem.getSystemUrl();
+        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
+
         OkHttpClient client = new OkHttpClient().newBuilder().build();
 
-        String url = "http://10.7.187.6:8980/api/speak/voiceList";
+        String url = systemUrl + "/api/speak/voiceList";
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
         String result = null;
+        JSONArray jsonArray = new JSONArray();
         try {
             Response response = client.newCall(request).execute();
             if (response.body() != null) {
                 result = response.body().string();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return AjaxResult.error("无可播放文件!");
+            // e.printStackTrace();
+            return AjaxResult.success(jsonArray);
         }
-        JSONArray jsonArray = new JSONArray();
+
         if (StringUtils.isNotBlank(result)) {
             JSONObject jo = JSONObject.parseObject(result);
             jsonArray = jo.getJSONObject("data").getJSONArray("items");
@@ -246,7 +309,7 @@ public class PhoneSpkService {
                 break;
             }
         }
-        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统，请联系管理员！");
+        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
 
         for (String spkDeviceId : spkDeviceIds) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
@@ -256,11 +319,11 @@ public class PhoneSpkService {
                 break;
             }
         }
-        Assert.hasText(hostId, "未配置所选设备的父设备的主机序号，请联系管理员！");
+        Assert.hasText(hostId, "未配置所选设备的父设备的主机序号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
         ArrayList<Map> spkList = (ArrayList<Map>) map.get("items");
         for (Map spk : spkList) {
@@ -280,60 +343,6 @@ public class PhoneSpkService {
         return AjaxResult.success(status);
     }
 
-    /**
-     * 多个广播播放音频
-     *
-     * @param map
-     * @return
-     */
-    public AjaxResult tempSpkGroup(Map<String, Object> map) {
-        ArrayList fileList = (ArrayList) map.get("fileNames");
-        ArrayList<String> spkDeviceIds = (ArrayList<String>) map.get("spkDeviceIds");
-        //参数校验
-        Assert.notEmpty(fileList, "未选择音频文件！");
-        Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
-
-        Long externalSystemId = null;
-        String hostId = null;
-
-        for (String spkDeviceId : spkDeviceIds) {
-            SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
-            externalSystemId = devices.getExternalSystemId();
-            if (null != externalSystemId) {
-                break;
-            }
-        }
-        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统，请联系管理员！");
-
-        for (String spkDeviceId : spkDeviceIds) {
-            SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
-            SdDevices fEq = sdDevicesMapper.selectSdDevicesById(devices.getfEqId());
-            hostId = fEq.getExternalDeviceId();
-            if (null != hostId) {
-                break;
-            }
-        }
-        Assert.hasText(hostId, "未配置所选设备的父设备的主机序号，请联系管理员！");
-
-        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
-        String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
-
-        map.put("hostId", hostId);
-
-        PhoneSpeak phoneSpeak = null;
-        for (String spkDeviceId : spkDeviceIds) {
-            phoneSpeak = getBeanOfDeviceProtocol(spkDeviceId);
-            if (null != phoneSpeak) {
-                break;
-            }
-        }
-        int status = phoneSpeak.tempSpkGroup(systemUrl, map);
-
-        return AjaxResult.success(status);
-    }
-
-
     public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         String tunnelId = (String) map.get("tunnelId");
@@ -343,13 +352,12 @@ public class PhoneSpkService {
         Assert.hasText(tunnelId, "隧道ID参数必传");
         Assert.hasText(direction, "隧道方向参数必传");
 
-
         SdDevices device = new SdDevices();
         device.setEqTunnelId(tunnelId);
         device.setEqDirection(direction);
         device.setEqType(DevicesTypeEnum.LS.getCode());
         List<SdDevices> spkList = sdDevicesMapper.getSpkList(device);
-        Assert.notEmpty(spkList, "该方向隧道未查询到广播设备，请联系管理员");
+        Assert.notEmpty(spkList, "该方向隧道未查询到广播设备");
 
         Long externalSystemId = null;
         String hostId = null;
@@ -360,7 +368,7 @@ public class PhoneSpkService {
                 break;
             }
         }
-        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统，请联系管理员！");
+        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
         for (SdDevices devices : spkList) {
             SdDevices fEq = sdDevicesMapper.selectSdDevicesById(devices.getfEqId());
             hostId = fEq.getExternalDeviceId();
@@ -368,11 +376,11 @@ public class PhoneSpkService {
                 break;
             }
         }
-        Assert.hasText(hostId, "未配置所选设备的父设备的主机序号，请联系管理员！");
+        Assert.hasText(hostId, "未配置所选设备的父设备的主机序号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
 
         ArrayList<Map> items = new ArrayList<>();
@@ -386,7 +394,6 @@ public class PhoneSpkService {
         map.put("items", items);
 
 
-
         PhoneSpeak phoneSpeak = null;
         for (SdDevices devices : spkList) {
             phoneSpeak = getBeanOfDeviceProtocol(devices.getEqId());
@@ -398,7 +405,6 @@ public class PhoneSpkService {
 
         return AjaxResult.success(status);
     }
-
 
 
     /**
@@ -419,10 +425,10 @@ public class PhoneSpkService {
                 break;
             }
         }
-        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统，请联系管理员！");
+        Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String systemUrl = externalSystem.getSystemUrl();
-        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+        Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
         ArrayList<Map<String, Object>> list = new ArrayList<>();
         for (String deviceId : deviceIds) {

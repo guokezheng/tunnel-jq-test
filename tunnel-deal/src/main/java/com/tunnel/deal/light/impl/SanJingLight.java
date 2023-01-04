@@ -109,22 +109,19 @@ public class SanJingLight implements Light {
         String eqDirection = device.getEqDirection();
         Long externalSystemId = device.getExternalSystemId();
         String step = device.getExternalDeviceId();
-        Assert.hasText(eqTunnelId, "未配置该设备所属隧道，请联系管理员！");
-        Assert.hasText(eqDirection, "未配置该设备所属方向，请联系管理员！");
-        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统，请联系管理员！");
-        Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
+        Assert.hasText(eqTunnelId, "未配置该设备所属隧道");
+        Assert.hasText(eqDirection, "未配置该设备所属方向");
+        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统");
+        // Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
+        Assert.hasText(step, "该设备暂时不可控！");
 
         //确定隧道洞编号
         String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
-        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号，请联系管理员！");
-
-        //确定段号
-        // String eqName = device.getEqName();
-        // Integer step = TunnelStepEnum.getValue(eqName);
+        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String baseUrl = externalSystem.getSystemUrl();
-        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
         login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
@@ -161,18 +158,18 @@ public class SanJingLight implements Light {
         String eqDirection = device.getEqDirection();
         Long externalSystemId = device.getExternalSystemId();
         String step = device.getExternalDeviceId();
-        Assert.hasText(eqTunnelId, "未配置该设备所属隧道，请联系管理员！");
-        Assert.hasText(eqDirection, "未配置该设备所属方向，请联系管理员！");
-        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统，请联系管理员！");
-        Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
+        Assert.hasText(eqTunnelId, "未配置该设备所属隧道");
+        Assert.hasText(eqDirection, "未配置该设备所属方向");
+        Assert.notNull(externalSystemId, "未配置该设备关联的外部系统");
+        Assert.hasText(step, "未配置该设备关联的段号");
 
         //确定隧道洞编号
         String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
-        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号，请联系管理员！");
+        Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
         String baseUrl = externalSystem.getSystemUrl();
-        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址，请联系管理员！");
+        Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
         login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 

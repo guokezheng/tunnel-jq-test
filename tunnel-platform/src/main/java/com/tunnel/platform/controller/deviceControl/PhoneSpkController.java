@@ -23,10 +23,15 @@ public class PhoneSpkController {
     }
 
 
-    @GetMapping(value = "/getAudioFileList")
+    @PostMapping(value = "/getAudioFileList")
+    public AjaxResult getAudioFileList(@RequestBody Map<String, Object> map) {
+        return phoneSpkService.getAudioFileList(map);
+    }
+
+    /*@GetMapping(value = "/getAudioFileList")
     public AjaxResult getAudioFileList() {
         return phoneSpkService.getAudioFileList();
-    }
+    }*/
 
     /**
      * 播放音频

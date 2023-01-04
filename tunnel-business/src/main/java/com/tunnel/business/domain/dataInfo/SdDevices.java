@@ -70,7 +70,7 @@ public class SdDevices extends BaseEntity {
      * 设备类型
      */
     @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")
+    /*@Excel(name = "设备类型")*/
     private Long eqType;
 
 
@@ -78,7 +78,7 @@ public class SdDevices extends BaseEntity {
      * eqType对象
      */
     @Excels({
-            @Excel(name = "设备类型名称", targetAttr = "typeName", type = Excel.Type.EXPORT),
+            @Excel(name = "设备类型", targetAttr = "typeName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("eqType对象")
     private SdEquipmentType eqTypeName;

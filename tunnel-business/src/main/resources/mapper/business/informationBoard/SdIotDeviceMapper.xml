@@ -386,6 +386,10 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
     </select>
 
     <select id="getDevicesSize" resultType="hashmap">
-        SELECT device_pixel from iot_device_access GROUP BY device_pixel
+        SELECT device_pixel from iot_device_access where device_pixel is not null GROUP BY device_pixel
+    </select>
+
+    <select id="selectIotDevicesByTunnelId" parameterType="String" resultType="Long">
+        SELECT device_id from iot_device where tunnel_id = #{tunnelId}
     </select>
 </mapper>

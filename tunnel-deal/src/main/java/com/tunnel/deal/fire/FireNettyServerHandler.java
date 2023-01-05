@@ -90,7 +90,7 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
-            if (data.contains("复位")) {
+            if (data.contains("恢复")) {
                 log.info("主机{}进行了复位，事件类型为{}", system.getSystemUrl(), alarmType);
                 //复位清除设备报警状态
                 SdDevices dev = new SdDevices();

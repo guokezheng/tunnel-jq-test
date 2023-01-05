@@ -89,39 +89,36 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
             if (externalSystems.isEmpty()) {
                 return;
             }
-//            SdDevices devices = new SdDevices();
-//            devices.setExternalSystemId(system.getId());
-//            List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesList(devices);
-//            SdDevices sdDevices = devicesList.get(0);
-//            if (data.contains("复位")) {
-//                log.info("主机{}进行了复位", sdDevices.getEqId());
-//                //复位清除设备报警状态
-//                SdDevices dev = new SdDevices();
-//                dev.setFEqId(sdDevices.getEqId());
-//                List<SdDevices> fireComponentsList = sdDevicesMapper.selectFireComponentsList(dev);
-//                SdDeviceData sdDeviceData = new SdDeviceData();
-//                for (int j = 0;j < fireComponentsList.size();j++) {
-//                    String eqId = fireComponentsList.get(j).getEqId();
-//                    sdDeviceData.setDeviceId(eqId);
-//                    List<SdDeviceData> dataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-//                    for (int s = 0;s < dataList.size();s++) {
-//                        SdDeviceData deviceData = dataList.get(s);
-//                        deviceData.setData("0");
-//                        deviceData.setUpdateTime(new Date());
-//                        sdDeviceDataMapper.updateSdDeviceData(deviceData);
-//                        sendData.pushDevicesDataNowTime(deviceData);
-//                    }
-//                }
-//                //复位清除预警
-//                SdEvent sdEvent = new SdEvent();
-//                sdEvent.setEventTypeId(101L);
-//                List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
-//                for (int i = 0; i < sdEvents.size(); i++) {
-//                    SdEvent event = sdEvents.get(i);
-//                    event.setEventState("1");
-//                    event.setEndTime(new Date().toString());
-//                    sdEventMapper.updateSdEvent(event);
-//                }
+
+            if (data.contains("复位")) {
+                log.info("主机{}进行了复位，事件类型为{}", system.getSystemUrl(), alarmType);
+                //复位清除设备报警状态
+                SdDevices dev = new SdDevices();
+                dev.setExternalSystemId(system.getId());
+                List<SdDevices> fireComponentsList = sdDevicesMapper.selectSdDevicesList(dev);
+                SdDeviceData sdDeviceData = new SdDeviceData();
+                for (int j = 0;j < fireComponentsList.size();j++) {
+                    String eqId = fireComponentsList.get(j).getEqId();
+                    sdDeviceData.setDeviceId(eqId);
+                    List<SdDeviceData> dataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+                    for (int s = 0;s < dataList.size();s++) {
+                        SdDeviceData deviceData = dataList.get(s);
+                        deviceData.setData("0");
+                        deviceData.setUpdateTime(new Date());
+                        sdDeviceDataMapper.updateSdDeviceData(deviceData);
+                        sendData.pushDevicesDataNowTime(deviceData);
+                    }
+                }
+                //复位清除预警
+                SdEvent sdEvent = new SdEvent();
+                sdEvent.setEventTypeId(20L);
+                List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+                for (int i = 0; i < sdEvents.size(); i++) {
+                    SdEvent event = sdEvents.get(i);
+                    event.setEventState("1");
+                    event.setEndTime(new Date().toString());
+                    sdEventMapper.updateSdEvent(event);
+                }
 //                sdEvent.setEventTypeId(102L);
 //                sdEvents = sdEventMapper.selectSdEventList(sdEvent);
 //                for (int i = 0; i < sdEvents.size(); i++) {
@@ -130,8 +127,8 @@ public class FireNettyServerHandler extends ChannelInboundHandlerAdapter {
 //                    event.setEndTime(new Date().toString());
 //                    sdEventMapper.updateSdEvent(event);
 //                }
-//            }
-//            String fireComponentHosteqId = devicesList.get(0).getEqId();
+            }
+
             Long systemId = system.getId();
             data = data.substring(data.indexOf("机") + 1);
             String loop = data.substring(0, data.indexOf("回"));

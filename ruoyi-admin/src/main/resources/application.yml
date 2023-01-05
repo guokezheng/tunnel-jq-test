@@ -225,6 +225,5 @@ url:
   detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
 
 video-platform:
-  ip: "10.166.147.60"
-  port: "9021"
+  address: "http://10.166.147.60:9021"
   deptId: "10000037"

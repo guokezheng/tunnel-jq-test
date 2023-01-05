@@ -13,7 +13,6 @@ import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.deal.light.Light;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -22,17 +21,6 @@ import java.util.List;
 
 @Component
 public class SanJingLight implements Light {
-
-    private String jessionId;
-
-    @Value("${device.light.sanjing.login}")
-    private String login;
-
-    @Value("${device.light.sanjing.brightness}")
-    private String brightness;
-
-    @Value("${device.light.sanjing.lineControl}")
-    private String lineControl;
 
     @Autowired
     private ISdDevicesService sdDevicesService;
@@ -57,10 +45,6 @@ public class SanJingLight implements Light {
      * @throws IOException
      */
     public String login(String username, String password, String baseUrl) {
-        if (null != jessionId) {
-            return jessionId;
-        }
-
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
@@ -78,7 +62,6 @@ public class SanJingLight implements Light {
             e.printStackTrace();
         }
         List<String> headers = response.headers("Set-Cookie");
-        jessionId = headers.get(0);
         return headers.get(0);
     }
 
@@ -123,11 +106,11 @@ public class SanJingLight implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
-        login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        // 示例 "tunnelId=1&step=0&bright=98"
+        // 示例 "tunnelId=2&step=0&bright=98"
         String url = baseUrl + "/api/adjustBrightness";
         String content = "tunnelId=" + externalSystemTunnelId + "&step=" + step + "&bright=" + bright;
         RequestBody body = RequestBody.create(mediaType, content);
@@ -171,7 +154,7 @@ public class SanJingLight implements Light {
         String baseUrl = externalSystem.getSystemUrl();
         Assert.hasText(baseUrl, "未配置该设备所属的外部系统地址");
 
-        login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
+        String jessionId = login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");

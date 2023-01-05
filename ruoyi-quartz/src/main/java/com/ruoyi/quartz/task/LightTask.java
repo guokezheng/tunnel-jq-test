@@ -14,8 +14,6 @@ import java.io.IOException;
 @Component("lightTask")
 public class LightTask {
 
-    private String jessionId;
-
     @Autowired
     private SanJingLight sanJingLight;
 
@@ -31,7 +29,7 @@ public class LightTask {
     public void syncLeftDeviceData() {
 
         // sanJingLight.login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-        sanJingLight.login("admin", "admin123", "http://10.7.187.6:8080");
+        String jessionId = sanJingLight.login("admin", "admin123", "http://10.7.187.6:8080");
 
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();
@@ -53,7 +51,7 @@ public class LightTask {
     public void syncRightDeviceData() {
 
         // sanJingLight.login(externalSystem.getUsername(), externalSystem.getPassword(), baseUrl);
-        jessionId = sanJingLight.login("admin", "admin123", "http://10.7.187.6:8080");
+        String jessionId = sanJingLight.login("admin", "admin123", "http://10.7.187.6:8080");
 
 
         OkHttpClient client = new OkHttpClient().newBuilder().build();

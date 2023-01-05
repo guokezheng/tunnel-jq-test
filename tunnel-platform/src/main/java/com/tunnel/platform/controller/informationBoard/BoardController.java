@@ -268,7 +268,7 @@ public class BoardController extends BaseController {
             if (nowContentMap != null && !nowContentMap.isEmpty() && nowContentMap.get(devId) != null) {
                 Object result = nowContentMap.get(devId);
                 JSONObject jsonObject = JSONObject.parseObject(result.toString());
-                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.getJSONObject("devicePixel") != null) {
+                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
                     map.put(devId, result);
                 }
             }

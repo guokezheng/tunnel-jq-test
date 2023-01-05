@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class PhoneSpkService {
@@ -63,6 +64,7 @@ public class PhoneSpkService {
     private SdEventMapper sdEventMapper;
     @Autowired
     private SdEventTypeMapper sdEventTypeMapper;
+
     /**
      * 从Spring容器中获取设备协议中配置的Class对象
      *
@@ -235,7 +237,10 @@ public class PhoneSpkService {
         String systemUrl = externalSystem.getSystemUrl();
         Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
 
         String url = systemUrl + "/api/speak/voiceList";
         Request request = new Request.Builder()

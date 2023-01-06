@@ -224,6 +224,7 @@ url:
   edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
   detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
 
+#视频平台接口调用地址、组织机构ID
 video-platform:
   address: "http://10.166.147.60:9021"
   deptId: "10000037"

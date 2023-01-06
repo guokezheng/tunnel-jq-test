@@ -188,3 +188,19 @@ export function batchControlDevice(data) {
     data: data
   })
 }
+
+// 情报板显示内容定时查询 
+export function addBoardContent(tunnelId) {
+  return request({
+    url: 'parser/board/addBoardContent/'+tunnelId,
+    method: 'get',
+  })
+}
+
+// 查询风机安全检测仪实时数据
+export function getFanSafeData(tunnelId) {
+  return request({
+    url: '/system/data/getFanSafeData/'+tunnelId,
+    method: 'get',
+  })
+}

@@ -28,13 +28,12 @@
           >
             <span
               class="textBoard"
-              style="line-height: 1; position: absolute; white-space: pre-wrap"
+              style="line-height: 1; position: absolute; "
              
               :style="{
                 color: dataForm.COLOR,
                 fontSize: dataForm.FONT_SIZE,
                 fontFamily: dataForm.FONT,
-                letterSpacing: dataForm.SPEED + 'px',
               
                 zIndex: '1000',
                 left:dataForm.COORDINATE.substring(0, 3) + 'px',
@@ -116,7 +115,6 @@
                     type="textarea"
                     clearable
                     id="textContent"
-
                     placeholder="详细内容"
                     v-model="dataForm.CONTENT"
                     @keyup.native="keyDown($event)"
@@ -170,7 +168,7 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <!-- <el-col :span="6">
                 <el-form-item prop="SPEED" label="字体间距">
                   <el-input-number
                     :min="0"
@@ -179,7 +177,7 @@
                     style="width: 100%"
                   />
                 </el-form-item>
-              </el-col>
+              </el-col> -->
               <el-col :span="24" v-show="templateContent.length > 1">
                 <el-divider></el-divider>
               </el-col>

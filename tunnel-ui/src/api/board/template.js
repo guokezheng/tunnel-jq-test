@@ -130,3 +130,12 @@ export function getAllVmsTemplate(data) {
 
   })
 }
+
+// 情报板内容查询
+export function getBoardContent(deviceId) {
+  return request({
+    url: '/parser/board/getBoardContent?deviceId=' + deviceId,
+    method: 'get',
+
+  })
+}

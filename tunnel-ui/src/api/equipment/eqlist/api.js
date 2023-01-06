@@ -171,3 +171,11 @@ export function getSpkList() {
     method: 'get',
   })
 }
+
+// 查询左洞或右洞扬声器
+export function getTodayYcylData(deviceId) {
+  return request({
+    url: 'system/data/getTodayYcylData/' + deviceId,
+    method: 'get',
+  })
+}

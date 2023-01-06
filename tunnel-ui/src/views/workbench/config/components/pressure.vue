@@ -52,7 +52,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="所属方向:">
-                {{ stateForm.eqDirection }}
+                {{ getDirection(stateForm.eqDirection) }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -64,7 +64,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="设备厂商:">
-                {{ stateForm.brandName }}
+                {{ getBrandName(stateForm.brandName) }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -75,35 +75,15 @@
                 {{ geteqType(stateForm.eqStatus) }}
               </el-form-item>
             </el-col>
-          </el-row>
-        <div class="lineClass"></div>
-        <div class="tunnelDialogButton">配置状态</div>
-        <el-row>
-            <el-col :span="13">
-              <el-form-item label="压力上限:">
-              
-              </el-form-item>
-            </el-col>
             <el-col :span="11">
               <el-form-item label="当前压力值:">
-              
+                {{ nowData }}
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="压力下限:">
-            
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="采集时间:">
-              
-              </el-form-item>
-            </el-col>
-          </el-row>
+        <div class="lineClass"></div>
+       
+        <div id="yaliCharts" style="margin: 10px auto"></div>
         </el-form>
         <div slot="footer">
         <el-button
@@ -126,7 +106,8 @@
     </div>
   </template>
   <script>
-  import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
+  import { getDeviceById, getTodayYcylData } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
+  import * as echarts from "echarts";
   
   export default {
     props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
@@ -136,6 +117,8 @@
         title: "",
         visible: true,
         titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+        nowData:'',
+        mychart:null,
       };
     },
     created() {
@@ -147,30 +130,154 @@
         var that = this;
         if (this.eqInfo.equipmentId) {
           var obj = {};
-          var state = "";
           // 查询单选框弹窗信息 -----------------------
           await getDeviceById(this.eqInfo.equipmentId).then((res) => {
             console.log(res, "查询单选框弹窗信息");
-            obj = res.data;
+            this.stateForm = res.data;
   
-            this.title = obj.eqName;
-            this.stateForm = {
-              brandName: that.getBrandName(obj.brandId), //厂商
-              eqDirection: that.getDirection(obj.eqDirection),
+            this.title = res.data.eqName;
+            // this.stateForm = {
+            //   brandName: that.getBrandName(obj.brandId), //厂商
+            //   eqDirection: that.getDirection(obj.eqDirection),
   
-              pile: obj.pile, //桩号
-              eqTypeName: obj.typeName, //设备类型名称
-              tunnelName: obj.tunnelName, //隧道名称
-              deptName: obj.deptName, //所属机构
-              eqType: obj.eqType, //设备类型号
-              state: obj.state,
-            };
+            //   pile: obj.pile, //桩号
+            //   eqTypeName: obj.typeName, //设备类型名称
+            //   tunnelName: obj.tunnelName, //隧道名称
+            //   deptName: obj.deptName, //所属机构
+            //   eqType: obj.eqType, //设备类型号
+            //   state: obj.state,
+            // };
             console.log(this.stateForm, "stateForm");
           });
+          await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
+            console.log(res,"压力表折线图数据")
+            this.nowData = res.data.nowData
+            let xData = []
+            let yData = []
+            for(var item of res.data.todayYcylData){
+              xData.push(item.order_hour)
+              yData.push(item.count)
+
+            }
+            // console.log(xData,yData,"压力表echarts数据");
+            this.initChart(xData,yData)
+          })
         } else {
           this.$modal.msgWarning("没有设备Id");
         }
       },
+      initChart(xData, yData) {
+     console.log(xData, yData)
+      this.mychart = echarts.init(document.getElementById("yaliCharts"));
+      var option = {
+        tooltip: {
+          trigger: "axis",
+        },
+        toolbox: {
+          show: true,
+          feature: {
+            // magicType: { show: true, type: ['stack', 'tiled'] },
+            // saveAsImage: { show: true }
+          },
+        },
+        grid: {
+          top: "24%",
+          bottom: "18%",
+          left: "14%",
+          right: "12%",
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: true,
+          data: xData,
+          axisLabel: {
+            textStyle: {
+              color: "#00AAF2",
+              fontSize: 10,
+            },
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: "#386D88",
+            },
+          },
+        },
+        yAxis: {
+          type: "value",
+          name: "Mpa",
+          nameTextStyle: {
+            color: "#FFB500",
+            fontSize: 10,
+            padding: [0, 30, 0, 0],
+          },
+          // minInterval: 1, //y轴的刻度只显示整数
+          axisLabel: {
+            textStyle: {
+              color: "#00AAF2",
+              fontSize: 10,
+            },
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              //分割线的样式
+              color: ["rgba(0,0,0,0.3)"],
+              width: 1,
+              type: "dashed",
+            },
+          },
+        },
+        series: [
+          {
+            type: "line",
+            color: "#00AAF2",
+            symbol: "none",
+            smooth: true,
+            stack: "Total",
+            areaStyle: {},
+            symbol: "circle",
+            symbolSize: [7, 7],
+            itemStyle: {
+              normal: {
+                borderColor: "white",
+              },
+            },
+            emphasis: {
+              focus: "series",
+            },
+            //渐变色
+            areaStyle: {
+              normal: {
+                //前四个参数代表位置 左下右上，如下表示从上往下渐变色 紫色到暗蓝色
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: "#8DEDFF",
+                  },
+                  {
+                    offset: 1,
+                    color: "#E3FAFF",
+                  },
+                ]),
+              },
+            },
+            data: yData,
+          },
+        ],
+      };
+
+      this.mychart.setOption(option);
+      window.addEventListener("resize", function () {
+        this.mychart.resize();
+      });
+    },
       getDirection(num) {
         for (var item of this.directionList) {
           if (item.dictValue == num) {
@@ -219,6 +326,16 @@
   margin-bottom: -10px;
   display: flex;
   flex-wrap: wrap;
+}
+#yaliCharts {
+  width: 90%;
+  height: 150px;
+  background: #fff;
+  margin-left: 5%;
+  div {
+    width: 100%;
+    height: 150px !important;
+  }
 }
   </style>
   

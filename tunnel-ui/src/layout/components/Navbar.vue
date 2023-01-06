@@ -693,7 +693,7 @@ export default {
     setInterval(()=>{
       this.getNodealNum()
 
-    },1000)
+    },5000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {

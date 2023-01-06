@@ -207,15 +207,15 @@ export default {
         this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS");
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
       } else {
-        if (
-          this.$cache.local.get("manageStationSelect") ==
-          "JQ-WeiFang-JiuLongYu-HSD"
-        ) {
-          window.location = "http://10.7.187.28:82/WorkBench?userId=8";
-        } else {
+        // if (
+        //   this.$cache.local.get("manageStationSelect") ==
+        //   "JQ-WeiFang-JiuLongYu-HSD"
+        // ) {
+        //   window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+        // } else {
           this.manageStationSelect = res.data[0].tunnelId;
           this.$cache.local.set("manageStationSelect", res.data[0].tunnelId);
-        }
+        // }
       }
     });
   },

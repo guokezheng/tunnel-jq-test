@@ -48,7 +48,7 @@ let laneImage = [
   {
     id: "6",
     name: "杭山东隧道",
-    url: require('@/assets/image/lane/hsd1230.png'),
+    url: require('@/assets/image/lane/hsd.png'),
     width: 1728,
     num: 3,
     direction: 0

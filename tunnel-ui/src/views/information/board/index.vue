@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div class="container infoBoardBox " style=" height: 100%">
+  <div class="container infoBoardBox" style="height: 100%">
     <el-row
       :gutter="20"
       style="height: 100%; margin-left: 0px; margin-right: 0px"
@@ -121,10 +121,7 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col
-        :span="10"
-        style=" border-left: 1px solid #f3f3f3"
-      >
+      <el-col :span="10" style="border-left: 1px solid #f3f3f3">
         <p class="bigTitle">待下发信息</p>
         <div class="contentBox">
           <div class="controlBox">
@@ -163,13 +160,19 @@
                 fontFamily: item.FONT,
               }"
             >
-            <span
-                  :style="{
-                    left:getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top:getCoordinate2(item.COORDINATE.substring(3, 6)),
-                  }"
-                  style="position:absolute"
-                  v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+              <span
+                :style="{
+                  left: getCoordinate1(item.COORDINATE.substring(0, 3)),
+                  top: getCoordinate2(item.COORDINATE.substring(3, 6)),
+                }"
+                style="position: absolute"
+                v-html="
+                  item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                    / /g,
+                    ' &nbsp'
+                  )
+                "
+              ></span>
               <!-- {{ item.CONTENT }} -->
             </div>
             <div class="menuBox">
@@ -183,10 +186,7 @@
           </div>
         </div>
       </el-col>
-      <el-col
-        :span="10"
-        style=" border-left: 1px solid #f3f3f3"
-      >
+      <el-col :span="10" style="border-left: 1px solid #f3f3f3">
         <p class="bigTitle">信息模板</p>
         <div class="templateBox">
           <div class="controlBox">
@@ -206,28 +206,46 @@
                 :key="indx"
                 class="con"
                 :style="{
-                  'font-size': getFontSize(itm.tcontents[0].fontSize,itm.screenSize),
+                  'font-size': getFontSize(
+                    itm.tcontents[0].fontSize,
+                    itm.screenSize
+                  ),
                   color: itm.tcontents[0].fontColor,
                   fontFamily: itm.tcontents[0].fontType,
                 }"
               >
                 <div class="templateTitle">
                   <span
-                  :style="{
-                    left:getCoordinate1(itm.tcontents[0].coordinate.substring(0, 3),itm.screenSize),
-                    top:getCoordinate2(itm.tcontents[0].coordinate.substring(3, 6),itm.screenSize),
-                  }"
-                  style="position:absolute"
-                  v-html="itm.tcontents[0].content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                    :style="{
+                      left: getCoordinate1(
+                        itm.tcontents[0].coordinate.substring(0, 3),
+                        itm.screenSize
+                      ),
+                      top: getCoordinate2(
+                        itm.tcontents[0].coordinate.substring(3, 6),
+                        itm.screenSize
+                      ),
+                    }"
+                    style="position: absolute"
+                    v-html="
+                      itm.tcontents[0].content
+                        .replace(/\n|\r\n/g, '<br>')
+                        .replace(/ /g, ' &nbsp')
+                    "
+                  ></span>
                 </div>
                 <div class="menuBox">
                   <i
                     class="el-icon-d-arrow-left"
                     @click="arrowLeft(itm)"
-                    :class="disabledButton || itm.screenSize != form.devicePixel? 'disabledClass' : ''"
+                    :class="
+                      disabledButton || itm.screenSize != form.devicePixel
+                        ? 'disabledClass'
+                        : ''
+                    "
                     style="cursor: pointer"
                   ></i>
-                  
+
                   <i
                     class="el-icon-edit-outline"
                     @click="editOutline(itm, indx, 2)"
@@ -272,6 +290,7 @@ import {
   getAllVmsTemplate,
   addTemplate,
   addTemplateContent,
+  getBoardContent
 } from "@/api/board/template";
 const cityOptions = ["上海", "北京", "广州", "深圳"];
 export default {
@@ -388,9 +407,9 @@ export default {
       console.log(active);
       this.activeNames = active;
       const param = {
-        devicePixel:this.form.devicePixel,
-        category : active
-      }
+        devicePixel: this.form.devicePixel,
+        category: active,
+      };
       getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
@@ -492,9 +511,9 @@ export default {
     // 情报板管理右侧查询接口
     getAllVmsTemplate() {
       const param = {
-        devicePixel:this.form.devicePixel,
-        category : 0
-      }
+        devicePixel: this.form.devicePixel,
+        category: 0,
+      };
       getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
@@ -532,8 +551,8 @@ export default {
           this.contentList[i].FONT_SIZE.substring(0, 2) +
           "\\";
         content += "c" + this.getColorValue(this.contentList[i].COLOR);
-        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, '<r><n>');
-        
+        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+
         if (i + 1 != this.contentList.length) {
           content += "<r><n>";
         }
@@ -543,41 +562,48 @@ export default {
       let deviceld = this.checkedCities.toString();
       uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
         console.log(response, "返回结果");
+        setTimeout(() => {
+          getBoardContent(this.checkboxList[0]).then((res) => {
+            console.log(res, "情报板内容查询");
+          });
+        }, 1000);
       });
-    
     },
     getContentInfo(content) {
-        // var content = this.boardEidtContentArea;
-        content = content.replace(/\\C.{6}/, "").trim();
-        content = content.replace(/C.{6}/, "").trim();
-        content = content.replace(/\\B.{3}/, "").trim();
-        content = content.replace(/\\y.{1}/, "").trim();
-        content = content.replace(/c.{12}/, "").trim();
-        content = content.replace(/\\b.{12}/, "").trim();
-        content = content.replace(/\\s.{12}/, "").trim();
-        content = content.replace(/\\S.{2}/, "").trim();
-        content = content.replace(/S.{2}/, "").trim();
-        content = content.replace(/f.{5}/, "").trim();
-        content = content.replace(/\\r.{12}/, "").trim();
-        content = content.replace(/\\K.{12}/, "").trim();
-        content = content.replace(/b.{12}/, "").trim();
-        content = content.replace(/\\F.{6}/, "").trim();
-        content = content.replace(/T.{12}/, "").trim();
-        content = content.replace(/\\M.{2}/, "").trim();
-        content = content.replace(/\\W/, "").trim();
-        content = content.replace(/\\\\n/, "").trim();
-        content = content.replace(/n/, "").trim();
-        content = content.replace(/N/, "").trim();
-        content = content.replace(/\\A/, "").trim();
-        content = content.replace(/A/, "").trim();
-        content = content.replace(/\\/, "").trim();
-        content = content.replace(/\\N.{2}/, "").trim();
-        if (content.indexOf('\\') != -1 && content.indexOf(',') != -1 &&
-          content.indexOf(',') != content.lastIndexOf(',')) {
-          return content.substring(content.indexOf('\\') + 1, content.length);
-        }
-        return content;
-      },
+      // var content = this.boardEidtContentArea;
+      content = content.replace(/\\C.{6}/, "").trim();
+      content = content.replace(/C.{6}/, "").trim();
+      content = content.replace(/\\B.{3}/, "").trim();
+      content = content.replace(/\\y.{1}/, "").trim();
+      content = content.replace(/c.{12}/, "").trim();
+      content = content.replace(/\\b.{12}/, "").trim();
+      content = content.replace(/\\s.{12}/, "").trim();
+      content = content.replace(/\\S.{2}/, "").trim();
+      content = content.replace(/S.{2}/, "").trim();
+      content = content.replace(/f.{5}/, "").trim();
+      content = content.replace(/\\r.{12}/, "").trim();
+      content = content.replace(/\\K.{12}/, "").trim();
+      content = content.replace(/b.{12}/, "").trim();
+      content = content.replace(/\\F.{6}/, "").trim();
+      content = content.replace(/T.{12}/, "").trim();
+      content = content.replace(/\\M.{2}/, "").trim();
+      content = content.replace(/\\W/, "").trim();
+      content = content.replace(/\\\\n/, "").trim();
+      content = content.replace(/n/, "").trim();
+      content = content.replace(/N/, "").trim();
+      content = content.replace(/\\A/, "").trim();
+      content = content.replace(/A/, "").trim();
+      content = content.replace(/\\/, "").trim();
+      content = content.replace(/\\N.{2}/, "").trim();
+      if (
+        content.indexOf("\\") != -1 &&
+        content.indexOf(",") != -1 &&
+        content.indexOf(",") != content.lastIndexOf(",")
+      ) {
+        return content.substring(content.indexOf("\\") + 1, content.length);
+      }
+      return content;
+    },
     // 接收子组件新增待发模板
     addInfo(form) {
       console.log(form, "待发新增");
@@ -717,9 +743,9 @@ export default {
       console.log(val);
       if (val) {
         const param = {
-        devicePixel:this.form.devicePixel,
-        category : val
-      }
+          devicePixel: this.form.devicePixel,
+          category: val,
+        };
         // 情报板管理右侧查询接口
         getAllVmsTemplate(param).then((res) => {
           console.log(res.data, "情报板管理右侧查询接口");
@@ -1064,97 +1090,96 @@ export default {
           this.disabledButton = true;
         }
       });
-      this.checkboxValue[0]
+      this.checkboxValue[0];
       // 获取情报板修改页面信息
-      getBoardEditInfo(this.checkboxValue[0])
-        .then((response) => {
-          console.log(response,"response");
-          if (response.code != 200) {
-            this.$message(response.msg);
-            return;
-          }
-          if (response.data[0] == undefined) {
-            this.$message(response.msg);
-            return;
-          }
-      // var response = {};
-      // response = boardData;
-      var parseObject = JSON.parse(response.data[0]);
-      var protocolType = parseObject.support.PROTOCOL_TYPE;
-      var contents = parseObject.content;
-      // console.log(parseObject,"parseObject")
-      // console.log(protocolType,"protocolType")
-      // console.log(contents,"contents")
-
-      // this.checkboxList = contents
-      if (
-        typeof contents == "undefined" ||
-        typeof protocolType == "undefined"
-      ) {
-        this.$message(response.msg);
-        return;
-      }
-      this.supplier = protocolType;
-      var currRowId = "";
-      var reg = /,/g;
-      console.log(contents, "contents");
-      for (var i = 0; i < contents.length; i++) {
-        var content = contents[i];
-        var itemId = "ITEM" + this.formatNum(i, 3);
-        if (i == 0) {
-          currRowId = itemId;
+      getBoardEditInfo(this.checkboxValue[0]).then((response) => {
+        console.log(response, "response");
+        if (response.code != 200) {
+          this.$message(response.msg);
+          return;
         }
-        var con = content[itemId];
-
-        this.itemStr = "";
-        for (let item of con) {
-          item.COLOR = this.getColorStyle(item.COLOR);
-          item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
-          // item.font = this.getFontStyle(item.FONT)
+        if (response.data[0] == undefined) {
+          this.$message(response.msg);
+          return;
         }
-        console.log(con, "con");
-        this.contentList = con;
-        this.getAllVmsTemplate()
-        // for (var j = 0; j < con.length; j++) {
-        //   this.itemStr = this.combineItemContent(
-        //     protocolType,
-        //     con[j].STAY,
-        //     con[j].ACTION,
-        //     con[j].SPEED,
-        //     con[j].COORDINATE,
-        //     this.getFontValue(con[j].FONT),
-        //     con[j].FONT_SIZE,
-        //     this.getColorValue(con[j].COLOR),
-        //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\\n")
-        //   );
-        //   console.log(this.itemStr,"this.itemStr");
-        //   this.addItemPropertyMap(
-        //     itemId,
-        //     false,
-        //     con[j].STAY,
-        //     con[j].ACTION,
-        //     con[j].SPEED,
-        //     con[j].COORDINATE,
-        //     con[j].FONT,
-        //     con[j].FONT_SIZE,
-        //     con[j].COLOR,
-        //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\n")
-        //   );
+        // var response = {};
+        // response = boardData;
+        var parseObject = JSON.parse(response.data[0]);
+        var protocolType = parseObject.support.PROTOCOL_TYPE;
+        var contents = parseObject.content;
+        // console.log(parseObject,"parseObject")
+        // console.log(protocolType,"protocolType")
+        // console.log(contents,"contents")
 
-        // }
-        // this.addContentDisplayInfos(
-        //   "ITEM" + this.formatNum(i, 3),
-        //   i + 1,
-        //   this.itemStr
-        // );
-      }
-      // this.isactive = currRowId;
-      // this.infosRowClick(this.disContentList[0]);
-      // })
-      // .catch(function (error) {
-      //   that.disContentList = [];
-      //   that.loadingDialog = false;
-      //   // this.$message(error);
+        // this.checkboxList = contents
+        if (
+          typeof contents == "undefined" ||
+          typeof protocolType == "undefined"
+        ) {
+          this.$message(response.msg);
+          return;
+        }
+        this.supplier = protocolType;
+        var currRowId = "";
+        var reg = /,/g;
+        console.log(contents, "contents");
+        for (var i = 0; i < contents.length; i++) {
+          var content = contents[i];
+          var itemId = "ITEM" + this.formatNum(i, 3);
+          if (i == 0) {
+            currRowId = itemId;
+          }
+          var con = content[itemId];
+
+          this.itemStr = "";
+          for (let item of con) {
+            item.COLOR = this.getColorStyle(item.COLOR);
+            item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+            // item.font = this.getFontStyle(item.FONT)
+          }
+          console.log(con, "con");
+          this.contentList = con;
+          this.getAllVmsTemplate();
+          // for (var j = 0; j < con.length; j++) {
+          //   this.itemStr = this.combineItemContent(
+          //     protocolType,
+          //     con[j].STAY,
+          //     con[j].ACTION,
+          //     con[j].SPEED,
+          //     con[j].COORDINATE,
+          //     this.getFontValue(con[j].FONT),
+          //     con[j].FONT_SIZE,
+          //     this.getColorValue(con[j].COLOR),
+          //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\\n")
+          //   );
+          //   console.log(this.itemStr,"this.itemStr");
+          //   this.addItemPropertyMap(
+          //     itemId,
+          //     false,
+          //     con[j].STAY,
+          //     con[j].ACTION,
+          //     con[j].SPEED,
+          //     con[j].COORDINATE,
+          //     con[j].FONT,
+          //     con[j].FONT_SIZE,
+          //     con[j].COLOR,
+          //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\n")
+          //   );
+
+          // }
+          // this.addContentDisplayInfos(
+          //   "ITEM" + this.formatNum(i, 3),
+          //   i + 1,
+          //   this.itemStr
+          // );
+        }
+        // this.isactive = currRowId;
+        // this.infosRowClick(this.disContentList[0]);
+        // })
+        // .catch(function (error) {
+        //   that.disContentList = [];
+        //   that.loadingDialog = false;
+        //   // this.$message(error);
       });
     },
     openQbbDrawer(item, index, type) {
@@ -1183,61 +1208,60 @@ export default {
         return font;
       }
     },
-    getFontSize(font,screenSize) {
-      if(!font){
-        return
+    getFontSize(font, screenSize) {
+      if (!font) {
+        return;
       }
-      var screen = ''
-      if(!screenSize){
+      var screen = "";
+      if (!screenSize) {
         screen = this.form.devicePixel.split("*")[0];
-
-      }else{
-        screen = screenSize.split("*")[0]
+      } else {
+        screen = screenSize.split("*")[0];
       }
       if (screen <= 630) {
         var i = 630 / screen;
-       
-        if(font.toString().length == 2){
+
+        if (font.toString().length == 2) {
           return font * i + "px";
-        }else {
+        } else {
           return font.substring(0, 2) * i + "px";
         }
-      }else{
-        var i = screen/630;
-        if(font.toString().length == 2){
+      } else {
+        var i = screen / 630;
+        if (font.toString().length == 2) {
           return font / i + "px";
-        }else {
+        } else {
           return font.substring(0, 2) / i + "px";
         }
       }
     },
-    getCoordinate1(coordinate,screenSize){
-      var screen = ''
-      if(!screenSize){
+    getCoordinate1(coordinate, screenSize) {
+      var screen = "";
+      if (!screenSize) {
         screen = this.form.devicePixel.split("*")[0];
-      }else{
-        screen = screenSize.split("*")[0]
+      } else {
+        screen = screenSize.split("*")[0];
       }
       if (screen <= 630) {
         var i = 630 / screen;
         return coordinate * i + "px";
-      }else{
-        var i = screen/630;
+      } else {
+        var i = screen / 630;
         return coordinate / i + "px";
       }
     },
-    getCoordinate2(coordinate,screenSize){
-      var screen = ''
-      if(!screenSize){
+    getCoordinate2(coordinate, screenSize) {
+      var screen = "";
+      if (!screenSize) {
         screen = this.form.devicePixel.split("*")[1];
-      }else{
-        screen = screenSize.split("*")[1]
+      } else {
+        screen = screenSize.split("*")[1];
       }
       if (screen <= 75) {
         var i = 75 / screen;
         return coordinate * i + "px";
-      }else{
-        var i = screen/75;
+      } else {
+        var i = screen / 75;
         return coordinate / i + "px";
       }
     },
@@ -1265,7 +1289,6 @@ export default {
     },
     //  上移
     moveTop(i, item) {
-
       if (item && i) {
         let obj = { ...this.contentList[i - 1] };
         this.contentList.splice(i - 1, 1, item);
@@ -1286,9 +1309,9 @@ export default {
       this.showEmit = false;
       setTimeout(() => {
         const param = {
-        devicePixel:this.form.devicePixel,
-        category : 0
-      }
+          devicePixel: this.form.devicePixel,
+          category: 0,
+        };
         getAllVmsTemplate(param).then((res) => {
           console.log(res, "情报板管理右侧查询接口");
           this.templateList = res.data;
@@ -1425,7 +1448,7 @@ export default {
     }
   }
 }
-::v-deep .el-collapse-item__content{
+::v-deep .el-collapse-item__content {
   line-height: normal;
 }
 </style>

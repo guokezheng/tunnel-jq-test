@@ -50,20 +50,18 @@
                 class="content"
                 :style="{
                   color: getColorStyle(item.COLOR),
-                  fontSize: getFontSize(item.FONT_SIZE),
+                  fontSize: getFontSize(item.FONT_SIZE, addForm.devicePixel),
                   fontFamily: item.FONT,
-                 
-
+                  width: getDevicePixel(addForm.devicePixel, 0),
+                  height: getDevicePixel(addForm.devicePixel, 1),
                 }"
               >
-              <!-- width:getDevicePixel(addForm.devicePixel,0),
-                  height:getDevicePixel(addForm.devicePixel,1), -->
                 <span
                   :style="{
-                    left: getCoordinate1(item.COORDINATE.substring(0, 3)) ,
+                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
                     top: getCoordinate2(item.COORDINATE.substring(3, 6)),
                   }"
-                  style="position: absolute"
+                  style="position: absolute;line-height: 1;"
                   v-html="
                     item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                       / /g,
@@ -204,36 +202,47 @@
           "
         >
           <div
-          style="{
-            backgroundColor: #000000;
-            color: yellow;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-          }"
-         
-          :style="{
-            width: boardWidth + 'px',
-            height: boardHeight + 'px',
-          }"
-          class="blackBoard"
-        >
-          <span
-            style="line-height: 1; position: absolute; white-space: nowrap"
+            style="
+               {
+                backgroundcolor: #000000;
+                color: yellow;
+                margin: 0 auto;
+                overflow: hidden;
+                position: relative;
+              }
+            "
             :style="{
-              color: addForm.COLOR,
-              fontSize: addForm.FONT_SIZE,
-              fontFamily: addForm.FONT,
-              letterSpacing: addForm.SPEED + 'px',
-              zIndex: '1000',
-              left: addForm.COORDINATE?addForm.COORDINATE.substring(0, 3) + 'px':'',
-              top: addForm.COORDINATE?addForm.COORDINATE.substring(3, 6) + 'px':'',
+              width: boardWidth + 'px',
+              height: boardHeight + 'px',
             }"
-            class="textBoard"
-            v-html="addForm.CONTENT?addForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp'):''"
-          ></span>
-         
-        </div>
+            class="blackBoard"
+          >
+            <span
+              style="line-height: 1; position: absolute; white-space: nowrap"
+              :style="{
+                color: addForm.COLOR,
+                fontSize: addForm.FONT_SIZE,
+                fontFamily: addForm.FONT,
+                letterSpacing: addForm.SPEED + 'px',
+                zIndex: '1000',
+                left: addForm.COORDINATE
+                  ? addForm.COORDINATE.substring(0, 3) + 'px'
+                  : '',
+                top: addForm.COORDINATE
+                  ? addForm.COORDINATE.substring(3, 6) + 'px'
+                  : '',
+              }"
+              class="textBoard"
+              v-html="
+                addForm.CONTENT
+                  ? addForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                      / /g,
+                      ' &nbsp'
+                    )
+                  : ''
+              "
+            ></span>
+          </div>
         </div>
         <el-form
           ref="form"
@@ -269,7 +278,6 @@
                   v-model="addForm.screenSize"
                   placeholder="请选择分辨率"
                   style="width: 90%"
-
                 >
                   <el-option
                     v-for="(item, index) in screenSizeOptions"
@@ -451,10 +459,7 @@
       v-if="this.showEmit"
       @dialogClose="dialogClose1"
     ></editInfo>
-    <addinfo
-      ref="addinfo"
-      @addInfo="addInfo"
-    ></addinfo>
+    <addinfo ref="addinfo" @addInfo="addInfo"></addinfo>
   </div>
 </template>
   
@@ -463,7 +468,11 @@ import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { listDevice } from "@/api/board/informationBoard.js"; //查询弹窗信息
-import { getAllVmsTemplate, uploadBoardEditInfo } from "@/api/board/template";
+import {
+  getAllVmsTemplate,
+  uploadBoardEditInfo,
+  getBoardContent,
+} from "@/api/board/template";
 import boardData from "@/views/information/board/boardData.json";
 import editInfo from "@/views/information/board/editInfo";
 import addinfo from "@/views/information/board//addinfo";
@@ -473,12 +482,12 @@ export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
   components: {
     editInfo,
-    addinfo
+    addinfo,
   },
   data() {
     return {
       openDialog: false,
-      associatedDeviceId:'',
+      associatedDeviceId: "",
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
       cameraVisible: true, //摄像机弹窗
@@ -489,9 +498,9 @@ export default {
       boardEmitItem: {},
       showEmit: false,
       index_: 0,
-      boardWidth:400,
-      boardHeight:40,
-      
+      boardWidth: 400,
+      boardHeight: 40,
+
       addForm: {
         category: "0",
         screenSize: "400*40",
@@ -502,7 +511,7 @@ export default {
         COLOR: "yellow",
         ACTION: 1,
         STAY: 500,
-        position:1,
+        position: 1,
       },
       iotTemplateCategoryList: [],
       screenSizeOptions: [
@@ -670,7 +679,7 @@ export default {
   },
   methods: {
     // 信息发布
-    releaseInfo(){
+    releaseInfo() {
       console.log(this.contentList, "this.contentListthis.contentList");
       var content = "";
       var playList = "[Playlist]<r><n>";
@@ -688,15 +697,15 @@ export default {
         content += this.contentList[i].ACTION + ",";
         content += this.contentList[i].SPEED + "," + "\\";
         content += "C" + this.contentList[i].COORDINATE + "\\";
-       content += 'S00\\';
-        content += "c" + this.getColorValue(this.contentList[i].COLOR)+"\\";
+        content += "S00\\";
+        content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
         content += "f" + this.getFontValue(this.contentList[i].FONT);
 
         content +=
           this.contentList[i].FONT_SIZE.substring(0, 2) +
           this.contentList[i].FONT_SIZE.substring(0, 2);
-        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, '<r><n>');
-        
+        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+
         if (i + 1 != this.contentList.length) {
           content += "<r><n>";
         }
@@ -723,10 +732,18 @@ export default {
       return "255255000000"; //黄色
     },
     // 转分辨率
-    getDevicePixel(devicePixel,num){
-      if(devicePixel){
-        return devicePixel.split("*")[num] + 'px';
-
+    getDevicePixel(devicePixel, num) {
+      let width = this.addForm.devicePixel.split("*")[0]
+      
+      if (devicePixel) {
+        if(width > 394){
+          if(num == 0){
+            return 394 + 'px'
+          }else if(num == 1){
+            return 75 + 'px'
+          }
+        }
+        return devicePixel.split("*")[num] + "px";
       }
     },
     // 打开添加信息弹窗
@@ -747,12 +764,12 @@ export default {
       this.$forceUpdate();
     },
     // 新增 修改分辨率
-    changeScreenSize(size){
-      console.log(size,"00000000000000000000");
+    changeScreenSize(size) {
+      console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
 
-      this.$forceUpdate()
+      this.$forceUpdate();
     },
     // 接收子组件form表单 修改
     receiveForm(form) {
@@ -829,43 +846,43 @@ export default {
     onSubmit() {
       getBoardEditInfo(this.associatedDeviceId).then((response) => {
         console.log(response, "getBoardInfo");
-     
-      
-      // var response = {};
-      // response = boardData;
-      var parseObject = JSON.parse(response.data[0]);
-      console.log(parseObject,"parseObject")
-      var protocolType = parseObject.support.PROTOCOL_TYPE;
-      var contents = parseObject.content;
 
-      // if (
-      //   typeof contents == "undefined" ||
-      //   typeof protocolType == "undefined"
-      // ) {
-      //   this.$message(response.msg);
-      //   return;
-      // }
-      // this.supplier = protocolType;
-      var currRowId = "";
-      var reg = /,/g;
-      console.log(contents, "contents");
-      for (var i = 0; i < contents.length; i++) {
-        var content = contents[i];
-        var itemId = "ITEM" + this.formatNum(i, 3);
-        if (i == 0) {
-          currRowId = itemId;
-        }
-        var con = content[itemId];
+        // var response = {};
+        // response = boardData;
+        var parseObject = JSON.parse(response.data[0]);
+        console.log(parseObject, "parseObject");
+        var protocolType = parseObject.support.PROTOCOL_TYPE;
+        var contents = parseObject.content;
 
-        for (let item of con) {
-          item.COLOR = this.getColorStyle(item.COLOR);
-          item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
-          // item.font = this.getFontStyle(item.FONT)
+        // if (
+        //   typeof contents == "undefined" ||
+        //   typeof protocolType == "undefined"
+        // ) {
+        //   this.$message(response.msg);
+        //   return;
+        // }
+        // this.supplier = protocolType;
+        var currRowId = "";
+        var reg = /,/g;
+        console.log(contents, "contents");
+        for (var i = 0; i < contents.length; i++) {
+          var content = contents[i];
+          var itemId = "ITEM" + this.formatNum(i, 3);
+          if (i == 0) {
+            currRowId = itemId;
+          }
+          var con = content[itemId];
+
+          for (let item of con) {
+            item.COLOR = this.getColorStyle(item.COLOR);
+            item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+            // item.font = this.getFontStyle(item.FONT)
+          }
+          console.log(con, "con");
+          this.contentList = con;
+          console.log(this.contentList, "this.contentList11");
         }
-        console.log(con, "con");
-        this.contentList = con;
-      }
-    })
+      });
     },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
@@ -910,13 +927,13 @@ export default {
     // 情报板管理右侧查询接口
     allVmsTemplate() {
       const param = {
-        devicePixel:this.addForm.devicePixel,
-        category : 0
-      }
+        devicePixel: this.addForm.devicePixel,
+        category: 0,
+      };
       getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
-        this.$forceUpdate()
+        this.$forceUpdate();
         // console.log(this.templateList,"this.templateList");
       });
     },
@@ -943,9 +960,9 @@ export default {
       console.log(active);
       this.activeNames = active;
       const param = {
-        devicePixel:this.addForm.devicePixel,
-        category : active
-      }
+        devicePixel: this.addForm.devicePixel,
+        category: active,
+      };
       getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
@@ -953,20 +970,14 @@ export default {
       });
     },
 
-    getCoordinate1(coordinate, screenSize) {
-      console.log(this.addForm.devicePixel,"this.addForm.devicePixel");
-      var screen = "";
-      if (!screenSize) {
-        screen = this.addForm.devicePixel.split("*")[0];
+    getCoordinate1(coordinate) {
+      console.log(this.addForm.devicePixel, "this.addForm.devicePixel");
+      let screen = this.addForm.devicePixel.split("*")[0];
+    
+      if (screen <= 394) {
+        return coordinate + "px";
       } else {
-        screen = screenSize.split("*")[0];
-      }
-
-      if (screen <= 368) {
-        var i = 368 / screen;
-        return coordinate * i + "px";
-      } else {
-        var i = screen / 368;
+        var i = screen / 394;
         return coordinate / i + "px";
       }
     },
@@ -978,11 +989,11 @@ export default {
         screen = screenSize.split("*")[1];
       }
 
-      if (screen <= 50) {
-        var i = 50 / screen;
+      if (screen <= 75) {
+        var i = 75 / screen;
         return coordinate * i + "px";
       } else {
-        var i = screen / 50;
+        var i = screen / 75;
         return coordinate / i + "px";
       }
     },
@@ -998,18 +1009,17 @@ export default {
       } else {
         screen = screenSize.split("*")[0];
       }
-      if (screen <= 368) {
-        var i = 368 / screen;
-
+      console.log(screen, "screen");
+      if (screen <= 394) {
         if (font.toString().length == 2) {
-          return font * i + "px";
+          return font + "px";
         } else {
-          return font.substring(0, 2) * i + "px";
+          return font.substring(0, 2) + "px";
         }
       } else {
-        var i = screen / 368;
+        var i = screen / 394;
         if (font.toString().length == 2) {
-          return font / i + "px";
+          return font * i + "px";
         } else {
           return font.substring(0, 2) / i + "px";
         }
@@ -1045,10 +1055,10 @@ export default {
     async getmessage() {
       if (this.eqInfo.equipmentId) {
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
-          console.log(res, "查询摄像机弹窗信息");
+          console.log(res, "查询情报板弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          this.associatedDeviceId = res.data.associatedDeviceId
+          this.associatedDeviceId = res.data.associatedDeviceId;
           this.onSubmit();
 
           // displayH5sVideoAll(res.data.secureKey);
@@ -1059,7 +1069,7 @@ export default {
             listDevice(param).then((response) => {
               console.log(response, "查询设备信息");
               this.addForm = response.rows[0];
-              this.allVmsTemplate()
+              this.allVmsTemplate();
             });
           }
         });
@@ -1094,11 +1104,13 @@ export default {
     },
     // 关闭弹窗
     handleClosee() {
+      getBoardContent(this.associatedDeviceId).then((res) => {
+        console.log(response, "情报板内容查询");
+      });
       this.$emit("dialogClose");
     },
     dialogClose1() {
       this.showEmit = false;
-      
     },
   },
 };
@@ -1150,14 +1162,14 @@ export default {
   z-index: 2017;
   .mesModeBg {
     padding: 10px;
-    background: #012E51;
+    background: #012e51;
     width: calc(100% - 30px);
     height: 403px;
     margin: 10px auto;
     overflow: auto;
-    .el-collapse-item__header{
-    background: #012E51;
-      color:#fff
+    .el-collapse-item__header {
+      background: #012e51;
+      color: #fff;
     }
     .mesModeBox {
       width: 100%;
@@ -1250,19 +1262,22 @@ export default {
   // background: #fff;
   margin: 0 30px 0 15px;
   overflow: auto;
-  border:solid 1px #01aafd;
+  border: solid 1px #01aafd;
   .infoContent {
     width: 97%;
-    height: 80px;
+    height: 75px;
     margin: 5px 10px;
     display: flex;
     .upDown {
       width: 30px;
       height: 100%;
       border: solid 1px #01aafd;
-      // background: #01aafd;
       text-align: center;
-      padding: 10px 0;
+      writing-mode: tb-rl;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       i {
         display: block;
         color: #586f85;
@@ -1272,7 +1287,7 @@ export default {
       }
     }
     .contentBox {
-      width: calc(100% - 150px);
+      width: calc(100% - 160px);
       height: 100%;
       border: solid 1px #01aafd;
       margin-left: 4px;
@@ -1282,8 +1297,7 @@ export default {
         background: #000;
         margin: 5px auto;
         overflow: hidden;
-      position: relative;
-
+        position: relative;
       }
     }
     .infoButton {
@@ -1322,22 +1336,20 @@ export default {
 }
 ::v-deep .el-collapse-item__header {
   height: 30px;
-  background: #012E51;
-  color:#fff;
+  background: #012e51;
+  color: #fff;
   border-bottom: solid 1px #01aafd;
-
 }
 ::v-deep .el-collapse-item__content {
   padding-bottom: 10px;
 }
 ::v-deep .el-collapse-item__wrap {
   padding: 0 10px;
-  background: #012E51;
+  background: #012e51;
   border-bottom: solid 1px #01aafd;
 }
 ::v-deep ::-webkit-scrollbar {
   width: 0px !important;
 }
-
 </style>
   

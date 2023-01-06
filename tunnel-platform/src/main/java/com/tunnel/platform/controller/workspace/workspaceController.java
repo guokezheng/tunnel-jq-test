@@ -24,6 +24,7 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
@@ -345,6 +346,79 @@ public class workspaceController extends BaseController {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
         sdOperationLog.setOperationState(fDeviceState);
+        sdOperationLog.setControlType("0");
+        sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return AjaxResult.success(controlState);
+    }
+
+    //警示灯带控制接口
+    @PostMapping("/controlWarningLightStripDevice")
+    public AjaxResult controlWarningLightStripDevice(@RequestBody Map<String, Object> map) {
+        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+            throw new RuntimeException("未指定设备");
+        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息");
+        }
+        if ("GSY".equals(deploymentType)) {
+            map.put("controlType", "0");
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+            sdOptDeviceService.optSingleDevice(map);
+            return AjaxResult.success();
+        }
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()));
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+
+        //根据字典中配置的设备模拟控制值进行模拟状态展示
+        List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
+        if (isopenList.size() == 0) {
+            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
+        }
+        SysDictData sysDictData = isopenList.get(0);
+        String isopen = sysDictData.getDictValue();
+        if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
+            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+            sdDevices.setEqStatus("1");
+            sdDevices.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(sdDevices);
+            if (sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
+                updateDeviceData(sdDevices, state, DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode());
+            }
+            //添加操作记录
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(sdDevices.getEqType());
+            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+            sdOperationLog.setEqId(sdDevices.getEqId());
+            sdOperationLog.setCreateTime(new Date());
+            if (data.size() > 0 && data.get(0) != null) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            sdOperationLog.setOperationState(state);
+            sdOperationLog.setControlType("0");
+            sdOperationLog.setState("1");
+            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            return AjaxResult.success(1);
+        }
+        //控制设备
+        int controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        if (data.size() > 0 && data.get(0) != null) {
+            sdOperationLog.setBeforeState(data.get(0).getData());
+        }
+        sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));

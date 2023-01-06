@@ -139,3 +139,4 @@ device:
       trafficLight: ${device.hongmeng.url}/deviceCtrl/trafficLight/alterTrafficLightRunStatus
       laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
       rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus
+

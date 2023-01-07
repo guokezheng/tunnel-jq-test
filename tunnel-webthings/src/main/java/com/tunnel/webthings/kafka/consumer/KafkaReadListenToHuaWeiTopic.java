@@ -3,6 +3,7 @@ package com.tunnel.webthings.kafka.consumer;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
@@ -296,7 +297,7 @@ public class KafkaReadListenToHuaWeiTopic {
     public void receiveEvent(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         log.info("监听到瑞华赢实时事件数据： --> {}", record.value());
         if (record.value() != null && record.value() != "") {
-            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            JSONObject objects =  JSON.parseObject(record.value().toString());
             joinEvent(objects);
         }
         consumer.commitSync();
@@ -792,77 +793,73 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 事件数据接收
-     * @param objects
      */
-    public void joinEvent(JSONArray objects) {
-        for (int i = 0; i < objects.size(); i++) {
-            JSONObject jsonObject = JSONObject.parseObject(objects.get(i).toString());
-            Long eventTypeId = MergeRhyEventTypeEnum.getMergeEventTypeId(jsonObject.getString("mergeCode"));
-            if(eventTypeId==null){
-                continue;
+    public void joinEvent(JSONObject jsonObject) {
+        Long eventTypeId = MergeRhyEventTypeEnum.getMergeEventTypeId(jsonObject.getString("mergeCode"));
+        if(eventTypeId==null){
+            return;
+        }
+        SdEvent event = new SdEvent();
+        Long eventId = jsonObject.getLong("eventId");
+        event.setId(eventId);
+        event.setDirection(jsonObject.getString("direction"));
+        event.setEventLongitude(jsonObject.getString("eventLongitude"));
+        event.setEventLatitude(jsonObject.getString("eventLatitude"));
+        event.setEventTypeId(eventTypeId);
+        String stakeNum = jsonObject.getString("eventStakeNo");
+        if(StrUtil.isNotBlank(stakeNum)){
+            event.setStakeNum(jsonObject.getString("eventStakeNo"));
+        }
+        event.setEventSource(jsonObject.getString("eventSource"));
+        event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        event.setEventDescription(jsonObject.getString("eventDescribe"));
+        event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
+        event.setVideoUrl(jsonObject.getString("videoUrl"));
+        event.setEndTime(jsonObject.getString("completeTime"));
+        event.setLaneNo(jsonObject.getString("carLane"));
+        //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
+        //zc  状态             0：处理中 1：已处理           2:忽略 3：未处理
+        Integer eventStatus = jsonObject.getInteger("eventStatus");
+        String ownStatus = "";
+        switch (eventStatus){
+            case 2 : ownStatus = "0"; break;
+            case 3 : ownStatus = "1"; break;
+            case 5 : ownStatus = "2"; break;
+            default: ownStatus = "3"; break;
+        }
+        event.setEventState(ownStatus);
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
+        event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
+        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            imageList.add(image);
+        }
+        SpringUtil.getBean(SdTrafficImageMapper.class).brachInsertFaultIconFile(imageList);
+        int effectiveRows = 0;
+        if(sdEventService.selectSdEventById(eventId) != null){
+            effectiveRows = sdEventService.updateSdEvent(event);
+        }else{
+            effectiveRows = sdEventService.insertSdEvent(event);
+        }
+        //推送物联中台
+        if(effectiveRows > 0){
+            //如果是未处理状态改为处理中
+            if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                event.setEventState(EventStateEnum.processing.getCode());
             }
-            SdEvent event = new SdEvent();
-            Long eventId = jsonObject.getLong("eventId");
-            event.setId(eventId);
-            event.setDirection(jsonObject.getString("direction"));
-            event.setEventLongitude(jsonObject.getString("eventLongitude"));
-            event.setEventLatitude(jsonObject.getString("eventLatitude"));
-            event.setEventTypeId(eventTypeId);
-            String stakeNum = jsonObject.getString("eventStakeNo");
-            if(StrUtil.isNotBlank(stakeNum)){
-                event.setStakeNum(jsonObject.getString("eventStakeNo"));
-            }
-            event.setEventSource(jsonObject.getString("eventSource"));
-            event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
-            event.setEventDescription(jsonObject.getString("eventDescribe"));
-            event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
-            event.setVideoUrl(jsonObject.getString("videoUrl"));
-            event.setEndTime(jsonObject.getString("completeTime"));
-            event.setLaneNo(jsonObject.getString("carLane"));
-            //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
-            //zc  状态             0：处理中 1：已处理           2:忽略 3：未处理
-            Integer eventStatus = jsonObject.getInteger("eventStatus");
-            String ownStatus = "";
-            switch (eventStatus){
-                case 2 : ownStatus = "0"; break;
-                case 3 : ownStatus = "1"; break;
-                case 5 : ownStatus = "2"; break;
-                default: ownStatus = "3"; break;
-            }
-            event.setEventState(ownStatus);
-            //所有事件类型Map
-            Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
-            //所有隧道Map
-            Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
-            event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
-            String[] imgList = jsonObject.getString("eventImgUrl").split(";");
-            List<SdTrafficImage> imageList = new ArrayList<>();
-            for(String img:imgList){
-                SdTrafficImage image = new SdTrafficImage();
-                image.setImgUrl(img);
-                image.setBusinessId(eventId.toString());
-                imageList.add(image);
-            }
-            SpringUtil.getBean(SdTrafficImageMapper.class).brachInsertFaultIconFile(imageList);
-            int effectiveRows = 0;
-            if(sdEventService.selectSdEventById(eventId).getId()!=null){
-                effectiveRows = sdEventService.updateSdEvent(event);
-            }else{
-                effectiveRows = sdEventService.insertSdEvent(event);
-            }
-            //推送物联中台
-            if(effectiveRows > 0){
-                //如果是未处理状态改为处理中
-                if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
-                    event.setEventState(EventStateEnum.processing.getCode());
-                }
-                radarEventServiceImpl.sendDataToOtherSystem(null,event);
+            radarEventServiceImpl.sendDataToOtherSystem(null,event);
 //                jsonObject.clear();
 //                jsonObject.put("event", event);
 //                jsonObject.put("devNo", "S00063700001980001");
 //                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-                //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
-            }
+            //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
         }
     }
 }

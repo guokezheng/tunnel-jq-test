@@ -1,20 +1,30 @@
 package com.tunnel.webthings.kafka.consumer;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdEventTypeMapper;
+import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.dataInfo.impl.SdTunnelsServiceImpl;
+import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -30,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +71,15 @@ public class KafkaReadListenToHuaWeiTopic {
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
 
+    @Autowired
+    private ISdEventService sdEventService;
+
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
+
+    @Autowired
+    private ISdEventTypeService sdEventTypeService;
+
     /**
      * 监听风机实时运行状态
      *
@@ -67,15 +87,15 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_fan_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
-    public void fanRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢风机数据： --> {}",record.value());
-        if(record.value() != null && record.value() != ""){
+    public void fanRunStatus(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢风机数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
             //获取风机itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.FENG_JI_STATUS.getCode());
             //解析风机数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataRealTime(objects,itemId);
+            saveOrUpdataRealTime(objects, itemId);
         }
         consumer.commitSync();
     }
@@ -87,15 +107,15 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_trafficLight_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
-    public void trafficLightRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢信号灯数据： --> {}",record.value());
-        if(record.value() != null && record.value() != ""){
+    public void trafficLightRunStatus(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢信号灯数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
             //获取交通信号灯itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode());
             //解析交通信号灯数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataRealTime(objects,itemId);
+            saveOrUpdataRealTime(objects, itemId);
         }
         consumer.commitSync();
     }
@@ -107,15 +127,15 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_laneIndicator_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
-    public void laneIndicatorRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢车指数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void laneIndicatorRunStatus(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢车指数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取车指itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode());
             //解析车道指示器数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataRealTime(objects,itemId);
+            saveOrUpdataRealTime(objects, itemId);
         }
         consumer.commitSync();
     }
@@ -127,15 +147,15 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_rollDoor_runStatus"}, containerFactory = "kafkaThreeContainerFactory")
-    public void rollDoorRunStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢卷帘门数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void rollDoorRunStatus(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢卷帘门数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取卷帘门itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode());
             //解析卷帘门数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataRealTime(objects,itemId);
+            saveOrUpdataRealTime(objects, itemId);
         }
         consumer.commitSync();
     }
@@ -147,16 +167,16 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_covi_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
-    public void coviBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢COVI数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void coviBizAttr(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢COVI数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取co/vi的itemId
             Long coId = Long.valueOf(DevicesTypeItemEnum.CO.getCode());
             Long viId = Long.valueOf(DevicesTypeItemEnum.VI.getCode());
             //解析co/vi数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新CO/VI数据
-            saveOrUpdateCoViData(objects,coId,viId);
+            saveOrUpdateCoViData(objects, coId, viId);
         }
         consumer.commitSync();
     }
@@ -168,16 +188,16 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_anemoclinograph_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
-    public void anemoclinographBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢风速风向数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void anemoclinographBizAttr(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢风速风向数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取风速风向的itemId
             Long fsId = Long.valueOf(DevicesTypeItemEnum.FENG_SU.getCode());
             Long fxId = Long.valueOf(DevicesTypeItemEnum.FENG_XIANG.getCode());
             //解析风速风向数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新风速风向数据
-            saveOrUpdateFsFxData(objects,fsId,fxId);
+            saveOrUpdateFsFxData(objects, fsId, fxId);
         }
         consumer.commitSync();
     }
@@ -189,15 +209,15 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_illuminance_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
-    public void illuminanceBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢洞内亮度数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void illuminanceBizAttr(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢洞内亮度数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取洞内亮度itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_INSIDE.getCode());
             //解析洞内亮度数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataIlluminance(objects,itemId);
+            saveOrUpdataIlluminance(objects, itemId);
         }
         consumer.commitSync();
     }
@@ -209,29 +229,30 @@ public class KafkaReadListenToHuaWeiTopic {
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_brightDetector_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
-    public void brightDetectorBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢洞外亮度数据： --> {}",record.value());
-        if(record.value() != null & record.value() != ""){
+    public void brightDetectorBizAttr(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢洞外亮度数据： --> {}", record.value());
+        if (record.value() != null & record.value() != "") {
             //获取洞外亮度itemId
             Long itemId = Long.valueOf(DevicesTypeItemEnum.LIANG_DU_OUTSIDE.getCode());
             //解析洞外亮度数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新设备数据
-            saveOrUpdataBrightDetector(objects,itemId);
+            saveOrUpdataBrightDetector(objects, itemId);
         }
         consumer.commitSync();
     }
 
     /**
      * 获取实时设备状态
+     *
      * @param record
      * @param acknowledgment
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_devStatus"}, containerFactory = "kafkaThreeContainerFactory")
-    public void receiveDevStatus(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢实时设备数据： --> {}",record.value());
-        if(record.value() != null && record.value() != ""){
+    public void receiveDevStatus(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢实时设备数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
             //解析实时设备状态
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //更新设备状态
@@ -242,14 +263,15 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 获取实时设备故障信息
+     *
      * @param record
      * @param acknowledgment
      * @param consumer
      */
     @KafkaListener(topics = {"rhy_iot_receive_devFault"}, containerFactory = "kafkaThreeContainerFactory")
-    public void receiveDevFault(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
-        log.info("监听到瑞华赢实时设备故障数据： --> {}",record.value());
-        if(record.value() != null && record.value() != ""){
+    public void receiveDevFault(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢实时设备故障数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
             //解析实时设备状态
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //更新设备状态
@@ -259,12 +281,29 @@ public class KafkaReadListenToHuaWeiTopic {
     }
 
     /**
+     * 接收瑞华赢实时事件推送
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_tunnel_merge_event"}, containerFactory = "kafkaThreeContainerFactory")
+    public void receiveEvent(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢实时事件数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
+            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            joinEvent(objects);
+        }
+        consumer.commitSync();
+    }
+
+    /**
      * 更新设备状态
      * @param objects
      */
-    public void updateDevStatus(JSONArray objects){
+    public void updateDevStatus(JSONArray objects) {
         log.info(objects.toString());
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = JSONObject.parseObject(objects.get(i).toString());
             //设备id
             String deviceId = jsonObject.getString("deviceId");
@@ -276,7 +315,7 @@ public class KafkaReadListenToHuaWeiTopic {
             sdDevices.setEqId(deviceId);
             sdDevices.setUpdateTime(DateUtils.getNowDate());
             sdDevices.setEqStatusTime(DateUtils.getNowDate());
-            if(isFault == 0) {
+            if (isFault == 0) {
                 if (onlineStatus == 0) {
                     //离线
                     sdDevices.setEqStatus("2");
@@ -284,36 +323,37 @@ public class KafkaReadListenToHuaWeiTopic {
                     //在线
                     sdDevices.setEqStatus("1");
                 }
-            }else {
+            } else {
                 //故障
                 sdDevices.setEqStatus("3");
             }
             //更新设备状态
             int count = sdDevicesMapper.updateSdDevices(sdDevices);
-            if(count > 0){
+            if (count > 0) {
                 SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
                 JSONObject jsonObject1 = devStatus(sdDevices1);
                 //将实时设备状态数据推送至高速云
-                kafkaTemplate.send("wq_devStatusTopic",jsonObject1.toString());
+                kafkaTemplate.send("wq_devStatusTopic", jsonObject1.toString());
             }
         }
     }
 
     /**
      * 新增设备故障信息
+     *
      * @param objects
      */
-    public void addDevFault(JSONArray objects){
+    public void addDevFault(JSONArray objects) {
         log.info(objects.toString());
         //数据库已存在数据
         List<SdFaultList> sdFaultLists = sdFaultListMapper.selectDeviceFault();
         List<SdFaultList> sdFaultListsCopy = new ArrayList<>();
-        for(SdFaultList item : sdFaultLists){
+        for (SdFaultList item : sdFaultLists) {
             sdFaultListsCopy.add(item);
         }
         //新故障数据
         List<SdFaultList> newFaultList = new ArrayList<>();
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject = JSONObject.parseObject(objects.get(i).toString());
             //设备id
             String deviceId = jsonObject.getString("deviceId");
@@ -351,27 +391,27 @@ public class KafkaReadListenToHuaWeiTopic {
             //区分上报类型 0：人为填报 1：设备上报
             sdFaultList.setFaultEscalationType("1");
             //查询设备运行状态
-            sdFaultList.setEqRunStatus(sdFaultListMapper.selectEqRunStatus(deviceId,deviceType));
+            sdFaultList.setEqRunStatus(sdFaultListMapper.selectEqRunStatus(deviceId, deviceType));
             SdFaultList sdFaultList1 = sdFaultListMapper.selectSdFaultListById(id);
-            if(sdFaultList1 == null){
+            if (sdFaultList1 == null) {
                 sdFaultList.setCreateTime(DateUtils.getNowDate());
                 sdFaultListMapper.insertSdFaultList(sdFaultList);
-            }else {
+            } else {
                 sdFaultList.setUpdateTime(DateUtils.getNowDate());
                 sdFaultListMapper.updateSdFaultList(sdFaultList);
             }
             newFaultList.add(sdFaultList);
         }
 
-        for(int i = sdFaultLists.size() - 1; i >= 0; i--){
+        for (int i = sdFaultLists.size() - 1; i >= 0; i--) {
             SdFaultList sdFaultList = sdFaultLists.get(i);
-            for(SdFaultList temp : newFaultList){
-                if(sdFaultList.getEqId().equals(temp.getEqId()) && sdFaultList.getEqType().equals(temp.getEqType())){
+            for (SdFaultList temp : newFaultList) {
+                if (sdFaultList.getEqId().equals(temp.getEqId()) && sdFaultList.getEqType().equals(temp.getEqType())) {
                     sdFaultListsCopy.remove(i);
                 }
             }
         }
-        for(SdFaultList item : sdFaultListsCopy){
+        for (SdFaultList item : sdFaultListsCopy) {
             item.setFalltRemoveStatue("0");
             item.setUpdateTime(DateUtils.getNowDate());
             sdFaultListMapper.updateSdFaultList(item);
@@ -380,35 +420,36 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新设备数据
+     *
      * @param objects
      * @param itemId
      */
-    public void saveOrUpdataRealTime(JSONArray objects,Long itemId){
+    public void saveOrUpdataRealTime(JSONArray objects, Long itemId) {
         //循环遍历kafka数据
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             Integer runStatus = 0;
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
-            if(DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == sdDevices1.getEqType()){
-                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()),jsonObject1.getInteger("runStatus"));
+            if (DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == sdDevices1.getEqType()) {
+                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode()), jsonObject1.getInteger("runStatus"));
                 itemId = Long.valueOf(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode());
-            }else if(DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() == sdDevices1.getEqType()){
-                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode()),jsonObject1.getInteger("runStatus"));
+            } else if (DevicesTypeEnum.JIAO_TONG_XIN_HAO_DENG.getCode() == sdDevices1.getEqType()) {
+                runStatus = devStatusCync(Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode()), jsonObject1.getInteger("runStatus"));
                 itemId = Long.valueOf(DevicesTypeItemEnum.XIN_HAO_DENG.getCode());
-            }else {
-                runStatus = devStatusCync(itemId,jsonObject1.getInteger("runStatus"));
+            } else {
+                runStatus = devStatusCync(itemId, jsonObject1.getInteger("runStatus"));
             }
             //将数据重新定义新的参数名
             JSONObject objectDev = definitionParam(deviceId, runStatus.toString(), itemId);
             //校验数据库是否存在
             int number = checkDeviceData(deviceId, itemId);
-            if(number == 0){
+            if (number == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, runStatus.toString(), itemId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, runStatus.toString(), itemId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -416,19 +457,20 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             JSONObject jsonObjectDev = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(itemId).getDeviceTypeId() : sdDevices1.getEqType(), objectDev);
             //将设备运行状态上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectDev.toString());
+            kafkaTemplate.send("wq_devStatusTopic", jsonObjectDev.toString());
         }
     }
 
     /**
      * 新增or更新co/vi数据
+     *
      * @param objects
      * @param coId
      * @param viId
      */
-    public void saveOrUpdateCoViData(JSONArray objects, Long coId, Long viId){
+    public void saveOrUpdateCoViData(JSONArray objects, Long coId, Long viId) {
         //循环遍历kafka数据
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String co = jsonObject1.getString("co");
@@ -438,12 +480,12 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject objectVi = definitionParam(deviceId, vi, viId);
             //校验数据库是否存在
             int numberCo = checkDeviceData(deviceId, coId);
-            if(numberCo == 0){
+            if (numberCo == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -451,12 +493,12 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             //校验数据库是否存在
             int numberVi = checkDeviceData(deviceId, viId);
-            if(numberVi == 0){
+            if (numberVi == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -465,34 +507,35 @@ public class KafkaReadListenToHuaWeiTopic {
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectCo = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(coId).getDeviceTypeId() : sdDevices1.getEqType(), objectCo);
             //将co数据上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectCo.toString());
+            kafkaTemplate.send("wq_devStatusTopic", jsonObjectCo.toString());
             //将vi数据上传至高速云
             JSONObject jsonObjectVi = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(viId).getDeviceTypeId() : sdDevices1.getEqType(), objectVi);
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectVi.toString());
+            kafkaTemplate.send("wq_devStatusTopic", jsonObjectVi.toString());
         }
     }
 
     /**
      * 新增or更新风速风向数据
+     *
      * @param objects
      * @param fsId
      * @param fxId
      */
-    public void saveOrUpdateFsFxData(JSONArray objects, Long fsId, Long fxId){
+    public void saveOrUpdateFsFxData(JSONArray objects, Long fsId, Long fxId) {
         //循环遍历kafka数据
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String windSpeed = jsonObject1.getString("windSpeed");
             String windDirection = jsonObject1.getString("windDirection");
             //校验数据库是否存在
             int numberFs = checkDeviceData(deviceId, fsId);
-            if(numberFs == 0){
+            if (numberFs == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -500,12 +543,12 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             //校验数据库是否存在
             int numberFx = checkDeviceData(deviceId, fxId);
-            if(numberFx == 0){
+            if (numberFx == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -518,30 +561,31 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObjectFs = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fsId).getDeviceTypeId() : sdDevices1.getEqType(), objectFs);
             JSONObject jsonObjectFx = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(fxId).getDeviceTypeId() : sdDevices1.getEqType(), objectFx);
             //将风速风向数据上传至高速云
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectFs.toString());
-            kafkaTemplate.send("wq_devStatusTopic",jsonObjectFx.toString());
+            kafkaTemplate.send("wq_devStatusTopic", jsonObjectFs.toString());
+            kafkaTemplate.send("wq_devStatusTopic", jsonObjectFx.toString());
         }
     }
 
     /**
      * 新增or更新洞内亮度数据
+     *
      * @param objects
      * @param itemId
      */
-    public void saveOrUpdataIlluminance(JSONArray objects,Long itemId){
+    public void saveOrUpdataIlluminance(JSONArray objects, Long itemId) {
         //循环遍历kafka数据
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String illuminance = jsonObject1.getString("illuminance");
             //校验数据库是否存在
             int number = checkDeviceData(deviceId, itemId);
-            if(number == 0){
+            if (number == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -552,22 +596,23 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新洞外亮度数据
+     *
      * @param objects
      * @param itemId
      */
-    public void saveOrUpdataBrightDetector(JSONArray objects,Long itemId){
+    public void saveOrUpdataBrightDetector(JSONArray objects, Long itemId) {
         //循环遍历kafka数据
-        for(int i = 0; i < objects.size(); i++){
+        for (int i = 0; i < objects.size(); i++) {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String brightness = jsonObject1.getString("brightness");
             int number = checkDeviceData(deviceId, itemId);
-            if(number == 0){
+            if (number == 0) {
                 //新增数据
                 SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
                 deviceData.setCreateTime(DateUtils.getNowDate());
                 sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
+            } else {
                 //更新数据
                 SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
                 deviceData.setUpdateTime(DateUtils.getNowDate());
@@ -578,12 +623,13 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 赋值设备实时数据
+     *
      * @param deviceId
      * @param runStatus
      * @param itemId
      * @return
      */
-    public SdDeviceData setDeviceData(String deviceId,String runStatus,Long itemId){
+    public SdDeviceData setDeviceData(String deviceId, String runStatus, Long itemId) {
         SdDeviceData deviceData = new SdDeviceData();
         deviceData.setDeviceId(deviceId);
         deviceData.setItemId(itemId);
@@ -593,143 +639,219 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 重新定义参数名
+     *
      * @param deviceId
      * @param deviceData
      * @param deviceItemId
      * @return
      */
-    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId){
+    public JSONObject definitionParam(String deviceId, String deviceData, Long deviceItemId) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("deviceId",deviceId);
-        jsonObject.put("deviceData",deviceData);
-        jsonObject.put("deviceItemId",deviceItemId);
+        jsonObject.put("deviceId", deviceId);
+        jsonObject.put("deviceData", deviceData);
+        jsonObject.put("deviceItemId", deviceItemId);
         return jsonObject;
     }
 
     /**
      * 实时设备运行状态上传高速云共通方法
+     *
      * @param eqType
      * @param object
      * @return
      */
-    public JSONObject devReaStatus(Long eqType, JSONObject object){
+    public JSONObject devReaStatus(Long eqType, JSONObject object) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("devNo", "SRUN00063700001980002");
-        jsonObject.put("devType",eqType);
-        jsonObject.put("loginTime",DateUtils.getNowDate());
-        jsonObject.put("devStatus","1");
-        jsonObject.put("netstatus","1");
-        jsonObject.put("source","suidao");
+        jsonObject.put("devType", eqType);
+        jsonObject.put("loginTime", DateUtils.getNowDate());
+        jsonObject.put("devStatus", "1");
+        jsonObject.put("netstatus", "1");
+        jsonObject.put("source", "suidao");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        jsonObject.put("expands",object.toString());
+        jsonObject.put("expands", object.toString());
         return jsonObject;
     }
 
     /**
      * 实时设备状态上传高速云共通方法
+     *
      * @param sdDevices
      * @return
      */
-    public JSONObject devStatus(SdDevices sdDevices){
+    public JSONObject devStatus(SdDevices sdDevices) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("devNo", "SDEV00063700001980003");
-        jsonObject.put("devType",sdDevices.getEqType());
-        jsonObject.put("loginTime",DateUtils.getNowDate());
-        jsonObject.put("devStatus",sdDevices.getEqStatus());
-        jsonObject.put("source","suidao");
-        if("1".equals(sdDevices.getEqStatus())){
-            jsonObject.put("netstatus",sdDevices.getEqStatus());
-            jsonObject.put("netStatusRemark","连通");
-            jsonObject.put("devStatusRemark","正常");
-        }else if("2".equals(sdDevices.getEqStatus())){
-            jsonObject.put("netstatus",sdDevices.getEqStatus());
-            jsonObject.put("netStatusRemark","离线");
-            jsonObject.put("devStatusRemark","离线");
-        }else if("3".equals(sdDevices.getEqStatus())){
-            jsonObject.put("devStatusRemark","故障");
-        }else {
-            jsonObject.put("netstatus","1");
-            jsonObject.put("netStatusRemark","连通");
+        jsonObject.put("devType", sdDevices.getEqType());
+        jsonObject.put("loginTime", DateUtils.getNowDate());
+        jsonObject.put("devStatus", sdDevices.getEqStatus());
+        jsonObject.put("source", "suidao");
+        if ("1".equals(sdDevices.getEqStatus())) {
+            jsonObject.put("netstatus", sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark", "连通");
+            jsonObject.put("devStatusRemark", "正常");
+        } else if ("2".equals(sdDevices.getEqStatus())) {
+            jsonObject.put("netstatus", sdDevices.getEqStatus());
+            jsonObject.put("netStatusRemark", "离线");
+            jsonObject.put("devStatusRemark", "离线");
+        } else if ("3".equals(sdDevices.getEqStatus())) {
+            jsonObject.put("devStatusRemark", "故障");
+        } else {
+            jsonObject.put("netstatus", "1");
+            jsonObject.put("netStatusRemark", "连通");
         }
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        jsonObject.put("expands",sdDevices);
+        jsonObject.put("expands", sdDevices);
         return jsonObject;
     }
 
     /**
      * 校验实时数据是否存在
+     *
      * @param deviceId
      * @param itemId
      * @return
      */
-    public int checkDeviceData(String deviceId, Long itemId){
+    public int checkDeviceData(String deviceId, Long itemId) {
         //校验数据库是否存在
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setItemId(itemId);
         sdDeviceData.setDeviceId(deviceId);
         List<SdDeviceData> sdDeviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-        if(sdDeviceDataList.size() > 0){
+        if (sdDeviceDataList.size() > 0) {
             return 1;
-        }else {
+        } else {
             return 0;
         }
     }
 
     /**
      * 设备运行状态与数据库匹配
+     *
      * @param itemId
      * @param runStatus
      * @return
      */
-    public Integer devStatusCync(Long itemId,Integer runStatus){
-        if(DevicesTypeItemEnum.FENG_JI_STATUS.getCode() == itemId){
-            if(runStatus == 0){
+    public Integer devStatusCync(Long itemId, Integer runStatus) {
+        if (DevicesTypeItemEnum.FENG_JI_STATUS.getCode() == itemId) {
+            if (runStatus == 0) {
                 return 3;
             }
         }
-        if(DevicesTypeItemEnum.XIN_HAO_DENG.getCode() == itemId){
-            if(runStatus == 0){
+        if (DevicesTypeItemEnum.XIN_HAO_DENG.getCode() == itemId) {
+            if (runStatus == 0) {
                 return 4;
             }
-            if(runStatus == 1){
+            if (runStatus == 1) {
                 return 2;
             }
-            if(runStatus == 2){
+            if (runStatus == 2) {
                 return 1;
             }
         }
-        if(DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode() == itemId){
-            if(runStatus == 4){
+        if (DevicesTypeItemEnum.ZHUO_ZHUAN_XIN_HAO_DENG.getCode() == itemId) {
+            if (runStatus == 4) {
                 return 5;
             }
-            if(runStatus == 0){
+            if (runStatus == 0) {
                 return 4;
             }
-            if(runStatus == 1){
+            if (runStatus == 1) {
                 return 2;
             }
-            if(runStatus == 2){
+            if (runStatus == 2) {
                 return 1;
             }
         }
-        if(DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId){
-            if(runStatus == 0){
+        if (DevicesTypeItemEnum.PU_TONG_CHE_ZHI.getCode() == itemId) {
+            if (runStatus == 0) {
                 return 4;
             }
         }
-        if(DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == itemId){
-            if(runStatus == 4){
+        if (DevicesTypeItemEnum.ZHUO_ZHUAN_CHE_ZHI.getCode() == itemId) {
+            if (runStatus == 4) {
                 return 5;
             }
-            if(runStatus == 0){
+            if (runStatus == 0) {
                 return 4;
             }
         }
-        if(DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode() == itemId){
-            if(runStatus == 0){
+        if (DevicesTypeItemEnum.JUAN_LIAN_MEN.getCode() == itemId) {
+            if (runStatus == 0) {
                 return 3;
             }
         }
         return runStatus;
+    }
+
+    /**
+     * 事件数据接收
+     * @param objects
+     */
+    public void joinEvent(JSONArray objects) {
+        for (int i = 0; i < objects.size(); i++) {
+            JSONObject jsonObject = JSONObject.parseObject(objects.get(i).toString());
+            Long eventTypeId = MergeRhyEventTypeEnum.getMergeEventTypeId(jsonObject.getString("mergeCode"));
+            if(eventTypeId==null){
+                continue;
+            }
+            SdEvent event = new SdEvent();
+            Long eventId = jsonObject.getLong("eventId");
+            event.setId(eventId);
+            event.setDirection(jsonObject.getString("direction"));
+            event.setEventLongitude(jsonObject.getString("eventLongitude"));
+            event.setEventLatitude(jsonObject.getString("eventLatitude"));
+            event.setEventTypeId(eventTypeId);
+            String stakeNum = jsonObject.getString("eventStakeNo");
+            if(StrUtil.isNotBlank(stakeNum)){
+                event.setStakeNum(jsonObject.getString("eventStakeNo"));
+            }
+            event.setEventSource(jsonObject.getString("eventSource"));
+            event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+            event.setEventDescription(jsonObject.getString("eventDescribe"));
+            event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
+            event.setVideoUrl(jsonObject.getString("videoUrl"));
+            event.setEndTime(jsonObject.getString("completeTime"));
+            event.setLaneNo(jsonObject.getString("carLane"));
+            //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
+            //zc  状态             0：处理中 1：已处理           2:忽略 3：未处理
+            Integer eventStatus = jsonObject.getInteger("eventStatus");
+            String ownStatus = "";
+            switch (eventStatus){
+                case 2 : ownStatus = "0"; break;
+                case 3 : ownStatus = "1"; break;
+                case 5 : ownStatus = "2"; break;
+                default: ownStatus = "3"; break;
+            }
+            event.setEventState(ownStatus);
+            //所有事件类型Map
+            Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
+            //所有隧道Map
+            Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
+            event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
+            String[] imgList = jsonObject.getString("eventImgUrl").split(";");
+            List<SdTrafficImage> imageList = new ArrayList<>();
+            for(String img:imgList){
+                SdTrafficImage image = new SdTrafficImage();
+                image.setImgUrl(img);
+                image.setBusinessId(eventId.toString());
+                imageList.add(image);
+            }
+            SpringUtil.getBean(SdTrafficImageMapper.class).brachInsertFaultIconFile(imageList);
+            int effectiveRows = 0;
+            if(sdEventService.selectSdEventById(eventId).getId()!=null){
+                effectiveRows = sdEventService.updateSdEvent(event);
+            }else{
+                effectiveRows = sdEventService.insertSdEvent(event);
+            }
+            //推送物联中台
+            if(effectiveRows > 0){
+                jsonObject.clear();
+                jsonObject.put("event", event);
+                jsonObject.put("devNo", "S00063700001980001");
+                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+                //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+            }
+        }
     }
 }

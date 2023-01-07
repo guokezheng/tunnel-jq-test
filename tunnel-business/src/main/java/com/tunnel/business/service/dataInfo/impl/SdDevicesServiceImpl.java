@@ -828,9 +828,23 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
         return devicesList;
     }
 
-
+    /**
+     * 根据隧道+方向+类型 获取广播设备
+     * @param sdDevices
+     * @return
+     */
     @Override
     public List<SdDevices> getSpkList(SdDevices sdDevices){
         return sdDevicesMapper.getSpkList(sdDevices);
+    }
+
+    /**
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public SdDevices getLight(SdDevices sdDevices){
+        return sdDevicesMapper.getLight(sdDevices);
     }
 }

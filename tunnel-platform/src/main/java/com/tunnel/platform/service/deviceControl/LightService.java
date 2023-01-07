@@ -71,11 +71,10 @@ public class LightService {
     }
 
     /**
-     *
-     * @param deviceId 设备ID
-     * @param bright 亮度
+     * @param deviceId    设备ID
+     * @param bright      亮度
      * @param controlType 控制类型
-     * @param operIp 操作者IP地址
+     * @param operIp      操作者IP地址
      * @return
      */
     public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
@@ -84,13 +83,16 @@ public class LightService {
         Light light = getBeanOfDeviceProtocol(deviceId);
         int resultStatus = light.setBrightness(deviceId, bright);
 
-        // 更新设备在线状态
-        device.setEqStatus("1");
-        device.setEqStatusTime(new Date());
-        sdDevicesService.updateSdDevices(device);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            // 更新设备在线状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
 
-        //更新设备实时数据
-        sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+            //更新设备实时数据
+            sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+        }
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -110,7 +112,6 @@ public class LightService {
         if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
             sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
         }
-
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
 
         return resultStatus;
@@ -128,14 +129,16 @@ public class LightService {
 
         Light light = getBeanOfDeviceProtocol(deviceId);
         int resultStatus = light.lineControl(deviceId, openClose);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            //更新设备状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
 
-        //更新设备状态
-        device.setEqStatus("1");
-        device.setEqStatusTime(new Date());
-        sdDevicesService.updateSdDevices(device);
-
-        //更新设备实时数据
-        sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+            //更新设备实时数据
+            sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+        }
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();

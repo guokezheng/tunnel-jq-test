@@ -23,11 +23,13 @@ import com.tunnel.business.mapper.event.SdEventTypeMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.dataInfo.impl.SdTunnelsServiceImpl;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,6 +81,9 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private ISdEventTypeService sdEventTypeService;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
 
     /**
      * 监听风机实时运行状态
@@ -299,6 +304,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 更新设备状态
+     *
      * @param objects
      */
     public void updateDevStatus(JSONArray objects) {
@@ -846,10 +852,15 @@ public class KafkaReadListenToHuaWeiTopic {
             }
             //推送物联中台
             if(effectiveRows > 0){
-                jsonObject.clear();
-                jsonObject.put("event", event);
-                jsonObject.put("devNo", "S00063700001980001");
-                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+                //如果是未处理状态改为处理中
+                if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                    event.setEventState(EventStateEnum.processing.getCode());
+                }
+                radarEventServiceImpl.sendDataToOtherSystem(null,event);
+//                jsonObject.clear();
+//                jsonObject.put("event", event);
+//                jsonObject.put("devNo", "S00063700001980001");
+//                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
                 //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
             }
         }

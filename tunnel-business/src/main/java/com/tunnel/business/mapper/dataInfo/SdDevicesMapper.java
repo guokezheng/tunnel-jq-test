@@ -272,4 +272,11 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> getSpkList(SdDevices sdDevices);
+
+	/**
+	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+	 * @param sdDevices
+	 * @return
+	 */
+	SdDevices getLight(SdDevices sdDevices);
 }

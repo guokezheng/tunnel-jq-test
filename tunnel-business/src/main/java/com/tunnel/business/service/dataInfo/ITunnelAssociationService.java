@@ -67,5 +67,12 @@ public interface ITunnelAssociationService
 
     List<TunnelAssociation> checkUpdateUnique(TunnelAssociation tunnelAssociation);
 
-
+    /**
+     * 根据隧道、方向、外部系统 获取外部系统隧道洞ID
+     * @param eqTunnelId
+     * @param eqDirection
+     * @param externalSystemId
+     * @return
+     */
+    public String getExternalSystemTunnelId(String eqTunnelId, String eqDirection, Long externalSystemId);
 }

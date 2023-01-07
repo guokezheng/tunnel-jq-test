@@ -71,7 +71,8 @@ public enum DevicesTypeItemEnum {
     DELINEATOR_FREQUENCY(70, "轮廓标频率"),
     DELINEATOR_IS_OPEN(71, "轮廓标是否开灯"),
     DELINEATOR_CONTROL(72, "轮廓标控制器"),
-    JI_BEN_ZHAO_MING_OPENCLOSE(73, "基本照明开关状态");
+    JI_BEN_ZHAO_MING_OPENCLOSE(73, "基本照明开关状态"),
+    JB_LIGHT_BRIGHNESS(74, "基本照明亮度");
 
 
     private int code;

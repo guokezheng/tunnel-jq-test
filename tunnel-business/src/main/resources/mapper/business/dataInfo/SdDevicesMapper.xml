@@ -903,4 +903,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from sd_devices
         where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType}
     </select>
+
+    <select id="getLight" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
+        select eq_id,
+            f_eq_id,
+            eq_tunnel_id,
+            eq_name,
+            eq_type,
+            f_eq_type,
+            brand_id,
+            external_system_id,
+            eq_direction,
+            pile,
+            ip,
+            port,
+            use_status,
+            eq_status,
+            eq_status_time,
+            external_device_id,
+            associated_device_id
+        from sd_devices
+        where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType} and external_device_id=#{externalDeviceId}
+
+    </select>
 </mapper>

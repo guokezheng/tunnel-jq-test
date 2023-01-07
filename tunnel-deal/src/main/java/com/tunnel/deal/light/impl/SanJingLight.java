@@ -1,14 +1,9 @@
 package com.tunnel.deal.light.impl;
 
-import com.ruoyi.system.service.ISysDictDataService;
-import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
-import com.tunnel.business.domain.dataInfo.SdTunnels;
-import com.tunnel.business.domain.dataInfo.TunnelAssociation;
 import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import com.tunnel.deal.light.Light;
 import okhttp3.*;
@@ -31,11 +26,6 @@ public class SanJingLight implements Light {
     @Autowired
     private IExternalSystemService externalSystemService;
 
-    @Autowired
-    private ISdTunnelsService sdTunnelsService;
-
-    @Autowired
-    private ISysDictDataService sysDictDataService;
 
     /**
      * 登录获取会话ID
@@ -48,7 +38,6 @@ public class SanJingLight implements Light {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("text/plain");
         RequestBody body = RequestBody.create(mediaType, "");
-        // String url = login + "?username=" + username + "&password=" + password;
         // http://47.119.189.80:8888/login
         String url = baseUrl + "/login?username=" + username + "&password=" + password;
         Request request = new Request.Builder()
@@ -65,25 +54,6 @@ public class SanJingLight implements Light {
         return headers.get(0);
     }
 
-    public String getExternalSystemTunnelId(String eqTunnelId, String eqDirection, Long externalSystemId) {
-        TunnelAssociation association = new TunnelAssociation();
-        association.setTunnelId(eqTunnelId);
-        association.setTunnelDirection(eqDirection);
-        association.setExternalSystemId(externalSystemId);
-
-        SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(eqTunnelId);
-        String directionName = sysDictDataService.selectDictLabel(DictTypeEnum.sd_direction.getCode(), eqDirection);
-        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
-        String msg = "【" + sdTunnels.getTunnelName() + "】 未查询到 方向为【" + directionName + "】系统名称为 【" + externalSystem.getSystemName() + "】的关联配置数据,请联系管理员";
-
-        List<TunnelAssociation> associationList = tunnelAssociationService.selectTunnelAssociationList(association);
-        Assert.notEmpty(associationList, msg);
-
-        TunnelAssociation tunnelAssociation = associationList.get(0);
-        return tunnelAssociation.getExternalSystemTunnelId();
-    }
-
-
     @Override
     public int setBrightness(String deviceId, Integer bright) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
@@ -99,7 +69,7 @@ public class SanJingLight implements Light {
         Assert.hasText(step, "该设备暂时不可控！");
 
         //确定隧道洞编号
-        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
         Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
@@ -147,7 +117,7 @@ public class SanJingLight implements Light {
         Assert.hasText(step, "未配置该设备关联的段号");
 
         //确定隧道洞编号
-        String externalSystemTunnelId = getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
+        String externalSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(eqTunnelId, eqDirection, externalSystemId);
         Assert.hasText(externalSystemTunnelId, "未配置该设备关联的隧道洞编号");
 
         ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);

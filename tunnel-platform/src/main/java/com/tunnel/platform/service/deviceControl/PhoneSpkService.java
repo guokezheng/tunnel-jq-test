@@ -104,7 +104,7 @@ public class PhoneSpkService {
 
     /**
      * 登录获取token
-     *
+     * 测试过程发现请求接口不需要携带token,此方法暂时用不上
      * @param username
      * @param password
      * @return
@@ -170,14 +170,8 @@ public class PhoneSpkService {
             SdDevices device = sdDevicesMapper.selectPhoneSpk(devices);
 
             if (null != device) {
-                System.out.println(device);
-            }
-
-            // TODO: 2022/12/30 有的device=null，后期排查下
-            if (null != device) {
                 String data = PhoneSpkEnum.getValue(attribute);
                 sdDeviceControlService.updateDeviceData(device, data, itemId);
-
 
                 /*SdEventType sdEventType = new SdEventType();
                 sdEventType.setEventType("紧急电话");
@@ -255,7 +249,6 @@ public class PhoneSpkService {
                 result = response.body().string();
             }
         } catch (IOException e) {
-            // e.printStackTrace();
             return AjaxResult.success(jsonArray);
         }
 
@@ -276,37 +269,12 @@ public class PhoneSpkService {
     public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         ArrayList<String> spkDeviceIds = (ArrayList<String>) map.get("spkDeviceIds");
-
         //参数校验
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
 
-        /*if ("GSY".equals(deploymentType)) {
-            String operIp = (String) map.get("operIp");
-            Assert.hasText(operIp, "IP参数{operIp}必传");
-
-            SdTunnels tunnel = null;
-            for (String spkDeviceId : spkDeviceIds) {
-                SdDevices sdDevices = sdDevicesService.selectSdDevicesById(spkDeviceId);
-                tunnel = sdTunnelsService.selectSdTunnelsById(sdDevices.getEqTunnelId());
-                if (null != tunnel) {
-                    break;
-                }
-            }
-            //设备所属管理站host
-            String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
-            //接口地址
-            String url = "http://localhost:80000/phoneSpk/playVoice";
-            // String url = host + "/phoneSpk/playVoice";
-
-            ResponseEntity<AjaxResult> forEntity = restTemplate.getForEntity(url, AjaxResult.class, uriVariables);
-            return forEntity.getBody();
-        }*/
-
-
         Long externalSystemId = null;
         String hostId = null;
-
         for (String spkDeviceId : spkDeviceIds) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
             externalSystemId = devices.getExternalSystemId();
@@ -315,7 +283,6 @@ public class PhoneSpkService {
             }
         }
         Assert.notNull(externalSystemId, "未配置所选设备关联的外部系统");
-
         for (String spkDeviceId : spkDeviceIds) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
             SdDevices fEq = sdDevicesMapper.selectSdDevicesById(devices.getfEqId());

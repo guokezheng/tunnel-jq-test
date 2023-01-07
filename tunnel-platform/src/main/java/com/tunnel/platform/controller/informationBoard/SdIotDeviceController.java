@@ -37,9 +37,9 @@ public class SdIotDeviceController extends BaseController
     }
 
     @GetMapping(value = "/getdevicessize")
-    public AjaxResult getDevicesSize()
+    public AjaxResult getDevicesSize(SdIotDevice sdIotDevice)
     {
-        return AjaxResult.success(sdIotDeviceService.getDevicesSize());
+        return AjaxResult.success(sdIotDeviceService.getDevicesSize(sdIotDevice));
     }
 
     /**

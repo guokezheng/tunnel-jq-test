@@ -63,42 +63,54 @@ public class KafkaReadListenToDevStatusTopic {
             if (record.value() != null || !record.value().toString().equals("")) {
                 System.out.println(record.value());
                 JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
-                if (jsonObject.get("deviceDataRecord") != null) {
-                    Object o = jsonObject.get("deviceDataRecord");
-                    SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(o.toString(), SdDeviceDataRecord.class);
-                    SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());
-                    if (deviceDataRecord != null) {
-                        sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
-                    } else {
-                        sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);
+                if(jsonObject.get("expands") != null && jsonObject.get("expands") != ""){
+                    //解析设备运行数据信息记录
+                    Object deviceDataRecordObject = jsonObject.get("deviceDataRecord");
+                    //解析设备运行数据信息
+                    Object deviceDataObject = jsonObject.get("deviceData");
+                    //解析设备状态数据信息
+                    Object deviceStatusObject = jsonObject.get("deviceStatus");
+                    //设备运行数据信息记录操作
+                    if(deviceStatusObject != null){
+                        //Object o = jsonObject.get("deviceDataRecord");
+                        SdDeviceDataRecord sdDeviceDataRecord = JSONUtil.toBean(deviceDataRecordObject.toString(), SdDeviceDataRecord.class);
+                        SdDeviceDataRecord deviceDataRecord = sdDeviceDataRecordService.selectSdDeviceDataRecordById(sdDeviceDataRecord.getId());
+                        if (deviceDataRecord != null) {
+                            sdDeviceDataRecordService.updateSdDeviceDataRecord(sdDeviceDataRecord);
+                        } else {
+                            sdDeviceDataRecordService.insertSdDeviceDataRecord(sdDeviceDataRecord);
+                        }
                     }
-                } else if (jsonObject.get("expands") != null && "SDEV00063700001980003".equals(jsonObject.get("devNo"))) {
-                    Object o = jsonObject.get("expands");
-                    SdDevices sdDevices = JSONUtil.toBean(o.toString(), SdDevices.class);
-                    SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
-                    if (devices != null) {
-                        sdDevices.setUpdateTime(new Date());
-                        sdDevicesService.updateSdDevices(sdDevices);
-                    } else {
-                        sdDevicesService.insertSdDevices(sdDevices);
+                    //设备运行数据信息操作
+                    if(deviceDataObject != null){
+                        JSONObject object = JSONObject.parseObject(deviceDataObject.toString());
+                        String deviceId = object.getString("deviceId");
+                        String deviceData = object.getString("deviceData");
+                        Long deviceItemId = object.getLong("deviceItemId");
+                        SdDeviceData sdDeviceData = new SdDeviceData();
+                        sdDeviceData.setItemId(deviceItemId);
+                        List<SdDeviceData> sdDeviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+                        List<SdDeviceData> collect = sdDeviceDataList.stream().filter(item -> item.getDeviceId().equals(deviceId) && item.getItemId().toString().equals(deviceItemId.toString())).collect(Collectors.toList());
+                        if (collect.size() > 0) {
+                            SdDeviceData data = setDeviceData(deviceId, deviceData, deviceItemId);
+                            data.setUpdateTime(DateUtils.getNowDate());
+                            sdDeviceDataMapper.updateKafkaDeviceData(data);
+                        } else {
+                            SdDeviceData data = setDeviceData(deviceId, deviceData, deviceItemId);
+                            data.setCreateTime(DateUtils.getNowDate());
+                            sdDeviceDataMapper.insertSdDeviceData(data);
+                        }
                     }
-                }else if (jsonObject.get("expands") != null && "SRUN00063700001980002".equals(jsonObject.get("devNo"))) {
-                    JSONObject object = JSONObject.parseObject(jsonObject.get("expands").toString());
-                    String deviceId = object.getString("deviceId");
-                    String deviceData = object.getString("deviceData");
-                    Long deviceItemId = object.getLong("deviceItemId");
-                    SdDeviceData sdDeviceData = new SdDeviceData();
-                    sdDeviceData.setItemId(deviceItemId);
-                    List<SdDeviceData> sdDeviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
-                    List<SdDeviceData> collect = sdDeviceDataList.stream().filter(item -> item.getDeviceId().equals(deviceId) && item.getItemId().toString().equals(deviceItemId.toString())).collect(Collectors.toList());
-                    if (collect.size() > 0) {
-                        SdDeviceData data = setDeviceData(deviceId, deviceData, deviceItemId);
-                        data.setUpdateTime(DateUtils.getNowDate());
-                        sdDeviceDataMapper.updateKafkaDeviceData(data);
-                    } else {
-                        SdDeviceData data = setDeviceData(deviceId, deviceData, deviceItemId);
-                        data.setCreateTime(DateUtils.getNowDate());
-                        sdDeviceDataMapper.insertSdDeviceData(data);
+                    //设备状态数据信息操作
+                    if(deviceStatusObject != null){
+                        SdDevices sdDevices = JSONUtil.toBean(deviceStatusObject.toString(), SdDevices.class);
+                        SdDevices devices = sdDevicesService.selectSdDevicesById(sdDevices.getEqId());
+                        if (devices != null) {
+                            sdDevices.setUpdateTime(new Date());
+                            sdDevicesService.updateSdDevices(sdDevices);
+                        } else {
+                            sdDevicesService.insertSdDevices(sdDevices);
+                        }
                     }
                 }
             }

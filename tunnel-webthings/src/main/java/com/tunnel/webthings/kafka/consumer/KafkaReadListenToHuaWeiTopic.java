@@ -8,16 +8,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
-import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdEventType;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
-import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
-import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
-import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
+import com.tunnel.business.mapper.dataInfo.*;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
@@ -27,6 +25,7 @@ import com.tunnel.business.service.dataInfo.impl.SdTunnelsServiceImpl;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
+import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -41,7 +40,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -85,6 +86,14 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private RadarEventServiceImpl radarEventServiceImpl;
+
+    @Autowired
+    private SdEventMapper sdEventMapper;
+
+    @Autowired
+    private SdMicrowavePeriodicStatisticsMapper statisticsMapper;
+
+    private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
 
     /**
      * 监听风机实时运行状态
@@ -289,6 +298,44 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增or更新风机安全检测仪数据
             saveOrUpdateFanSafeMonitor(objects, zhenSuDu, zhenFuDu, chenJiang, qingXie, zhenGaoJing, chenQingGaoJing);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 实时获取火灾报警信息
+     *
+     * @param record
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_iot_receive_fire_alert"}, containerFactory = "kafkaThreeContainerFactory")
+    public void receiveFireAlert(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢火灾报警数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析火灾报警数据
+            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            //处理火灾报警数据
+            fireDataHandle(objects);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取实时微波车检信息
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_iot_receive_vd_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
+    public void receiveVdBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢微波车检数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //获取微波车检itemId
+            Long itemId = Long.valueOf(DevicesTypeItemEnum.WEI_BO_CHE_LIANG_JIAN_CE_QI.getCode());
+            //解析微波车检数据
+            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            //新增微波车检数据
+            savePressureInstrument(objects,itemId);
         }
         consumer.commitSync();
     }
@@ -694,6 +741,23 @@ public class KafkaReadListenToHuaWeiTopic {
     }
 
     /**
+     * 新增微波车检信息
+     *
+     * @param objects
+     * @param itemId
+     */
+    public void saveReceiveVdBizAttr(JSONArray objects,Long itemId){
+        //循环遍历kafka数据
+        for(int i = 0; i < objects.size(); i++){
+            //解析数据
+            JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
+            //新增微波车检
+            SdMicrowavePeriodicStatistics statistics = setVdBizAttrData(jsonObject1);
+            statisticsMapper.insertSdMicrowavePeriodicStatistics(statistics);
+        }
+    }
+
+    /**
      * 赋值设备实时数据
      *
      * @param deviceId
@@ -707,6 +771,48 @@ public class KafkaReadListenToHuaWeiTopic {
         deviceData.setItemId(itemId);
         deviceData.setData(data);
         return deviceData;
+    }
+
+    /**
+     * 赋值微波车检实体类
+     *
+     * @param jsonObject1
+     * @return
+     */
+    public SdMicrowavePeriodicStatistics setVdBizAttrData(JSONObject jsonObject1){
+        String deviceId = jsonObject1.getString("deviceId");//设备id
+        Long laneNum = jsonObject1.getLong("laneNum");//车道
+        String direction = jsonObject1.getString("direction");//方向
+        String flow = jsonObject1.getString("flow");//车流量总数
+        String flowS = jsonObject1.getString("flowS");//小型车交通量
+        String flowM = jsonObject1.getString("flowM");//中型车交通量
+        String flowL = jsonObject1.getString("flowL");//大型车交通量
+        String flowSpace = jsonObject1.getString("flowSpace");//车间距
+        String speed = jsonObject1.getString("speed");//平均速度
+        String speedS = jsonObject1.getString("speedS");//平均速度:小型车
+        String speedM = jsonObject1.getString("speedM");//平均速度:中型车
+        String speedL = jsonObject1.getString("speedL");//平均速度:小大型车
+        String occupancy = jsonObject1.getString("occupancy");//平均占有率
+        String carLength = jsonObject1.getString("carLength");//平均车长
+        String collectTime = jsonObject1.getString("collectTime");//采集时间
+        SdMicrowavePeriodicStatistics statistics = new SdMicrowavePeriodicStatistics();
+        statistics.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        statistics.setDeviceId(deviceId);
+        statistics.setLaneNo(laneNum);
+        statistics.setAvgSpeed(speed);
+        statistics.setSmallVehicleNum(flowS);
+        statistics.setMidVehicleNum(flowM);
+        statistics.setHeavyVehicleNum(flowL);
+        statistics.setAvgLength(carLength);
+        statistics.setAvgHeadway(flowSpace);
+        statistics.setAvgOccupancy(occupancy);
+        statistics.setTrafficFlowTotal(flow);
+        statistics.setEqDirection(direction);
+        statistics.setSmallVehicleSpeed(speedS);
+        statistics.setMidVehicleSpeed(speedM);
+        statistics.setHeavyVehicleSpeed(speedL);
+        statistics.setCreateTime(DateUtils.parseDate(collectTime));
+        return statistics;
     }
 
     /**
@@ -734,14 +840,16 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     public JSONObject devReaStatus(Long eqType, JSONObject object){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "SRUN00063700001980002");
+        jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("devType",eqType);
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus","1");
         jsonObject.put("netstatus","1");
         jsonObject.put("source","suidao");
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        jsonObject.put("expands",object.toString());
+        JSONObject obj = new JSONObject();
+        obj.put("deviceData",object);
+        jsonObject.put("expands",obj);
         return jsonObject;
     }
 
@@ -753,7 +861,7 @@ public class KafkaReadListenToHuaWeiTopic {
      */
     public JSONObject devStatus(SdDevices sdDevices){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("devNo", "SDEV00063700001980003");
+        jsonObject.put("devNo", "S00063700001980001");
         jsonObject.put("devType",sdDevices.getEqType());
         jsonObject.put("loginTime",DateUtils.getNowDate());
         jsonObject.put("devStatus",sdDevices.getEqStatus());
@@ -773,7 +881,9 @@ public class KafkaReadListenToHuaWeiTopic {
             jsonObject.put("netStatusRemark","连通");
         }
         jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
-        jsonObject.put("expands",sdDevices);
+        JSONObject obj = new JSONObject();
+        obj.put("deviceStatus",sdDevices);
+        jsonObject.put("expands",obj);
         return jsonObject;
     }
 
@@ -945,6 +1055,84 @@ public class KafkaReadListenToHuaWeiTopic {
 //                jsonObject.put("devNo", "S00063700001980001");
 //                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
             //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+        }
+    }
+
+    /**
+     * 处理火灾报警信息
+     *
+     * @param jsonArray
+     */
+    public void fireDataHandle(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            //解析数据
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            //设备id
+            String deviceId = jsonObject.getString("deviceId");
+            String fireData = jsonObject.getString("alertInfo");
+            //判断是否为空或类型不对应
+            if ("".equals(fireData) || fireData == null) {
+                return;
+            }
+            if (!fireData.contains("火警") && !fireData.contains("模块或探头故障") && !fireData.contains("模块或探头恢复")
+                    && !fireData.contains("全部声光启动") && !fireData.contains("全部声光停止")) {
+                return;
+            }
+            if (fireData.contains(":")) {
+                //查询设备信息
+                SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
+                //查询设备类型数据项表
+                SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+                sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+                SdDeviceTypeItem deviceTypeItem = sdDeviceTypeItemMapper.selectSdDeviceTypeItemList(sdDeviceTypeItem).get(0);
+                //查询实时数据表
+                SdDeviceData sdDeviceData = new SdDeviceData();
+                sdDeviceData.setDeviceId(deviceId);
+                sdDeviceData.setItemId(deviceTypeItem.getId());
+                List<SdDeviceData> sdDeviceDataList = sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
+                //获取火灾报警事件类型
+                String alarmType = fireData.substring(0, fireData.indexOf(":"));
+                log.info("alarmType:" + alarmType);
+                //获取火灾报警时间
+                String warningTime = fireData.substring(fireData.length() - 19);
+                //事件类型为模块或探头恢复、全部声光停止时清除设备报警状态
+                if (fireData.contains("恢复") || fireData.contains("全部声光停止")) {
+                    //复位清除设备报警状态
+                    //将状态更新为正常
+                    for(SdDeviceData item : sdDeviceDataList){
+                        //0：正常 1：报警
+                        item.setData("0");
+                        sdDeviceDataMapper.updateSdDeviceData(item);
+                        sendData.pushDevicesDataNowTime(sdDeviceData);
+                    }
+                    //复位清除预警
+                    SdEvent sdEvent = new SdEvent();
+                    sdEvent.setEventTypeId(20L);
+                    List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+                    for (SdEvent item : sdEvents) {
+                        item.setEventState("1");
+                        item.setEndTime(new Date().toString());
+                        sdEventMapper.updateSdEvent(item);
+                    }
+                }
+                //事件相关的设备要把数据更新到device_data中
+                if (sdDeviceDataList.size() == 0) {
+                    sdDeviceData.setData("1");
+                    sdDeviceData.setCreateTime(new Date());
+                    sdDeviceData.setItemId(deviceTypeItem.getId());
+                    sdDeviceDataMapper.insertSdDeviceData(sdDeviceData);
+                    sendData.pushDevicesDataNowTime(sdDeviceData);
+                } else {
+                    SdDeviceData devData = sdDeviceDataList.get(0);
+                    devData.setUpdateTime(new Date());
+                    devData.setData("1");
+                    sdDeviceDataMapper.updateSdDeviceData(devData);
+                    sendData.pushDevicesDataNowTime(devData);
+                }
+            } else {
+                log.error("当前报文格式异常，请检查设备！");
+                return;
+            }
         }
     }
 }

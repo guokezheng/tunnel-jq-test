@@ -507,8 +507,6 @@ export default {
           if(response.code == 200){
             this.videoForm = response.data
             this.cameraPlayer = true
-          }else if(response.code == 500){
-            this.$modal.msgWarning("获取视频失败");
           }
         }).catch((e)=>{
           this.$modal.msgWarning("获取视频失败");

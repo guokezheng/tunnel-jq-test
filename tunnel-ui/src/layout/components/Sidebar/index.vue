@@ -280,8 +280,7 @@ export default {
   align-items: center;
 }
 .el-scrollbar__wrap{
-  width: 100%;
-  overflow: hidden;
+  // width: 100%;
 }
 // .theme-light .el-scrollbar__wrap{background-color:white;}
 // .theme-light #app .sidebar-container{background-color: white;}
@@ -313,7 +312,7 @@ export default {
     }
   }
   .el-scrollbar__view {
-    width: 100%;
+    // width: 100%;
     height: 100%;
   }
   .el-scrollbar {
@@ -499,7 +498,7 @@ export default {
       padding: 0;
     }
     .el-scrollbar__view {
-      width: 100% !important;
+      // width: 100% !important;
       color: white;
     }
     .el-select-dropdown__item.selected,

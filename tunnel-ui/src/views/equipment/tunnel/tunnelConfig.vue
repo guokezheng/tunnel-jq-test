@@ -800,11 +800,6 @@ export default {
     },
     /* 配置清空*/
     reset() {
-      console.log(this.selectedIconList,"this.selectedIconList")
-      console.log(this.upList,"this.upList")
-      console.log(this.downList,"this.downList")
-      console.log(img,"img")
-      
       this.selectedIconList = [];
       this.upList = [];
       this.downList = [];

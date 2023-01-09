@@ -210,11 +210,11 @@ export default {
       this.$emit("dialogClose");
     },
     handleOK(){
-      const items = []
+      // const items = []
 
-      const divId = {}
-      divId.deviceId = this.stateForm.externalDeviceId
-      items.push(divId)
+      // const divId = {}
+      // divId.deviceId = this.stateForm.externalDeviceId
+      // items.push(divId)
       const param ={
         lib:"YeastarHost",
         loop: this.stateForm2.loop,
@@ -222,7 +222,7 @@ export default {
         volume:this.stateForm2.volume,
         fileNames:Array(this.stateForm2.fileNames),
         spkDeviceIds:Array(this.eqInfo.equipmentId),
-        items :items,
+        // items :items,
       }
       console.log(param,"param");
       playVoice(param).then((res) =>{

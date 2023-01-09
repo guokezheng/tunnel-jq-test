@@ -92,13 +92,14 @@ public class LightTask {
                         sdDevices.setEqType(TunnelStepEnum.getEqType(name));
                         sdDevices.setExternalDeviceId(TunnelStepEnum.getValue(name));
                         SdDevices device = sdDevicesService.getLight(sdDevices);
-
-                        String desc = tunnelStepEnum.getDesc();
-                        Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
-                        if ("基本段".equals(desc)) {
-                            itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+                        if (device != null) {
+                            String desc = tunnelStepEnum.getDesc();
+                            Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+                            if ("基本段".equals(desc)) {
+                                itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+                            }
+                            updateDeviceData(device, String.valueOf(brightness), itemId);
                         }
-                        updateDeviceData(device, String.valueOf(brightness), itemId);
                     }
                 }
             }
@@ -131,18 +132,18 @@ public class LightTask {
                 for (TunnelStepEnum tunnelStepEnum : TunnelStepEnum.values()) {
                     String name = tunnelStepEnum.getName();
                     Integer brightness = data.getInteger(name);
-
                     if (null != brightness) {
                         sdDevices.setEqType(TunnelStepEnum.getEqType(name));
                         sdDevices.setExternalDeviceId(TunnelStepEnum.getValue(name));
                         SdDevices device = sdDevicesService.getLight(sdDevices);
-
-                        String desc = tunnelStepEnum.getDesc();
-                        Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
-                        if ("基本段".equals(desc)) {
-                            itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+                        if (device != null) {
+                            String desc = tunnelStepEnum.getDesc();
+                            Integer itemId = DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode();
+                            if ("基本段".equals(desc)) {
+                                itemId = DevicesTypeItemEnum.JB_LIGHT_BRIGHNESS.getCode();
+                            }
+                            updateDeviceData(device, String.valueOf(brightness), itemId);
                         }
-                        updateDeviceData(device, String.valueOf(brightness), itemId);
                     }
                 }
             }

@@ -1,8 +1,15 @@
 <template>
-  <el-dialog :title="title" :visible.sync="visible" top="6vh" width="1200px" before-close="visible = false">
-    <el-card class="box-card" style="margin-top: 2vh;">
+  <el-dialog
+    :title="title"
+    :visible.sync="visible"
+    top="6vh"
+    width="1200px"
+    before-close="visible = false"
+  >
+    <el-card class="box-card" style="margin-top: 2vh">
       <span v-if="dataForm.applyType == ''" style="color: red"
-        >请先选择屏幕尺寸，以方便查看具体预览</span>
+        >请先选择屏幕尺寸，以方便查看具体预览</span
+      >
       <span style="color: red; margin-left: 20px"
         >使用"#"作为占位符号,例如：前方#公里出现交通事故，请减速慢行</span
       >
@@ -20,9 +27,8 @@
         v-bind:style="divStyle"
         class="blackBoard"
       >
-
         <div
-        class="textBoard"
+          class="textBoard"
           v-for="(res, index) in templateContent"
           :key="index"
           v-drag
@@ -65,27 +71,7 @@
         </div>
       </div>
     </el-card>
-    <el-row class="infoBoardButton">
-        <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-        <el-button type="info" plain @click="alignment(6)" size="mini"
-          >下对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(5)" size="mini"
-          >上下居中</el-button
-        >
-        <el-button type="info" plain @click="alignment(4)" size="mini"
-          >上对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(3)" size="mini"
-          >右对齐</el-button
-        >
-        <el-button type="info" plain @click="alignment(2)" size="mini"
-          >左右居中</el-button
-        >
-        <el-button type="info" plain @click="alignment(1)" size="mini"
-          >左对齐</el-button
-        >
-      </el-row>
+
     <el-card>
       <el-form
         :model="dataForm"
@@ -95,13 +81,14 @@
         size="mini"
       >
         <el-row :gutter="24">
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item prop="screenSize" label="屏幕尺寸">
               <el-select
                 @change="resolvingPowerType"
                 v-model="dataForm.screenSize"
                 filterable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in screenSizeOptions"
@@ -113,59 +100,80 @@
               </el-select>
             </el-form-item>
           </el-col>
-<!--          <el-col :span="2">-->
-<!--            <el-button type="primary" @click="addTemplateContent"-->
-<!--              >新增222</el-button-->
-<!--            >-->
-<!--          </el-col>-->
-<!--          <el-col :span="2">-->
-<!--            <el-button type="primary" @click="chooseImageEvent()"-->
-<!--              >选择图片</el-button-->
-<!--            >-->
-<!--          </el-col>-->
+          <el-col :span="16">
+            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+            <el-button type="info" plain @click="alignment(6)" size="mini"
+              >下对齐</el-button
+            >
+            <el-button type="info" plain @click="alignment(5)" size="mini"
+              >上下居中</el-button
+            >
+            <el-button type="info" plain @click="alignment(4)" size="mini"
+              >上对齐</el-button
+            >
+            <el-button type="info" plain @click="alignment(3)" size="mini"
+              >右对齐</el-button
+            >
+            <el-button type="info" plain @click="alignment(2)" size="mini"
+              >左右居中</el-button
+            >
+            <el-button type="info" plain @click="alignment(1)" size="mini"
+              >左对齐</el-button
+            >
+          </el-col>
+          <!--          <el-col :span="2">-->
+          <!--            <el-button type="primary" @click="addTemplateContent"-->
+          <!--              >新增222</el-button-->
+          <!--            >-->
+          <!--          </el-col>-->
+          <!--          <el-col :span="2">-->
+          <!--            <el-button type="primary" @click="chooseImageEvent()"-->
+          <!--              >选择图片</el-button-->
+          <!--            >-->
+          <!--          </el-col>-->
         </el-row>
         <!-- 选择图片弹出框开始 -->
-<!--        <el-dialog-->
-<!--          title="选择图片"-->
-<!--          :visible.sync="dialogVisible"-->
-<!--          :before-close="close"-->
-<!--          top="6vh"-->
-<!--          width="1100px"-->
-<!--          :modal="false"-->
-<!--          append-to-body-->
-<!--        >-->
-<!--          &lt;!&ndash; 选择图片内容区域开始 &ndash;&gt;-->
-<!--          <div class="changeImage">-->
-<!--            <el-row style="padding-left: 60px">-->
-<!--              <el-checkbox-group v-model="checkList">-->
-<!--                <el-col-->
-<!--                  :span="8"-->
-<!--                  v-for="(item, index) in imgUrl"-->
-<!--                  :key="index"-->
-<!--                  style="margin-top: 12px"-->
-<!--                  v-show="item.pictureUrl"-->
-<!--                >-->
-<!--                  <el-checkbox :label="item.pictureUrl" >-->
-<!--                    <div class="photo">-->
-<!--                      <img-->
-<!--                        :src="item.pictureUrl"-->
-<!--                        @dblclick="dblEvent(item.pictureUrl)"-->
-<!--                        draggable="true"-->
-<!--                        v-on:dragstart="faceImagedragg($event, item)"-->
-<!--                      />-->
-<!--                    </div>-->
-<!--                  </el-checkbox>-->
-<!--                </el-col>-->
-<!--              </el-checkbox-group>-->
-<!--            </el-row>-->
-<!--            <span slot="footer" class="dialog-footer">-->
-<!--              <el-button size="small" @click="close">取消</el-button>-->
-<!--              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>-->
-<!--            </span>-->
-<!--          </div>-->
+        <!--        <el-dialog-->
+        <!--          title="选择图片"-->
+        <!--          :visible.sync="dialogVisible"-->
+        <!--          :before-close="close"-->
+        <!--          top="6vh"-->
+        <!--          width="1100px"-->
+        <!--          :modal="false"-->
+        <!--          append-to-body-->
+        <!--        >-->
+        <!--          &lt;!&ndash; 选择图片内容区域开始 &ndash;&gt;-->
+        <!--          <div class="changeImage">-->
+        <!--            <el-row style="padding-left: 60px">-->
+        <!--              <el-checkbox-group v-model="checkList">-->
+        <!--                <el-col-->
+        <!--                  :span="8"-->
+        <!--                  v-for="(item, index) in imgUrl"-->
+        <!--                  :key="index"-->
+        <!--                  style="margin-top: 12px"-->
+        <!--                  v-show="item.pictureUrl"-->
+        <!--                >-->
+        <!--                  <el-checkbox :label="item.pictureUrl" >-->
+        <!--                    <div class="photo">-->
+        <!--                      <img-->
+        <!--                        :src="item.pictureUrl"-->
+        <!--                        @dblclick="dblEvent(item.pictureUrl)"-->
+        <!--                        draggable="true"-->
+        <!--                        v-on:dragstart="faceImagedragg($event, item)"-->
+        <!--                      />-->
+        <!--                    </div>-->
+        <!--                  </el-checkbox>-->
+        <!--                </el-col>-->
+        <!--              </el-checkbox-group>-->
+        <!--            </el-row>-->
+        <!--            <span slot="footer" class="dialog-footer">-->
+        <!--              <el-button size="small" @click="close">取消</el-button>-->
+        <!--              <el-button size="small" @click="sendBtnEvent()" type="primary" v-loading="loading">确认</el-button>-->
+        <!--            </span>-->
+        <!--          </div>-->
 
-<!--          &lt;!&ndash; 选择图片内容区域结束 &ndash;&gt;-->
-<!--        </el-dialog>-->
+        <!--          &lt;!&ndash; 选择图片内容区域结束 &ndash;&gt;-->
+        <!--        </el-dialog>-->
         <!-- 选择图片弹出框结束 -->
         <!--        <el-scrollbar style="height:15vh;width: 1130px">-->
         <el-row
@@ -173,7 +181,7 @@
           v-for="(res, index) in templateContent"
           :key="index"
         >
-          <el-col :span="22">
+          <el-col :span="24">
             <el-form-item label="内容">
               <el-input
                 type="textarea"
@@ -190,12 +198,13 @@
               @click="delTemplateContent(res)"
             ></el-button>
           </el-col> -->
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item prop="fontColor" label="字体颜色">
               <el-select
                 v-model="res.fontColor"
                 filterable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in colorOptions"
@@ -207,7 +216,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item prop="fontSize" label="字体大小">
               <el-select v-model="res.fontSize" style="width: 100%">
                 <el-option
@@ -220,9 +229,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item prop="fontType" label="字体类型">
-              <el-select v-model="res.fontType" filterable placeholder="请选择">
+              <el-select v-model="res.fontType" filterable placeholder="请选择"  style="width: 100%">
                 <el-option
                   v-for="item in fontTypeOptions"
                   :key="item.code"
@@ -233,7 +242,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item prop="fontSpacing" label="字体间距">
               <el-input-number
                 :min="0"
@@ -242,12 +251,12 @@
                 style="width: 100%"
               />
             </el-form-item>
-          </el-col>
-          <el-col :span="24" v-show="templateContent.length > 1">
+          </el-col> -->
+          <!-- <el-col :span="24" v-show="templateContent.length > 1">
             <el-divider></el-divider>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
+          </el-col> -->
+        <!-- </el-row>
+        <el-row :gutter="24"> -->
           <!-- <el-col :span="8">
             <el-form-item prop="rollSpeed" label="滚动速度(毫秒)" label-width="40%">
               <el-input-number
@@ -274,6 +283,7 @@
                 v-model="dataForm.inScreenMode"
                 filterable
                 placeholder="请选择"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in inScreenModeOptions"
@@ -292,6 +302,7 @@
                 placeholder="请选择所属类别"
                 clearable
                 size="small"
+                style="width: 100%"
               >
                 <el-option
                   v-for="item in iotTemplateCategoryList"
@@ -305,10 +316,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item prop="remark" label="备注">
-              <el-input
-                v-model="dataForm.remark"
-                style="width: 100%"
-              />
+              <el-input v-model="dataForm.remark" style="width: 100%" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -336,7 +344,7 @@ import {
   editTemplate,
   deleteTemplate,
   getTemplateContent,
-  getGalleryList
+  getGalleryList,
 } from "@/api/board/template";
 export default {
   data() {
@@ -375,35 +383,34 @@ export default {
       ispreviewContent: -1,
       dataForm: {
         id: "",
-        screenSize: "1024*128",//屏幕尺寸
-        inScreenMode: "1",//入屏方式
-        stopTime: '500',
-        applyType: "",//适用类型
-        vmsType: "",//情报板类型
-        remark: "",//备注
+        screenSize: "1024*128", //屏幕尺寸
+        inScreenMode: "1", //入屏方式
+        stopTime: "500",
+        applyType: "", //适用类型
+        vmsType: "", //情报板类型
+        remark: "", //备注
         imgSizeFrom: "", //尺寸大小
         imageUrl: "",
         height: "",
         width: "",
-        coordinate: "",//起始点位置;前3位代表x点的位值，后3位代表y点的位置
+        coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
         category: "",
       },
       templateContent: [],
       templateDelContent: [],
       fontTypeOptions: [
         {
-            code: 'KaiTi',
-            content: '楷体'
+          code: "KaiTi",
+          content: "楷体",
         },
         {
-            code: 'SimSun',
-            content: '宋体'
+          code: "SimSun",
+          content: "宋体",
         },
         {
-            code: 'SimHei',
-            content: '黑体'
+          code: "SimHei",
+          content: "黑体",
         },
-
       ],
       screenSizeOptions: [
         // {
@@ -559,7 +566,7 @@ export default {
           name: "正常",
         },
       ],
-      fontSizeOpt:[
+      fontSizeOpt: [
         {
           code: "24",
           name: "24",
@@ -572,9 +579,8 @@ export default {
           code: "16",
           name: "16",
         },
-
       ],
-      iotTemplateCategoryList:[],
+      iotTemplateCategoryList: [],
       title: "选择图片",
       loading: false,
       isAdd: false,
@@ -624,12 +630,11 @@ export default {
   computed: {
     dataRule() {
       return {
-
         stopTime: [
           //停留时间
           {
             required: true,
-            message: '请填写停留时间',
+            message: "请填写停留时间",
             trigger: "blur",
           },
         ],
@@ -637,7 +642,7 @@ export default {
           //入屏方式
           {
             required: true,
-            message: '请选择入屏方式',
+            message: "请选择入屏方式",
             trigger: "blur",
           },
         ],
@@ -679,23 +684,23 @@ export default {
   //     },
   //   },
   // },
-  mounted(){
+  mounted() {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
       this.screenSizeOptions = res.data;
-      console.log(this.screenSizeOptions,'this.screenSizeOptions')
+      console.log(this.screenSizeOptions, "this.screenSizeOptions");
     });
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList,'this.iotTemplateCategoryList')
+      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
   },
   methods: {
     init() {
-      this.title = !this.dataForm.id ? '新增' : '修改';
+      this.title = !this.dataForm.id ? "新增" : "修改";
       this.isAdd = !this.dataForm.id;
       this.visible = true;
-      console.log(this.dataForm.id,'这是模板id');
+      console.log(this.dataForm.id, "这是模板id");
       this.templateDelContent = [];
       this.$nextTick(() => {
         if (this.isAdd) {
@@ -721,19 +726,22 @@ export default {
     },
     // 文字对齐方式
     alignment(alignmentNum) {
-      console.log(alignmentNum,"alignmentNum");
+      console.log(alignmentNum, "alignmentNum");
       var divContent = document.getElementsByClassName("blackBoard");
       var textBoard = document.getElementsByClassName("textBoard");
-      console.log(textBoard,"textBoard");
+      console.log(textBoard, "textBoard");
       // 获取文字长宽
       let textWidth = textBoard[0].offsetWidth;
       let textHeight = textBoard[0].offsetHeight;
       // 获取黑盒子长宽
       let divWidth = divContent[0].offsetWidth;
       let divHeight = divContent[0].offsetHeight;
-      console.log(document.getElementsByClassName("textBoard"),"document.getElementsByClassName('textBoard')");
-      console.log(textBoard[0].style,"textBoard[0].style");
-      console.log(textWidth,divWidth,"999999999999999");
+      console.log(
+        document.getElementsByClassName("textBoard"),
+        "document.getElementsByClassName('textBoard')"
+      );
+      console.log(textBoard[0].style, "textBoard[0].style");
+      console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
         // 左对齐
         case 1:
@@ -914,24 +922,24 @@ export default {
       this.loading = true;
       let templateId = "";
       let method = !this.isAdd ? "put" : "post";
-      console.log(this.dataForm,"this.dataForm");
-      console.log(this.templateContent,"this.templateContent")
+      console.log(this.dataForm, "this.dataForm");
+      console.log(this.templateContent, "this.templateContent");
       if (this.isAdd) {
         // 新增
         await addTemplate(this.dataForm, method).then((data) => {
-          console.log(data,'新增口')
+          console.log(data, "新增口");
           templateId = data;
         });
         let params = {
           templateContent: this.templateContent,
           templateId: templateId,
-        }
+        };
         addTemplateContent(params).catch((err) => {
           throw err;
         });
       } else {
-        console.log(this.dataForm)
-        console.log(params)
+        console.log(this.dataForm);
+        console.log(params);
         // 修改
         await editTemplate(this.dataForm).then((data) => {});
 
@@ -943,9 +951,9 @@ export default {
           templateContent: this.templateContent,
           templateId: this.dataForm.id,
           templateDelContent: this.templateDelContent,
-        }
-        editTemplateContent(params).then(response => {
-          console.log(response,'返回结果');
+        };
+        editTemplateContent(params).then((response) => {
+          console.log(response, "返回结果");
         });
       }
       this.loading = false;
@@ -1023,15 +1031,14 @@ export default {
           this.templateContent.indexOf(data) ==
           this.templateContent.indexOf(this.templateContent[i])
         ) {
-          if(this.templateContent.length == 1){
+          if (this.templateContent.length == 1) {
             this.$modal.msgError("至少保留一条数据");
-          }else{
-            if(data.id){
+          } else {
+            if (data.id) {
               this.templateDelContent.push(data);
             }
             this.templateContent.splice(this.templateContent.indexOf(data), 1);
           }
-
         }
       }
     },
@@ -1059,30 +1066,29 @@ export default {
       let params = {
         vmsSize: this.dataForm.screenSize,
       };
-      console.log(params,'params')
+      console.log(params, "params");
       getGalleryList(params).then((data) => {
-        console.log(data,"data")
+        console.log(data, "data");
 
         if (!data) {
           return;
         }
-        for(var i=0;i<data.rows.length;i++){
-            for(var j=i+1;j<data.rows.length;j++){
-                if(data.rows[i].pictureName==data.rows[j].pictureName){
-                  data.rows.splice(j,1)
-                }
+        for (var i = 0; i < data.rows.length; i++) {
+          for (var j = i + 1; j < data.rows.length; j++) {
+            if (data.rows[i].pictureName == data.rows[j].pictureName) {
+              data.rows.splice(j, 1);
             }
+          }
         }
         let list = data.rows.sort((dataA, dataB) => {
           dataA.id - dataB.id;
         });
         this.imgUrl.push(...list);
-        console.log(this.imgUrl,"this.imgUrl")
-
+        console.log(this.imgUrl, "this.imgUrl");
       });
     },
   },
-}
+};
 </script>
 <style lang="less" scoped>
 .previewContentCSS {
@@ -1098,8 +1104,8 @@ export default {
   width: 100%;
   // height: 80px;
 }
-.infoBoardButton{
-    display:flex; 
-    justify-content: center;
-  }
+.infoBoardButton {
+  display: flex;
+  justify-content: center;
+}
 </style>

@@ -92,7 +92,7 @@
             prop="strategyType"
             :formatter="strategyTypeFormat"
           />
-          <el-table-column label="策略信息" align="left" prop="slist">
+          <el-table-column label="策略信息" align="left" prop="slist" :show-overflow-tooltip='true'>
             <template slot-scope="scope">
               <div v-for="(item, index) in scope.row.slist" :key="index">
                 {{ item }}
@@ -249,7 +249,7 @@
             prop="strategyType"
             :formatter="strategyTypeFormat"
           />
-          <el-table-column label="策略信息" align="left" prop="slist">
+          <el-table-column label="策略信息" align="left" prop="slist" :show-overflow-tooltip='true'>
             <template slot-scope="scope">
               <div v-for="(item, index) in scope.row.slist" :key="index">
                 {{ item }}

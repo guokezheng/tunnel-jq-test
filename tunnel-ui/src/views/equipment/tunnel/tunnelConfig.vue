@@ -13,11 +13,14 @@
         </el-button>
         <el-button type="info" size="small" icon="el-icon-check" class="tunnelNameButton" @click="preserve">保存配置
         </el-button>
+        <el-button type="info" size="small" icon="el-icon-circle-close" class="tunnelNameButton" @click="handleBack">返回
+        </el-button>
         <el-popconfirm popper-class="reset-confirm" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
           icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @onConfirm="reset">
           <el-button type="info" size="small" slot="reference" icon="el-icon-refresh-left" class="tunnelNameButton"
             style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>
+        
         <div class="display-box">
           <p class="menu-title title-wrap">显示设备编号：</p>
           <el-switch class="title-wrap" v-model="displayNumb" active-color="#46a6ff" inactive-color="#46a6ff">
@@ -1321,6 +1324,11 @@ export default {
       this.EnvironmentVisible = false;
       this.laneVisible = false;
       this.paramVisible = false;
+    },
+    handleBack(){
+      this.$router.push({
+        path: "/dev/sd/tunnel",
+      });
     },
     // 辅助线
     auxiliaryLine() {

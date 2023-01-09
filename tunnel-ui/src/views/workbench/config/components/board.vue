@@ -73,11 +73,12 @@
             </div>
 
             <div class="infoButton">
-              <img
+              <div  @click="openQbbDrawer(item, index, 1)"></div>
+              <!-- <img
                 src="../../../../assets/cloudControl/edit2.png"
                 @click="openQbbDrawer(item, index, 1)"
-              />
-              <div @click="delQbbDrawer(item)">X</div>
+              /> -->
+              <div @click="delQbbDrawer(index)"></div>
             </div>
           </div>
         </div>
@@ -174,7 +175,7 @@
           <el-button
             type="primary"
             size="mini"
-            @click="openDialogVisible(1)"
+            @click="openDialogVisible(1,1)"
             style="width: 80px"
             class="submitButton"
             >添加信息</el-button
@@ -714,6 +715,7 @@ export default {
       let protocolType = "GUANGDIAN_V33";
       let deviceld = this.associatedDeviceId.toString();
       uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
+        this.$modal.msgSuccess("发布成功");
         console.log(response, "返回结果");
       });
     },
@@ -747,12 +749,12 @@ export default {
       }
     },
     // 打开添加信息弹窗
-    openDialogVisible(type) {
+    openDialogVisible(type,mode) {
       // this.devicePixel = this.form.devicePixel
       if (type == 1) {
-        this.$refs.addinfo.init(this.addForm.devicePixel, type);
+        this.$refs.addinfo.init(this.addForm.devicePixel, type,mode);
       } else {
-        this.$refs.addinfo.init(this.devicePixelMode, type);
+        this.$refs.addinfo.init(this.devicePixelMode, type,mode);
       }
       console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
     },
@@ -845,43 +847,22 @@ export default {
     // },
     onSubmit() {
       getBoardEditInfo(this.associatedDeviceId).then((response) => {
-        console.log(response, "getBoardInfo");
-
-        // var response = {};
-        // response = boardData;
         var parseObject = JSON.parse(response.data[0]);
-        console.log(parseObject, "parseObject");
+        console.log(parseObject,"parseObject");
         var protocolType = parseObject.support.PROTOCOL_TYPE;
         var contents = parseObject.content;
-
-        // if (
-        //   typeof contents == "undefined" ||
-        //   typeof protocolType == "undefined"
-        // ) {
-        //   this.$message(response.msg);
-        //   return;
-        // }
-        // this.supplier = protocolType;
-        var currRowId = "";
-        var reg = /,/g;
-        console.log(contents, "contents");
+        this.contentList = []
         for (var i = 0; i < contents.length; i++) {
           var content = contents[i];
           var itemId = "ITEM" + this.formatNum(i, 3);
-          if (i == 0) {
-            currRowId = itemId;
+          for(var itm of content[itemId]){
+            itm.COLOR = this.getColorStyle(itm.COLOR);
+            itm.FONT_SIZE = Number(itm.FONT_SIZE.substring(0, 2)) + "px";
+            this.contentList.push(itm);
           }
-          var con = content[itemId];
-
-          for (let item of con) {
-            item.COLOR = this.getColorStyle(item.COLOR);
-            item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
-            // item.font = this.getFontStyle(item.FONT)
-          }
-          console.log(con, "con");
-          this.contentList = con;
-          console.log(this.contentList, "this.contentList11");
         }
+        console.log(this.contentList, "this.contentList11");
+
       });
     },
     formatNum(num, length) {
@@ -1106,7 +1087,9 @@ export default {
     handleClosee() {
       getBoardContent(this.associatedDeviceId).then((res) => {
         console.log(response, "情报板内容查询");
-      });
+      }).catch(e => {
+        console.log(e);
+      })
       this.$emit("dialogClose");
     },
     dialogClose1() {
@@ -1261,7 +1244,7 @@ export default {
   height: 200px;
   // background: #fff;
   margin: 0 30px 0 15px;
-  overflow: auto;
+  overflow-y: auto;
   border: solid 1px #01aafd;
   .infoContent {
     width: 97%;
@@ -1280,7 +1263,7 @@ export default {
       justify-content: center;
       i {
         display: block;
-        color: #586f85;
+        color: #f2f8ff;
       }
       i:nth-of-type(2) {
         padding-top: 10px;
@@ -1291,6 +1274,7 @@ export default {
       height: 100%;
       border: solid 1px #01aafd;
       margin-left: 4px;
+      overflow: hidden;
       .content {
         width: calc(100% - 10px);
         height: calc(100% - 10px);
@@ -1308,23 +1292,27 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-around;
-      img {
-        width: 40px;
-        height: 40px;
-        cursor: pointer;
-      }
+      // img {
+      //   width: 40px;
+      //   height: 40px;
+      //   cursor: pointer;
+      // }
       > div {
         width: 40px;
         height: 40px;
-        text-align: center;
         line-height: 40px;
-        border: solid 1px #cfd5e0;
-        color: #333;
-        font-weight: 600;
-        background: #f2f8ff;
-        border-radius: 2px;
-        font-size: 16px;
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
         cursor: pointer;
+      }
+      >div:nth-of-type(1){
+        background-image: url(../../../../assets/cloudControl/edit3.png);
+      }
+      >div:nth-of-type(2){
+        background-image: url(../../../../assets/cloudControl/edit4.png);
+      }
+      >div:nth-of-type(1):hover{
+        background-image: url(../../../../assets/cloudControl/edit1.png);
       }
     }
   }
@@ -1332,7 +1320,7 @@ export default {
 .disabledClass {
   pointer-events: none;
   cursor: auto !important;
-  color: #f2f8ff !important;
+  color: #00152B  !important;
 }
 ::v-deep .el-collapse-item__header {
   height: 30px;

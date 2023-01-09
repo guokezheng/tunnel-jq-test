@@ -4,17 +4,18 @@
     <el-dialog
       title="提示"
       :visible.sync="dialogVisible"
-      width="60%"
+      width="44%"
       :before-close="handleClose"
     >
       <el-card class="box-card" style="margin-top: 2vh">
         <div
           style="
-            backgroundcolor: #000000;
-            color: yellow;
+            backgroundColor: #000000;
+            display: flex;
             margin: 0 auto;
             overflow: hidden;
             position: relative;
+
           "
           v-on:ondragenter="ondragenter"
           v-on:drop="faceDrop"
@@ -26,7 +27,7 @@
           class="blackBoard"
         >
           <span
-            style="line-height: 1; position: absolute; white-space: nowrap"
+            style="line-height: 1; white-space: nowrap;position: absolute;"
             :style="{
               color: dataForm.COLOR,
               fontSize: dataForm.FONT_SIZE,
@@ -75,8 +76,9 @@
           size="mini"
         >
           <el-row :gutter="24">
-            <el-col :span="6">
-              <el-form-item prop="category" label="所属类别">
+            <el-col :span="8">
+              <el-form-item prop="category" label="所属类别" 
+              :rules="[{ required: categoryRules?true:false,message: '请选择所属类别',trigger: 'blur',}]">
                 <el-select
                   v-model="dataForm.category"
                   placeholder="请选择所属类别"
@@ -93,7 +95,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col class="infoBoardButton" :span="18">
+            <el-col class="infoBoardButton" :span="16">
               <el-button type="info" plain @click="alignment(6)" size="mini"
                 >下对齐</el-button
               >
@@ -172,7 +174,7 @@
           </el-dialog> -->
           <!-- 选择图片弹出框结束 -->
           <el-row :gutter="24">
-            <el-col :span="22">
+            <el-col :span="24">
               <el-form-item label="详细内容">
                 <el-input
                   type="textarea"
@@ -192,7 +194,7 @@
                 @click="delTemplateContent(res)"
               ></el-button>
             </el-col> -->
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="COLOR" label="字体颜色">
                 <el-select
                   v-model="dataForm.COLOR"
@@ -209,7 +211,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="FONT_SIZE" label="字体大小">
                 <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
                   <el-option
@@ -222,7 +224,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="FONT" label="字体类型">
                 <el-select
                   v-model="dataForm.FONT"
@@ -249,11 +251,10 @@
                 />
               </el-form-item>
             </el-col> -->
-            <el-col :span="24" v-show="templateContent.length > 1">
+            <!-- <el-col :span="24" v-show="templateContent.length > 1">
               <el-divider></el-divider>
-            </el-col>
-          </el-row>
-          <el-row :gutter="24">
+            </el-col> -->
+         
             <!-- <el-col :span="6">
               <el-form-item prop="rollSpeed" label="滚动速度">
                 <el-input-number
@@ -264,7 +265,7 @@
                 />
               </el-form-item>
             </el-col> -->
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="STAY" label="停留时间">
                 <el-input-number
                   :min="0"
@@ -274,7 +275,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="ACTION" label="入屏方式">
                 <el-select
                   v-model="dataForm.ACTION"
@@ -291,7 +292,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item prop="screenSize" label="屏幕尺寸">
                 <el-select
                   v-model="dataForm.screenSize"
@@ -404,6 +405,7 @@ export default {
         COORDINATE: "",
         FONT_SIZE: "",
         CONTENT: "山东高速欢迎你",
+        COLOR:'yellow',
       },
       templateContent: [],
       templateDelContent: [],
@@ -415,13 +417,13 @@ export default {
             trigger: "blur",
           },
         ],
-        category: [
-          {
-            required: true,
-            message: "请选择所属类别",
-            trigger: "blur",
-          },
-        ],
+        // category: [
+        //   {
+        //     required: true,
+        //     message: "请选择所属类别",
+        //     trigger: "blur",
+        //   },
+        // ],
         fontColor: [
           {
             required: true,
@@ -642,6 +644,7 @@ export default {
       iotTemplateCategoryList: [],
       infoType: "",
       devicePixelBoolean: false,
+      categoryRules:false,
     };
   },
   //   directives: {
@@ -736,7 +739,7 @@ export default {
     this.getdevicessize();
   },
   methods: {
-    init(devicePixel, type) {
+    init(devicePixel, type,mode) {
       if (devicePixel) {
         this.devicePixelBoolean = true;
 
@@ -750,7 +753,11 @@ export default {
         (this.boardWidth = "400"), (this.boardHeight = "40");
       }
       this.infoType = type;
-
+      if(mode == 1){
+        this.categoryRules = false
+      }else{
+        this.categoryRules = true
+      }
       this.title = "新增";
       this.isAdd = !this.dataForm.id;
       this.dialogVisible = true;
@@ -974,37 +981,44 @@ export default {
       console.log(textBoard[0].style, "textBoard[0].style");
       console.log(textWidth, divWidth, "999999999999999");
       switch (alignmentNum) {
-        // 左对齐
+       // 左对齐
         case 1:
-          textBoard[0].style.left = "0px";
-          textBoard[0].style.removeProperty("right");
-          break;
-        // 左右居中
-        case 2:
-          textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
-          textBoard[0].style.right = "unset";
+          divContent[0].style.justifyContent = 'left'
+          textBoard[0].style.textAlign = 'left'
+          textBoard[0].style.position = 'static'
 
           break;
-        // 右对齐
+          // 左右居中
+        case 2:
+          divContent[0].style.justifyContent = 'center'
+          textBoard[0].style.textAlign = 'center'
+          textBoard[0].style.position = 'static'
+
+          break;
+          // 右对齐
         case 3:
-          textBoard[0].style.right = "0px";
-          textBoard[0].style.removeProperty("left");
+          divContent[0].style.justifyContent = 'right'
+          textBoard[0].style.textAlign = 'right'
+          textBoard[0].style.position = 'static'
+
           break;
-        // 上对齐
+          // 上对齐
         case 4:
-          textBoard[0].style.top = "0px";
-          textBoard[0].style.removeProperty("bottom");
+          divContent[0].style.alignItems = 'flex-start'
+          textBoard[0].style.position = 'static'
+
           break;
-        // 上下对齐
+          // 上下对齐
         case 5:
-          console.log(divHeight, textHeight, "00000");
-          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
-          textBoard[0].style.bottom = "unset";
+          divContent[0].style.alignItems = 'center'
+          textBoard[0].style.position = 'static'
+
           break;
-        // 下对齐
+          // 下对齐
         case 6:
-          textBoard[0].style.removeProperty("top");
-          textBoard[0].style.bottom = "0px";
+          divContent[0].style.alignItems = 'flex-end'
+          textBoard[0].style.position = 'static'
+
           break;
       }
       var textLeft = this.addZero(textBoard[0].offsetLeft);

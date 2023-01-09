@@ -183,13 +183,7 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
 
     @Override
     public List<Map<String, Object>> getDevicesSize(SdIotDevice iotDevice) {
-        if (iotDevice.getTunnelId() == null || iotDevice.getTunnelId().equals("")
-                || iotDevice.getLocalInfo() == null || iotDevice.getLocalInfo().equals("")) {
-            return new ArrayList<>();
-        }
-        String tunnelId = iotDevice.getTunnelId();
-        Integer localInfo = iotDevice.getLocalInfo();
-        return sdIotDeviceMapper.getDevicesSize(tunnelId, localInfo);
+        return sdIotDeviceMapper.getDevicesSize(iotDevice.getTunnelId(), iotDevice.getLocalInfo());
     }
 
     @Override

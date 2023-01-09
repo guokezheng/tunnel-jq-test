@@ -926,4 +926,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType} and external_device_id=#{externalDeviceId}
 
     </select>
+
+    <select id="selectZdyDevice" resultType="sdDevices">
+        SELECT
+            d.eq_id,
+            d.eq_name,
+            d1.eq_id,
+            d1.eq_name
+        FROM
+            sd_devices d
+                LEFT JOIN sd_devices d1 ON d.f_eq_id = d1.f_eq_id
+        WHERE
+            1 = 1
+          AND d.eq_id = #{deviceId}
+          AND d1.eq_type = #{eqType}
+    </select>
 </mapper>

@@ -253,14 +253,24 @@ public class BoardController extends BaseController {
     }
 
     @GetMapping("/addBoardContent/{tunnelId}")
-    public Map<String, Object> addBoardContent(@PathVariable String tunnelId) throws ExecutionException, InterruptedException {
+    public Map<String, Object> addBoardContent(@PathVariable String tunnelId) {
         Map<String, Object> map = new HashMap<>();
         List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
         for (int i = 0;i < deviceIds.size();i++) {
-            String devId = deviceIds.get(i).toString();
+            Long deviceId = deviceIds.get(i);
+            String devId = deviceId.toString();
+            IotDeviceAccess iotDeviceAccess = iotDeviceAccessService.selectIotDeviceAccessById(deviceId);
+            if (iotDeviceAccess == null || iotDeviceAccess.getDevicePixel() == null || iotDeviceAccess.getDevicePixel().equals("")) {
+                continue;
+            }
+            String deviceInformation = "{\"devicePixel\":\"" + iotDeviceAccess.getDevicePixel() + "\"}";
+            map.put(devId, deviceInformation);
             if (nowContentMap != null && !nowContentMap.isEmpty() && nowContentMap.get(devId) != null) {
                 Object result = nowContentMap.get(devId);
-                map.put(devId, result);
+                JSONObject jsonObject = JSONObject.parseObject(result.toString());
+                if (jsonObject != null && !jsonObject.equals("{}") && jsonObject.get("devicePixel") != null) {
+                    map.put(devId, result);
+                }
             }
         }
         return map;

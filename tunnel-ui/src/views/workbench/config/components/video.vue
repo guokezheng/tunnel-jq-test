@@ -295,15 +295,21 @@
           ></videoPlayer>
           </div>
           <div class="yuntaiPic">
-            <div @click="clickLeft()"><</div>
+            <!-- <div @click="clickLeft()"><</div>
             <div>
               <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
             </div>
-            <div @click="clickRight()">></div>
+            <div @click="clickRight()">></div> -->
+            <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/>
           </div>
         </el-col>
         <el-col :span="6">
-          <div class="fangxiang"></div>
+          <div class="fangxiang">
+            <div class="picBox">
+              <img :src="yuntai" v-for="(item,index) of 8" :key="index"/>
+              <div>预置位</div>
+            </div>
+          </div>
           <div class="jiaJian">
             <div>-</div>
             <div>变倍</div>
@@ -319,11 +325,11 @@
             <div>光圈</div>
             <div>+</div>
           </div>
-          <div class="sliderClass">
+          <!-- <div class="sliderClass">
             <div>0</div>
             <el-slider v-model="yunTaiForm.slider" :max="255"></el-slider>
             <div>255</div>
-          </div>
+          </div> -->
           <div class="switchClass">
             <div>雨刷</div>
             <el-switch
@@ -336,7 +342,7 @@
             >
             </el-switch>
           </div>
-          <div class="switchClass">
+          <!-- <div class="switchClass">
             <div>灯光</div>
             <el-switch
               style="display: block"
@@ -347,7 +353,7 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
+          </div> -->
           <div class="switchClass">
             <div>除雪</div>
             <el-switch
@@ -373,7 +379,7 @@ import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状
 import flvjs from 'flv.js'
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 
-import { getLocalIP } from "@/api/event/vedioRecord";
+// import { getLocalIP } from "@/api/event/vedioRecord";
 
 
 export default {
@@ -404,8 +410,10 @@ export default {
       videoForm:{
         liveUrl:'',
       },
-      hostIP: null,
+      // hostIP: null,
       cameraVisible:true,
+      videoIcon:require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
+      yuntai:require("@/assets/cloudControl/yuntai.png"),
       videoList: [
         {
           pic: require("@/assets/images/ruoyi-login-background.jpg"),
@@ -485,10 +493,10 @@ export default {
     if(this.videoList.length > 4){
       this.picList = this.videoList.slice(0,4)
     }
-    getLocalIP().then((response) => {
-      console.log(response,"responseresponse");
-      this.hostIP = response;
-    });
+    // getLocalIP().then((response) => {
+    //   console.log(response,"responseresponse");
+    //   this.hostIP = response;
+    // });
   },
   methods: {
     // 根据设备id 获取弹窗内信息
@@ -496,10 +504,14 @@ export default {
       if (this.eqInfo.equipmentId) {
         videoStreaming(this.eqInfo.equipmentId).then((response) =>{
           console.log(response,"视频流");
-
-
-          this.videoForm = response.data
-          this.cameraPlayer = true
+          if(response.code == 200){
+            this.videoForm = response.data
+            this.cameraPlayer = true
+          }else if(response.code == 500){
+            this.$modal.msgWarning("获取视频失败");
+          }
+        }).catch((e)=>{
+          this.$modal.msgWarning("获取视频失败");
         })
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
@@ -630,9 +642,9 @@ export default {
 }
 .yuntaiBox {
   width: 100%;
-  height: 600px;
+  // height: 600px;
+  height: 510px;
   padding: 20px;
-  // border: solid 1px red;
   > .el-col:nth-of-type(1) {
     padding-right: 10px;
   }
@@ -648,15 +660,16 @@ export default {
   }
   .yuntaiPic {
     width: 100%;
-    height: calc(100% - 450px);
-    margin-top: 20px;
+    // height: calc(100% - 450px);
+    height: calc(100% - 440px);
+    // margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 30px;
       height: 30px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       line-height: 28px;
@@ -674,16 +687,103 @@ export default {
       margin-left: 5px;
       cursor: pointer;
     }
+    // img{
+    //   width: 25%;
+    //   height: 100%;
+    //   padding-right: 5px;
+    // }
     img{
-      width: 25%;
-      height: 100%;
-      padding-right: 5px;
+      width:30px;
+      height:30px;
+      margin-left: 6px;
+      cursor: pointer;
+      caret-color: rgba(0,0,0,0);
+
+    }
+    img:nth-of-type(1){
+      margin-left: 0;
     }
   }
   .fangxiang {
-    widows: 100%;
-    height: 40%;
-    border: solid 1px white;
+    width: 100%;
+    height: 215px;
+    margin: 0 auto;
+    .picBox{
+      width:215px;
+      height:215px;
+      margin: 0 auto;
+      position: relative;
+      >div{
+        text-decoration: underline;
+        color: #fff;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top:0;
+        bottom: 0;
+        margin: auto;
+        height: 36px;
+        width: 74px;
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+      }
+      >img{
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+      }
+      >img:nth-of-type(1){
+        position: absolute;
+        top: -1px;
+        left:96px;
+        transform: rotate(0deg) scale(0.77)
+      }
+      >img:nth-of-type(2){
+        position: absolute;
+        top: 45px;
+        left:137px;
+        transform: rotate(45deg) scale(0.77);
+      }
+      >img:nth-of-type(3){
+        position: absolute;
+        top: 106px;
+        left: 133px;
+        transform: rotate(90deg) scale(0.77);
+      }
+      >img:nth-of-type(4){
+        position: absolute;
+        top: 147px;
+        left: 87px;
+        transform: rotate(135deg) scale(0.77);
+      }
+      >img:nth-of-type(5){
+        position: absolute;
+        top: 143px;
+        left: 26px;
+        transform: rotate(180deg) scale(0.77);
+      }
+      >img:nth-of-type(6){
+        position: absolute;
+        top: 97px;
+        left: -14px;
+        transform: rotate(225deg) scale(0.77);
+
+      }
+      >img:nth-of-type(7){
+        position: absolute;
+        top: 36px;
+        left: -11px;
+        transform: rotate(269deg) scale(0.77);
+
+      }
+      >img:nth-of-type(8){
+        position: absolute;
+        top: -5px;
+        left: 35px;
+        transform: rotate(315deg) scale(0.77);
+
+      }
+    }
   }
   .jiaJian {
     width: 100%;
@@ -696,10 +796,16 @@ export default {
     > div:nth-of-type(3) {
       width: 23px;
       height: 23px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       font-size: 18px;
+      cursor: pointer;  
+      caret-color: rgba(0,0,0,0);
+    }
+    > div:nth-of-type(1):hover,
+    > div:nth-of-type(3):hover{
+      background: #01aafd;
+      color: #fff;
     }
     > div:nth-of-type(1) {
       line-height: 18px;

@@ -65,9 +65,11 @@ public class InductionlampUtil {
                         map.put("brightness", brightnessParam);
                         //发送控制器同步指令
                         client.pushCode("000000000006010600020001");
+                        client.stop();
                         return map;
                     } else {
                         map.put("brightness", "0");
+                        client.stop();
                         return map;
                     }
                 }
@@ -116,8 +118,10 @@ public class InductionlampUtil {
                         String frequency = codeInfo.substring(0, 2);
                         int frequencyParam = Integer.parseInt(frequency, 16);
                         map.put("frequency", frequencyParam);
+                        client.stop();
                         return map;
                     } else {
+                        client.stop();
                         map.put("frequency", "0");
                         return map;
                     }
@@ -167,9 +171,11 @@ public class InductionlampUtil {
                         String dutyCycle = codeInfo.substring(0, 2);
                         int dutyCycleParam = Integer.parseInt(dutyCycle, 16);
                         map.put("dutyCycle", dutyCycleParam);
+                        client.stop();
                         return map;
                     } else {
                         map.put("dutyCycle", "0");
+                        client.stop();
                         return map;
                     }
                 }

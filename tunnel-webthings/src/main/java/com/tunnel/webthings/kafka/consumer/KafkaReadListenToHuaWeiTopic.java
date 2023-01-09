@@ -1,23 +1,36 @@
 package com.tunnel.webthings.kafka.consumer;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
-import com.tunnel.business.datacenter.domain.enumeration.PlatformAuthEnum;
+import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
+import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
+import com.tunnel.business.mapper.event.SdEventMapper;
+import com.tunnel.business.mapper.event.SdEventTypeMapper;
+import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.dataInfo.impl.SdTunnelsServiceImpl;
+import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
+import com.tunnel.business.service.event.ISdEventService;
+import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +43,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +73,18 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Autowired
+    private ISdEventService sdEventService;
+
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
+
+    @Autowired
+    private ISdEventTypeService sdEventTypeService;
+
+    @Autowired
+    private RadarEventServiceImpl radarEventServiceImpl;
 
     /**
      * 监听风机实时运行状态
@@ -223,6 +249,51 @@ public class KafkaReadListenToHuaWeiTopic {
     }
 
     /**
+     * 获取实时远传压力值信息
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_iot_receive_pressureInstrument_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
+    public void pressureInstrumentBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢远传压力表数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //获取远传压力值itemId
+            Long itemId = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+            //解析远传压力值数据
+            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            //新增远传压力值数据
+            savePressureInstrument(objects,itemId);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取实时风机安全检测仪信息
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_iot_receive_fanSafeMonitor_bizAttr"}, containerFactory = "kafkaThreeContainerFactory")
+    public void fanSafeMonitorBizAttr(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢风机安全检测仪数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //获取远传压力值itemId
+            Long zhenSuDu = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode());
+            Long zhenFuDu = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode());
+            Long chenJiang = Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode());
+            Long qingXie = Long.valueOf(DevicesTypeItemEnum.QING_XIE_ZHI.getCode());
+            Long zhenGaoJing = Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode());
+            Long chenQingGaoJing = Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode());
+            //解析风机安全检测仪数据
+            JSONArray objects = JSONObject.parseArray(record.value().toString());
+            //新增or更新风机安全检测仪数据
+            saveOrUpdateFanSafeMonitor(objects, zhenSuDu, zhenFuDu, chenJiang, qingXie, zhenGaoJing, chenQingGaoJing);
+        }
+        consumer.commitSync();
+    }
+
+    /**
      * 获取实时设备状态
      * @param record
      * @param acknowledgment
@@ -242,6 +313,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 获取实时设备故障信息
+     *
      * @param record
      * @param acknowledgment
      * @param consumer
@@ -259,7 +331,25 @@ public class KafkaReadListenToHuaWeiTopic {
     }
 
     /**
+     * 接收瑞华赢实时事件推送
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"rhy_tunnel_merge_event"}, containerFactory = "kafkaThreeContainerFactory")
+    public void receiveEvent(ConsumerRecord<String, Object> record, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
+        log.info("监听到瑞华赢实时事件数据： --> {}", record.value());
+        if (record.value() != null && record.value() != "") {
+            JSONObject objects =  JSON.parseObject(record.value().toString());
+            joinEvent(objects);
+        }
+        consumer.commitSync();
+    }
+
+    /**
      * 更新设备状态
+     *
      * @param objects
      */
     public void updateDevStatus(JSONArray objects){
@@ -301,6 +391,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增设备故障信息
+     *
      * @param objects
      */
     public void addDevFault(JSONArray objects){
@@ -380,6 +471,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新设备数据
+     *
      * @param objects
      * @param itemId
      */
@@ -422,6 +514,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新co/vi数据
+     *
      * @param objects
      * @param coId
      * @param viId
@@ -436,32 +529,14 @@ public class KafkaReadListenToHuaWeiTopic {
             //将数据重新定义新的参数名
             JSONObject objectCo = definitionParam(deviceId, co, coId);
             JSONObject objectVi = definitionParam(deviceId, vi, viId);
-            //校验数据库是否存在
-            int numberCo = checkDeviceData(deviceId, coId);
-            if(numberCo == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
-            //校验数据库是否存在
-            int numberVi = checkDeviceData(deviceId, viId);
-            if(numberVi == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
+            //新增CO数据
+            SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            //新增VI数据
+            SdDeviceData deviceData1 = setDeviceData(deviceId, vi, viId);
+            deviceData1.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData1);
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectCo = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(coId).getDeviceTypeId() : sdDevices1.getEqType(), objectCo);
             //将co数据上传至高速云
@@ -474,6 +549,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新风速风向数据
+     *
      * @param objects
      * @param fsId
      * @param fxId
@@ -486,31 +562,15 @@ public class KafkaReadListenToHuaWeiTopic {
             String windSpeed = jsonObject1.getString("windSpeed");
             String windDirection = jsonObject1.getString("windDirection");
             //校验数据库是否存在
-            int numberFs = checkDeviceData(deviceId, fsId);
-            if(numberFs == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
+            //新增FS数据
+            SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
             //校验数据库是否存在
-            int numberFx = checkDeviceData(deviceId, fxId);
-            if(numberFx == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
+            //新增FX数据
+            SdDeviceData deviceData1 = setDeviceData(deviceId, windDirection, fxId);
+            deviceData1.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData1);
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             //重新定义参数名
             JSONObject objectFs = definitionParam(deviceId, windSpeed, fsId);
@@ -525,6 +585,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 新增or更新洞内亮度数据
+     *
      * @param objects
      * @param itemId
      */
@@ -534,24 +595,16 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String illuminance = jsonObject1.getString("illuminance");
-            //校验数据库是否存在
-            int number = checkDeviceData(deviceId, itemId);
-            if(number == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
+            //新增洞内亮度数据
+            SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
         }
     }
 
     /**
      * 新增or更新洞外亮度数据
+     *
      * @param objects
      * @param itemId
      */
@@ -561,38 +614,104 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String brightness = jsonObject1.getString("brightness");
-            int number = checkDeviceData(deviceId, itemId);
-            if(number == 0){
-                //新增数据
-                SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
-                deviceData.setCreateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            }else {
-                //更新数据
-                SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
-                deviceData.setUpdateTime(DateUtils.getNowDate());
-                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
-            }
+            //新增洞外数据
+            SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+        }
+    }
+
+    /**
+     * 新增远传压力值数据
+     * @param objects
+     * @param itemId
+     */
+    public void savePressureInstrument(JSONArray objects,Long itemId){
+        //循环遍历kafka数据
+        for(int i = 0; i < objects.size(); i++){
+            JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
+            String deviceId = jsonObject1.getString("deviceId");
+            String pressure = jsonObject1.getString("pressure");
+            //新增远传压力值数据
+            SdDeviceData deviceData = setDeviceData(deviceId, pressure, itemId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+        }
+    }
+
+    /**
+     * 新增or更新风机安全检测仪数据
+     * @param objects
+     * @param zhenSuDu
+     * @param zhenFuDu
+     * @param chenJiang
+     * @param qingXie
+     * @param zhenGaoJing
+     * @param chenQingGaoJing
+     */
+    public void saveOrUpdateFanSafeMonitor(JSONArray objects,Long zhenSuDu,
+                                           Long zhenFuDu, Long chenJiang, Long qingXie,
+                                           Long zhenGaoJing, Long chenQingGaoJing){
+        //循环遍历kafka数据
+        for(int i = 0; i < objects.size(); i++){
+            JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
+            String deviceId = jsonObject1.getString("deviceId");
+            //振动速度值
+            String shakeSpeed = jsonObject1.getString("shakeSpeed");
+            //振动幅度值
+            String amplitude = jsonObject1.getString("amplitude");
+            //沉降值
+            String subside = jsonObject1.getString("subside");
+            //倾斜值
+            String slope = jsonObject1.getString("slope");
+            //振动告警
+            String shakeAlaram = jsonObject1.getString("shakeAlaram");
+            //沉降倾斜告警
+            String subsideSlopeAlaram = jsonObject1.getString("subsideSlopeAlaram");
+            //校验数据库是否存在
+            //振动速度值
+            int zhenSuDuNum = checkDeviceData(deviceId, zhenSuDu);
+            int zhenFuDuNum = checkDeviceData(deviceId, zhenFuDu);
+            int chenJiangNum = checkDeviceData(deviceId, chenJiang);
+            int qingXieNum = checkDeviceData(deviceId, qingXie);
+            int zhenGaoJingNum = checkDeviceData(deviceId, zhenGaoJing);
+            int chenQingGaoJingNum = checkDeviceData(deviceId, chenQingGaoJing);
+
+            //新增or更新远传压力值数据
+            //振动速度值
+            saveOrUpdateFanSafe(deviceId,shakeSpeed,zhenSuDu,zhenSuDuNum);
+            //振动幅度值
+            saveOrUpdateFanSafe(deviceId,amplitude,zhenFuDu,zhenFuDuNum);
+            //沉降值
+            saveOrUpdateFanSafe(deviceId,subside,chenJiang,chenJiangNum);
+            //倾斜值
+            saveOrUpdateFanSafe(deviceId,slope,qingXie,qingXieNum);
+            //振动告警
+            saveOrUpdateFanSafe(deviceId,shakeAlaram,zhenGaoJing,zhenGaoJingNum);
+            //沉降倾斜告警
+            saveOrUpdateFanSafe(deviceId,subsideSlopeAlaram,chenQingGaoJing,chenQingGaoJingNum);
         }
     }
 
     /**
      * 赋值设备实时数据
+     *
      * @param deviceId
-     * @param runStatus
+     * @param data
      * @param itemId
      * @return
      */
-    public SdDeviceData setDeviceData(String deviceId,String runStatus,Long itemId){
+    public SdDeviceData setDeviceData(String deviceId,String data,Long itemId){
         SdDeviceData deviceData = new SdDeviceData();
         deviceData.setDeviceId(deviceId);
         deviceData.setItemId(itemId);
-        deviceData.setData(runStatus);
+        deviceData.setData(data);
         return deviceData;
     }
 
     /**
      * 重新定义参数名
+     *
      * @param deviceId
      * @param deviceData
      * @param deviceItemId
@@ -608,6 +727,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 实时设备运行状态上传高速云共通方法
+     *
      * @param eqType
      * @param object
      * @return
@@ -627,6 +747,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 实时设备状态上传高速云共通方法
+     *
      * @param sdDevices
      * @return
      */
@@ -658,6 +779,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 校验实时数据是否存在
+     *
      * @param deviceId
      * @param itemId
      * @return
@@ -677,6 +799,7 @@ public class KafkaReadListenToHuaWeiTopic {
 
     /**
      * 设备运行状态与数据库匹配
+     *
      * @param itemId
      * @param runStatus
      * @return
@@ -731,5 +854,97 @@ public class KafkaReadListenToHuaWeiTopic {
             }
         }
         return runStatus;
+    }
+
+    /**
+     * 实时保存风机安全检测仪数据
+     *
+     * @param deviceId
+     * @param data
+     * @param itemId
+     * @param num
+     */
+    public void saveOrUpdateFanSafe(String deviceId,String data, Long itemId, int num){
+        if(num == 0){
+            SdDeviceData deviceData = setDeviceData(deviceId, data, itemId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+        }else {
+            SdDeviceData deviceData = setDeviceData(deviceId, data, itemId);
+            deviceData.setCreateTime(DateUtils.getNowDate());
+            sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+        }
+    }
+
+    /**
+     * 事件数据接收
+     */
+    public void joinEvent(JSONObject jsonObject) {
+        Long eventTypeId = MergeRhyEventTypeEnum.getMergeEventTypeId(jsonObject.getString("mergeCode"));
+        if(eventTypeId==null){
+            return;
+        }
+        SdEvent event = new SdEvent();
+        Long eventId = jsonObject.getLong("eventId");
+        event.setId(eventId);
+        event.setDirection(jsonObject.getString("direction"));
+        event.setEventLongitude(jsonObject.getString("eventLongitude"));
+        event.setEventLatitude(jsonObject.getString("eventLatitude"));
+        event.setEventTypeId(eventTypeId);
+        String stakeNum = jsonObject.getString("eventStakeNo");
+        if(StrUtil.isNotBlank(stakeNum)){
+            event.setStakeNum(jsonObject.getString("eventStakeNo"));
+        }
+        event.setEventSource(jsonObject.getString("eventSource"));
+        event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        event.setEventDescription(jsonObject.getString("eventDescribe"));
+        event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
+        event.setVideoUrl(jsonObject.getString("videoUrl"));
+        event.setEndTime(jsonObject.getString("completeTime"));
+        event.setLaneNo(jsonObject.getString("carLane"));
+        //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联
+        //zc  状态             0：处理中 1：已处理           2:忽略 3：未处理
+        Integer eventStatus = jsonObject.getInteger("eventStatus");
+        String ownStatus = "";
+        switch (eventStatus){
+            case 2 : ownStatus = "0"; break;
+            case 3 : ownStatus = "1"; break;
+            case 5 : ownStatus = "2"; break;
+            default: ownStatus = "3"; break;
+        }
+        event.setEventState(ownStatus);
+        //所有事件类型Map
+        Map<Long,String> eventTypeMap = sdEventTypeService.getEventTypeMap();
+        //所有隧道Map
+        Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
+        event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
+        String[] imgList = jsonObject.getString("eventImgUrl").split(";");
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        for(String img:imgList){
+            SdTrafficImage image = new SdTrafficImage();
+            image.setImgUrl(img);
+            image.setBusinessId(eventId.toString());
+            imageList.add(image);
+        }
+        SpringUtil.getBean(SdTrafficImageMapper.class).brachInsertFaultIconFile(imageList);
+        int effectiveRows = 0;
+        if(sdEventService.selectSdEventById(eventId) != null){
+            effectiveRows = sdEventService.updateSdEvent(event);
+        }else{
+            effectiveRows = sdEventService.insertSdEvent(event);
+        }
+        //推送物联中台
+        if(effectiveRows > 0){
+            //如果是未处理状态改为处理中
+            if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
+                event.setEventState(EventStateEnum.processing.getCode());
+            }
+            radarEventServiceImpl.sendDataToOtherSystem(null,event);
+//                jsonObject.clear();
+//                jsonObject.put("event", event);
+//                jsonObject.put("devNo", "S00063700001980001");
+//                jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), "yyyy-MM-dd HH:mm:ss.SSS"));
+            //kafkaTemplate.send("wq_tunnelEvent", jsonObject.toString());
+        }
     }
 }

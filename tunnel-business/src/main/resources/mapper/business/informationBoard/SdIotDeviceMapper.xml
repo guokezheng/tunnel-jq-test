@@ -162,9 +162,6 @@
             <if test="localInfo != null and localInfo != ''"> and local_info = #{localInfo}</if>
             <if test="devicePixel != null and devicePixel != ''"> and ida.device_pixel = #{devicePixel}</if>
             <if test="tunnelId != null and tunnelId != ''"> and ide.tunnel_id = #{tunnelId}</if>
-            <if test="params.deptId != null and params.deptId != ''">
-                AND (ide.dept_id = #{params.deptId} OR ide.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
-            </if>
         </where>
     </select>
 
@@ -386,7 +383,12 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
     </select>
 
     <select id="getDevicesSize" resultType="hashmap">
-        SELECT device_pixel from iot_device_access where device_pixel is not null GROUP BY device_pixel
+        SELECT a.device_pixel from iot_device_access a
+        left join iot_device b on a.device_id = b.device_id
+        where a.device_pixel is not null
+        <if test="tunnelId != null and tunnelId != ''">and b.tunnel_id = #{tunnelId}</if>
+        <if test="localInfo != null and localInfo != ''">and b.local_info = #{localInfo}</if>
+        GROUP BY a.device_pixel
     </select>
 
     <select id="selectIotDevicesByTunnelId" parameterType="String" resultType="Long">

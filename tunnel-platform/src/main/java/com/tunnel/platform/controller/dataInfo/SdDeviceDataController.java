@@ -157,6 +157,18 @@ public class SdDeviceDataController extends BaseController
         return Result.success(todayFSFXData);
     }
 
+    /**
+     * 获取远传压力表数据
+     * @param deviceId
+     * @return
+     */
+    @GetMapping("/getTodayYcylData/{deviceId}")
+    @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
+    public Result<Map> getTodayYcylData(@PathVariable("deviceId") String deviceId){
+        Map<String, Object> todayFSFXData = sdDeviceDataService.getTodayYcylData(deviceId);
+        return Result.success(todayFSFXData);
+    }
+
     @GetMapping("/getTodayLDData/{deviceId}")
     @ApiImplicitParam(name = "deviceId", value = "设备ID", required = true, dataType = "String", paramType = "path",dataTypeClass = String.class)
     public Result<Map> getTodayLDData(@PathVariable("deviceId") String deviceId)
@@ -177,5 +189,15 @@ public class SdDeviceDataController extends BaseController
     public AjaxResult energyConsumptionDetection(@PathVariable("tunnelId") String tunnelId)
     {
         return AjaxResult.success(sdDeviceDataService.energyConsumptionDetection(tunnelId));
+    }
+
+    /**
+     * 获取风机安全检测仪实时数据
+     * @param deviceId
+     * @return
+     */
+    @GetMapping(value = "/getFanSafeData/{deviceId}")
+    public AjaxResult getFanSafeData(@PathVariable("deviceId") String deviceId){
+        return sdDeviceDataService.getFanSafeData(deviceId);
     }
 }

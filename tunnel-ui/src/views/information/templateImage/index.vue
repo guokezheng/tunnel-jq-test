@@ -616,3 +616,9 @@ export default {
   },
 };
 </script>
+<style scoped lang="scss">
+::v-deep .el-dialog__header{
+    padding: 20px;
+    padding-bottom: 20px;
+  }
+</style>

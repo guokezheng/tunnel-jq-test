@@ -1,9 +1,4 @@
-/* 设备图标 */
-/* url:图标地址
- * type:图标类型
- * explain：图标含义
- * */
-/* 逆向车道 */
+/* 平台地图 */
 let laneImage = [
   {
     id: "1",
@@ -48,7 +43,7 @@ let laneImage = [
   {
     id: "6",
     name: "杭山东隧道",
-    url: require('@/assets/image/lane/hsd1230.png'),
+    url: require('@/assets/image/lane/hsd.png'),
     width: 1728,
     num: 3,
     direction: 0
@@ -56,7 +51,7 @@ let laneImage = [
   {
     id: "7",
     name: "金家楼隧道",
-    url: require('@/assets/image/lane/jjl1230.png'),
+    url: require('@/assets/image/lane/jjl.png'),
     width: 1728,
     num: 3,
     direction: 0
@@ -64,7 +59,7 @@ let laneImage = [
   {
     id: "8",
     name: "马鞍山隧道",
-    url: require('@/assets/image/lane/mas1230.png'),
+    url: require('@/assets/image/lane/mas.png'),
     width: 2270,
     num: 3,
     direction: 0

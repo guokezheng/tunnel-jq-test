@@ -656,6 +656,12 @@ export default {
   .modifyEqTypeDialog .el-dialog__headerbtn{
     top: 10px !important;
   }
+  ::v-deep .el-dialog__headerbtn{
+    top:14px !important;
+  }
+  ::v-deep .el-dialog__header{
+    padding: 20px;
+  }
   
 </style>
 <style lang="scss">

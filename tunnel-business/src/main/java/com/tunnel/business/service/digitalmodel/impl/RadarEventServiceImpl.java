@@ -196,7 +196,9 @@ public class RadarEventServiceImpl implements RadarEventService {
                 }
             } else if (sdEvent != null) {
                 sdEvent.setEventState("1");
-                sdEvent.setStakeNum(sdEvent.getStakeNum().replaceAll("-",""));
+                if(sdEvent.getStakeNum()!=null){
+                    sdEvent.setStakeNum(sdEvent.getStakeNum().replaceAll("-",""));
+                }
                 jsonObject.put("event", sdEvent);
                 kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
             }

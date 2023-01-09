@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.informationBoard;
 
 
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -127,7 +128,7 @@ public interface SdIotDeviceMapper {
      */
 	public List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice iotDevice);
 
-    public List<Map<String, Object>> getDevicesSize();
+    public List<Map<String, Object>> getDevicesSize(@Param("tunnelId") String tunnelId, @Param("localInfo") Integer localInfo);
 
     public List<Long> selectIotDevicesByTunnelId(String tunnelId);
 }

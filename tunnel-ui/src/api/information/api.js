@@ -10,10 +10,12 @@ export function listTunnels(deptId) {
 
 
   // 查询位置信息
-export function devicessize() {
+export function devicessize(query) {
     return request({
       url: '/information/getdevicessize',
       method: 'get',
+      params: query
+
     })
   }
 

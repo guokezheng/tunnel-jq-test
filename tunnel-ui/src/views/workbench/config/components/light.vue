@@ -39,36 +39,33 @@
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="隧道名称:">
+            <el-form-item label="隧道名称:" label-width="102px">
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+       
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="所属方向:">
+            <el-form-item label="所属方向:" label-width="102px">
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+      
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
-            <el-form-item label="设备厂商:">
+            <el-form-item label="设备厂商:" label-width="102px">
               {{ getBrandName(stateForm.brandName) }}
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
+       
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
@@ -76,8 +73,42 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <div class="lineClass" v-if="eqInfo.clickEqType == 10" style="margin-bottom:10px"></div>
+        <el-row v-if="eqInfo.clickEqType == 10">
+          <el-col :span="13">
+            <el-form-item label="振动速度值:">
+              {{ stateForm2.shakeSpeed }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="振动幅度值:" label-width="102px">
+              {{ stateForm2.amplitude }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="13">
+            <el-form-item label="沉降值:">
+              {{ stateForm2.subside }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="倾斜值:" label-width="102px">
+              {{ stateForm2.slope }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="13">
+            <el-form-item label="振动告警:">
+              {{ stateForm2.shakeAlaram }}
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-form-item label="沉降倾斜告警:" label-width="102px">
+              {{ stateForm2.subsideSlopeAlaram }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
         <div class="lineClass"></div>
-        <el-row>
+        <el-row style="margin-top:10px">
           <el-col :span="15">
             <el-form-item label="亮度调整" v-show="this.eqInfo.clickEqType == 7">
           <el-slider
@@ -198,7 +229,7 @@ import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信
 import { getType } from "@/api/equipment/type/api.js"; //查询设备图标宽高
 import { getDevice, setBrightness } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import { getStateByData } from "@/api/equipment/eqTypeState/api"; //查询设备状态图标
-import { controlDevice } from "@/api/workbench/config.js"; //提交控制信息
+import { controlDevice,getFanSafeData } from "@/api/workbench/config.js"; //提交控制信息
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
@@ -213,6 +244,7 @@ export default {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       iconWidth: "",
       iconHeight: "",
+      stateForm2:{}
     };
   },
   created() {
@@ -242,6 +274,13 @@ export default {
             this.getEqTypeStateIcon();
           });
         });
+        if(this.eqInfo.clickEqType == 10){
+          await getFanSafeData(this.eqInfo.equipmentId).then((res) => {
+            console.log(res,"风机")
+            this.stateForm2 = res.data
+          })
+        }
+        
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -273,7 +312,6 @@ export default {
             iconUrl.push(img);
           }
         }
-        console.log(iconUrl);
 
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,
@@ -320,16 +358,21 @@ export default {
         if (response.data == 0) {
           this.$modal.msgError("控制失败");
         } else if (response.data == 1) {
-          const params = {
-            bright: this.stateForm.brightness,
-            controlType: "0",
-            deviceId: this.eqInfo.equipmentId,
-          };
-          setBrightness(params).then((res) => {
-            console.log(res, "亮度");
-          this.$modal.msgSuccess("控制成功");
+          if(this.eqInfo.clickEqType == 7){
+            const params = {
+              bright: this.stateForm.brightness,
+              controlType: "0",
+              deviceId: this.eqInfo.equipmentId,
+            };
+            setBrightness(params).then((res) => {
+              console.log(res, "亮度");
+              this.$modal.msgSuccess("控制成功");
 
-          });
+            });
+          }else{
+            this.$modal.msgSuccess("控制成功");
+          }
+          
         }
 
         this.$emit("dialogClose");

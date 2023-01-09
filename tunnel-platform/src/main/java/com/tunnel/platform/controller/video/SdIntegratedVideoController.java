@@ -29,6 +29,27 @@ public class SdIntegratedVideoController {
         return Result.success(sdIntegratedVideoService.PTZControl(param));
     }
 
+    @GetMapping("/nearCamList")
+    @ApiOperation("查询附近相机")
+    public Result nearCamList(@RequestParam Map param)
+    {
+        return Result.success(sdIntegratedVideoService.nearCamList(param));
+    }
+
+    @GetMapping("/presetList/{camId}")
+    @ApiOperation("查询相机预置位")
+    public Result presetList(@PathVariable("camId") String camId)
+    {
+        return Result.success(sdIntegratedVideoService.presetList(camId));
+    }
+
+    @GetMapping("/addPreset")
+    @ApiOperation("新增预置位")
+    public Result addPreset(@RequestParam Map param)
+    {
+        return Result.success(sdIntegratedVideoService.addPreset(param));
+    }
+
 //    @GetMapping("/camList")
 //    @ApiOperation("部门下设备数据同步")
 //    public Result camList()

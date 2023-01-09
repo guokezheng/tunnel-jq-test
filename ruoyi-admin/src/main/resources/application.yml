@@ -9,9 +9,9 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  #  profile: /Users/yqc/OpenSources/ruoyi
+#  profile: /Users/yqc/OpenSources/ruoyi
   profile: D:/project/tunnel/uploadPath
-  #  profile: E:/
+#  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -23,7 +23,7 @@ ruoyi:
   oss:
     bucketName: bucket-wisdom-oss
     # 这个需要在高速云网络环境下才可以访问，如果部署在高速云环境则需要打开此注释，目前先用IP
-    #    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
+#    endPoint: oss-cn-jinan-sdhs-d01-a.ops.sdhs.cloud
     endPoint: 10.166.26.35
     accessKeyId: h1HEeliVnMImdxRH
     accessKeySecret: LpPPK7a9ZBRmRQyHIZJ5CmVxe7kLe8
@@ -33,7 +33,7 @@ ruoyi:
 server:
   # 服务器的HTTP端口，默认为8080
   port: 8000
-  #  port: 7075
+#  port: 7075
   servlet:
     # 应用的访问路径
     context-path: /
@@ -61,15 +61,15 @@ spring:
     active: druid,webthings,deal,platform
   # 文件上传
   servlet:
-    multipart:
-      # 单个文件大小
-      max-file-size:  10MB
-      # 设置总上传的文件大小
-      max-request-size:  20MB
-    # 初始化dispatcherServlet，默认-1未开启，0及以上为开启
+     multipart:
+       # 单个文件大小
+       max-file-size:  10MB
+       # 设置总上传的文件大小
+       max-request-size:  20MB
+   # 初始化dispatcherServlet，默认-1未开启，0及以上为开启
   mvc:
-    servlet:
-      load-on-startup: 1
+     servlet:
+       load-on-startup: 1
   # 服务模块
   devtools:
     restart:
@@ -80,7 +80,7 @@ spring:
     # 地址
     #    host: 127.0.0.1
     host: 10.166.157.190
-    #    host: 10.168.54.206
+#    host: 10.168.54.206
     # 端口，默认为6379
     port: 8081
     # 数据库索引
@@ -103,12 +103,12 @@ spring:
 
 # token配置
 token:
-  # 令牌自定义标识
-  header: Authorization
-  # 令牌密钥
-  secret: abcdefghijklmnopqrstuvwxyz
-  # 令牌有效期（默认30分钟）
-  expireTime: 8760
+    # 令牌自定义标识
+    header: Authorization
+    # 令牌密钥
+    secret: abcdefghijklmnopqrstuvwxyz
+    # 令牌有效期（默认30分钟）
+    expireTime: 8760
 
 # MyBatis Plus配置
 mybatis-plus:
@@ -185,15 +185,15 @@ authorize:
   name: GLZ
   #name: GSY
   gsy:
-    host: http://10.168.65.230:8000
+    host: http://211.168.65.230:8000
     tunnel_push_url: ${authorize.gsy.host}/platform/api/tunnelsAccept
     device_push_url: ${authorize.gsy.host}/platform/api/devicesAccept
   glz_host:
-    wzb_glz_host: http://10.168.65.231:8000
-    th_glz_host: http://10.168.65.232:8000
-    mz_glz_host: http://10.168.65.233:8000
-    yts_glz_host: http://10.168.65.234:8000
-    jly_glz_host: http://10.168.65.235:8000
+    wzb_glz_host: http://211.168.65.231:8000
+    th_glz_host: http://211.168.65.232:8000
+    mz_glz_host: http://211.168.65.233:8000
+    yts_glz_host: http://211.168.65.234:8000
+    jly_glz_host: http://211.168.65.235:8000
   #管理站部门id配置，用于管理站分发
   dept_id:
     #文祖北隧道管理站，太河隧道管理站，庙子隧道管理站，仰天山隧道管理站，九龙峪隧道管理站
@@ -224,7 +224,7 @@ url:
   edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
   detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
 
+#视频平台接口调用地址、组织机构ID
 video-platform:
-  ip: "10.166.147.60"
-  port: "9021"
+  address: "http://10.166.147.60:9021"
   deptId: "10000037"

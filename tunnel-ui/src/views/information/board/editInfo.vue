@@ -4,7 +4,7 @@
       <el-dialog
         title="修改"
         :visible.sync="dialogVisible"
-        width="60%"
+        width="44%"
         :before-close="closeDialog"
       >
         <el-card class="box-card" >
@@ -12,33 +12,30 @@
             class="blackBoard"
             style="
               backgroundColor: #000000;
-              color: yellow;
               margin: 0 auto;
               overflow: hidden;
-             
+              display:flex;
               position: relative;
             "
             v-on:ondragenter="ondragenter"
             v-on:drop="faceDrop"
             v-on:dragover="allowDrop"
             :style="{
-                width:boardWidth + 'px',
-                height:boardHeight + 'px',
+                width:getDevicePixel(boardWidth,0),
+                height:getDevicePixel(boardHeight,1),
             }"
           >
             <span
               class="textBoard"
-              style="line-height: 1; position: absolute; white-space: pre-wrap"
+              style="line-height: 1; position: absolute;"
              
               :style="{
                 color: dataForm.COLOR,
-                fontSize: dataForm.FONT_SIZE,
+                fontSize: getFontSize(dataForm.FONT_SIZE),
                 fontFamily: dataForm.FONT,
-                letterSpacing: dataForm.SPEED + 'px',
-              
                 zIndex: '1000',
-                left:dataForm.COORDINATE.substring(0, 3) + 'px',
-                top:dataForm.COORDINATE.substring(3, 6) + 'px',
+                left:getCoordinate(dataForm.COORDINATE.substring(0, 3),0),
+                top:getCoordinate(dataForm.COORDINATE.substring(3, 6),1),
               }"
             v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
             ></span>
@@ -54,7 +51,150 @@
             size="mini"
           >
             <el-row :gutter="24">
-              <el-col :span="6">
+              <el-col :span="8">
+              <el-form-item prop="category" label="所属类别">
+                <el-select
+                  v-model="dataForm.category"
+                  placeholder="请选择所属类别"
+                  size="small"
+                  disabled
+                >
+                  <el-option
+                    v-for="item in iotTemplateCategoryList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="16" class="infoBoardButton" >
+            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
+            <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
+            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
+            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
+            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
+            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
+        
+            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+           
+          </el-col>
+            </el-row>
+            <el-row
+              :gutter="24"
+            >
+              <el-col :span="24">
+                <el-form-item label="详细内容">
+                  <el-input
+                    type="textarea"
+                    clearable
+                    id="textContent"
+                    placeholder="详细内容"
+                    v-model="dataForm.CONTENT"
+                    @keyup.native="keyDown($event)"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="COLOR" label="字体颜色">
+                  <el-select
+                    v-model="dataForm.COLOR"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in colorOptions"
+                      :key="item.code"
+                      :label="item.content"
+                      :value="item.code"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="FONT_SIZE" label="字体大小">
+                  <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
+                    <el-option
+                      v-for="item in fontSizeOpt"
+                      :key="item.code"
+                      :label="item.content"
+                      :value="item.code"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="FONT" label="字体类型">
+                  <el-select
+                    v-model="dataForm.FONT"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in fontTypeOptions"
+                      :key="item.code"
+                      :label="item.content"
+                      :value="item.code"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <!-- <el-col :span="6">
+                <el-form-item prop="SPEED" label="字体间距">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.SPEED"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col> -->
+              <!-- <el-col :span="24" v-show="templateContent.length > 1">
+                <el-divider></el-divider>
+              </el-col> -->
+           
+              <!-- <el-col :span="6">
+                <el-form-item prop="rollSpeed" label="滚动速度">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.rollSpeed"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col> -->
+              <el-col :span="8">
+                <el-form-item prop="STAY" label="停留时间">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.STAY"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="ACTION" label="入屏方式">
+                  <el-select
+                    v-model="dataForm.ACTION"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in inScreenModeOptions"
+                      :key="item.code"
+                      :label="item.name"
+                      :value="item.code"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item prop="screenSize" label="屏幕尺寸">
                   <el-input
                     disabled
@@ -75,150 +215,6 @@
                     >
                     </el-option>
                   </el-select> -->
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-              <el-form-item prop="category" label="所属类别">
-                <el-select
-                  v-model="dataForm.category"
-                  placeholder="请选择所属类别"
-                  size="small"
-                  disabled
-                >
-                  <el-option
-                    v-for="item in iotTemplateCategoryList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="infoBoardButton" >
-            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
-            <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
-            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
-            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
-            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
-            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
-        
-            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-           
-          </el-col>
-            </el-row>
-            <el-row
-              :gutter="24"
-            >
-              <el-col :span="22">
-                <el-form-item label="详细内容">
-                  <el-input
-                    type="textarea"
-                    clearable
-                    id="textContent"
-
-                    placeholder="详细内容"
-                    v-model="dataForm.CONTENT"
-                    @keyup.native="keyDown($event)"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="COLOR" label="字体颜色">
-                  <el-select
-                    v-model="dataForm.COLOR"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in colorOptions"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="FONT_SIZE" label="字体大小">
-                  <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
-                    <el-option
-                      v-for="item in fontSizeOpt"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="FONT" label="字体类型">
-                  <el-select
-                    v-model="dataForm.FONT"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in fontTypeOptions"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="SPEED" label="字体间距">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.SPEED"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24" v-show="templateContent.length > 1">
-                <el-divider></el-divider>
-              </el-col>
-           
-              <!-- <el-col :span="6">
-                <el-form-item prop="rollSpeed" label="滚动速度">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.rollSpeed"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col> -->
-              <el-col :span="6">
-                <el-form-item prop="STAY" label="停留时间">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.STAY"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="ACTION" label="入屏方式">
-                  <el-select
-                    v-model="dataForm.ACTION"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in inScreenModeOptions"
-                      :key="item.code"
-                      :label="item.name"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6">
@@ -312,19 +308,19 @@
         previewContent: "", //预览内容
         ispreviewContent: -1,
         dataForm: {
-          id: "",
-          screenSize: "400*40", //屏幕尺寸
-          inScreenMode: "1", //入屏方式
-          rollSpeed: "1000",
-          stopTime: "500",
-          applyType: "", //适用类型
-          vmsType: "", //情报板类型
-          remark: "", //备注
-          imgSizeFrom: "", //尺寸大小
-          imageUrl: "",
-          height: "",
-          width: "",
-          coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+          // id: "",
+          // screenSize: "400*40", //屏幕尺寸
+          // inScreenMode: "1", //入屏方式
+          // rollSpeed: "1000",
+          // stopTime: "500",
+          // applyType: "", //适用类型
+          // vmsType: "", //情报板类型
+          // remark: "", //备注
+          // imgSizeFrom: "", //尺寸大小
+          // imageUrl: "",
+          // height: "",
+          // width: "",
+          // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
         },
         templateContentModel:'',
         templateContent: [],
@@ -626,7 +622,7 @@
 
         this.boardWidth = this.boardEmitItem.screenSize.split("*")[0];
         this.boardHeight = this.boardEmitItem.screenSize.split("*")[1];
-       
+        console.log(this.boardWidth,this.boardHeight,"this.boardHeightthis.boardHeight")
         this.init()
       }
       this.getDicts("iot_template_category").then((res) => {
@@ -652,7 +648,7 @@
         this.itemPropertyMap = new HashMap();
 
         this.dataForm = this.boardEmitItem
-        this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')
+        this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')
       },
       alignment(alignmentNum) {
         console.log(alignmentNum,"alignmentNum");
@@ -673,37 +669,42 @@
         switch (alignmentNum) {
           // 左对齐
           case 1:
-            textBoard[0].style.left = '0px';
-            textBoard[0].style.removeProperty('right')
+            divContent[0].style.justifyContent = 'left'
+            textBoard[0].style.textAlign = 'left'
+            textBoard[0].style.position = 'static'
+
             break;
             // 左右居中
           case 2:
-            textBoard[0].style.left = (divWidth - textWidth)/2 +'px';
-            textBoard[0].style.right = "unset";
-            // divContent[0].style.display='flex';
-            // divContent[0].style.justifyContent= 'center';
+            divContent[0].style.justifyContent = 'center'
+            textBoard[0].style.textAlign = 'center'
+            textBoard[0].style.position = 'static'
 
             break;
             // 右对齐
           case 3:
-            textBoard[0].style.right = '0px';
-            textBoard[0].style.removeProperty('left')
+            divContent[0].style.justifyContent = 'right'
+            textBoard[0].style.textAlign = 'right'
+            textBoard[0].style.position = 'static'
+
             break;
             // 上对齐
           case 4:
-            textBoard[0].style.top = '0px';
-            textBoard[0].style.removeProperty('bottom')
+            divContent[0].style.alignItems = 'flex-start'
+            textBoard[0].style.position = 'static'
+
             break;
             // 上下对齐
           case 5:
-            console.log(divHeight,textHeight,"00000");
-            textBoard[0].style.top = (divHeight - textHeight)/2 +'px';
-            textBoard[0].style.bottom = "unset";
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.position = 'static'
+
             break;
             // 下对齐
           case 6:
-            textBoard[0].style.removeProperty('top')
-            textBoard[0].style.bottom = '0px';
+            divContent[0].style.alignItems = 'flex-end'
+            textBoard[0].style.position = 'static'
+
             break;
         }
         var textLeft = this.addZero(textBoard[0].offsetLeft)
@@ -854,6 +855,48 @@
         this.$emit("dialogClose");
 
       },
+      getDevicePixel(devicePixel, num){
+          if(num == 0){
+            if(devicePixel>760){
+              return 760 + 'px'
+            }else{
+              return devicePixel + 'px'
+            }
+          }else if(num == 1){
+            if(devicePixel>123){
+              return 123 + 'px'
+            }else{
+              return devicePixel +'px'
+            }
+          }
+      },
+      getCoordinate(coordinate,num){
+        if(num == 0){
+          if(this.boardWidth >760){
+            let i = this.boardWidth/760
+            return coordinate/i + 'px'
+          }else{
+            return coordinate + 'px'
+          }
+        }else if(num == 1){
+          if(this.boardHeight>123){
+            let i = this.boardHeight/123
+            return coordinate/i + 'px'
+          }else{
+            return coordinate + 'px'
+          }
+        }
+      },
+      getFontSize(size){
+        console.log(size,"size")
+        if(this.boardWidth >760){
+          let i = this.boardWidth/760
+          
+          return size.substring(0, 2)/i + 'px'
+        }else{
+          return size
+        }
+      }
       //将item属性存入Map
       // addItemPropertyMap(itemId, addFlg, stay, action, speed, coordinate, font, font_size, color, content) {
       //   if (!action) {

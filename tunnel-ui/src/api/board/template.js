@@ -109,6 +109,7 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
     protocolType:protocolType,
+    // parameters:parameters
     parameters:encodeURI(parameters)
 
   }
@@ -127,6 +128,15 @@ export function getAllVmsTemplate(data) {
     url: '/system/template/getAllVmsTemplate',
     method: 'get',
     params: data
+
+  })
+}
+
+// 情报板内容查询
+export function getBoardContent(deviceId) {
+  return request({
+    url: '/parser/board/getBoardContent?deviceId=' + deviceId,
+    method: 'get',
 
   })
 }

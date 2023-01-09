@@ -272,4 +272,19 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> getSpkList(SdDevices sdDevices);
+
+	/**
+	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+	 * @param sdDevices
+	 * @return
+	 */
+	SdDevices getLight(SdDevices sdDevices);
+
+	/**
+	 * 查询风机对应的振动仪检测器
+	 * @param deviceId
+	 * @return
+	 */
+	SdDevices selectZdyDevice(@Param("deviceId") String deviceId,
+							  @Param("eqType") Long eqType);
 }

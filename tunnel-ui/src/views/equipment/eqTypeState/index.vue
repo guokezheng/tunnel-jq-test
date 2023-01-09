@@ -19,7 +19,7 @@
           v-hasPermi="['system:eqTypeState:remove']">删除</el-button>
       </el-form-item>
     </el-form>
-<!-- 
+<!--
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:eqTypeState:add']">新增</el-button>
@@ -99,18 +99,18 @@
                   </el-select>
                 </el-form-item>
               </el-col>
-              <el-col :span="4">              
-                <el-form-item label="上传图标" label-width="120px">                
+              <el-col :span="4">
+                <el-form-item label="上传图标" label-width="120px">
                   <el-upload ref="upload" action="http://xxx.xxx.xxx/personality/uploadExcel" list-type="picture-card"
                              :data="{index}" :on-remove="handleRemove" :http-request="uploadFile" :on-success="handleSuccess" :file-list="fileList"
                              :on-exceed="handleExceed" :on-change="handleChange" :limit="2" :class="fileList.length >= 2 ? 'showUpload':''">
                              <img v-if="imageUrl" :src="item.url" class="avatar">
-                  </el-upload>                  
+                  </el-upload>
                   <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
                 </el-form-item>
-              
+
               </el-col>
               <el-col :span="1">
                 <div class="dialogButton" @click="addFrom()">添加</div>
@@ -152,22 +152,22 @@
                   <el-input-number v-model="item.sort" controls-position="right"  size="small" :min="1" :max="10"></el-input-number>
                 </el-form-item>
               </el-col>
-              
-              <el-col :span="4">               
-                <el-form-item label="上传图标" label-width="120px">                         
-                  <el-upload ref="upload" action="http://xxx.xxx.xxx/personality/uploadExcel"  list-type="picture-card" 
+
+              <el-col :span="4">
+                <el-form-item label="上传图标" label-width="120px">
+                  <el-upload ref="upload" action="http://xxx.xxx.xxx/personality/uploadExcel"  list-type="picture-card"
                     :data="{index}" :on-remove="handleRemove" :http-request="uploadFile" :on-success="handleSuccess" :file-list="item.iFileList"
-                    :on-exceed="handleExceed" :on-change="handleChange" :limit="2" :on-progress='handleChange'  >     
-                    <!-- <img :src="item.url" alt="">       -->                                                                    
-                </el-upload>  
-                   
-                  
+                    :on-exceed="handleExceed" :on-change="handleChange" :limit="2" :on-progress='handleChange'  >
+                    <!-- <img :src="item.url" alt="">       -->
+                </el-upload>
+
+
                  <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
                   </el-dialog>
-                </el-form-item>                 
+                </el-form-item>
               </el-col>
-              
+
               <!-- <el-col :span="1">
                 <div class="dialogButton" @click="addFrom()">添加</div>
               </el-col> -->
@@ -175,7 +175,7 @@
                 <div class="dialogButton" @click="updataDeleteForm(index)">删除</div>
               </el-col>
             </el-row>
-           
+
           </template>
         <!-- <el-form-item label="是否区分正反" >
           <el-radio v-model="direction" label="0">是</el-radio>
@@ -262,7 +262,7 @@
               stateName:'',
               isControl:'',
               iconFileId:''
-            }  
+            }
           ]
         },
         equipmentStates: [
@@ -322,11 +322,11 @@
     created() {
       this.getList();
       this.getStateEqType();
-      this.getDicts("sys_type_control").then(response => {       
+      this.getDicts("sys_type_control").then(response => {
         // console.log(response.data,'response.dataresponse.data')
         this.isControlOptions = response.data;
       });
-      this.getDicts("sd_device_state_type").then(response => {       
+      this.getDicts("sd_device_state_type").then(response => {
         this.isStateType=response.data
       });
     },
@@ -348,9 +348,9 @@
       },
       //添加的删除
       deleteForm(index){
-        //  console.log(this.form,'this.formthis.form');     
+        //  console.log(this.form,'this.formthis.form');
       // let str=this.form.equipmentList[index].iconFileId
-      //   if(str){          
+      //   if(str){
       //     deletePicture(str).then(res=>{
       //       console.log(res,'删除行')
       //   })
@@ -375,10 +375,10 @@
             }
             })
            }
-         
+
         this.equipmentStates.splice(index, 1)
-       
-        
+
+
 
       },
       /** 查询设备类型状态关系列表 */
@@ -420,10 +420,10 @@
         //      console.log(res,'取消按钮')
         //       if(res.code==200){
         //         this.iconFileIdAll==''
-        //       }            
-        //    })           
+        //       }
+        //    })
         // }
-       
+
       },
       // 表单重置
       reset() {
@@ -488,7 +488,7 @@
         //debugger
         var that = this
         // that.reset();
-        
+
         let id=''
         let staTyId=''
         if(this.ids.length==0){
@@ -507,12 +507,12 @@
        else{
          staTyId=this.sid
        }
-       
+
         // console.log(staTyId,'11111111111111')
         getEqTypeStatesByType(id,staTyId).then(response => {
          console.log(response,'resres')
          if(response.data.length==0){
-            let item = {           
+            let item = {
            deviceState:'',
            stateName:'',
            isControl:'',
@@ -526,7 +526,7 @@
          }else{
               this.equipmentStates = response.data;
          }
-        
+
           /*that.form.equipmentList = response.data;*/
           this.form.stateTypeId = id;
           const iFileList = [];
@@ -548,26 +548,26 @@
             });
 
              }
-           
+
           });
-          
+
           this.open = true;
           this.title = "修改设备类型状态关系";
-         
+
         });
       },
       //  async planRoadmapUrl(iFileList) {
       //   var that = this
       //   // that.fileList = []
-      //   // console.log(iFileList,'iFileListiFileListiFileList')     
+      //   // console.log(iFileList,'iFileListiFileListiFileList')
       //     // let iconName = iFileList[i].stateIconName
       //     let iconUrl = await that.picture(iFileList)
-      //     // console.log(iconUrl,'iconUrliconUrl')       
+      //     // console.log(iconUrl,'iconUrliconUrl')
       //       this.equipmentStates.forEach(item=>{
       //           item.iFileList.forEach(it=>{
       //              it.url=iconUrl
       //           })
-      //       })               
+      //       })
       //   console.log(that.equipmentStates,'gggggggggggggggg');
       // },
       // /* 请求图片base64地址*/
@@ -589,7 +589,7 @@
           //   url: iconUrl,
           //   fId: iFileList[i].id
           // })
-          
+
         //  that.fileList.push(this.form.iFileList[i].url)
       /** 提交按钮 */
       // submitForm() {
@@ -617,7 +617,7 @@
       // },
       /** 提交按钮 */
       submitForm() {
-       
+
         var that = this
         // this.fileData = new FormData(); // new formData对象
         // this.fileData.append("pictureName", this.form.pictureName);
@@ -628,7 +628,7 @@
         // this.fileData.append("imageRemark", this.form.imageRemark);
         // this.fileData.append("speed", this.form.speed);
         // this.fileData.append("deleteflag", this.form.deleteflag);
-        console.log(this.form,'----====------')        
+        console.log(this.form,'----====------')
         this.$refs["form"].validate(valid => {
           // this.title = "添加设备类型状态关系";
           if (valid) {
@@ -636,7 +636,7 @@
             // that.fileData.append('deviceState', that.form.equipmentList.deviceState); //状态code
             // that.fileData.append('stateName', that.form.equipmentList.stateName); //状态名称
             // that.fileData.append('isControl', that.form.equipmentList.isControl); //是否可控
-           
+
             if (this.title == "修改设备类型状态关系") {
               // if (this.fileList.length === 0) {
               //   this.$message({
@@ -656,13 +656,13 @@
               //     that.getList();下·
               //   }
               // });
-             
-              let login= this.equipmentStates.every(item=>{                 
-                   return item.iconFileId !== ''                
+
+              let login= this.equipmentStates.every(item=>{
+                   return item.iconFileId !== ''
                })
                console.log(login,'login');
                if( !login ) {
-                  return this.$modal.msgSuccess("请上传图片");
+                  return this.$modal.msgWarning("请上传图片");
                }
               console.log(this.equipmentStates,'this.form.equipmentList');
                 updatePic(this.equipmentStates).then(res=>{
@@ -682,8 +682,8 @@
               //     that.open = false;
               //     that.getList();
               //   }
-              // });              
-               
+              // });
+
                   addList2(this.form.equipmentList).then(res=>{
                       if (res.code==200){
                          that.open = false;
@@ -697,7 +697,7 @@
         });
       },
       /** 删除按钮操作 */
-      handleDelete(row) {     
+      handleDelete(row) {
         let that=this
         this.$confirm('是否确认删除?', "警告", {
           confirmButtonText: "确定",
@@ -713,8 +713,8 @@
                 }
           })
         }).catch(function() {});
-    
-     
+
+
       },
       //  删除多条
       handleDeleteAll(){
@@ -768,13 +768,13 @@
         // console.log(this.form)
         // this.fileList = fileList;
         // if(this.fileList.length===0){
-        //  let fileId= this.form.equipmentList[this.idx].iconFileId      
-        //  this.form.equipmentList[this.idx].iconFileId =''  
+        //  let fileId= this.form.equipmentList[this.idx].iconFileId
+        //  this.form.equipmentList[this.idx].iconFileId =''
         //     deletePicture(fileId).then(res=>{
         //       console.log(res,'图片上的删除')
         //     })
         // }
-        
+
         // console.log(this.equipmentStates,'fileListfileListfileList');
          deletePicture(file.id).then(res=>{
             console.log(res);
@@ -785,37 +785,37 @@
         console.log(file)
       },
       // 上传文件
-      uploadFile(param) {      
+      uploadFile(param) {
         let obj=new FormData()
           obj.append('file',param.file)
-          // console.log(obj.getAll('file'),'aaaaaaaaaaaaaaaa')  
-          // console.log(param)   
-        this.idx=param.data.index  
+          // console.log(obj.getAll('file'),'aaaaaaaaaaaaaaaa')
+          // console.log(param)
+        this.idx=param.data.index
         if(this.title == "添加设备类型状态关系"){
            addEqTypeState1(obj).then(res=>{
-        //  console.log(res,'resssssss')  
+        //  console.log(res,'resssssss')
         //  this.iconFileIdAll+=res+','
         //  this.form.equipmentList.forEach((item,index)=>{
         //   item.stateTypeId=this.form.stateTypeId
         //     if (index===param.data.index){
         //       this.form.equipmentList[index].iconFileId += res+','
-           
+
         //     }
         //  })
         // console.log(res,'shanchuantupa');
         })
-          
-        }else{         
+
+        }else{
              addEqTypeState1(obj).then(res=>{
               this.equipmentStates.forEach((item,index)=>{
                 if( index == param.data.index ){
                    item.iconFileId += ','+ res
-                }               
+                }
               })
          console.log(param,'xiugaigaigaig');
           })
         }
-       
+
         // this.fileData.push(); // append增加数据
         // this.fileList = fileList;
         // this.form.equipmentList[param.data].fileList.push(param.file)
@@ -826,17 +826,17 @@
       //监控上传文件列表
       handleChange(file, fileList,) {
         // this.fileList = fileList;
-        
+
         console.log(file,fileList,'uuuuuuuuuuuuuuu')
       },
       handleSuccess(response, file, fileList){
-        console.log(response, file, fileList,'文件上传成功') 
+        console.log(response, file, fileList,'文件上传成功')
       },
       // 选取文件超过数量提示
       handleExceed(files, fileList) {
         this.$message.warning("当前限制上传图标个数不超过2个");
-      },  
-     
+      },
+
       //=======================================文件上传end===============================
       // 表格行样式
     tableRowClassName({ row, rowIndex }) {
@@ -863,7 +863,7 @@
 ::v-deep .el-upload--picture-card{
   width: 30px !important;
   height: 30px !important;
-  // display: none; 
+  // display: none;
 }
  ::v-deep .el-col-4 {
       width: 15.666667%
@@ -894,6 +894,6 @@
   position: absolute;
   top: 55px;
   left: 25%;
-  
+
 }
 </style>

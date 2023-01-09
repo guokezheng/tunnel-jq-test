@@ -207,15 +207,15 @@ export default {
         this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS");
         this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
       } else {
-        if (
-          this.$cache.local.get("manageStationSelect") ==
-          "JQ-WeiFang-JiuLongYu-HSD"
-        ) {
-          window.location = "http://10.7.187.28:82/WorkBench?userId=8";
-        } else {
+        // if (
+        //   this.$cache.local.get("manageStationSelect") ==
+        //   "JQ-WeiFang-JiuLongYu-HSD"
+        // ) {
+        //   window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+        // } else {
           this.manageStationSelect = res.data[0].tunnelId;
           this.$cache.local.set("manageStationSelect", res.data[0].tunnelId);
-        }
+        // }
       }
     });
   },
@@ -279,7 +279,10 @@ export default {
   justify-content: left;
   align-items: center;
 }
-
+.el-scrollbar__wrap{
+  width: 100%;
+  overflow: hidden;
+}
 // .theme-light .el-scrollbar__wrap{background-color:white;}
 // .theme-light #app .sidebar-container{background-color: white;}
 .theme-light,
@@ -491,6 +494,10 @@ export default {
     border: solid 1px transparent;
     padding: 5px 10px;
     min-width: 160px;
+    height: 160px;
+    .el-select-dropdown__list{
+      padding: 0;
+    }
     .el-scrollbar__view {
       width: 100% !important;
       color: white;

@@ -123,7 +123,11 @@ public class StrategyTask {
                         if(s.get("lane")!=null){
                             sdEvent.setLaneNo(s.get("lane").toString());
                         }
-                        sdEvent.setEventTypeId(TriggerEventTypeEnum.getTriggerEventTypeEnum(s.get("eq_type").toString()+s.get("element_id")).getEventType());
+                        if(s.get("event_type")!=null && !s.get("event_type").equals("")){
+                            sdEvent.setEventTypeId(Long.valueOf(s.get("event_type").toString()));
+                        }else{
+                            sdEvent.setEventTypeId(TriggerEventTypeEnum.getTriggerEventTypeEnum(s.get("eq_type").toString()+s.get("element_id")).getEventType());
+                        }
                         sdEvent.setStartTime(DateUtils.getTime());
                         sdEvent.setEventState("3");
                         sdEvent.setCreateTime(DateUtils.getNowDate());

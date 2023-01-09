@@ -109,6 +109,7 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
     protocolType:protocolType,
+    // parameters:parameters
     parameters:encodeURI(parameters)
 
   }

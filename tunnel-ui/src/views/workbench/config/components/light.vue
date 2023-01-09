@@ -312,7 +312,6 @@ export default {
             iconUrl.push(img);
           }
         }
-        console.log(iconUrl);
 
         that.eqTypeStateList.push({
           type: list[i].stateTypeId,

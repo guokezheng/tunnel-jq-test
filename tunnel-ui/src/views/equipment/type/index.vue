@@ -660,7 +660,7 @@ export default {
     top:14px !important;
   }
   ::v-deep .el-dialog__header{
-    padding: 40px;
+    padding: 20px;
   }
   
 </style>

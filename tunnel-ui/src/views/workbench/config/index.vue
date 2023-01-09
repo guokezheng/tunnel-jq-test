@@ -2169,7 +2169,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35,40,39,48].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>
@@ -2680,7 +2680,7 @@
           width="200"
         />
         <el-table-column label="策略名称" align="center" prop="strategyName" />
-        <el-table-column label="策略信息" align="center" prop="strategyInfo">
+        <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip='true'>
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
               {{ item }}
@@ -4226,7 +4226,11 @@ export default {
             let fontS = ''
             let color = ''
             for(let item of con){
+              // if(id == 1055550303){
+              //   console.log(item.CONTENT,item.COLOR,"item.CONTENTitem.CONTENT")
+              // }
               arr += item.CONTENT.replace("<br>", "");
+              arr += ' '
               color = this.getColorStyle(item.COLOR)
               fontS = Number(item.FONT_SIZE.substring(0, 2))
             }
@@ -4243,9 +4247,6 @@ export default {
                   return JSON.parse(this.boardObj[id]).devicePixel.split("*")[0]/4;
                 }
               }else if(type == 'content'){
-                if(id == 1055550303){
-                  console.log(arr,"00000000000")
-                }
                 return arr
               }else if(type == 'color'){
                 return color
@@ -4289,62 +4290,8 @@ export default {
         }
       }
     },
-     // 转颜色
-     getColorStyle(font) {
-      if (font == "黄色") {
-        return "yellow";
-      } else if (font == "红色") {
-        return "red";
-      } else if (font == "绿色") {
-        return "green";
-      } else if (font == "蓝色") {
-        return "blue";
-      } else {
-        return font;
-      }
-    },
     formatNum(num, length) {
       return (Array(length).join("0") + parseInt(num)).slice(-length);
-    },
-    getBoardText(id){
-      getBoardContent(id).then((res) => {
-        console.log(res, "情报板图标样式");
-        console.log(JSON.parse(res.data[0]));
-        var contents = JSON.parse(res.data[0]).content;
-
-        console.log(contents, "contents");
-        for (var i = 0; i < contents.length; i++) {
-          var content = contents[i];
-          var itemId = "ITEM" + this.formatNum(i, 3);
-          if (i == 0) {
-            currRowId = itemId;
-          }
-          var con = content[itemId];
-
-          for (let item of con) {
-            item.COLOR = this.getColorStyle(item.COLOR);
-            item.FONT = this.getFont(item.FONT)
-          }
-          console.log(con, "con");
-          this.contentList = con;
-        }
-        return ""
-      });
-    },
-    formatNum(num, length) {
-      return (Array(length).join("0") + parseInt(num)).slice(-length);
-    },
-    // 转字体
-    getFont(font) {
-      if (font == "KaiTi") {
-        return "楷体";
-      } else if (font == "SimSun") {
-        return "宋体";
-      } else if (font == "SimHei") {
-        return "黑体";
-      } else {
-        return font;
-      }
     },
     // 转颜色
     getColorStyle(font) {
@@ -6803,7 +6750,7 @@ export default {
         }
       });
       addBoardContent(this.currentTunnel.id).then((res)=>{
-        console.log(res,"情报板显示内容查询");
+        // console.log(res,"情报板显示内容查询");
         this.boardObj = res
       })
     },
@@ -10165,7 +10112,7 @@ input {
 .boardBox2 span {
   display: inline-block;
   /*inline样式不能使用动画*/
-  animation: boardBox2 10s linear infinite; /*滚动动画*/
+  animation: boardBox2 15s linear infinite; /*滚动动画*/
 }
 @keyframes boardBox2 {
   from {

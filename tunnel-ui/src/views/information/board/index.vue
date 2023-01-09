@@ -59,6 +59,8 @@
                 :key="item.tunnelId"
                 :label="item.tunnelName"
                 :value="item.tunnelId"
+                @click.native="changeTunnel(item.tunnelId)"
+
               />
             </el-select>
           </el-form-item>
@@ -74,6 +76,8 @@
                 :key="item.dictValue"
                 :label="item.dictLabel"
                 :value="item.dictValue"
+                @click.native="changeposition(item.dictValue)"
+
               />
             </el-select>
           </el-form-item>
@@ -126,7 +130,7 @@
         <div class="contentBox">
           <div class="controlBox">
             <el-button
-              @click.native="openDialogVisible(1)"
+              @click.native="openDialogVisible(1,2)"
               :disabled="disabledButton"
               >添加信息</el-button
             >
@@ -152,27 +156,30 @@
                 @click="moveBottom(index, item)"
               ></i>
             </div>
-            <div
-              class="con"
+            <div class="con">
+              <div style="background:black;position: relative;"
               :style="{
-                color: getColorStyle(item.COLOR),
-                fontSize: getFontSize(item.FONT_SIZE),
-                fontFamily: item.FONT,
-              }"
-            >
-              <span
-                :style="{
-                  left: getCoordinate1(item.COORDINATE.substring(0, 3)),
-                  top: getCoordinate2(item.COORDINATE.substring(3, 6)),
-                }"
-                style="position: absolute"
-                v-html="
-                  item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                    / /g,
-                    ' &nbsp'
-                  )
-                "
-              ></span>
+                  color: getColorStyle(item.COLOR),
+                  fontSize: getFontSize(item.FONT_SIZE),
+                  fontFamily: item.FONT,
+                  width:getScreenSize(form.devicePixel.split('*')[0],'width') + 'px',
+                  height:getScreenSize(form.devicePixel.split('*')[1],'height') + 'px',
+                }">
+                <span
+                  :style="{
+                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
+                    top: getCoordinate2(item.COORDINATE.substring(3, 6)),
+                  }"
+                  style="position: absolute;line-height: 1;"
+                  v-html="
+                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                      / /g,
+                      ' &nbsp'
+                    )
+                  "
+                ></span>
+              </div>
+              
               <!-- {{ item.CONTENT }} -->
             </div>
             <div class="menuBox">
@@ -190,7 +197,7 @@
         <p class="bigTitle">信息模板</p>
         <div class="templateBox">
           <div class="controlBox">
-            <el-button type="primary" @click="openDialogVisible(2)"
+            <el-button type="primary" @click="openDialogVisible(2,2)"
               >添加模板</el-button
             >
           </div>
@@ -215,24 +222,31 @@
                 }"
               >
                 <div class="templateTitle">
-                  <span
-                    :style="{
-                      left: getCoordinate1(
-                        itm.tcontents[0].coordinate.substring(0, 3),
-                        itm.screenSize
-                      ),
-                      top: getCoordinate2(
-                        itm.tcontents[0].coordinate.substring(3, 6),
-                        itm.screenSize
-                      ),
-                    }"
-                    style="position: absolute"
-                    v-html="
-                      itm.tcontents[0].content
-                        .replace(/\n|\r\n/g, '<br>')
-                        .replace(/ /g, ' &nbsp')
-                    "
-                  ></span>
+                  <div :style="{
+                    width:getScreenSize(itm.screenSize.split('*')[0],'width') + 'px',
+                    height:getScreenSize(itm.screenSize.split('*')[1],'height') + 'px',
+                  }"
+                  style="background:black;position: relative;">
+                    <span
+                      :style="{
+                        left: getCoordinate1(
+                          itm.tcontents[0].coordinate.substring(0, 3),
+                          itm.screenSize
+                        ),
+                        top: getCoordinate2(
+                          itm.tcontents[0].coordinate.substring(3, 6),
+                          itm.screenSize
+                        ),
+                      }"
+                      style="position: absolute"
+                      v-html="
+                        itm.tcontents[0].content
+                          .replace(/\n|\r\n/g, '<br>')
+                          .replace(/ /g, ' &nbsp')
+                      "
+                    ></span>
+                  </div>
+                  
                 </div>
                 <div class="menuBox">
                   <i
@@ -301,6 +315,8 @@ export default {
   },
   data() {
     return {
+      tunnelId:'',
+      localInfo:'',
       devicePixelMode: null,
       editType: 0,
       disabledButton: true,
@@ -403,6 +419,42 @@ export default {
     });
   },
   methods: {
+    getScreenSize(num,type){
+      if(type == 'width'){
+        if(num>630){
+          return 630
+        }else{
+          return num
+        }
+      }else if(type == "height"){
+        if(num>75){
+          return 75
+        }else{
+          return num
+        }
+      }
+    },
+    changeTunnel(value){
+      this.form.devicePixel = ''
+      this.form.localInfo = ''
+      this.checkedCities = []
+      this.checkboxList = []
+      this.contentList = []
+      console.log(value,"value")
+      this.tunnelId = value
+      this.getdevicessize()
+
+    },
+    changeposition(value){
+      this.form.devicePixel = ''
+      console.log(value,"value")
+      this.localInfo = value
+      this.checkedCities = []
+      this.checkboxList = []
+      this.contentList = []
+
+      this.getdevicessize()
+    },
     getActiveNames(active) {
       console.log(active);
       this.activeNames = active;
@@ -706,15 +758,21 @@ export default {
       this.getDicts("iot_devices_type").then((response) => {
         console.log(response, "位置信息");
         this.positionList = response.data;
-        this.getdevicessize();
       });
     },
     // 查分辨率
     getdevicessize() {
-      devicessize().then((res) => {
-        console.log(res, "查分辨率");
-        this.devicessizeList = res.data;
-      });
+      if(this.tunnelId && this.localInfo){
+        const param = {
+          tunnelId :this.tunnelId,
+          localInfo : this.localInfo,
+        }
+        devicessize(param).then((res) => {
+          console.log(res, "查分辨率");
+          this.devicessizeList = res.data;
+        });
+      }
+      
     },
     // 查设备多选框
     changeDevicessize() {
@@ -730,12 +788,12 @@ export default {
       });
     },
     // 打开添加信息弹窗
-    openDialogVisible(type) {
+    openDialogVisible(type,mode) {
       // this.devicePixel = this.form.devicePixel
       if (type == 1) {
-        this.$refs.addinfo.init(this.form.devicePixel, type);
+        this.$refs.addinfo.init(this.form.devicePixel, type,mode);
       } else {
-        this.$refs.addinfo.init(this.devicePixelMode, type);
+        this.$refs.addinfo.init(this.devicePixelMode, type,mode);
       }
       console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
     },
@@ -1081,6 +1139,7 @@ export default {
       ) {
         return;
       }
+      console.log(this.checkboxValue[0],"this.checkboxValue[0]")
       getBoardInfo(this.checkboxValue[0]).then((res) => {
         console.log(res, "getBoardInfo");
         this.deviceId = res.data.deviceId;
@@ -1135,6 +1194,7 @@ export default {
           for (let item of con) {
             item.COLOR = this.getColorStyle(item.COLOR);
             item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+            item.CONTENT = item.CONTENT.replace('<br>','').replace(' &nbsp',' ')
             // item.font = this.getFontStyle(item.FONT)
           }
           console.log(con, "con");
@@ -1222,9 +1282,9 @@ export default {
         var i = 630 / screen;
 
         if (font.toString().length == 2) {
-          return font * i + "px";
+          return font + "px";
         } else {
-          return font.substring(0, 2) * i + "px";
+          return font.substring(0, 2) + "px";
         }
       } else {
         var i = screen / 630;
@@ -1243,8 +1303,7 @@ export default {
         screen = screenSize.split("*")[0];
       }
       if (screen <= 630) {
-        var i = 630 / screen;
-        return coordinate * i + "px";
+        return coordinate + "px";
       } else {
         var i = screen / 630;
         return coordinate / i + "px";
@@ -1258,11 +1317,10 @@ export default {
         screen = screenSize.split("*")[1];
       }
       if (screen <= 75) {
+        return coordinate + "px";
+      } else {
         var i = 75 / screen;
         return coordinate * i + "px";
-      } else {
-        var i = screen / 75;
-        return coordinate / i + "px";
       }
     },
     getFontStyle(font) {
@@ -1361,15 +1419,18 @@ export default {
         }
 
         .con {
-          border: 1px solid #f3f3f3;
-          // height: 75px;
+          border: 1px solid black;
+          height: 75px;
           // line-height: 75px;
           // text-align: center;
-          background: black;
+          // background: black;
           position: relative;
           width: 630px;
           margin-left: 10px;
           overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           // position: absolute;
         }
         .menuBox {
@@ -1406,11 +1467,14 @@ export default {
           height: 75px;
           // line-height: 75px;
           // text-align: center;
-          border: 1px solid #f3f3f3;
-          background: black;
+          border: 1px solid #ccc;
+          // background: black;
           position: relative;
           width: 630px;
           float: left;
+          display: flex;
+          justify-content: center;
+          align-items: center;   
         }
         .menuBox {
           display: flex;

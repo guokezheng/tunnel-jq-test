@@ -554,10 +554,10 @@
                 @change="changeEquipmentType(item.eqTypeId, index)"
               >
                 <el-option
-                  v-for="item in equipmentTypeData"
-                  :key="item.typeId"
-                  :label="item.typeName"
-                  :value="item.typeId"
+                  v-for="items in equipmentTypeData"
+                  :key="items.typeId"
+                  :label="items.typeName"
+                  :value="items.typeId"
                 />
               </el-select>
             </el-col>
@@ -950,7 +950,6 @@ export default {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         listType(this.queryEqTypeParams).then((data) => {
           console.log(data.rows, "设备类型");
-          // this.equipmentTypeData = data.rows;
           this.$set(this.planTypeIdList[i], "equipmentTypeData", data.rows);
           this.equipmentTypeData = data.rows;
         });

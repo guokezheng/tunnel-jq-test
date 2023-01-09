@@ -297,11 +297,30 @@ public class PhoneSpkService {
         String systemUrl = externalSystem.getSystemUrl();
         Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
-        ArrayList<Map> spkList = (ArrayList<Map>) map.get("items");
-        for (Map spk : spkList) {
-            spk.put("hostId", hostId);
-            spk.put("hostType", "YeastarHost");
+        /*
+            预案那里items参数不好传值,这里注释掉改为从后台组装
+            ArrayList<Map> spkList = (ArrayList<Map>) map.get("items");
+            for (Map spk : spkList) {
+                spk.put("hostId", hostId);
+                spk.put("hostType", "YeastarHost");
+            }
+        */
+
+        ArrayList<Map> spkList = new ArrayList<>();
+
+        for (String spkDeviceId : spkDeviceIds) {
+            SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
+            String externalDeviceId = devices.getExternalDeviceId();
+
+            if (StringUtils.isNotBlank(externalDeviceId)) {
+                Map<String, String> item = new HashMap<>();
+                item.put("hostId", hostId);
+                item.put("hostType", "YeastarHost");
+                item.put("deviceId", externalDeviceId);
+                spkList.add(item);
+            }
         }
+        map.put("items", spkList);
 
         PhoneSpeak phoneSpeak = null;
         for (String spkDeviceId : spkDeviceIds) {

@@ -386,7 +386,8 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
         SELECT a.device_pixel from iot_device_access a
         left join iot_device b on a.device_id = b.device_id
         where a.device_pixel is not null
-          and b.tunnel_id = #{tunnelId} and b.local_info = #{localInfo}
+        <if test="tunnelId != null and tunnelId != ''">and b.tunnel_id = #{tunnelId}</if>
+        <if test="localInfo != null and localInfo != ''">and b.local_info = #{localInfo}</if>
         GROUP BY a.device_pixel
     </select>
 

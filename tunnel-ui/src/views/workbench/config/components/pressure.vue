@@ -35,7 +35,7 @@
           <el-row>
             <el-col :span="13">
               <el-form-item label="设备类型:">
-                {{ stateForm.eqTypeName }}
+                {{ stateForm.typeName }}
               </el-form-item>
             </el-col>
             <el-col :span="11">
@@ -82,7 +82,12 @@
             </el-col>
           </el-row>
         <div class="lineClass"></div>
-       
+        <el-radio-group
+          v-model="tab"
+          style="margin-bottom: 10px; margin-top: -10px"
+        >
+          <el-radio-button label="yali">压力表实时趋势</el-radio-button>
+        </el-radio-group>
         <div id="yaliCharts" style="margin: 10px auto"></div>
         </el-form>
         <div slot="footer">
@@ -119,6 +124,7 @@
         titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
         nowData:'',
         mychart:null,
+        tab:'yali',
       };
     },
     created() {
@@ -134,19 +140,7 @@
           await getDeviceById(this.eqInfo.equipmentId).then((res) => {
             console.log(res, "查询单选框弹窗信息");
             this.stateForm = res.data;
-  
             this.title = res.data.eqName;
-            // this.stateForm = {
-            //   brandName: that.getBrandName(obj.brandId), //厂商
-            //   eqDirection: that.getDirection(obj.eqDirection),
-  
-            //   pile: obj.pile, //桩号
-            //   eqTypeName: obj.typeName, //设备类型名称
-            //   tunnelName: obj.tunnelName, //隧道名称
-            //   deptName: obj.deptName, //所属机构
-            //   eqType: obj.eqType, //设备类型号
-            //   state: obj.state,
-            // };
             console.log(this.stateForm, "stateForm");
           });
           await getTodayYcylData(this.eqInfo.equipmentId).then((res) => {
@@ -327,8 +321,17 @@
   display: flex;
   flex-wrap: wrap;
 }
+::v-deep .el-radio-button--medium .el-radio-button__inner {
+  padding: 5px 10px !important;
+}
+::v-deep .el-radio-button--medium .el-radio-button__inner {
+  border-radius: 20px !important;
+}
+::v-deep .el-radio-button {
+  margin: 0 15px;
+}
 #yaliCharts {
-  width: 90%;
+  width: calc(100% - 30px);
   height: 150px;
   background: #fff;
   margin-left: 5%;

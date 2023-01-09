@@ -519,6 +519,11 @@
   .el-scrollbar__wrap::-webkit-scrollbar-thumb {
     background-color: #00598f;
   }
+  .el-input-group__append, .el-input-group__prepend{
+    background: #326CA9 !important;
+    color: white;
+    border: 1px solid #05AFE3;
+  }
   #app {
     .el-textarea__inner{
       border: solid 1px #65bfff !important;

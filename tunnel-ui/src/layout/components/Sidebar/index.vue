@@ -279,7 +279,9 @@ export default {
   justify-content: left;
   align-items: center;
 }
-
+.el-scrollbar__wrap{
+  width: 100%;
+}
 // .theme-light .el-scrollbar__wrap{background-color:white;}
 // .theme-light #app .sidebar-container{background-color: white;}
 .theme-light,

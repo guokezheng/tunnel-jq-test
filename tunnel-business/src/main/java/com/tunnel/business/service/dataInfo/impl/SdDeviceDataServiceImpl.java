@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.ruoyi.common.constant.Constants;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
@@ -349,6 +350,72 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
 
 //        List<Long> list = Arrays.asList(1450L, 1650L, 1500L, 1430L, 1580L, 1530L, 1580L, 1460L, 1400L, 1540L);
         return allDataList;
+    }
+
+    @Override
+    public Map<String, Object> getTodayYcylData(String deviceId) {
+        Long itemId = Long.valueOf(DevicesTypeItemEnum.YUAN_CHUAN_YA_LI_ZHI.getCode());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String today = simpleDateFormat.format(new Date());
+        SdDeviceData data = new SdDeviceData();
+        data.setDeviceId(deviceId);
+        data.setItemId(Long.valueOf(itemId));
+        SdDeviceData devData = sdDeviceDataMapper.selectLastRecord(data);
+        if (devData != null && devData.getUpdateTime() != null) {
+            today = simpleDateFormat.format(devData.getUpdateTime());
+        } else if (devData != null && devData.getCreateTime() != null) {
+            today = simpleDateFormat.format(devData.getCreateTime());
+        }
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (devData != null) {
+            map.put("nowData", devData.getData());
+        } else {
+            map.put("nowData", null);
+        }
+        List<Map<String, Object>> todayYcylData = sdDeviceDataMapper.getTodayCOVIData(deviceId, itemId, today);
+        map.put("todayYcylData", todayYcylData);
+        return map;
+    }
+
+
+
+    @Override
+    public AjaxResult getFanSafeData(String deviceId) {
+        SdDevices sdDevices = sdDevicesMapper.selectZdyDevice(deviceId, DevicesTypeEnum.NEI_WAI_ZHEN_DONG_YI_JIANCEQI.getCode());
+        //振动速度值
+        List<SdDeviceData> suDuList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_SU_DU.getCode()), sdDevices.getEqId());
+        //振动幅度值
+        List<SdDeviceData> fuDuList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_FU_DU.getCode()), sdDevices.getEqId());
+        //沉降值
+        List<SdDeviceData> chenJiangList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_ZHI.getCode()), sdDevices.getEqId());
+        //倾斜值
+        List<SdDeviceData> qingXieList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.QING_XIE_ZHI.getCode()), sdDevices.getEqId());
+        //振动告警
+        List<SdDeviceData> zhenGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.ZHEN_DONG_GAO_JING.getCode()), sdDevices.getEqId());
+        //沉降倾斜告警
+        List<SdDeviceData> chenQingGaoJingList = getDeviceDataList(Long.valueOf(DevicesTypeItemEnum.CHEN_JIANG_QING_XIE_GAO_JING.getCode()), sdDevices.getEqId());
+        //封装到mqp
+        Map<String, String> map = new HashMap<>();
+        map.put("shakeSpeed",suDuList.size() == 0 ? "" : suDuList.get(0).getData());
+        map.put("amplitude",fuDuList.size() == 0 ? "" : fuDuList.get(0).getData());
+        map.put("subside",chenJiangList.size() == 0 ? "" : chenJiangList.get(0).getData());
+        map.put("slope",qingXieList.size() == 0 ? "" : qingXieList.get(0).getData());
+        map.put("shakeAlaram",zhenGaoJingList.size() == 0 ? "" : zhenGaoJingList.get(0).getData());
+        map.put("subsideSlopeAlaram",chenQingGaoJingList.size() == 0 ? "" : chenQingGaoJingList.get(0).getData());
+        return AjaxResult.success(map);
+    }
+
+    /**
+     * 获取设备实时数据
+     * @param itemId
+     * @param deviceId
+     * @return
+     */
+    public List<SdDeviceData> getDeviceDataList(Long itemId, String deviceId){
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setItemId(itemId);
+        sdDeviceData.setDeviceId(deviceId);
+        return sdDeviceDataMapper.selectSdDeviceDataList(sdDeviceData);
     }
 
 }

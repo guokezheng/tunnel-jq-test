@@ -279,4 +279,12 @@ public interface SdDevicesMapper
 	 * @return
 	 */
 	SdDevices getLight(SdDevices sdDevices);
+
+	/**
+	 * 查询风机对应的振动仪检测器
+	 * @param deviceId
+	 * @return
+	 */
+	SdDevices selectZdyDevice(@Param("deviceId") String deviceId,
+							  @Param("eqType") Long eqType);
 }

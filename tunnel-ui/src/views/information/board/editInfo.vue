@@ -308,19 +308,19 @@
         previewContent: "", //预览内容
         ispreviewContent: -1,
         dataForm: {
-          id: "",
-          screenSize: "400*40", //屏幕尺寸
-          inScreenMode: "1", //入屏方式
-          rollSpeed: "1000",
-          stopTime: "500",
-          applyType: "", //适用类型
-          vmsType: "", //情报板类型
-          remark: "", //备注
-          imgSizeFrom: "", //尺寸大小
-          imageUrl: "",
-          height: "",
-          width: "",
-          coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+          // id: "",
+          // screenSize: "400*40", //屏幕尺寸
+          // inScreenMode: "1", //入屏方式
+          // rollSpeed: "1000",
+          // stopTime: "500",
+          // applyType: "", //适用类型
+          // vmsType: "", //情报板类型
+          // remark: "", //备注
+          // imgSizeFrom: "", //尺寸大小
+          // imageUrl: "",
+          // height: "",
+          // width: "",
+          // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
         },
         templateContentModel:'',
         templateContent: [],

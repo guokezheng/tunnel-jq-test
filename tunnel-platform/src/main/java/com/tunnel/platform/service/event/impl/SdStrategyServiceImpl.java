@@ -702,7 +702,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             List<String> value = (List<String>) map.get("equipments");
             String equipments = StringUtils.join(value,",");
             String equipmentTypeId = map.get("equipmentTypeId") + "";
-            if(map.get("state") == null){
+            if(map.get("state") == null || map.get("state").equals("")){
                 throw new RuntimeException("请填写完整策略信息！");
             }
             String eqState = (String) map.get("state");

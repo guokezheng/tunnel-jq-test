@@ -41,7 +41,7 @@
         <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="deviation">
           <el-input
-            style="width: 100px"
+            style="width: 145px"
             class="dateClass"
             v-model.number="queryParams.deviation"
             placeholder="桩号偏差"
@@ -66,7 +66,7 @@
         <span style="margin: 0 5px;" class="formAddClass">+</span>
         <el-form-item prop="endDeviation">
           <el-input
-            style="width: 100px"
+            style="width: 145px"
             class="dateClass"
             v-model.number="queryParams.endDeviation"
             placeholder="桩号偏差"
@@ -647,30 +647,30 @@ export default {
       queryParamsRules: {
         station: {
           type: "number",
-          required: false,
+          required: true,
           pattern: /^(?:[0-9]{1,3})$/,
           message: "桩号为0~999之间的数字",
           trigger: "blur",
         },
         deviation: {
           type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,2})$/,
-          message: "桩号偏差为0~99之间数字",
+          required: true,
+          pattern: /^(?:[0-9]{1,3})$/,
+          message: "桩号偏差为0~999之间数字",
           trigger: "blur",
         },
         endStation: {
           type: "number",
-          required: false,
+          required: true,
           pattern: /^(?:[0-9]{1,3})$/,
           message: "桩号为0~999之间的数字",
           trigger: "blur",
         },
         endDeviation: {
           type: "number",
-          required: false,
-          pattern: /^(?:[0-9]{1,2})$/,
-          message: "桩号偏差为0~99之间数字",
+          required: true,
+          pattern: /^(?:[0-9]{1,3})$/,
+          message: "桩号偏差为0~999之间数字",
           trigger: "blur",
         },
       },

@@ -257,8 +257,8 @@
         <el-form-item label="是否启用" prop="deleteflag">
           <el-switch
             v-model="form.deleteflag"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
+            active-color="#ff4949"
+            inactive-color="#13ce66">
           </el-switch>
         </el-form-item>
       </el-form>

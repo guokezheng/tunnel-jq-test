@@ -16,7 +16,7 @@
         <el-button type="info" size="small" icon="el-icon-circle-close" class="tunnelNameButton" @click="handleBack">返回
         </el-button>
         <el-popconfirm popper-class="reset-confirm" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-          icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @onConfirm="reset">
+          icon-color="red" title="重置后该隧道的配置信息将被清空,确定清空吗？" @confirm="reset">
           <el-button type="info" size="small" slot="reference" icon="el-icon-refresh-left" class="tunnelNameButton"
             style="margin-left: 10px;">重置</el-button>
         </el-popconfirm>

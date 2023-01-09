@@ -281,6 +281,7 @@ export default {
 }
 .el-scrollbar__wrap{
   width: 100%;
+  overflow: hidden;
 }
 // .theme-light .el-scrollbar__wrap{background-color:white;}
 // .theme-light #app .sidebar-container{background-color: white;}
@@ -493,6 +494,10 @@ export default {
     border: solid 1px transparent;
     padding: 5px 10px;
     min-width: 160px;
+    height: 160px;
+    .el-select-dropdown__list{
+      padding: 0;
+    }
     .el-scrollbar__view {
       width: 100% !important;
       color: white;

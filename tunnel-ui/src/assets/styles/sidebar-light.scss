@@ -834,11 +834,11 @@
         height: 100%;
       }
 
-      &.has-logo {
-        .el-scrollbar {
-          height: calc(100% - 144px);
-        }
-      }
+      // &.has-logo {
+      //   .el-scrollbar {
+      //     height: calc(100% - 144px);
+      //   }
+      // }
 
       .is-horizontal {
         display: none;

@@ -1,7 +1,6 @@
 package com.tunnel.platform.service;
 
 import cn.hutool.json.JSONObject;
-import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.system.service.ISysDictDataService;
@@ -24,8 +23,6 @@ import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
-import com.tunnel.platform.business.vms.device.DataUtils;
-import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
@@ -166,7 +163,7 @@ public class SdDeviceControlService {
         if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.PU_TONG_CHE_ZHI.getCode().longValue()
             || sdDevices.getEqType().longValue() == DevicesTypeEnum.JUAN_LIAN_MEN.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.FENG_JI.getCode().longValue() ||
-                sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
+                // sdDevices.getEqType().longValue() == DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.ZHUO_ZHUAN_CHE_ZHI.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.ZUO_JIAO_TONG_XIN_HAO_DENG.getCode().longValue() ||
                 sdDevices.getEqType().longValue() == DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode().longValue()) ||
@@ -253,10 +250,6 @@ public class SdDeviceControlService {
             controlState = controlLightingDevices(controlState, isopen, devId, state, sdDevices);
 
             sdOperationLog.setState(String.valueOf(controlState));
-            //通过websocket推送到前端
-            String[] states = new String[4];
-            states[0] = state;
-            sendNowDeviceStatusByWebsocket(sdDevices,states,sdOperationLog,"zm");
         } else if (sdDevices != null && (sdDevices.getEqType().longValue() == DevicesTypeEnum.VMS.getCode().longValue()
                 || sdDevices.getEqType().longValue() == DevicesTypeEnum.MEN_JIA_VMS.getCode().longValue())) {
             //情报板控制需要根据模板ID获取到发送报文需要的各个元素

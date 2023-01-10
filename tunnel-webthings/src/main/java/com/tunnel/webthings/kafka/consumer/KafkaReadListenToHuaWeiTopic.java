@@ -1045,7 +1045,7 @@ public class KafkaReadListenToHuaWeiTopic {
         }else{
             effectiveRows = sdEventService.insertSdEvent(event);
         }
-        //推送物联中台
+        //推送物联中台，事件类型过滤
         if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
             //如果是未处理状态改为处理中
             if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){

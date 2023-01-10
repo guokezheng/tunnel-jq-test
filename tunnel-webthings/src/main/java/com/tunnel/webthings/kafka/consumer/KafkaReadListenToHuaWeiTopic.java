@@ -27,6 +27,7 @@ import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
 import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
+import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -1044,6 +1045,12 @@ public class KafkaReadListenToHuaWeiTopic {
             effectiveRows = sdEventService.updateSdEvent(event);
         }else{
             effectiveRows = sdEventService.insertSdEvent(event);
+            //新增事件后推送前端
+            JSONObject object = new JSONObject();
+            object.put("sdEventList", new ArrayList<SdEvent>() {{
+                add(event);
+            }});
+            WebSocketService.broadcast("sdEventList",object.toString());
         }
         //推送物联中台，事件类型过滤
         if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){

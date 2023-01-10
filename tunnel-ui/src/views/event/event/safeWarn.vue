@@ -389,11 +389,18 @@
           <div>三图一视<span>(事前、事中、事后三张抓图+录像判断)</span></div>
           <video :src="eventForm.videoUrl" controls muted loop fluid></video>
           <div class="picBox">
-            <div   v-if="eventForm.iconUrlList.length>0" >
+            <div v-if="arrowLeft" class="turnPages"  @click="turnLeft()"><</div>
+            <div :style="{
+              display:eventForm.iconUrlList.length==0?'none':'block',
+            }">
               <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
             </div>
-            <img src="../../../assets/cloudControl/nullImg.png" v-else
-              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index"/>
+            <div 
+              v-if="eventForm.iconUrlList.length<4" class="noPic"
+              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index">
+              <img src="../../../assets/cloudControl/nullImg.png"/>
+            </div>
+            <div v-if="arrowRight" class="turnPages" @click="turnRight()">></div>
 
           </div>
         </div>
@@ -401,10 +408,19 @@
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
           <video :src="videoUrl" controls muted loop fluid></video>
           <div class="picBox">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div class="turnPages" @click="turnLeft()"><</div>
+            <div :style="{
+              display:eventForm.iconUrlList.length==0?'none':'block',
+            }">
+              <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
+            </div>
+            <div 
+              v-if="eventForm.iconUrlList.length<4" class="noPic"
+              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index">
+              <img src="../../../assets/cloudControl/nullImg.png"/>
+            </div>
+
+            <div class="turnPages"  @click="turnRight()">></div>
           </div>
         </div>
       </div>
@@ -420,9 +436,9 @@
                 >
                   <el-option
                     v-for="item in fromList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
                   ></el-option>
                 </el-select>
               </el-form-item>
@@ -554,7 +570,7 @@
                   v-model="eventForm.eventDescription"
                   placeholder="m"
                   :disabled="detailsDisabled"
-                  style="width: 536px"
+                  style="width: 100%"
                 />
               </el-form-item>
             </el-col>
@@ -1063,24 +1079,7 @@ export default {
       eqStatusList: [],
       directionList: [],
       direction: "",
-      fromList: [
-        {
-          value: "0",
-          label: "雷达",
-        },
-        {
-          value: "1",
-          label: "火灾报警",
-        },
-        {
-          value: "2",
-          label: "紧急电话",
-        },
-        {
-          value: "3",
-          label: "其他",
-        },
-      ],
+      fromList: [],
       closeProcessDialog: false,
       processDialog: false,
       processType: false,
@@ -1355,6 +1354,8 @@ export default {
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
+      arrowRight:false,
+      arrowLeft:false,
     };
   },
   watch: {
@@ -1381,6 +1382,11 @@ export default {
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();
+    // 事件来源
+    this.getDicts("sd_event_source").then((data) => {
+      console.log(data,"事件来源")
+      this.fromList = data.data;
+    });
     this.fileData = new FormData(); // new formData对象
     //设备填报状态
     this.getDicts("sd_monitor_state").then((data) => {
@@ -1604,8 +1610,8 @@ export default {
     },
     getFrom(from) {
       for (let item of this.fromList) {
-        if (from == item.value) {
-          return item.label;
+        if (from == item.dictValue) {
+          return item.dictLabel;
         }
       }
     },
@@ -1692,6 +1698,13 @@ export default {
       }
       this.details = true;
       this.eventForm = item;
+      if(this.eventForm.iconUrlList.length>4){
+        this.arrowRight = true
+        this.eventForm.iconUrlList1 = this.eventForm.iconUrlList.splice(0,4)
+      }else{
+        this.arrowRight = false
+      }
+
       this.getEventList();
       if (item.stakeNum) {
         this.$set(
@@ -1715,7 +1728,12 @@ export default {
       }
       this.title = item.eventTitle;
     },
+    turnLeft(){
 
+    },
+    turnRight(){
+
+    },
     //选事件类型
     handleEvtButton(item) {
       console.log(item);
@@ -1865,6 +1883,7 @@ export default {
       if (this.activeName == "2") {
         this.queryParams.pageSize = 10
         listList(this.queryParams).then((response) => {
+          console.log(response,"列表内容")
           this.eventList = response.rows;
           this.eventList.forEach((item) => {
             if (item.faultLocation == "null") {
@@ -2531,8 +2550,31 @@ export default {
       // border: solid 1px red;
       display: flex;
       justify-content: space-between;
-      div {
-        width: 24%;
+      align-items: center;
+      .turnPages{
+        width:20px !important;
+        height:20px !important;
+        border:solid 1px #0087e7;
+        border-radius:10px;
+        text-align: center;
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+      }
+      .turnPages:hover{
+        background: #0087e7;
+        color:#fff
+      }
+      .noPic{
+        border:solid 1px #0087e7;
+        display:flex;
+        justify-content: center;
+        align-items: center;
+        img{
+          width:50%;
+        }
+      }
+      div{
+        width: 20%;
         height: 100%;
         overflow: hidden;
         // border: solid 1px blue;
@@ -2563,7 +2605,7 @@ export default {
     margin-bottom: 10px !important;
   }
   .evtCarStyle {
-    width: calc(100% - 12px);
+    width: 100%;
     height: 100px;
     // border: solid 1px #cfd5e0;
     padding: 10px;

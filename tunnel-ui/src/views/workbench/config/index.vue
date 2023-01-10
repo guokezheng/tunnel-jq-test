@@ -2629,6 +2629,7 @@
               />
             </el-select>
           </el-form-item>
+          
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               v-model="queryParams.strategyName"
@@ -2677,9 +2678,26 @@
           label="隧道名称"
           align="center"
           prop="tunnels.tunnelName"
-          width="200"
         />
+        <el-table-column
+            label="事件类型"
+            align="center"
+            prop="tunnels.tunnelName"
+            v-if="strategyActive == 'yujing'"
+          />
         <el-table-column label="策略名称" align="center" prop="strategyName" />
+        <el-table-column
+            label="方向"
+            align="center"
+            prop="direction"
+            :formatter="directionFormat"
+          />
+          <el-table-column
+            label="策略类型"
+            align="center"
+            prop="strategyType"
+            :formatter="strategyTypeFormat"
+          />
         <el-table-column label="策略信息" align="center" prop="strategyInfo" :show-overflow-tooltip='true'>
           <template slot-scope="scope" v-if="scope.row.slist != []">
             <div v-for="(item, index) in scope.row.slist" :key="index">
@@ -2688,7 +2706,20 @@
           </template>
           <div v-else>暂无信息</div>
         </el-table-column>
-        <el-table-column
+        <el-table-column label="状态" align="center" prop="schedulerTime">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.strategyState"
+                active-color="#39ADFF"
+                inactive-color="#ccc"
+                active-value="0"
+                inactive-value="1"
+                @change="changeStrategyState(scope.row)"
+              >
+              </el-switch>
+            </template>
+          </el-table-column>
+        <!-- <el-table-column
           label="操作"
           align="center"
           class-name="small-padding fixed-width"
@@ -2702,8 +2733,22 @@
               @click="handleController(scope.row)"
               >手动控制
             </el-button>
+            <el-button
+                size="mini"
+                class="tableBlueButtton"
+                @click="handleUpdate(scope.row)"
+                v-hasPermi="['system:strategy:edit']"
+              >编辑</el-button
+              >
+              <el-button
+                size="mini"
+                class="tableDelButtton"
+                @click="handleDelete(scope.row)"
+                v-hasPermi="['system:strategy:remove']"
+              >删除</el-button
+              >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <pagination
           v-show="total > 0"
@@ -3030,6 +3075,7 @@ import {
   getStrategy,
   handleStrategy,
   workTriggerInfo,
+  updateState
 } from "@/api/event/strategy";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
@@ -3867,6 +3913,7 @@ export default {
     listTunnels().then((response) => {
       this.tunnelData = response.rows;
     });
+    // 策略类型
     this.getDicts("sd_strategy_type").then((response) => {
       this.strategyTypeOptions = response.data;
     });
@@ -4204,6 +4251,19 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    changeStrategyState(row) {
+      let data = { strategyId: row.id, change: row.strategyState };
+      updateState(data).then((result) => {
+        this.$modal.msgSuccess(result.msg);
+      });
+    },
+    directionFormat(row, column) {
+      return this.selectDictLabel(this.directionList, row.direction);
+    },
+    // 策略类型字典翻译
+    strategyTypeFormat(row, column) {
+      return this.selectDictLabel(this.strategyTypeOptions, row.strategyType);
+    },
     // 点击侧边栏文件列表下拉框
     clickFileNames(direction) {
       const params ={

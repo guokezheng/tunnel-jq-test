@@ -336,7 +336,7 @@ public class KafkaReadListenToHuaWeiTopic {
             //解析微波车检数据
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增微波车检数据
-            savePressureInstrument(objects,itemId);
+            saveReceiveVdBizAttr(objects,itemId);
         }
         consumer.commitSync();
     }

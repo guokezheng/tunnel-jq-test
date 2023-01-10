@@ -136,4 +136,73 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{statisticsId}
         </foreach>
     </delete>
+
+    <select id="getStatisticsNewList" parameterType="sdMicrowavePeriodicStatistics" resultType="sdMicrowavePeriodicStatistics">
+        SELECT
+            mps.statistics_id AS statisticsId,
+            mps.lane_no AS laneNo,
+            mps.traffic_flow_total AS trafficFlowTotal,
+            mps.avg_speed AS avgSpeed,
+            mps.avg_occupancy AS avgOccupancy,
+            mps.create_time AS createTime
+        FROM
+            sd_microwave_periodic_statistics mps
+        WHERE
+            1 = 1
+          AND mps.eq_direction = #{eqDirection}
+          AND mps.lane_no = #{laneNo}
+          AND mps.device_id = #{deviceId}
+        ORDER BY mps.create_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="getStatisticsRealList" parameterType="sdMicrowavePeriodicStatistics" resultType="hashmap">
+        SELECT HOUR
+            ( t.TIME ) order_hour,
+            CASE
+              WHEN (sa.avgSpeed IS NULL or sa.avgSpeed = '')
+            THEN 0
+            ELSE
+                sa.avgSpeed / sa.countNum
+            END avgSpeed
+        FROM
+            (
+            SELECT
+                DATE_FORMAT( DATE_SUB( now(), INTERVAL ( -( @i := @i - 1 ) ) HOUR ), '%Y-%m-%d %H' ) AS 'time'
+            FROM
+            (
+                SELECT
+                    a
+                FROM
+                ( SELECT '1' AS a UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' ) AS a
+                    JOIN ( SELECT '1' UNION SELECT '2' UNION SELECT '3' UNION SELECT '4' UNION SELECT '5' UNION SELECT '6' ) AS b ON 1
+                ) AS b,(
+                    SELECT
+                    @i :=+ 1
+                ) AS i
+            ) AS t
+            LEFT JOIN (
+                SELECT
+                    DATE_FORMAT( DATE_SUB( b.create_time, INTERVAL MINUTE ( now() )- 60 MINUTE ), '%Y-%m-%d %H' ) AS DATE,
+                    avg_speed AS avgSpeed,
+                    countNum AS countNum
+                FROM
+                    ( SELECT
+                          sum( mps.avg_speed ) AS avg_speed,
+                          count(DATE_FORMAT( mps.create_time, '%Y-%m-%d %H' )) AS countNum,
+                          mps.create_time
+                      FROM sd_microwave_periodic_statistics mps WHERE mps.create_time >= ( now() - INTERVAL 25 HOUR )
+                        AND mps.lane_no = #{laneNo}
+                        AND mps.device_id = #{deviceId}
+                        AND mps.eq_direction = #{eqDirection}
+                        GROUP BY
+                        DATE_FORMAT( mps.create_time, '%Y-%m-%d %H' )) b
+                GROUP BY
+                DATE
+                ) AS sa ON sa.DATE = DATE_FORMAT(
+            t.TIME,
+            '%Y-%m-%d %H'
+            )
+        GROUP BY t.TIME
+    </select>
 </mapper>

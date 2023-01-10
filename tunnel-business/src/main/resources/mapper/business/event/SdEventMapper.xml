@@ -260,6 +260,7 @@ ORDER BY MERGE.startTime DESC
             <if test="stakeNum != null">stake_num,</if>
             <if test="stakeEndNum != null">stake_end_num,</if>
             <if test="laneNo != null">lane_no,</if>
+            <if test="videoUrl != null">video_url,</if>
             <if test="eventSource != null">event_source,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -296,6 +297,7 @@ ORDER BY MERGE.startTime DESC
             <if test="stakeNum != null">#{stakeNum},</if>
             <if test="stakeEndNum != null">#{stakeEndNum},</if>
             <if test="laneNo != null">#{laneNo},</if>
+            <if test="videoUrl != null">#{videoUrl},</if>
             <if test="eventSource != null">#{eventSource},</if>
         </trim>
     </insert>

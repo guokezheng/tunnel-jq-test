@@ -2,6 +2,8 @@ package com.tunnel.platform.service.event.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.DateUtils;
@@ -36,6 +38,7 @@ import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.service.SdDeviceControlService;
+import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +51,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import javax.swing.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
@@ -561,9 +565,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 //设备list
                 List<String> eqId = new ArrayList<String>();
                 for (int j = 0; j < eqss.length; j++) {
-					if ("全选".equals(eqss[j])){
-						continue;
-					}
+                    if ("全选".equals(eqss[j])){
+                        continue;
+                    }
                     eqId.add(eqss[j]);
                     sdStrategyBackMapper.deleteSdStrategyBackByWarId(warId);
                     SdStrategyBack strategyBack = new SdStrategyBack();
@@ -1040,7 +1044,22 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 issuedParam.put("eqTypeId",eqTypeId);
                 scheduledRecoveryState(issuedParam,rl.getEffectiveTime());
             }
-        }else{
+        }else if(eqTypeId.equals(DevicesTypeEnum.LS.getCode().toString())){
+            JSONObject object = new JSONObject();
+            object.put("loop",false);
+            object.put("loopCount",2);
+            object.put("volume",80);
+            object.put("fileNames",new ArrayList<String>(){{
+                add(rl.getState());
+            }});
+            object.put("lib","YeastarHost");
+            object.put("controlType",controlType);
+            object.put("spkDeviceIds", new ArrayList<String>(){{
+                addAll(Arrays.asList(rl.getEquipments().split(",")));
+            }});
+            AjaxResult result = SpringUtils.getBean(PhoneSpkService.class).playVoice(object);
+            return Integer.valueOf(result.get("data").toString());
+        } else{
             String[] split = rl.getEquipments().split(",");
             for (String devId : split){
                 issuedParam.put("devId",devId);

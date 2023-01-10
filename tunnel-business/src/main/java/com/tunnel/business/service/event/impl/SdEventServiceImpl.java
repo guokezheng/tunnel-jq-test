@@ -118,6 +118,9 @@ public class SdEventServiceImpl implements ISdEventService {
             if(eventTitle.length() > endLength){
                 item.setPosition(eventTitle.substring(startLength,endLength));
             }
+            if(sdEvent.getVideoUrl()!=null){
+                item.setVideoUrl(sdEvent.getVideoUrl().split(";")[0]);
+            }
             item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
         });
@@ -223,7 +226,11 @@ public class SdEventServiceImpl implements ISdEventService {
      */
     @Override
     public SdEvent getById(Long id) {
-        return sdEventMapper.selectSdEventById(id);
+        SdEvent event = sdEventMapper.selectSdEventById(id);
+        if(event.getVideoUrl()!=null){
+            event.setVideoUrl(event.getVideoUrl().split(";")[0]);
+        }
+        return event;
     }
 
     /**

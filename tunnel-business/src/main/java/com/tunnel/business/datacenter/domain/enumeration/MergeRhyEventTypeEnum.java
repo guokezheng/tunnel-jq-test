@@ -22,7 +22,7 @@ public enum MergeRhyEventTypeEnum {
     private String rhyType;
     //对应本系统事件类型ID
     private Long typeId;
-    //是否推送
+    //是否推送,1 推送，0 不推送（上传到物联平台的事件类型过滤）
     private int pushOrNot;
 
     MergeRhyEventTypeEnum(String rhyType, Long typeId, int pushOrNot) {

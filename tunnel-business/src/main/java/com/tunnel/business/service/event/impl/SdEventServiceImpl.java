@@ -1,6 +1,7 @@
 package com.tunnel.business.service.event.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -8,13 +9,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventDescEnum;
-import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
-import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
-import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
@@ -23,16 +21,17 @@ import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficI
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
-import com.tunnel.business.utils.util.CommonUtil;
 import com.tunnel.business.utils.util.UUIDUtil;
-import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.net.InetAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +42,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SdEventServiceImpl implements ISdEventService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SdEventServiceImpl.class);
+
     @Autowired
     private SdEventMapper sdEventMapper;
 
@@ -138,7 +140,13 @@ public class SdEventServiceImpl implements ISdEventService {
         eventFlow.setEventId(guid);
         eventFlow.setFlowTime(sdEvent.getEventTime());
         eventFlow.setFlowDescription(sdEvent.getEventDescription());
-        eventFlow.setFlowHandler(SecurityUtils.getUsername());
+        try{
+            String username = SecurityUtils.getUsername();
+            eventFlow.setFlowHandler(username);
+        }catch (ServiceException e){
+            logger.error("获取用户账户异常",e.getDetailMessage());
+        }
+
         int result = sdEventFlowMapper.insertSdEventFlow(eventFlow);
         if (result > -1) {
             result = sdEventMapper.insertSdEvent(sdEvent);

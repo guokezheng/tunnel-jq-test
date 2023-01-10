@@ -847,4 +847,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public SdDevices getLight(SdDevices sdDevices){
         return sdDevicesMapper.getLight(sdDevices);
     }
+
+    @Override
+    public SdDevices getDeviceByAssociationDeviceId(Long deviceId) {
+        return sdDevicesMapper.getDeviceByAssociationDeviceId(deviceId);
+    }
 }

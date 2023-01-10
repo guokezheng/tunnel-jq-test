@@ -244,4 +244,6 @@ public interface ISdDevicesService {
      */
     SdDevices getLight(SdDevices sdDevices);
 
+    SdDevices getDeviceByAssociationDeviceId(Long deviceId);
+
 }

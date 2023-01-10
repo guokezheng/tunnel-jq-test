@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.*;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
@@ -15,6 +16,7 @@ import com.tunnel.platform.business.vms.core.IDeviceProtocol;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -57,19 +59,27 @@ public class BoardController extends BaseController {
      *
      * 1分钟检测一次情报板的状态
      */
-
+    @Scheduled(fixedRate = 60000 * 5)
     public void getIcyData() {
 
     	List<SdIotDevice> list = sdIotDeviceService.selectIotDeviceList(new SdIotDevice());
     	for(int i=0;i<list.size();i++){
     		SdIotDevice iotDevice = list.get(i);
-    		try {
-    			DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
-    			iotDevice.setDeviceStatus("0");
-    			sdIotDeviceService.updateIotDevice(iotDevice);
+            Long deviceId = iotDevice.getDeviceId();
+            SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+            try {
+                DeviceManagerFactory.getInstance().getDeviceDisplayListByDeviceId(String.valueOf(iotDevice.getDeviceId()));
+                iotDevice.setDeviceStatus("0");
+                sdIotDeviceService.updateIotDevice(iotDevice);
+                device.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+                device.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(device);
             } catch (Exception e) {
             	iotDevice.setDeviceStatus("1");
     			sdIotDeviceService.updateIotDevice(iotDevice);
+                device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+                device.setEqStatusTime(new Date());
+                sdDevicesService.updateSdDevices(device);
             }
     	}
 

@@ -941,4 +941,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND d.eq_id = #{deviceId}
           AND d1.eq_type = #{eqType}
     </select>
+
+    <select id="getDeviceByAssociationDeviceId" parameterType="Long" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"/>
+        where associated_device_id = #{deviceId}
+    </select>
 </mapper>

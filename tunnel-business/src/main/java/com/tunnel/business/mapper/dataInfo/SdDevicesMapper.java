@@ -287,4 +287,6 @@ public interface SdDevicesMapper
 	 */
 	SdDevices selectZdyDevice(@Param("deviceId") String deviceId,
 							  @Param("eqType") Long eqType);
+
+	SdDevices getDeviceByAssociationDeviceId(@Param("deviceId") Long deviceId);
 }

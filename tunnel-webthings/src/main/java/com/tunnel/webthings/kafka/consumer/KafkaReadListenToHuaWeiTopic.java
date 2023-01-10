@@ -990,10 +990,11 @@ public class KafkaReadListenToHuaWeiTopic {
      * 事件数据接收
      */
     public void joinEvent(JSONObject jsonObject) {
-        Long eventTypeId = MergeRhyEventTypeEnum.getMergeEventTypeId(jsonObject.getString("mergeCode"));
-        if(eventTypeId==null){
+        MergeRhyEventTypeEnum mergeRhyEventTypeEnum = MergeRhyEventTypeEnum.getMergeEvent(jsonObject.getString("mergeCode"));
+        if(mergeRhyEventTypeEnum == null){
             return;
         }
+        Long eventTypeId = mergeRhyEventTypeEnum.getTypeId();
         SdEvent event = new SdEvent();
         Long eventId = jsonObject.getLong("eventId");
         event.setId(eventId);
@@ -1028,6 +1029,7 @@ public class KafkaReadListenToHuaWeiTopic {
         //所有隧道Map
         Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
         event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
+        event.setEventImgUrl(jsonObject.getString("eventImgUrl"));
         String[] imgList = jsonObject.getString("eventImgUrl").split(";");
         List<SdTrafficImage> imageList = new ArrayList<>();
         for(String img:imgList){
@@ -1044,7 +1046,7 @@ public class KafkaReadListenToHuaWeiTopic {
             effectiveRows = sdEventService.insertSdEvent(event);
         }
         //推送物联中台
-        if(effectiveRows > 0){
+        if(effectiveRows > 0 && mergeRhyEventTypeEnum.getPushOrNot() == 1){
             //如果是未处理状态改为处理中
             if(event.getEventState().equals(EventStateEnum.unprocessed.getCode())){
                 event.setEventState(EventStateEnum.processing.getCode());

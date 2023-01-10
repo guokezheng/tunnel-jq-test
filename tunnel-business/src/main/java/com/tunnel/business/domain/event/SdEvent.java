@@ -242,6 +242,17 @@ public class SdEvent extends BaseEntity {
      */
     private String remark;
 
+    //推送物联中台 图片临时保存字段
+    private String eventImgUrl;
+
+    public String getEventImgUrl() {
+        return eventImgUrl;
+    }
+
+    public void setEventImgUrl(String eventImgUrl) {
+        this.eventImgUrl = eventImgUrl;
+    }
+
     @Override
     public String getRemark() {
         return remark;

@@ -271,7 +271,7 @@ public class PhoneSpkService {
      * @param map
      * @return
      */
-    public AjaxResult playVoice(@RequestBody Map<String, Object> map) throws UnknownHostException {
+    public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         ArrayList<String> spkDeviceIds = (ArrayList<String>) map.get("spkDeviceIds");
         String controlType = (String) map.get("controlType");
@@ -312,7 +312,11 @@ public class PhoneSpkService {
             }
             return AjaxResult.success(status);*/
         } else if ("GLZ".equals(deploymentType)) {
-            operIp = InetAddress.getLocalHost().getHostAddress();
+            try {
+                operIp = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                // e.printStackTrace();
+            }
         }
 
         Long externalSystemId = null;
@@ -391,7 +395,7 @@ public class PhoneSpkService {
     }
 
 
-    public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) throws UnknownHostException {
+    public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         String tunnelId = (String) map.get("tunnelId");
         String direction = (String) map.get("direction");
@@ -406,7 +410,11 @@ public class PhoneSpkService {
         if ("GSY".equals(deploymentType)) {
             Assert.hasText(operIp, "操作方IP地址参数必传！");
         } else if ("GLZ".equals(deploymentType)) {
-            operIp = InetAddress.getLocalHost().getHostAddress();
+            try {
+                operIp = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                // e.printStackTrace();
+            }
         }
         SdDevices device = new SdDevices();
         device.setEqTunnelId(tunnelId);
@@ -465,13 +473,13 @@ public class PhoneSpkService {
                 .map(dev -> {
                     String eqId = dev.getEqId();
                     int index = eqId.lastIndexOf("-");
-                    return eqId.substring(index+1);
+                    return eqId.substring(index + 1);
                 })
                 .collect(Collectors.joining(","));
-        String eqIds = tunnelId + "-" + DevicesTypeEnum.LS.name()+"-" + string;
+        String eqIds = tunnelId + "-" + DevicesTypeEnum.LS.name() + "-" + string;
         sdOperationLog.setEqId(eqIds);
         sdOperationLog.setOperationState("playVoice");
-        sdOperationLog.setControlType("xxxxxxxxxxxxxxxxxxxxx");
+        sdOperationLog.setControlType(controlType);
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperIp(operIp);
         sdOperationLog.setState(String.valueOf(status));

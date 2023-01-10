@@ -204,3 +204,21 @@ export function getFanSafeData(tunnelId) {
     method: 'get',
   })
 }
+
+// 微波车检表格
+export function getStatisticsNewList(query) {
+  return request({
+    url: '/microwave/statistics/getStatisticsNewList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 微波车检echarts
+export function getStatisticsRealList(query) {
+  return request({
+    url: '/microwave/statistics/getStatisticsRealList',
+    method: 'get',
+    params: query
+  })
+}

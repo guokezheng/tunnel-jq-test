@@ -4317,6 +4317,8 @@ export default {
           fileNames: Array(this.phoneForm1.fileNames),
           direction: direction,
           tunnelId: this.currentTunnel.id,
+          controlType: "0",
+
         };
         console.log(param, "param");
         playVoiceGroup(param).then((res) => {});
@@ -4329,6 +4331,8 @@ export default {
           fileNames: Array(this.phoneForm2.fileNames),
           direction: direction,
           tunnelId: this.currentTunnel.id,
+          controlType: "0",
+
         };
         console.log(param, "param");
         playVoiceGroup(param).then((res) => {});
@@ -6750,7 +6754,7 @@ export default {
         }
       });
       addBoardContent(this.currentTunnel.id).then((res)=>{
-        // console.log(res,"情报板显示内容查询");
+        console.log(res,"情报板显示内容查询");
         this.boardObj = res
       })
     },

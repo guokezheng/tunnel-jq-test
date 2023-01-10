@@ -222,6 +222,7 @@ export default {
         volume:this.stateForm2.volume,
         fileNames:Array(this.stateForm2.fileNames),
         spkDeviceIds:Array(this.eqInfo.equipmentId),
+        controlType: "0",
         // items :items,
       }
       console.log(param,"param");

@@ -35,7 +35,7 @@
         <el-row>
           <el-col :span="13">
             <el-form-item label="设备类型:">
-              {{ stateForm.eqTypeName }}
+              {{ stateForm.typeName }}
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="所属方向:">
-              {{ stateForm.eqDirection }}
+              {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ getBrandName(stateForm.brandId) }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -84,25 +84,37 @@
       </el-radio-group>
       <div v-show="tab == 'data'" style="margin-bottom: 10px">
         <el-table :data="dataList" min-height="150" empty-text="暂无操作日志" >
-          <el-table-column label="车道" align="center" prop="lane" width="76" />
+          <el-table-column label="车道" align="center" prop="laneNo" width="76" >
+            <template slot-scope="scope">
+              <span>第{{scope.row.laneNo}}车道</span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="车流量(辆/分钟)"
             align="center"
-            prop="trafficFlow"
+            prop="trafficFlowTotal"
             width="80"
           />
           <el-table-column
             label="平均车速"
             align="center"
-            prop="velocity"
+            prop="avgSpeed"
             width="80"
-          />
+          >
+            <template slot-scope="scope">
+              <span>{{scope.row.avgSpeed}}km/h</span>
+            </template>
+          </el-table-column>
           <el-table-column
             label="占有率"
             align="center"
-            prop="occupancy"
+            prop="avgOccupancy"
             width="64"
-          />
+          >
+            <template slot-scope="scope">
+              <span>{{scope.row.avgOccupancy}}%</span>
+            </template>
+          </el-table-column>
           <el-table-column label="上传时间" align="center" prop="createTime" />
         </el-table>
       </div>
@@ -131,7 +143,8 @@
   <script>
 import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
-import { getTodayCOVIData } from "@/api/workbench/config.js"; //查询弹窗信息
+import { getTodayCOVIData, getStatisticsNewList, getStatisticsRealList } from "@/api/workbench/config.js"; //查询弹窗信息
+import { ConsoleWriter } from "istanbul-lib-report";
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
@@ -142,7 +155,7 @@ export default {
           console.log(newValue, "newValue");
           // this.mychart.dispose()
           this.$nextTick(() => {
-            this.initChart(newValue);
+            this.initChart();
           });
         }
       },
@@ -156,29 +169,11 @@ export default {
       visible: true,
       tab: "data",
       mychart: null,
-      dataList: [
-        {
-          lane: "第一车道",
-          trafficFlow: "47分钟",
-          velocity: "74km/h",
-          occupancy: "47%",
-          createTime: "2022-09-07 14:17:00",
-        },
-        {
-          lane: "第二车道",
-          trafficFlow: "47分钟",
-          velocity: "74km/h",
-          occupancy: "47%",
-          createTime: "2022-09-07 14:17:00",
-        },
-        {
-          lane: "第三车道",
-          trafficFlow: "47分钟",
-          velocity: "74km/h",
-          occupancy: "47%",
-          createTime: "2022-09-07 14:17:00",
-        },
-      ],
+      dataList: [],
+      XData:[],
+      yData1:[],
+      yData2:[],
+      yData3:[]
     };
   },
   created() {
@@ -186,9 +181,7 @@ export default {
     this.getMessage();
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart();
-    });
+    
   },
   methods: {
     // 查设备详情
@@ -206,51 +199,49 @@ export default {
             console.log(response, "covi数据");
           });
           this.title = obj.eqName;
-          this.stateForm = {
-            brandName: that.getBrandName(obj.brandId), //厂商
-            eqDirection: that.getDirection(obj.eqDirection),
-
-            pile: obj.pile, //桩号
-            eqTypeName: obj.typeName, //设备类型名称
-            tunnelName: obj.tunnelName, //隧道名称
-            deptName: obj.deptName, //所属机构
-            eqType: obj.eqType, //设备类型号
-            state: obj.state,
-          };
+          this.stateForm = obj
           console.log(this.stateForm, "stateForm");
+          this.getMess()
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
     },
-    // 获取图表数据信息
-    initChart(val) {
-      console.log(val);
-      var lincolor = [];
-      var yName = "";
-      if (val) {
-        lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-        yName = "VI/KM";
+    getMess(){
+      const params = {
+        deviceId:this.eqInfo.equipmentId,
+        eqDirection:this.stateForm.eqDirection
       }
-
-      var XData = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18];
-      var YData = [1000, 1200, 1250, 1350, 1439, 1446, 1235, 1256, 1363, 1153];
-      console.log(
-        document.getElementById(this.tab),
-        "document.getElementById(this.tab)"
-      );
-      // this.mychart.dispose()
+      getStatisticsNewList(params).then((res)=>{
+        console.log(res,"微波车检表格")
+        this.dataList = res.data
+      })
+      getStatisticsRealList(params).then((res)=>{
+        console.log(res,"微波车检 echarts")
+        for(let item of res.data.laneNoOne){
+          this.XData.push(item.order_hour)
+          this.yData1.push(item.avgSpeed)
+        }
+        for(let item of res.data.laneNoTwo){
+          this.yData2.push(item.avgSpeed)
+        }
+        for(let item of res.data.laneNoThree){
+          this.yData3.push(item.avgSpeed)
+        }
+        setTimeout(()=>{
+          this.$nextTick(() => {
+            this.initChart();
+          });
+        },500)
+        
+      })
+    },
+    // 获取图表数据信息
+    initChart() {
       this.mychart = echarts.init(document.getElementById(this.tab));
       var option = {
         tooltip: {
           trigger: "axis",
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            // magicType: { show: true, type: ['stack', 'tiled'] },
-            // saveAsImage: { show: true }
-          },
         },
         legend: {
           show: true,
@@ -275,7 +266,7 @@ export default {
         xAxis: {
           type: "category",
           boundaryGap: true,
-          data: XData,
+          data: this.XData,
           axisLabel: {
             textStyle: {
               color: "#00AAF2",
@@ -291,7 +282,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          name: "KM",
+          name: "辆",
           nameTextStyle: {
             color: "#FFB500",
             fontSize: 10,
@@ -333,8 +324,7 @@ export default {
               },
             },
             smooth: true,
-
-            data: [30, 80, 90, 70, 80, 90, 80, 90, 70, 50, 60, 70],
+            data:this.yData1,
           },
           {
             name: "2车道",
@@ -348,13 +338,7 @@ export default {
               },
             },
             smooth: true,
-            //   stack: 'Total',
-            //   areaStyle: {},
-            //   emphasis: {
-            //     focus: 'series'
-            //   },
-
-            data: [90, 70, 50, 60, 80, 90, 30, 60, 70, 80, 90, 80],
+            data:this.yData2,
           },
           {
             name: "3车道",
@@ -368,7 +352,7 @@ export default {
               },
             },
             smooth: true,
-            data: [60, 50, 40, 50, 70, 80, 90, 60, 50, 40, 50, 60],
+            data:this.yData3,
           },
         ],
       };

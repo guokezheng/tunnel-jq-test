@@ -192,14 +192,10 @@ export default {
             for(var item of response.data.todayCOData){
               coXdata.push(item.order_hour)
               coYdata.push(item.count)
-              // this.coValue = coYdata[coYdata.length-1]
-              // console.log(co,"co");
             }
             for(var item of response.data.todayVIData){
               viXdata.push(item.order_hour)
               viYdata.push(item.count)
-              // this.viValue = viYdata[viYdata.length-1]
-
             }
             this.$nextTick(() => {
               this.initChart(coXdata,coYdata,viXdata,viYdata);

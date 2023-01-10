@@ -84,11 +84,11 @@
         <div class="lineClass"></div>
         <el-radio-group
           v-model="tab"
-          style="margin-bottom: 10px; margin-top: -10px"
+          style="margin-bottom: 10px; margin-top: 10px"
         >
           <el-radio-button label="yali">压力表实时趋势</el-radio-button>
         </el-radio-group>
-        <div id="yaliCharts" style="margin: 10px auto"></div>
+        <div id="yaliCharts" style="margin: 0px auto"></div>
         </el-form>
         <div slot="footer">
         <el-button
@@ -327,11 +327,11 @@
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
   border-radius: 20px !important;
 }
-::v-deep .el-radio-button {
-  margin: 0 15px;
-}
+// ::v-deep .el-radio-button {
+//   margin: 0 15px;
+// }
 #yaliCharts {
-  width: calc(100% - 30px);
+  width: 100%;
   height: 150px;
   background: #fff;
   margin-left: 5%;

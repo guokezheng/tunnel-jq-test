@@ -155,121 +155,129 @@
         <div class="dispatchRight">
           <div class="workBenchBox">
             <div class="tunnelBox1" v-show="activeMap == 1">
-              <div class="tunnelMap">
-                <el-image
-                  class="back-img"
-                  :src="backImg"
-                  :style="{ width: laneUrlList[0].width + 'px' }"
-                ></el-image>
-                <div class="wrapper" id="eq-wrapper">
-                  <div
-                    class="icon-box active"
-                    v-for="(item, index) in selectedIconList"
-                    :key="index"
-                    @click="openStateSwitch(item)"
-                    :style="{
-                      left: item.position.left / 1.31 + 'px',
-                      top: item.position.top / 1.17 + 'px',
-                      'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
-                    }"
-                    :class="
-                      item.eqType == 7 || item.eqType == 8 || item.eqType == 9
-                        ? 'light-' + item.position.left
-                        : ''
-                    "
-                  >
-                    <div :class="{ focus: item.focus }">
-                      <img
-                        v-show="item.eqType != ('31' || '16' || '36')"
-                        v-for="(url, indexs) in item.url"
-                        style="position: absolute"
-                        :style="{
-                          left: indexs * 14 + 'px',
-                          cursor:
-                            item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border: item.click == true ? 'solid 2px #09C3FC' : '',
-                          transform:
-                            item.eqType == 23 && item.eqDirection == 0
-                              ? 'scale(-1,1)'
-                              : '',
-                        }"
-                        :width="item.iconWidth / 1.23"
-                        :height="item.iconHeight / 1.23"
-                        :key="item.eqId + indexs"
-                        :src="url"
-                      />
-                      <img
-                        v-show="item.eqType == '31'"
-                        style="position: absolute"
-                        :style="{
-                          cursor:
-                            item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border: item.click == true ? 'solid 2px #09C3FC' : '',
-                          transform:
-                            item.eqType == 23 && item.eqDirection == 0
-                              ? 'scale(-1,1)'
-                              : '',
-                        }"
-                        :width="item.iconWidth / 1.3"
-                        :height="item.iconHeight"
-                        :src="getTypePic(item)"
-                      />
-                      <!-- 情报板洞内 -->
-                      <div
-                        v-show="item.eqType == '16' || item.eqType == '36'"
-                        style="
-                          position: absolute;
-                          overflow: hidden;
-                          writing-mode: tb-rl;
-                          font-size: 12px;
-                          color: #ffff07;
-                          text-align: center;
-                          padding: 2px;
-                        "
-                        :style="{
-                          cursor:
-                            item.eqType || item.eqType == 0 ? 'pointer' : '',
-                          border: item.click == true ? 'solid 2px #09C3FC' : '',
-                          width: item.iconWidth / 1.3 + 'px',
-                          height: item.iconHeight / 1.3 + 'px',
-                        }"
-                        :src="getTypePic(item)"
-                      >
-                        {{ item.eqName }}
-                      </div>
+              <div style="width:100%;height:100%;overflow:hidden">
+                <div class="tunnelMap"
+                  @mousedown="dragImg"
+                  ref="dragImgDom"
+                  @contextmenu.prevent>
+                  <el-image
+                    class="back-img"
+                    :src="backImg"
+                    :style="{ 
+                      width: picWidth / 1.37 + 'px',
+                  }"
+                  ></el-image>
+                  <div class="wrapper" id="eq-wrapper">
+                    <div
+                      class="icon-box active"
+                      v-for="(item, index) in selectedIconList"
+                      :key="index"
+                      @click="openStateSwitch(item)"
+                      :style="{
+                        left: item.position.left / 1.37 + 'px',
+                        top: item.position.top / 1.17 + 'px',
+                        'z-index': item.eqType || item.eqType == 0 ? '' : '-1',
+                      }"
+                      :class="
+                        item.eqType == 7 || item.eqType == 8 || item.eqType == 9
+                          ? 'light-' + item.position.left
+                          : ''
+                      "
+                    >
+                      <div :class="{ focus: item.focus }">
+                        <img
+                          v-show="item.eqType != ('31' || '16' || '36')"
+                          v-for="(url, indexs) in item.url"
+                          style="position: absolute"
+                          :style="{
+                            left: indexs * 14 + 'px',
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border: item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth / 1.23"
+                          :height="item.iconHeight / 1.23"
+                          :key="item.eqId + indexs"
+                          :src="url"
+                        />
+                        <img
+                          v-show="item.eqType == '31'"
+                          style="position: absolute"
+                          :style="{
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border: item.click == true ? 'solid 2px #09C3FC' : '',
+                            transform:
+                              item.eqType == 23 && item.eqDirection == 0
+                                ? 'scale(-1,1)'
+                                : '',
+                          }"
+                          :width="item.iconWidth / 1.3"
+                          :height="item.iconHeight"
+                          :src="getTypePic(item)"
+                        />
+                        <!-- 情报板洞内 -->
+                        <div
+                          v-show="item.eqType == '16' || item.eqType == '36'"
+                          style="
+                            position: absolute;
+                            overflow: hidden;
+                            writing-mode: tb-rl;
+                            font-size: 12px;
+                            color: #ffff07;
+                            text-align: center;
+                            padding: 2px;
+                          "
+                          :style="{
+                            cursor:
+                              item.eqType || item.eqType == 0 ? 'pointer' : '',
+                            border: item.click == true ? 'solid 2px #09C3FC' : '',
+                            width: item.iconWidth / 1.3 + 'px',
+                            height: item.iconHeight / 1.3 + 'px',
+                          }"
+                          :src="getTypePic(item)"
+                        >
+                          {{ item.eqName }}
+                        </div>
 
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accBox">
+                    <div class="accTop">
+                      <div class="accPoint"
+                      :style="{
+                        height:160/tunnelLane + 'px',
+                        width:160/tunnelLane + 'px',
+                        left:accLeft + '%',
+                        top:accTop + '%'
+                      }"
+                      v-if="eventForm.direction == '2'"
+                      >
+                    <img :src="assIconUrl"></img>
+                    </div>
+                    </div>
+                    <div class="accBottom">
+                      <div class="accPoint"
+                      :style="{
+                        height:160/tunnelLane + 'px',
+                        width:160/tunnelLane + 'px',
+                        left:accLeft + '%',
+                        top:accTop + '%'
+                      }"
+                      v-if="eventForm.direction == '1'"
+                      >
+                      <img :src="assIconUrl"></img>
+                    </div>
                     </div>
                   </div>
                 </div>
-                <div class="accBox">
-                  <div class="accTop">
-                    <div class="accPoint"
-                    :style="{
-                      height:160/tunnelLane + 'px',
-                      width:160/tunnelLane + 'px',
-                      left:accLeft + '%',
-                      top:accTop + '%'
-                    }"
-                    v-if="eventForm.direction == '2'"
-                    >
-                  <img :src="assIconUrl"></img>
-                  </div>
-                  </div>
-                  <div class="accBottom">
-                    <div class="accPoint"
-                    :style="{
-                      height:160/tunnelLane + 'px',
-                      width:160/tunnelLane + 'px',
-                      left:accLeft + '%',
-                      top:accTop + '%'
-                    }"
-                    v-if="eventForm.direction == '1'"
-                    >
-                    <img :src="assIconUrl"></img>
-                  </div>
-                  </div>
-                </div>
               </div>
+              
             </div>
             <div class="tunnelBox3" v-show="activeMap == 2">
               <iframe
@@ -629,10 +637,7 @@ import comData from "@/views/workbench/config/components/data"; //只有数据�
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
 
-import {
-  listEventType,
-
-} from "@/api/event/eventType";
+import { listEventType } from "@/api/event/eventType";
 import {
   listEqTypeState,
   getStateByData,
@@ -648,7 +653,7 @@ import {
   getAccidentPoint,
   implementProcess,
   implementPlan,
-  performRecovery
+  performRecovery,
 } from "@/api/event/event";
 import { listSdEmergencyPer } from "@/api/event/SdEmergencyPer";
 
@@ -670,19 +675,19 @@ export default {
   },
   data() {
     return {
-      iconDisabled:false,
-      disabledRadio:false,
-      assIconUrl:'',
-      IssuedItemContent:'',
-      IssuedItem:{},
-      title:'',
-      IssuedDialog:false,
-      accLeft:0,
-      accTop:0,
-      tunnelLane:0,
-      eqTypeDialogList:[],
-      brandList:[],
-      eqInfo:{},
+      iconDisabled: false,
+      disabledRadio: false,
+      assIconUrl: "",
+      IssuedItemContent: "",
+      IssuedItem: {},
+      title: "",
+      IssuedDialog: false,
+      accLeft: 0,
+      accTop: 0,
+      tunnelLane: 0,
+      eqTypeDialogList: [],
+      brandList: [],
+      eqInfo: {},
       relationDisabled: false,
       activeMap: 1,
       eqTypeList: [],
@@ -745,7 +750,13 @@ export default {
       eventList: [],
       implementList: [],
       zxList: [],
-      incHandList: [ ],
+      incHandList: [],
+      picWidth: "",
+      dragFlag: false,
+      mouseLeft: 0,
+      mouseTop: 0,
+      curX: 0,
+      curY: 0,
     };
   },
   computed: {
@@ -810,6 +821,32 @@ export default {
     }, 1000 * 5);
   },
   methods: {
+    //右键拖动
+    dragImg(e) {
+      console.log(e, "e");
+      console.log(
+        this.$refs.dragImgDom.offsetLeft,
+        "this.$refs.dragImgDom.offsetLeft"
+      );
+      if (e.button == 0) {
+        return;
+      }
+      this.dragFlag = true;
+      this.mouseLeft =
+        e.clientX - parseInt(this.$refs.dragImgDom.offsetLeft) + 560;
+      this.mouseTop = e.clientY - parseInt(this.$refs.dragImgDom.offsetTop);
+      document.onmousemove = (e) => {
+        if (this.dragFlag) {
+          this.curX = e.clientX - this.mouseLeft;
+          this.curY = e.clientY - this.mouseTop;
+          this.$refs.dragImgDom.style.left = this.curX + "px";
+          this.$refs.dragImgDom.style.top = this.curY + "px";
+        }
+      };
+      document.onmouseup = () => {
+        this.dragFlag = false;
+      };
+    },
     // 预览按钮
     getPreview(type) {
       // 查预案ID
@@ -819,10 +856,10 @@ export default {
         controlDirection: type,
         direction: this.eventForm.direction,
         eventId: this.eventForm.id,
-        planTypeId:this.eventForm.eventTypeId,
+        planTypeId: this.eventForm.eventTypeId,
       };
-      getReserveId(params).then(res=>{
-        console.log(res,"获取的预案id");
+      getReserveId(params).then((res) => {
+        console.log(res, "获取的预案id");
         var planId = res.data;
         this.$nextTick(() => {
           this.$refs.workBench.eventId = this.$route.query.id;
@@ -830,76 +867,72 @@ export default {
           this.$refs.workBench.tunnelId = this.eventForm.tunnelId;
           this.$refs.workBench.init();
         });
-      })
+      });
       // this.workbenchOpen = true;
     },
     // 事件点图片
-    getAccIcon(){
-      console.log(8888888888)
-      let id = this.eventForm.eventTypeId
-      console.log(this.eventForm.eventTypeId,"this.eventForm.eventTypeId");
-      listEventType({id}).then((res) =>{
+    getAccIcon() {
+      console.log(8888888888);
+      let id = this.eventForm.eventTypeId;
+      console.log(this.eventForm.eventTypeId, "this.eventForm.eventTypeId");
+      listEventType({ id }).then((res) => {
         console.log(res);
-        this.assIconUrl = res.rows[0].iconUrl
-      })
+        this.assIconUrl = res.rows[0].iconUrl;
+      });
     },
     // 事件点
-    async getAcc(){
+    async getAcc() {
       const params = {
-        stakeNum:this.eventForm.stakeNum,
-        laneNo:this.eventForm.laneNo,
-        tunnelId:this.eventForm.tunnelId,
-      }
-      await getAccidentPoint(params).then((res) =>{
-        console.log(res,"事件点");
-        this.accLeft = res.data['tunnelLeft'] * 100
-        this.accTop = res.data['tunnelTop'] * 100
-        this.getAccIcon()
-      })
+        stakeNum: this.eventForm.stakeNum,
+        laneNo: this.eventForm.laneNo,
+        tunnelId: this.eventForm.tunnelId,
+      };
+      await getAccidentPoint(params).then((res) => {
+        console.log(res, "事件点");
+        this.accLeft = res.data["tunnelLeft"] * 100;
+        this.accTop = res.data["tunnelTop"] * 100;
+        this.getAccIcon();
+      });
     },
     // 事件处置 一键
-    getYiJian(item){
-      console.log(item,"一键");
-      var that = this
+    getYiJian(item) {
+      console.log(item, "一键");
+      var that = this;
       // let str = ''
-      let arr = []
-      for(let itm of item.children){
-        arr.push(itm.id)
+      let arr = [];
+      for (let itm of item.children) {
+        arr.push(itm.id);
       }
-     
 
       this.$confirm("是否确认执行?", "警告", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(function () {
-      
-          let planId = item.reserveId
-          let eventId = that.$route.query.id
+        let planId = item.reserveId;
+        let eventId = that.$route.query.id;
 
-        implementPlan(planId,eventId).then((response) =>{
-          console.log(response,"一键下发成功");
-          for(let item of that.incHandList) {
-            for(let itm of item.children) {
-              for(let it_m of arr){
+        implementPlan(planId, eventId).then((response) => {
+          console.log(response, "一键下发成功");
+          for (let item of that.incHandList) {
+            for (let itm of item.children) {
+              for (let it_m of arr) {
                 if (itm.id == it_m) {
                   itm.eventState = "1";
-                 that.$modal.msgSuccess("一键下发成功");
-
+                  that.$modal.msgSuccess("一键下发成功");
                 }
               }
             }
           }
           this.evtHandle();
           this.getEventList();
-        })
+        });
       });
     },
     // 返回安全预警
-    backSafeWarn(){
+    backSafeWarn() {
       this.$router.push({
         path: "/emergency/safeWarn",
-
       });
     },
     // 关闭弹窗子组件
@@ -907,12 +940,12 @@ export default {
       this.eqInfo.clickEqType = 0;
     },
     // 点设备弹窗
-    openStateSwitch(item){
+    openStateSwitch(item) {
       console.log(item, "点击的设备");
-        this.eqInfo = {
-          clickEqType: item.eqType,
-          equipmentId: item.eqId,
-        };
+      this.eqInfo = {
+        clickEqType: item.eqType,
+        equipmentId: item.eqId,
+      };
     },
 
     // 关联事件
@@ -923,7 +956,7 @@ export default {
         controlDirection: type,
         direction: this.eventForm.direction,
         eventId: this.eventForm.id,
-        planTypeId:this.eventForm.eventTypeId,
+        planTypeId: this.eventForm.eventTypeId,
       };
       getRelation(params).then((res) => {
         console.log(res, "关联事件");
@@ -931,63 +964,59 @@ export default {
 
         this.getListEvent();
         this.relationDisabled = true;
-        this.disabledRadio = true
+        this.disabledRadio = true;
       });
     },
     // 打开下发事件弹窗
-    openIssuedDialog(item){
-      this.IssuedDialog = true
-      this.title = '警告'
-      this.IssuedItem = item
+    openIssuedDialog(item) {
+      this.IssuedDialog = true;
+      this.title = "警告";
+      this.IssuedItem = item;
     },
     // 关闭下发事件弹窗
-    cancelIssuedDialog(){
-      this.IssuedDialog = false
-
+    cancelIssuedDialog() {
+      this.IssuedDialog = false;
     },
     changeIncHand() {
-      var that = this
-      console.log(this.IssuedItem,"this.IssuedItem");
-      if(this.IssuedItem.flowPid == '7'){
-        let processId = this.IssuedItem.processId
-        let eventId = that.$route.query.id
-        implementProcess(processId,eventId).then((response) =>{
-          console.log(response,"单点下发");
+      var that = this;
+      console.log(this.IssuedItem, "this.IssuedItem");
+      if (this.IssuedItem.flowPid == "7") {
+        let processId = this.IssuedItem.processId;
+        let eventId = that.$route.query.id;
+        implementProcess(processId, eventId).then((response) => {
+          console.log(response, "单点下发");
           that.$modal.msgSuccess("状态修改成功");
-          this.IssuedDialog = false
-          this.getDispatchExecuted()
+          this.IssuedDialog = false;
+          this.getDispatchExecuted();
           that.evtHandle();
           that.getEventList();
-        })
-      }
-      else if(this.IssuedItem.flowId == '17'){
-        let eventId = that.$route.query.id
-        let handleId = this.IssuedItem.id
-        performRecovery(eventId,handleId).then((res) =>{
-          console.log(res,"解除管控");
-          this.IssuedDialog = false
-          this.IssuedItemContent = ''
+        });
+      } else if (this.IssuedItem.flowId == "17") {
+        let eventId = that.$route.query.id;
+        let handleId = this.IssuedItem.id;
+        performRecovery(eventId, handleId).then((res) => {
+          console.log(res, "解除管控");
+          this.IssuedDialog = false;
+          this.IssuedItemContent = "";
           that.evtHandle();
           that.getEventList();
-        })
-      }
-      else{
+        });
+      } else {
         const params = {
           id: that.$route.query.id,
           ids: this.IssuedItem.id,
-          remark:this.IssuedItemContent,
+          remark: this.IssuedItemContent,
         };
         updateHandle(params).then((res) => {
-          console.log(res,"单点改状态");
-          console.log(that.incHandList,"this.incHandList");
+          console.log(res, "单点改状态");
+          console.log(that.incHandList, "this.incHandList");
           that.$modal.msgSuccess("状态修改成功");
-          this.IssuedDialog = false
-          this.IssuedItemContent = ''
+          this.IssuedDialog = false;
+          this.IssuedItemContent = "";
           that.evtHandle();
           that.getEventList();
-          if(this.IssuedItem.flowId == '18'){
-            this.iconDisabled = true
-           
+          if (this.IssuedItem.flowId == "18") {
+            this.iconDisabled = true;
           }
         });
       }
@@ -1003,20 +1032,23 @@ export default {
         //  for(let item of list){
         //   console.log(item.flowContent.toString().length,"555555555555555")
         //  }
-        for(var i = 0; i < list.length; i++){
-          for(var j = i; j < list.length - 1; j++){
-            if(Number(list[i].flowSort) > Number(list[j + 1].flowSort)){
+        for (var i = 0; i < list.length; i++) {
+          for (var j = i; j < list.length - 1; j++) {
+            if (Number(list[i].flowSort) > Number(list[j + 1].flowSort)) {
               const temp = list[i];
               list[i] = list[j + 1];
               list[j + 1] = temp;
             }
           }
         }
-        for(var i = 0; i < list.length; i++){
-          if(list[i].children){
-            for(var a = 0; a < list[i].children.length; a++){
-              for(var b = a; b < list[i].children.length - 1; b++){
-                if(Number(list[i].children[a].flowSort) > Number(list[i].children[b + 1].flowSort)){
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].children) {
+            for (var a = 0; a < list[i].children.length; a++) {
+              for (var b = a; b < list[i].children.length - 1; b++) {
+                if (
+                  Number(list[i].children[a].flowSort) >
+                  Number(list[i].children[b + 1].flowSort)
+                ) {
                   const temp = list[i].children[a];
                   // console.log(temp,"temptemptemptemptemptemp")
                   list[i].children[a] = list[i].children[b + 1];
@@ -1027,12 +1059,12 @@ export default {
           }
         }
         this.incHandList = list;
-        for(let item of this.incHandList){
-          for(let itm of item.children){
-            if(itm.flowId == 18 && itm.eventState == '1'){
-              this.iconDisabled = true
-              this.relationDisabled = true
-              this.disabledRadio = true
+        for (let item of this.incHandList) {
+          for (let itm of item.children) {
+            if (itm.flowId == 18 && itm.eventState == "1") {
+              this.iconDisabled = true;
+              this.relationDisabled = true;
+              this.disabledRadio = true;
             }
           }
         }
@@ -1061,10 +1093,9 @@ export default {
           this.getpersonnelList();
           this.evtHandle();
           this.getTunnelData();
-          setTimeout(()=>{
-            this.getAcc()
-          },500)
-
+          setTimeout(() => {
+            this.getAcc();
+          }, 500);
         });
       }
     },
@@ -1090,7 +1121,7 @@ export default {
     // 处置记录
     getEventList() {
       eventFlowList({ eventId: this.$route.query.id }).then((res) => {
-        console.log(res,"处置记录");
+        console.log(res, "处置记录");
         this.eventList = res.rows;
       });
     },
@@ -1137,18 +1168,19 @@ export default {
       let that = this;
 
       await getTunnels(tunnelId).then((response) => {
-        console.log(response,"response");
-        this.tunnelLane = Number(response.data.lane)
+        console.log(response, "response");
+        this.tunnelLane = Number(response.data.lane);
         let res = response.data.storeConfigure;
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-        console.log(res,"获取隧道配置信息");
+          console.log(res, "获取隧道配置信息");
 
           let id = res.lane;
           for (let i = 0; i < that.laneUrlList.length; i++) {
             if (that.laneUrlList[i].id == id) {
               that.backImg = that.laneUrlList[i].url;
+              that.picWidth = that.laneUrlList[i].width;
             }
           }
           listType().then((response) => {
@@ -1327,13 +1359,13 @@ export default {
         });
       }
     },
-    getExecuteResult(num){
-      if(num == '1'){
-        return "执行成功"
-      }else{
-        return "执行失败"
+    getExecuteResult(num) {
+      if (num == "1") {
+        return "执行成功";
+      } else {
+        return "执行失败";
       }
-    }
+    },
   },
 };
 </script>
@@ -1608,8 +1640,8 @@ export default {
         margin-bottom: 10px;
         // padding-bottom: 10px;
         .back-img {
-          width: 100% !important;
-          height: 100% !important;
+          // width: 100% !important;
+          height: 491.47px !important;
           position: absolute;
         }
         .wrapper {
@@ -1627,25 +1659,25 @@ export default {
             width: 30px !important;
           }
         }
-        .accBox{
+        .accBox {
           width: 100%;
           height: 100%;
           position: relative;
-          .accTop{
+          .accTop {
             position: absolute;
             width: calc(100% - 200px);
             height: 160px;
             top: 60px;
             left: 100px;
           }
-          .accBottom{
+          .accBottom {
             position: absolute;
             width: calc(100% - 200px);
             height: 160px;
             top: 270px;
             left: 100px;
           }
-          .accPoint{
+          .accPoint {
             border-radius: 50px;
             position: absolute;
             // border: solid 1px red;
@@ -1713,7 +1745,7 @@ export default {
                 text-align: center;
               }
               .yijian {
-                color:white;
+                color: white;
                 width: 50px;
                 background: linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
                 border: 1px solid #39adff;
@@ -1760,7 +1792,6 @@ export default {
         height: 100%;
         // border-left: solid 1px #E0E7ED;
         overflow: hidden;
-
       }
     }
     .implement1 {
@@ -1884,39 +1915,35 @@ export default {
   background: #008aff;
   // border: solid 2px #012e51;
 }
-::v-deep .el-dialog__header{
+::v-deep .el-dialog__header {
   padding: 0 !important;
 }
-.workbench-dialog{
-  .el-dialog__header{
+.workbench-dialog {
+  .el-dialog__header {
     padding: 0 !important;
   }
 }
-
-
 </style>
 <style lang="scss">
-.IssuedDialog{
-  .el-dialog{
-  margin-top: 28vh !important;
-}
-  .el-dialog__body{
+.IssuedDialog {
+  .el-dialog {
+    margin-top: 28vh !important;
+  }
+  .el-dialog__body {
     padding-top: 20px !important;
   }
-  .IssuedButton1{
+  .IssuedButton1 {
     width: 60px;
     height: 20px;
     border-radius: 15px;
-    background: #d8d8d8
-              linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
+    background: #d8d8d8 linear-gradient(180deg, #1eace8 0%, #0074d4 100%);
     text-align: center;
     line-height: 20px;
     color: #fff;
     margin: 10px;
     cursor: pointer;
-
   }
-  .IssuedButton2{
+  .IssuedButton2 {
     width: 60px;
     height: 20px;
     border-radius: 15px;
@@ -1928,5 +1955,4 @@ export default {
     cursor: pointer;
   }
 }
-
 </style>

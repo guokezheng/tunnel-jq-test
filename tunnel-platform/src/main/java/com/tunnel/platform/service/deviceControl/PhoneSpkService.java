@@ -2,6 +2,7 @@ package com.tunnel.platform.service.deviceControl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONValidator;
 import com.google.gson.JsonObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
@@ -10,6 +11,7 @@ import com.tunnel.business.datacenter.domain.enumeration.PhoneSpkEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
+import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.event.SdEventTypeMapper;
@@ -17,6 +19,7 @@ import com.tunnel.business.service.dataInfo.IExternalSystemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
+import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.business.utils.util.SpringContextUtils;
 import com.tunnel.deal.phone.PhoneSpeak;
 import com.tunnel.platform.service.SdDeviceControlService;
@@ -34,14 +37,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class PhoneSpkService {
+
     @Value("${authorize.name}")
     private String deploymentType;
     @Autowired
@@ -64,6 +68,8 @@ public class PhoneSpkService {
     private SdEventMapper sdEventMapper;
     @Autowired
     private SdEventTypeMapper sdEventTypeMapper;
+    @Autowired
+    private ISdOperationLogService sdOperationLogService;
 
     /**
      * 从Spring容器中获取设备协议中配置的Class对象
@@ -105,6 +111,7 @@ public class PhoneSpkService {
     /**
      * 登录获取token
      * 测试过程发现请求接口不需要携带token,此方法暂时用不上
+     *
      * @param username
      * @param password
      * @return
@@ -235,28 +242,26 @@ public class PhoneSpkService {
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
-
-        String url = systemUrl + "/api/speak/voiceList";
         Request request = new Request.Builder()
-                .url(url)
+                .url(systemUrl + "/api/speak/voiceList")
                 .build();
 
-        String result = null;
         JSONArray jsonArray = new JSONArray();
         try {
             Response response = client.newCall(request).execute();
-            if (response.body() != null) {
-                result = response.body().string();
+            String result = response.body().string();
+
+            if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
+                JSONObject jo = JSONObject.parseObject(result);
+                JSONObject data = jo.getJSONObject("data");
+                if (null != data) {
+                    jsonArray = data.getJSONArray("items");
+                }
             }
         } catch (IOException e) {
             return AjaxResult.success(jsonArray);
         }
 
-        if (StringUtils.isNotBlank(result)) {
-            JSONObject jo = JSONObject.parseObject(result);
-            jsonArray = jo.getJSONObject("data").getJSONArray("items");
-
-        }
         return AjaxResult.success(jsonArray);
     }
 
@@ -266,17 +271,56 @@ public class PhoneSpkService {
      * @param map
      * @return
      */
-    public AjaxResult playVoice(@RequestBody Map<String, Object> map) {
+    public AjaxResult playVoice(@RequestBody Map<String, Object> map) throws UnknownHostException {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         ArrayList<String> spkDeviceIds = (ArrayList<String>) map.get("spkDeviceIds");
+        String controlType = (String) map.get("controlType");
+        String operIp = (String) map.get("operIp");
+
         //参数校验
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
+        Assert.hasText(controlType, "控制类型参数必传！");
+        if ("GSY".equals(deploymentType)) {
+            /*Assert.hasText(operIp, "操作方IP地址参数{operIp}必传！");
+
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+            MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
+            //构建json格式参数
+            JSONObject jsonParam = new JSONObject();
+            jsonParam.putAll(map);
+            String content = jsonParam.toString();
+            okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
+            Request request = new Request.Builder()
+                    .url("http://10.168.75.50:8000/api/speak/playVoice")
+                    .method("POST", requestBody)
+                    .build();
+            int status = 0;
+
+            try {
+                Response response = client.newCall(request).execute();
+                String result = response.body().string();
+                if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
+                    JSONObject jsonObject = JSONObject.parseObject(result);
+                    int code = (int) jsonObject.get("code");
+                    if (code == 200) {
+                        status = 1;
+                    }
+                }
+            } catch (IOException e) {
+                status = 0;
+            }
+            return AjaxResult.success(status);*/
+        } else if ("GLZ".equals(deploymentType)) {
+            operIp = InetAddress.getLocalHost().getHostAddress();
+        }
 
         Long externalSystemId = null;
         String hostId = null;
+        String eqTunnelId = null;
         for (String spkDeviceId : spkDeviceIds) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
+            eqTunnelId = devices.getEqTunnelId();
             externalSystemId = devices.getExternalSystemId();
             if (null != externalSystemId) {
                 break;
@@ -331,18 +375,39 @@ public class PhoneSpkService {
         }
         int status = phoneSpeak.playVoice(systemUrl, map);
 
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
+        sdOperationLog.setTunnelId(eqTunnelId);
+        sdOperationLog.setEqId(spkDeviceIds.toString());
+        sdOperationLog.setOperationState("playVoice");
+        sdOperationLog.setControlType(controlType);
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setOperIp(operIp);
+        sdOperationLog.setState(String.valueOf(status));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+
         return AjaxResult.success(status);
     }
 
-    public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) {
+
+    public AjaxResult playVoiceGroup(@RequestBody Map<String, Object> map) throws UnknownHostException {
         ArrayList fileList = (ArrayList) map.get("fileNames");
         String tunnelId = (String) map.get("tunnelId");
         String direction = (String) map.get("direction");
+        String controlType = (String) map.get("controlType");
+        String operIp = (String) map.get("operIp");
 
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.hasText(tunnelId, "隧道ID参数必传");
         Assert.hasText(direction, "隧道方向参数必传");
+        Assert.hasText(controlType, "控制类型参数必传！");
 
+        if ("GSY".equals(deploymentType)) {
+            Assert.hasText(operIp, "操作方IP地址参数必传！");
+        } else if ("GLZ".equals(deploymentType)) {
+            operIp = InetAddress.getLocalHost().getHostAddress();
+        }
         SdDevices device = new SdDevices();
         device.setEqTunnelId(tunnelId);
         device.setEqDirection(direction);
@@ -373,7 +438,6 @@ public class PhoneSpkService {
         String systemUrl = externalSystem.getSystemUrl();
         Assert.hasText(systemUrl, "未配置该设备所属的外部系统地址");
 
-
         ArrayList<Map> items = new ArrayList<>();
         for (SdDevices devices : spkList) {
             HashMap item = new HashMap();
@@ -384,7 +448,6 @@ public class PhoneSpkService {
         }
         map.put("items", items);
 
-
         PhoneSpeak phoneSpeak = null;
         for (SdDevices devices : spkList) {
             phoneSpeak = getBeanOfDeviceProtocol(devices.getEqId());
@@ -393,6 +456,26 @@ public class PhoneSpkService {
             }
         }
         int status = phoneSpeak.playVoice(systemUrl, map);
+
+        //添加操作日志
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
+        sdOperationLog.setTunnelId(tunnelId);
+        String string = spkList.stream()
+                .map(dev -> {
+                    String eqId = dev.getEqId();
+                    int index = eqId.lastIndexOf("-");
+                    return eqId.substring(index+1);
+                })
+                .collect(Collectors.joining(","));
+        String eqIds = tunnelId + "-" + DevicesTypeEnum.LS.name()+"-" + string;
+        sdOperationLog.setEqId(eqIds);
+        sdOperationLog.setOperationState("playVoice");
+        sdOperationLog.setControlType("xxxxxxxxxxxxxxxxxxxxx");
+        sdOperationLog.setCreateTime(new Date());
+        sdOperationLog.setOperIp(operIp);
+        sdOperationLog.setState(String.valueOf(status));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
 
         return AjaxResult.success(status);
     }

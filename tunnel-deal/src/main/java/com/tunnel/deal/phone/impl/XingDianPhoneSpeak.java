@@ -1,6 +1,7 @@
 package com.tunnel.deal.phone.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONValidator;
 import com.tunnel.deal.phone.PhoneSpeak;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -30,26 +31,24 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
         String content = jsonParam.toString();
 
         okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
-
-        String url = systemUrl + "/api/speak/playVoice";
         Request request = new Request.Builder()
-                .url(url)
+                .url(systemUrl + "/api/speak/playVoice")
                 .method("POST", requestBody)
                 .build();
-        String result = null;
+
         int status = 0;
         try {
             Response response = client.newCall(request).execute();
-            result = response.body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (StringUtils.isNotBlank(result)) {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            int code = (int) jsonObject.get("code");
-            if (code == 0) {
-                status = 1;
+            String result = response.body().string();
+            if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                int code = (int) jsonObject.get("code");
+                if (code == 0) {
+                    status = 1;
+                }
             }
+        } catch (IOException e) {
+            return status;
         }
         return status;
     }
@@ -65,26 +64,25 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
         String content = jsonParam.toString();
 
         okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
-        String url = systemUrl + "/api/speak/tempSpkGroup";
         Request request = new Request.Builder()
-                .url(url)
+                .url(systemUrl + "/api/speak/tempSpkGroup")
                 .method("POST", requestBody)
                 .build();
-        String result = null;
+
         int status = 0;
         try {
             Response response = client.newCall(request).execute();
-            result = response.body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            String result = response.body().string();
 
-        if (StringUtils.isNotBlank(result)) {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            int code = (int) jsonObject.get("code");
-            if (code == 0) {
-                status = 1;
+            if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                int code = (int) jsonObject.get("code");
+                if (code == 0) {
+                    status = 1;
+                }
             }
+        } catch (IOException e) {
+            return status;
         }
         return status;
     }
@@ -105,22 +103,22 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
                 .url(url)
                 .method("POST", requestBody)
                 .build();
-        String result = null;
+
         int status = 0;
         try {
             Response response = client.newCall(request).execute();
-            result = response.body().string();
+            String result = response.body().string();
+            if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
+                JSONObject jsonObject = JSONObject.parseObject(result);
+                int code = (int) jsonObject.get("code");
+                if (code == 0) {
+                    status = 1;
+                }
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            return status;
         }
 
-        if (StringUtils.isNotBlank(result)) {
-            JSONObject jsonObject = JSONObject.parseObject(result);
-            int code = (int) jsonObject.get("code");
-            if (code == 0) {
-                status = 1;
-            }
-        }
         return status;
     }
 }

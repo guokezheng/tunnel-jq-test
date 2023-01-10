@@ -65,7 +65,7 @@ public class SanJingLight implements Light {
         Assert.hasText(eqTunnelId, "未配置该设备所属隧道");
         Assert.hasText(eqDirection, "未配置该设备所属方向");
         Assert.notNull(externalSystemId, "未配置该设备关联的外部系统");
-        // Assert.hasText(step, "未配置该设备关联的段号，请联系管理员！");
+        // Assert.hasText(step, "未配置该设备关联的段号");
         Assert.hasText(step, "该设备暂时不可控！");
 
         //确定隧道洞编号
@@ -97,7 +97,6 @@ public class SanJingLight implements Light {
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
-            e.printStackTrace();
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;
@@ -147,7 +146,6 @@ public class SanJingLight implements Light {
             //包含“发送成功"就可以
             responseBody = response.body().string();
         } catch (IOException e) {
-            e.printStackTrace();
             return 0;
         }
         return responseBody.contains("发送成功") ? 1 : 0;

@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.deviceControl;
 
+import cn.hutool.http.HttpUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -65,7 +66,7 @@ public class LightController {
     {
         // 如果是部署在高速云，校验Ip地址参数
         if ("GSY".equals(deploymentType)) {
-            Assert.hasText(operIp, "IP参数{operIp}必传");
+            // Assert.hasText(operIp, "操作方IP地址参数{operIp}必传");
             Map<String, Object> uriVariables = new HashMap<>();
             uriVariables.put("deviceId", deviceId);
             uriVariables.put("bright", bright);
@@ -77,11 +78,17 @@ public class LightController {
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
             //接口地址
-            String url = "http://localhost:80000/light/setBrightness";
+            String url = "http://10.168.75.50:8000/light/setBrightness";
             // String url = host + "/light/setBrightness";
 
-            ResponseEntity<AjaxResult> forEntity = restTemplate.getForEntity(url, AjaxResult.class, uriVariables);
-            return forEntity.getBody();
+            // ResponseEntity<AjaxResult> forEntity = restTemplate.getForEntity(url, AjaxResult.class, uriVariables);
+
+            String s = HttpUtil.get(url, uriVariables);
+
+
+            // return forEntity.getBody();
+
+            return AjaxResult.success();
         }
 
         operIp = InetAddress.getLocalHost().getHostAddress();
@@ -117,7 +124,7 @@ public class LightController {
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
             //接口地址
-            String url = "http://localhost:80000/light/lineControl";
+            String url = "http://10.168.75.50:8000/light/lineControl";
             // String url = host + "/light/setBrightness";
 
             ResponseEntity<AjaxResult> forEntity = restTemplate.getForEntity(url, AjaxResult.class, uriVariables);

@@ -1,5 +1,6 @@
 package com.tunnel.platform.service.deviceControl;
 
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
@@ -11,6 +12,7 @@ import com.tunnel.business.datacenter.domain.enumeration.PhoneSpkEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
+import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
@@ -276,41 +278,31 @@ public class PhoneSpkService {
         ArrayList<String> spkDeviceIds = (ArrayList<String>) map.get("spkDeviceIds");
         String controlType = (String) map.get("controlType");
         String operIp = (String) map.get("operIp");
-
+        String tunnelId = (String) map.get("tunnelId");
         //参数校验
         Assert.notEmpty(fileList, "未选择音频文件！");
         Assert.notEmpty(spkDeviceIds, "未选择广播设备！");
         Assert.hasText(controlType, "控制类型参数必传！");
+        Assert.hasText(tunnelId, "隧道ID参数必传");
+
         if ("GSY".equals(deploymentType)) {
-            /*Assert.hasText(operIp, "操作方IP地址参数{operIp}必传！");
+            Assert.hasText(operIp, "操作方IP地址参数{operIp}必传！");
+            SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
+            //设备所属管理站host
+            String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
+            // String url = "host" + "/api/speak/playVoice";
 
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
-            MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
-            //构建json格式参数
-            JSONObject jsonParam = new JSONObject();
-            jsonParam.putAll(map);
-            String content = jsonParam.toString();
-            okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
-            Request request = new Request.Builder()
-                    .url("http://10.168.75.50:8000/api/speak/playVoice")
-                    .method("POST", requestBody)
-                    .build();
-            int status = 0;
+            String url = "http://10.168.75.50:8000/api/speak/playVoice";
+            String response = HttpUtil.post(url, map, 5000);
 
-            try {
-                Response response = client.newCall(request).execute();
-                String result = response.body().string();
-                if (StringUtils.isNotBlank(result) && JSONValidator.from(result).validate()) {
-                    JSONObject jsonObject = JSONObject.parseObject(result);
-                    int code = (int) jsonObject.get("code");
-                    if (code == 200) {
-                        status = 1;
-                    }
+            if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
+                JSONObject jsonObject = JSONObject.parseObject(response);
+                jsonObject.containsKey("code");
+                if (200 == jsonObject.getInteger("code")) {
+                    return AjaxResult.success();
                 }
-            } catch (IOException e) {
-                status = 0;
             }
-            return AjaxResult.success(status);*/
+            return AjaxResult.error();
         } else if ("GLZ".equals(deploymentType)) {
             try {
                 operIp = InetAddress.getLocalHost().getHostAddress();
@@ -321,10 +313,8 @@ public class PhoneSpkService {
 
         Long externalSystemId = null;
         String hostId = null;
-        String eqTunnelId = null;
         for (String spkDeviceId : spkDeviceIds) {
             SdDevices devices = sdDevicesMapper.selectSdDevicesById(spkDeviceId);
-            eqTunnelId = devices.getEqTunnelId();
             externalSystemId = devices.getExternalSystemId();
             if (null != externalSystemId) {
                 break;
@@ -382,7 +372,7 @@ public class PhoneSpkService {
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
         sdOperationLog.setEqTypeId(DevicesTypeEnum.LS.getCode());
-        sdOperationLog.setTunnelId(eqTunnelId);
+        sdOperationLog.setTunnelId(tunnelId);
         sdOperationLog.setEqId(spkDeviceIds.toString());
         sdOperationLog.setOperationState("playVoice");
         sdOperationLog.setControlType(controlType);
@@ -409,6 +399,23 @@ public class PhoneSpkService {
 
         if ("GSY".equals(deploymentType)) {
             Assert.hasText(operIp, "操作方IP地址参数必传！");
+
+            SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
+            //设备所属管理站host
+            String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
+            // String url = host + "/light/setBrightness";
+
+            String url = "http://10.168.75.50:8000/api/speak/playVoice";
+
+            String response = HttpUtil.post(url, map, 5000);
+            if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
+                JSONObject jsonObject = JSONObject.parseObject(response);
+                jsonObject.containsKey("code");
+                if (200 == jsonObject.getInteger("code")) {
+                    return AjaxResult.success();
+                }
+            }
+            return AjaxResult.error();
         } else if ("GLZ".equals(deploymentType)) {
             try {
                 operIp = InetAddress.getLocalHost().getHostAddress();
@@ -463,7 +470,7 @@ public class PhoneSpkService {
                 break;
             }
         }
-        int status = phoneSpeak.playVoice(systemUrl, map);
+        int resultStatus = phoneSpeak.playVoice(systemUrl, map);
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -482,10 +489,10 @@ public class PhoneSpkService {
         sdOperationLog.setControlType(controlType);
         sdOperationLog.setCreateTime(new Date());
         sdOperationLog.setOperIp(operIp);
-        sdOperationLog.setState(String.valueOf(status));
+        sdOperationLog.setState(String.valueOf(resultStatus));
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
 
-        return AjaxResult.success(status);
+        return resultStatus == 1 ? AjaxResult.success() : AjaxResult.error();
     }
 
 
@@ -531,11 +538,8 @@ public class PhoneSpkService {
                 break;
             }
         }
-
-
-        int status = phoneSpeak.hungUp(systemUrl, map);
-        return AjaxResult.success(status);
+        int resultStatus = phoneSpeak.hungUp(systemUrl, map);
+        return resultStatus == 1 ? AjaxResult.success() : AjaxResult.error();
     }
-
 
 }

@@ -34,10 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -677,7 +673,7 @@ public class workspaceController extends BaseController {
         String operIp = (String) params.get("operIp");
         Assert.hasText(devId, "设备参数{devId}必传");
         Assert.hasText(state, "设备控制状态参数{state}必传");
-        Assert.hasText(operIp, "IP参数{operIp}必传");
+        Assert.hasText(operIp, "操作方IP地址参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
     }

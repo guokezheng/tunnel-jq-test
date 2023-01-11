@@ -80,9 +80,7 @@ public class LightController {
             //接口地址
             String url = "http://10.168.75.50:8000/light/setBrightness";
             // String url = host + "/light/setBrightness";
-
             String response = HttpUtil.get(url, paramMap);
-
             if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(response);
                 jsonObject.containsKey("code");
@@ -95,7 +93,8 @@ public class LightController {
 
         operIp = InetAddress.getLocalHost().getHostAddress();
         int resultStatus = lightService.setBrightness(deviceId, bright, controlType, operIp);
-        return AjaxResult.success(resultStatus);
+
+        return resultStatus == 1 ? AjaxResult.success() : AjaxResult.error();
     }
 
     /**
@@ -136,8 +135,9 @@ public class LightController {
         */
 
         operIp = InetAddress.getLocalHost().getHostAddress();
-        int controlResult = lightService.lineControl(deviceId, openClose, controlType, operIp);
-        return AjaxResult.success(controlResult);
+        int resultStatus = lightService.lineControl(deviceId, openClose, controlType, operIp);
+
+        return resultStatus == 1 ? AjaxResult.success() : AjaxResult.error();
     }
 
 }

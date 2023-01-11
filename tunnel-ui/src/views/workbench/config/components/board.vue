@@ -692,12 +692,13 @@ export default {
       var value = "";
       content += Item_No;
       for (var i = 0; i < this.contentList.length; i++) {
+        console.log(this.contentList[i].COORDINATE,"this.contentList[i].COORDINATE")
         value = ("000" + i).slice(-3);
         content += Item_Content + value + "=";
         content += this.contentList[i].STAY + ",";
         content += this.contentList[i].ACTION + ",";
         content += this.contentList[i].SPEED + "," + "\\";
-        content += "C" + this.contentList[i].COORDINATE + "\\";
+        content += "C" + this.contentList[i].COORDINATE.replace("-",'0') + "\\";
         content += "S00\\";
         content += "c" + this.getColorValue(this.contentList[i].COLOR) + "\\";
         content += "f" + this.getFontValue(this.contentList[i].FONT);

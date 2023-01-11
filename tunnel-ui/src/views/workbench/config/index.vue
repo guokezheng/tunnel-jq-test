@@ -678,6 +678,7 @@
                 v-model.number="phoneForm1.loopCount"
                 controls-position="right"
                 @change="handleChangePhone(1)"
+                :min="0"
                 size="small"
               />
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
@@ -726,6 +727,7 @@
                 controls-position="right"
                 @change="handleChangePhone(2)"
                 size="small"
+                :min="0"
               />
               <el-checkbox v-model="phoneForm2.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
             </div>
@@ -3170,7 +3172,7 @@ export default {
       boardObj:{},
       fileNamesList: [],
       phoneForm1: {
-        loopCount: 1,
+        loopCount: '1',
         loop: false,
         volume: 0,
         fileNames: [],
@@ -3976,7 +3978,7 @@ export default {
       this.getTunnelList();
     },
     sdEventList(event) {
-      // console.log(event, "websockt工作台接收事件弹窗");
+      console.log(event, "websockt工作台接收事件弹窗");
       for (var item of event) {
         this.trafficList.unshift(item);
       }
@@ -4395,7 +4397,9 @@ export default {
 
         };
         console.log(param, "param");
-        playVoiceGroup(param).then((res) => {});
+        playVoiceGroup(param).then((res) => {
+          this.$modal.msgSuccess("控制成功");
+        });
       }
       // console.log(direction,"广播一键控制方向");
     },
@@ -6814,7 +6818,7 @@ export default {
         }
       });
       addBoardContent(this.currentTunnel.id).then((res)=>{
-        console.log(res,"情报板显示内容查询");
+        // console.log(res,"情报板显示内容查询");
         this.boardObj = res
       })
     },

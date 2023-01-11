@@ -41,6 +41,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -1031,6 +1032,8 @@ public class KafkaReadListenToHuaWeiTopic {
         Map<String,String> tunnelMap = sdTunnelsService.getTunnelNameMap();
         event.setEventTitle(sdEventService.getDefaultEventTitle(event,tunnelMap,eventTypeMap));
         event.setEventImgUrl(jsonObject.getString("eventImgUrl"));
+        event.setStartTime(DateUtils.dateTimeNow(DateUtils.YYYY_MM_DD_HH_MM_SS));
+
         String[] imgList = jsonObject.getString("eventImgUrl").split(";");
         List<SdTrafficImage> imageList = new ArrayList<>();
         for(String img:imgList){

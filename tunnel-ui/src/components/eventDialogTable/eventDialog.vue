@@ -25,7 +25,7 @@
         />
       </div>
       <div class="blueLine"></div> -->
-      <div style="display: flex; width: 100%; padding: 10px;height: 100%;">
+      <div style="display: flex; width: 100%; height: 100%;">
         <div class="eventLeft">
           <div class="video">
             <video

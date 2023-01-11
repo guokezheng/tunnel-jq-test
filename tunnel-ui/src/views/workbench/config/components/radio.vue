@@ -82,7 +82,7 @@
             <el-form-item label="播放次数:" prop="loopCount">
               <el-input-number
                 v-model.number="stateForm2.loopCount"
-                
+                :min="0"
                 controls-position="right"
                 @change="handleChange"
               />
@@ -170,6 +170,7 @@ export default {
       title: "",
       visible: true,
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
+      tunnelId:''
     };
   },
   created() {
@@ -194,6 +195,7 @@ export default {
           this.stateForm = res.data;
           this.device = res.data.externalDeviceId
           this.title = this.stateForm.eqName;
+          this.tunnelId = res.data.tunnelId
         });
         // await playVoice().then((response) =>{
 
@@ -223,11 +225,12 @@ export default {
         fileNames:Array(this.stateForm2.fileNames),
         spkDeviceIds:Array(this.eqInfo.equipmentId),
         controlType: "0",
+        tunnelId:this.tunnelId,
         // items :items,
       }
       console.log(param,"param");
       playVoice(param).then((res) =>{
-
+        this.$modal.msgSuccess("控制成功");
       })
         this.$emit("dialogClose");
       },

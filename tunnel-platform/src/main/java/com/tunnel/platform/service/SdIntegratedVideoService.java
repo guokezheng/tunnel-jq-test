@@ -132,11 +132,15 @@ public class SdIntegratedVideoService {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("type",1)
                 .queryParam("camId",devices.getExternalDeviceId());
-
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
-        JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
-        return Optional.ofNullable(object).orElseGet(()->result);
+        try{
+            ResponseEntity<String> exchange = template.exchange(builder.build().toUri(), HttpMethod.POST, requestEntity, String.class);
+            JSONObject object = JSONObject.parseObject(exchange.getBody()).getJSONObject("data");
+            return Optional.ofNullable(object).orElseGet(()->result);
+        }catch(Exception ex){
+            log.info("打开相机实时流发生异常：{}",ex.getMessage());
+        }
+        return null;
     }
 
     /**

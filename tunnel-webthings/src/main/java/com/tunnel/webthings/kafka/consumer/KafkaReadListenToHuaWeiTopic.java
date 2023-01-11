@@ -1130,11 +1130,13 @@ public class KafkaReadListenToHuaWeiTopic {
             effectiveRows = sdEventService.updateSdEvent(event);
         }else{
             effectiveRows = sdEventService.insertSdEvent(event);
+            //新增后再查询数据库，返回给前端事件图标等字段
+            SdEvent sdEvent = new SdEvent();
+            sdEvent.setId(eventId);
+            List<SdEvent> sdEventList = sdEventService.querySdEventList(sdEvent);
             //新增事件后推送前端
             JSONObject object = new JSONObject();
-            object.put("sdEventList", new ArrayList<SdEvent>() {{
-                add(event);
-            }});
+            object.put("sdEventList", sdEventList);
             WebSocketService.broadcast("sdEventList",object.toString());
         }
         //推送物联中台，事件类型过滤

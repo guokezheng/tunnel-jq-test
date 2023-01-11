@@ -23,11 +23,25 @@ public class TestTopic {
     @Qualifier("kafkaThreeTemplate")
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @PostMapping("/event")
-    public String event(@RequestBody JSONObject eventObject) {
+    @Autowired
+    private KafkaReadListenToHuaWeiTopic huaWeiTopic;
 
-        //推送给华为
-        kafkaTemplate.send("rhy_tunnel_merge_event", eventObject.toJSONString());
+//    @PostMapping("/event")
+//    public String event(@RequestBody JSONObject eventObject) {
+//
+//        //推送给华为
+//        kafkaTemplate.send("rhy_tunnel_merge_event", eventObject.toJSONString());
+//        return "OK";
+//    }
+
+    /**
+     * 数据推送测试，避免走华为kafka
+     * @param eventObject
+     * @return
+     */
+    @PostMapping("/event")
+    public String testEvent(@RequestBody JSONObject eventObject){
+        huaWeiTopic.joinEvent(eventObject);
         return "OK";
     }
 

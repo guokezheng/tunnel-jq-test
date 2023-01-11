@@ -32,6 +32,15 @@ public interface ISdEventService {
      */
     List<SdEvent> selectSdEventList(SdEvent sdEvent);
 
+
+    /**
+     * 查询事件管理列表(不做额外处理，单纯查询数据库SQL)
+     *
+     * @param sdEvent 事件管理
+     * @return 事件管理集合
+     */
+    List<SdEvent> querySdEventList(SdEvent sdEvent);
+
     /**
      * 新增事件管理
      *

@@ -578,14 +578,36 @@ public class KafkaReadListenToHuaWeiTopic {
             //将数据重新定义新的参数名
             JSONObject objectCo = definitionParam(deviceId, co, coId);
             JSONObject objectVi = definitionParam(deviceId, vi, viId);
-            //新增CO数据
-            SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData);
-            //新增VI数据
-            SdDeviceData deviceData1 = setDeviceData(deviceId, vi, viId);
-            deviceData1.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData1);
+            //校验数据库是否存在
+            int numberCo = checkDeviceData(deviceId, coId);
+            if (numberCo == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, co, coId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将co设备数据存入历史记录表
+            setDeviceDataRecord(deviceId,co,coId);
+            //校验数据库是否存在
+            int numberVi = checkDeviceData(deviceId, viId);
+            if (numberVi == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, vi, viId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将vi设备数据存入历史记录表
+            setDeviceDataRecord(deviceId,vi,viId);
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             JSONObject jsonObjectCo = devReaStatus(sdDevices1 == null ? sdDeviceTypeItemMapper.selectSdDeviceTypeItemById(coId).getDeviceTypeId() : sdDevices1.getEqType(), objectCo);
             //将co数据上传至高速云
@@ -611,15 +633,35 @@ public class KafkaReadListenToHuaWeiTopic {
             String windSpeed = jsonObject1.getString("windSpeed");
             String windDirection = jsonObject1.getString("windDirection");
             //校验数据库是否存在
-            //新增FS数据
-            SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            int numberFs = checkDeviceData(deviceId, fsId);
+            if (numberFs == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, windSpeed, fsId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将风速数据存入历史记录表
+            setDeviceDataRecord(deviceId,windSpeed,fsId);
             //校验数据库是否存在
-            //新增FX数据
-            SdDeviceData deviceData1 = setDeviceData(deviceId, windDirection, fxId);
-            deviceData1.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData1);
+            int numberFx = checkDeviceData(deviceId, fxId);
+            if (numberFx == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, windDirection, fxId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将风向数据存入历史记录表
+            setDeviceDataRecord(deviceId,windDirection,fxId);
             SdDevices sdDevices1 = sdDevicesMapper.selectSdDevicesById(deviceId);
             //重新定义参数名
             JSONObject objectFs = definitionParam(deviceId, windSpeed, fsId);
@@ -644,10 +686,21 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String illuminance = jsonObject1.getString("illuminance");
-            //新增洞内亮度数据
-            SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            //校验数据库是否存在
+            int number = checkDeviceData(deviceId, itemId);
+            if (number == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, illuminance, itemId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将洞内亮度数据存入历史记录表
+            setDeviceDataRecord(deviceId,illuminance,itemId);
         }
     }
 
@@ -663,10 +716,20 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String brightness = jsonObject1.getString("brightness");
-            //新增洞外数据
-            SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
-            deviceData.setCreateTime(DateUtils.getNowDate());
-            sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            int number = checkDeviceData(deviceId, itemId);
+            if (number == 0) {
+                //新增数据
+                SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
+                deviceData.setCreateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.insertSdDeviceData(deviceData);
+            } else {
+                //更新数据
+                SdDeviceData deviceData = setDeviceData(deviceId, brightness, itemId);
+                deviceData.setUpdateTime(DateUtils.getNowDate());
+                sdDeviceDataMapper.updateKafkaDeviceData(deviceData);
+            }
+            //将洞外亮度数据存入历史记录表
+            setDeviceDataRecord(deviceId,brightness,itemId);
         }
     }
 
@@ -773,6 +836,25 @@ public class KafkaReadListenToHuaWeiTopic {
         deviceData.setItemId(itemId);
         deviceData.setData(data);
         return deviceData;
+    }
+
+    /**
+     * 储存设备数据历史记录表
+     *
+     * @param deviceId
+     * @param data
+     * @param itemId
+     */
+    public void setDeviceDataRecord(String deviceId,String data,Long itemId){
+        SdDeviceDataRecord record = new SdDeviceDataRecord();
+        record.setDeviceId(deviceId);
+        record.setData(data);
+        record.setItemId(itemId);
+        record.setCreateTime(DateUtils.getNowDate());
+        //获取bean
+        SdDeviceDataRecordMapper bean = SpringUtils.getBean(SdDeviceDataRecordMapper.class);
+        //将数据存入历史记录表
+        bean.insertSdDeviceDataRecord(record);
     }
 
     /**

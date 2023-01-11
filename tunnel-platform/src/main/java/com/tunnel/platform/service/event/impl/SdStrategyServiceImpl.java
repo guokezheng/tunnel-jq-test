@@ -1048,6 +1048,7 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
             JSONObject object = new JSONObject();
             object.put("loop",false);
             object.put("loopCount",2);
+            object.put("tunnelId",event.getTunnelId());
             object.put("volume",80);
             object.put("fileNames",new ArrayList<String>(){{
                 add(rl.getState());

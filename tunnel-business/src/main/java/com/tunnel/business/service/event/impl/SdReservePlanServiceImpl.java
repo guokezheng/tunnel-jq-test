@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.InetAddress;
@@ -194,7 +195,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         List<SdReservePlan> planList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
 
         if (planList.size() > 0) {
-            throw new RuntimeException("当前隧道已存在同种类型预案！");
+            throw new RuntimeException("当前隧道已添加同种类型预案！");
         }
         int result = -1;
         List<SdReservePlanFile> list = new ArrayList<SdReservePlanFile>();
@@ -265,6 +266,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
      * @return 结果
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateSdReservePlan(MultipartFile[] file, SdReservePlan sdReservePlan, Long[] ids) {
         SdReservePlan searchObj = new SdReservePlan();
         searchObj.setTunnelId(sdReservePlan.getTunnelId());
@@ -274,11 +276,7 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         }
         searchObj.setPlanTypeId(sdReservePlan.getPlanTypeId());
         searchObj.setCategory(sdReservePlan.getCategory());
-        List<SdReservePlan> findList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
 
-        if (findList.size() > 0) {
-            throw new RuntimeException("当前隧道已存在同种类型预案！");
-        }
         sdReservePlan.setPlanFileId(UUIDUtil.getRandom32BeginTimePK());
         List<SdReservePlan> planList = sdReservePlanMapper.checkIfSingleReservePlan(sdReservePlan);
         if (planList.size() > 0 && ids == null) {
@@ -339,6 +337,11 @@ public class SdReservePlanServiceImpl implements ISdReservePlanService {
         }
         if (result >= 0) {
             result = sdReservePlanMapper.updateSdReservePlan(sdReservePlan);
+            List<SdReservePlan> findList = sdReservePlanMapper.selectSdReservePlanList(searchObj);
+
+            if (findList.size() > 1) {
+                throw new RuntimeException("当前隧道已添加同种类型预案！");
+            }
         }
 
         return result;

@@ -262,8 +262,8 @@ public class BoardController extends BaseController {
 
     }
 
-    @GetMapping("/addBoardContent/{tunnelId}")
-    public Map<String, Object> addBoardContent(@PathVariable String tunnelId) {
+    @GetMapping("/getWorkBenchBoardContent/{tunnelId}")
+    public Map<String, Object> getWorkBenchBoardContent(@PathVariable String tunnelId) {
         Map<String, Object> map = new HashMap<>();
         List<Long> deviceIds = sdIotDeviceService.selectIotDevicesByTunnelId(tunnelId);
         for (int i = 0;i < deviceIds.size();i++) {

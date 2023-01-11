@@ -189,10 +189,10 @@ export function batchControlDevice(data) {
   })
 }
 
-// 情报板显示内容定时查询 
+// 情报板显示内容定时查询
 export function addBoardContent(tunnelId) {
   return request({
-    url: 'parser/board/addBoardContent/'+tunnelId,
+    url: 'parser/board/getWorkBenchBoardContent/'+tunnelId,
     method: 'get',
   })
 }

@@ -8,10 +8,11 @@
   import {onMessage} from "@/api/equipment/phone/phone";
 
   export default {
-    name: "Websocket",
+    name: "PhoneWebsocket",
     data() {
       return {
-        websocket: null
+        //修改变量名，避免跟原websocket冲突
+        phoneWebsocket: null
       };
     },
     // computed: {
@@ -47,7 +48,7 @@
     this.initWebSocket();
   },
   destroyed() {
-    this.websocket.close() //离开路由之后断开websocket连接
+    this.phoneWebsocket.close() //离开路由之后断开websocket连接
   },
     methods: {
       isJson(str){
@@ -68,11 +69,11 @@
       initWebSocket(){ //初始化weosocket
         // var url = "ws://localhost:8000/websocket";
         var url = "ws://10.7.187.6:8981";
-        this.websocket = new WebSocket(url);
-        this.websocket.onmessage = this.websocketonmessage;
-        this.websocket.onopen = this.websocketonopen;
-        this.websocket.onerror = this.websocketonerror;
-        this.websocket.onclose = this.websocketclose;
+        this.phoneWebsocket = new WebSocket(url);
+        this.phoneWebsocket.onmessage = this.websocketonmessage;
+        this.phoneWebsocket.onopen = this.websocketonopen;
+        this.phoneWebsocket.onerror = this.websocketonerror;
+        this.phoneWebsocket.onclose = this.websocketclose;
       },
       websocketonopen(){
         console.log("紧急电话广播系统建立连接");

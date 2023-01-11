@@ -25,7 +25,7 @@
           <el-row style="color: white; font-size: 14px">
             <el-col :span="2">
               <img
-                :src="item.iconUrl"
+                :src="item.eventType.iconUrl"
                 style="width: 20px; height: 20px; transform: translateY(5px)"
               />
             </el-col>

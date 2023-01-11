@@ -94,6 +94,10 @@ public class BoardController extends BaseController {
     @GetMapping("/getBoardContent")
     @ResponseBody
     public AjaxResult loadRealtimeInf(Long deviceId) {
+        SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+            return null;
+        }
         List<String> paramsList = new ArrayList<String>();
         AjaxResult ajaxResult;
         try {
@@ -112,11 +116,11 @@ public class BoardController extends BaseController {
             paramsList.add(items.toString());
             nowContentMap.put(deviceId.toString(), items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
-        } catch (BusinessException e) {
-//        	return AjaxResult.error(-1, e.getMessage());
-            return null;
         } catch (Exception e) {
 //        	return AjaxResult.error(-1, e.getMessage());
+            device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
             return null;
         }
         return ajaxResult;
@@ -191,6 +195,8 @@ public class BoardController extends BaseController {
         String[] devices = deviceIds.split(",");
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
+            SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
+            protocolType = sdIotDevice.getProtocolName();
             List<String> paramsList = new ArrayList<String>();
             IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
             SdReleaseRecord sdReleaseRecord = new SdReleaseRecord();
@@ -209,6 +215,7 @@ public class BoardController extends BaseController {
                 parameters = parameters.replaceAll("<br>","\\\\n");
                 String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
                 Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
+//                Boolean result = false;
                 String releaseOldContent = releaseContentMap.get(deviceId);
                 sdReleaseRecord.setReleaseDev(deviceId);
                 sdReleaseRecord.setReleaseTime(new Date());

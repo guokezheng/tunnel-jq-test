@@ -138,10 +138,8 @@ export default {
   },
   methods: {
     handleSee(id) {
-      setTimeout(() => {
         bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      // bus.$emit("openPicDialog");
     },
 
     // 忽略事件

@@ -9,21 +9,21 @@
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-      <!-- <div
+      <div
         style="
           width: 100%;
           height: 30px;
           display: flex;
           justify-content: space-between;
         "
-      > -->
+      >
         <!-- <div class="dialogLine"></div> -->
         <img
           :src="titleIcon"
           style="height: 30px; cursor: pointer;position: absolute;top: 0;right: 0;"
           @click="handleClosee"
         />
-      <!-- </div> -->
+      </div>
       <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
       <div style="width: 100%; height: 200px; padding: 0 15px">
         <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
@@ -159,14 +159,14 @@
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoViewing()"
           style="width: 80px"
           class="submitButton"
           >录像查看</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -583,9 +583,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-dialog__header{
-  padding: 4px 20px !important;
-}
+// ::v-deep .el-dialog__header{
+//   padding: 4px 20px !important;
+// }
 ::v-deep .el-dialog__headerbtn{
   background-size: 47% 50% !important;
   top: 4px;

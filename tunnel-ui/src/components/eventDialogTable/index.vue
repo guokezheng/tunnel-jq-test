@@ -385,7 +385,7 @@ export default {
     }
   }
   .listContent {
-    max-height: 290px;
+    max-height: 301px;
     overflow: auto;
     background: rgba($color: #6c8097, $alpha: 0.3);
     padding-left: 0;

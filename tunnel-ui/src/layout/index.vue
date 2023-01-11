@@ -232,7 +232,7 @@ export default {
       is_weather: null,
       is_breadcrumb: null,
       tunnelStyle: null,
-      eventDialogPic: false,
+      eventDialogPic: true,
       eventDialogTable: false,
       evtDialogVideo:false,
       routePath: [

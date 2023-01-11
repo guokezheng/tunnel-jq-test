@@ -243,6 +243,9 @@ public class SdEquipmentStateController extends BaseController
     @ApiOperation("批量修改设备类型关系")
     @PutMapping("/updateStates")
     public Result updateStates(@RequestBody List<SdEquipmentState> sdEquipmentStates) {
+        if(sdEquipmentStates.size()==0)
+            return Result.toResult(1);
+        else
         return Result.toResult(sdEquipmentStateService.updateSdEquipmentStates( sdEquipmentStates ));
     }
 

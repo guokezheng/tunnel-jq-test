@@ -1,11 +1,11 @@
 package com.tunnel.platform.service.deviceControl;
 
-import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
 import com.google.gson.JsonObject;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.http.HttpUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PhoneSpkEnum;
@@ -290,11 +290,10 @@ public class PhoneSpkService {
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
-            // String url = "host" + "/api/speak/playVoice";
+            String url = host + "/api/speak/playVoice";
+            // String url = "http://10.168.75.50:8000/api/speak/playVoice";
 
-            String url = "http://10.168.75.50:8000/api/speak/playVoice";
-            String response = HttpUtil.post(url, map, 5000);
-
+            String response = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
             if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(response);
                 jsonObject.containsKey("code");
@@ -303,11 +302,11 @@ public class PhoneSpkService {
                 }
             }
             return AjaxResult.error();
-        } else if ("GLZ".equals(deploymentType)) {
+        } else if ("GLZ".equals(deploymentType) && StringUtils.isBlank(operIp)) {
             try {
                 operIp = InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
-                // e.printStackTrace();
+
             }
         }
 
@@ -403,11 +402,9 @@ public class PhoneSpkService {
             SdTunnels tunnel = sdTunnelsService.selectSdTunnelsById(tunnelId);
             //设备所属管理站host
             String host = sdOptDeviceService.getGlzHost(String.valueOf(tunnel.getDeptId()));
-            // String url = host + "/light/setBrightness";
-
-            String url = "http://10.168.75.50:8000/api/speak/playVoice";
-
-            String response = HttpUtil.post(url, map, 5000);
+            String url = host + "/light/setBrightness";
+            // String url = "http://10.168.75.50:8000/api/speak/playVoice";
+            String response = HttpUtils.sendPostByApplicationJson(url, JSONObject.toJSONString(map));
             if (StringUtils.isNotBlank(response) && JSONValidator.from(response).validate()) {
                 JSONObject jsonObject = JSONObject.parseObject(response);
                 jsonObject.containsKey("code");
@@ -416,11 +413,11 @@ public class PhoneSpkService {
                 }
             }
             return AjaxResult.error();
-        } else if ("GLZ".equals(deploymentType)) {
+        } else if ("GLZ".equals(deploymentType) && StringUtils.isBlank(operIp)) {
             try {
                 operIp = InetAddress.getLocalHost().getHostAddress();
             } catch (UnknownHostException e) {
-                // e.printStackTrace();
+
             }
         }
         SdDevices device = new SdDevices();

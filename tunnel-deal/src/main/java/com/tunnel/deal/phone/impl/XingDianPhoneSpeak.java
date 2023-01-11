@@ -24,13 +24,7 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
     public int playVoice(String systemUrl, Map<String, Object> map) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
-
-        //构建json格式参数
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.putAll(map);
-        String content = jsonParam.toString();
-
-        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
+        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(map));
         Request request = new Request.Builder()
                 .url(systemUrl + "/api/speak/playVoice")
                 .method("POST", requestBody)
@@ -57,13 +51,7 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
     public int tempSpkGroup(String systemUrl, Map<String, Object> map) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
-
-        //构建json格式参数
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.putAll(map);
-        String content = jsonParam.toString();
-
-        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
+        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(map));
         Request request = new Request.Builder()
                 .url(systemUrl + "/api/speak/tempSpkGroup")
                 .method("POST", requestBody)
@@ -91,13 +79,7 @@ public class XingDianPhoneSpeak implements PhoneSpeak {
     public int hungUp(String systemUrl,Map<String, Object> map) {
         OkHttpClient client = new OkHttpClient().newBuilder().build();
         MediaType mediaType = MediaType.parse("application/json;charset=utf-8");
-
-        //构建json格式参数
-        JSONObject jsonParam = new JSONObject();
-        jsonParam.putAll(map);
-        String content = jsonParam.toString();
-
-        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, content);
+        okhttp3.RequestBody requestBody = okhttp3.RequestBody.create(mediaType, JSONObject.toJSONString(map));
         String url = systemUrl + "/api/speak/hungUp";
         Request request = new Request.Builder()
                 .url(url)

@@ -692,7 +692,7 @@ export default {
       var value = "";
       content += Item_No;
       for (var i = 0; i < this.contentList.length; i++) {
-        console.log(this.contentList[i].COORDINATE,"this.contentList[i].COORDINATE")
+        // console.log(this.contentList[i].COLOR,"this.contentList[i].COORDINATE")
         value = ("000" + i).slice(-3);
         content += Item_Content + value + "=";
         content += this.contentList[i].STAY + ",";
@@ -728,10 +728,10 @@ export default {
       return "s";
     },
     getColorValue(color) {
-      if (color == "蓝色") return "000000255000";
-      if (color == "绿色") return "000255000000";
-      if (color == "透明色") return "t";
-      if (color == "红色") return "255000000000";
+      if (color == "蓝色" || color == 'blue') return "000000255000";
+      if (color == "绿色" || color == 'GreenYellow') return "000255000000";
+      if (color == "透明色" || color == 'transparent') return "t";
+      if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
     },
     // 转分辨率

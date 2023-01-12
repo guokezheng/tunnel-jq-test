@@ -132,4 +132,11 @@ public interface ISdEquipmentStateService {
      * @return
      */
     int deleteSdEquipmentStateByTypeId(Long[] typeId);
+
+    /**
+     * 批量删除状态图片
+     * @param iconFileIds
+     * @return
+     */
+    int batchDeletePic(String[] iconFileIds);
 }

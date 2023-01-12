@@ -51,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sn"    column="sn"    />
         <result property="zxNum"    column="zxNum"    />
         <result property="lxNum"    column="lxNum"    />
+        <result property="iconFileId"    column="icon_file_id"    />
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
@@ -806,11 +807,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id from sd_devices t
+        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
         left join sd_device_data d on t.eq_id = d.device_id
         left join  sd_device_type_item i on i.id = d.item_id
         left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
         left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
+        left join sd_equipment_type q on t.eq_type = q.type_id
         <where>
         1=1
             <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
@@ -946,4 +948,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSdDevicesVo"/>
         where associated_device_id = #{deviceId}
     </select>
+
+
+
 </mapper>

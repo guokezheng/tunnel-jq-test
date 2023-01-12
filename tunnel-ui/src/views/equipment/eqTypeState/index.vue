@@ -207,7 +207,7 @@ import {
   deletePicture,
   updatePic,
   deleteRow,
-  deleteEquiment
+  deleteEquiment, batchDeletePic
 } from "@/api/equipment/eqTypeState/api";
 import {
   addType,
@@ -317,7 +317,13 @@ export default {
       //状态类型枚举
       isStateType:[],
       //状态类型idx
-      sid:''
+      sid:'',
+      //需要删除的图片
+      currentDeleteFile:[],
+      //删除的iconId
+      iconId:"",
+      //新添加的图片
+      currentAddFile:[],
     };
   },
   created() {
@@ -416,7 +422,8 @@ export default {
       this.fileList.length = 0
       this.equipmentStates = []
       this.reset();
-      console.log(this.iconFileIdAll,'this.iconFileIdAllthis.iconFileIdAll')
+      console.log(this.iconFileIdAll,'this.iconFileIdAllthis.iconFileIdAll');
+      this.currentDeleteFile = "";
       // if(this.iconFileIdAllz1!==''){
       //      deletePicture(this.iconFileIdAll).then(res=>{
       //      console.log(res,'取消按钮')
@@ -487,6 +494,7 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+      this.currentDeleteFile = "";
       var that = this
       // that.reset();
 
@@ -656,60 +664,105 @@ export default {
             //     that.getList();下·
             //   }
             // });
-            /*let login= this.equipmentStates.every(item=>{
-              return item.iconFileId !== ''
-            })
-            if( !login ) {
-              return this.$modal.msgWarning("请上传图片");
-            }*/
-            console.log(this.equipmentStates,'this.form.equipmentList');
-            if(this.equipmentStates.length>0){
-              for(let i=0;i<this.equipmentStates.length;i++){
-                const flag = this.equipmentStates[i].hasOwnProperty("stateType");
-                if(flag==false){
-                  return this.$modal.msgWarning("请选择状态类型");
-                }
+            if(this.currentDeleteFile!=""){
+              if(this.currentDeleteFile.slice(0,1) == ","){
+                this.currentDeleteFile = this.currentDeleteFile.slice(1);
               }
+              let deleteFiles = this.currentDeleteFile.split(",");
+              if(this.equipmentStates.length>0){
+                for(let i=0;i<this.equipmentStates.length;i++){
+                  let file = this.equipmentStates[i].iFileList;
+                  if(file.length>0){
+                    for(let j = 0;j<file.length;j++){
+                      for(let k =0;k<deleteFiles.length;k++){
+                        if(file[j].id == deleteFiles[k] ){
+                          file[j]= "";
+                        }
+                      }
+                    }
+                    if(file.length==1&&file[0]==""){
+                      if(this.currentAddFile==""){
+                        this.iconId = this.equipmentStates[i].iconFileId;
+                        this.equipmentStates[i].iconFileId = '';
+                      }else if(this.currentAddFile.indexOf(this.equipmentStates[i].iconFileId) != -1){
+                        this.equipmentStates[i].iconFileId = this.equipmentStates[i].iconFileId;
+                      }
 
-            }
-            if(this.equipmentStates.length>0){
-              for(let i=0;i<this.equipmentStates.length;i++){
-                const flag = this.equipmentStates[i].iFileList.length;
-                const str  = this.equipmentStates[i].iconFileId;
-                if(flag==0&&str.indexOf(",") == -1){
-                  return this.$modal.msgWarning("请选择要上传的图标");
+                    }
+                    if(file.length==2&&file[0]==""&&file[1]==""){
+                      if(this.currentAddFile==""){
+                        this.iconId = this.equipmentStates[i].iconFileId;
+                        this.equipmentStates[i].iconFileId = '';
+                      }else if(this.currentAddFile.indexOf(this.equipmentStates[i].iconFileId) != -1){
+                        this.equipmentStates[i].iconFileId = this.equipmentStates[i].iconFileId;
+                      }
+                    }
+                  }
                 }
-              }
 
-            }
-            updatePic(this.equipmentStates).then(res=>{
-              if(res.code==200){
-                this.open=false
-                this.$modal.msgSuccess("修改成功");
-                this.getList()
               }
-            })
-          } else {
-            // console.log(this.form)
-            // addEqTypeState(that.fileData).then(response => {
-            //   if (response.code === 200) {
-            //     that.$modal.msgSuccess("新增成功");
-            //     that.reset();
-            //     that.open = false;
-            //     that.getList();
-            //   }
-            // });
+            }
+            else{
+            }
+            setTimeout(() => {
+                let login= this.equipmentStates.every(item=>{
+                  return item.iconFileId !== ''
+                })
+                if( !login) {
+                  if(this.iconId!=""&&(this.iconId.substr(0, 1) == ",")){
+
+                  }else{
+                    return this.$modal.msgWarning("请上传图片");
+                  }
+                }
+
+              if(this.equipmentStates.length>0){
+                for(let i=0;i<this.equipmentStates.length;i++){
+                  const flag = this.equipmentStates[i].hasOwnProperty("stateType");
+                  if(flag==false){
+                    return this.$modal.msgWarning("请选择状态类型");
+                  }
+                }
+
+              }
+              updatePic(this.equipmentStates).then(res=>{
+                if(res.code==200){
+                  if(this.currentDeleteFile!=""){
+                    batchDeletePic(this.currentDeleteFile).then(res=>{
+                      this.open=false
+                      this.$modal.msgSuccess("修改成功");
+                      this.getList();
+                      this.currentDeleteFile = "";
+                      this.currentAddFile = "";
+                      this.iconId = "";
+                    })
+                  }else{
+                    this.open=false
+                    this.$modal.msgSuccess("修改成功");
+                    this.getList();
+                  }
+
+                }
+
+              })
+
+            }, 600)
+
+         }else {
             addList2(this.form.equipmentList).then(res=>{
               if (res.code==200){
                 that.open = false;
                 that.reset();
                 that.getList();
                 that.$modal.msgSuccess("添加成功");
+                this.currentDeleteFile = "";
               }
+
             })
           }
         }
       });
+      //this.currentDeleteFile = "";
     },
     /** 删除按钮操作 */
     handleDelete(row) {
@@ -765,18 +818,12 @@ export default {
     //=======================================文件上传start================================
     //删除文件
     handleRemove(file, fileList) {
-      debugger
-     /* if (file.hasOwnProperty("fId")) {
+      this.currentDeleteFile = this.currentDeleteFile+","+file.id;
+      if (file.hasOwnProperty("fId")) {
         this.removeIds.push(file.fId);
       }
-      this.fileList = fileList;*/
-     console.log(fileList+"========++++++++++删之前");
-      deletePicture(file.id).then(res=>{
-        if(res.code==200){
-          //  this.$modal.msgSuccess("添加成功");
-        }
-      })
-      console.log(file, fileList+"========++++++++++删之后");
+      this.fileList = fileList;
+
 
     },
     // 上传文件
@@ -804,6 +851,7 @@ export default {
         addEqTypeState1(obj).then(res=>{
           this.equipmentStates.forEach((item,index)=>{
             if( index == param.data.index ){
+              this.currentAddFile = item.iconFileId;
               item.iconFileId += ','+ res
             }
           })
@@ -820,10 +868,10 @@ export default {
     //监控上传文件列表
     handleChange(file, fileList,) {
       // this.fileList = fileList;
-
       console.log(file,fileList,'uuuuuuuuuuuuuuu')
     },
     handleSuccess(response, file, fileList){
+
       console.log(response, file, fileList,'文件上传成功')
     },
     // 选取文件超过数量提示

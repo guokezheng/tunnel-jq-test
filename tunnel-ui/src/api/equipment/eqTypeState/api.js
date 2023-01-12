@@ -83,6 +83,14 @@ export function updatePic(data) {
     data: data
   })
 }
+//批量删除图片
+export function batchDeletePic(data) {
+  return request({
+    url: '/eqTypeState/batchDeletePic',
+    method: 'post',
+    data: data
+  })
+}
 
 
 //删除

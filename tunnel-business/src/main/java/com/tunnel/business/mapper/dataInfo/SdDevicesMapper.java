@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
+import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
@@ -289,4 +290,6 @@ public interface SdDevicesMapper
 							  @Param("eqType") Long eqType);
 
 	SdDevices getDeviceByAssociationDeviceId(@Param("deviceId") Long deviceId);
+
+
 }

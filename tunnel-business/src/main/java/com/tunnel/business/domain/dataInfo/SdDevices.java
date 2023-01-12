@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @ApiModel("设备对象类")
-public class SdDevices extends BaseEntity {
+public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -305,6 +305,15 @@ public class SdDevices extends BaseEntity {
      * 是否更新
      */
     private boolean updateSupport;
+
+
+
+    /** 图片id */
+    @Excel(name = "图片id")
+    private String iconFileId;
+
+    @ApiModelProperty("设备类型图片")
+    private List<SdEquipmentStateIconFile> iFileList;
 
     public void setEqId(String eqId) {
         this.eqId = eqId;
@@ -824,6 +833,23 @@ public class SdDevices extends BaseEntity {
     public void setfEqType(String fEqType) {
         this.fEqType = fEqType;
     }
+
+    public String getIconFileId() {
+        return this.iconFileId;
+    }
+
+    public void setIconFileId(final String iconFileId) {
+        this.iconFileId = iconFileId;
+    }
+
+    public List<SdEquipmentStateIconFile> getiFileList() {
+        return this.iFileList;
+    }
+
+    public void setiFileList(final List<SdEquipmentStateIconFile> iFileList) {
+        this.iFileList = iFileList;
+    }
+
 
     @Override
     public String toString() {

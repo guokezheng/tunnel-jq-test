@@ -8,8 +8,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.service.dataInfo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -46,6 +48,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     private ISdEquipmentTypeService equipmentTypeService;
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
+
+    @Autowired
+    private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
 
 
     /**
@@ -796,6 +801,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public Map getAppDevicesList(String param, String eqType, String eqStatus) {
         Map<String, Object> map=new HashMap<String, Object>();
         List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
+        if(sdDevicesList!=null && sdDevicesList.size()>=0){
+            for(int i =0;i<sdDevicesList.size();i++){
+                String fileId = sdDevicesList.get(i).getIconFileId();
+                if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                    SdEquipmentStateIconFile sdEquipmentStateIconFilee = new SdEquipmentStateIconFile();
+                    sdEquipmentStateIconFilee.setStateIconId(fileId);
+                    sdDevicesList.get(i).setiFileList(sdEquipmentIconFileMapper.selectSdTypeImgFileList(sdEquipmentStateIconFilee));
+                }
+            }
+        }
         List<SdDevices> num = sdDevicesMapper.getDevicesNum(param,eqType,eqStatus);
         map.put("sdDevicesList",sdDevicesList);
         map.put("numList",num);

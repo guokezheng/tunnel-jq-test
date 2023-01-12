@@ -530,4 +530,16 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService {
     public int deleteSdEquipmentStateByTypeId(Long[] typeId) {
         return sdEquipmentStateMapper.deleteSdEquipmentStateByTypeId(typeId);
     }
+
+    /**
+     * 批量删除状态图片
+     * @param id
+     * @return
+     */
+    @Override
+    public int batchDeletePic(String[] id)
+    {
+        return sdEquipmentStateMapper.batchDeletePic(id);
+    }
+
 }

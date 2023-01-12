@@ -89,4 +89,12 @@ public interface SdEquipmentIconFileMapper
      * @return
      */
     public int deleteStateIconFileByrlIds(String[] fileId);
+
+    /**
+     * app查询设备类型图标
+     * @param sdEquipmentStateIconFilee
+     * @return
+     */
+    List selectSdTypeImgFileList(SdEquipmentStateIconFile sdEquipmentStateIconFilee);
+
 }

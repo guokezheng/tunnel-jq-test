@@ -252,14 +252,25 @@ public class SdEquipmentStateController extends BaseController
     /**
      * 批量删除设备类型状态关系
      */
+    @ApiOperation("批量新增设备类型状态关系")
+    @PostMapping("/batchDeletePic")
+    public AjaxResult batchDeletePic(@RequestBody String currentDeleteFile)
+    {
+        String[] iconFileIds = currentDeleteFile.split(",");
+        return toAjax(sdEquipmentStateService.batchDeletePic(iconFileIds));
+    }
+
+
     @Log(title = "设备类型状态关系", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     @ApiOperation("删除设备类型状态关系")
     @ApiImplicitParam(name = "ids", value = "需要删除的设备类型状态关系ID", required = true, dataType = "Long", paramType = "path",dataTypeClass = Long.class)
     public Result remove(@PathVariable Long[] ids)
     {
         return Result.toResult(sdEquipmentStateService.deleteSdEquipmentStateByIds(ids));
     }
+
+
 
     /**
      * 根据设备id删除设备状态的接口

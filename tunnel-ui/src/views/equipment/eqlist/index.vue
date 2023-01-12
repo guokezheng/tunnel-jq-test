@@ -1014,7 +1014,7 @@
             }
           });
         } else {
-          this.$modal.msgSuccess("该设备没有控制状态");
+          this.$modal.msgWarning("该设备没有控制状态");
         }
       },
       /** 修改按钮操作 */

@@ -283,7 +283,7 @@ export default {
       const supplierIds = row.supplierId || this.ids;
       this.$modal
         .confirm(
-          '是否确认删除物联设备厂商编号为"' + supplierIds + '"的数据项？'
+          '是否确认删除已经选择的物联设备厂商数据项？'
         )
         .then(function () {
           return delBrand(supplierIds);

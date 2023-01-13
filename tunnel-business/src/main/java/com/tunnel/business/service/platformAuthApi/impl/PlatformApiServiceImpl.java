@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class PlatformApiServiceImpl implements PlatformApiService {
 
-    private static final Logger log = LoggerFactory.getLogger(PlatformApiService.class);
+    private static final Logger log = LoggerFactory.getLogger(PlatformApiServiceImpl.class);
 
     /**
      * 高速云设备管理接收地址
@@ -172,7 +172,7 @@ public class PlatformApiServiceImpl implements PlatformApiService {
     public int deleteSdDevices(List<SdDevices> sdDevicesList) {
         int count = 0;
         for(SdDevices sdDevices : sdDevicesList){
-            count = iSdDevicesService.deleteSdDevicesByIds(sdDevices.getEqIds().toArray(new String[sdDevices.getEqIds().size()]));
+            count = iSdDevicesService.deleteSdDevicesByIds((String[])sdDevices.getEqIds().toArray(new String[sdDevices.getEqIds().size()]));
         }
         return count;
     }

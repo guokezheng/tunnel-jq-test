@@ -136,8 +136,8 @@ public class WarningLightStripHandle {
     public static Map sendCommandToWarningLightStrip(String ip, Integer port, String command) {
         Map<String, Object> map = new HashMap<>();
         //获取当前设备亮灯状态
-        String crcResult = getCRC(command);
-        command = command + crcResult;
+//        String crcResult = getCRC(command);
+//        command = command + crcResult;
         NettyClient client = new NettyClient(ip, port, command, 3);
         try {
             client.start(null);

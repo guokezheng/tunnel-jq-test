@@ -7,8 +7,10 @@ import com.ruoyi.common.utils.DictUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.EventDescEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelDirectionEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
@@ -404,7 +406,7 @@ public class SdEventServiceImpl implements ISdEventService {
         SdDevices devices = new SdDevices();
         devices.setEqTunnelId(tunnelId);
         devices.setEqDirection(direction);
-        devices.setEqType(23L);
+        devices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
         try {
             int param = Integer.valueOf(stakeNum.replaceAll("[a-zA-Z]", "").replace("+","").replace(" ",""));
@@ -413,7 +415,7 @@ public class SdEventServiceImpl implements ISdEventService {
             pileNum = pileNum.stream().sorted().collect(Collectors.toList());
             for(int i = 0;i < pileNum.size(); i++){
                 if(pileNum.get(i)==param){
-                    param = pileNum.get(i+1);
+                    param = direction.equals(TunnelDirectionEnum.DOWN_DIRECTION.getCode())?pileNum.get(i+1):pileNum.get(i-1);
                     break;
                 }
             }

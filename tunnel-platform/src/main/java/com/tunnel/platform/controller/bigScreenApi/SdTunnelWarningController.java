@@ -28,8 +28,8 @@ public class SdTunnelWarningController extends BaseController {
      * @return
      */
     @GetMapping("/warningnum")
-    public AjaxResult getTunnelWarningNumber(){
-        List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber();
+    public AjaxResult getTunnelWarningNumber(String tunnelId){
+        List<Long> tunnelWarningNumber = iSdTunnelWarningService.getTunnelWarningNumber(tunnelId);
         return AjaxResult.success(tunnelWarningNumber);
     }
 

@@ -90,6 +90,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         list.add(activeSafety(cumulativeWarning,dataCount));
         //计算设备故障数量、百分比
         list.add(equipmentFailure(cumulativeFault,dataCount));
+        cumulativeAlarmList.stream().forEach(item -> {
+            if(item.get("eventTime") == null){
+                item.put("eventTime",null);
+            }
+        });
         //累计分析列表
         Map<String, Object> map = new HashMap<>();
         map.put("eventPercentage",list);
@@ -194,7 +199,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算交通事件数量、百分比
         map.put("eventCount",cumulativeEvent);
-        map.put("percentage",cumulativeEvent.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeEvent.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeEvent.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 
@@ -206,7 +215,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算交通事件数量、百分比
         map.put("warningCount",cumulativeWarning);
-        map.put("percentage",cumulativeWarning.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeWarning.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeWarning.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 
@@ -218,7 +231,11 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         Map<String, Object> map = new HashMap<>();
         //计算设备故障数量、百分比
         map.put("faultCount",cumulativeFault);
-        map.put("percentage",cumulativeFault.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        if(cumulativeFault.compareTo(new BigDecimal(0)) == 0){
+            map.put("percentage",0);
+        }else {
+            map.put("percentage",cumulativeFault.divide(dataCount,2,BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_HALF_DOWN));
+        }
         return map;
     }
 }

@@ -18,8 +18,8 @@ public class SdTunnelWarningServiceImpl implements ISdTunnelWarningService {
     private SdTunnelWarningMapper sdTunnelWarningMapper;
 
     @Override
-    public List<Long> getTunnelWarningNumber() {
-        List<Long> tunnelWarningNumber = sdTunnelWarningMapper.getTunnelWarningNumber();
+    public List<Long> getTunnelWarningNumber(String tunnelId) {
+        List<Long> tunnelWarningNumber = sdTunnelWarningMapper.getTunnelWarningNumber(tunnelId);
         log.info("查询近30日隧道预警事件成功");
         return tunnelWarningNumber;
     }

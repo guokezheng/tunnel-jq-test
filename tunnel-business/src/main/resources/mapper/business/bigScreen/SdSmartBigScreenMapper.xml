@@ -91,7 +91,7 @@
         AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ >= ]]>  DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
         AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
         <if test="tunnelId != null and tunnelId != ''">
-            se.tunnel_id = #{tunnelId}
+            AND se.tunnel_id = #{tunnelId}
         </if>
         GROUP BY
         se.event_state
@@ -107,6 +107,9 @@
             1 = 1
         AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) <![CDATA[ >= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
         AND DATE_FORMAT( sfl.fault_fxtime, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
+        <if test="tunnelId != null and tunnelId != ''">
+            AND sfl.tunnel_id = #{tunnelId}
+        </if>
         GROUP BY
             sfl.fallt_remove_statue
     </select>

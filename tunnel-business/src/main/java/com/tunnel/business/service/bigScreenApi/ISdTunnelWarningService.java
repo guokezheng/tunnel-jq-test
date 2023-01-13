@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ISdTunnelWarningService {
 
-    List<Long> getTunnelWarningNumber();
+    List<Long> getTunnelWarningNumber(String tunnelId);
 
 }

@@ -12,7 +12,6 @@ import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.digitalmodel.RadarEventService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
-import com.tunnel.deal.guidancelamp.control.inductionlamp.InductionlampUtil;
 import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,6 +217,8 @@ public class WarningLightStripTask {
         }
         Integer port = Integer.valueOf(portAddress);
         String command = "01030000000E";
+        String crc = WarningLightStripHandle.getCRC(command);
+        command = command + crc;
         Map map = WarningLightStripHandle.sendCommandToWarningLightStrip(ip, port, command);
         if (map == null || map.isEmpty() || map.get("isSuccess") == null || map.get("data") == null) {
             return;

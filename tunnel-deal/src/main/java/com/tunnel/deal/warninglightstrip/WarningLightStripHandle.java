@@ -2,6 +2,7 @@ package com.tunnel.deal.warninglightstrip;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDevices;
@@ -129,6 +130,10 @@ public class WarningLightStripHandle {
         }
         //存储变更后控制器状态到数据库
         updateDeviceData(deviceId, Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()), ctrState.toString());
+        //设置设备为在线
+        sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
+        sdDevices.setEqStatusTime(new Date());
+        sdDevicesMapper.updateSdDevices(sdDevices);
         return 1;
     }
 

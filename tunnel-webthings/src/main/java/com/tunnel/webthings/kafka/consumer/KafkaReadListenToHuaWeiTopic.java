@@ -1094,7 +1094,7 @@ public class KafkaReadListenToHuaWeiTopic {
         event.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         event.setEventDescription(jsonObject.getString("eventDescribe"));
         event.setEventTime(DateUtils.parseDate(jsonObject.getString("foundTime")));
-        event.setVideoUrl(jsonObject.getString("videoUrl"));
+        event.setVideoUrl(jsonObject.getString("eventVideoUrl"));
         event.setEndTime(jsonObject.getString("completeTime"));
         event.setLaneNo(jsonObject.getString("carLane"));
         //rhy 事件状态,1:待复核; 2:处置中; 3:已处置; 4:已确认; 5:已挂起; 6:误报; 7:关联

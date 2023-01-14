@@ -812,3 +812,80 @@ ALTER TABLE `sd_event_type`
 -- 设备故障表新增字段
 ALTER TABLE `sd_fault_list`
     ADD COLUMN `fault_escalation_type` varchar(1) NULL DEFAULT 0 COMMENT '上报区分 0：人为填报 1：设备上报' AFTER `eq_run_status`;
+
+-- 新增车道统计数据表
+CREATE TABLE `sd_lane_statistics` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `lane_no` int(20) DEFAULT NULL COMMENT '车道编号',
+      `speed` varchar(20) DEFAULT NULL COMMENT '平均速度 单位km/h',
+      `time_occupy` varchar(20) DEFAULT NULL COMMENT '时间占有率',
+      `space_occupy` varchar(20) DEFAULT NULL COMMENT '空间占有率',
+      `gap` varchar(20) DEFAULT NULL COMMENT '车头间距 单位米',
+      `gap_time` varchar(20) DEFAULT NULL COMMENT '车头时距 单位秒',
+      `time` datetime DEFAULT NULL COMMENT '时间戳',
+      `flow_small` int(20) DEFAULT NULL COMMENT '小车流量',
+      `flow_medium` int(20) DEFAULT NULL COMMENT '中车流量',
+      `flow_large` int(20) DEFAULT NULL COMMENT '大车流量',
+      `flowx_large` int(20) DEFAULT NULL COMMENT '超大车流量',
+      `cars` int(20) DEFAULT NULL COMMENT '车道车辆数',
+      `start_time` datetime DEFAULT NULL COMMENT '统计开始时间',
+      `end_time` datetime DEFAULT NULL COMMENT '统计结束时间',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='车道统计数据表';
+
+-- 新增路段统计数据表
+CREATE TABLE `sd_road_section_statistics` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `speed` varchar(20) DEFAULT NULL COMMENT '平均速度 路段平均速度，单位km/h',
+      `time_occupy` varchar(20) DEFAULT NULL COMMENT '时间占有率',
+      `space_occupy` varchar(20) DEFAULT NULL COMMENT '空间占有率,路段车辆占道路比例',
+      `gap` varchar(20) DEFAULT NULL COMMENT '平均车头间距 单位米',
+      `gap_time` varchar(20) DEFAULT NULL COMMENT '平均车头时距 单位秒',
+      `time` datetime DEFAULT NULL COMMENT '时间戳',
+      `in_flow` varchar(20) DEFAULT NULL COMMENT '进入流量',
+      `out_flow` varchar(20) DEFAULT NULL COMMENT '离开流量',
+      `congestion_index` varchar(20) DEFAULT NULL COMMENT '拥堵指标',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `saturation_vc` varchar(20) DEFAULT NULL COMMENT '饱和度',
+      `start_time` datetime DEFAULT NULL COMMENT '统计开始时间',
+      `end_time` datetime DEFAULT NULL COMMENT '统计结束时间',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='路段统计数据表';
+
+-- 新增路段车辆行驶记录表
+CREATE TABLE `sd_vehicle_driving` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `track_id` bigint(20) DEFAULT NULL COMMENT '轨迹ID',
+      `plate_color` varchar(10) DEFAULT NULL COMMENT '车牌颜色',
+      `plate_number` varchar(15) DEFAULT NULL COMMENT '车牌号',
+      `object_type` varchar(2) DEFAULT NULL COMMENT '目标类型',
+      `vehicle_type` varchar(10) DEFAULT NULL COMMENT '车辆类型',
+      `vehicle_color` varchar(10) DEFAULT NULL COMMENT '车身颜色',
+      `speed` varchar(20) DEFAULT NULL COMMENT '车辆速度，单位：km/h',
+      `travel_type` varchar(1) DEFAULT NULL COMMENT '进入或者离开标志 1：进入2：离开',
+      `start_time` datetime DEFAULT NULL COMMENT '进入或离开的时间',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='路段车辆行驶记录';
+
+-- 雷达监测感知数据表新增字段
+ALTER TABLE `sd_radar_detect_data`
+    MODIFY COLUMN `record_Serial_Number` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '流水号' AFTER `detect_time`,
+    ADD COLUMN `object_type` varchar(2) NULL COMMENT '目标类型' AFTER `distance`,
+    ADD COLUMN `road_dir` varchar(1) NULL COMMENT '上下行标志 1：上行，2：下行' AFTER `object_type`;

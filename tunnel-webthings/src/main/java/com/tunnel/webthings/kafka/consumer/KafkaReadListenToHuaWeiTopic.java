@@ -7,26 +7,25 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.DateUtils;
-import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
-import com.tunnel.business.domain.event.SdEvent;
-import com.tunnel.business.domain.event.SdEventType;
+import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.*;
+import com.tunnel.business.mapper.digitalmodel.SdRadarDetectDataMapper;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
-import com.tunnel.business.mapper.event.SdEventTypeMapper;
+import com.tunnel.business.mapper.event.SdLaneStatisticsMapper;
+import com.tunnel.business.mapper.event.SdRoadSectionStatisticsMapper;
+import com.tunnel.business.mapper.event.SdVehicleDrivingMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
 import com.tunnel.business.service.dataInfo.ISdTunnelsService;
-import com.tunnel.business.service.dataInfo.impl.SdTunnelsServiceImpl;
 import com.tunnel.business.service.digitalmodel.impl.RadarEventServiceImpl;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdEventTypeService;
 import com.tunnel.business.service.sendDataToKafka.SendDeviceStatusToKafkaService;
-import com.tunnel.platform.controller.platformAuthApi.PlatformApiController;
 import com.zc.common.core.websocket.WebSocketService;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -35,19 +34,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 读取设备、隧道基础数据
@@ -338,6 +334,84 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONArray objects = JSONObject.parseArray(record.value().toString());
             //新增微波车检数据
             saveReceiveVdBizAttr(objects,itemId);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取车道统计数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"analysis.crosslane.hist"}, containerFactory = "kafkaThreeContainerFactory")
+    public void analysisCrosslane(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢-图盟车道统计数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析车道统计数据
+            JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+            //新增车道统计数据
+            analysisAnalysisCrosslane(jsonObject);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取路段统计数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"analysis.rid.hist"}, containerFactory = "kafkaThreeContainerFactory")
+    public void analysisRid(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢-图盟路段统计数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析路段统计数据
+            JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+            //新增路段统计数据
+            analysisAnalysisRid(jsonObject);
+        }
+        consumer.commitSync();
+    }
+
+
+    /**
+     * 获取路段车辆行驶记录数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"analysis.rid.travel"}, containerFactory = "kafkaThreeContainerFactory")
+    public void ridTravel(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢-图盟路段车辆行驶记录数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析路段车辆行驶记录数据
+            JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+            //新增路段车辆行驶记录数据
+            analysisRidTravel(jsonObject);
+        }
+        consumer.commitSync();
+    }
+
+    /**
+     * 获取车辆快照数据
+     *
+     * @param record
+     * @param acknowledgment
+     * @param consumer
+     */
+    @KafkaListener(topics = {"analysis.carsnap"}, containerFactory = "kafkaThreeContainerFactory")
+    public void analysisCarsnap(ConsumerRecord<String,Object> record, Acknowledgment acknowledgment, Consumer<?,?> consumer){
+        log.info("监听到瑞华赢-图盟车辆快照数据： --> {}",record.value());
+        if(record.value() != null & record.value() != ""){
+            //解析车辆快照数据
+            JSONObject jsonObject = JSONObject.parseObject(record.value().toString());
+            JSONArray track = JSONObject.parseArray(jsonObject.getString("track"));
+            //新增车辆快照数据
+            saveAnalysisCarsnap(track);
         }
         consumer.commitSync();
     }
@@ -1230,5 +1304,167 @@ public class KafkaReadListenToHuaWeiTopic {
                 return;
             }
         }
+    }
+
+    /**
+     * 新增车道统计数据
+     *
+     * @param jsonArray
+     */
+    public void saveAnalysisCrosslane(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            //保存车道统计数据
+            analysisAnalysisCrosslane(jsonObject);
+        }
+    }
+
+    /**
+     * 新增路段统计数据
+     *
+     * @param jsonArray
+     */
+    public void saveAnalysisRid(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            //保存路段统计数据
+            analysisAnalysisRid(jsonObject);
+        }
+    }
+
+    /**
+     * 新增路段车辆行驶记录数据
+     *
+     * @param jsonArray
+     */
+    public void saveRidTravel(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            //保存路段车辆行驶记录数据
+            analysisRidTravel(jsonObject);
+        }
+    }
+
+    /**
+     * 新增车辆快照数据
+     *
+     * @param jsonArray
+     */
+    public void saveAnalysisCarsnap(JSONArray jsonArray){
+        for(int i = 0; i < jsonArray.size(); i++){
+            JSONObject jsonObject = JSONObject.parseObject(jsonArray.get(i).toString());
+            //保存车辆快照数据
+            analysisAnalysisCarsnap(jsonObject);
+        }
+    }
+
+    /**
+     * 解析保存车道统计数据
+     *
+     * @param jsonObject
+     * @return
+     */
+    public void analysisAnalysisCrosslane(JSONObject jsonObject){
+        SdLaneStatistics sdLaneStatistics = new SdLaneStatistics();
+        sdLaneStatistics.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        sdLaneStatistics.setLaneNo(jsonObject.getLong("laneNo"));
+        sdLaneStatistics.setSpeed(jsonObject.getString("speed"));
+        sdLaneStatistics.setTimeOccupy(jsonObject.getString("timeOccupy"));
+        sdLaneStatistics.setSpaceOccupy(jsonObject.getString("spaceOccupy"));
+        sdLaneStatistics.setGap(jsonObject.getString("gap"));
+        sdLaneStatistics.setGapTime(jsonObject.getString("gapTime"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        sdLaneStatistics.setTime(time);
+        sdLaneStatistics.setFlowSmall(jsonObject.getLong("flowSmall"));
+        sdLaneStatistics.setFlowMedium(jsonObject.getLong("flowMedium"));
+        sdLaneStatistics.setFlowLarge(jsonObject.getLong("flowLarge"));
+        sdLaneStatistics.setFlowxLarge(jsonObject.getLong("flowXLarge"));
+        sdLaneStatistics.setCars(jsonObject.getLong("cars"));
+        sdLaneStatistics.setStartTime(DateUtils.parseDate(jsonObject.getString("startTime")));
+        sdLaneStatistics.setEndTime(DateUtils.parseDate(jsonObject.getString("endTime")));
+        sdLaneStatistics.setRoadDir(jsonObject.getString("roadDir"));
+        sdLaneStatistics.setCreateTime(DateUtils.getNowDate());
+        SdLaneStatisticsMapper sdLaneStatisticsMapper = SpringUtils.getBean(SdLaneStatisticsMapper.class);
+        sdLaneStatisticsMapper.insertSdLaneStatistics(sdLaneStatistics);
+    }
+
+    /**
+     * 解析保存路段统计数据
+     *
+     * @param jsonObject
+     */
+    public void analysisAnalysisRid(JSONObject jsonObject){
+        SdRoadSectionStatistics statistics = new SdRoadSectionStatistics();
+        statistics.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        statistics.setSpeed(jsonObject.getString("speed"));
+        statistics.setTimeOccupy(jsonObject.getString("timeOccupy"));
+        statistics.setSpaceOccupy(jsonObject.getString("spaceOccupy"));
+        statistics.setGap(jsonObject.getString("gap"));
+        statistics.setGapTime(jsonObject.getString("gapTime"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        statistics.setTime(time);
+        statistics.setInFlow(jsonObject.getString("inFlow"));
+        statistics.setOutFlow(jsonObject.getString("outFlow"));
+        statistics.setCongestionIndex(jsonObject.getString("congestionIndex"));
+        statistics.setRoadDir(jsonObject.getString("roadDir"));
+        statistics.setSaturationVc(jsonObject.getString("saturationVC"));
+        statistics.setStartTime(DateUtils.parseDate(jsonObject.getString("startTime")));
+        statistics.setEndTime(DateUtils.parseDate(jsonObject.getString("endTime")));
+        statistics.setCreateTime(DateUtils.getNowDate());
+        SdRoadSectionStatisticsMapper sectionStatisticsMapper = SpringUtils.getBean(SdRoadSectionStatisticsMapper.class);
+        sectionStatisticsMapper.insertSdRoadSectionStatistics(statistics);
+    }
+
+    /**
+     * 解析保存路段车辆行驶记录
+     *
+     * @param jsonObject
+     */
+    public void analysisRidTravel(JSONObject jsonObject){
+        SdVehicleDriving sdVehicleDriving = new SdVehicleDriving();
+        sdVehicleDriving.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        sdVehicleDriving.setTrackId(jsonObject.getLong("trackID"));
+        sdVehicleDriving.setPlateColor(jsonObject.getString("plateColor"));
+        sdVehicleDriving.setPlateNumber(jsonObject.getString("plateNumber"));
+        sdVehicleDriving.setObjectType(jsonObject.getString("objectType"));
+        sdVehicleDriving.setVehicleType(jsonObject.getString("vehicleType"));
+        sdVehicleDriving.setVehicleColor(jsonObject.getString("vehicleColor"));
+        sdVehicleDriving.setSpeed(jsonObject.getString("speed"));
+        sdVehicleDriving.setTravelType(jsonObject.getString("travelType"));
+        sdVehicleDriving.setRoadDir(jsonObject.getString("roadDir"));
+        sdVehicleDriving.setStartTime(DateUtils.parseDate(jsonObject.getString("startTime")));
+        sdVehicleDriving.setCreateTime(DateUtils.getNowDate());
+        SdVehicleDrivingMapper drivingMapper = SpringUtils.getBean(SdVehicleDrivingMapper.class);
+        drivingMapper.insertSdVehicleDriving(sdVehicleDriving);
+    }
+
+    /**
+     * 解析保存车辆快照数据
+     *
+     * @param jsonObject
+     */
+    public void analysisAnalysisCarsnap(JSONObject jsonObject){
+        SdRadarDetectData sdRadarDetectData = new SdRadarDetectData();
+        sdRadarDetectData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
+        sdRadarDetectData.setRecordSerialNumber(jsonObject.getString("trackID"));
+        sdRadarDetectData.setObjectType(jsonObject.getString("objectType"));
+        sdRadarDetectData.setVehicleType(jsonObject.getString("vehicleType"));
+        sdRadarDetectData.setVehicleColor(jsonObject.getString("vehicleColor"));
+        sdRadarDetectData.setVehicleLicense(jsonObject.getString("plateNumber"));
+        sdRadarDetectData.setLatitude(jsonObject.getString("lat"));
+        sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
+        sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
+        sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //转换
+        Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
+        sdRadarDetectData.setDetectTime(time);
+        sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
+        SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
+        detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
     }
 }

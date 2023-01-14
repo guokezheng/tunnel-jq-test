@@ -212,7 +212,7 @@
                 multiple
                 collapse-tags
                 placeholder="请选择设备"
-                @change="qbgChange(index, dain.value)"
+                @change="qbgChange(index, dain.equipments)"
               >
                 <el-option
                   v-for="item in dain.equipmentData"

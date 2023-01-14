@@ -86,19 +86,19 @@
       </el-row>
       <el-row>
         <el-form-item
-          v-for="(dain, index) in strategyForm.autoControl"
+          v-for="(items, index) in strategyForm.autoControl"
           :key="index"
         >
           <el-col :span="6">
             <el-select
-              v-model="dain.equipmentTypeId"
+              v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
               title="手动控制"
               @change="changeEquipmentType(index)"
             >
               <el-option
-                v-for="item in dain.equipmentTypeData"
+                v-for="item in items.equipmentTypeData"
                 :key="item.typeId"
                 :label="item.typeName"
                 :value="item.typeId"
@@ -107,14 +107,14 @@
           </el-col>
           <el-col :span="6">
             <el-select
-              v-model="dain.equipments"
+              v-model="items.equipments"
               multiple
               collapse-tags
               placeholder="请选择设备"
-              @change="qbgChange(index,dain.value)"
+              @change="qbgChange(index, items.equipments)"
             >
               <el-option
-                v-for="item in dain.equipmentData"
+                v-for="item in items.equipmentData"
                 :key="item.eqId"
                 :label="item.eqName"
                 :value="item.eqId"
@@ -122,13 +122,13 @@
               />
             </el-select>
           </el-col>
-          <el-col :span="6" v-show="dain.equipmentTypeId != 16 && dain.equipmentTypeId != 36">
-            <el-select
-              v-model="dain.state"
-              placeholder="请选择设备执行操作"
-            >
+          <el-col
+            :span="6"
+            v-show="items.equipmentTypeId != 16 && items.equipmentTypeId != 36"
+          >
+            <el-select v-model="items.state" placeholder="请选择设备执行操作">
               <el-option
-                v-for="(item, indx) in dain.eqStateList"
+                v-for="(item, indx) in items.eqStateList"
                 :key="item.deviceState"
                 :label="item.stateName"
                 :value="item.deviceState"
@@ -136,15 +136,19 @@
               </el-option>
             </el-select>
           </el-col>
-          <el-col :span="6" v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36">
+          <el-col
+            :span="6"
+            v-show="items.equipmentTypeId == 16 || items.equipmentTypeId == 36"
+          >
             <el-cascader
               :props="checkStrictly"
-              v-model="dain.state"
-              :options="dain.templatesList"
+              v-model="items.state"
+              :options="items.templatesList"
               :show-all-levels="false"
               clearable
               collapse-tags
-              @change="handleChange"></el-cascader>
+              @change="handleChange"
+            ></el-cascader>
           </el-col>
           <el-col :span="4" class="buttonBox">
             <el-button
@@ -202,7 +206,10 @@ import {
 } from "@/api/monitor/job";
 import Crontab from "@/components/Crontab";
 
-import { listEqTypeStateIsControl,getVMSTemplatesByDevIdAndCategory } from "@/api/equipment/eqTypeState/api";
+import {
+  listEqTypeStateIsControl,
+  getVMSTemplatesByDevIdAndCategory,
+} from "@/api/equipment/eqTypeState/api";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { listDevices } from "@/api/equipment/eqlist/api";
 import { listType } from "@/api/equipment/type/api";
@@ -235,8 +242,8 @@ export default {
         checkStrictly: true,
       },
       expression: "",
-      paramsData : {
-        tunnelId: ""
+      paramsData: {
+        tunnelId: "",
       },
       openCron: false,
       id: "", //策略id
@@ -259,7 +266,7 @@ export default {
       viewStrategy: false,
       showCronBox: false,
       strategyForm: {
-        strategyGroup:1,
+        strategyGroup: 1,
         schedulerTime: "", //cron数据
         strategyType: "1", //策略类型
         tunnelId: null, //隧道id
@@ -270,9 +277,10 @@ export default {
             value: "", //设备
             state: "", //状态
             type: "", //设备分类
-            equipmentTypeId:"",//设备类型
-            equipment:[],//设备列表
-            equipmentTypeData:[],equipmentData:[]
+            equipmentTypeId: "", //设备类型
+            equipment: [], //设备列表
+            equipmentTypeData: [],
+            equipmentData: [],
           },
         ],
       },
@@ -336,50 +344,64 @@ export default {
           for (var i = 0; i < response.rows.length; i++) {
             let autoControl = this.strategyForm.autoControl[i];
             var attr = response.rows[i];
-            this.strategyForm.autoControl[i].equipments = attr.equipments.split(",");
+            this.strategyForm.autoControl[i].equipments =
+              attr.equipments.split(",");
             this.strategyForm.autoControl[i].eqStateList = attr.eqStateList;
             this.strategyForm.autoControl[i].state = attr.state;
             this.strategyForm.autoControl[i].type = attr.eqTypeId;
-            this.strategyForm.autoControl[i].equipmentTypeId = Number(attr.eqTypeId);
-            this.$set(autoControl,"equipmentTypeData",this.equipmentTypeData);
+            this.strategyForm.autoControl[i].equipmentTypeId = Number(
+              attr.eqTypeId
+            );
+            this.$set(autoControl, "equipmentTypeData", this.equipmentTypeData);
             listDevices({
               eqType: attr.eqTypeId,
               eqTunnelId: this.strategyForm.tunnelId,
               eqDirection: this.strategyForm.direction, //方向
             }).then((res) => {
-              this.$set(autoControl,"equipmentData",res.rows)
-              console.log(autoControl.equipmentData,"设备列表数据1")
+              this.$set(autoControl, "equipmentData", res.rows);
+              console.log(autoControl.equipmentData, "设备列表数据1");
             });
           }
         });
       });
     },
     // 改变设备类型
-    changeEquipmentType(index){
+    changeEquipmentType(index) {
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道
         eqDirection: this.strategyForm.direction, //方向
       };
       listDevices(params).then((res) => {
-        this.$set(this.strategyForm.autoControl[index],"equipmentData",res.rows)
+        this.$set(
+          this.strategyForm.autoControl[index],
+          "equipmentData",
+          res.rows
+        );
         console.log(this.equipmentData, "设备列表");
       });
       this.listEqTypeStateIsControl(index);
     },
-    qbgChange(index,value){
-      console.log(value);
+    qbgChange(index, value) {
+      console.log(value, "当前选中板子");
       let data = value;
-      if(this.strategyForm.autoControl[index].equipmentTypeId == 16 || this.strategyForm.autoControl[index].equipmentTypeId == 36 ) {
-        getVMSTemplatesByDevIdAndCategory(data).then(res => {
-          console.log(res.data, "模板信息")
+      if (
+        this.strategyForm.autoControl[index].equipmentTypeId == 16 ||
+        this.strategyForm.autoControl[index].equipmentTypeId == 36
+      ) {
+        getVMSTemplatesByDevIdAndCategory(data).then((res) => {
+          console.log(res.data, "模板信息");
           // this.templatesList = res.data;
-          this.$set(this.strategyForm.autoControl[index], "templatesList", res.data)
-        })
+          this.$set(
+            this.strategyForm.autoControl[index],
+            "templatesList",
+            res.data
+          );
+        });
       }
     },
-    handleChange(e){
-      console.log(e)
+    handleChange(e) {
+      console.log(e);
     },
     // 查询设备可控状态
     listEqTypeStateIsControl(index) {
@@ -461,9 +483,9 @@ export default {
         });
       }
       let data = this.strategyForm.autoControl;
-      data.forEach(item=>{
-        item.state = item.state.toString()
-      })
+      data.forEach((item) => {
+        item.state = item.state.toString();
+      });
       let params = this.strategyForm;
       updateStrategyInfo(params).then((res) => {
         this.$modal.msgSuccess("修改策略成功");
@@ -477,9 +499,9 @@ export default {
         this.strategyForm.jobRelationId = res;
       });
       let data = this.strategyForm.autoControl;
-      data.forEach(item=>{
-        item.state = item.state.toString()
-      })
+      data.forEach((item) => {
+        item.state = item.state.toString();
+      });
       let params = this.strategyForm;
       addStrategyInfo(params).then((res) => {
         this.resetForm();
@@ -552,7 +574,7 @@ export default {
       this.strategyForm.autoControl.push({
         value: "",
         state: "",
-        equipmentTypeId:"",
+        equipmentTypeId: "",
         equipmentTypeData: [],
         equipmentData: [],
       });
@@ -656,8 +678,8 @@ export default {
     },
     /** 查询隧道列表 */
     getTunnels() {
-      if(this.$cache.local.get("manageStation") == "1"){
-        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect")
+      if (this.$cache.local.get("manageStation") == "1") {
+        this.paramsData.tunnelId = this.$cache.local.get("manageStationSelect");
       }
       listTunnels(this.paramsData).then((response) => {
         this.tunnelData = response.rows;
@@ -674,10 +696,10 @@ export default {
     /** 查询设备类型列表 */
     getEquipmentType() {
       let autoControl = this.strategyForm.autoControl;
-      for(let i = 0;i < autoControl.length;i++){
+      for (let i = 0; i < autoControl.length; i++) {
         listType(this.queryEqTypeParams).then((data) => {
-          console.log(data.rows,"设备类型")
-          this.$set(autoControl[i],"equipmentTypeData",data.rows)
+          console.log(data.rows, "设备类型");
+          this.$set(autoControl[i], "equipmentTypeData", data.rows);
           this.equipmentTypeData = data.rows;
         });
       }
@@ -708,6 +730,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .menu {color:white;background-color: #74c5ff;display: flex;justify-content: space-around;align-items: center;}
-  .buttonBox{display: flex;justify-content: space-around;align-items: center}
+.menu {
+  color: white;
+  background-color: #74c5ff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.buttonBox {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 </style>

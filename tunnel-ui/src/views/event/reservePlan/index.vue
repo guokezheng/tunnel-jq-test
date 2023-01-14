@@ -27,10 +27,10 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="预案类别" prop="category">
+      <el-form-item label="预案类型" prop="category">
         <el-select
           v-model="queryParams.category"
-          placeholder="请选择预案类别"
+          placeholder="请选择预案类型"
           clearable
           size="small"
         >
@@ -811,6 +811,16 @@ export default {
           message: "请选择隧道类型",
           trigger: "change",
         },
+        direction: {
+          required: true,
+          message: "请选择方向",
+          trigger: "change",
+        },
+        controlDirection: {
+          required: true,
+          message: "请选择管控方向",
+          trigger: "change",
+        },
         sId: { required: true, message: "请选择分区隧道", trigger: "change" },
         planDescription: {
           required: true,
@@ -820,7 +830,7 @@ export default {
         category: {
           required: true,
           trigger: "change",
-          message: "请选择预案类别",
+          message: "请选择预案类型",
         },
       },
       //draw开关

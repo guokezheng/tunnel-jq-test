@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.bigScreenApi.SdTunnelZtMapper">
+
+
+    <select id="getTunnelEventNumber" parameterType="String" resultType="Map">
+        select count(*)totalNum, count(event_type_id='12' or null)sgNum,count(event_type_id!='12' or null)sjNum from sd_event
+        where 1=1
+        <if test="createTimeBegin != null  and createTimeBegin != '' and createTimeEnd != null and createTimeEnd != '' "> and event_time between #{createTimeBegin} and #{createTimeEnd}</if>
+        <if test="tunnelId != null  and tunnelId != ''"> and tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getWindPowerDirection" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type ='17'
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+
+    <select id="getCOPotency" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type ='19'  and  i.id = '1'
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getVisibility" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type ='19'  and  i.id = '2'
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getLiquidLevel" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type ='15'
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getLightDetection" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type in ('5','18')
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getPressure" parameterType="String" resultType="Map">
+        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        from sd_devices t
+        left join `sd_device_type_item` i on t.eq_type = i.device_type_id
+        left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id
+        where 1=1
+        and t.eq_type = '28'
+        <if test="tunnelId != null  and tunnelId != ''"> and t.eq_tunnel_id = #{tunnelId}</if>
+    </select>
+
+
+    <select id="getDeviceData" parameterType="String" resultType="Map">
+        select  eq_direction,count(distinct eq_type) typeNum,count(eq_id) deviceNum,
+        count(eq_status)statusNum,count(eq_status='1' or null) onlineNum,count(eq_status='2' or null) offlineNum,count(eq_status='3' or null) faultNum
+        from sd_devices
+        where 1=1
+        <if test="tunnelId != null  and tunnelId != ''"> and eq_tunnel_id = #{tunnelId}</if>
+        group by eq_direction
+    </select>
+</mapper>

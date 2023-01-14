@@ -706,27 +706,27 @@ export default {
             }
             setTimeout(() => {
                 let login= this.equipmentStates.every(item=>{
-                  return item.iconFileId !== ''
-                })
+              return item.iconFileId !== ''
+            })
                 if( !login) {
                   if(this.iconId!=""&&(this.iconId.substr(0, 1) == ",")){
 
                   }else{
-                    return this.$modal.msgWarning("请上传图片");
+              return this.$modal.msgWarning("请上传图片");
                   }
                 }
 
-              if(this.equipmentStates.length>0){
-                for(let i=0;i<this.equipmentStates.length;i++){
-                  const flag = this.equipmentStates[i].hasOwnProperty("stateType");
-                  if(flag==false){
-                    return this.$modal.msgWarning("请选择状态类型");
-                  }
+            if(this.equipmentStates.length>0){
+              for(let i=0;i<this.equipmentStates.length;i++){
+                const flag = this.equipmentStates[i].hasOwnProperty("stateType");
+                if(flag==false){
+                  return this.$modal.msgWarning("请选择状态类型");
                 }
-
               }
-              updatePic(this.equipmentStates).then(res=>{
-                if(res.code==200){
+
+            }
+            updatePic(this.equipmentStates).then(res=>{
+              if(res.code==200){
                   if(this.currentDeleteFile!=""){
                     batchDeletePic(this.currentDeleteFile).then(res=>{
                       this.open=false

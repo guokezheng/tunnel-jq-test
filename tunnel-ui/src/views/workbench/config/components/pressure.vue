@@ -91,14 +91,14 @@
         <div id="yaliCharts" style="margin: 0px auto"></div>
         </el-form>
         <div slot="footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="handleOK()"
           style="width: 80px"
           class="submitButton"
           >确 定</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"

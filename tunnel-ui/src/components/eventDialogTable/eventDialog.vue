@@ -493,4 +493,7 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #00c2ff;
 }
+::v-deep .el-carousel--horizontal{
+  height: 100% !important;
+}
 </style>

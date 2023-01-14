@@ -283,7 +283,7 @@
     />
 
     <!-- 添加/修改应急资源对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 <!--        <el-form-item label="物资编号" prop="materialId">-->
 <!--          <el-input v-model="form.materialId" placeholder="请输入物资编号" />-->
@@ -372,6 +372,7 @@
             placeholder="选择生产时间"
             :picker-options="pickerOptions0"
             class="dateClass"
+            @focus="focus"
           >
           </el-date-picker>
         </el-form-item>
@@ -782,6 +783,12 @@ export default {
     });
   },
   methods: {
+    focus() {
+      this.$nextTick(() => {
+        document.getElementsByClassName('el-button--text')[1].setAttribute('style', 'display:none') // 隐藏此刻按钮
+      })
+    },
+
     openCrkDrawer(row) {
       this.drawer = true;
       this.crkFormDetail.materialId = row.id; //通过物资id去查询出入库详情信息
@@ -1231,4 +1238,5 @@ h3 {
   display: inline-table;
   vertical-align: middle;
 }
+
 </style>

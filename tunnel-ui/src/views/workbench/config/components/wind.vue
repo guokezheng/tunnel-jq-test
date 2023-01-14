@@ -102,14 +102,14 @@
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
       <div slot="footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="handleClosee()"
           style="width: 80px"
           class="submitButton"
           >确 定</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"

@@ -390,15 +390,16 @@
           <video :src="eventForm.videoUrl" controls muted loop fluid></video>
           <div class="picBox">
             <div v-if="arrowLeft" class="turnPages"  @click="turnLeft()"><</div>
-            <div :style="{
-              display:eventForm.iconUrlList.length==0?'none':'block',
-            }">
-              <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
-            </div>
-            <div 
-              v-if="eventForm.iconUrlList.length<4" class="noPic"
-              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index">
-              <img src="../../../assets/cloudControl/nullImg.png"/>
+            <div class="picList">
+              <div
+              v-for="item in imgUrlList" :key="item.imgId">
+                <img  :src="item.imgUrl"   />
+              </div>
+              <div 
+                v-show="eventForm && !eventForm.iconUrlList" class="noPic"
+                v-for="(item,index) of 4" :key="index">
+                <img src="../../../assets/cloudControl/nullImg.png"/>
+              </div>
             </div>
             <div v-if="arrowRight" class="turnPages" @click="turnRight()">></div>
 
@@ -406,21 +407,26 @@
         </div>
         <div class="dialogBg">
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
-          <video :src="videoUrl" controls muted loop fluid></video>
+          <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
           <div class="picBox">
-            <div class="turnPages" @click="turnLeft()"><</div>
-            <div :style="{
-              display:eventForm.iconUrlList.length==0?'none':'block',
-            }">
-              <img  :src="item.imgUrl" v-for="(item, index) in eventForm.iconUrlList" :key="index"  />
+            <div v-if="arrowLeft2" class="turnPages"  @click="turnLeft2()"><</div>
+            <div class="picList">
+              <div 
+              v-for="item in urlsList" :key="item.imgId">
+                <img  :src="item.imgUrl"   />
+              </div>
+              <div 
+                v-show="!urls" class="noPic"
+                v-for="(item,index) of 4" :key="index">
+                <img src="../../../assets/cloudControl/nullImg.png"/>
+              </div>
             </div>
-            <div 
-              v-if="eventForm.iconUrlList.length<4" class="noPic"
-              v-for="(item,index) of 4-eventForm.iconUrlList.length" :key="index">
-              <img src="../../../assets/cloudControl/nullImg.png"/>
-            </div>
+            <div v-if="arrowRight2" class="turnPages" @click="turnRight2()">></div>
 
-            <div class="turnPages"  @click="turnRight()">></div>
           </div>
         </div>
       </div>
@@ -1034,14 +1040,15 @@ import {
 import { listEventType, getTodayEventCount } from "@/api/event/eventType";
 import { listPlan } from "@/api/event/reservePlan";
 import { listTunnels } from "@/api/equipment/tunnel/api";
-import { image, video } from "@/api/eventDialog/api.js";
+import { image, video, getEventCamera } from "@/api/eventDialog/api.js";
 import { listEventFlow, getListBySId } from "@/api/event/eventFlow";
 import { treeselect, treeselectExcYG1 } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import { listType, loadPicture } from "@/api/equipment/type/api";
 import { listBz } from "@/api/electromechanicalPatrol/taskManage/task";
-import { listDevices } from "@/api/equipment/eqlist/api";
+import { listDevices, videoStreaming } from "@/api/equipment/eqlist/api";
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 
 export default {
   name: "Event",
@@ -1057,7 +1064,7 @@ export default {
     "power",
   ],
   //字典值：故障类型、故障等级，故障消除状态
-  components: { Treeselect },
+  components: { Treeselect, videoPlayer},
   data() {
     return {
       eventWarnList: [],
@@ -1172,10 +1179,6 @@ export default {
         process: 0,
         bl: 0,
       },
-      urls: [
-        { imgUrl: require("@/assets/image/nodata.png") },
-        { imgUrl: require("@/assets/image/nodata.png") },
-      ],
 
       // 管理机构
       mechanism: [],
@@ -1341,6 +1344,19 @@ export default {
         stakeEndNum2: "",
         iconUrlList: [],
       },
+      iconUrlListAll:[],
+      imgUrlList:[],
+      urls: [],
+      urlsList:[],
+      urlsAll:[],
+      // 翻页
+      arrowRight:false,
+      arrowLeft:false,
+      arrowRight2:false,
+      arrowLeft2:false,
+      imgPage:1,
+      imgPage2:1,
+
       // 遮罩层
       dloading: false,
       // 部门树选项
@@ -1354,8 +1370,13 @@ export default {
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
-      arrowRight:false,
-      arrowLeft:false,
+      
+
+      // 实时视频
+      videoForm:{
+        liveUrl:'',
+      },
+      cameraVisible:true,
     };
   },
   watch: {
@@ -1679,16 +1700,6 @@ export default {
       this.tunnelId = item.tunnelId;
       this.direction = item.direction;
 
-      // const param = {
-      //   id:item.id,
-      //   eventState:0,
-      // }
-      // updateEvent(param).then((res) =>{
-      //   console.log(res,"处理中")
-      //   this.$modal.msgSuccess("正在处理");
-      //   this.evtHandle();
-
-      // })
       if (type == 1) {
         this.detailsDisabled = true;
         this.detailsButtonType = 1;
@@ -1698,11 +1709,18 @@ export default {
       }
       this.details = true;
       this.eventForm = item;
+
+      // 图片分组翻页
       if(this.eventForm.iconUrlList.length>4){
         this.arrowRight = true
-        this.eventForm.iconUrlList1 = this.eventForm.iconUrlList.splice(0,4)
+        for(let i=0;i<this.eventForm.iconUrlList.length;){
+          this.iconUrlListAll.push(this.eventForm.iconUrlList.splice(0,4))
+        }
+        this.imgUrlList = this.iconUrlListAll[0]
+        this.imgPage = 0
       }else{
         this.arrowRight = false
+        this.imgUrlList = this.eventForm.iconUrlList
       }
 
       this.getEventList();
@@ -1727,12 +1745,84 @@ export default {
         );
       }
       this.title = item.eventTitle;
+      // 获取实时视频
+      this.getVideoUrl(item)
+      // 获取实时视频截图
+      this.getImgUrl(item)
+      
+    },
+    getImgUrl(item){
+      const param = {
+        businessId: item.id,
+      };
+      image(param).then((response) => {
+        console.log(response.data, "获取图片");
+        this.urls = response.data;
+        if(this.urls.length>4){
+          this.arrowRight2 = true
+          for(let i=0;i<this.urls.length;){
+            this.urlsAll.push(this.urls.splice(0,4))
+          }
+          this.urlsList = this.urlsAll[0]
+          this.imgPage2 = 0
+        }else{
+          this.arrowRight2 = false
+          this.urlsList = this.urls
+        }
+      });
+    },
+    getVideoUrl(item){
+      getEventCamera(
+        item.tunnelId,
+        item.stakeNum,
+        item.direction
+      ).then((res) => {
+        console.log(res,"获取实时视频上游相机")
+        if(res.data){
+          let videoId = res.data[0].eqId
+          videoStreaming(videoId).then((response) =>{
+            console.log(response,"视频流");
+            if(response.code == 200){
+              this.videoForm = response.data
+              this.cameraPlayer = true
+            }
+          }).catch((e)=>{
+            this.$modal.msgWarning("获取视频失败");
+          })
+        }
+      });
     },
     turnLeft(){
-
+      this.arrowRight = true
+      this.imgPage --
+      this.imgUrlList = this.iconUrlListAll[this.imgPage]
+      if(this.imgPage == 0){
+        this.arrowLeft = false
+      }
     },
     turnRight(){
-
+      this.imgPage ++
+      this.imgUrlList = this.iconUrlListAll[this.imgPage]
+      this.arrowLeft = true
+      if(this.imgPage == this.iconUrlListAll.length-1){
+        this.arrowRight = false
+      }
+    },
+    turnLeft2(){
+      this.arrowRight2 = true
+      this.imgPage2 --
+      this.urlsList = this.urlsAll[this.imgPage2]
+      if(this.imgPage2 == 0){
+        this.arrowLeft2 = false
+      }
+    },
+    turnRight2(){
+      this.imgPage2 ++
+      this.urlsList = this.urlsAll[this.imgPage2]
+      this.arrowLeft2 = true
+      if(this.imgPage2 == this.urlsAll.length-1){
+        this.arrowRight2 = false
+      }
     },
     //选事件类型
     handleEvtButton(item) {
@@ -1756,7 +1846,7 @@ export default {
     getTreeselect() {
       treeselectExcYG1().then((response) => {
         this.deptOptions = response.data;
-        console.log(this.deptOptions);
+        console.log(this.deptOptions,"00000000000000");
       });
     },
     eqStatusGet(e) {
@@ -1831,24 +1921,24 @@ export default {
       });
     },
     //获取图片视频
-    getUrl(id) {
-      const param3 = {
-        businessId: id,
-      };
-      const param4 = {
-        id: id,
-      };
-      image(param3).then((response) => {
-        console.log(response.data.length);
-        if (response.data.length >= 1) {
-          this.urls = response.data;
-        }
-      });
-      video(param4).then((response) => {
-        console.log(response.data, "视频信息");
-        this.videoUrl = response.data.videoUrl;
-      });
-    },
+    // getUrl(id) {
+    //   const param3 = {
+    //     businessId: id,
+    //   };
+    //   const param4 = {
+    //     id: id,
+    //   };
+    //   image(param3).then((response) => {
+    //     console.log(response.data.length);
+    //     if (response.data.length >= 1) {
+    //       this.urls = response.data;
+    //     }
+    //   });
+    //   video(param4).then((response) => {
+    //     console.log(response.data, "视频信息");
+    //     this.videoUrl = response.data.videoUrl;
+    //   });
+    // },
     // 查询方向
     getDirection(num) {
       for (var item of this.directionList) {
@@ -1878,8 +1968,9 @@ export default {
         this.queryParams.tunnelId = this.$cache.local.get(
           "manageStationSelect"
         );
-        console.log(this.queryParams.tunnelId, "666666666666666666666");
       }
+      console.log(this.queryParams, "666666666666666666666");
+
       if (this.activeName == "2") {
         this.queryParams.pageSize = 10
         listList(this.queryParams).then((response) => {
@@ -2242,7 +2333,7 @@ export default {
       this.dateRange = [];
       this.tunnelList = [];
       this.queryParams.eventTypeId = "";
-      this.resetForm("queryForm");
+      // this.resetForm("queryForm");
       this.handleQuery();
     },
     /** 新增按钮操作 */
@@ -2393,6 +2484,7 @@ export default {
     },
     // 表单重置
     resetEvent() {
+
       this.$refs.form1.resetFields();
       this.eventForm.eventTypeId = null;
       this.eventForm.eventInjured = null;
@@ -2436,8 +2528,8 @@ export default {
     width: 24%;
     // height: 135px;
     border: solid 1px #2aa6ff;
-    display: inline-block;
-    margin-right: 24px;
+    display: inline-flex;
+    margin-right: 22px;
     margin-bottom: 5px;
     position: relative;
     .video {
@@ -2445,7 +2537,7 @@ export default {
       height: 100%;
       float: left;
       text-align: center;
-      font-size: 14px;
+      font-size: 0.7vw;
       // color: #2aa6ff;
       video {
         width: 100%;
@@ -2463,7 +2555,7 @@ export default {
 
     .contentText {
       margin-top: 10px;
-      font-size: 14px;
+      font-size: 0.7vw;
       // color: #0087e7;
       margin-right: 20px;
       width: 213px;
@@ -2549,8 +2641,30 @@ export default {
       margin-top: 10px;
       // border: solid 1px red;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
+      .picList{
+        width: 100%;
+        height: 100%;
+        // display: flex;
+        // justify-content: left;
+        >div{
+          overflow: hidden;
+          margin-left: 10px;
+          width: 22%;
+          height: 100%;
+          display: inline-block;
+          > img {
+            width: auto;
+            height: 100%;
+            overflow: hidden;
+            // border: solid 1px blue;
+            margin: 0 auto;
+          }
+        }
+        
+     
+      }
       .turnPages{
         width:20px !important;
         height:20px !important;
@@ -2573,19 +2687,8 @@ export default {
           width:50%;
         }
       }
-      div{
-        width: 20%;
-        height: 100%;
-        overflow: hidden;
-        // border: solid 1px blue;
-      }
-      > img {
-        width: auto;
-        height: 100%;
-        overflow: hidden;
-        // border: solid 1px blue;
-        margin: 0 auto;
-      }
+      
+      
     }
   }
 }
@@ -2933,7 +3036,7 @@ hr {
     .contentListBox {
       height: calc(100% - 130px);
       .contentBox {
-        height: 23%;
+        height: 135px;
       }
     }
   }
@@ -2944,6 +3047,12 @@ hr {
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
+}
+.video-box{
+  height: 240px;
+}
+::-webkit-scrollbar{
+  width:6px;
 }
 </style>
 

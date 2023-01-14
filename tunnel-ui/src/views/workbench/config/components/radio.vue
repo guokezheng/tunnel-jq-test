@@ -139,6 +139,7 @@
           @click="handleOK()"
           style="width: 80px"
           class="submitButton"
+          v-hasPermi="['workbench:dialog:save']"
           >确 定</el-button
         >
         <el-button

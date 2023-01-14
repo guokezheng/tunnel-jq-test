@@ -448,7 +448,6 @@
                             text-decoration: underline;
                             color: #79e0a9;
                             padding-left: 5px;
-                            width: 100px;
                             text-align: left;
                             transform: translate(30px,5px);
 
@@ -465,7 +464,6 @@
                             position: absolute;
                             color: #f2a520;
                             padding-left: 5px;
-                            width: 100px;
                             text-align: left;
                             transform: translate(30px,5px);
                           "
@@ -682,7 +680,7 @@
                 size="small"
               />
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
-
+              
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -807,14 +805,14 @@
                   value-format="HH:mm:ss"
                 >
                 </el-time-picker>
-                <el-button
+              </div>
+              <el-button
                   type="primary"
                   size="mini"
                   class="handleLightClass"
                   @click="timingStrategy(item)"
                   >确定
                 </el-button>
-              </div>
             </div>
           </div>
         </el-drawer>
@@ -853,7 +851,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-
+             
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -863,7 +861,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-
+          
         </el-drawer>
       </div>
 
@@ -946,7 +944,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-
+              
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1142,7 +1140,7 @@
                     {{ item.name }}
                   </div>
                 </el-row>
-
+                
                 <el-row
                   class="flex-row"
                   v-if="batchManageForm.eqType != 1 && batchManageForm.eqType != 2"
@@ -1387,7 +1385,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-
+     
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2613,7 +2611,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-
+          
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -2631,7 +2629,7 @@
               />
             </el-select>
           </el-form-item>
-
+          
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               v-model="queryParams.strategyName"
@@ -3144,7 +3142,7 @@ let mode = "";
 export default {
   carShow: false, //车辆是否
   name: "Workbench",
-  dicts: ["sd_sys_name"],
+  dicts: ["sd_sys_name","sys_common_status","sd_control_type"],
   components: {
     // DragItDude,
     videoPlayer,
@@ -3927,7 +3925,8 @@ export default {
       this.strategyTypeGroup = response.data;
       console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
-    this.getDicts("sd_operation_log_state").then((response) => {
+    this.getDicts("sd_device_opt_state").then((response) => {
+      console.log(response.data,"操作结果")
       this.operationStateOptions = response.data;
     });
     this.getDicts("brand").then((data) => {
@@ -4341,7 +4340,7 @@ export default {
             return 15
           }
         }
-
+        
       }else{
         if(type == 'width'){
           return 72;
@@ -4603,8 +4602,9 @@ export default {
         } else if (res.data == 1) {
           this.$modal.msgSuccess("控制成功");
         }
-        this.chezhiDisabled = false;
       });
+      this.chezhiDisabled = false;
+
     },
     getDeviceDataAndStateData() {
       getDeviceDataAndState(this.tunnelId).then((result) => {
@@ -6465,9 +6465,9 @@ export default {
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-
+                  
                     // if(res.eqList[i].eqType == 16 || res.eqList[i].eqType == 36){
-
+            
                     //   console.log(res.eqList[i].associated_device_id,"res.eqList[i].associated_device_id")
                     //   getBoardContent(res.eqList[i].associated_device_id).then((resp) => {
                     //     console.log(resp.data,"0000000000000000")
@@ -6485,7 +6485,7 @@ export default {
                     //   let iconHeight = Number(response.rows[j].iconHeight);
                     //   res.eqList[i].iconWidth = iconWidth;
                     //   res.eqList[i].iconHeight = iconHeight;
-
+                  
                     // }
                     break;
                   }
@@ -6493,7 +6493,7 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
-
+             
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -6817,13 +6817,10 @@ export default {
           }
         }
       });
-      console.log(this.currentTunnel.id, "this.currentTunnel.id");
-      if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
-        addBoardContent(this.currentTunnel.id).then((res)=>{
-          // console.log(res,"情报板显示内容查询");
-          this.boardObj = res
-        })
-      }
+      addBoardContent(this.currentTunnel.id).then((res)=>{
+        // console.log(res,"情报板显示内容查询");
+        this.boardObj = res
+      })
     },
     /* 选择隧道*/
     switchTunnel() {
@@ -8288,7 +8285,7 @@ export default {
   // height:49%;
   // top:239px;
   width: 23% !important;
-  font-size: 14px;
+  font-size: 0.7vw;
 
   ::-webkit-scrollbar-track-piece {
     background-color: rgba($color: #00c2ff, $alpha: 0.1);
@@ -8492,8 +8489,8 @@ export default {
 
     .handleLightClass {
       height: 28px;
-      margin-left: 5px;
-      width: 40px;
+      margin: 0 5px;
+      width: 4vw;
       text-align: center;
       // background-color: #07C2FF !important;
       border: none;
@@ -8503,7 +8500,7 @@ export default {
 
 ::v-deep .el-date-editor.el-input,
 .el-date-editor.el-input__inner {
-  width: 86px;
+  width: 100%;
 }
 
 // ::v-deep .el-input--prefix .el-input__inner{

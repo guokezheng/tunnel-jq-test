@@ -53,34 +53,6 @@ public class WarningLightStripTask {
         }
     }
 
-    private String handleDeviceStatus(SdDevices sdDevices, Map<String, Object> codeMap) {
-        String state = "";
-        if (codeMap == null || codeMap.isEmpty()) {
-            //当前诱导灯控制器已经离线，存储状态到devices
-            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
-            sdDevices.setEqStatusTime(new Date());
-            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "off");
-            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "off");
-        } else {
-            if (codeMap.get("openState") != null) {
-                state = codeMap.get("openState").toString();
-            } else if (codeMap.get("runMode") != null) {
-                state = codeMap.get("runMode").toString();
-            }
-            sdDevices.setEqStatus(DevicesStatusEnum.DEVICE_ON_LINE.getCode());
-            sdDevices.setEqStatusTime(new Date());
-            sendData.pushDevicesStatusToOtherSystem(sdDevices, "1", "on");
-            sendData.pushDevicesStatusToOtherSystem(sdDevices, "2", "on");
-        }
-        //更新诱导灯控制器状态，诱导灯子设备状态也需要更改
-        sdDevicesService.updateSdDevices(sdDevices);
-        SdDevices sonDevices = new SdDevices();
-        sonDevices.setFEqId(sdDevices.getEqId());
-        sonDevices.setEqStatus(sdDevices.getEqStatus());
-        sdDevicesService.updateSdDevicesByFEqId(sonDevices);
-        return state;
-    }
-
     private static void sendNowDeviceStatusByWebsocket(SdDevices sdDevices, String[] state) {
         List<SdDeviceNowState> dataList = new ArrayList<>();
         JSONObject jsonObject = new JSONObject();
@@ -114,81 +86,6 @@ public class WarningLightStripTask {
         jsonObject.put("runMode", Integer.valueOf(runMode));
         map.put("deviceData", jsonObject);
         radarEventService.sendBaseDeviceStatus(map);
-    }
-
-    private static void handleCodeMap(SdDevices sdDevices, Map<String, Object> codeMap) {
-        if (codeMap == null || codeMap.isEmpty() || codeMap.get("mode") == null) {
-            return;
-        }
-        String mode = codeMap.get("mode").toString();
-        if (mode.equals("1")) {
-            mode = "2";
-        } else if (mode.equals("4")) {
-            mode = "3";
-        }
-        //当前数据库中，控制器一定有子级设备，而且状态是一致的
-        SdDevices dev = new SdDevices();
-        dev.setFEqId(sdDevices.getEqId());
-        List<SdDevices> list = sdDevicesService.selectSdDevicesList(dev);
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, "2", DevicesTypeItemEnum.GUIDANCE_LAMP_CONTROL_MODE.getCode());
-                }
-            }
-        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, "2", DevicesTypeItemEnum.DELINEATOR_CONTROL_MODE.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, "2", DevicesTypeItemEnum.DELINEATOR_CONTROL_MODE.getCode());
-                }
-            }
-        }
-        sendDataToWanJi(sdDevices, "lightOn", mode);
-        String brightness = codeMap.get("brightness").toString();
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
-                }
-            }
-        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.DELINEATOR_BRIGHNESS.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.DELINEATOR_BRIGHNESS.getCode());
-                }
-            }
-        }
-        String frequency = codeMap.get("frequency").toString();
-        if (sdDevices.getEqType().longValue() == DevicesTypeEnum.YOU_DAO_DENG_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
-                }
-            }
-        } else if (sdDevices.getEqType().longValue() == DevicesTypeEnum.LUN_KUO_BIAO_CONTROL.getCode().longValue()) {
-            saveDataIntoSdDeviceData(sdDevices, brightness, DevicesTypeItemEnum.DELINEATOR_FREQUENCY.getCode());
-            if (!list.isEmpty()) {
-                for (int i = 0; i < list.size(); i++) {
-                    SdDevices devo = list.get(i);
-                    saveDataIntoSdDeviceData(devo, brightness, DevicesTypeItemEnum.DELINEATOR_FREQUENCY.getCode());
-                }
-            }
-        }
-        String[] states = new String[3];
-        states[0] = mode;
-        states[1] = brightness;
-        states[2] = frequency;
-        sendNowDeviceStatusByWebsocket(sdDevices, states);
     }
 
     private static void saveDataIntoSdDeviceData(SdDevices sdDevices, String value, Integer itemId) {

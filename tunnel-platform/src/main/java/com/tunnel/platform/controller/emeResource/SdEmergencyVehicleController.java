@@ -112,7 +112,7 @@ public class SdEmergencyVehicleController extends BaseController
     @ApiOperation("修改应急车辆")
     public AjaxResult edit(@RequestBody SdEmergencyVehicle sdEmergencyVehicle)
     {
-        return toAjax(sdEmergencyVehicleService.updateSdEmergencyVehicle(sdEmergencyVehicle));
+        return sdEmergencyVehicleService.updateSdEmergencyVehicle(sdEmergencyVehicle);
     }
 
     /**

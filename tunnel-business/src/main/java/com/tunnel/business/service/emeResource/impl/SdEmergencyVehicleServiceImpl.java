@@ -2,6 +2,7 @@ package com.tunnel.business.service.emeResource.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.DateUtils;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
@@ -94,14 +95,14 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
      */
     @Override
     @Transactional(rollbackFor = {Exception.class,RuntimeException.class})
-    public int updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle) {
+    public AjaxResult updateSdEmergencyVehicle(SdEmergencyVehicle sdEmergencyVehicle) {
         sdEmergencyVehicle.setUpdateTime(DateUtils.getNowDate());
         int code = updateVehicle(sdEmergencyVehicle);
-        int count = 0;
         if(code == 200){
-            count = sdEmergencyVehicleMapper.updateSdEmergencyVehicle(sdEmergencyVehicle);
+            return AjaxResult.success(sdEmergencyVehicleMapper.updateSdEmergencyVehicle(sdEmergencyVehicle));
+        }else {
+            return AjaxResult.error("应急车辆修改失败");
         }
-        return count;
     }
 
     /**

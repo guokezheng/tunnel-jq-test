@@ -229,3 +229,12 @@ url:
 video-platform:
   address: "http://10.166.147.60:9021"
   deptId: "10000037"
+
+
+#系统对接配置
+opm:
+  #外部系统登录标识，默认使用admin获取token
+  externalLogin:
+    #访问标识
+    appId: jq_tunnel
+    loginName: admin

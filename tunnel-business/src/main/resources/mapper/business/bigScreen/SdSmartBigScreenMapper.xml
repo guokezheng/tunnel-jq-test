@@ -437,4 +437,32 @@
             e.start_time DESC
         LIMIT 50
     </select>
+
+    <select id="getRiskIndicators" parameterType="java.lang.String" resultType="hashmap">
+        SELECT
+            e.event_type_id AS eventType,
+            et.simplify_name AS typeName,
+            count( e.event_type_id ) AS eventPercentage
+        FROM
+            sd_event e
+                LEFT JOIN sd_event_type et ON e.event_type_id = et.id
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND e.tunnel_id = #{tunnelId}
+        </if>
+        GROUP BY
+            e.event_type_id UNION ALL
+        SELECT
+            '' AS eventType,
+            '设备故障' AS typeName,
+            count(*) AS eventPercentage
+        FROM
+            sd_fault_list fl
+        WHERE
+            1 = 1
+        <if test="tunnelId != null and tunnelId != ''">
+            AND fl.tunnel_id = #{tunnelId}
+        </if>
+    </select>
 </mapper>

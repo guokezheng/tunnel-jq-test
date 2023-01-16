@@ -150,4 +150,27 @@ public class SdSmartBigScreenController extends BaseController {
     public AjaxResult getAlarmInformation(String tunnelId){
         return sdSmartBigScreenService.getAlarmInformation(tunnelId);
     }
+
+    /**
+     * 查询风险指标
+     *
+     * @param tunnelId
+     * @return
+     */
+    @GetMapping("/getRiskIndicators")
+    public AjaxResult getRiskIndicators(String tunnelId){
+        return sdSmartBigScreenService.getRiskIndicators(tunnelId);
+    }
+
+    /**
+     * 查询隧道内车辆数、车辆均速
+     *
+     * @param tunnelId
+     * @param tunnelDirection
+     * @return
+     */
+    @GetMapping("/getTunnelVehicles")
+    public AjaxResult getTunnelVehicles(String tunnelId, String roadDir){
+        return sdSmartBigScreenService.getTunnelVehicles(tunnelId,roadDir);
+    }
 }

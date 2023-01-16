@@ -394,6 +394,10 @@ export default {
               this.getList();
             });
           } else {
+            if(this.toData.length == 0){
+              this.$modal.msgError("请选择预案流程");
+              return;
+            }
             checkData(this.form.eventTypeId).then(res => {
               if(res.code == 200){
                 this.form.planFlowList = this.toData

@@ -79,7 +79,18 @@ public class SdRoadSectionStatistics extends BaseEntity
     @Excel(name = "统计结束时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date endTime;
 
-    public void setId(Long id) 
+    @Excel(name = "车辆数")
+    private String cars;
+
+    public String getCars() {
+        return cars;
+    }
+
+    public void setCars(String cars) {
+        this.cars = cars;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }

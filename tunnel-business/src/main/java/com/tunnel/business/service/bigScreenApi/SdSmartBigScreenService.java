@@ -97,4 +97,21 @@ public interface SdSmartBigScreenService {
      * @return
      */
     AjaxResult getAlarmInformation(String tunnelId);
+
+    /**
+     * 查询风险指标
+     *
+     * @param tunnelId
+     * @return
+     */
+    AjaxResult getRiskIndicators(String tunnelId);
+
+    /**
+     * 查询隧道内车辆数、车辆均速
+     *
+     * @param tunnelId
+     * @param tunnelDirection
+     * @return
+     */
+    AjaxResult getTunnelVehicles(String tunnelId, String roadDir);
 }

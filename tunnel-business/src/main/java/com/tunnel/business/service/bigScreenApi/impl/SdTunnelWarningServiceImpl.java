@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SdTunnelWarningServiceImpl implements ISdTunnelWarningService {
@@ -22,5 +23,11 @@ public class SdTunnelWarningServiceImpl implements ISdTunnelWarningService {
         List<Long> tunnelWarningNumber = sdTunnelWarningMapper.getTunnelWarningNumber(tunnelId);
         log.info("查询近30日隧道预警事件成功");
         return tunnelWarningNumber;
+    }
+
+    @Override
+    public List<Map<String, Object>> getTunnelWarningNumData(String tunnelId, String startDate, String endDate) {
+        List<Map<String, Object>> list = sdTunnelWarningMapper.getTunnelWarningNumData(tunnelId,startDate,endDate);
+        return list;
     }
 }

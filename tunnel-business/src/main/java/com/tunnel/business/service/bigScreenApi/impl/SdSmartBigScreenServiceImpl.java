@@ -1,19 +1,20 @@
 package com.tunnel.business.service.bigScreenApi.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.PrevControlTypeEnum;
 import com.tunnel.business.domain.bigScreenApi.SdEventWarning;
+import com.tunnel.business.domain.event.SdRoadSectionStatistics;
 import com.tunnel.business.mapper.bigScreenApi.SdSmartBigScreenMapper;
 import com.tunnel.business.service.bigScreenApi.SdSmartBigScreenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author zhai
@@ -24,6 +25,12 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
 
     @Autowired
     private SdSmartBigScreenMapper sdSmartBigScreenMapper;
+
+    @Autowired
+    private RedisCache redisCache;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Map<String, Object> getEventWarning(String tunnelId) {
@@ -144,6 +151,49 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
     @Override
     public AjaxResult getAlarmInformation(String tunnelId) {
         return AjaxResult.success(sdSmartBigScreenMapper.getAlarmInformation(tunnelId));
+    }
+
+    @Override
+    public AjaxResult getRiskIndicators(String tunnelId) {
+        List<Map<String, Object>> riskIndicators = sdSmartBigScreenMapper.getRiskIndicators(tunnelId);
+        //事件总数量
+        BigDecimal numCount = new BigDecimal(0);
+        for(int i = 0; i < riskIndicators.size(); i++){
+            numCount = numCount.add(new BigDecimal(riskIndicators.get(i).get("eventPercentage").toString()));
+        }
+        if(numCount.compareTo(new BigDecimal(0)) == 0){
+            List<Map<String, Object>> list = new ArrayList<>();
+            Map<String, Object> map = new HashMap<>();
+            map.put("id",null);
+            map.put("typeName",null);
+            map.put("eventPercentage","0");
+            list.add(map);
+            return AjaxResult.success(list);
+        }
+        for(Map<String, Object> item : riskIndicators){
+            item.put("eventPercentage", new BigDecimal(item.get("eventPercentage").toString()).divide(numCount, 2, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100)).toString());
+        }
+        return AjaxResult.success(riskIndicators);
+    }
+
+    @Override
+    public AjaxResult getTunnelVehicles(String tunnelId, String roadDir) {
+        if(StringUtils.isNull(tunnelId) || StringUtils.isEmpty(tunnelId)){
+            Collection<String> keys = redisCache.keys("tunnelVehicleTotal:*");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) redisTemplate.opsForValue().multiGet(keys);
+            return AjaxResult.success(list);
+        }else {
+            if(StringUtils.isNotNull(roadDir) && StringUtils.isNotEmpty(roadDir)){
+                Map<String, Object> map = (Map<String, Object>)redisCache.getCacheObject("tunnelVehicleTotal:" + tunnelId + ":" + roadDir);
+                List<Map<String, Object>> list = new ArrayList<>();
+                list.add(map);
+                return AjaxResult.success(list);
+            }else {
+                Collection<String> keys = redisCache.keys("tunnelVehicleTotal:" + tunnelId + ":*");
+                List<Map<String, Object>> list = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(keys);
+                return AjaxResult.success(list);
+            }
+        }
     }
 
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){

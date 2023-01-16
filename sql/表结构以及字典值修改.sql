@@ -889,3 +889,11 @@ ALTER TABLE `sd_radar_detect_data`
     MODIFY COLUMN `record_Serial_Number` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '流水号' AFTER `detect_time`,
     ADD COLUMN `object_type` varchar(2) NULL COMMENT '目标类型' AFTER `distance`,
     ADD COLUMN `road_dir` varchar(1) NULL COMMENT '上下行标志 1：上行，2：下行' AFTER `object_type`;
+
+-- 路段统计数据表新增字段
+ALTER TABLE `tunnel_cs`.`sd_road_section_statistics`
+DROP COLUMN `cars`,
+ADD COLUMN `cars` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路段当前车辆数' AFTER `saturation_vc`,
+MODIFY COLUMN `create_time` datetime NOT NULL COMMENT '创建时间' AFTER `create_by`,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`id`, `create_time`) USING BTREE;

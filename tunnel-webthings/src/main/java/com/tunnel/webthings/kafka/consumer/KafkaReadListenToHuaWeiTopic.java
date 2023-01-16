@@ -6,6 +6,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
@@ -40,10 +41,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 读取设备、隧道基础数据
@@ -90,6 +88,9 @@ public class KafkaReadListenToHuaWeiTopic {
 
     @Autowired
     private SdMicrowavePeriodicStatisticsMapper statisticsMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     private static SendDeviceStatusToKafkaService sendData = SpringUtils.getBean(SendDeviceStatusToKafkaService.class);
 
@@ -1415,8 +1416,10 @@ public class KafkaReadListenToHuaWeiTopic {
         statistics.setStartTime(DateUtils.parseDate(jsonObject.getString("startTime")));
         statistics.setEndTime(DateUtils.parseDate(jsonObject.getString("endTime")));
         statistics.setCreateTime(DateUtils.getNowDate());
+        statistics.setCars(jsonObject.getString("cars"));
         SdRoadSectionStatisticsMapper sectionStatisticsMapper = SpringUtils.getBean(SdRoadSectionStatisticsMapper.class);
         sectionStatisticsMapper.insertSdRoadSectionStatistics(statistics);
+        setRedis(statistics);
     }
 
     /**
@@ -1466,5 +1469,19 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
         SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
         detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
+    }
+
+    /**
+     * 将车辆路段信息存入redis
+     * @param statistics
+     */
+    public void setRedis(SdRoadSectionStatistics statistics){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("roadDir",statistics.getRoadDir());
+        map.put("speed",statistics.getSpeed());
+        map.put("cars",statistics.getCars());
+        //redis-key命名规则  固定字段tunnelVehicleTotal:隧道Id:方向
+        redisCache.setCacheObject("tunnelVehicleTotal:"+TunnelEnum.HANG_SHAN_DONG.getCode()+":"+statistics.getRoadDir(),map);
     }
 }

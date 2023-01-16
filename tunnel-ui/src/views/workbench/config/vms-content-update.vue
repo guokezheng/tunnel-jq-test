@@ -255,7 +255,7 @@
                     }"
                     style="
                       background-color: #000000;
-                      height: 72px;
+                      height: 7.6vh;
                       overflow: hidden;
                     "
                   >
@@ -279,7 +279,7 @@
                     }"
                     style="
                       background-color: #000000;
-                      height: 72px;
+                      height: 7.6vh;
                       overflow: hidden;
                     "
                   >

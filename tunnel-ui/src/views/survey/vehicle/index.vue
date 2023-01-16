@@ -434,12 +434,15 @@ export default {
           if (this.title == "修改应急车辆") {
             console.log(this.form, "formfffffff");
             await updateForm(this.form).then((response) => {
+              console.log(response.code,"response.code")
               if (response.code === 200) {
                 this.$modal.msgSuccess("修改成功");
                 this.open = false;
                 this.getList();
               }
-            });
+            }).catch((e)=>{
+              this.open = false;
+            })
             console.log("修改应急资源");
           } else {
             console.log(this.form, "22222222222222");

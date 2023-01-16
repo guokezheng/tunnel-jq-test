@@ -2,7 +2,7 @@
   <div
     :class="{ 'has-logo': showLogo }"
     :style="{
-      height: topNav ? '72px' : '100%',
+      height: topNav ? '7.6vh' : '100%',
     }"
   >
     <logo v-if="showLogo" :collapse="isCollapse" />
@@ -369,8 +369,8 @@ export default {
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 100% 58%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 .theme-blue
   #app
@@ -392,8 +392,8 @@ export default {
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 100% 58%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 .theme-light
   #app
@@ -414,8 +414,8 @@ export default {
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 70% 52%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 
 // 工作台按钮样式
@@ -425,7 +425,7 @@ export default {
   a {
     height: 100%;
     font-size: 16px;
-    line-height: 72px;
+    line-height: 7.6vh;
     padding-left: 26px;
   }
 }

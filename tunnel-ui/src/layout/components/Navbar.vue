@@ -1047,7 +1047,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 72px;
+    line-height: 7.6vh;
     &:focus {
       outline: none;
     }
@@ -1081,7 +1081,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 72px;
+        height: 7.6vh;
         span {
           font-size: 16px;
           margin-left: 10px;

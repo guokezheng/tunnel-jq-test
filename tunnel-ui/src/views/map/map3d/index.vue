@@ -1,5 +1,5 @@
 <template>
-  <div style="height: calc(100% + 72px)">
+  <div style="height: calc(100% + 7.6vh)">
     <iframe
       name="tuniframe"
       id="miframe"

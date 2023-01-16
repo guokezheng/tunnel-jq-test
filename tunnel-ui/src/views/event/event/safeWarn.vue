@@ -367,7 +367,7 @@
       :title="title"
       :visible.sync="details"
       :before-close="cancel"
-      width="1000px"
+      width="100%"
       text-align="left"
       :style="processType ? 'left: 13%' : ''"
       class="detailsDialog"
@@ -392,11 +392,12 @@
             <div v-if="arrowLeft" class="turnPages"  @click="turnLeft()"><</div>
             <div class="picList">
               <div
+              v-show="eventForm && eventForm.iconUrlList != []"
               v-for="item in imgUrlList" :key="item.imgId">
                 <img  :src="item.imgUrl"   />
               </div>
               <div 
-                v-show="eventForm && !eventForm.iconUrlList" class="noPic"
+                v-show="eventForm && eventForm.iconUrlList == []" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
               </div>
@@ -459,7 +460,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width: 202px"
+                  style="width: 100%"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -479,7 +480,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width: 202px"
+                  style="width: 100%"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -504,70 +505,91 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件起点">
-                <el-input
-                  v-model="eventForm.stakeNum1"
-                  placeholder="Km"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
-                +
-                <el-input
-                  v-model="eventForm.stakeNum2"
-                  placeholder="m"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
+                <el-row >
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventForm.stakeNum1"
+                      placeholder="Km"
+                      :disabled="detailsDisabled"
+                      width="100%"
+                    />
+                  </el-col>
+                  <el-col :span="1">+</el-col>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventForm.stakeNum2"
+                      placeholder="m"
+                      :disabled="detailsDisabled"
+                      width="100%"
+                    />
+                  </el-col>
+                </el-row>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="事件终点" label-width="100px">
-                <el-input
-                  v-model="eventForm.stakeEndNum1"
-                  placeholder="Km"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
-                +
-                <el-input
-                  v-model="eventForm.stakeEndNum2"
-                  placeholder="m"
-                  :disabled="detailsDisabled"
-                  width="70px"
-                />
+                <el-row>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventForm.stakeEndNum1"
+                      placeholder="Km"
+                      :disabled="detailsDisabled"
+                      width="100%"
+                    />
+                  </el-col>
+                  <el-col :span="1">+</el-col>
+                  <el-col :span="11">
+                    <el-input
+                      v-model="eventForm.stakeEndNum2"
+                      placeholder="m"
+                      :disabled="detailsDisabled"
+                      width="100%"
+                    />
+                  </el-col>
+                </el-row>
+                
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="影响车道">
-                <el-select
-                  v-model="eventForm.direction"
-                  placeholder="方向"
-                  clearable
-                  size="small"
-                  :disabled="detailsDisabled"
-                  style="width: 100px"
-                >
-                  <el-option
-                    v-for="item in directionList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  />
-                </el-select>
-                <el-select
-                  v-model="eventForm.laneNo"
-                  placeholder="车道"
-                  clearable
-                  size="small"
-                  :disabled="detailsDisabled"
-                  style="width: 100px; margin-left: 15px"
-                >
-                  <el-option
-                    v-for="item in chezhiLaneList"
-                    :key="item.laneId"
-                    :label="item.laneName"
-                    :value="item.laneId"
-                  />
-                </el-select>
+                <el-row>
+                  <el-col :span="12">
+                    <el-select
+                      v-model="eventForm.direction"
+                      placeholder="方向"
+                      clearable
+                      size="small"
+                      :disabled="detailsDisabled"
+                      style="width: 100%"
+                    >
+                      <el-option
+                        v-for="item in directionList"
+                        :key="item.dictValue"
+                        :label="item.dictLabel"
+                        :value="item.dictValue"
+                      />
+                    </el-select>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-select
+                      v-model="eventForm.laneNo"
+                      placeholder="车道"
+                      clearable
+                      size="small"
+                      :disabled="detailsDisabled"
+                      style="width: 100%; margin-left: 15px"
+                    >
+                      <el-option
+                        v-for="item in chezhiLaneList"
+                        :key="item.laneId"
+                        :label="item.laneName"
+                        :value="item.laneId"
+                      />
+                    </el-select>
+                  </el-col>
+                </el-row>
+                
+                
               </el-form-item>
             </el-col>
             <el-col :span="16">
@@ -1758,7 +1780,7 @@ export default {
       image(param).then((response) => {
         console.log(response.data, "获取图片");
         this.urls = response.data;
-        if(this.urls.length>4){
+        if(response.data.length > 4){
           this.arrowRight2 = true
           for(let i=0;i<this.urls.length;){
             this.urlsAll.push(this.urls.splice(0,4))
@@ -1963,6 +1985,8 @@ export default {
     getList() {
       // console.log(this.activeName, "9999999");
       this.loading = true;
+      this.eventList = []
+
       // console.log(this.manageStation, "this.manageStation");
       if (this.manageStation == "1") {
         this.queryParams.tunnelId = this.$cache.local.get(
@@ -2512,8 +2536,23 @@ export default {
 <style scoped lang="scss">
 .formStyle {
   .el-form-item {
-    margin-bottom: 10px;
+    margin-bottom: 1vh;
+    
   }
+}
+::v-deep .el-form-item--medium .el-form-item__label{
+  line-height: 3vh;
+  font-size: 0.7vw;
+}
+::v-deep .el-form-item--medium .el-form-item__content{
+  line-height: 3vh;
+  font-size: 0.7vw;
+}
+::v-deep .el-input--medium .el-input__icon{
+  line-height: 3vh;
+}
+::v-deep .el-input--small .el-input__icon{
+  line-height: 3vh;
 }
 .el-tabs__header {
   margin: 0 0 12px !important;
@@ -2529,7 +2568,7 @@ export default {
     // height: 135px;
     border: solid 1px #2aa6ff;
     display: inline-flex;
-    margin-right: 22px;
+    margin-right: 1vw;
     margin-bottom: 5px;
     position: relative;
     .video {
@@ -2548,7 +2587,7 @@ export default {
       }
       img {
         // width: 100%;
-        height: 100px;
+        height: 10vh;
         margin-top: 2px;
       }
     }
@@ -2566,7 +2605,7 @@ export default {
         right: -21px;
       }
       div {
-        padding: 4px 0;
+        padding: 0.4vh 0;
         span {
           padding-left: 6px;
         }
@@ -2577,7 +2616,7 @@ export default {
         width: 150px;
         div {
           width: 65px;
-          height: 24px;
+          height: 2vh;
           border-radius: 14px;
           color: white;
           display: flex;
@@ -2601,7 +2640,7 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 365px;
+  height: 50%;
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -2633,11 +2672,11 @@ export default {
     }
     video {
       width: 100%;
-      height: 240px;
+      height: 70%;
     }
     .picBox {
       width: 100%;
-      height: calc(100% - 265px);
+      height: calc(30% - 20px);
       margin-top: 10px;
       // border: solid 1px red;
       display: flex;
@@ -2651,7 +2690,7 @@ export default {
         >div{
           overflow: hidden;
           margin-left: 10px;
-          width: 22%;
+          width: 21%;
           height: 100%;
           display: inline-block;
           > img {
@@ -2694,12 +2733,14 @@ export default {
 }
 .dialogForm {
   width: 100%;
-  height: 270px;
+  height: 43%;
   background: #f7f7f7;
   padding: 10px;
   margin-top: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
   .el-input {
-    width: 93px;
+    width: 100%;
     .el-input--medium .el-input__inner {
       width: 93px;
     }
@@ -2757,15 +2798,22 @@ export default {
   }
 }
 .detailsDialog {
-  height: 100%;
+  height: 92%;
   // z-index: 2008 !important;
   width: 53%;
   position: absolute;
   left: 20%;
+  
 }
+::v-deep .el-dialog{
+    height:calc(100% - 8vh) !important;
+    .el-dialog__body{
+      height: calc(100% - 4vh - 30px);
+    }
+  }
 .animationDialog {
   z-index: 2008 !important;
-  height: 100%;
+  height: 92%;
   width: 480px;
   // transform: translateX(1330px);
   animation: mymove 0.3s linear;
@@ -2784,13 +2832,28 @@ export default {
   z-index: 2010 !important;
 }
 .eventTypeButton {
-  height: 24px;
-  line-height: 22px;
-  // border: solid 1px #65bfff;
+  height: 2.6vh;
+  line-height: 2.6vh;
   border-radius: 2px;
-  // color: #189fff;
   cursor: pointer;
   padding: 0px 10px;
+  font-size: 0.7vw;
+}
+::v-deep .vue-treeselect__control{
+  height: 3vh;
+}
+::v-deep .vue-treeselect__placeholder, .vue-treeselect__single-value{
+  line-height: 3vh;
+}
+::v-deep .el-input--small .el-input__inner{
+  line-height: 3vh;
+  height: 3vh;
+  font-size: 0.7vw;
+}
+::v-deep .el-input--medium .el-input__inner{
+  line-height: 3vh;
+  height: 3vh;
+  font-size: 0.7vw;
 }
 .butBox {
   width: 280px;
@@ -3029,27 +3092,36 @@ hr {
     background-size: 100%;
   }
 }
-::v-deep .el-tabs__content {
-  height: calc(100% - 55px);
-  .el-tab-pane {
-    height: 100%;
-    .contentListBox {
-      height: calc(100% - 130px);
-      .contentBox {
-        height: 135px;
+
+
+::v-deep .el-tabs{
+  height: 100%;
+  .el-tabs__item {
+    height: 4vh;
+    font-size: 0.7vw;
+  }
+  .el-tabs__content {
+    height: calc(100% - 5vh);
+    .el-tab-pane {
+      height: 100%;
+      .contentListBox {
+        height: 60vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        .contentBox {
+          height: 14vh;
+        }
       }
     }
   }
 }
-.el-tabs__item {
-  color: #fff;
-}
+
 .disabledButton {
   cursor: no-drop;
   pointer-events: none;
 }
 .video-box{
-  height: 240px;
+  height: 70%;
 }
 ::-webkit-scrollbar{
   width:6px;

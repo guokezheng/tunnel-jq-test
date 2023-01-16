@@ -346,8 +346,8 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
-        height: 72px;
-        line-height: 72px;
+        height: 7.6vh;
+        line-height: 7.6vh;
         font-size: 16px;
         border-radius: 10px;
       }
@@ -569,7 +569,7 @@
   .my-back{
     background-color: #010913;
   }
-   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:72px;}
+   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:7.6vh;}
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
     background: linear-gradient(177deg, #00ACED, #0079DB);

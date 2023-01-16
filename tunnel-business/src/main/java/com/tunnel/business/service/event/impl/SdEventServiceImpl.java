@@ -31,9 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -411,14 +409,16 @@ public class SdEventServiceImpl implements ISdEventService {
         try {
             int param = Integer.valueOf(stakeNum.replaceAll("[a-zA-Z]", "").replace("+","").replace(" ",""));
             List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());
+            //视频检测来源
+            if(pileNum.contains(param)){
+                int filter = param;
+                return list.stream().filter(p->p.getPileNum().intValue()==filter).collect(Collectors.toList());
+            }
+            //非视频检测
             pileNum.add(param);
             pileNum = pileNum.stream().sorted().collect(Collectors.toList());
-            for(int i = 0;i < pileNum.size(); i++){
-                if(pileNum.get(i)==param){
-                    param = direction.equals(TunnelDirectionEnum.DOWN_DIRECTION.getCode())?pileNum.get(i+1):pileNum.get(i-1);
-                    break;
-                }
-            }
+            int paramIndex = pileNum.indexOf(param);
+            param = direction.equals(TunnelDirectionEnum.DOWN_DIRECTION.getCode())?pileNum.get(paramIndex+1):pileNum.get(paramIndex-1);
             devices.setPileNum(new Long((long)param));
             List<SdDevices> result = sdDevicesService.selectSdDevicesList(devices);
             return result;

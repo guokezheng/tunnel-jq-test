@@ -680,7 +680,7 @@
                 size="small"
               />
               <el-checkbox v-model="phoneForm1.loop" label="循环播放" border class="phoneCheckBox">循环播放</el-checkbox>
-              
+
             </div>
             <div class="phoneBox1">
               <div class="chezhiName">音量:</div>
@@ -851,7 +851,7 @@
                   line-height: 30px;
                   border-bottom: 1px solid rgba(224, 231, 237, 0.2);
                 ">
-             
+
                 <div style="width: 80px; margin-right: 5px; padding-left: 5px">
                   {{ item.name }}
                 </div>
@@ -861,7 +861,7 @@
                 <div class="reservePlan" v-for="(itm,inx) in item.plan" :key="inx">{{ itm }}</div>
               </div>
             </div>
-          
+
         </el-drawer>
       </div>
 
@@ -944,7 +944,7 @@
                 <div style="width: 86px; text-align: center; margin-left: 35px">
                   {{ item.laneNum }}车道
                 </div>
-              
+
               </div>
             </vue-seamless-scroll>
           </div> -->
@@ -1140,7 +1140,7 @@
                     {{ item.name }}
                   </div>
                 </el-row>
-                
+
                 <el-row
                   class="flex-row"
                   v-if="batchManageForm.eqType != 1 && batchManageForm.eqType != 2"
@@ -1385,7 +1385,7 @@
         @pagination="getOperationList(operationActive)"
         class="paginationWorkbench"
       />
-     
+
     </el-dialog>
     <!-- 隧道选择对话框-->
     <el-dialog
@@ -2611,7 +2611,7 @@
           :model="queryParams"
           ref="queryForm"
           :inline="true"
-          
+
           label-width="68px"
         >
           <el-form-item label="隧道名称" prop="tunnelId">
@@ -2629,7 +2629,7 @@
               />
             </el-select>
           </el-form-item>
-          
+
           <el-form-item label="策略名称" prop="strategyName">
             <el-input
               v-model="queryParams.strategyName"
@@ -4340,7 +4340,7 @@ export default {
             return 15
           }
         }
-        
+
       }else{
         if(type == 'width'){
           return 72;
@@ -6465,9 +6465,9 @@ export default {
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
                     res.eqList[i].iconHeight = iconHeight;
-                  
+
                     // if(res.eqList[i].eqType == 16 || res.eqList[i].eqType == 36){
-            
+
                     //   console.log(res.eqList[i].associated_device_id,"res.eqList[i].associated_device_id")
                     //   getBoardContent(res.eqList[i].associated_device_id).then((resp) => {
                     //     console.log(resp.data,"0000000000000000")
@@ -6485,7 +6485,7 @@ export default {
                     //   let iconHeight = Number(response.rows[j].iconHeight);
                     //   res.eqList[i].iconWidth = iconWidth;
                     //   res.eqList[i].iconHeight = iconHeight;
-                  
+
                     // }
                     break;
                   }
@@ -6493,7 +6493,7 @@ export default {
               }
               that.selectedIconList = res.eqList; //设备zxczczxc
               that.getRealTimeData();
-             
+
               console.log(
                 that.selectedIconList,
                 "所有设备图标selectedIconList"
@@ -6817,10 +6817,12 @@ export default {
           }
         }
       });
-      addBoardContent(this.currentTunnel.id).then((res)=>{
-        // console.log(res,"情报板显示内容查询");
-        this.boardObj = res
-      })
+      if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
+        addBoardContent(this.currentTunnel.id).then((res)=>{
+          // console.log(res,"情报板显示内容查询");
+          this.boardObj = res
+        })
+      }
     },
     /* 选择隧道*/
     switchTunnel() {

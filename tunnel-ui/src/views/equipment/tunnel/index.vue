@@ -358,7 +358,7 @@
 
 
     <!-- 添加或修改隧道对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="1000" append-to-body class="addUserDialog">
       <el-form ref="form" :model="form" :rules="rules" label-width="130px">
         <el-row>
           <el-col :span="12">

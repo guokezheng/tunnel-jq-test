@@ -493,7 +493,6 @@ export default {
     border: solid 1px transparent;
     padding: 5px 10px;
     min-width: 160px;
-    height: 160px;
     .el-select-dropdown__list{
       padding: 0;
     }

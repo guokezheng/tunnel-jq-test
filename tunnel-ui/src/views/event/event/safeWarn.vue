@@ -204,8 +204,8 @@
             :key="index"
           >
             <div class="video">
-              <video :src="item.videoUrl" controls muted loop fluid v-if="item.videoUrl"></video>
-              <img src="../../../assets/cloudControl/nullImg.png" v-else></video>
+              <img :src="item.picUrl" v-show="item.picUrl" style="width:100%" @click="openPicDialog(item)"/>
+              <img src="../../../assets/cloudControl/nullImg.png" v-show="!item.picUrl" />
 
               <div>{{ item.simplifyName }}</div>
             </div>
@@ -1028,6 +1028,11 @@
         </div>
       </div>
     </el-dialog>
+    <el-dialog :visible.sync="picUrlDialog" width="70%" title="事件视频" class="videoDialog">
+      <div class="videoDialogClass">
+        <video :src="videoUrl" controls muted loop fluid autoplay></video>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -1089,6 +1094,7 @@ export default {
   components: { Treeselect, videoPlayer},
   data() {
     return {
+      picUrlDialog:false,
       eventWarnList: [],
       miniDialog: true,
       eventTypeId: "",
@@ -1131,7 +1137,7 @@ export default {
           value: 1,
         },
       ],
-      videoUrl: require("@/assets/Example/v1.mp4"),
+      videoUrl: '',
       safeWarn0: require("@/assets/cloudControl/safeWarn0.png"),
       safeWarn1: require("@/assets/cloudControl/safeWarn1.png"),
       safeWarn2: require("@/assets/cloudControl/safeWarn2.png"),
@@ -1477,6 +1483,11 @@ export default {
     });
   },
   methods: {
+    // 打开图片变视频弹窗
+    openPicDialog(item){
+      this.videoUrl = item.videoUrl
+      this.picUrlDialog = true
+    },
     // 忽略
     hulue() {
       const param = {
@@ -1713,8 +1724,12 @@ export default {
     detailsButton(item, type) {
       if (type == 1) {
         this.miniDialog = false;
+        this.detailsDisabled = true;
+        this.detailsButtonType = 1;
       } else {
         this.miniDialog = true;
+        this.detailsDisabled = false;
+        this.detailsButtonType = 2;
       }
       console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
@@ -1722,13 +1737,6 @@ export default {
       this.tunnelId = item.tunnelId;
       this.direction = item.direction;
 
-      if (type == 1) {
-        this.detailsDisabled = true;
-        this.detailsButtonType = 1;
-      } else {
-        this.detailsDisabled = false;
-        this.detailsButtonType = 2;
-      }
       this.details = true;
       this.eventForm = item;
 
@@ -1794,6 +1802,10 @@ export default {
       });
     },
     getVideoUrl(item){
+      console.log(item,"item")
+      console.log(item.stakeNum,"item.stakeNum")
+
+      this.cameraPlayer = false
       getEventCamera(
         item.tunnelId,
         item.stakeNum,
@@ -1857,6 +1869,9 @@ export default {
     //切换tab页
     handleClick(e) {
       console.log(e);
+      this.queryParams.pageNum = 1
+      this.queryParams.pageSize = 16
+
       this.getList();
       this.getEventType();
     },
@@ -2024,10 +2039,14 @@ export default {
         this.queryParams.searchValue = this.activeName;
         listEvent(this.queryParams).then((response) => {
           console.log(response, "查询事件管理列表");
+          for(let item of response.rows){
+            if(item.iconUrlList){
+              for(let i=0;i<item.iconUrlList.length;i++){
+                item.picUrl = item.iconUrlList[0].imgUrl
+              }
+            }
+          }
           this.eventList = response.rows;
-          // this.$nextTick(() => {
-          //   this.$refs.tableRef.doLayout();
-          // });
           this.total = response.total;
           this.loading = false;
         });
@@ -2520,7 +2539,9 @@ export default {
       this.processDialog = false;
       this.processType = false;
       this.reset();
-      this.getList();
+      if(this.detailsButtonType == 2){
+        this.getList();
+      }
     },
     // 表格的行样式
     tableRowClassName({ row, rowIndex }) {
@@ -2581,7 +2602,6 @@ export default {
       video {
         width: 100%;
         height: 100px;
-        margin-left: 10px;
         margin-top: 2px;
         float: left;
       }
@@ -3125,6 +3145,18 @@ hr {
 }
 ::-webkit-scrollbar{
   width:6px;
+}
+.videoDialog{
+  height: 92%;
+}
+.videoDialogClass{
+  width:100%;
+  height:100%;
+
+  video{
+    width:100%;
+    height:auto;
+  }
 }
 </style>
 

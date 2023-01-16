@@ -23,6 +23,7 @@ import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
 import com.tunnel.platform.business.vms.device.DataUtils;
 import com.tunnel.platform.business.vms.device.DeviceManagerFactory;
 import com.tunnel.platform.service.deviceControl.HongMengDevService;
@@ -265,6 +266,14 @@ public class SdDeviceControlService {
             controlInformationBoard(controlState, isopen, templateId, sdDevices, state);
 
             sdOperationLog.setState(String.valueOf(controlState));
+        } else if (sdDevices != null
+                && sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
+            if (data.size() > 0) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            //警示灯带控制方法
+            controlState = controlWarningLightStripDevice(controlState, isopen, devId, state, sdDevices);
+            sdOperationLog.setState(String.valueOf(controlState));
         }
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
         return controlState;
@@ -452,6 +461,28 @@ public class SdDeviceControlService {
                 updateDeviceData(devo, brightness, DevicesTypeItemEnum.GUIDANCE_LAMP_BRIGHNESS.getCode());
                 updateDeviceData(devo, frequency, DevicesTypeItemEnum.GUIDANCE_LAMP_FREQUENCY.getCode());
             }
+            controlState = 1;
+        }
+        return controlState;
+    }
+
+    private int controlWarningLightStripDevice(Integer controlState, String isopen, String devId, String state, SdDevices sdDevices) {
+        if (isopen != null && !isopen.equals("") && isopen.equals("0")) {
+            //连接设备进行控制
+            controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        } else if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
+            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+            sdDevices.setEqStatus("1");
+            sdDevices.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(sdDevices);
+            SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
+            sdDeviceTypeItem.setDeviceTypeId(sdDevices.getEqType());
+            List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
+            if (sdDeviceTypeItems.size() == 0) {
+                throw new RuntimeException("当前设备没有设备类型数据项数据");
+            }
+            SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
+            updateDeviceData(sdDevices, state, Integer.parseInt(typeItem.getId().toString()));
             controlState = 1;
         }
         return controlState;

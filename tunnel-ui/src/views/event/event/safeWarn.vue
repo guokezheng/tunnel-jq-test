@@ -1723,6 +1723,7 @@ export default {
     detailsButton(item, type) {
       this.imgUrlList = []
       this.iconUrlListAll = []
+
       if (type == 1) {
         this.miniDialog = false;
         this.detailsDisabled = true;
@@ -1783,6 +1784,8 @@ export default {
       
     },
     getImgUrl(item){
+      this.urlsList = []
+      this.urlsAll = []
       const param = {
         businessId: item.id,
       };

@@ -179,7 +179,7 @@
                   "
                 ></span>
               </div>
-              
+
               <!-- {{ item.CONTENT }} -->
             </div>
             <div class="menuBox">
@@ -246,7 +246,7 @@
                       "
                     ></span>
                   </div>
-                  
+
                 </div>
                 <div class="menuBox">
                   <i
@@ -339,6 +339,7 @@ export default {
       positionList: [], //位置信息下拉框
       devicessizeList: [], //分辨率下拉框
       checkboxList: [], //多选框数组
+      deviceList:[],
       checkbox: false,
       checkboxValue: [],
       checkAll: false,
@@ -772,7 +773,7 @@ export default {
           this.devicessizeList = res.data;
         });
       }
-      
+
     },
     // 查设备多选框
     changeDevicessize() {
@@ -785,6 +786,10 @@ export default {
       information(param).then((res) => {
         console.log(res, "查设备多选框");
         this.checkboxList = res.rows;
+        for (let j of this.checkboxList) {
+          console.log(j.deviceId, "123123123");
+          this.deviceList.push(j.deviceId);
+        }
       });
     },
     // 打开添加信息弹窗
@@ -813,7 +818,7 @@ export default {
       }
     },
     handleCheckAllChange(val) {
-      this.checkedCities = val ? this.checkboxList : [];
+      this.checkedCities = val ? this.deviceList : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
@@ -1474,7 +1479,7 @@ export default {
           float: left;
           display: flex;
           justify-content: center;
-          align-items: center;   
+          align-items: center;
         }
         .menuBox {
           display: flex;

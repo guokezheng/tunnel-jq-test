@@ -82,8 +82,15 @@ h6 {
   max-height: 70vh;
   padding: 10px 20px 0;
 }
-
+.tableClass{
+  max-height: 66vh;
+  overflow: auto;
+}
+.el-form-item__label{
+  font-size: 0.7vw;
+}
 .el-table {
+  font-size: 0.7vw;
   .el-table__header-wrapper,
   .el-table__fixed-header-wrapper {
     th {
@@ -91,7 +98,7 @@ h6 {
       background-color: #f8f8f9;
       color: #515a6e;
       height: 40px;
-      font-size: 13px;
+      font-size: 0.7vw;
     }
   }
   .el-table__body-wrapper {

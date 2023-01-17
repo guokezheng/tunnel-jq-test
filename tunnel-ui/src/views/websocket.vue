@@ -44,14 +44,10 @@ export default {
           return;
         }
         const params = message.params;
-        console.log(params,"params")
-
         const subEvent = params.subEvent;
         const content = params.content;
-        console.log(content,"content")
 
         var contentList = JSON.parse(content);
-        console.log(contentList,"contentList")
         switch (subEvent) {
           case "payment_webSocket_send":
             this.$store.commit("PAYMENT", content);

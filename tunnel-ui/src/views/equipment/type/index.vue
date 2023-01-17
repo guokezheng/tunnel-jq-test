@@ -138,10 +138,9 @@
     <el-table
       v-loading="loading"
       :data="typeList"
-      max-height="640"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
-
+      class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备类型名称" align="center" prop="typeName" />

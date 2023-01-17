@@ -149,8 +149,8 @@
       v-loading="loading"
       :data="devicesList"
       @selection-change="handleSelectionChange"
-      max-height="640"
       :row-class-name="tableRowClassName"
+      class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column

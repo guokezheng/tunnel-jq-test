@@ -58,9 +58,8 @@
         row-key="deptId"
         :default-expand-all="isExpandAll"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-        max-height="640"
         :row-class-name="tableRowClassName"
-        class="menuAdministration"
+        class="menuAdministration tableClass"
       >
       <el-table-column label="机构名称" prop="deptName" />
       <el-table-column label="机构负责人" align="center" prop="leader" />

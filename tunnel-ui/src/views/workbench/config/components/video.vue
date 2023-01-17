@@ -294,36 +294,37 @@
             :open="cameraPlayer"
           ></videoPlayer>
           </div>
-          <div class="yuntaiPic">
+          <!-- <div class="yuntaiPic"> -->
             <!-- <div @click="clickLeft()"><</div>
             <div>
               <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
             </div>
             <div @click="clickRight()">></div> -->
-            <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/>
-          </div>
+            <!-- <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/> -->
+          <!-- </div> -->
         </el-col>
         <el-col :span="6">
           <div class="fangxiang">
             <div class="picBox">
-              <img :src="yuntai" v-for="(item,index) of 8" :key="index"/>
-              <div>预置位</div>
+              <img :src="yuntai" v-for="(item,index) of yuntaiList" :key="index" @click="changeYunTai(item.cmdType)"/>
             </div>
+            <div class="yuzhiwei">预置位</div>
+
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(11)">-</div>
             <div>变倍</div>
-            <div>+</div>
+            <div @click="changeYunTai(12)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(13)">-</div>
             <div>聚焦</div>
-            <div>+</div>
+            <div @click="changeYunTai(14)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(16)">-</div>
             <div>光圈</div>
-            <div>+</div>
+            <div @click="changeYunTai(15)">+</div>
           </div>
           <!-- <div class="sliderClass">
             <div>0</div>
@@ -339,6 +340,7 @@
               inactive-color="#ddd"
               active-text="开"
               inactive-text="关"
+              @change="changeYunTai(yunTaiForm.yuShua,'yushua')"
             >
             </el-switch>
           </div>
@@ -354,7 +356,7 @@
             >
             </el-switch>
           </div> -->
-          <div class="switchClass">
+          <!-- <div class="switchClass">
             <div>除雪</div>
             <el-switch
               style="display: block"
@@ -365,7 +367,7 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
+          </div> -->
         </el-col>
       </el-row>
     </el-dialog>
@@ -378,6 +380,7 @@ import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; /
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import flvjs from 'flv.js'
 import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+import { PTZContro } from "@/api/workbench/config.js"; //提交控制信息
 
 // import { getLocalIP } from "@/api/event/vedioRecord";
 
@@ -414,6 +417,32 @@ export default {
       cameraVisible:true,
       videoIcon:require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
       yuntai:require("@/assets/cloudControl/yuntai.png"),
+      yuntaiList:[
+        {
+          cmdType:21,//上
+        },
+        {
+          cmdType:52,//右上
+        },
+        {
+          cmdType:24,//右
+        },
+        {
+          cmdType:53,//右下
+        },
+        {
+          cmdType:22,//下
+        },
+        {
+          cmdType:51,//左下
+        },
+        {
+          cmdType:23,//左
+        },
+        {
+          cmdType:50,//左上
+        },
+      ],
       videoList: [
         {
           pic: require("@/assets/images/ruoyi-login-background.jpg"),
@@ -479,7 +508,7 @@ export default {
       ],
       yunTaiForm: {
         slider: 0,
-        yuShua: true,
+        yuShua: false,
         dengGuang: false,
         chuXue: true,
       },
@@ -499,6 +528,18 @@ export default {
     // });
   },
   methods: {
+    // 点击云台方向
+    changeYunTai(cmdType,type){
+      if(type && cmdType == false){
+        cmdType = 48
+      }else if (type && cmdType == true){
+        cmdType = 49
+      }
+      PTZContro(this.eqInfo.equipmentId,cmdType).then((res)=>{
+        console.log(res,"云台控制");
+      })
+
+    },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
@@ -641,7 +682,7 @@ export default {
 .yuntaiBox {
   width: 100%;
   // height: 600px;
-  height: 510px;
+  height: 460px;
   padding: 20px;
   > .el-col:nth-of-type(1) {
     padding-right: 10px;
@@ -706,11 +747,29 @@ export default {
     width: 100%;
     height: 215px;
     margin: 0 auto;
+    transform: scale(0.8);
+    position: relative;
+    .yuzhiwei{
+      text-decoration: underline;
+      color: #fff;
+      font-size: 24px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top:0;
+      bottom: 0;
+      margin: auto;
+      height: 36px;
+      width: 74px;
+      cursor: pointer;
+      caret-color: rgba(0,0,0,0);
+    }
     .picBox{
       width:215px;
-      height:215px;
+      height:100%;
       margin: 0 auto;
       position: relative;
+      transform: rotate(-23deg);
       >div{
         text-decoration: underline;
         color: #fff;
@@ -790,6 +849,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 10px;
+    transform: translateY(-20px);
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 23px;
@@ -819,6 +879,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 15px;
+    
     > .el-slider {
       width: 50%;
     }
@@ -830,6 +891,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 22px;
+    transform: translateY(-20px);
   }
 }
 ::v-deep .el-switch__label{

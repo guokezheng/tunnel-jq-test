@@ -142,7 +142,7 @@
       v-loading="loading"
       :data="mechanismList"
       :row-class-name="tableRowClassName"
-      max-height="640"
+      class="tableClass"
     >
       <el-table-column label="机构" align="center" prop="orgName" />
       <el-table-column label="车牌" align="center" prop="plateNumber" />

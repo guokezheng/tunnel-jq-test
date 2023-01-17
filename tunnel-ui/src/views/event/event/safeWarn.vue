@@ -345,7 +345,6 @@
           :page.sync="queryParams.pageNum"
           :limit.sync="queryParams.pageSize"
           @pagination="getList"
-          :page-size="16"
         />
         <el-pagination
           v-if="total>0 && (activeName == '0' || activeName == '1')"
@@ -394,7 +393,7 @@
               <div
               v-show="eventForm && eventForm.iconUrlList != []"
               v-for="item in imgUrlList" :key="item.imgId">
-                <img  :src="item.imgUrl"   />
+                <el-image  :src="item.imgUrl"  :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
               <div 
                 v-show="eventForm && eventForm.iconUrlList == []" class="noPic"
@@ -418,10 +417,10 @@
             <div class="picList">
               <div 
               v-for="item in urlsList" :key="item.imgId">
-                <img  :src="item.imgUrl"   />
+                <el-image  :src="item.imgUrl" :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
               <div 
-                v-show="!urls" class="noPic"
+                v-show="!urlsList" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
               </div>
@@ -1722,6 +1721,8 @@ export default {
     },
     //详情弹窗
     detailsButton(item, type) {
+      this.imgUrlList = []
+      this.iconUrlListAll = []
       if (type == 1) {
         this.miniDialog = false;
         this.detailsDisabled = true;
@@ -1739,7 +1740,7 @@ export default {
 
       this.details = true;
       this.eventForm = item;
-
+      console.log(this.eventForm.iconUrlList,"iconUrlList")
       // 图片分组翻页
       if(this.eventForm.iconUrlList.length>4){
         this.arrowRight = true
@@ -2033,7 +2034,6 @@ export default {
         if (!this.dateRange) {
           this.dateRange = [];
         }
-        this.queryParams.pageSize = 16
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
@@ -2713,7 +2713,7 @@ export default {
           width: 21%;
           height: 100%;
           display: inline-block;
-          > img {
+          > .el-image {
             width: auto;
             height: 100%;
             overflow: hidden;

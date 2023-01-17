@@ -222,3 +222,11 @@ export function getStatisticsRealList(query) {
     params: query
   })
 }
+
+// 云台控制
+export function PTZContro(eqId,cmdType) {
+  return request({
+    url: '/integrated/video/PTZControl?eqId='+ eqId + '&cmdType=' + cmdType + '&speed=1',
+    method: 'get'
+  })
+}

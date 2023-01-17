@@ -431,7 +431,7 @@
                             padding-left: 5px;
                             width: 100px;
                             text-align: left;
-                            transform: translate(30px,5px);
+                            transform: translate(0px,25px);
 
                           "
                           v-if="item.eqType == 19"
@@ -449,7 +449,7 @@
                             color: #79e0a9;
                             padding-left: 5px;
                             text-align: left;
-                            transform: translate(30px,5px);
+                            transform: translate(0px,25px);
 
                           "
                           v-if="item.eqType == 17"
@@ -465,7 +465,7 @@
                             color: #f2a520;
                             padding-left: 5px;
                             text-align: left;
-                            transform: translate(30px,5px);
+                            transform: translate(0px,25px);
                           "
                           v-if="item.eqType == 5 || item.eqType == 18"
                         >
@@ -6499,9 +6499,9 @@ export default {
                 "所有设备图标selectedIconList"
               );
               for (var item of that.selectedIconList) {
-                if(item.eqType == 16){
-                  console.log(item,"情报板设备信息selectedIconList")
-                }
+                // if(item.eqType == 16){
+                //   console.log(item,"情报板设备信息selectedIconList")
+                // }
                 if (
                   this.tunnelId == "JQ-JiNan-WenZuBei-MJY" &&
                   item.eqType == 29

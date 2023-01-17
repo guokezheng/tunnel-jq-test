@@ -125,7 +125,7 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="10" style="border-left: 1px solid #f3f3f3">
+      <el-col :span="10" style="border-left: 1px solid #05AFE3">
         <p class="bigTitle">待下发信息</p>
         <div class="contentBox">
           <div class="controlBox">
@@ -179,7 +179,7 @@
                   "
                 ></span>
               </div>
-
+              
               <!-- {{ item.CONTENT }} -->
             </div>
             <div class="menuBox">
@@ -193,7 +193,7 @@
           </div>
         </div>
       </el-col>
-      <el-col :span="10" style="border-left: 1px solid #f3f3f3">
+      <el-col :span="10" style="border-left: 1px solid #05AFE3">
         <p class="bigTitle">信息模板</p>
         <div class="templateBox">
           <div class="controlBox">
@@ -246,7 +246,7 @@
                       "
                     ></span>
                   </div>
-
+                  
                 </div>
                 <div class="menuBox">
                   <i
@@ -773,7 +773,7 @@ export default {
           this.devicessizeList = res.data;
         });
       }
-
+      
     },
     // 查设备多选框
     changeDevicessize() {
@@ -1391,12 +1391,12 @@ export default {
     height: 100%;
     .bigTitle {
       padding: 15px 0;
-      border-bottom: 1px solid #f3f3f3;
+      border-bottom: 1px solid #05AFE3;
       margin-bottom: 10px;
     }
     .contentBox {
       width: 100%;
-      height: 730px;
+      height: calc(100% - 67px);
       overflow: auto;
       .listBox {
         height: 75px;
@@ -1472,14 +1472,15 @@ export default {
           height: 75px;
           // line-height: 75px;
           // text-align: center;
-          border: 1px solid #ccc;
+          border: 1px solid #05AFE3;
           // background: black;
           position: relative;
           width: 630px;
           float: left;
           display: flex;
           justify-content: center;
-          align-items: center;
+          align-items: center;   
+          overflow: hidden;
         }
         .menuBox {
           display: flex;
@@ -1504,8 +1505,10 @@ export default {
         justify-content: center;
       }
       .el-collapse {
-        max-height: 680px !important;
+        max-height: 69vh !important;
         overflow: auto;
+        border-bottom: none;
+        border-top: solid 1px #05AFE3;
       }
     }
   }

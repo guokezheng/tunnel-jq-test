@@ -74,8 +74,7 @@
       v-loading="loading"
       :data="brandList"
       @selection-change="handleSelectionChange"
-      class="allTable"
-      max-height="630"
+      class="allTable tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备厂商编号" align="center" prop="supplierId" />
@@ -313,3 +312,4 @@ export default {
   },
 };
 </script>
+

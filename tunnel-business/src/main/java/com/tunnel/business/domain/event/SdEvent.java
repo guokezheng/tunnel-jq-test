@@ -1,6 +1,8 @@
 package com.tunnel.business.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
@@ -27,6 +29,7 @@ public class SdEvent extends BaseEntity {
      * 事件ID
      */
     @ApiModelProperty("事件id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**

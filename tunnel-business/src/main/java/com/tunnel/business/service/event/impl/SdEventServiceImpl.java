@@ -112,10 +112,6 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.getParams().put("deptId", deptId);
         }
         List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
-        List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectImageBy();
-        List<WjConfidence> wjConfidences = radarEventMapper.selectConfidence(null);
-        List<SdTrafficImage> imageList = new ArrayList<>();
-        List<WjConfidence> wjConfidenceList = new ArrayList<>();
         sdEvents.stream().forEach(item -> {
             String eventTitle = item.getEventTitle();
             int startLength = eventTitle.indexOf(item.getTunnelName()) + item.getTunnelName().length();
@@ -126,20 +122,8 @@ public class SdEventServiceImpl implements ISdEventService {
             if(item.getVideoUrl()!=null){
                 item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
-
-            for(SdTrafficImage image : sdTrafficImages){
-                if(item.getId().equals(image.getBusinessId())){
-                    imageList.add(image);
-                }
-            }
-            item.setIconUrlList(imageList);
-
-            for(WjConfidence confidence : wjConfidences){
-                if(item.getId().equals(confidence.getEventIds())){
-                    wjConfidenceList.add(confidence);
-                }
-            }
-            item.setConfidenceList(wjConfidenceList);
+            item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
+            item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
         });
         return sdEvents;
     }

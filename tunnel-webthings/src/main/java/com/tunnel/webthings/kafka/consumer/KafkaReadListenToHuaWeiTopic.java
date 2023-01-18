@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.*;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 读取设备、隧道基础数据
@@ -1368,7 +1370,16 @@ public class KafkaReadListenToHuaWeiTopic {
     public void analysisAnalysisCrosslane(JSONObject jsonObject){
         SdLaneStatistics sdLaneStatistics = new SdLaneStatistics();
         sdLaneStatistics.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
-        sdLaneStatistics.setLaneNo(jsonObject.getLong("laneNo"));
+        Long lane = jsonObject.getLong("laneNo");
+        Long laneNo = 0L;
+        if(lane == 11L){
+            laneNo = 1L;
+        }else if(lane == 12L){
+            laneNo = 2L;
+        }else {
+            laneNo = 3L;
+        }
+        sdLaneStatistics.setLaneNo(laneNo);
         sdLaneStatistics.setSpeed(jsonObject.getString("speed"));
         sdLaneStatistics.setTimeOccupy(jsonObject.getString("timeOccupy"));
         sdLaneStatistics.setSpaceOccupy(jsonObject.getString("spaceOccupy"));
@@ -1431,11 +1442,11 @@ public class KafkaReadListenToHuaWeiTopic {
         SdVehicleDriving sdVehicleDriving = new SdVehicleDriving();
         sdVehicleDriving.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         sdVehicleDriving.setTrackId(jsonObject.getLong("trackID"));
-        sdVehicleDriving.setPlateColor(jsonObject.getString("plateColor"));
+        sdVehicleDriving.setPlateColor(getPlateColor(jsonObject.getString("plateColor")));
         sdVehicleDriving.setPlateNumber(jsonObject.getString("plateNumber"));
         sdVehicleDriving.setObjectType(jsonObject.getString("objectType"));
-        sdVehicleDriving.setVehicleType(jsonObject.getString("vehicleType"));
-        sdVehicleDriving.setVehicleColor(jsonObject.getString("vehicleColor"));
+        sdVehicleDriving.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+        sdVehicleDriving.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
         sdVehicleDriving.setSpeed(jsonObject.getString("speed"));
         sdVehicleDriving.setTravelType(jsonObject.getString("travelType"));
         sdVehicleDriving.setRoadDir(jsonObject.getString("roadDir"));
@@ -1455,13 +1466,17 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setTunnelId(TunnelEnum.HANG_SHAN_DONG.getCode());
         sdRadarDetectData.setRecordSerialNumber(jsonObject.getString("trackID"));
         sdRadarDetectData.setObjectType(jsonObject.getString("objectType"));
-        sdRadarDetectData.setVehicleType(jsonObject.getString("vehicleType"));
-        sdRadarDetectData.setVehicleColor(jsonObject.getString("vehicleColor"));
+        sdRadarDetectData.setVehicleType(getVehicleType(jsonObject.getString("vehicleType")));
+        sdRadarDetectData.setVehicleColor(getVehicleColor(jsonObject.getString("vehicleColor")));
         sdRadarDetectData.setVehicleLicense(jsonObject.getString("plateNumber"));
         sdRadarDetectData.setLatitude(jsonObject.getString("lat"));
         sdRadarDetectData.setLongitude(jsonObject.getString("lng"));
         sdRadarDetectData.setCourseAngle(jsonObject.getString("rriveAngle"));
         sdRadarDetectData.setSpeed(jsonObject.getString("speed"));
+        sdRadarDetectData.setDistance((950-jsonObject.getInteger("ridOffset"))+"");
+        String matchLane = jsonObject.getString("matchLane");
+        String laneNo = matchLane.substring(matchLane.length() - 1, matchLane.length());
+        sdRadarDetectData.setLaneNum(laneNo);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //转换
         Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
@@ -1469,6 +1484,9 @@ public class KafkaReadListenToHuaWeiTopic {
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
         SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
         detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
+        if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){
+            setCarsnapRedis(sdRadarDetectData);
+        }
     }
 
     /**
@@ -1482,6 +1500,124 @@ public class KafkaReadListenToHuaWeiTopic {
         map.put("speed",statistics.getSpeed());
         map.put("cars",statistics.getCars());
         //redis-key命名规则  固定字段tunnelVehicleTotal:隧道Id:方向
-        redisCache.setCacheObject("tunnelVehicleTotal:"+TunnelEnum.HANG_SHAN_DONG.getCode()+":"+statistics.getRoadDir(),map);
+        redisCache.setCacheObject("tunnelVehicleTotal:"+statistics.getTunnelId()+":"+statistics.getRoadDir(),map);
+    }
+
+    /**
+     * 将车辆快照存入redis
+     *
+     * @param sdRadarDetectData
+     */
+    public void setCarsnapRedis(SdRadarDetectData sdRadarDetectData){
+        Map<String, Object> map = new HashMap<>();
+        map.put("tunnelId",TunnelEnum.HANG_SHAN_DONG.getCode());
+        map.put("roadDir",sdRadarDetectData.getRoadDir());
+        map.put("speed",sdRadarDetectData.getSpeed());
+        map.put("laneNo",sdRadarDetectData.getLaneNum());
+        map.put("vehicleType",sdRadarDetectData.getVehicleType());
+        map.put("lat",sdRadarDetectData.getLatitude());
+        map.put("lng",sdRadarDetectData.getLongitude());
+        map.put("distance",sdRadarDetectData.getDistance());
+        map.put("vehicleLicense",sdRadarDetectData.getVehicleLicense());
+        //redis-key命名规则，固定字段vehicleSnap:隧道id:车牌号
+        redisCache.setCacheObject("vehicleSnap:" + sdRadarDetectData.getTunnelId() + ":" + sdRadarDetectData.getVehicleLicense(),map,5, TimeUnit.MINUTES);
+    }
+
+    /**
+     * 对应车辆类型
+     *
+     * @param vehicleType
+     * @return
+     */
+    public String getVehicleType(String vehicleType){
+        String type = "";
+        switch (vehicleType){
+            case "1":{type = "24"; break;}
+            case "2":{type = "17"; break;}
+            case "3":{type = "13"; break;}
+            case "4":{type = "16"; break;}
+            case "5":{type = "14"; break;}
+            case "6":{type = "4"; break;}
+            case "7":{type = "25"; break;}
+            case "9":{type = "4"; break;}
+            case "10":{type = "12"; break;}
+            case "11":{type = "19"; break;}
+            case "12":{type = "7"; break;}
+            case "13":{type = "18"; break;}
+            case "14":{type = "27"; break;}
+            case "15":{type = "4"; break;}
+            case "16":{type = "28"; break;}
+            case "17":{type = "4"; break;}
+            case "18":{type = "4"; break;}
+            case "19":{type = "4"; break;}
+            case "20":{type = "4"; break;}
+            case "21":{type = "4"; break;}
+            case "22":{type = "4"; break;}
+            case "23":{type = "4"; break;}
+            case "24":{type = "4"; break;}
+            case "25":{type = "28"; break;}
+            default:type = vehicleType;
+        }
+        return type;
+    }
+
+    /**
+     * 对应车辆颜色
+     *
+     * @param vehicleColor
+     * @return
+     */
+    public String getVehicleColor(String vehicleColor){
+        String color = "";
+        switch (vehicleColor){
+            case "0":{color = "2"; break;}
+            case "1":{color = "3"; break;}
+            case "2":{color = "6"; break;}
+            case "3":{color = "12"; break;}
+            case "5":{color = "9"; break;}
+            case "6":{color = "5"; break;}
+            case "7":{color = "8"; break;}
+            case "8":{color = "1"; break;}
+            case "9":{color = "99"; break;}
+            case "11":{color = "7"; break;}
+            case "12":{color = "99"; break;}
+            case "13":{color = "11"; break;}
+            case "14":{color = "99"; break;}
+            case "15":{color = "13"; break;}
+            default:color = vehicleColor;
+        }
+        return color;
+    }
+
+    /**
+     * 对应车牌颜色
+     *
+     * @param plateColor
+     * @return
+     */
+    public String getPlateColor(String plateColor){
+        String color = "";
+        switch (plateColor){
+            case "0":{color = "3"; break;}
+            case "1":{color = "9"; break;}
+            case "2":{color = "1"; break;}
+            case "3":{color = "9"; break;}
+            case "4":{color = "12"; break;}
+            case "5":{color = "11"; break;}
+            case "6":{color = "0"; break;}
+            case "7":{color = "9"; break;}
+            case "8":{color = "2"; break;}
+            case "10":{color = "9"; break;}
+            case "11":{color = "9"; break;}
+            case "12":{color = "9"; break;}
+            case "13":{color = "9"; break;}
+            case "14":{color = "9"; break;}
+            case "15":{color = "9"; break;}
+            case "20":{color = "4"; break;}
+            case "21":{color = "5"; break;}
+            case "99":{color = "9"; break;}
+            default:color = plateColor;
+        }
+        return color;
     }
 }

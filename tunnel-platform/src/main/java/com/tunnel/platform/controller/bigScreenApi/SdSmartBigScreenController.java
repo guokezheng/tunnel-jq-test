@@ -166,11 +166,23 @@ public class SdSmartBigScreenController extends BaseController {
      * 查询隧道内车辆数、车辆均速
      *
      * @param tunnelId
-     * @param tunnelDirection
+     * @param roadDir
      * @return
      */
     @GetMapping("/getTunnelVehicles")
     public AjaxResult getTunnelVehicles(String tunnelId, String roadDir){
         return sdSmartBigScreenService.getTunnelVehicles(tunnelId,roadDir);
+    }
+
+    /**
+     * 查询实时车辆
+     *
+     * @param tunnelId
+     * @param vehicleLicense
+     * @return
+     */
+    @GetMapping("/getRealCars")
+    public AjaxResult getRealCars(String tunnelId, String vehicleLicense){
+        return sdSmartBigScreenService.getRealCars(tunnelId,vehicleLicense);
     }
 }

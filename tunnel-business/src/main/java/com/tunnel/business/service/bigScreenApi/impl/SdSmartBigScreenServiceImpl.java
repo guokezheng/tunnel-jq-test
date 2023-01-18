@@ -196,6 +196,26 @@ public class SdSmartBigScreenServiceImpl implements SdSmartBigScreenService {
         }
     }
 
+    @Override
+    public AjaxResult getRealCars(String tunnelId, String vehicleLicense) {
+        if(StringUtils.isNull(tunnelId) || StringUtils.isEmpty(tunnelId)){
+            Collection<String> keys = redisCache.keys("vehicleSnap:*");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) redisTemplate.opsForValue().multiGet(keys);
+            return AjaxResult.success(list);
+        }else {
+            if(StringUtils.isNotNull(vehicleLicense) && StringUtils.isNotEmpty(vehicleLicense)){
+                Map<String, Object> map = (Map<String, Object>)redisCache.getCacheObject("vehicleSnap:" + tunnelId + ":" + vehicleLicense);
+                List<Map<String, Object>> list = new ArrayList<>();
+                list.add(map);
+                return AjaxResult.success(list);
+            }else {
+                Collection<String> keys = redisCache.keys("vehicleSnap:" + tunnelId + ":*");
+                List<Map<String, Object>> list = (List<Map<String, Object>>)redisTemplate.opsForValue().multiGet(keys);
+                return AjaxResult.success(list);
+            }
+        }
+    }
+
     public List<Map<String, Object>> dataStatistics(List<Map<String, Object>> eventWarning, List<Map<String, Object>> faultWarning){
         List<Map<String, Object>> list = new ArrayList<>();
         //已完成数量

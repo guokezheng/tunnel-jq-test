@@ -110,8 +110,17 @@ public interface SdSmartBigScreenService {
      * 查询隧道内车辆数、车辆均速
      *
      * @param tunnelId
-     * @param tunnelDirection
+     * @param roadDir
      * @return
      */
     AjaxResult getTunnelVehicles(String tunnelId, String roadDir);
+
+    /**
+     * 查询实时车辆
+     *
+     * @param tunnelId
+     * @param vehicleLicense
+     * @return
+     */
+    AjaxResult getRealCars(String tunnelId, String vehicleLicense);
 }

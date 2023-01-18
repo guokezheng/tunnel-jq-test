@@ -119,6 +119,7 @@
             <if test="objectType != null">object_type,</if>
             <if test="roadDir != null">road_dir,</if>
             <if test="recordSerialNumber != null">record_Serial_Number,</if>
+            create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -138,6 +139,7 @@
             <if test="objectType != null">#{objectType},</if>
             <if test="roadDir != null">#{roadDir},</if>
             <if test="recordSerialNumber != null">#{recordSerialNumber},</if>
+            NOW()
         </trim>
     </insert>
 

@@ -893,3 +893,7 @@ ALTER TABLE `sd_radar_detect_data`
 -- 路段统计数据表新增字段
 ALTER TABLE `tunnel-jq`.`sd_road_section_statistics`
     CHANGE COLUMN `start_time` `cars` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路段当前车辆数' AFTER `saturation_vc`;
+
+-- 雷达监测感知数据表新增字段
+ALTER TABLE `tunnel-jq`.`sd_radar_detect_data`
+    ADD COLUMN `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间' AFTER `road_dir`;

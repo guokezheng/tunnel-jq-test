@@ -127,7 +127,7 @@
       :data="dataList"
       @selection-change="handleSelectionChange"
     :row-class-name="tableRowClassName"
-    max-height="640"
+    class="tableClass" 
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="序号" align="center" type="index" /> -->

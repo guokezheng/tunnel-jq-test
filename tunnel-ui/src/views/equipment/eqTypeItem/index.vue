@@ -127,8 +127,8 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange" max-height="640"
-    :row-class-name="tableRowClassName"
+    <el-table v-loading="loading" :data="itemList" @selection-change="handleSelectionChange"
+    :row-class-name="tableRowClassName" class="tableClass" 
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="数据项编号" align="center" prop="itemCode" />

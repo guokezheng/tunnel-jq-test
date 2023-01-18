@@ -85,7 +85,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              {{ VInowData }}<span style="padding-left:5px" v-if="VInowData">KM</span>
+              {{ VInowData }}<span style="padding-left:5px" v-if="VInowData">M</span>
             </el-form-item>
           </el-col>
         </el-row>

@@ -1,13 +1,13 @@
 <!-- 全景数据 - 电力数据-->
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="height:100%">
       <el-col :span="4" :xs="24" style="height:100%;">
         <el-card class="box-card">
-          <circuit-tree height="calc(100vh - 225px)" @defaultSelect="defaultSelectLoop" @nodeClick="handleClick" :default_check_first="true" :default_select_first="true"></circuit-tree>
+          <circuit-tree height="calc(100vh - 4vh - 20px)" @defaultSelect="defaultSelectLoop" @nodeClick="handleClick" :default_check_first="true" :default_select_first="true"></circuit-tree>
         </el-card>
       </el-col>
-      <el-col :span="20" :xs="24">
+      <el-col :span="20" :xs="24" style="height:100%;">
         <el-tabs type="border-card" v-model="activeName" @tab-click="clickzhhuji" class="elemonitorTab">
           <el-tab-pane label="日原始数据" name="first">
             <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
@@ -36,7 +36,7 @@
             <div>
               <powerECharts :cityOptionsTable="cityOptionsTable" :riEChartsList="riEChartsList" :cityOptionsValue="cityOptionsValue" />
             </div>
-            <div style="margin-top:1.5vh;">
+            <div >
               <br />
               <el-table v-loading="loading" :data="tableDtaList" style="overflow-x: auto;overflow-y: auto;" height="35vh">
                 <el-table-column label="回路名称" align="center" prop="huiLuName" min-width="200" />
@@ -743,3 +743,25 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+::v-deep .el-tabs__item{
+  height: 4vh;
+  line-height: 4vh;
+  font-size: 0.7vw;
+}
+.el-form-item{
+  margin-bottom: 1vh;
+}
+::v-deep .el-card__body{
+  padding: 0 !important;
+}
+.elemonitorTab{
+  height: 100%;
+}
+.el-tabs__content{
+  height: calc(100% - 4vh);
+}
+.box-card{
+  height: 100%;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <!-- 温湿度传感器 -->
-  <div class="echarts" ref="echarts" style="width:100%;height:240px"></div>
+  <div class="echarts" ref="echarts" style="width:100%;height:27vh"></div>
 </template>
 
 <script>

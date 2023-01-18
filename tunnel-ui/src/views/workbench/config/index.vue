@@ -424,16 +424,9 @@
                         <!-- CO/VI -->
                         <label
                           style="
-                            font-size: 12px;
-                            position: absolute;
                             color: #79e0a9;
-                            text-decoration: underline;
-                            padding-left: 5px;
-                            width: 100px;
-                            text-align: left;
-                            transform: translate(0px,25px);
-
                           "
+                          class="labelClass"
                           v-if="item.eqType == 19"
                         >
                           {{ item.num }}
@@ -443,15 +436,9 @@
                         <!-- 风速风向 -->
                         <label
                           style="
-                            font-size: 14px;
-                            position: absolute;
-                            text-decoration: underline;
                             color: #79e0a9;
-                            padding-left: 5px;
-                            text-align: left;
-                            transform: translate(0px,25px);
-
                           "
+                          class="labelClass"
                           v-if="item.eqType == 17"
                         >
                           {{ item.num }}
@@ -460,13 +447,9 @@
                         <!-- 洞内洞外 -->
                         <label
                           style="
-                            font-size: 14px;
-                            position: absolute;
                             color: #f2a520;
-                            padding-left: 5px;
-                            text-align: left;
-                            transform: translate(0px,25px);
                           "
+                          class="labelClass"
                           v-if="item.eqType == 5 || item.eqType == 18"
                         >
                           {{ item.num }}
@@ -6713,7 +6696,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -9528,6 +9511,17 @@ input {
   position: static;
   // bottom: 250px !important;
   height: 60px;
+}
+.labelClass{
+  font-size: 0.6vw;
+  position: absolute;
+  padding-left: 5px;
+  text-align: left;
+  transform: translate(25px,8px);
+  text-decoration: underline;
+  z-index: 4;
+  white-space: nowrap;
+  font-weight: bold;
 }
 </style>
 <style lang="scss">

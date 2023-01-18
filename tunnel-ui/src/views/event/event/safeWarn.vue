@@ -405,14 +405,14 @@
 
           </div>
         </div>
-        <div class="dialogBg">
+        <div class="dialogBg dialogBg2">
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
           <videoPlayer
             v-if="videoForm.liveUrl "
             :rtsp="videoForm.liveUrl"
             :open="cameraPlayer"
           ></videoPlayer>
-          <div class="picBox">
+          <!-- <div class="picBox">
             <div v-if="arrowLeft2" class="turnPages"  @click="turnLeft2()"><</div>
             <div class="picList">
               <div 
@@ -427,7 +427,7 @@
             </div>
             <div v-if="arrowRight2" class="turnPages" @click="turnRight2()">></div>
 
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="dialogForm">
@@ -439,6 +439,7 @@
                   v-model="eventForm.eventSource"
                   :disabled="detailsDisabled"
                   placeholder="请选择告警来源"
+                  style="width:12vw"
                 >
                   <el-option
                     v-for="item in fromList"
@@ -459,7 +460,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width: 100%"
+                  style="width: 12vw"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -479,7 +480,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width: 100%"
+                  style="width: 11vw"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -492,6 +493,7 @@
                   clearable
                   size="small"
                   disabled
+                  style="width:12vw"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -552,7 +554,7 @@
             <el-col :span="8">
               <el-form-item label="影响车道">
                 <el-row>
-                  <el-col :span="12">
+                  <el-col :span="11">
                     <el-select
                       v-model="eventForm.direction"
                       placeholder="方向"
@@ -569,14 +571,14 @@
                       />
                     </el-select>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="11">
                     <el-select
                       v-model="eventForm.laneNo"
                       placeholder="车道"
                       clearable
                       size="small"
                       :disabled="detailsDisabled"
-                      style="width: 100%; margin-left: 15px"
+                      style="width: 100%; margin-left: 8px"
                     >
                       <el-option
                         v-for="item in chezhiLaneList"
@@ -597,7 +599,7 @@
                   v-model="eventForm.eventDescription"
                   placeholder="m"
                   :disabled="detailsDisabled"
-                  style="width: 100%"
+                  style="width: calc(100% - 10px)"
                 />
               </el-form-item>
             </el-col>
@@ -2663,14 +2665,14 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 50%;
+  height: 51%;
   display: flex;
   justify-content: space-between;
   position: relative;
   .processButton {
     position: absolute;
     top: 20px;
-    right: -20px;
+    right: -15px;
     width: 25px;
     height: 100px;
     cursor: pointer;
@@ -2683,24 +2685,31 @@ export default {
     font-size: 14px;
     color: #fff;
   }
+  .dialogBg2{
+    width: 55% !important;
+    padding: 20px 20px 10px 10px !important;
+    .video-box{
+      height: calc(100% - 20px) !important;
+    }
+  }
   .dialogBg {
     background: #f7f7f7;
     height: 100%;
-    width: 49%;
+    width: 45%;
     color: #0087e7;
-    padding: 20px;
+    padding: 20px 10px 10px 20px;
     span {
       color: #767676 !important;
       padding-left: 10px;
     }
     video {
       width: 100%;
-      height: 70%;
+      height: 73%;
     }
     .picBox {
       width: 100%;
-      height: calc(30% - 20px);
-      margin-top: 10px;
+      height: calc(22% - 20px);
+      margin-top: 5px;
       // border: solid 1px red;
       display: flex;
       justify-content: center;
@@ -2756,10 +2765,9 @@ export default {
 }
 .dialogForm {
   width: 100%;
-  height: 43%;
+  height: calc(42% - 10px);
   background: #f7f7f7;
   padding: 10px;
-  margin-top: 10px;
   overflow-y: auto;
   overflow-x: hidden;
   .el-input {
@@ -2772,12 +2780,12 @@ export default {
     margin-bottom: 10px !important;
   }
   .evtCarStyle {
-    width: 100%;
+    width: calc(100% - 10px);
     height: 100px;
-    // border: solid 1px #cfd5e0;
     padding: 10px;
     overflow-y: auto;
     padding-bottom: 0;
+    border-radius: 4px;
     > div {
       display: flex;
       margin-bottom: 5px;
@@ -2821,7 +2829,7 @@ export default {
   }
 }
 .detailsDialog {
-  height: 92%;
+  height: 82%;
   // z-index: 2008 !important;
   width: 53%;
   position: absolute;
@@ -2832,6 +2840,7 @@ export default {
     height:calc(100% - 8vh) !important;
     .el-dialog__body{
       height: calc(100% - 4vh - 30px);
+      padding:0 !important;
     }
   }
 .animationDialog {

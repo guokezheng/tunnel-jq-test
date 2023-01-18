@@ -528,6 +528,9 @@
     border: 1px solid #05AFE3;
   }
   #app {
+    .el-tree-node__content:hover{
+      background: #004375;
+    }
     .el-textarea__inner{
       border: solid 1px #65bfff !important;
     }
@@ -594,10 +597,10 @@
       color: white;
       background-color: #004375;//没有数据时暂无数据显示背景色
     }
-    .el-table .el-table__cell{
-      height: 40px;
-      line-height: 40px;
-    }
+    // .el-table .el-table__cell{
+    //   height: 40px;
+    //   line-height: 40px;
+    // }
     // .el-table tr{
     //   background-color: #2B5F96;
     // }

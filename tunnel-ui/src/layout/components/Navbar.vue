@@ -727,7 +727,8 @@ export default {
     // 获取当前角色信息
     getUser() {
       getUserProfile().then((response) => {
-        this.roleGroup = response.roleGroup;
+        console.log(response,"获取当前角色信息")
+        this.roleGroup = response.data.nickName;
       });
     },
     block() {},

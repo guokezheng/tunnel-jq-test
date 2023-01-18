@@ -45,8 +45,9 @@
         </el-row> -->
 
     <el-table v-loading="loading" :data="eqTypeStateList"
-              max-height="640" @selection-change="handleSelectionChange"
+              @selection-change="handleSelectionChange"
               :row-class-name="tableRowClassName"
+              class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="ID" align="center" prop="id" /> -->

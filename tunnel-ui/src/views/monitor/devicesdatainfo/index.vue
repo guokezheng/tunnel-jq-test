@@ -97,7 +97,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="searchValue == '1'"
-        max-height="640"
+        class="tableHeight"
       >
         <!--      <el-table-column type="selection" width="55" align="center" />-->
         <el-table-column label="序号" align="center" prop="num" />
@@ -114,7 +114,7 @@
       <el-table
         v-loading="loading"
         :data="list"
-        max-height="640"
+        class="tableHeight"
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="searchValue == '2'"
@@ -148,7 +148,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="searchValue == '3'"
-        max-height="640"
+        class="tableHeight"
       >
         <!--      <el-table-column type="selection" width="55" align="center" />-->
         <el-table-column label="序号" align="center" prop="num" />
@@ -167,7 +167,7 @@
         @selection-change="handleSelectionChange"
         :row-class-name="tableRowClassName"
         v-show="searchValue == '4'"
-        max-height="640"
+        class="tableHeight"
       >
         <!--      <el-table-column type="selection" width="55" align="center" />-->
         <el-table-column label="序号" align="center" prop="num" />
@@ -674,6 +674,10 @@ hr {
   font-size: 18px;
   font-weight: 400;
   color: #303133;
+}
+.tableHeight{
+  max-height: 59vh !important;
+  overflow: auto;
 }
 </style>
 

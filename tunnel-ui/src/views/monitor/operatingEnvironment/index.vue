@@ -1,6 +1,6 @@
 <template>
   <!-- 全景数据 运行环境 -->
-  <div style="padding:0.5vh 0.5vw;font-size: 14px;">
+  <div style="padding:0.5vh 0.5vw;font-size: 0.7vw;height: 100%;">
     <el-row :gutter="10">
       <el-col :span="4">
         <!-- 左侧树形组件 -->
@@ -8,7 +8,7 @@
           <loop-tree height="calc(100vh - 220px)" :powerCode="powerCode" @defaultSelect="defaultSelectLoop" @nodeClick="handleClick" :default_select_first="true" :default_check_first="true"></loop-tree>
         </el-card>
       </el-col>
-      <el-col :span="20">
+      <el-col :span="20" style="height:100%">
         <!-- 状态 水浸 烟感 声光报警 气体检测 -->
         <div class="operatingEnvironment_top">
           <el-row :gutter="10">
@@ -186,18 +186,21 @@
                     <button class="state_style_header_btn">详情</button>
                   </div>
                 </div>
-                <div class="menJin_switch" v-for="(item,index) in 4" :key="index">
-                  <div class="menJin_switch_img">
-                    <img src="../../../assets/images/stateImg/门禁.png" alt="">
-                  </div>
-                  <div class="menJin_switch_name">高低压室东侧门门禁</div>
-                  <div class="menJin_switch_name_type_k">开启状态</div>
-                  <!-- <div class="menJin_switch_name_type_g">关闭状态</div> -->
-                  <div class="menJin_switch_btn">
-                    <el-switch v-model="menJinValue">
-                    </el-switch>
+                <div style="height:19vh;overflow:auto">
+                  <div class="menJin_switch" v-for="(item,index) in 4" :key="index">
+                    <div class="menJin_switch_img">
+                      <img src="../../../assets/images/stateImg/门禁.png" alt="">
+                    </div>
+                    <div class="menJin_switch_name">高低压室东侧门门禁</div>
+                    <div class="menJin_switch_name_type_k">开启状态</div>
+                    <!-- <div class="menJin_switch_name_type_g">关闭状态</div> -->
+                    <div class="menJin_switch_btn">
+                      <el-switch v-model="menJinValue">
+                      </el-switch>
+                    </div>
                   </div>
                 </div>
+                
               </el-card>
             </el-col>
           </el-row>
@@ -805,5 +808,8 @@ export default {
   .menJin_switch_btn {
     margin-left: 15%;
   }
+}
+::v-deep .el-card__body{
+  padding: 1.5vh !important;
 }
 </style>

@@ -217,8 +217,13 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
             if (associatedDeviceId.longValue() == 0L) {
                 break;
             }
+            String devicePixel = "";
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(associatedDeviceId);
-            String devicePixel = sdIotDevice.getDevicePixel();
+            if (sdIotDevice != null && sdIotDevice.getDevicePixel() != null && !sdIotDevice.getDevicePixel().equals("")) {
+                devicePixel = sdIotDevice.getDevicePixel();
+            } else {
+                throw new RuntimeException("情报板设备分辨率信息不全，无法查询到可以匹配的模板信息");
+            }
             for (int j = 0;j < categorys.size();j++) {
                 Map<String, Object> map = new HashMap<>();
                 List<Map<String, Object>> childrenMap = new ArrayList<>();

@@ -161,10 +161,4 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{removeIds}
         </foreach>
     </delete>
-
-
-    <select id="selectImageBy" resultMap="SdTrafficImageResult">
-        select img_id, img_name, img_url, img_width, img_height, remark, business_id, create_time, create_by, update_time, update_by from sd_traffic_image
-        where 1=1
-    </select>
 </mapper>

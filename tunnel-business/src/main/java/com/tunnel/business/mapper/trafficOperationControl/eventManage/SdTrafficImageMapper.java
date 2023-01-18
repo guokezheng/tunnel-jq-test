@@ -112,6 +112,4 @@ public interface SdTrafficImageMapper
      * @return
      */
     int deleteFaultIconFileByIds(Long[] removeIds);
-
-    List<SdTrafficImage> selectImageBy();
 }

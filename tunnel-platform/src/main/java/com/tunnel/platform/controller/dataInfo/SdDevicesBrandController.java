@@ -29,7 +29,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 查询物联设备厂商列表
      */
-    @PreAuthorize("@ss.hasPermi('device:brand:list')")
+    // @PreAuthorize("@ss.hasPermi('device:brand:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDevicesBrand sdDevicesBrand) {
         startPage();
@@ -71,7 +71,7 @@ public class SdDevicesBrandController extends BaseController {
     /**
      * 修改物联设备厂商
      */
-    @PreAuthorize("@ss.hasPermi('device:brand:edit')")
+    // @PreAuthorize("@ss.hasPermi('device:brand:edit')")
     @Log(title = "物联设备厂商", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdDevicesBrand sdDevicesBrand) {

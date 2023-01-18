@@ -29,7 +29,7 @@ public class SdDevicesProtocolController extends BaseController {
     /**
      * 查询设备协议列表
      */
-    @PreAuthorize("@ss.hasPermi('device:protocol:list')")
+    // @PreAuthorize("@ss.hasPermi('device:protocol:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdDevicesProtocol sdDevicesProtocol) {
         startPage();

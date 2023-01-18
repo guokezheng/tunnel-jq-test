@@ -15,6 +15,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
@@ -111,6 +112,10 @@ public class SdEventServiceImpl implements ISdEventService {
             sdEvent.getParams().put("deptId", deptId);
         }
         List<SdEvent> sdEvents = sdEventMapper.selectSdEventList(sdEvent);
+        List<SdTrafficImage> sdTrafficImages = sdTrafficImageMapper.selectImageBy();
+        List<WjConfidence> wjConfidences = radarEventMapper.selectConfidence(null);
+        List<SdTrafficImage> imageList = new ArrayList<>();
+        List<WjConfidence> wjConfidenceList = new ArrayList<>();
         sdEvents.stream().forEach(item -> {
             String eventTitle = item.getEventTitle();
             int startLength = eventTitle.indexOf(item.getTunnelName()) + item.getTunnelName().length();
@@ -121,8 +126,20 @@ public class SdEventServiceImpl implements ISdEventService {
             if(sdEvent.getVideoUrl()!=null){
                 item.setVideoUrl(sdEvent.getVideoUrl().split(";")[0]);
             }
-            item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
-            item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));
+
+            for(SdTrafficImage image : sdTrafficImages){
+                if(item.getId().equals(image.getBusinessId())){
+                    imageList.add(image);
+                }
+            }
+            item.setIconUrlList(imageList);
+
+            for(WjConfidence confidence : wjConfidences){
+                if(item.getId().equals(confidence.getEventIds())){
+                    wjConfidenceList.add(confidence);
+                }
+            }
+            item.setConfidenceList(wjConfidenceList);
         });
         return sdEvents;
     }

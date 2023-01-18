@@ -172,8 +172,6 @@ ORDER BY MERGE.startTime DESC
         left join sd_event_type B
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
-        LEFT JOIN sd_traffic_image ti1 ON CONCAT(a.id) = ti1.business_id
-        AND ti1.img_type = '1'
         <where>
             1=1
             AND B.is_usable = '1'

@@ -78,7 +78,9 @@
             sd_event_confidence ec
         WHERE
             1 = 1
-          AND ec.event_id = #{eventId}
+          <if test="eventId != null and eventId != ''">
+              AND ec.event_id = #{eventId}
+          </if>
     </select>
 
     <update id="updateEventConfidence" parameterType="com.tunnel.business.domain.digitalmodel.WjConfidence">

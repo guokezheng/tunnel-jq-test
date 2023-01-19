@@ -217,7 +217,7 @@
                 位置 <span>{{ item.position }}</span>
               </div>
               <div>
-                时间 <span>{{ item.startTime }}</span>
+                时间 <span>{{ item.eventTime }}</span>
               </div>
               <div class="contentButton">
                 <div @click="detailsButton(item, 1)">详情</div>
@@ -407,11 +407,16 @@
         </div>
         <div class="dialogBg dialogBg2">
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
-          <videoPlayer
-            v-if="videoForm.liveUrl "
-            :rtsp="videoForm.liveUrl"
-            :open="cameraPlayer"
-          ></videoPlayer>
+          <el-carousel trigger="click" height="calc(100% - 14px)">
+            <el-carousel-item v-for="item in videoList" :key="item">
+              <videoPlayer
+                v-if="item.liveUrl "
+                :rtsp="item.liveUrl"
+                :open="cameraPlayer"
+              ></videoPlayer>
+            </el-carousel-item>
+          </el-carousel>
+          
           <!-- <div class="picBox">
             <div v-if="arrowLeft2" class="turnPages"  @click="turnLeft2()"><</div>
             <div class="picList">
@@ -451,12 +456,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="告警时间" prop="startTime">
+              <el-form-item label="告警时间" prop="eventTime">
                 <el-date-picker
                   clearable
                   size="small"
                   :disabled="detailsDisabled"
-                  v-model="eventForm.startTime"
+                  v-model="eventForm.eventTime"
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
@@ -1402,9 +1407,10 @@ export default {
       
 
       // 实时视频
-      videoForm:{
-        liveUrl:'',
-      },
+      // videoForm:{
+      //   liveUrl:'',
+      // },
+      videoList:[],
       cameraVisible:true,
     };
   },
@@ -1812,6 +1818,7 @@ export default {
       console.log(item.stakeNum,"item.stakeNum")
 
       this.cameraPlayer = false
+      this.videoList = []
       getEventCamera(
         item.tunnelId,
         item.stakeNum,
@@ -1823,13 +1830,22 @@ export default {
           videoStreaming(videoId).then((response) =>{
             console.log(response,"视频流");
             if(response.code == 200){
-              this.videoForm = response.data
+              this.videoList.push(response.data)
               this.cameraPlayer = true
             }
-          }).catch((e)=>{
-            this.$modal.msgWarning("获取视频失败");
           })
+          if(res.data.length>1){
+            let videoId2 = res.data[1].eqId
+            videoStreaming(videoId2).then((response) =>{
+              console.log(response,"视频流");
+              if(response.code == 200){
+                this.videoList.push(response.data)
+                this.cameraPlayer = true
+              }
+            })
+          }
         }
+        console.log(this.videoList,"this.videoList")
       });
     },
     turnLeft(){
@@ -2004,6 +2020,7 @@ export default {
     },
     /** 查询事件管理列表 */
     getList() {
+      console.log(new Date())
       // console.log(this.activeName, "9999999");
       this.loading = true;
       this.eventList = []
@@ -2042,7 +2059,11 @@ export default {
         this.queryParams.startTime = this.dateRange[0];
         this.queryParams.endTime = this.dateRange[1];
         this.queryParams.searchValue = this.activeName;
+        console.log(new Date())
+
         listEvent(this.queryParams).then((response) => {
+          console.log(new Date())
+
           console.log(response, "查询事件管理列表");
           for(let item of response.rows){
             if(item.iconUrlList){
@@ -2054,6 +2075,7 @@ export default {
           this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
+          
         });
       }
     },
@@ -2624,6 +2646,7 @@ export default {
       margin-right: 20px;
       width: 213px;
       float: right;
+      margin-left: 10px;
       .stateTab {
         position: absolute;
         top: -34px;
@@ -2665,7 +2688,7 @@ export default {
 
 .videoDialogBox {
   width: 100%;
-  height: 51%;
+  height: 56%;
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -2689,7 +2712,7 @@ export default {
     width: 55% !important;
     padding: 20px 20px 10px 10px !important;
     .video-box{
-      height: calc(100% - 20px) !important;
+      height: calc(100% - 10px) !important;
     }
   }
   .dialogBg {
@@ -2708,7 +2731,7 @@ export default {
     }
     .picBox {
       width: 100%;
-      height: calc(22% - 20px);
+      height: calc(24% - 25px);
       margin-top: 5px;
       // border: solid 1px red;
       display: flex;
@@ -2765,9 +2788,9 @@ export default {
 }
 .dialogForm {
   width: 100%;
-  height: calc(42% - 10px);
+  height: calc(44% - 50px);
   background: #f7f7f7;
-  padding: 10px;
+  padding: 0px 10px 0;
   overflow-y: auto;
   overflow-x: hidden;
   .el-input {
@@ -2829,7 +2852,7 @@ export default {
   }
 }
 .detailsDialog {
-  height: 82%;
+  height: 84%;
   // z-index: 2008 !important;
   width: 53%;
   position: absolute;
@@ -3169,6 +3192,12 @@ hr {
     width:100%;
     height:auto;
   }
+}
+.el-carousel{
+  height:100%;
+}
+::v-deep .el-carousel__indicators{
+  display: none;
 }
 </style>
 

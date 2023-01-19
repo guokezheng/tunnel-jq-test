@@ -325,6 +325,9 @@ export default {
   margin: 0;
   box-shadow: none;
   background: transparent;
+  .el-dialog__title{
+    color: #fff !important;
+  }
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
@@ -333,7 +336,7 @@ export default {
 //   display: none;
 // }
 ::v-deep .el-dialog__body {
-  padding: 0;
+  padding: 20px;
   height: calc(100% - 60px);
 }
 .evenDialogBox {

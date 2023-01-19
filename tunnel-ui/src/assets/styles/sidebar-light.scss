@@ -783,6 +783,20 @@
         background: #2B5F96 !important;
       }
     }
+    .phoneBox1{
+      .el-checkbox__input.is-checked .el-checkbox__inner{
+          border: solid 1px #fff;
+      }
+      .el-input-number__increase,
+      .el-input-number__decrease {
+        background: #2d69a5;
+        border-left: solid 1px #05afe3 !important;
+        color: #fff;
+      }
+      .el-input-number__increase {
+        border-bottom: solid 1px #05afe3 !important;
+      }
+    }
     // 深色版部分小细节需要白色字
     .textColorClass{
       color:white
@@ -1787,6 +1801,9 @@
       background-position: center;
       background-repeat: no-repeat;
       background-size: 100% 100%;
+      .listRow{
+        color: white;
+      }
   }
   .listRow{
       color: white;

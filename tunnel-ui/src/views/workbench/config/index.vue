@@ -955,42 +955,45 @@
           >
             暂无交通事件
           </div>
-          <vue-seamless-scroll
-            :class-option="defaultOption"
-            class="listContent"
-            :data="trafficList"
-          >
-            <el-row
-              v-for="(item, index) in trafficList"
-              :key="index"
-              class="listRow"
-              style="margin-top:4px"
-              @click.native="jumpYingJi(item.id)"
+          <div >
+            <vue-seamless-scroll
+              :class-option="defaultOption"
+              class="listContent"
+              :data="trafficList"
             >
-              <el-col style="text-align: center" :span="2">
-                <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
-              </el-col>
-              <el-col style="text-align: center" :span="3"
-              :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
-                {{item.eventType.simplifyName}}
-              </el-col>
-              <el-col :span="19" style="display: flex;">
-                <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
-                  item.eventType.eventType
-                }}事件 -->
-                <div
-                  style="width:300px;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  color:white;
-                  ">
-                  {{item.eventTitle}}</div>
-                <div style="color:#D0CECE;font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
+              <el-row
+                v-for="(item, index) in trafficList"
+                :key="index"
+                class="listRow"
+                style="margin-top:4px"
+                @click.native="jumpYingJi(item.id)" 
+              >
+                <el-col style="text-align: center" :span="2">
+                  <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
+                </el-col>
+                <el-col style="text-align: center" :span="3"
+                :style="{color:item.eventType.prevControlType == '0'?'#E0281B':item.eventType.prevControlType=='1'?'#0B92FE':'yellow'}">
+                  {{item.eventType.simplifyName}}
+                </el-col>
+                <el-col :span="19" style="display: flex;">
+                  <!-- {{ item.startTime }} {{ item.tunnels.tunnelName }}发生{{
+                    item.eventType.eventType
+                  }}事件 -->
+                  <div
+                    style="width:300px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    z-index:10;
+                    ">
+                    {{item.eventTitle}}</div>
+                  <div style="font-size:12px;float:right;margin-right:10px">{{getStartTime(item.startTime)}}</div>
 
-              </el-col>
-            </el-row>
-          </vue-seamless-scroll>
+                </el-col>
+              </el-row>
+            </vue-seamless-scroll>
+          </div>
+          
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -4628,10 +4631,13 @@ export default {
     //   // 上传成功后记得把this.checkList清空
     // },
     // 预警事件点击跳转应急调度
-    jumpYingJi(num) {
-      console.log(num, "num预警事件点击跳转应急调度工作台页面");
+    jumpYingJi(e) {
+      console.log(e, "num预警事件点击跳转应急调度工作台页面");
+      // const obj =JSON.parse(e.target.dataset.obj)
+      // this.showDialog(obj)
+      // console.log(obj,"objobjobjobj")
       setTimeout(() => {
-        bus.$emit("getPicId", num);
+        bus.$emit("getPicId", e);
       }, 200);
       bus.$emit("openPicDialog");
     },
@@ -8354,7 +8360,7 @@ export default {
   background-color: white;
   width: 14px;
   height: 14px;
-  border: solid 1px #fff;
+  // border: solid 1px #fff;
   // box-shadow: 1px 1px 2px #dcad76;
 }
 
@@ -8505,12 +8511,12 @@ export default {
   margin-left: 20px;
 }
 
-::v-deep .el-checkbox__inner {
-  width: 26px;
-  height: 26px;
-  border: 1px solid #fff;
-  border-radius: 0px;
-}
+// ::v-deep .el-checkbox__inner {
+//   width: 26px;
+//   height: 26px;
+//   border: 1px solid #fff;
+//   border-radius: 0px;
+// }
 
 .vehicleLane {
   height: 68%;
@@ -9651,16 +9657,9 @@ input {
   .chezhiControlButton:hover {
     color: white;
   }
-  .el-input-number__increase,
-  .el-input-number__decrease {
-    background: #2d69a5;
-    border-left: solid 1px #05afe3 !important;
-    color: #fff;
-  }
+  
 
-  .el-input-number__increase {
-    border-bottom: solid 1px #05afe3 !important;
-  }
+  
 }
 .chezhiDrawerInfo {
   width: 100%;

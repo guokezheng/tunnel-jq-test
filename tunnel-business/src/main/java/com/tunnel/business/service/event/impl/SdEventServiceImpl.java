@@ -15,6 +15,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
@@ -118,8 +119,8 @@ public class SdEventServiceImpl implements ISdEventService {
             if(eventTitle.length() > endLength){
                 item.setPosition(eventTitle.substring(startLength,endLength));
             }
-            if(sdEvent.getVideoUrl()!=null){
-                item.setVideoUrl(sdEvent.getVideoUrl().split(";")[0]);
+            if(item.getVideoUrl()!=null){
+                item.setVideoUrl(item.getVideoUrl().split(";")[0]);
             }
             item.setIconUrlList(sdTrafficImageMapper.selectImageByBusinessId(item.getId().toString()));
             item.setConfidenceList(radarEventMapper.selectConfidence(item.getId()));

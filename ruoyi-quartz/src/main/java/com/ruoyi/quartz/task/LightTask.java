@@ -44,25 +44,27 @@ public class LightTask {
         ExternalSystem system = getExternalSystem();
         String tunnelId = system.getTunnelId();
         Long systemId = system.getId();
-        String direction = TunnelDirectionEnum.DOWN_DIRECTION.getCode();
 
         String username = system.getUsername();
         String password = system.getPassword();
         String systemUrl = system.getSystemUrl();
         //获取cookie
         String jessionId = sanJingLight.login(username, password, systemUrl);
-        String eSystemTunnelId = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, direction, systemId);
+        // 上行对应的外部系统隧道洞ID
+        String eSystemTunnelId1 = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.UP_DIRECTION.getCode(), systemId);
+        // 下行对应的外部系统隧道洞ID
+        String eSystemTunnelId2 = tunnelAssociationService.getExternalSystemTunnelId(tunnelId, TunnelDirectionEnum.DOWN_DIRECTION.getCode(), systemId);
 
         //同步左洞
-        // syncLeftDeviceData(tunnelId, systemUrl, eSystemTunnelId, jessionId);
+        // syncLeftDeviceData(tunnelId, systemUrl, eSystemTunnelId2, jessionId);
         //同步右洞
-        syncRightDeviceData(tunnelId, systemUrl, eSystemTunnelId, jessionId);
+        syncRightDeviceData(tunnelId, systemUrl, eSystemTunnelId1, jessionId);
 
         // System.out.println(">>>>>>>>>>>>" + DateUtils.getTime());
     }
 
-    public void syncLeftDeviceData(String eqTunnelId, String systemUrl, String externalSystemTunnelId, String jessionId) {
-        String url = systemUrl + "/api/getLatestDeviceData?tunnelId=" + externalSystemTunnelId;
+    public void syncLeftDeviceData(String eqTunnelId, String systemUrl, String eSystemTunnelId, String jessionId) {
+        String url = systemUrl + "/api/getLatestDeviceData?tunnelId=" + eSystemTunnelId;
 
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -108,8 +110,8 @@ public class LightTask {
         }
     }
 
-    public void syncRightDeviceData(String eqTunnelId, String systemUrl, String externalSystemTunnelId, String jessionId) {
-        String url = systemUrl + "/api/getLatestDeviceData?tunnelId=" + externalSystemTunnelId;
+    public void syncRightDeviceData(String eqTunnelId, String systemUrl, String eSystemTunnelId, String jessionId) {
+        String url = systemUrl + "/api/getLatestDeviceData?tunnelId=" + eSystemTunnelId;
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)

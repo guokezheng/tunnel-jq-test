@@ -1377,7 +1377,7 @@ export default {
       }
       //判断两个字段是否填写
       if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
-        return this.$modal.msgWarning('请选择隧道名称')
+        return this.$modal.msgWarning('请选择所属隧道')
       }
       if (this.form.taskName == "") {
         return this.$modal.msgWarning('请填写任务名称')

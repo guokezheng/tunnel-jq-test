@@ -955,7 +955,7 @@
           >
             暂无交通事件
           </div>
-          <div >
+          <div v-if="trafficList" @click="jumpYingJi">
             <vue-seamless-scroll
               :class-option="defaultOption"
               class="listContent"
@@ -966,8 +966,10 @@
                 :key="index"
                 class="listRow"
                 style="margin-top:4px"
-                @click.native="jumpYingJi(item.id)" 
+                :data-index="JSON.stringify(item)"
+                :id="item.id"
               >
+              <!-- @click.native="jumpYingJi(item.id)"  -->
                 <el-col style="text-align: center" :span="2">
                   <img :src="item.eventType.iconUrl"  style="width: 20px; height: 20px; transform: translateY(5px)"></img>
                 </el-col>
@@ -4632,14 +4634,15 @@ export default {
     // },
     // 预警事件点击跳转应急调度
     jumpYingJi(e) {
-      console.log(e, "num预警事件点击跳转应急调度工作台页面");
-      // const obj =JSON.parse(e.target.dataset.obj)
-      // this.showDialog(obj)
-      // console.log(obj,"objobjobjobj")
-      setTimeout(() => {
-        bus.$emit("getPicId", e);
-      }, 200);
-      bus.$emit("openPicDialog");
+      const item = e.target.closest(".listRow")
+      if (item) { // 是否是滚动组件的某一行/列
+        const { index } = item.dataset;
+        let id = JSON.parse(index).id
+        setTimeout(() => {
+          bus.$emit("getPicId", id);
+        }, 200);
+        bus.$emit("openPicDialog");
+      }
     },
     // 车型通过字典表获取值
     getCheXing(num) {

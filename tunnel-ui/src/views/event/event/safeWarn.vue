@@ -1891,9 +1891,7 @@ export default {
     //切换tab页
     handleClick(e) {
       console.log(e);
-      this.queryParams.pageNum = 1
-      this.queryParams.pageSize = 16
-
+      this.resetQuery();
       this.getList();
       this.getEventType();
     },

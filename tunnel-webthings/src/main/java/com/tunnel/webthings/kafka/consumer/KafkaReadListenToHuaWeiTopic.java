@@ -551,6 +551,8 @@ public class KafkaReadListenToHuaWeiTopic {
             SdFaultList sdFaultList = new SdFaultList();
             sdFaultList.setId(id);
             sdFaultList.setEqId(deviceId);
+            SdDevices sdDevices = sdDevicesMapper.selectSdDevicesById(deviceId);
+            sdFaultList.setFaultLocation(sdDevices.getPile());
             sdFaultList.setTunnelId("JQ-WeiFang-JiuLongYu-HSD");
             //类型暂时为 其他
             sdFaultList.setFaultType("6");

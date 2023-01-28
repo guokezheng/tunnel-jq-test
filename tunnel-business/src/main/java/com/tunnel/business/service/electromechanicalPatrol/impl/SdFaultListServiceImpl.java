@@ -4,12 +4,14 @@ package com.tunnel.business.service.electromechanicalPatrol.impl;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.electromechanicalPatrol.SdFaultList;
 import com.tunnel.business.domain.electromechanicalPatrol.SdPatrolList;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.electromechanicalPatrol.SdFaultListMapper;
 import com.tunnel.business.mapper.trafficOperationControl.eventManage.SdTrafficImageMapper;
+import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.electromechanicalPatrol.ISdFaultListService;
 import com.tunnel.business.utils.util.UUIDUtil;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -28,7 +30,7 @@ import java.util.List;
 
 /**
  * 故障清单Service业务层处理
- * 
+ *
  * @author ruoyi
  * @date 2022-11-02
  */
@@ -41,9 +43,12 @@ public class SdFaultListServiceImpl implements ISdFaultListService
     @Autowired
     private SdTrafficImageMapper sdTrafficImageMapper;
 
+    @Autowired
+    private ISdDevicesService sdDevicesService;
+
     /**
      * 查询故障清单
-     * 
+     *
      * @param id 故障清单主键
      * @return 故障清单
      */
@@ -64,7 +69,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 查询故障清单列表
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 故障清单
      */
@@ -110,7 +115,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 新增故障清单
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 结果
      */
@@ -123,6 +128,11 @@ public class SdFaultListServiceImpl implements ISdFaultListService
         try {
             sdFaultList.setCreateTime(DateUtils.getNowDate());// 创建时间
             sdFaultList.setCreateBy(SecurityUtils.getUsername());// 设置当前创建人
+            if (sdFaultList.getEqId() != null && !sdFaultList.getEqId().equals("")
+                    && (sdFaultList.getFaultLocation() == null || sdFaultList.getFaultLocation().equals(""))) {
+                SdDevices sdDevices = sdDevicesService.selectSdDevicesById(sdFaultList.getEqId());
+                sdFaultList.setFaultLocation(sdDevices.getPile());
+            }
             if(file!=null){
                 String guid = UUIDUtil.getRandom32BeginTimePK();// 生成guid
                 sdFaultList.setImgFileId(guid);// 文件关联ID
@@ -185,7 +195,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 修改故障清单
-     * 
+     *
      * @param sdFaultList 故障清单
      * @return 结果
      */
@@ -267,7 +277,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 批量删除故障清单
-     * 
+     *
      * @param ids 需要删除的故障清单主键
      * @return 结果
      */
@@ -279,7 +289,7 @@ public class SdFaultListServiceImpl implements ISdFaultListService
 
     /**
      * 删除故障清单信息
-     * 
+     *
      * @param id 故障清单主键
      * @return 结果
      */

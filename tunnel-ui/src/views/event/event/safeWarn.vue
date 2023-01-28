@@ -724,17 +724,17 @@
     <el-dialog
       :title="title"
       :visible.sync="open"
-      width="1200px"
+      width="1000px"
       append-to-body
     >
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-row>
+      <el-form ref="form" :model="form" label-width="110px">
+        <el-row style="padding:10px">
           <el-col :span="24">
             <div class="topTxt">故障基本信息</div>
           </el-col>
           <el-col :span="8" :style="{ display: 'none' }">
             <el-form-item label="故障id" prop="id" :style="{ display: 'none' }">
-              <el-input v-model="form.id" placeholder="请输入发现源" />
+              <el-input v-model="form.id" placeholder="请输入发现源" style="width:100%"/>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -743,6 +743,7 @@
                 v-model="form.tunnelId"
                 :disabled="disstate"
                 placeholder="请选择所属隧道"
+                style="width:100%"
               >
                 <el-option
                   v-for="item in tunnelList"
@@ -753,13 +754,13 @@
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="8">
             <el-form-item label="故障类型" prop="faultType">
               <el-select
                 v-model="form.faultType"
                 :disabled="disstate"
                 placeholder="请选择故障类型"
+                style="width:100%"
               >
                 <el-option
                   v-for="item in faultTypeOptions"
@@ -776,6 +777,7 @@
                 :disabled="disstate"
                 v-model="form.faultSource"
                 placeholder="请输入发现源"
+                style="width:100%"
               />
             </el-form-item>
           </el-col>
@@ -789,6 +791,7 @@
                 type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障发现时间"
+                style="width:100%"
               >
               </el-date-picker>
             </el-form-item>
@@ -798,22 +801,22 @@
               <el-input
                 :disabled="disstate"
                 v-model="form.faultCxtime"
-                style="width: 15.5em"
+                style="width: 100%"
                 placeholder="请按照天/小时/分格式填写"
               />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="8">
             <el-form-item label="故障填报时间" prop="faultTbtime">
               <el-date-picker
                 clearable
                 size="small"
                 :disabled="disstate"
                 v-model="form.faultTbtime"
-                style="width: 268px"
                 type="datetime"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择故障填报时间"
+                style="width: 100%"
               >
               </el-date-picker>
             </el-form-item>
@@ -865,12 +868,12 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="7">
+          <el-col :span="8">
             <el-form-item label="设备运行状态" prop="eqRunStatus">
               <el-input
                 v-model="form.eqRunStatus"
                 :disabled="disstate"
-                placeholder=""
+                placeholder="请输入设备运行状态"
               />
             </el-form-item>
           </el-col>
@@ -931,13 +934,13 @@
                 maxlength="250"
                 :disabled="disstate"
                 placeholder="请输入故障描述"
-                style="width: 80%"
+                style="width: 100%"
                 type="textarea"
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="现场图片" label-width="120px">
+            <el-form-item label="现场图片" label-width="110px">
               <el-upload
                 ref="upload"
                 action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -964,14 +967,14 @@
           </el-col>
         </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button v-if="isWritable" type="primary" @click="submitForm"
-          >仅保存</el-button
+      <div class="dialogFooterButton">
+        <div v-if="isWritable"  @click="submitForm"
+          >仅保存</div
         >
-        <el-button v-if="isWritable" type="primary" @click="publishForm"
-          >保存并发布</el-button
+        <div v-if="isWritable"  @click="publishForm"
+          >保存并发布</div
         >
-        <el-button @click="cancel">取 消</el-button>
+        <div @click="cancel">取 消</div>
       </div>
     </el-dialog>
 
@@ -2857,13 +2860,14 @@ export default {
   left: 20%;
   
 }
-::v-deep .el-dialog{
+  ::v-deep .detailsDialog .el-dialog{
     height:calc(100% - 8vh) !important;
     .el-dialog__body{
       height: calc(100% - 4vh - 30px);
       padding:0 !important;
     }
   }
+
 .animationDialog {
   z-index: 2008 !important;
   height: 92%;
@@ -3196,6 +3200,10 @@ hr {
 }
 ::v-deep .el-carousel__indicators{
   display: none;
+}
+.topTxt{
+  margin-left: 15px;
+  margin-top: 10px;
 }
 </style>
 

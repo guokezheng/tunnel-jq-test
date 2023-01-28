@@ -527,7 +527,16 @@
     color: white;
     border: 1px solid #05AFE3;
   }
+  .el-input-number__increase, .el-input-number__decrease{
+    background: #012E51 !important;
+    color: white !important;
+    border-left: 1px solid #05AFE3 !important;
+  }
+  .el-input-number__increase{
+    border-bottom: 1px solid #05AFE3 !important;
+  }
   #app {
+    
     .el-tree-node__content:hover{
       background: #004375;
     }

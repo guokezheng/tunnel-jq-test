@@ -86,6 +86,14 @@
       background-color: #ffffff;
     }
   }
+  .el-input-number__increase, .el-input-number__decrease{
+    background: #012E51 !important;
+    color: white !important;
+    border-left: 1px solid #05AFE3 !important;
+  }
+  .el-input-number__increase{
+    border-bottom: 1px solid #05AFE3 !important;
+  }
   #app {
     .eventTypeButton{
       border: solid 1px #65bfff;

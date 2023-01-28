@@ -189,7 +189,7 @@
           >
         </div>
       </div>
-      <div v-show="infoType == 'add'">
+      <!-- <div v-show="infoType == 'add'">
         <div
           style="
             width: calc(100% - 30px);
@@ -321,9 +321,9 @@
                 >
                   <el-option
                     v-for="item in fontTypeOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
+                    :key="item.dictLabel"
+                    :label="item.dictLabel"
+                    :value="item.dictLabel"
                   >
                   </el-option>
                 </el-select>
@@ -352,9 +352,9 @@
                 >
                   <el-option
                     v-for="item in colorOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
+                    :key="item.cssClass"
+                    :label="item.dictLabel"
+                    :value="item.cssClass"
                   >
                   </el-option>
                 </el-select>
@@ -390,8 +390,8 @@
             </el-col>
           </el-row>
         </el-form>
-      </div>
-    </el-dialog>
+      </div>-->
+    </el-dialog> 
     <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
@@ -524,18 +524,18 @@ export default {
         },
       ],
       fontTypeOptions: [
-        {
-          code: "KaiTi",
-          content: "楷体",
-        },
-        {
-          code: "SimSun",
-          content: "宋体",
-        },
-        {
-          code: "SimHei",
-          content: "黑体",
-        },
+        // {
+        //   code: "KaiTi",
+        //   content: "楷体",
+        // },
+        // {
+        //   code: "SimSun",
+        //   content: "宋体",
+        // },
+        // {
+        //   code: "SimHei",
+        //   content: "黑体",
+        // },
       ],
       fontSizeOpt: [
         {
@@ -552,22 +552,22 @@ export default {
         },
       ],
       colorOptions: [
-        {
-          code: "red",
-          content: "红色",
-        },
-        {
-          code: "yellow",
-          content: "黄色",
-        },
-        {
-          code: "blue",
-          content: "蓝色",
-        },
-        {
-          code: "GreenYellow",
-          content: "绿色",
-        },
+        // {
+        //   code: "red",
+        //   content: "红色",
+        // },
+        // {
+        //   code: "yellow",
+        //   content: "黄色",
+        // },
+        // {
+        //   code: "blue",
+        //   content: "蓝色",
+        // },
+        // {
+        //   code: "GreenYellow",
+        //   content: "绿色",
+        // },
       ],
       inScreenModeOptions: [
         {
@@ -677,6 +677,16 @@ export default {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
     });
+    this.getDicts("iot_devices_font_color").then((res) => {
+      this.colorOptions = res.data;
+      console.log(this.colorOptions, "字体颜色");
+    });
+    this.getDicts("iot_device_font_type").then((res) => {
+      this.fontTypeOptions = res.data;
+      console.log(this.fontTypeOptions, "字体类型");
+    });
+    
+    
   },
   methods: {
     // 信息发布
@@ -757,18 +767,15 @@ export default {
       } else {
         this.$refs.addinfo.init(this.devicePixelMode, type,mode);
       }
-      console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
     },
     // 接收子组件新增待发模板
     addInfo(form) {
       console.log(form, "待发新增");
       this.contentList.push(form);
-      console.log(this.contentList, "this.contentListthis.contentList");
       this.$forceUpdate();
     },
     // 新增 修改分辨率
     changeScreenSize(size) {
-      console.log(size, "00000000000000000000");
       this.boardWidth = size.split("*")[0];
       this.boardHeight = size.split("*")[1];
 
@@ -798,10 +805,9 @@ export default {
       //   this.$forceUpdate();
       // } else {
 
-      console.log(form, "1111111111111");
       this.contentList[this.index_] = form;
       this.$forceUpdate();
-      console.log(this.contentList, "99999999999");
+      console.log(this.contentList, "this.contentList");
 
       // }
     },
@@ -810,7 +816,6 @@ export default {
       this.index_ = index;
       console.log(item);
       this.boardEmitItem = item;
-      // console.log(this.form.devicePixel,"this.form.devicePixel");
       this.boardEmitItem.screenSize = this.addForm.devicePixel;
       // this.boardEmitItem.deviceId = this.deviceId;
       this.boardEmitItem.type = type;
@@ -953,7 +958,6 @@ export default {
     },
 
     getCoordinate1(coordinate) {
-      console.log(this.addForm.devicePixel, "this.addForm.devicePixel");
       let screen = this.addForm.devicePixel.split("*")[0];
     
       if (screen <= 394) {
@@ -991,7 +995,6 @@ export default {
       } else {
         screen = screenSize.split("*")[0];
       }
-      console.log(screen, "screen");
       if (screen <= 394) {
         if (font.toString().length == 2) {
           return font + "px";
@@ -1246,6 +1249,7 @@ export default {
   // background: #fff;
   margin: 0 30px 0 15px;
   overflow-y: auto;
+  overflow-x: hidden;
   border: solid 1px #01aafd;
   .infoContent {
     width: 97%;

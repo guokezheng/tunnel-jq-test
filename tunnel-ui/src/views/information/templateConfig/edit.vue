@@ -4,7 +4,7 @@
     :visible.sync="visible"
     top="6vh"
     width="1200px"
-    before-close="visible = false"
+    :before-close="closeDialog"
   >
     <el-card class="box-card" style="margin-top: 2vh">
       <span v-if="dataForm.applyType == ''" style="color: red"
@@ -208,9 +208,9 @@
               >
                 <el-option
                   v-for="item in colorOptions"
-                  :key="item.code"
-                  :label="item.content"
-                  :value="item.code"
+                  :key="item.cssClass"
+                  :label="item.dictLabel"
+                  :value="item.cssClass"
                 >
                 </el-option>
               </el-select>
@@ -221,9 +221,9 @@
               <el-select v-model="res.fontSize" style="width: 100%">
                 <el-option
                   v-for="item in fontSizeOpt"
-                  :key="item.code"
-                  :label="item.content"
-                  :value="item.code"
+                  :key="item.dictValue"
+                  :label="item.dictLabel"
+                  :value="item.dictValue"
                 >
                 </el-option>
               </el-select>
@@ -234,9 +234,9 @@
               <el-select v-model="res.fontType" filterable placeholder="请选择"  style="width: 100%">
                 <el-option
                   v-for="item in fontTypeOptions"
-                  :key="item.code"
-                  :label="item.content"
-                  :value="item.code"
+                  :key="item.dictLabel"
+                  :label="item.dictLabel"
+                  :value="item.dictLabel"
                 >
                 </el-option>
               </el-select>
@@ -287,9 +287,9 @@
               >
                 <el-option
                   v-for="item in inScreenModeOptions"
-                  :key="item.code"
-                  :label="item.name"
-                  :value="item.code"
+                  :key="item.cssClass"
+                  :label="item.dictLabel"
+                  :value="item.cssClass"
                 >
                 </el-option>
               </el-select>
@@ -324,7 +324,7 @@
     </el-card>
 
     <template slot="footer">
-      <el-button size="small" @click="visible = false">取消</el-button>
+      <el-button size="small" @click="closeDialog()">取消</el-button>
       <el-button
         size="small"
         @click="dataFormSubmitHandle()"
@@ -349,7 +349,6 @@ import {
 export default {
   data() {
     return {
-      fontSizeOpt: [],
       checkList: [], //复选框一组
       obj: "",
       imgUrl: [],
@@ -399,18 +398,18 @@ export default {
       templateContent: [],
       templateDelContent: [],
       fontTypeOptions: [
-        {
-          code: "KaiTi",
-          content: "楷体",
-        },
-        {
-          code: "SimSun",
-          content: "宋体",
-        },
-        {
-          code: "SimHei",
-          content: "黑体",
-        },
+        // {
+        //   code: "KaiTi",
+        //   content: "楷体",
+        // },
+        // {
+        //   code: "SimSun",
+        //   content: "宋体",
+        // },
+        // {
+        //   code: "SimHei",
+        //   content: "黑体",
+        // },
       ],
       screenSizeOptions: [
         // {
@@ -439,22 +438,22 @@ export default {
         // },
       ],
       colorOptions: [
-        {
-          code: "red",
-          content: "红色",
-        },
-        {
-          code: "yellow",
-          content: "黄色",
-        },
-        {
-          code: "blue",
-          content: "蓝色",
-        },
-        {
-          code: "GreenYellow",
-          content: "绿色",
-        },
+        // {
+        //   code: "red",
+        //   content: "红色",
+        // },
+        // {
+        //   code: "yellow",
+        //   content: "黄色",
+        // },
+        // {
+        //   code: "blue",
+        //   content: "蓝色",
+        // },
+        // {
+        //   code: "GreenYellow",
+        //   content: "绿色",
+        // },
       ],
       isCurrencyOptions: [
         {
@@ -467,94 +466,94 @@ export default {
         },
       ],
       inScreenModeOptions: [
-        {
-          code: "0",
-          name: "清屏（全黑)",
-        },
-        {
-          code: "1",
-          name: "立即显示",
-        },
-        {
-          code: "2",
-          name: "上移",
-        },
-        {
-          code: "3",
-          name: "下移",
-        },
-        {
-          code: "4",
-          name: "左移",
-        },
-        {
-          code: "5",
-          name: "右移",
-        },
-        {
-          code: "6",
-          name: "横百叶窗",
-        },
-        {
-          code: "7",
-          name: "竖百叶窗",
-        },
-        {
-          code: "8",
-          name: "上下合拢",
-        },
-        {
-          code: "9",
-          name: "上下展开",
-        },
-        {
-          code: "10",
-          name: "左右合拢",
-        },
-        {
-          code: "11",
-          name: "左右展开",
-        },
-        {
-          code: "12",
-          name: "中心合拢",
-        },
-        {
-          code: "13",
-          name: "中心展开",
-        },
-        {
-          code: "14",
-          name: "向下马赛克",
-        },
-        {
-          code: "15",
-          name: "向右马赛克",
-        },
-        {
-          code: "16",
-          name: "淡入",
-        },
-        {
-          code: "17",
-          name: "淡出",
-        },
-        {
-          code: "18",
-          name: "字符闪烁（闪后消失）",
-        },
-        {
-          code: "19",
-          name: "字符闪烁（闪后停留）",
-        },
-        {
-          code: "20",
-          name: "区域闪烁（闪后复原）",
-        },
-        {
-          code: "21",
-          name: "区域闪烁（闪后区域为黑）",
-        },
+        // {
+        //   code: "0",
+        //   name: "清屏（全黑)",
+        // },
+        // {
+        //   code: "1",
+        //   name: "立即显示",
+        // },
+        // {
+        //   code: "2",
+        //   name: "上移",
+        // },
+        // {
+        //   code: "3",
+        //   name: "下移",
+        // },
+        // {
+        //   code: "4",
+        //   name: "左移",
+        // },
+        // {
+        //   code: "5",
+        //   name: "右移",
+        // },
+        // {
+        //   code: "6",
+        //   name: "横百叶窗",
+        // },
+        // {
+        //   code: "7",
+        //   name: "竖百叶窗",
+        // },
+        // {
+        //   code: "8",
+        //   name: "上下合拢",
+        // },
+        // {
+        //   code: "9",
+        //   name: "上下展开",
+        // },
+        // {
+        //   code: "10",
+        //   name: "左右合拢",
+        // },
+        // {
+        //   code: "11",
+        //   name: "左右展开",
+        // },
+        // {
+        //   code: "12",
+        //   name: "中心合拢",
+        // },
+        // {
+        //   code: "13",
+        //   name: "中心展开",
+        // },
+        // {
+        //   code: "14",
+        //   name: "向下马赛克",
+        // },
+        // {
+        //   code: "15",
+        //   name: "向右马赛克",
+        // },
+        // {
+        //   code: "16",
+        //   name: "淡入",
+        // },
+        // {
+        //   code: "17",
+        //   name: "淡出",
+        // },
+        // {
+        //   code: "18",
+        //   name: "字符闪烁（闪后消失）",
+        // },
+        // {
+        //   code: "19",
+        //   name: "字符闪烁（闪后停留）",
+        // },
+        // {
+        //   code: "20",
+        //   name: "区域闪烁（闪后复原）",
+        // },
+        // {
+        //   code: "21",
+        //   name: "区域闪烁（闪后区域为黑）",
+        // },
       ],
       imgSize: [
         {
@@ -567,18 +566,18 @@ export default {
         },
       ],
       fontSizeOpt: [
-        {
-          code: "24",
-          name: "24",
-        },
-        {
-          code: "32",
-          name: "32",
-        },
-        {
-          code: "16",
-          name: "16",
-        },
+        // {
+        //   code: "24",
+        //   name: "24",
+        // },
+        // {
+        //   code: "32",
+        //   name: "32",
+        // },
+        // {
+        //   code: "16",
+        //   name: "16",
+        // },
       ],
       iotTemplateCategoryList: [],
       title: "选择图片",
@@ -684,7 +683,8 @@ export default {
   //     },
   //   },
   // },
-  mounted() {
+  
+  created() {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
       this.screenSizeOptions = res.data;
@@ -693,6 +693,22 @@ export default {
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+    });
+    this.getDicts("iot_device_font_type").then((res) => {
+      this.fontTypeOptions = res.data;
+      console.log(this.fontTypeOptions, "字体类型");
+    });
+    this.getDicts("iot_devices_font_color").then((res) => {
+      this.colorOptions = res.data;
+      console.log(this.colorOptions, "字体颜色");
+    });
+    this.getDicts("iot_device_font_size").then((res) => {
+      this.fontSizeOpt = res.data;
+      console.log(this.fontSizeOpt, "字体大小");
+    });
+    this.getDicts("iot_device_font_inScreen_mode").then((res) => {
+      this.inScreenModeOptions = res.data;
+      console.log(this.inScreenModeOptions, "入屏方式");
     });
   },
   methods: {
@@ -1058,7 +1074,9 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
-
+    closeDialog(){
+        this.visible = false;
+      },
     /**
      * 获取图片信息
      */

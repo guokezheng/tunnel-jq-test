@@ -203,9 +203,9 @@
                 >
                   <el-option
                     v-for="item in colorOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
+                    :key="item.cssClass"
+                    :label="item.dictLabel"
+                    :value="item.cssClass"
                   >
                   </el-option>
                 </el-select>
@@ -216,9 +216,9 @@
                 <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
                   <el-option
                     v-for="item in fontSizeOpt"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
                   >
                   </el-option>
                 </el-select>
@@ -233,9 +233,9 @@
                 >
                   <el-option
                     v-for="item in fontTypeOptions"
-                    :key="item.code"
-                    :label="item.content"
-                    :value="item.code"
+                    :key="item.cssClass"
+                    :label="item.dictLabel"
+                    :value="item.cssClass"
                   >
                   </el-option>
                 </el-select>
@@ -284,9 +284,9 @@
                 >
                   <el-option
                     v-for="item in inScreenModeOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
+                    :key="item.cssClass"
+                    :label="item.dictLabel"
+                    :value="item.cssClass"
                   >
                   </el-option>
                 </el-select>
@@ -475,18 +475,18 @@ export default {
         ],
       },
       fontTypeOptions: [
-        {
-          code: "KaiTi",
-          content: "楷体",
-        },
-        {
-          code: "SimSun",
-          content: "宋体",
-        },
-        {
-          code: "SimHei",
-          content: "黑体",
-        },
+        // {
+        //   code: "KaiTi",
+        //   content: "楷体",
+        // },
+        // {
+        //   code: "SimSun",
+        //   content: "宋体",
+        // },
+        // {
+        //   code: "SimHei",
+        //   content: "黑体",
+        // },
       ],
       screenSizeOptions: [
         // {
@@ -497,22 +497,22 @@ export default {
         // },
       ],
       colorOptions: [
-        {
-          code: "red",
-          content: "红色",
-        },
-        {
-          code: "yellow",
-          content: "黄色",
-        },
-        {
-          code: "blue",
-          content: "蓝色",
-        },
-        {
-          code: "GreenYellow",
-          content: "绿色",
-        },
+        // {
+        //   code: "red",
+        //   content: "红色",
+        // },
+        // {
+        //   code: "yellow",
+        //   content: "黄色",
+        // },
+        // {
+        //   code: "blue",
+        //   content: "蓝色",
+        // },
+        // {
+        //   code: "GreenYellow",
+        //   content: "绿色",
+        // },
       ],
       isCurrencyOptions: [
         {
@@ -525,94 +525,94 @@ export default {
         },
       ],
       inScreenModeOptions: [
-        {
-          code: "0",
-          name: "清屏（全黑)",
-        },
-        {
-          code: "1",
-          name: "立即显示",
-        },
-        {
-          code: "2",
-          name: "上移",
-        },
-        {
-          code: "3",
-          name: "下移",
-        },
-        {
-          code: "4",
-          name: "左移",
-        },
-        {
-          code: "5",
-          name: "右移",
-        },
-        {
-          code: "6",
-          name: "横百叶窗",
-        },
-        {
-          code: "7",
-          name: "竖百叶窗",
-        },
-        {
-          code: "8",
-          name: "上下合拢",
-        },
-        {
-          code: "9",
-          name: "上下展开",
-        },
-        {
-          code: "10",
-          name: "左右合拢",
-        },
-        {
-          code: "11",
-          name: "左右展开",
-        },
-        {
-          code: "12",
-          name: "中心合拢",
-        },
-        {
-          code: "13",
-          name: "中心展开",
-        },
-        {
-          code: "14",
-          name: "向下马赛克",
-        },
-        {
-          code: "15",
-          name: "向右马赛克",
-        },
-        {
-          code: "16",
-          name: "淡入",
-        },
-        {
-          code: "17",
-          name: "淡出",
-        },
-        {
-          code: "18",
-          name: "字符闪烁（闪后消失）",
-        },
-        {
-          code: "19",
-          name: "字符闪烁（闪后停留）",
-        },
-        {
-          code: "20",
-          name: "区域闪烁（闪后复原）",
-        },
-        {
-          code: "21",
-          name: "区域闪烁（闪后区域为黑）",
-        },
+        // {
+        //   code: "0",
+        //   name: "清屏（全黑)",
+        // },
+        // {
+        //   code: "1",
+        //   name: "立即显示",
+        // },
+        // {
+        //   code: "2",
+        //   name: "上移",
+        // },
+        // {
+        //   code: "3",
+        //   name: "下移",
+        // },
+        // {
+        //   code: "4",
+        //   name: "左移",
+        // },
+        // {
+        //   code: "5",
+        //   name: "右移",
+        // },
+        // {
+        //   code: "6",
+        //   name: "横百叶窗",
+        // },
+        // {
+        //   code: "7",
+        //   name: "竖百叶窗",
+        // },
+        // {
+        //   code: "8",
+        //   name: "上下合拢",
+        // },
+        // {
+        //   code: "9",
+        //   name: "上下展开",
+        // },
+        // {
+        //   code: "10",
+        //   name: "左右合拢",
+        // },
+        // {
+        //   code: "11",
+        //   name: "左右展开",
+        // },
+        // {
+        //   code: "12",
+        //   name: "中心合拢",
+        // },
+        // {
+        //   code: "13",
+        //   name: "中心展开",
+        // },
+        // {
+        //   code: "14",
+        //   name: "向下马赛克",
+        // },
+        // {
+        //   code: "15",
+        //   name: "向右马赛克",
+        // },
+        // {
+        //   code: "16",
+        //   name: "淡入",
+        // },
+        // {
+        //   code: "17",
+        //   name: "淡出",
+        // },
+        // {
+        //   code: "18",
+        //   name: "字符闪烁（闪后消失）",
+        // },
+        // {
+        //   code: "19",
+        //   name: "字符闪烁（闪后停留）",
+        // },
+        // {
+        //   code: "20",
+        //   name: "区域闪烁（闪后复原）",
+        // },
+        // {
+        //   code: "21",
+        //   name: "区域闪烁（闪后区域为黑）",
+        // },
       ],
       imgSize: [
         {
@@ -625,18 +625,18 @@ export default {
         },
       ],
       fontSizeOpt: [
-        {
-          value: "32px",
-          label: "32px",
-        },
-        {
-          value: "24px",
-          label: "24px",
-        },
-        {
-          value: "16px",
-          label: "16px",
-        },
+        // {
+        //   value: "32px",
+        //   label: "32px",
+        // },
+        // {
+        //   value: "24px",
+        //   label: "24px",
+        // },
+        // {
+        //   value: "16px",
+        //   label: "16px",
+        // },
       ],
       title: "选择图片",
       loading: false,
@@ -736,6 +736,22 @@ export default {
     });
   },
   created() {
+    this.getDicts("iot_device_font_type").then((res) => {
+      this.fontTypeOptions = res.data;
+      console.log(this.fontTypeOptions, "字体类型");
+    });
+    this.getDicts("iot_devices_font_color").then((res) => {
+      this.colorOptions = res.data;
+      console.log(this.colorOptions, "字体颜色");
+    });
+    this.getDicts("iot_device_font_size").then((res) => {
+      this.fontSizeOpt = res.data;
+      console.log(this.fontSizeOpt, "字体大小");
+    });
+    this.getDicts("iot_device_font_inScreen_mode").then((res) => {
+      this.inScreenModeOptions = res.data;
+      console.log(this.inScreenModeOptions, "入屏方式");
+    });
     this.getdevicessize();
   },
   methods: {

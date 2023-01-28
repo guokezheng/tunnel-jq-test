@@ -166,6 +166,7 @@
             v-show="dain.equipmentTypeId == 16 || dain.equipmentTypeId == 36"
           >
             <el-cascader
+              style="width: 90%"
               :props="checkStrictly"
               v-model="dain.state"
               :options="dain.templatesList"
@@ -463,6 +464,9 @@ export default {
     },
     // 改变设备类型
     changeEquipmentType(index) {
+      this.$set(this.strategyForm.autoControl[index], "openState", "");
+      this.$set(this.strategyForm.autoControl[index], "closeState", "");
+      this.$set(this.strategyForm.autoControl[index], "equipments", null);
       let params = {
         eqType: this.strategyForm.autoControl[index].equipmentTypeId, //设备类型
         eqTunnelId: this.strategyForm.tunnelId, //隧道

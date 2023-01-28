@@ -1112,7 +1112,6 @@ export default {
       }
     },
     getAudioFileListData() {
-      console.log(1111111111111111);
       let params = {
         tunnelId: this.currentClickData.tunnelId,
         direction: this.currentClickData.direction,
@@ -1158,7 +1157,7 @@ export default {
       for (let i = 0; i < this.planTypeIdList.length; i++) {
         console.log(this.planTypeIdList[i].handleStrategyList);
         if (
-          this.planTypeIdList[i].handleStrategyList == "" ||
+          this.planTypeIdList[i].equipments == "" ||
           this.planTypeIdList[i].processName == ""
         ) {
           return this.$modal.msgWarning("请填写完整");

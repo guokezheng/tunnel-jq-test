@@ -563,7 +563,7 @@ export default {
     removeItem(index) {
       console.log(index);
       if (this.strategyForm.manualControl.length == 1) {
-        return this.$modal.msgError("至少添加一条执行操作");
+        return this.$modal.msgWarning("至少添加一条执行操作");
       }
       this.strategyForm.manualControl.splice(index, 1);
     },

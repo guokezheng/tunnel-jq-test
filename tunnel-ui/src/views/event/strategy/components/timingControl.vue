@@ -558,6 +558,9 @@ export default {
     },
     removeItem(index) {
       console.log(index);
+      if (this.strategyForm.autoControl.length == 1) {
+        return this.$modal.msgWarning("至少保留一条执行操作");
+      }
       this.strategyForm.autoControl.splice(index, 1);
     },
     // 添加执行操作

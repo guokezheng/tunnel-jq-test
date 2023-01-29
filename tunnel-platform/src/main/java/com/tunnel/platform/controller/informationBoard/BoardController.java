@@ -158,6 +158,10 @@ public class BoardController extends BaseController {
     @ResponseBody
     public AjaxResult getBoardEditInfo(Long deviceId) {
         AjaxResult ajaxResult = new AjaxResult();
+        SdDevices device = sdDevicesService.getDeviceByAssociationDeviceId(deviceId);
+        if (device.getEqStatus() != null && device.getEqStatus().equals(DevicesStatusEnum.DEVICE_OFF_LINE.getCode())) {
+            return null;
+        }
         List<String> paramsList = new ArrayList<String>();
         try {
             // 1.获取设备状态
@@ -172,10 +176,14 @@ public class BoardController extends BaseController {
             items.put("support", DataUtils.getSupport(String.valueOf(deviceId), protocolType));
             paramsList.add(items.toString());
             ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "返回成功", paramsList);
-        } catch (BusinessException e) {
-            return AjaxResult.error(-1, e.getMessage());
+//        } catch (BusinessException e) {
+//            return AjaxResult.error(-1, e.getMessage());
         } catch (Exception e) {
-        	return AjaxResult.error(-1, e.getMessage());
+//        	return AjaxResult.error(-1, e.getMessage());
+            device.setEqStatus(DevicesStatusEnum.DEVICE_OFF_LINE.getCode());
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
+            return null;
         }
 
         return ajaxResult;

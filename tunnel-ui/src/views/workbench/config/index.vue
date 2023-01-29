@@ -363,7 +363,7 @@
                               : ''
                           ">
                         </img>
-                        <div v-show="item.eqType == '16'"
+                        <div v-show="item.eqType == 16"
                         class="boardBox1"
 
                         :style="{
@@ -387,7 +387,7 @@
 
                           <span>{{getBoardStyle(item.associated_device_id,'content') }}</span>
                         </div>
-                        <div v-show="item.eqType == '36'"
+                        <div v-show="item.eqType == 36"
                         class="boardBox2"
 
                         :style="{
@@ -4331,9 +4331,9 @@ export default {
 
       }else{
         if(type == 'width'){
-          return 72;
-        }else if(type == 'height'){
           return 24;
+        }else if(type == 'height'){
+          return 72;
         }else if(type == 'content'){
           return '山东高速欢迎您'
         }
@@ -4730,8 +4730,14 @@ export default {
       this.drawerA = true;
       this.drawerB = false;
       this.drawerCVisible = false;
-      this.phoneForm1 = {};
-      this.phoneForm2 = {};
+      // Object.assign(this.$data.phoneForm1, this.$options.data().phoneForm1)
+      this.phoneForm1 = {
+        'loopCount': '1',
+      };
+      this.phoneForm2 = {
+        'loopCount': '1',
+
+      };
     },
     isDrawerB() {
       this.drawerB = true;

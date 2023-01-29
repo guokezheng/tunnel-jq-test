@@ -129,6 +129,7 @@
     <el-table
       v-loading="loading"
       :data="tunnelsList"
+      ref="tableRef"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
       max-height="640"
@@ -602,7 +603,6 @@ export default {
     };
     return {
       manageStatin:this.$cache.local.get("manageStation"),
-
       oper: "add", //add 添加  edit修改
       // 遮罩层
       loading: true,
@@ -999,6 +999,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
+      let that = this
       const tunnelIds = row.tunnelId || this.ids;
       this.$confirm("是否确认删除?", "警告", {
         confirmButtonText: "确定",
@@ -1013,7 +1014,9 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function (e) {
+          that.getList()
+        });
     },
     /** 导出按钮操作 */
     handleExport() {

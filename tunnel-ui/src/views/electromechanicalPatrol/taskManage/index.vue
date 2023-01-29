@@ -355,7 +355,7 @@
             />
           </el-select>
           <div class="cancel-determine">
-            <el-button @click="determine1">取消</el-button>
+            <el-button @click="cancelDetermine1">取消</el-button>
             <el-button type="primary" @click="determine1">确定</el-button>
           </div>
         </div>
@@ -489,8 +489,9 @@
       </div>
       <div class="col-1" v-for="(ite, index) in taskNews" :key="index">
         发布状态/执行状态：
-        <div class="col-card">{{ ite.publishStatus }}</div>
-        <div class="col-card">{{ ite.taskStatus }}</div>
+        <div class="col-card" v-show="ite.publishStatus">{{ ite.publishStatus }}</div>
+        <div class="col-card" v-show="ite.taskStatus">{{ ite.taskStatus }}</div>
+        <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews" :key="index">
         <div class="card-col" style="font-size:16px">
@@ -612,7 +613,9 @@
           <div class="test">
             任务持续时长：
             <span>{{ tas.taskCxtime }}</span>
-            <div class="chaoshi">{{ tas.ifchaosgu }}</div>
+            <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
+            <div >{{ tas.ifchaosgu }}</div>
+
           </div>
         </div>
         <div class="card-cols">
@@ -623,13 +626,13 @@
         </div>
       </div>
       <div class="card">
-        <div class="table-row" v-if="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
+        <div class="table-row" v-show="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
           <div style="width: 20%">{{item.tunnelName}} / {{item.optPersonId}}</div>
           <div style="width: 30%">{{item.optTime}}</div>
         </div>
-        <div v-if="taskOpt.length==0">
+        <div v-show="taskOpt.length==0">
           <div   style="text-align: center;margin-top: 20px;margin-bottom: 20px">
             暂无执行记录
           </div>
@@ -946,8 +949,9 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
+      console.log(selection,"selectionselectionselectionselection")
       this.dialogSelection = selection;
-      console.log("=============="+this.dialogSelection, "this.dialogSelection");
+      console.log(this.dialogSelection, "this.dialogSelection");
     },
     /** 所属隧道 */
     getTunnel() {
@@ -1195,6 +1199,9 @@ export default {
     },
     show1() {
      //this.tableData1 = null
+     this.dialogSelection = []
+     console.log(this.dialogSelection,"this.dialogSelectionthis.dialogSelectionthis.dialogSelection")
+    //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
       //点击确定，数据还原
       if(this.openCz){
@@ -1219,14 +1226,18 @@ export default {
       }
       this.openGz = false;
     },
+    cancelDetermine1(){
+      this.dialogSelection = []
+      this.isShow1 = false;
 
+    },
     determine1() {
       this.isShow1 = false;
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_1";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
-      this.dialogSelection = "";
+      this.dialogSelection = [];
     },
     determine2() {
       this.isShow2 = false;
@@ -1234,7 +1245,7 @@ export default {
         item.eq_id= item.eq_id+"_2";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
-      this.dialogSelection = "";
+      this.dialogSelection = [];
     },
     // 多选框选中数据
     handleSelectionChange(selection) {

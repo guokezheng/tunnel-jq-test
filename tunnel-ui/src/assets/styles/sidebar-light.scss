@@ -536,7 +536,11 @@
     border-bottom: 1px solid #05AFE3 !important;
   }
   #app {
-    
+    .show-left{
+      .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+        background: #004375;
+      }
+    }
     .el-tree-node__content:hover{
       background: #004375;
     }

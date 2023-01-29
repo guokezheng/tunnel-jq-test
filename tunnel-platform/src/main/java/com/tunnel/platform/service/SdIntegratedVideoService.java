@@ -58,10 +58,14 @@ public class SdIntegratedVideoService {
         requestBody.put("password", "hsdsdVideo");
 
         HttpEntity<HashMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
-
-        ResponseEntity<Map> exchange = template.exchange(url, HttpMethod.POST, httpEntity, Map.class);
-        Map body = exchange.getBody();
-        return Optional.ofNullable(body.get("token")).orElseGet(()->"").toString();
+        try{
+            ResponseEntity<Map> exchange = template.exchange(url, HttpMethod.POST, httpEntity, Map.class);
+            Map body = exchange.getBody();
+            return Optional.ofNullable(body.get("token")).orElseGet(()->"").toString();
+        }catch(Exception ex){
+            log.info("打开相机实时流发生异常：{}",ex.getMessage());
+        }
+        return null;
     }
 
     /**

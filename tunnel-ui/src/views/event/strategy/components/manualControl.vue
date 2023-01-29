@@ -77,7 +77,6 @@
               v-model="items.equipmentTypeId"
               placeholder="请选择设备类型"
               clearable
-              title="手动控制"
               @change="changeEquipmentType(index)"
             >
               <el-option

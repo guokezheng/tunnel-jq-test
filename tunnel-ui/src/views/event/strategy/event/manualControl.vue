@@ -567,7 +567,6 @@ export default {
       }
       this.strategyForm.manualControl.splice(index, 1);
     },
-
     // 添加执行操作
     addItem() {
       this.addCf();

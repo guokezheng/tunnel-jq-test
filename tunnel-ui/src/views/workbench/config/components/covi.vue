@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -169,7 +169,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-         
+
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -200,7 +200,7 @@ export default {
             this.$nextTick(() => {
               this.initChart(coXdata,coYdata,viXdata,viYdata);
     });
-            
+
 
           })
     },
@@ -210,7 +210,7 @@ export default {
       var yName = "";
       var XData = [];
       var YData = [];
-      
+
         if (this.tab == "vi") {
           XData = viXdata;
           YData = viYdata
@@ -222,7 +222,7 @@ export default {
           lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
           yName = "CO/PPM";
         }
-      
+
 
       this.mychart = echarts.init(document.getElementById(this.tab));
       var option = {

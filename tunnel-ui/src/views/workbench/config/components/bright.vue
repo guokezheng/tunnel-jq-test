@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -187,7 +187,7 @@ export default {
           for (var item of response.data.todayLDInsideData) {
             xData.push(item.order_hour);
             yData.push(item.count);
-           
+
           }
         }
         this.brightValue = yData[yData.length - 1];

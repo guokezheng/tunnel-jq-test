@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>

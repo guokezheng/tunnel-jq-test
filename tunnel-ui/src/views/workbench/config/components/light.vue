@@ -43,7 +43,7 @@
               {{ stateForm.tunnelName }}
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="13">
             <el-form-item label="位置桩号:">
               {{ stateForm.pile }}
@@ -54,7 +54,7 @@
               {{ getDirection(stateForm.eqDirection) }}
             </el-form-item>
           </el-col>
-      
+
           <el-col :span="13">
             <el-form-item label="所属机构:">
               {{ stateForm.deptName }}
@@ -62,10 +62,10 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:" label-width="102px">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
-       
+
           <el-col :span="13">
             <el-form-item label="设备状态:">
               <!-- {{ stateForm.eqStatus }} -->
@@ -106,7 +106,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        
+
         <div class="lineClass"></div>
         <el-row style="margin-top:10px">
           <el-col :span="15">
@@ -281,7 +281,7 @@ export default {
             this.stateForm2 = res.data
           })
         }
-        
+
       } else {
         this.$modal.msgWarning("没有设备Id");
       }
@@ -373,12 +373,12 @@ export default {
           }else{
             this.$modal.msgSuccess("控制成功");
           }
-          
+
         }
 
         this.$emit("dialogClose");
       });
-     
+
     },
     // 关闭弹窗
     handleClosee() {

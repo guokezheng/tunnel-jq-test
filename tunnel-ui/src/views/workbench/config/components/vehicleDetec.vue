@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandId) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -139,7 +139,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
@@ -181,7 +181,7 @@ export default {
     this.getMessage();
   },
   mounted() {
-    
+
   },
   methods: {
     // 查设备详情
@@ -233,7 +233,7 @@ export default {
             this.initChart();
           });
         },500)
-        
+
       })
     },
     // 获取图表数据信息
@@ -396,7 +396,7 @@ export default {
   },
 };
 </script>
-  
+
   <style  lang="scss" scoped>
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
   padding: 5px 10px !important;
@@ -480,4 +480,3 @@ export default {
 //       // background-color: #304156;
 //     }
 </style>
-  

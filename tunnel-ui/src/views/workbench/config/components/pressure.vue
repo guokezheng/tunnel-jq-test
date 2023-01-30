@@ -64,7 +64,7 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="设备厂商:">
-                {{ getBrandName(stateForm.brandName) }}
+                {{ stateForm.supplierName }}
               </el-form-item>
             </el-col>
           </el-row>
@@ -113,7 +113,7 @@
   <script>
   import { getDeviceById, getTodayYcylData } from "@/api/equipment/eqlist/api.js"; //查询单选框弹窗信息
   import * as echarts from "echarts";
-  
+
   export default {
     props: ["eqInfo", "brandList", "directionList","eqTypeDialogList"],
     data() {
@@ -341,4 +341,3 @@
   }
 }
   </style>
-  

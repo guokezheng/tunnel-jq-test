@@ -112,7 +112,7 @@
                 </el-col>
                 <el-col :span="7">
                   <el-form-item label="设备厂商:">
-                    {{ getBrandName(stateForm.brandName) }}
+                    {{ stateForm.supplierName }}
                   </el-form-item>
                 </el-col>
                 <el-col :span="9">
@@ -146,7 +146,7 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label="设备厂商:">
-                    {{ getBrandName(stateForm.supplierName) }}
+                    {{ stateForm.supplierName }}
                   </el-form-item>
                 </el-col>
                 <el-col :span="8">
@@ -391,7 +391,7 @@
           </el-row>
         </el-form>
       </div>-->
-    </el-dialog> 
+    </el-dialog>
     <el-dialog
       class="workbench-dialog mesModeDialog"
       title="信息模板"
@@ -463,7 +463,7 @@
     <addinfo ref="addinfo" @addInfo="addInfo"></addinfo>
   </div>
 </template>
-  
+
   <script>
 import { displayH5sVideoAll } from "@/api/icyH5stream";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
@@ -685,8 +685,8 @@ export default {
       this.fontTypeOptions = res.data;
       console.log(this.fontTypeOptions, "字体类型");
     });
-    
-    
+
+
   },
   methods: {
     // 信息发布
@@ -747,7 +747,7 @@ export default {
     // 转分辨率
     getDevicePixel(devicePixel, num) {
       let width = this.addForm.devicePixel.split("*")[0]
-      
+
       if (devicePixel) {
         if(width > 394){
           if(num == 0){
@@ -959,7 +959,7 @@ export default {
 
     getCoordinate1(coordinate) {
       let screen = this.addForm.devicePixel.split("*")[0];
-    
+
       if (screen <= 394) {
         return coordinate + "px";
       } else {
@@ -1102,7 +1102,7 @@ export default {
   },
 };
 </script>
-  
+
   <style lang="scss" scoped>
 .el-row {
   margin-bottom: -10px;
@@ -1345,4 +1345,3 @@ export default {
   width: 0px !important;
 }
 </style>
-  

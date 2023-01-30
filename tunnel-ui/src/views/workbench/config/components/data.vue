@@ -43,7 +43,7 @@
                 {{ stateForm.tunnelName }}
               </el-form-item>
             </el-col>
-          
+
             <el-col :span="13">
               <el-form-item label="位置桩号:">
                 {{ stateForm.pile }}
@@ -54,7 +54,7 @@
                 {{ getDirection(stateForm.eqDirection) }}
               </el-form-item>
             </el-col>
-          
+
             <el-col :span="13">
               <el-form-item label="所属机构:">
                 {{ stateForm.deptName }}
@@ -62,10 +62,10 @@
             </el-col>
             <el-col :span="11">
               <el-form-item label="设备厂商:">
-                {{ getBrandName(stateForm.brandName) }}
+                {{ stateForm.supplierName }}
               </el-form-item>
             </el-col>
-        
+
             <el-col :span="13">
               <el-form-item label="设备状态:">
                 <!-- {{ stateForm.eqStatus }} -->
@@ -90,10 +90,10 @@
                   />
                 </el-select>
               </el-form-item>
-              
+
             </el-col>
           </el-row>
-          
+
         </el-form>
         <div slot="footer" style="float: right; margin-bottom: 20px" v-if="eqInfo.clickEqType == 45">
           <el-button
@@ -212,4 +212,3 @@
     },
   };
   </script>
-  

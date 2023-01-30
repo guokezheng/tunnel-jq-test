@@ -4027,10 +4027,10 @@ export default {
         event[i].left =
           math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
         //计算最终纬度
-        event[i].top =
-          math.add(
-            math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
-          ) + "px";
+        // event[i].top =
+        //   math.add(
+        //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
+        //   ) + "px";
         // console.log(math.multiply(+carLat * this.proportion), "实际left值");
         console.log(event[i].top, "event[i].topevent[i].top");
         // 根据车道数进行判断

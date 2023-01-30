@@ -162,13 +162,13 @@
                   color: getColorStyle(item.COLOR),
                   fontSize: getFontSize(item.FONT_SIZE),
                   fontFamily: item.FONT,
-                  width:getScreenSize(form.devicePixel.split('*')[0],'width') + 'px',
-                  height:getScreenSize(form.devicePixel.split('*')[1],'height') + 'px',
+                  width:getScreenSize(form.devicePixel,'width') + 'px',
+                  height:getScreenSize(form.devicePixel,'height') + 'px',
                 }">
                 <span
                   :style="{
-                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top: getCoordinate2(item.COORDINATE.substring(3, 6)),
+                    left: getCoordinate(item.COORDINATE.substring(0, 3),'left'),
+                    top: getCoordinate(item.COORDINATE.substring(3, 6),'top'),
                   }"
                   style="position: absolute;line-height: 1;"
                   v-html="
@@ -223,18 +223,20 @@
               >
                 <div class="templateTitle">
                   <div :style="{
-                    width:getScreenSize(itm.screenSize.split('*')[0],'width') + 'px',
-                    height:getScreenSize(itm.screenSize.split('*')[1],'height') + 'px',
+                    width:getScreenSize(itm.screenSize,'width') + 'px',
+                    height:getScreenSize(itm.screenSize,'height') + 'px',
                   }"
                   style="background:black;position: relative;">
                     <span
                       :style="{
-                        left: getCoordinate1(
+                        left: getCoordinate(
                           itm.tcontents[0].coordinate.substring(0, 3),
+                          'left',
                           itm.screenSize
                         ),
-                        top: getCoordinate2(
+                        top: getCoordinate(
                           itm.tcontents[0].coordinate.substring(3, 6),
+                          'top',
                           itm.screenSize
                         ),
                       }"
@@ -412,7 +414,7 @@ export default {
   },
   created() {
     this.getDeptList();
-    this.getAllVmsTemplate();
+    this.allVmsTemplate();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
@@ -421,17 +423,29 @@ export default {
   },
   methods: {
     getScreenSize(num,type){
-      if(type == 'width'){
-        if(num>630){
-          return 630
-        }else{
-          return num
+      let width = num.split('*')[0];
+      let height = num.split('*')[1];
+      // 实际分辨率比页面板子小
+      if(width < 630 && height < 75){
+        if(type == 'width'){
+          return width
+        }else if(type == 'height'){
+          return height
         }
-      }else if(type == "height"){
-        if(num>75){
-          return 75
+      }else{
+        // 实际分辨率比页面板子大
+        if(width/630 > height/75){
+          if(type == 'width'){
+            return 630
+          }else if(type == 'height'){
+            return height/(width/630)
+          }
         }else{
-          return num
+          if(type == 'width'){
+            return width/(height/75)
+          }else if(type == 'height'){
+            return 75
+          }
         }
       }
     },
@@ -562,7 +576,7 @@ export default {
       }
     },
     // 情报板管理右侧查询接口
-    getAllVmsTemplate() {
+    allVmsTemplate() {
       const param = {
         devicePixel: this.form.devicePixel,
         category: 0,
@@ -1204,7 +1218,6 @@ export default {
           }
           console.log(con, "con");
           this.contentList = con;
-          this.getAllVmsTemplate();
           // for (var j = 0; j < con.length; j++) {
           //   this.itemStr = this.combineItemContent(
           //     protocolType,
@@ -1238,6 +1251,7 @@ export default {
           //   this.itemStr
           // );
         }
+        this.allVmsTemplate();
         // this.isactive = currRowId;
         // this.infosRowClick(this.disContentList[0]);
         // })
@@ -1275,57 +1289,66 @@ export default {
     },
     getFontSize(font, screenSize) {
       if (!font) {
-        return;
+        return ;
       }
-      var screen = "";
+      let width = '';
+      let height = '';
       if (!screenSize) {
-        screen = this.form.devicePixel.split("*")[0];
+        width = this.form.devicePixel.split("*")[0];
+        height = this.form.devicePixel.split("*")[1];
       } else {
-        screen = screenSize.split("*")[0];
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
       }
-      if (screen <= 630) {
-        var i = 630 / screen;
-
+      if (width < 630 && height < 75) {
         if (font.toString().length == 2) {
           return font + "px";
         } else {
           return font.substring(0, 2) + "px";
         }
       } else {
-        var i = screen / 630;
-        if (font.toString().length == 2) {
-          return font / i + "px";
-        } else {
-          return font.substring(0, 2) / i + "px";
+        if(width/630 > height/75){
+          if (font.toString().length == 2) {
+            return font/(width/630)-4 + 'px';
+          }else {
+            return font.substring(0, 2)/(width/630)-4 + "px";
+          }   
+        }else{
+          if (font.toString().length == 2) {
+            return font/(height/75)-4 + 'px';
+          }else{
+            return font.substring(0, 2)/(height/75)-4 + "px";
+          }
+
         }
       }
     },
-    getCoordinate1(coordinate, screenSize) {
-      var screen = "";
+    getCoordinate(coordinate, type,screenSize) {
+      let width = '';
+      let height = '';
       if (!screenSize) {
-        screen = this.form.devicePixel.split("*")[0];
+        width = this.form.devicePixel.split("*")[0];
+        height = this.form.devicePixel.split("*")[1];
       } else {
-        screen = screenSize.split("*")[0];
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
       }
-      if (screen <= 630) {
+      if (width < 630 && height < 75) {
         return coordinate + "px";
       } else {
-        var i = screen / 630;
-        return coordinate / i + "px";
-      }
-    },
-    getCoordinate2(coordinate, screenSize) {
-      var screen = "";
-      if (!screenSize) {
-        screen = this.form.devicePixel.split("*")[1];
-      } else {
-        screen = screenSize.split("*")[1];
-      }
-      if (screen <= 75) {
-        return coordinate + "px";
-      } else {
-        var i = 75 / screen;
-        return coordinate * i + "px";
+        if(width/630 > height/75){
+          if(type == 'left'){
+            return coordinate/(width/630) + 'px';
+          }else if(type == 'top'){
+            return coordinate/(width/630) + 'px';
+          }
+        }else{
+          if(type == 'left'){
+            return coordinate/(height/75) + 'px';
+          }else if(type == 'top'){
+            return coordinate/(height/75) + 'px';
+          }
+        }
       }
     },
     getFontStyle(font) {

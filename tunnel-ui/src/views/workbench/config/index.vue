@@ -3063,7 +3063,7 @@ import {
   getStrategy,
   handleStrategy,
   workTriggerInfo,
-  updateState
+  updateState,
 } from "@/api/event/strategy";
 import { selectByEqDeno } from "@/api/business/roadState.js";
 import videoPlayer from "@/views/event/vedioRecord/myVideo";
@@ -3130,7 +3130,7 @@ let mode = "";
 export default {
   carShow: false, //车辆是否
   name: "Workbench",
-  dicts: ["sd_sys_name","sys_common_status","sd_control_type"],
+  dicts: ["sd_sys_name", "sys_common_status", "sd_control_type"],
   components: {
     // DragItDude,
     videoPlayer,
@@ -3155,10 +3155,10 @@ export default {
 
   data() {
     return {
-      boardObj:{},
+      boardObj: {},
       fileNamesList: [],
       phoneForm1: {
-        loopCount: '1',
+        loopCount: "1",
         loop: false,
         volume: 0,
         fileNames: [],
@@ -3914,7 +3914,7 @@ export default {
       console.log(this.strategyTypeGroup, "this.strategyTypeGroup");
     });
     this.getDicts("sd_device_opt_state").then((response) => {
-      console.log(response.data,"操作结果")
+      console.log(response.data, "操作结果");
       this.operationStateOptions = response.data;
     });
     this.getDicts("brand").then((data) => {
@@ -3971,7 +3971,7 @@ export default {
       }
     },
     radarDataList(event) {
-      // console.log(event, "websockt工作台接收车辆感知事件数据");
+      console.log(event, "websockt工作台接收车辆感知事件数据");
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
       // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
@@ -3987,7 +3987,7 @@ export default {
       // this.realTimeList = event;
       // console.log(this.realTimeList, "处理完的数据");
       // 横纬竖经 lng 经度；   lat：纬度
-      //       math.add(a+b)//加
+      // math.add(a+b)//加
       // math.subtract(a-b)//减
       // math.multiply(a*b)//乘
       // math.divide(a/b)//除
@@ -4010,13 +4010,13 @@ export default {
       // console.log(gaoB, "gaoBgaoBgaoBgaoBgaoB"); //478
       for (let i = 0; i < event.length; i++) {
         //车辆实际经度
-        var lng = Number(event[i].longitude);
+        var lng = Number(event[i].lng);
         //车辆实际纬度
         // var lat = event[i].latitude;
         if (lng <= +data[3].lat) {
           return;
         }
-        console.log(event[i].laneNum);
+        console.log(event[i].laneNo);
         //车辆实际距离入口距离
         var carKm = event[i].distance;
         // var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
@@ -4027,18 +4027,18 @@ export default {
         event[i].left =
           math.add(math.multiply(+carKm * this.proportion) + 120) + "px";
         //计算最终纬度
-        // event[i].top =
-        //   math.add(
-        //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
-        //   ) + "px";
+        event[i].top =
+          math.add(
+            math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
+          ) + "px";
         // console.log(math.multiply(+carLat * this.proportion), "实际left值");
         console.log(event[i].top, "event[i].topevent[i].top");
         // 根据车道数进行判断
         if (this.lane == 2) {
           console.log(this.lane, "66666666666");
-          if (event[i].laneNum == 1) {
+          if (event[i].laneNo == 1) {
             event[i].top = 360 + "px";
-          } else if (event[i].laneNum == 2) {
+          } else if (event[i].laneNo == 2) {
             event[i].top = 450 + "px";
           }
         }
@@ -4255,87 +4255,102 @@ export default {
     },
     // 点击侧边栏文件列表下拉框
     clickFileNames(direction) {
-      const params ={
-        tunnelId:this.tunnelId,
-        direction:direction,
-      }
+      const params = {
+        tunnelId: this.tunnelId,
+        direction: direction,
+      };
       getAudioFileList(params).then((res) => {
         console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
       });
     },
-    getBoardStyle(id, type,eqType) {
-      if(this.boardObj[id]){
-        if(JSON.parse(this.boardObj[id]).content){
+    getBoardStyle(id, type, eqType) {
+      if (this.boardObj[id]) {
+        if (JSON.parse(this.boardObj[id]).content) {
           let content = JSON.parse(this.boardObj[id]).content;
-          for(var i = 0;i < content.length; i++){
+          for (var i = 0; i < content.length; i++) {
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId];
-            let arr = ''
-            let fontS = ''
-            let color = ''
-            for(let item of con){
+            let arr = "";
+            let fontS = "";
+            let color = "";
+            for (let item of con) {
               // if(id == 1055550303){
               //   console.log(item.CONTENT,item.COLOR,"item.CONTENTitem.CONTENT")
               // }
               arr += item.CONTENT.replace("<br>", "");
-              arr += ' '
-              color = this.getColorStyle(item.COLOR)
-              fontS = Number(item.FONT_SIZE.substring(0, 2))
+              arr += " ";
+              color = this.getColorStyle(item.COLOR);
+              fontS = Number(item.FONT_SIZE.substring(0, 2));
             }
-            if(type == 'width'){
-                if(eqType && eqType == 16 ){
-                   return JSON.parse(this.boardObj[id]).devicePixel.split("*")[1]/2;
-                }else if(eqType && eqType == 36){
-                  return JSON.parse(this.boardObj[id]).devicePixel.split("*")[1]/4;
-                }
-              }else if(type == 'height'){
-                if(eqType && eqType == 16 ){
-                   return JSON.parse(this.boardObj[id]).devicePixel.split("*")[0]/2;
-                }else if(eqType && eqType == 36){
-                  return JSON.parse(this.boardObj[id]).devicePixel.split("*")[0]/4;
-                }
-              }else if(type == 'content'){
-                return arr
-              }else if(type == 'color'){
-                return color
-              }else if(type == 'fontSize'){
-                if(eqType && eqType == 16 ){
-                  return fontS/2
-                }else if(eqType && eqType == 36){
-                  return fontS/4
-                }
+            if (type == "width") {
+              if (eqType && eqType == 16) {
+                return (
+                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 2
+                );
+              } else if (eqType && eqType == 36) {
+                return (
+                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 4
+                );
               }
+            } else if (type == "height") {
+              if (eqType && eqType == 16) {
+                return (
+                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 2
+                );
+              } else if (eqType && eqType == 36) {
+                return (
+                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 4
+                );
+              }
+            } else if (type == "content") {
+              return arr;
+            } else if (type == "color") {
+              return color;
+            } else if (type == "fontSize") {
+              if (eqType && eqType == 16) {
+                return fontS / 2;
+              } else if (eqType && eqType == 36) {
+                return fontS / 4;
+              }
+            }
           }
-        }else{
-          if(type == 'width'){
-            if(eqType && eqType == 16 ){
-                return JSON.parse(this.boardObj[id]).devicePixel.split("*")[1]/2;
-            }else if(eqType && eqType == 36){
-              return JSON.parse(this.boardObj[id]).devicePixel.split("*")[1]/4;
+        } else {
+          if (type == "width") {
+            if (eqType && eqType == 16) {
+              return (
+                JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 2
+              );
+            } else if (eqType && eqType == 36) {
+              return (
+                JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 4
+              );
             }
-          }else if(type == 'height'){
-            if(eqType && eqType == 16 ){
-                return JSON.parse(this.boardObj[id]).devicePixel.split("*")[0]/2;
-            }else if(eqType && eqType == 36){
-              return JSON.parse(this.boardObj[id]).devicePixel.split("*")[0]/4;
+          } else if (type == "height") {
+            if (eqType && eqType == 16) {
+              return (
+                JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 2
+              );
+            } else if (eqType && eqType == 36) {
+              return (
+                JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 4
+              );
             }
-          }else if(type == 'content'){
-            return '山东高速欢迎您'
-          }else if(type == 'color'){
-            return 'yellow'
-          }else if(type == 'fontSize'){
-            return 15
+          } else if (type == "content") {
+            return "山东高速欢迎您";
+          } else if (type == "color") {
+            return "yellow";
+          } else if (type == "fontSize") {
+            return 15;
           }
         }
-
-      }else{
-        if(type == 'width'){
+      } else {
+        if (type == "width") {
           return 24;
-        }else if(type == 'height'){
+        } else if (type == "height") {
           return 72;
-        }else if(type == 'content'){
-          return '山东高速欢迎您'
+        } else if (type == "content") {
+          return "山东高速欢迎您";
         }
       }
     },
@@ -4367,7 +4382,6 @@ export default {
           direction: direction,
           tunnelId: this.currentTunnel.id,
           controlType: "0",
-
         };
         console.log(param, "param");
         playVoiceGroup(param).then((res) => {});
@@ -4381,7 +4395,6 @@ export default {
           direction: direction,
           tunnelId: this.currentTunnel.id,
           controlType: "0",
-
         };
         console.log(param, "param");
         playVoiceGroup(param).then((res) => {
@@ -4592,7 +4605,6 @@ export default {
         }
       });
       this.chezhiDisabled = false;
-
     },
     getDeviceDataAndStateData() {
       getDeviceDataAndState(this.tunnelId).then((result) => {
@@ -4634,10 +4646,11 @@ export default {
     // },
     // 预警事件点击跳转应急调度
     jumpYingJi(e) {
-      const item = e.target.closest(".listRow")
-      if (item) { // 是否是滚动组件的某一行/列
+      const item = e.target.closest(".listRow");
+      if (item) {
+        // 是否是滚动组件的某一行/列
         const { index } = item.dataset;
-        let id = JSON.parse(index).id
+        let id = JSON.parse(index).id;
         setTimeout(() => {
           bus.$emit("getPicId", id);
         }, 200);
@@ -4732,11 +4745,10 @@ export default {
       this.drawerCVisible = false;
       // Object.assign(this.$data.phoneForm1, this.$options.data().phoneForm1)
       this.phoneForm1 = {
-        'loopCount': '1',
+        loopCount: "1",
       };
       this.phoneForm2 = {
-        'loopCount': '1',
-
+        loopCount: "1",
       };
     },
     isDrawerB() {
@@ -6451,14 +6463,13 @@ export default {
         //存在配置内容
         if (res != null && res != "" && res != undefined) {
           res = JSON.parse(res);
-          console.log(res,"eqList")
+          console.log(res, "eqList");
           listType("")
             .then((response) => {
               for (let i = 0; i < res.eqList.length; i++) {
                 res.eqList[i].focus = false;
                 for (let j = 0; j < response.rows.length; j++) {
                   if (response.rows[j].typeId == res.eqList[i].eqType) {
-
                     let iconWidth = Number(response.rows[j].iconWidth);
                     let iconHeight = Number(response.rows[j].iconHeight);
                     res.eqList[i].iconWidth = iconWidth;
@@ -6711,7 +6722,8 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+                  40, 39,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -6816,10 +6828,10 @@ export default {
         }
       });
       if (this.currentTunnel.id != null && this.currentTunnel.id != "") {
-        addBoardContent(this.currentTunnel.id).then((res)=>{
+        addBoardContent(this.currentTunnel.id).then((res) => {
           // console.log(res,"情报板显示内容查询");
-          this.boardObj = res
-        })
+          this.boardObj = res;
+        });
       }
     },
     /* 选择隧道*/
@@ -9527,12 +9539,12 @@ input {
   // bottom: 250px !important;
   height: 60px;
 }
-.labelClass{
+.labelClass {
   font-size: 0.6vw;
   position: absolute;
   padding-left: 5px;
   text-align: left;
-  transform: translate(25px,8px);
+  transform: translate(25px, 8px);
   text-decoration: underline;
   z-index: 4;
   white-space: nowrap;
@@ -9666,9 +9678,6 @@ input {
   .chezhiControlButton:hover {
     color: white;
   }
-  
-
-  
 }
 .chezhiDrawerInfo {
   width: 100%;
@@ -10143,13 +10152,12 @@ input {
   white-space: nowrap;
   text-align: center;
   padding: 2px;
-  border:solid 1.5px #F9B554;
+  border: solid 1.5px #f9b554;
   display: flex;
-  align-items:center;
-  border-radius:2px;
+  align-items: center;
+  border-radius: 2px;
   background: black;
-  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
-
+  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
 }
 .boardBox1 span {
   display: inline-block;
@@ -10174,12 +10182,12 @@ input {
   // color: #ffff07;
   text-align: center;
   padding: 4px;
-  border:solid 1.5px #F9B554;
+  border: solid 1.5px #f9b554;
   display: flex;
-  align-items:center;
-  border-radius:2px;
+  align-items: center;
+  border-radius: 2px;
   background: black;
-  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
+  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
 }
 .boardBox2 span {
   display: inline-block;

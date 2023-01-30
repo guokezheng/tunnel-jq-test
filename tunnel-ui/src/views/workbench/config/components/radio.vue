@@ -116,7 +116,7 @@
                 v-model="stateForm2.fileNames"
                 placeholder="请选择播放文件"
                 clearable
-                size="small"
+                size="mini"
               >
                 <el-option
                   v-for="item in fileNamesList"

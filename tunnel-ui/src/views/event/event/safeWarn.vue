@@ -24,6 +24,7 @@
                     v-for="(item, index) in eventTypeData"
                     class="eventTypeButton"
                     :key="index"
+                    type="primary" plain
                     @click="handleEvtButton(item.id)"
                   >
                     {{ item.simplifyName }}

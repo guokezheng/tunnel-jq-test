@@ -371,10 +371,10 @@
                             item.eqType || item.eqType == 0 ? 'pointer' : '',
                           border:
                             item.click == true ? 'solid 2px #09C3FC' : '',
-                          width:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
-                          height:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
-                          color:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'color') :'yellow',
-                          fontSize:item.associated_device_id != undefined?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
+                          width:item.associated_device_id?getBoardStyle(item.associated_device_id,'width',item.eqType) + 'px':item.iconWidth + 'px',
+                          height:item.associated_device_id?getBoardStyle(item.associated_device_id,'height',item.eqType) + 'px':item.iconHeight + 'px',
+                          color:item.associated_device_id?getBoardStyle(item.associated_device_id,'color') :'yellow',
+                          fontSize:item.associated_device_id?getBoardStyle(item.associated_device_id,'fontSize',item.eqType) + 'px':'15px'
                           }"
 
                           :src= getTypePic(item)
@@ -2157,7 +2157,7 @@
       :brandList="this.brandList"
       :directionList="this.directionList"
       :eqTypeDialogList="this.eqTypeDialogList"
-      v-if="[14, 21, 32, 33, 15, 35,40,39,48].includes(this.eqInfo.clickEqType)"
+      v-if="[14, 21, 32, 33, 15, 35,40,39,48,45].includes(this.eqInfo.clickEqType)"
       :eqInfo="this.eqInfo"
       @dialogClose="dialogClose"
     ></com-data>

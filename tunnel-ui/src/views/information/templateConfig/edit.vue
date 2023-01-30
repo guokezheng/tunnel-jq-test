@@ -234,9 +234,9 @@
               <el-select v-model="res.fontType" filterable placeholder="请选择"  style="width: 100%">
                 <el-option
                   v-for="item in fontTypeOptions"
-                  :key="item.dictLabel"
+                  :key="item.cssClass"
                   :label="item.dictLabel"
-                  :value="item.dictLabel"
+                  :value="item.cssClass"
                 >
                 </el-option>
               </el-select>
@@ -915,7 +915,7 @@ export default {
       });
       getTemplateContent(this.dataForm.id).then((data) => {
         this.templateContent = data.rows;
-
+        console.log(this.templateContent,"修改弹窗详情")
         if (this.templateContent.length == 0) {
           this.templateContent.push({
             content: "",

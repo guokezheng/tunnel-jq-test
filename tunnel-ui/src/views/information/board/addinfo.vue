@@ -929,10 +929,15 @@ export default {
               templateContent: templateContent,
               templateId: data,
             };
-            addTemplateContent(params2).catch((err) => {
+            addTemplateContent(params2).then((res)=>{
+              if(res.code == 200){
+                this.$emit("getActiveNames", this.dataForm.category);
+              }
+            }).catch((err) => {
               throw err;
             });
-            this.$emit("getActiveNames", this.dataForm.category);
+
+            
           });
         }
       } else {

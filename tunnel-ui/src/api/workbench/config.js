@@ -230,3 +230,14 @@ export function PTZContro(eqId,cmdType) {
     method: 'get'
   })
 }
+
+// 指示灯带
+export function controlWarningLightStripDevice(data) {
+  return request({
+    url: '/workspace/controlWarningLightStripDevice',
+    method: 'post',
+    data: data
+  })
+}
+
+

@@ -46,7 +46,7 @@
           <el-form
             :model="dataForm"
             :rules="dataRule"
-            label-width="90px"
+            label-width="80px"
             ref="dataForm"
             size="mini"
           >
@@ -895,7 +895,7 @@
         if(this.boardWidth >760){
           let i = this.boardWidth/760
           
-          return size.substring(0, 2)/i + 'px'
+          return size.substring(0, 2)/i - 2 + 'px'
         }else{
           return size
         }
@@ -1022,4 +1022,7 @@
     display:flex; 
     justify-content: center;
   }
+  ::v-deep .el-card__body{
+    padding:10px 0;
+  }  
   </style>

@@ -3987,7 +3987,7 @@ export default {
       // this.realTimeList = event;
       // console.log(this.realTimeList, "处理完的数据");
       // 横纬竖经 lng 经度；   lat：纬度
-      // math.add(a+b)//加
+      //       math.add(a+b)//加
       // math.subtract(a-b)//减
       // math.multiply(a*b)//乘
       // math.divide(a/b)//除
@@ -4263,94 +4263,79 @@ export default {
         console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
       });
-    },
-    getBoardStyle(id, type, eqType) {
-      if (this.boardObj[id]) {
-        if (JSON.parse(this.boardObj[id]).content) {
-          let content = JSON.parse(this.boardObj[id]).content;
-          for (var i = 0; i < content.length; i++) {
+    }, 
+
+    getBoardStyle(id, type,eqType) {
+      if(this.boardObj[id]){
+        if(JSON.parse(this.boardObj[id]).content){
+          let content = (JSON.parse(this.boardObj[id])).content;
+          let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
+             if(type == 'width'){
+                if(eqType && eqType == 16 ){
+                   return devicePixel.split("*")[1]/2;
+                }else if(eqType && eqType == 36){
+                  return devicePixel.split("*")[1]/4;
+                }
+              }else if(type == 'height'){
+                if(eqType && eqType == 16 ){
+                   return devicePixel.split("*")[0]/2;
+                }else if(eqType && eqType == 36){
+                  return devicePixel.split("*")[0]/4;
+                }
+              }
+            let arr = ''
+            let fontS = ''
+            let color = ''
+          for(let i = 0;i < content.length; i++){
             var itemId = "ITEM" + this.formatNum(i, 3);
-            var con = content[i][itemId];
-            let arr = "";
-            let fontS = "";
-            let color = "";
-            for (let item of con) {
-              // if(id == 1055550303){
-              //   console.log(item.CONTENT,item.COLOR,"item.CONTENTitem.CONTENT")
-              // }
-              arr += item.CONTENT.replace("<br>", "");
-              arr += " ";
-              color = this.getColorStyle(item.COLOR);
-              fontS = Number(item.FONT_SIZE.substring(0, 2));
-            }
-            if (type == "width") {
-              if (eqType && eqType == 16) {
-                return (
-                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 2
-                );
-              } else if (eqType && eqType == 36) {
-                return (
-                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 4
-                );
-              }
-            } else if (type == "height") {
-              if (eqType && eqType == 16) {
-                return (
-                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 2
-                );
-              } else if (eqType && eqType == 36) {
-                return (
-                  JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 4
-                );
-              }
-            } else if (type == "content") {
-              return arr;
-            } else if (type == "color") {
-              return color;
-            } else if (type == "fontSize") {
-              if (eqType && eqType == 16) {
-                return fontS / 2;
-              } else if (eqType && eqType == 36) {
-                return fontS / 4;
-              }
-            }
+            var con = content[i][itemId][0];
+            arr += con.CONTENT
+            arr += ' '
+            color = this.getColorStyle(con.COLOR)
+            fontS = Number(con.FONT_SIZE.substring(0, 2))
           }
-        } else {
-          if (type == "width") {
-            if (eqType && eqType == 16) {
-              return (
-                JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 2
-              );
-            } else if (eqType && eqType == 36) {
-              return (
-                JSON.parse(this.boardObj[id]).devicePixel.split("*")[1] / 4
-              );
+          if(type == 'content'){
+                return arr
+              }else if(type == 'color'){
+                return color
+              }else if(type == 'fontSize'){
+                if(eqType && eqType == 16 ){
+                  return fontS/2
+                }else if(eqType && eqType == 36){
+                  return fontS/4
+                }
+              }
+          
+        }else{
+          let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
+          if(type == 'width'){
+            if(eqType && eqType == 16 ){
+                return devicePixel.split("*")[1]/2;
+            }else if(eqType && eqType == 36){
+              return devicePixel.split("*")[1]/4;
             }
-          } else if (type == "height") {
-            if (eqType && eqType == 16) {
-              return (
-                JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 2
-              );
-            } else if (eqType && eqType == 36) {
-              return (
-                JSON.parse(this.boardObj[id]).devicePixel.split("*")[0] / 4
-              );
+          }else if(type == 'height'){
+            if(eqType && eqType == 16 ){
+                return devicePixel.split("*")[0]/2;
+            }else if(eqType && eqType == 36){
+              return devicePixel.split("*")[0]/4;
             }
-          } else if (type == "content") {
-            return "山东高速欢迎您";
-          } else if (type == "color") {
-            return "yellow";
-          } else if (type == "fontSize") {
-            return 15;
+          }else if(type == 'content'){
+            return '山东高速欢迎您'
+          }else if(type == 'color'){
+            return 'yellow'
+          }else if(type == 'fontSize'){
+            return 15
           }
         }
-      } else {
-        if (type == "width") {
+
+      }else{
+        if(type == 'width'){
           return 24;
-        } else if (type == "height") {
+        }else if(type == 'height'){
           return 72;
-        } else if (type == "content") {
-          return "山东高速欢迎您";
+        }else if(type == 'content'){
+          return '山东高速欢迎您'
         }
       }
     },
@@ -6722,8 +6707,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -10152,12 +10136,13 @@ input {
   white-space: nowrap;
   text-align: center;
   padding: 2px;
-  border: solid 1.5px #f9b554;
+  border:solid 1.5px #F9B554;
   display: flex;
-  align-items: center;
-  border-radius: 2px;
+  align-items:center;
+  border-radius:2px;
   background: black;
-  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
+  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
+
 }
 .boardBox1 span {
   display: inline-block;
@@ -10182,12 +10167,12 @@ input {
   // color: #ffff07;
   text-align: center;
   padding: 4px;
-  border: solid 1.5px #f9b554;
+  border:solid 1.5px #F9B554;
   display: flex;
-  align-items: center;
-  border-radius: 2px;
+  align-items:center;
+  border-radius:2px;
   background: black;
-  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
+  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
 }
 .boardBox2 span {
   display: inline-block;

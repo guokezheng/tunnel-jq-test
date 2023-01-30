@@ -527,7 +527,7 @@ public class SdEventServiceImpl implements ISdEventService {
         //车道数量
         BigDecimal lane = new BigDecimal(sdTunnels.getLane());
         //事件车道号
-        BigDecimal laneNo = new BigDecimal(sdEvent.getLaneNo());
+        BigDecimal laneNo = new BigDecimal(sdEvent.getLaneNo() == null ? "0" : sdEvent.getLaneNo());
         //隧道Top值
         BigDecimal tunnelTop = laneNo.subtract(new BigDecimal(1)).divide(lane,2,BigDecimal.ROUND_HALF_UP);
         Map<String, Object> map = new HashMap<>();

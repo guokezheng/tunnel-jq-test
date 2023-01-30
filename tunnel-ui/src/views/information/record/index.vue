@@ -344,7 +344,15 @@ export default {
       this.loading = true;
       listRecord(this.queryParams).then((response) => {
         this.recordList = response.rows;
-        console.log(this.recordList)
+        console.log(this.recordList);
+        for (var item of this.recordList) {
+          if (item.releaseStatus == "0") {
+            item.releaseStatus = "成功";
+          } else {
+            item.releaseStatus = "失败";
+          }
+          console.log(item.releaseStatus, "item.releaseStatus");
+        }
         this.total = response.total;
         this.loading = false;
       });

@@ -1447,7 +1447,7 @@ export default {
         }
 
         .con {
-          border: 1px solid black;
+          border: 1px solid #05AFE3;
           height: 75px;
           // line-height: 75px;
           // text-align: center;

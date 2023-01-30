@@ -47,7 +47,6 @@ public enum DevicesTypeItemEnum {
     YUN_TAI_QIU_JI(45, "云台摄像机（球机）"),
     ZHUA_PAI_CAMERA(46, "抓拍摄像机"),
     HAO_MI_BO_RADAR(47, "毫米波雷达"),
-    YUAN_CHUAN_YA_LI_BIAO(48, "远传压力表"),
     XUN_JIAN_ROBOT(49, "巡检机器人"),
     ZHI_NENG_XIAO_FANG_PAO(50, "智能消防炮"),
     FIRE_ALARN_CONTROL(51, "火灾报警控制器"),

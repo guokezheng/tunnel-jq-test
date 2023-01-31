@@ -328,7 +328,7 @@
                             border:
                               item.click == true ? 'solid 2px #09C3FC' : '',
                             transform:
-                              item.eqType == 23 && item.eqDirection == 0
+                              item.eqType == 23 && item.eqDirection == 1
                                 ? 'scale(-1,1)'
                                 : '',
                           }"
@@ -346,7 +346,6 @@
                          v-show="item.eqType == '31'"
                         style="position: absolute"
                           :style="{
-
                             cursor:
                               item.eqType || item.eqType == 0 ? 'pointer' : '',
                             border:
@@ -355,14 +354,12 @@
                             height:item.iconHeight + 'px',
 
                           }"
-
                           :src= getTypePic(item)
                           :class="
                             item.eqName == screenEqName
                               ? 'screenEqNameClass'
                               : ''
-                          ">
-                        </img>
+                          " />
                         <div v-show="item.eqType == 16"
                         class="boardBox1"
 
@@ -3971,7 +3968,7 @@ export default {
       }
     },
     radarDataList(event) {
-      console.log(event, "websockt工作台接收车辆感知事件数据");
+      // console.log(event, "websockt工作台接收车辆感知事件数据");
       // 首先应判断推送数据和当前选择隧道是否一致
       // if(item.tunnelId == this.tunnelId){}
       // laneNum：车道 /speed：时速单位公里   /  distance:距离单位 米
@@ -4016,7 +4013,7 @@ export default {
         if (lng <= +data[3].lat) {
           return;
         }
-        console.log(event[i].laneNo);
+        // console.log(event[i].laneNo);
         //车辆实际距离入口距离
         var carKm = event[i].distance;
         // var carKm = math.multiply(math.subtract(lng - data[2].lng) * changB); //C
@@ -4032,7 +4029,7 @@ export default {
         //     math.divide(math.multiply(+carLat * this.heightRatio), 20.3) + 340
         //   ) + "px";
         // console.log(math.multiply(+carLat * this.proportion), "实际left值");
-        console.log(event[i].top, "event[i].topevent[i].top");
+        // console.log(event[i].top, "event[i].topevent[i].top");
         // 根据车道数进行判断
         if (this.lane == 2) {
           console.log(this.lane, "66666666666");
@@ -4289,7 +4286,7 @@ export default {
           for(let i = 0;i < content.length; i++){
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId][0];
-            arr += con.CONTENT
+            arr += con.CONTENT.replace('<br>',' ').replace(' &nbsp',' ')
             arr += ' '
             color = this.getColorStyle(con.COLOR)
             fontS = Number(con.FONT_SIZE.substring(0, 2))
@@ -6276,9 +6273,9 @@ export default {
           }
         }
         this.getTunnelLane();
-        this.$nextTick(() => {
-          this.getEnergyConsumption(this.currentTunnel.id);
-        });
+        // this.$nextTick(() => {
+        //   this.getEnergyConsumption(this.currentTunnel.id);
+        // });
         // this.timingControl()
       });
     },
@@ -6745,7 +6742,7 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  if (deviceData.eqStatus == "1") {
+                  if (deviceData.eqStatus == "1" || deviceData.eqStatus == "2") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2

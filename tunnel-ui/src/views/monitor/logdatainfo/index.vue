@@ -103,10 +103,10 @@
       <el-form-item label="控制方式" prop="controlType">
         <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
           <el-option
-            v-for="dict in dict.type.sd_control_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="dict in controlTypeOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
           />
         </el-select>
       </el-form-item>
@@ -219,7 +219,7 @@ import {listLog} from "@/api/system/log";
 
 export default {
   name: "Logininfor",
-  dicts: ['sys_common_status'],
+  dicts: ['sys_common_status, sd_control_type'],
   data() {
     return {
       manageStatin:this.$cache.local.get("manageStation"),

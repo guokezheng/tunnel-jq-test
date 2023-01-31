@@ -66,7 +66,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:flow:edit']"
+            v-hasPermi="['system:flow:query']"
           >详情</el-button>
           <el-button
             size="mini"

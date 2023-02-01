@@ -156,6 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -178,6 +179,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -198,6 +200,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -218,6 +221,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i

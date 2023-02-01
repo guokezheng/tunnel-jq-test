@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.tunnel.business.domain.informationBoard.IotBoardReleaseLog;
 import com.tunnel.business.service.informationBoard.IIotBoardReleaseLogService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,18 @@ public class IotBoardReleaseLogController extends BaseController
     public AjaxResult edit(@RequestBody IotBoardReleaseLog iotBoardReleaseLog)
     {
         return toAjax(iotBoardReleaseLogService.updateIotBoardReleaseLog(iotBoardReleaseLog));
+    }
+
+    /**
+     * 导出发布记录列表
+     */
+    @Log(title = "发布记录", businessType = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public AjaxResult export(IotBoardReleaseLog iotBoardReleaseLog)
+    {
+        List<IotBoardReleaseLog> list = iotBoardReleaseLogService.selectIotBoardReleaseLogList(iotBoardReleaseLog);
+        ExcelUtil<IotBoardReleaseLog> util = new ExcelUtil<IotBoardReleaseLog>(IotBoardReleaseLog.class);
+        return util.exportExcel(list, "发布记录列表");
     }
 
 }

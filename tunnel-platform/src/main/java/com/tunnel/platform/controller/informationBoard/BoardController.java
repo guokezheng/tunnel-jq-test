@@ -6,6 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.service.ISysDeptService;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesStatusEnum;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.*;
@@ -54,6 +57,10 @@ public class BoardController extends BaseController {
     private ISdReleaseRecordService sdReleaseRecordService;
     @Autowired
     private IIotDeviceAccessService iotDeviceAccessService;
+    @Autowired
+    private IIotBoardVocabularyService iotBoardVocabularyService;
+    @Autowired
+    private ISysDeptService sysDeptService;
 
     /**
      *
@@ -201,13 +208,18 @@ public class BoardController extends BaseController {
     public AjaxResult uploadBoardEditInfo(String deviceIds, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
         String[] devices = deviceIds.split(",");
+        Boolean flag = false;
+        List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
+        Long deptId = Long.valueOf(SecurityUtils.getDeptId());
+        SysDept sysDept = sysDeptService.selectDeptById(deptId.toString());
+        String userId = SecurityUtils.getUserId().toString();
+        String username = SecurityUtils.getUsername();
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
             protocolType = sdIotDevice.getProtocolName();
             List<String> paramsList = new ArrayList<String>();
             IotBoardReleaseLog iotBoardReleaseLog = new IotBoardReleaseLog();
-            SdReleaseRecord sdReleaseRecord = new SdReleaseRecord();
             try {
                 parameters = URLDecoder.decode(parameters, "UTF-8");
                 if (protocolType.startsWith(IDeviceProtocol.DIANMING) || protocolType.startsWith(IDeviceProtocol.TONGZHOU)) {
@@ -221,12 +233,20 @@ public class BoardController extends BaseController {
                 }
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
+                for (int g = 0;g < iotBoardVocabularies.size();g++) {
+                    String word = iotBoardVocabularies.get(i).getWord();
+                    if (parameters.contains(word)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
+                }
                 String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
                 Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
 //                Boolean result = false;
                 String releaseOldContent = releaseContentMap.get(deviceId);
-                sdReleaseRecord.setReleaseDev(deviceId);
-                sdReleaseRecord.setReleaseTime(new Date());
                 if (result) {
                     if (protocolType.startsWith(IDeviceProtocol.XIANKE)) {
                         String XKcommands = "02 32 32 30 30 30 30 30 2E 78 6B 6C 7A 93 03";
@@ -239,24 +259,29 @@ public class BoardController extends BaseController {
                     } else {
                         ajaxResult = new AjaxResult(HttpStatus.SUCCESS, "修改成功");
                     }
-                    sdReleaseRecord.setReleaseStatus("0");
+                    iotBoardReleaseLog.setReleaseStatus("0");
                 } else {
                     ajaxResult = new AjaxResult(HttpStatus.ERROR, "修改失败");
-                    sdReleaseRecord.setReleaseStatus("1");
+                    iotBoardReleaseLog.setReleaseStatus("1");
                 }
-                sdReleaseRecordService.insertSdReleaseRecord(sdReleaseRecord);
                 iotBoardReleaseLog.setDeviceId(deviceId);
                 iotBoardReleaseLog.setReleaseOldContent(releaseOldContent);
                 parameters = parameters.replaceAll("\n", "<n>");
                 parameters = parameters.replaceAll("\r", "<r>");
                 iotBoardReleaseLog.setReleaseNewContent(parameters);
                 iotBoardReleaseLog.setReleaseTime(new Date());
+                iotBoardReleaseLog.setReleaseDeptId(deptId);
+                iotBoardReleaseLog.setReleaseDeptName(sysDept.getDeptName());
+                iotBoardReleaseLog.setReleaseUserId(userId);
+                iotBoardReleaseLog.setReleaseUserName(username);
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                 releaseContentMap.clear();
-            } catch (BusinessException e) {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());
             } catch (Exception e) {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                if (flag) {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "发送的内容包含不恰当的关键字，请修改后重试！");
+                } else {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                }
             }
         }
         return ajaxResult;

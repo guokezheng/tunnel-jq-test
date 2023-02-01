@@ -287,9 +287,9 @@
               >
                 <el-option
                   v-for="item in inScreenModeOptions"
-                  :key="item.cssClass"
+                  :key="item.dictValue"
                   :label="item.dictLabel"
-                  :value="item.cssClass"
+                  :value="item.dictValue"
                 >
                 </el-option>
               </el-select>
@@ -683,7 +683,7 @@ export default {
   //     },
   //   },
   // },
-  
+
   created() {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {

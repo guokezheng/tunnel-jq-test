@@ -407,8 +407,8 @@ public class SdEventServiceImpl implements ISdEventService {
         devices.setEqDirection(direction);
         devices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
         List<SdDevices> list = sdDevicesService.selectSdDevicesList(devices);
-        devices.setEqType(DevicesTypeEnum.CAMERA_DOME.getCode());
-        list.addAll(sdDevicesService.selectSdDevicesList(devices));
+//        devices.setEqType(DevicesTypeEnum.CAMERA_DOME.getCode());
+//        list.addAll(sdDevicesService.selectSdDevicesList(devices));
         try {
             int param = Integer.valueOf(stakeNum.replaceAll("[a-zA-Z]", "").replace("+","").replace(" ",""));
             List<Integer> pileNum = list.stream().map(p->(p.getPileNum().intValue())).distinct().collect(Collectors.toList());

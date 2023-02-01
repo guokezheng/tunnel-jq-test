@@ -86,7 +86,7 @@ public class SdEquipmentStateServiceImpl implements ISdEquipmentStateService {
                         }
                     }
                     //车道指示器类型顺序变换
-                    if(state.getStateTypeId() == 1){
+                    if(state.getStateTypeId() == 1 || state.getStateTypeId() == 2){
                         Collections.reverse(iconList);
                         state.setiFileList(iconList);
                     }else {

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.informationBoard.IotBoardReleaseLogMapper">
-    
+
     <resultMap type="IotBoardReleaseLog" id="IotBoardReleaseLogResult">
         <result property="id"    column="id"    />
         <result property="deviceId"    column="device_id"    />
@@ -12,21 +12,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="releaseNewContent"    column="release_new_content"    />
         <result property="releaseBy"    column="release_by"    />
         <result property="releaseTime"    column="release_time"    />
+        <result property="releaseStatus"    column="release_status"    />
+        <result property="releaseDeptName"    column="release_dept_name"    />
+        <result property="releaseDeptId"    column="release_dept_id"    />
+        <result property="releaseUserName"    column="release_user_name"    />
+        <result property="releaseUserId"    column="release_user_id"    />
     </resultMap>
 
     <sql id="selectIotBoardReleaseLogVo">
-        select id, device_id, device_name, release_old_content, release_new_content, release_by, release_time from iot_board_release_log
+        select id, device_id, device_name, release_old_content, release_new_content, release_by, release_time,
+               release_status, release_dept_name, release_dept_id, release_user_name, release_user_id from iot_board_release_log
     </sql>
 
     <select id="selectIotBoardReleaseLogList" parameterType="IotBoardReleaseLog" resultMap="IotBoardReleaseLogResult">
         <include refid="selectIotBoardReleaseLogVo"/>
-        <where>  
+        <where>
             <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="releaseOldContent != null  and releaseOldContent != ''"> and release_old_content = #{releaseOldContent}</if>
             <if test="releaseNewContent != null  and releaseNewContent != ''"> and release_new_content = #{releaseNewContent}</if>
             <if test="releaseBy != null  and releaseBy != ''"> and release_by = #{releaseBy}</if>
             <if test="releaseTime != null "> and release_time = #{releaseTime}</if>
+            <if test="releaseStatus != null  and releaseStatus != ''"> and release_status = #{releaseStatus}</if>
+            <if test="releaseDeptName != null  and releaseDeptName != ''"> and release_dept_name like concat('%', #{releaseDeptName}, '%')</if>
+            <if test="releaseUserName != null  and releaseUserName != ''"> and release_user_name like concat('%', #{releaseUserName}, '%')</if>
             <if test="params.beginReleaseTime != null and params.beginReleaseTime != ''"><!-- 开始时间检索 -->
                 AND date_format(release_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginReleaseTime},'%y%m%d%H%i%s')
             </if>
@@ -34,13 +43,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 AND date_format(release_time,'%y%m%d%H%i%s') &lt;= date_format(#{params.endReleaseTime},'%y%m%d%H%i%s')
             </if>
         </where>
+        ORDER BY id DESC
     </select>
-    
+
     <select id="selectIotBoardReleaseLogById" parameterType="Long" resultMap="IotBoardReleaseLogResult">
         <include refid="selectIotBoardReleaseLogVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertIotBoardReleaseLog" parameterType="IotBoardReleaseLog" useGeneratedKeys="true" keyProperty="id">
         insert into iot_board_release_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -50,6 +60,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">release_new_content,</if>
             <if test="releaseBy != null  and releaseBy != ''">release_by,</if>
             <if test="releaseTime != null ">release_time,</if>
+            <if test="releaseStatus != null">release_status,</if>
+            <if test="releaseDeptName != null">release_dept_name,</if>
+            <if test="releaseDeptId != null">release_dept_id,</if>
+            <if test="releaseUserName != null">release_user_name,</if>
+            <if test="releaseUserId != null">release_user_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
@@ -58,6 +73,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">#{releaseNewContent},</if>
             <if test="releaseBy != null  and releaseBy != ''">#{releaseBy},</if>
             <if test="releaseTime != null ">#{releaseTime},</if>
+            <if test="releaseStatus != null">#{releaseStatus},</if>
+            <if test="releaseDeptName != null">#{releaseDeptName},</if>
+            <if test="releaseDeptId != null">#{releaseDeptId},</if>
+            <if test="releaseUserName != null">#{releaseUserName},</if>
+            <if test="releaseUserId != null">#{releaseUserId},</if>
          </trim>
     </insert>
 
@@ -70,6 +90,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="releaseNewContent != null  and releaseNewContent != ''">release_new_content = #{releaseNewContent},</if>
             <if test="releaseBy != null  and releaseBy != ''">release_by = #{releaseBy},</if>
             <if test="releaseTime != null ">release_time = #{releaseTime},</if>
+            <if test="releaseStatus != null">release_status = #{releaseStatus},</if>
+            <if test="releaseDeptName != null">release_dept_name = #{releaseDeptName},</if>
+            <if test="releaseDeptId != null">release_dept_id = #{releaseDeptId},</if>
+            <if test="releaseUserName != null">release_user_name = #{releaseUserName},</if>
+            <if test="releaseUserId != null">release_user_id = #{releaseUserId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -79,10 +104,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteIotBoardReleaseLogByIds" parameterType="String">
-        delete from iot_board_release_log where id in 
+        delete from iot_board_release_log where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-    
+
 </mapper>

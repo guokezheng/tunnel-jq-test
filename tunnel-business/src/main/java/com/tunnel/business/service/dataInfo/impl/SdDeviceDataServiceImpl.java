@@ -259,6 +259,10 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
         if (sdDeviceData.getSearchValue() != null && !sdDeviceData.getSearchValue().equals("")) {
             searchValue = sdDeviceData.getSearchValue();
         }
+        String pile = "";
+        if (sdDeviceData.getPile() != null && !sdDeviceData.getPile().equals("")) {
+            pile = sdDeviceData.getPile();
+        }
         String now = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String beginTime = now + " 00:00:00";
         String endTime = now + " 23:59:59";
@@ -268,16 +272,16 @@ public class SdDeviceDataServiceImpl implements ISdDeviceDataService {
             endTime = sdDeviceData.getParams().get("endTime").toString();
         }
         if (searchValue.equals("1")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectCOVIDataList(dept, tunnelId, beginTime, endTime, pile);
             return maps;
         } else if (searchValue.equals("2")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(dept, tunnelId, beginTime, endTime);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectFSFXDataList(dept, tunnelId, beginTime, endTime, pile);
             return maps;
         } else if (searchValue.equals("3")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(dept, tunnelId, beginTime, endTime);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDNDataList(dept, tunnelId, beginTime, endTime, pile);
             return maps;
         } else if (searchValue.equals("4")) {
-            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(dept, tunnelId, beginTime, endTime);
+            List<Map<String, String>> maps = sdDeviceDataMapper.selectDWDataList(dept, tunnelId, beginTime, endTime, pile);
             return maps;
         } else {
             return null;

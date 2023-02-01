@@ -36,6 +36,16 @@ public class SdDeviceData extends BaseEntity
 
     private String searchValue;
 
+    private String pile;
+
+    public String getPile() {
+        return pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
     public Long getDeptId() {
         return deptId;
     }

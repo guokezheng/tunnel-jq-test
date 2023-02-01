@@ -45,6 +45,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="桩号" prop="pile">
+        <el-input
+          v-model="queryParams.pile"
+          placeholder="请输入桩号"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="采集时间">
         <el-date-picker
           v-model="dateRange"
@@ -259,6 +268,7 @@ export default {
         tunnelId: null,
         deptId: null,
         searchValue: "1",
+        pile: null,
       },
       echartShow: false,
       CO: [],

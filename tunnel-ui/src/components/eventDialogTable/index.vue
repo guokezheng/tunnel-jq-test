@@ -9,7 +9,7 @@
     >
       <div class="title">
         事件预警
-      
+
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -63,7 +63,6 @@
                 />
               </el-col>
               <el-col :span="2">
-            
                 <div v-if="searchValue == 2 || searchValue == 3">
                   {{ item.simplifyName }}
                 </div>
@@ -77,10 +76,9 @@
               >
                 <div class="overflowText">{{ item.eventTitle }}</div>
                 <div style="float: right; margin-right: 10px">
-                  {{ getStartTime(item.startTime) }}
+                  {{ item.startTime }}
                 </div>
               </el-col>
-            
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -448,7 +446,7 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
-  .el-dialog__body{
+  .el-dialog__body {
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;

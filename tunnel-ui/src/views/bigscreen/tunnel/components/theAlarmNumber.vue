@@ -143,14 +143,14 @@ export default {
       this.currentData = {};
       getEventWarning()
         .then((res) => {
-          console.log(res.data);
+          console.log(res.data, "66");
           this.currentData.listData = res.data.list;
           this.eventProportion = res.data.eventProportion;
           let data = ["处理中", "已处理", "忽略", "未处理"];
           data.forEach((items) => {
             this.eventProportion.forEach((element) => {
               element.name = items;
-              element.value = element.percentage;
+              element.value = Number(element.percentage);
             });
           });
         })

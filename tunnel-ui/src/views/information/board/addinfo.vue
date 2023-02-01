@@ -65,7 +65,7 @@
         <el-button type="info" plain @click="alignment(1)" size="mini"
           >左对齐</el-button
         >
-        
+
       </el-row> -->
       <el-card>
         <el-form
@@ -77,7 +77,7 @@
         >
           <el-row :gutter="24">
             <el-col :span="8">
-              <el-form-item prop="category" label="所属类别" 
+              <el-form-item prop="category" label="所属类别"
               :rules="[{ required: categoryRules?true:false,message: '请选择所属类别',trigger: 'blur',}]">
                 <el-select
                   v-model="dataForm.category"
@@ -254,7 +254,7 @@
             <!-- <el-col :span="24" v-show="templateContent.length > 1">
               <el-divider></el-divider>
             </el-col> -->
-         
+
             <!-- <el-col :span="6">
               <el-form-item prop="rollSpeed" label="滚动速度">
                 <el-input-number
@@ -284,9 +284,9 @@
                 >
                   <el-option
                     v-for="item in inScreenModeOptions"
-                    :key="item.cssClass"
+                    :key="item.dictValue"
                     :label="item.dictLabel"
-                    :value="item.cssClass"
+                    :value="item.dictValue"
                   >
                   </el-option>
                 </el-select>
@@ -937,7 +937,7 @@ export default {
               throw err;
             });
 
-            
+
           });
         }
       } else {

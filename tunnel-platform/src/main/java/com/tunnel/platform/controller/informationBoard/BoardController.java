@@ -54,6 +54,8 @@ public class BoardController extends BaseController {
     private ISdReleaseRecordService sdReleaseRecordService;
     @Autowired
     private IIotDeviceAccessService iotDeviceAccessService;
+    @Autowired
+    private IIotBoardVocabularyService iotBoardVocabularyService;
 
     /**
      *
@@ -201,6 +203,8 @@ public class BoardController extends BaseController {
     public AjaxResult uploadBoardEditInfo(String deviceIds, String protocolType,String parameters) {
         AjaxResult ajaxResult = new AjaxResult();
         String[] devices = deviceIds.split(",");
+        Boolean flag = false;
+        List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
         for (int i = 0;i < devices.length;i++) {
             String deviceId = devices[i];
             SdIotDevice sdIotDevice = sdIotDeviceService.selectIotDeviceById(Long.parseLong(deviceId));
@@ -221,6 +225,16 @@ public class BoardController extends BaseController {
                 }
                 parameters = parameters.replaceAll("<r><n>","\r\n");
                 parameters = parameters.replaceAll("<br>","\\\\n");
+                for (int g = 0;g < iotBoardVocabularies.size();g++) {
+                    String word = iotBoardVocabularies.get(i).getWord();
+                    if (parameters.contains(word)) {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (flag) {
+                    throw new RuntimeException("发送的内容包含不恰当的关键字，请修改后重试！");
+                }
                 String commands = DataUtils.contentToGb2312_CG(deviceId, parameters, protocolType);
                 Boolean result = DeviceManagerFactory.getInstance().controlDeviceByDeviceId(deviceId, protocolType, commands);
 //                Boolean result = false;
@@ -253,10 +267,12 @@ public class BoardController extends BaseController {
                 iotBoardReleaseLog.setReleaseTime(new Date());
                 iIotBoardReleaseLogService.insertIotBoardReleaseLog(iotBoardReleaseLog);
                 releaseContentMap.clear();
-            } catch (BusinessException e) {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, e.getMessage());
             } catch (Exception e) {
-                ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                if (flag) {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "发送的内容包含不恰当的关键字，请修改后重试！");
+                } else {
+                    ajaxResult = new AjaxResult(HttpStatus.ERROR, "系统异常");
+                }
             }
         }
         return ajaxResult;

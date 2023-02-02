@@ -34,7 +34,7 @@
     <select id="getProtocolFunctionByName" parameterType="String" resultMap="IotDeviceProtocolResult">
            select idp.protocol_id, idp.protocol_name,ipf.protocol_function,ipf.protocol_param
            from iot_device_protocol idp
-           left join iot_protocol_function ipf on idp.protocol_id = ipf.protocol_id
+           left join iot_board_protocol ipf on idp.protocol_id = ipf.protocol_id
         where protocol_name = #{protocolName}
     </select>
 

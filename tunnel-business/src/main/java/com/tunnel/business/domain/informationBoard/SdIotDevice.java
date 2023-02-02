@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * 设备列表对象 iot_device
+ * 设备列表对象 iot_board
  *
  * @author yangqichao
  * @date 2020-03-25

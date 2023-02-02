@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.informationBoard.IotDeviceTypeMapper">
-    
+
     <resultMap type="IotDeviceType" id="IotDeviceTypeResult">
         <result property="deviceTypeId"    column="device_type_id"    />
         <result property="deviceTypeNumber"    column="device_type_number"    />
@@ -24,12 +24,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectIotDeviceTypeVo">
-        select device_type_id, device_type_number, states, device_type_name, url, normal_css_class, abnormal_css_class, fault_css_class, push_css_class, refresh_time, visible, ispush, sort, create_by, create_time, remark from iot_device_type
+        select device_type_id, device_type_number, states, device_type_name, url, normal_css_class, abnormal_css_class, fault_css_class, push_css_class, refresh_time, visible, ispush, sort, create_by, create_time, remark from iot_board_type
     </sql>
 
     <select id="selectIotDeviceTypeList" parameterType="IotDeviceType" resultMap="IotDeviceTypeResult">
         <include refid="selectIotDeviceTypeVo"/>
-        <where>  
+        <where>
             <if test="deviceTypeNumber != null  and deviceTypeNumber != ''"> and device_type_number = #{deviceTypeNumber}</if>
             <if test="states != null  and states != ''"> and states = #{states}</if>
             <if test="deviceTypeName != null  and deviceTypeName != ''"> and device_type_name like concat('%', #{deviceTypeName}, '%')</if>
@@ -44,14 +44,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sort != null "> and sort = #{sort}</if>
         </where>
     </select>
-    
+
     <select id="selectIotDeviceTypeById" parameterType="Long" resultMap="IotDeviceTypeResult">
         <include refid="selectIotDeviceTypeVo"/>
         where device_type_id = #{deviceTypeId}
     </select>
-        
+
     <insert id="insertIotDeviceType" parameterType="IotDeviceType">
-        insert into iot_device_type
+        insert into iot_board_type
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="deviceTypeId != null ">device_type_id,</if>
             <if test="deviceTypeNumber != null  and deviceTypeNumber != ''">device_type_number,</if>
@@ -91,7 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateIotDeviceType" parameterType="IotDeviceType">
-        update iot_device_type
+        update iot_board_type
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceTypeNumber != null  and deviceTypeNumber != ''">device_type_number = #{deviceTypeNumber},</if>
             <if test="states != null  and states != ''">states = #{states},</if>
@@ -113,14 +113,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteIotDeviceTypeById" parameterType="Long">
-        delete from iot_device_type where device_type_id = #{deviceTypeId}
+        delete from iot_board_type where device_type_id = #{deviceTypeId}
     </delete>
 
     <delete id="deleteIotDeviceTypeByIds" parameterType="String">
-        delete from iot_device_type where device_type_id in 
+        delete from iot_board_type where device_type_id in
         <foreach item="deviceTypeId" collection="array" open="(" separator="," close=")">
             #{deviceTypeId}
         </foreach>
     </delete>
-    
+
 </mapper>

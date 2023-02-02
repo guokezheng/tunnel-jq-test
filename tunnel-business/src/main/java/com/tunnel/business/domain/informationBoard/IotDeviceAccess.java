@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 设备接入信息对象 iot_device_access
+ * 设备接入信息对象 iot_board_access
  *
  * @author yangqichao
  * @date 2020-03-25

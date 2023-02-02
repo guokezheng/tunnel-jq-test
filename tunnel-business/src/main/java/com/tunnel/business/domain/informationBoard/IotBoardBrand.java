@@ -3,7 +3,7 @@ package com.tunnel.business.domain.informationBoard;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class IotBrand {
+public class IotBoardBrand {
 	/**
 	 * 设备id
 	 */
@@ -31,5 +31,5 @@ public class IotBrand {
 		            .append("brandName", getBrandName())
 		            .toString();
 	}
-	
+
 }

@@ -53,10 +53,10 @@
         <result property="passWord" column="pass_word"/>
         <result property="tunnelId" column="tunnel_id"/>
         <association property="iotDeviceType" column="device_type_id" javaType="IotDeviceType" resultMap="deviceTypeResult" />
-        <association property="iotBrandName"  column="brand_id" javaType="IotBrand" resultMap="brandResult" />
+        <association property="iotBoardBrandName"  column="brand_id" javaType="IotBoardBrand" resultMap="brandResult" />
     </resultMap>
 	<resultMap type="IotDeviceType" id="deviceTypeResult"></resultMap>
-	<resultMap id="brandResult" type="IotBrand">
+	<resultMap id="brandResult" type="IotBoardBrand">
 		<id  property="brandId" column="brand_id" />
 		<result property="brandName" column="brand_name"   />
 	</resultMap>
@@ -127,7 +127,7 @@
 		from iot_device ide
         left join iot_device_access ida on ida.device_id = ide.device_id
         left join sys_dept d on d.dept_id=ide.manage_agency_id
-        left join iot_brand e on e.brand_id=ide.brand_id
+        left join iot_board_brand e on e.brand_id=ide.brand_id
         <where>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="brandId != null "> and brand_id = #{brandId}</if>

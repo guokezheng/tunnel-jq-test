@@ -32,9 +32,9 @@ public class SdIotDevice extends BaseEntity
     private Long brandId;
     /** 品牌列表对象 */
     @Excels({
-        @Excel(name = "iotBrandName", targetAttr = "iotBrandName"),
+        @Excel(name = "iotBoardBrandName", targetAttr = "iotBoardBrandName"),
     })
-    private IotBrand iotBrandName;
+    private IotBoardBrand iotBoardBrandName;
 	/**
      * 设备类型对象
      */
@@ -284,11 +284,11 @@ public class SdIotDevice extends BaseEntity
     {
         return brandId;
     }
-    public IotBrand getIotBrandName() {
-		return iotBrandName;
+    public IotBoardBrand getIotBoardBrandName() {
+		return iotBoardBrandName;
 	}
-	public void setIotBrandName(IotBrand iotBrandName) {
-		this.iotBrandName = iotBrandName;
+	public void setIotBoardBrandName(IotBoardBrand iotBoardBrandName) {
+		this.iotBoardBrandName = iotBoardBrandName;
 	}
     public void setRouteId(Long routeId)
     {
@@ -611,7 +611,7 @@ public class SdIotDevice extends BaseEntity
             .append("deviceId", getDeviceId())
             .append("deviceName", getDeviceName())
             .append("brandId", getBrandId())
-            .append("iotBrandName", getIotBrandName())
+            .append("iotBoardBrandName", getIotBoardBrandName())
             .append("iotDeviceType", getIotDeviceType())
             .append("routeId", getRouteId())
             .append("routeDirection", getRouteDirection())

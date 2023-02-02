@@ -1,89 +1,101 @@
 <template>
   <div class="app-container">
-    <el-form
-      v-show="showSearch"
-      ref="queryForm"
-      :inline="true"
-      :model="queryParams"
-      label-width="68px"
-    >
-      <el-form-item
-        label="所属隧道"
-        prop="tunnelId"
-        v-show="manageStatin == '0'"
-      >
-        <el-select
-          v-model="queryParams.tunnelId"
-          placeholder="请选择所属隧道"
-          @change="changeSelection"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="(item, index) in eqTunnelData"
-            :key="index"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="预案类型" prop="category">
-        <el-select
-          v-model="queryParams.category"
-          placeholder="请选择预案类型"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="(item, index) in planCategory"
-            :key="index"
-            :label="item.dictLabel"
-            :value="item.dictValue"
-          ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="事件类型" prop="planTypeId">
-        <el-select
-          v-model="queryParams.planTypeId"
-          clearable
-          placeholder="请选择事件类型"
-          size="small"
-        >
-          <el-option
-            v-for="(item, index) in planTypeData"
-            :key="index"
-            :label="item.eventType"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="预案名称" prop="planName">
-        <el-input
-          v-model="queryParams.planName"
-          clearable
-          placeholder="请输入预案名称"
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button size="mini" type="primary" @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button size="mini" @click="resetQuery" type="primary" plain
-          >重置</el-button
-        >
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
         <el-button
           v-hasPermi="['business:plan:add']"
-          size="mini"
+          size="small"
           type="primary"
           plain
           @click="handleAdd()"
-          >新增
+          >新增预案
         </el-button>
-      </el-form-item>
-    </el-form>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入预案名称"
+            v-model="queryParams.planName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="boxShow = !boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item
+          style="width: 100%"
+          label="所属隧道"
+          prop="tunnelId"
+          v-show="manageStatin == '0'"
+        >
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            @change="changeSelection"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in eqTunnelData"
+              :key="index"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="预案类型" prop="category" style="width: 100%">
+          <el-select
+            v-model="queryParams.category"
+            placeholder="请选择预案类型"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in planCategory"
+              :key="index"
+              :label="item.dictLabel"
+              :value="item.dictValue"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="事件类型" prop="planTypeId" style="width: 100%">
+          <el-select
+            v-model="queryParams.planTypeId"
+            clearable
+            placeholder="请选择事件类型"
+            size="small"
+          >
+            <el-option
+              v-for="(item, index) in planTypeData"
+              :key="index"
+              :label="item.eventType"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+            >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
 
     <el-table
       ref="planTable"
@@ -718,6 +730,7 @@ export default {
   // },
   data() {
     return {
+      boxShow: false,
       fileList: null,
       checkStrictly: {
         multiple: false,
@@ -1119,6 +1132,7 @@ export default {
       getAudioFileList(params).then((res) => {
         console.log(res.data, "广播");
         this.fileList = res.data;
+        this.$set(this.planTypeIdList[index], "eqStateList", response.rows);
       });
     },
     // 查询设备可控状态
@@ -1200,7 +1214,7 @@ export default {
        this.$modal.msgSuccess("执行策略中.......");
        handleStrategy(row.strategyId);
      }, */
-    // 选择将要执行的策略
+    // 配置策略
     async chooseStrategyInfo(row) {
       this.getEquipmentType();
       this.reserveId = row.id;
@@ -1237,8 +1251,13 @@ export default {
 
             this.planTypeIdList[i].equipments = data[i].equipments.split(",");
             console.log(this.planTypeIdList[i].equipments, "设备");
+            // 请求情报板数据
             if (data[i].eq_type_id == 16 || data[i].eq_type_id == 36) {
               this.qbgChange(i, this.planTypeIdList[i].equipments);
+            }
+            //请求广播音频列表数据
+            if (data[i].eq_type_id == 22) {
+              this.getAudioFileListData();
             }
             // 渲染设备列表
             let params = {
@@ -1756,6 +1775,16 @@ export default {
 };
 </script>
 <style>
+.searchBox {
+  position: absolute;
+  top: 6%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 #cascader-menu-45-0 .el-radio {
   display: none !important;
 }
@@ -1861,6 +1890,30 @@ export default {
     pointer-events: none;
     cursor: auto !important;
     color: #ccc;
+  }
+}
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
 }
 </style>

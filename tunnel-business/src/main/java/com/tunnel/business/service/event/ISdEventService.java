@@ -158,4 +158,11 @@ public interface ISdEventService {
      * @return
      */
     AjaxResult getReserveId(SdReservePlan sdReservePlan);
+
+    /**
+     * 查询应急调度出入口视频
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEntranceExitVideo(SdEvent sdEvent);
 }

@@ -206,6 +206,16 @@ public class SdIotDevice extends BaseEntity
 
     private String lAlarmHandleStr;
 
+    private String eqDirection;
+
+    public String getEqDirection() {
+        return eqDirection;
+    }
+
+    public void setEqDirection(String eqDirection) {
+        this.eqDirection = eqDirection;
+    }
+
     public String getRouteNumber() {
         return routeNumber;
     }

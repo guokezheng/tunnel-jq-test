@@ -59,4 +59,6 @@ public interface IIotBoardReleaseLogService {
      * @return 结果
      */
     int deleteIotBoardReleaseLogById(Long id);
+
+    List<IotBoardReleaseLog> getLastReleaseLogsByDeviceId(String deviceId);
 }

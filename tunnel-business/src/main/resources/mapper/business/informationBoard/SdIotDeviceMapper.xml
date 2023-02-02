@@ -128,7 +128,9 @@
         left join iot_board_access ida on ida.device_id = ide.device_id
         left join sys_dept d on d.dept_id=ide.manage_agency_id
         left join iot_board_brand e on e.brand_id=ide.brand_id
+        left join sd_devices dev on dev.associated_device_id = ide.device_id
         <where>
+            <if test="eqDirection != null and eqDirection != ''"> and dev.eq_direction = #{eqDirection}</if>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="brandId != null "> and brand_id = #{brandId}</if>
             <if test="routeId != null "> and route_id = #{routeId}</if>
@@ -163,6 +165,9 @@
             <if test="localInfo != null and localInfo != ''"> and local_info = #{localInfo}</if>
             <if test="devicePixel != null and devicePixel != ''"> and ida.device_pixel = #{devicePixel}</if>
             <if test="tunnelId != null and tunnelId != ''"> and ide.tunnel_id = #{tunnelId}</if>
+            <if test="manageAgencyId != null and manageAgencyId != ''">
+                AND (ide.manage_agency_id = #{manageAgencyId} OR d.dept_id IN ( SELECT dep.dept_id FROM sys_dept dep WHERE FIND_IN_SET (#{manageAgencyId},dep.ancestors) ))
+            </if>
         </where>
     </select>
 

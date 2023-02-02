@@ -353,7 +353,7 @@ INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_typ
 INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (5, '突发事件', '4', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:34:07', '', NULL, '模板类别');
 INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (6, '警情播报', '5', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:35:05', '', NULL, '模板类别');
 -- 情报板模板数据库表新增字段
-alter table sd_vms_template add column category varchar(100) comment '模板类别';
+alter table iot_board_template add column category varchar(100) comment '模板类别';
 
 -- 数据字典防空类型
 INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( '防控类型', 'prev_control_type', '0', 'admin', '2022-11-09 10:37:37', '', NULL, NULL);INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);

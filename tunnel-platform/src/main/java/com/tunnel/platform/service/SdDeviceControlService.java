@@ -12,14 +12,14 @@ import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdDeviceNowState;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
 import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateContentService;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
@@ -70,9 +70,9 @@ public class SdDeviceControlService {
     @Autowired
     private LightService lightService;
     @Autowired
-    private ISdVmsTemplateService sdVmsTemplateService;
+    private IIotBoardTemplateService sdVmsTemplateService;
     @Autowired
-    private ISdVmsTemplateContentService sdVmsTemplateContentService;
+    private IIotBoardTemplateContentService sdVmsTemplateContentService;
 
     @Autowired
     private HongMengDevService hongMengDevService;
@@ -301,13 +301,13 @@ public class SdDeviceControlService {
     }
 
     private int controlInformationBoard(int controlState, String isopen, Long templateId, SdDevices sdDevices, String state) {
-        SdVmsTemplate sdVmsTemplate = sdVmsTemplateService.selectSdVmsTemplateById(templateId);
+        IotBoardTemplate iotBoardTemplate = sdVmsTemplateService.selectSdVmsTemplateById(templateId);
         String parameters = "[Playlist]<r><n>ITEM_NO=2<r><n>ITEM000=300,0,1,\\C000000\\fh2424\\c255255000000谨慎驾驶\\n注意安全<r><n>ITEM001=300,0,1,\\C000000\\fh2424\\c255255000000山东高速\\n欢迎您";
-        if (sdVmsTemplate != null) {
-            SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
-            sdVmsTemplateContent.setTemplateId(templateId.toString());
-            List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentService.selectSdVmsTemplateContentList(sdVmsTemplateContent);
-            SdVmsTemplateContent templateContent = sdVmsTemplateContents.get(0);
+        if (iotBoardTemplate != null) {
+            IotBoardTemplateContent iotBoardTemplateContent = new IotBoardTemplateContent();
+            iotBoardTemplateContent.setTemplateId(templateId.toString());
+            List<IotBoardTemplateContent> iotBoardTemplateContents = sdVmsTemplateContentService.selectSdVmsTemplateContentList(iotBoardTemplateContent);
+            IotBoardTemplateContent templateContent = iotBoardTemplateContents.get(0);
             String fontType = "s";
             if (templateContent.getFontType().equals("KaiTi")) {
                 fontType = "k";
@@ -323,7 +323,7 @@ public class SdDeviceControlService {
                 fontColor = "000000255000";
             }
             //[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000=500,0,1,\C072004\fh3232\c255255000000前方事故xxxxxx米
-            parameters = "[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000="+sdVmsTemplate.getStopTime()+",1,1,\\C"
+            parameters = "[Playlist]<r><n>ITEM_NO=1<r><n>ITEM000="+ iotBoardTemplate.getStopTime()+",1,1,\\C"
                     +templateContent.getCoordinate()+"\\f"+fontType+templateContent.getFontSize()
                     +templateContent.getFontSize()+templateContent.getFontSize()+"\\c"+fontColor+templateContent.getContent();
             state = templateContent.getContent();

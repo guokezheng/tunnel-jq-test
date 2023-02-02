@@ -5,13 +5,13 @@ import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +27,12 @@ import java.util.Map;
  * @date 2021-11-30
  */
 @Service
-public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
+public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
     @Autowired
-    private SdVmsTemplateMapper sdVmsTemplateMapper;
+    private IotBoardTemplateMapper iotBoardTemplateMapper;
 
     @Autowired
-    private SdVmsTemplateContentMapper sdVmsTemplateContentMapper;
+    private IotBoardTemplateContentMapper iotBoardTemplateContentMapper;
 
     @Autowired
     private ISysDictDataService sysDictDataService;
@@ -50,19 +50,19 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
      * @return 情报板模板
      */
     @Override
-    public SdVmsTemplate selectSdVmsTemplateById(Long id) {
-        return sdVmsTemplateMapper.selectSdVmsTemplateById(id);
+    public IotBoardTemplate selectSdVmsTemplateById(Long id) {
+        return iotBoardTemplateMapper.selectSdVmsTemplateById(id);
     }
 
     /**
      * 查询情报板模板列表
      *
-     * @param sdVmsTemplate 情报板模板
+     * @param iotBoardTemplate 情报板模板
      * @return 情报板模板
      */
     @Override
-    public List<SdVmsTemplate> selectSdVmsTemplateList(SdVmsTemplate sdVmsTemplate) {
-        return sdVmsTemplateMapper.selectSdVmsTemplateList(sdVmsTemplate);
+    public List<IotBoardTemplate> selectSdVmsTemplateList(IotBoardTemplate iotBoardTemplate) {
+        return iotBoardTemplateMapper.selectSdVmsTemplateList(iotBoardTemplate);
     }
 
     /**
@@ -77,23 +77,23 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
 //        for (Map.Entry<String, Object> entry : templatesMap.entrySet()) {
 //            templatesMap.put(entry.getKey(), entry.getValue());
 //        }
-        SdVmsTemplate sdVmsTemplate = new SdVmsTemplate();
-        sdVmsTemplate.setScreenSize(jsonObject.get("screenSize").toString());
-        sdVmsTemplate.setInScreenMode(jsonObject.get("inScreenMode").toString());
+        IotBoardTemplate iotBoardTemplate = new IotBoardTemplate();
+        iotBoardTemplate.setScreenSize(jsonObject.get("screenSize").toString());
+        iotBoardTemplate.setInScreenMode(jsonObject.get("inScreenMode").toString());
 //        sdVmsTemplate.setRollSpeed(Long.parseLong(jsonObject.get("rollSpeed").toString()));
-        sdVmsTemplate.setStopTime(Long.parseLong(jsonObject.get("stopTime").toString()));
-        sdVmsTemplate.setApplyType(jsonObject.get("applyType").toString());
+        iotBoardTemplate.setStopTime(Long.parseLong(jsonObject.get("stopTime").toString()));
+        iotBoardTemplate.setApplyType(jsonObject.get("applyType").toString());
         if (jsonObject.get("category") == null || jsonObject.get("category").toString().equals("")) {
             throw new RuntimeException("情报板所属类别不能为空");
         }
-        sdVmsTemplate.setCategory(jsonObject.get("category").toString());
+        iotBoardTemplate.setCategory(jsonObject.get("category").toString());
     /*    sdVmsTemplate.setIsCurrency(Integer.parseInt(jsonObject.get("isCurrency").toString()));
         sdVmsTemplate.setTemplateType(Integer.parseInt(jsonObject.get("templateType").toString()));*/
-        sdVmsTemplate.setVmsType(jsonObject.get("vmsType").toString());
-        sdVmsTemplate.setRemark(jsonObject.get("remark").toString());
-        int template = sdVmsTemplateMapper.insertSdVmsTemplate(sdVmsTemplate);
+        iotBoardTemplate.setVmsType(jsonObject.get("vmsType").toString());
+        iotBoardTemplate.setRemark(jsonObject.get("remark").toString());
+        int template = iotBoardTemplateMapper.insertSdVmsTemplate(iotBoardTemplate);
         if (template > 0) {
-            Long id = sdVmsTemplateMapper.selectSdVmsTemplateId();
+            Long id = iotBoardTemplateMapper.selectSdVmsTemplateId();
             return id;
         }
         return -1L;
@@ -107,22 +107,22 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
      */
     @Override
     public int updateSdVmsTemplate(JSONObject templatesMap) {
-        SdVmsTemplate sdVmsTemplate = new SdVmsTemplate();
-        sdVmsTemplate.setScreenSize(templatesMap.get("screenSize").toString());
-        sdVmsTemplate.setInScreenMode(templatesMap.get("inScreenMode").toString());
+        IotBoardTemplate iotBoardTemplate = new IotBoardTemplate();
+        iotBoardTemplate.setScreenSize(templatesMap.get("screenSize").toString());
+        iotBoardTemplate.setInScreenMode(templatesMap.get("inScreenMode").toString());
 //        sdVmsTemplate.setRollSpeed(Long.parseLong(templatesMap.get("rollSpeed").toString()));
-        sdVmsTemplate.setStopTime(Long.parseLong(templatesMap.get("stopTime").toString()));
-        sdVmsTemplate.setApplyType(templatesMap.get("applyType").toString());
+        iotBoardTemplate.setStopTime(Long.parseLong(templatesMap.get("stopTime").toString()));
+        iotBoardTemplate.setApplyType(templatesMap.get("applyType").toString());
         if (templatesMap.get("category") == null || templatesMap.get("category").toString().equals("")) {
             throw new RuntimeException("情报板所属类别不能为空");
         }
-        sdVmsTemplate.setCategory(templatesMap.get("category").toString());
+        iotBoardTemplate.setCategory(templatesMap.get("category").toString());
       /*  sdVmsTemplate.setIsCurrency(Integer.parseInt(templatesMap.get("isCurrency").toString()));
         sdVmsTemplate.setTemplateType(Integer.parseInt(templatesMap.get("templateType").toString()));*/
-        sdVmsTemplate.setVmsType(templatesMap.get("vmsType").toString());
-        sdVmsTemplate.setId(Long.valueOf(templatesMap.get("id").toString()));
-        sdVmsTemplate.setRemark(templatesMap.get("remark").toString());
-        return sdVmsTemplateMapper.updateSdVmsTemplate(sdVmsTemplate);
+        iotBoardTemplate.setVmsType(templatesMap.get("vmsType").toString());
+        iotBoardTemplate.setId(Long.valueOf(templatesMap.get("id").toString()));
+        iotBoardTemplate.setRemark(templatesMap.get("remark").toString());
+        return iotBoardTemplateMapper.updateSdVmsTemplate(iotBoardTemplate);
     }
 
     /**
@@ -136,9 +136,9 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
         for (int i = 0; i < ids.length; i++) {
             Long templateId = ids[i];
             //获取要删除的ID后先删除模板内容数据
-            sdVmsTemplateContentMapper.deleteContentByTemplateId(templateId.toString());
+            iotBoardTemplateContentMapper.deleteContentByTemplateId(templateId.toString());
         }
-        return sdVmsTemplateMapper.deleteSdVmsTemplateByIds(ids);
+        return iotBoardTemplateMapper.deleteSdVmsTemplateByIds(ids);
     }
 
     /**
@@ -149,7 +149,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
      */
     @Override
     public int deleteSdVmsTemplateById(Long id) {
-        return sdVmsTemplateMapper.deleteSdVmsTemplateById(id);
+        return iotBoardTemplateMapper.deleteSdVmsTemplateById(id);
     }
 
     @Override
@@ -163,36 +163,36 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
     }
 
     @Override
-    public List<SdVmsTemplate> getAllVmsTemplate(String category, String devicePixel) {
+    public List<IotBoardTemplate> getAllVmsTemplate(String category, String devicePixel) {
 //        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
 //        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<SdVmsTemplate> sdVmsTemplates = sdVmsTemplateMapper.selectTemplateList(category, devicePixel);
-        List<SdVmsTemplateContent> sdVmsTemplateContents = sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(null);
-        List<SdVmsTemplateContent> contents = new ArrayList<>();
-        List<SdVmsTemplate> template = new ArrayList<>();
+        List<IotBoardTemplate> iotBoardTemplates = iotBoardTemplateMapper.selectTemplateList(category, devicePixel);
+        List<IotBoardTemplateContent> iotBoardTemplateContents = iotBoardTemplateContentMapper.selectSdVmsTemplateContentList(null);
+        List<IotBoardTemplateContent> contents = new ArrayList<>();
+        List<IotBoardTemplate> template = new ArrayList<>();
 //        if (!categorys.isEmpty()) {
 //            for (int i = 0;i < categorys.size();i++) {
 //                template = new ArrayList<>();
 //                String dictValue = categorys.get(i).getDictValue();
-                for (int j = 0;j < sdVmsTemplates.size();j++) {
+                for (int j = 0; j < iotBoardTemplates.size(); j++) {
                     contents = new ArrayList<>();
-                    SdVmsTemplate sdVmsTemplate = sdVmsTemplates.get(j);
-                    if (!category.equals(sdVmsTemplate.getCategory())) {
+                    IotBoardTemplate iotBoardTemplate = iotBoardTemplates.get(j);
+                    if (!category.equals(iotBoardTemplate.getCategory())) {
                         continue;
                     }
-                    Long id = sdVmsTemplate.getId();
-                    for (int z = 0;z < sdVmsTemplateContents.size();z++) {
-                        SdVmsTemplateContent sdVmsTemplateContent = sdVmsTemplateContents.get(z);
-                        if (sdVmsTemplateContent.getTemplateId().equals("") || sdVmsTemplateContent.getTemplateId() == null) {
+                    Long id = iotBoardTemplate.getId();
+                    for (int z = 0; z < iotBoardTemplateContents.size(); z++) {
+                        IotBoardTemplateContent iotBoardTemplateContent = iotBoardTemplateContents.get(z);
+                        if (iotBoardTemplateContent.getTemplateId().equals("") || iotBoardTemplateContent.getTemplateId() == null) {
                             continue;
                         }
-                        Long templateId = Long.parseLong(sdVmsTemplateContent.getTemplateId());
+                        Long templateId = Long.parseLong(iotBoardTemplateContent.getTemplateId());
                         if (id.longValue() == templateId.longValue()) {
-                            contents.add(sdVmsTemplateContent);
+                            contents.add(iotBoardTemplateContent);
                         }
                     }
-                    sdVmsTemplate.setTcontents(contents);
-                    template.add(sdVmsTemplate);
+                    iotBoardTemplate.setTcontents(contents);
+                    template.add(iotBoardTemplate);
                 }
 //                map.put(category, template);
 //            }
@@ -209,7 +209,7 @@ public class SdVmsTemplateServiceImpl implements ISdVmsTemplateService {
             throw new RuntimeException("情报板模板类型数据为空！");
         }
         List<Map<String, Object>> listMap = new ArrayList<>();
-        List<Map<String, Object>> sdVmsTemplates = sdVmsTemplateMapper.getAllSdVmsTemplateList();
+        List<Map<String, Object>> sdVmsTemplates = iotBoardTemplateMapper.getAllSdVmsTemplateList();
         for (int i = 0;i < devIds.size();i++) {
             String devId = devIds.get(i);
             SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);

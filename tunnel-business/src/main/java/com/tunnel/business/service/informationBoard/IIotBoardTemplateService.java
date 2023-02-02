@@ -1,7 +1,7 @@
 package com.tunnel.business.service.informationBoard;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -12,22 +12,22 @@ import java.util.Map;
  * @author 刘方堃
  * @date 2021-11-30
  */
-public interface ISdVmsTemplateService {
+public interface IIotBoardTemplateService {
     /**
      * 查询情报板模板
      *
      * @param id 情报板模板ID
      * @return 情报板模板
      */
-    SdVmsTemplate selectSdVmsTemplateById(Long id);
+    IotBoardTemplate selectSdVmsTemplateById(Long id);
 
     /**
      * 查询情报板模板列表
      *
-     * @param sdVmsTemplate 情报板模板
+     * @param iotBoardTemplate 情报板模板
      * @return 情报板模板集合
      */
-    List<SdVmsTemplate> selectSdVmsTemplateList(SdVmsTemplate sdVmsTemplate);
+    List<IotBoardTemplate> selectSdVmsTemplateList(IotBoardTemplate iotBoardTemplate);
 
     /**
      * 新增情报板模板
@@ -65,7 +65,7 @@ public interface ISdVmsTemplateService {
 
     List<Map<String, Object>> informationBoardAcquisition(JSONObject jsonObject);
 
-    List<SdVmsTemplate> getAllVmsTemplate(String category, String devicePixel);
+    List<IotBoardTemplate> getAllVmsTemplate(String category, String devicePixel);
 
     List<Map<String, Object>> getVMSTemplatesByDevIdAndCategory(List<String> devIds);
 }

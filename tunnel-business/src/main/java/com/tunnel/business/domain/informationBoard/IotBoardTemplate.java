@@ -8,12 +8,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.util.List;
 
 /**
- * 情报板模板对象 sd_vms_template
+ * 情报板模板对象
  *
  * @author 刘方堃
  * @date 2021-11-30
  */
-public class SdVmsTemplate extends BaseEntity
+public class IotBoardTemplate extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -56,15 +56,15 @@ public class SdVmsTemplate extends BaseEntity
 
     private String dictLable;
 
-    private SdVmsTemplateContent tcontent;
+    private IotBoardTemplateContent tcontent;
 
-    private List<SdVmsTemplateContent> tcontents;
+    private List<IotBoardTemplateContent> tcontents;
 
-    public List<SdVmsTemplateContent> getTcontents() {
+    public List<IotBoardTemplateContent> getTcontents() {
         return tcontents;
     }
 
-    public void setTcontents(List<SdVmsTemplateContent> tcontents) {
+    public void setTcontents(List<IotBoardTemplateContent> tcontents) {
         this.tcontents = tcontents;
     }
 
@@ -84,14 +84,14 @@ public class SdVmsTemplate extends BaseEntity
         this.category = category;
     }
 
-    public SdVmsTemplateContent getTcontent() {
+    public IotBoardTemplateContent getTcontent() {
         if (tcontent == null) {
-            tcontent = new SdVmsTemplateContent();
+            tcontent = new IotBoardTemplateContent();
         }
         return tcontent;
     }
 
-    public void setTcontent(SdVmsTemplateContent tcontent) {
+    public void setTcontent(IotBoardTemplateContent tcontent) {
         this.tcontent = tcontent;
     }
 

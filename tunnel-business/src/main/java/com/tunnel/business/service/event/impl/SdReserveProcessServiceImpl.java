@@ -9,8 +9,7 @@ import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdEquipmentState;
 import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.event.*;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
-import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
@@ -18,7 +17,7 @@ import com.tunnel.business.mapper.event.SdReservePlanMapper;
 import com.tunnel.business.mapper.event.SdReserveProcessMapper;
 import com.tunnel.business.mapper.event.SdStrategyMapper;
 import com.tunnel.business.mapper.event.SdStrategyRlMapper;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.event.ISdEventFlowService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.event.ISdReserveProcessService;
@@ -298,9 +297,9 @@ public class SdReserveProcessServiceImpl implements ISdReserveProcessService {
             List<SdEquipmentState> sdEquipmentStates = new ArrayList<>();
             if(rl.getEqTypeId().equals(DevicesTypeEnum.VMS.getCode().toString()) || rl.getEqTypeId().equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
                 String templateId = rl.getState();
-                SdVmsTemplateContent content = new SdVmsTemplateContent();
+                IotBoardTemplateContent content = new IotBoardTemplateContent();
                 content.setTemplateId(templateId);
-                List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                 eqOperation.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
             }else{
                 SdEquipmentState state = new SdEquipmentState();

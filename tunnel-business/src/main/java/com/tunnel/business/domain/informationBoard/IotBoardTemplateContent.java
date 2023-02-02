@@ -6,12 +6,12 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 发布模板内容对象 sd_vms_template_content
+ * 发布模板内容对象
  *
  * @author ruoyi
  * @date 2022-03-22
  */
-public class SdVmsTemplateContent extends BaseEntity
+public class IotBoardTemplateContent extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

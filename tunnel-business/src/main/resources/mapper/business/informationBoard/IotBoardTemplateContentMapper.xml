@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper">
 
-    <resultMap type="SdVmsTemplateContent" id="SdVmsTemplateContentResult">
+    <resultMap type="IotBoardTemplateContent" id="IotBoardTemplateContentResult">
         <result property="id"    column="id"    />
         <result property="templateId"    column="template_id"    />
         <result property="content"    column="content"    />
@@ -18,12 +18,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="width"    column="width"    />
     </resultMap>
 
-    <sql id="selectSdVmsTemplateContentVo">
-        select id, template_id, content, font_color, font_size, font_type, font_spacing, coordinate, image_url, height, width from sd_vms_template_content
+    <sql id="selectIotBoardTemplateContentVo">
+        select id, template_id, content, font_color, font_size, font_type, font_spacing, coordinate, image_url, height, width from iot_board_template_content
     </sql>
 
-    <select id="selectSdVmsTemplateContentList" parameterType="SdVmsTemplateContent" resultMap="SdVmsTemplateContentResult">
-        <include refid="selectSdVmsTemplateContentVo"/>
+    <select id="selectSdVmsTemplateContentList" parameterType="IotBoardTemplateContent" resultMap="IotBoardTemplateContentResult">
+        <include refid="selectIotBoardTemplateContentVo"/>
         <where>
             <if test="templateId != null  and templateId != ''"> and template_id = #{templateId}</if>
             <if test="content != null  and content != ''"> and content = #{content}</if>
@@ -38,13 +38,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectSdVmsTemplateContentById" parameterType="Long" resultMap="SdVmsTemplateContentResult">
-        <include refid="selectSdVmsTemplateContentVo"/>
+    <select id="selectSdVmsTemplateContentById" parameterType="Long" resultMap="IotBoardTemplateContentResult">
+        <include refid="selectIotBoardTemplateContentVo"/>
         where id = #{id}
     </select>
 
-    <insert id="insertSdVmsTemplateContent" parameterType="SdVmsTemplateContent" useGeneratedKeys="true" keyProperty="id">
-        insert into sd_vms_template_content
+    <insert id="insertSdVmsTemplateContent" parameterType="IotBoardTemplateContent" useGeneratedKeys="true" keyProperty="id">
+        insert into iot_board_template_content
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="templateId != null">template_id,</if>
             <if test="content != null">content,</if>
@@ -71,8 +71,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateSdVmsTemplateContent" parameterType="SdVmsTemplateContent">
-        update sd_vms_template_content
+    <update id="updateSdVmsTemplateContent" parameterType="IotBoardTemplateContent">
+        update iot_board_template_content
         <trim prefix="SET" suffixOverrides=",">
             <if test="templateId != null">template_id = #{templateId},</if>
             <if test="content != null">content = #{content},</if>
@@ -89,17 +89,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSdVmsTemplateContentById" parameterType="Long">
-        delete from sd_vms_template_content where id = #{id}
+        delete from iot_board_template_content where id = #{id}
     </delete>
 
     <delete id="deleteSdVmsTemplateContentByIds" parameterType="String">
-        delete from sd_vms_template_content where id in
+        delete from iot_board_template_content where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <delete id="deleteContentByTemplateId" parameterType="String">
-        delete from sd_vms_template_content where template_id = #{templateId}
+        delete from iot_board_template_content where template_id = #{templateId}
     </delete>
 </mapper>

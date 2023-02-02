@@ -1,6 +1,6 @@
 package com.tunnel.business.mapper.informationBoard;
 
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2022-03-22
  */
-public interface SdVmsTemplateContentMapper
+public interface IotBoardTemplateContentMapper
 {
     /**
      * 查询发布模板内容
@@ -19,31 +19,31 @@ public interface SdVmsTemplateContentMapper
      * @param id 发布模板内容主键
      * @return 发布模板内容
      */
-    public SdVmsTemplateContent selectSdVmsTemplateContentById(Long id);
+    public IotBoardTemplateContent selectSdVmsTemplateContentById(Long id);
 
     /**
      * 查询发布模板内容列表
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 发布模板内容集合
      */
-    public List<SdVmsTemplateContent> selectSdVmsTemplateContentList(SdVmsTemplateContent sdVmsTemplateContent);
+    public List<IotBoardTemplateContent> selectSdVmsTemplateContentList(IotBoardTemplateContent iotBoardTemplateContent);
 
     /**
      * 新增发布模板内容
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 结果
      */
-    public int insertSdVmsTemplateContent(SdVmsTemplateContent sdVmsTemplateContent);
+    public int insertSdVmsTemplateContent(IotBoardTemplateContent iotBoardTemplateContent);
 
     /**
      * 修改发布模板内容
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 结果
      */
-    public int updateSdVmsTemplateContent(SdVmsTemplateContent sdVmsTemplateContent);
+    public int updateSdVmsTemplateContent(IotBoardTemplateContent iotBoardTemplateContent);
 
     /**
      * 删除发布模板内容

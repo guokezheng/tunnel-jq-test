@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper">
+<mapper namespace="com.tunnel.business.mapper.informationBoard.IotBoardTemplateMapper">
 
-    <resultMap type="SdVmsTemplate" id="SdVmsTemplateResult">
+    <resultMap type="IotBoardTemplate" id="IotBoardTemplateResult">
         <result property="id"    column="id"    />
         <result property="screenSize"    column="screen_size"    />
         <result property="inScreenMode"    column="in_screen_mode"    />
@@ -17,10 +17,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
         <result property="category"    column="category"    />
         <result property="dictLable"    column="dict_lable"    />
-        <association property="tcontent" column="template_id" javaType="SdVmsTemplateContent" resultMap="contentResult"/>
+        <association property="tcontent" column="template_id" javaType="IotBoardTemplateContent" resultMap="contentResult"/>
     </resultMap>
 
-    <resultMap id="contentResult" type="SdVmsTemplateContent">
+    <resultMap id="contentResult" type="IotBoardTemplateContent">
         <id property="templateId"    column="template_id"    />
         <result property="id"    column="id"    />
         <result property="content"    column="content"    />
@@ -34,17 +34,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="width"    column="width"    />
     </resultMap>
 
-    <sql id="selectSdVmsTemplateVo">
+    <sql id="selectIotBoardTemplateVo">
         select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
                a.template_type, a.vms_type, a.remark, b.id, b.template_id, b.content, b.font_color, b.font_size,
                b.font_type, b.font_spacing, b.coordinate, b.image_url, b.height, b.width, a.category, c.dict_label
-        from sd_vms_template a
-        left join sd_vms_template_content b on a.id = b.template_id
+        from iot_board_template a
+        left join iot_board_template_content b on a.id = b.template_id
         left join sys_dict_data c on c.dict_type = "iot_template_category" and a.category = c.dict_value
     </sql>
 
-    <select id="selectSdVmsTemplateList" parameterType="SdVmsTemplate" resultMap="SdVmsTemplateResult">
-        <include refid="selectSdVmsTemplateVo"/>
+    <select id="selectSdVmsTemplateList" parameterType="IotBoardTemplate" resultMap="IotBoardTemplateResult">
+        <include refid="selectIotBoardTemplateVo"/>
         <where>
             <if test="screenSize != null  and screenSize != ''"> and a.screen_size = #{screenSize}</if>
             <if test="applyType != null  and applyType != ''"> and a.apply_type = #{applyType}</if>
@@ -55,21 +55,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectTemplateList" resultMap="SdVmsTemplateResult">
+    <select id="selectTemplateList" resultMap="IotBoardTemplateResult">
         select a.id, a.screen_size, a.in_screen_mode, a.roll_speed, a.stop_time, a.apply_type, a.is_currency,
                a.template_type, a.vms_type, a.remark, a.category
-        from sd_vms_template a
+        from iot_board_template a
         where a.category = #{category}
         <if test="devicePixel != null and devicePixel != ''"> and a.screen_size = #{devicePixel}</if>
     </select>
 
-    <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="SdVmsTemplateResult">
-        <include refid="selectSdVmsTemplateVo"/>
+    <select id="selectSdVmsTemplateById" parameterType="Long" resultMap="IotBoardTemplateResult">
+        <include refid="selectIotBoardTemplateVo"/>
         where a.id = #{id}
     </select>
 
-    <insert id="insertSdVmsTemplate" parameterType="SdVmsTemplate">
-        insert into sd_vms_template
+    <insert id="insertSdVmsTemplate" parameterType="IotBoardTemplate">
+        insert into iot_board_template
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="screenSize != null">screen_size,</if>
             <if test="inScreenMode != null">in_screen_mode,</if>
@@ -96,8 +96,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateSdVmsTemplate" parameterType="SdVmsTemplate">
-        update sd_vms_template
+    <update id="updateSdVmsTemplate" parameterType="IotBoardTemplate">
+        update iot_board_template
         <trim prefix="SET" suffixOverrides=",">
             <if test="screenSize != null">screen_size = #{screenSize},</if>
             <if test="inScreenMode != null">in_screen_mode = #{inScreenMode},</if>
@@ -113,24 +113,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSdVmsTemplateById" parameterType="Long">
-        delete from sd_vms_template where id = #{id}
+        delete from iot_board_template where id = #{id}
     </delete>
 
     <delete id="deleteSdVmsTemplateByIds" parameterType="Long">
-        delete from sd_vms_template where id in
+        delete from iot_board_template where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
     <select id="selectSdVmsTemplateId" resultType="Long">
-        SELECT id from sd_vms_template ORDER BY id desc LIMIT 1
+        SELECT id from iot_board_template ORDER BY id desc LIMIT 1
     </select>
 
     <select id="getAllSdVmsTemplateList" resultType="hashmap">
         select a.id value, a.screen_size devicePixel, a.category, b.id contentId, b.template_id templateId, b.content label
-        from sd_vms_template a
-                 left join sd_vms_template_content b on a.id = b.template_id
+        from iot_board_template a
+                 left join iot_board_template_content b on a.id = b.template_id
         GROUP BY b.template_id
     </select>
 </mapper>

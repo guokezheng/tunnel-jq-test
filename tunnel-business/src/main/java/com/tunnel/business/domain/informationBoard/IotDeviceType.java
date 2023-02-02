@@ -6,8 +6,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 设备类型编号对象 iot_device_type
- * 
+ * 设备类型编号对象 iot_board_type
+ *
  * @author yangqichao
  * @date 2020-03-26
  */
@@ -66,120 +66,120 @@ public class IotDeviceType extends BaseEntity
     @Excel(name = "排序")
     private Integer sort;
 
-    public void setDeviceTypeId(Long deviceTypeId) 
+    public void setDeviceTypeId(Long deviceTypeId)
     {
         this.deviceTypeId = deviceTypeId;
     }
 
-    public Long getDeviceTypeId() 
+    public Long getDeviceTypeId()
     {
         return deviceTypeId;
     }
-    public void setDeviceTypeNumber(String deviceTypeNumber) 
+    public void setDeviceTypeNumber(String deviceTypeNumber)
     {
         this.deviceTypeNumber = deviceTypeNumber;
     }
 
-    public String getDeviceTypeNumber() 
+    public String getDeviceTypeNumber()
     {
         return deviceTypeNumber;
     }
-    public void setStates(String states) 
+    public void setStates(String states)
     {
         this.states = states;
     }
 
-    public String getStates() 
+    public String getStates()
     {
         return states;
     }
-    public void setDeviceTypeName(String deviceTypeName) 
+    public void setDeviceTypeName(String deviceTypeName)
     {
         this.deviceTypeName = deviceTypeName;
     }
 
-    public String getDeviceTypeName() 
+    public String getDeviceTypeName()
     {
         return deviceTypeName;
     }
-    public void setUrl(String url) 
+    public void setUrl(String url)
     {
         this.url = url;
     }
 
-    public String getUrl() 
+    public String getUrl()
     {
         return url;
     }
-    public void setNormalCssClass(String normalCssClass) 
+    public void setNormalCssClass(String normalCssClass)
     {
         this.normalCssClass = normalCssClass;
     }
 
-    public String getNormalCssClass() 
+    public String getNormalCssClass()
     {
         return normalCssClass;
     }
-    public void setAbnormalCssClass(String abnormalCssClass) 
+    public void setAbnormalCssClass(String abnormalCssClass)
     {
         this.abnormalCssClass = abnormalCssClass;
     }
 
-    public String getAbnormalCssClass() 
+    public String getAbnormalCssClass()
     {
         return abnormalCssClass;
     }
-    public void setFaultCssClass(String faultCssClass) 
+    public void setFaultCssClass(String faultCssClass)
     {
         this.faultCssClass = faultCssClass;
     }
 
-    public String getFaultCssClass() 
+    public String getFaultCssClass()
     {
         return faultCssClass;
     }
-    public void setPushCssClass(String pushCssClass) 
+    public void setPushCssClass(String pushCssClass)
     {
         this.pushCssClass = pushCssClass;
     }
 
-    public String getPushCssClass() 
+    public String getPushCssClass()
     {
         return pushCssClass;
     }
-    public void setRefreshTime(String refreshTime) 
+    public void setRefreshTime(String refreshTime)
     {
         this.refreshTime = refreshTime;
     }
 
-    public String getRefreshTime() 
+    public String getRefreshTime()
     {
         return refreshTime;
     }
-    public void setVisible(Integer visible) 
+    public void setVisible(Integer visible)
     {
         this.visible = visible;
     }
 
-    public Integer getVisible() 
+    public Integer getVisible()
     {
         return visible;
     }
-    public void setIspush(Integer ispush) 
+    public void setIspush(Integer ispush)
     {
         this.ispush = ispush;
     }
 
-    public Integer getIspush() 
+    public Integer getIspush()
     {
         return ispush;
     }
-    public void setSort(Integer sort) 
+    public void setSort(Integer sort)
     {
         this.sort = sort;
     }
 
-    public Integer getSort() 
+    public Integer getSort()
     {
         return sort;
     }

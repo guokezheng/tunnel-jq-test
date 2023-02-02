@@ -339,7 +339,7 @@
           ref="tree"
           accordion
           default-expand-all
-          @node-click="handleNodeClick"
+          @node-click="handleNodeClick1"
           node-key="id"
           highlight-current
         />
@@ -420,7 +420,7 @@
           ref="tree"
           accordion
           default-expand-all
-          @node-click="handleNodeClick"
+          @node-click="handleNodeClick2"
           node-key="id"
           highlight-current
         />
@@ -950,7 +950,6 @@ export default {
     },
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
-      console.log(selection,"selectionselectionselectionselection")
       this.dialogSelection = selection;
       console.log(this.dialogSelection, "this.dialogSelection");
     },
@@ -970,17 +969,15 @@ export default {
         this.deviceType = deviceType
       }
       getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
-        console.log(res, "获取设备table");
-        console.log(this.boxList, "boxList");
-
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          //console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
             this.tableData1.forEach((item) => {
               this.boxList.forEach((row) => {
-                if (item.eq_name == row.eq_name) {
+                const eq_id = row.eq_id.slice(0, -2);
+                if (item.eq_id == eq_id) {
                   this.$nextTick(() => {
                     this.$refs.multipleTable1.toggleRowSelection(item, true);
                   });
@@ -1004,11 +1001,12 @@ export default {
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+         // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
             this.tableData2.forEach((item) => {
               this.boxList.forEach((row) => {
-                if (item.eq_name == row.eq_name) {
+                const eq_id = row.eq_id.slice(0, -2);
+                if (item.eq_id == eq_id) {
                   this.$nextTick(() => {
                     this.$refs.multipleTable2.toggleRowSelection(item, true);
                   });
@@ -1021,10 +1019,59 @@ export default {
         }
       });
     },
-    //节点单击事件
-    handleNodeClick(data) {
-      console.log(data, "节点单击事件");
+    //设备节点单击事件
+    handleNodeClick1(data) {
       this.tunnelId = data.id;
+
+      getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
+        console.log(res, "获取设备table");
+        console.log(this.boxList, "boxList");
+
+        this.tableData1 = res.rows;
+        this.dialogTotal = res.total;
+        if (this.boxList != []) {
+          // if (this.boxList[0].eq_type == deviceType) {
+          this.tableData1.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable1.toggleRowSelection(item, true);
+                });
+              }
+            });
+          });
+          // }
+        } else {
+          this.$refs.multipleTable1.clearSelection();
+        }
+      });
+    },
+    //故障节点单击事件
+    handleNodeClick2(data) {
+      this.tunnelId = data.id;
+      getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
+        console.log(res, "获取故障table");
+        console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
+        this.tableData2 = res.rows;
+        this.dialogTotal = res.total;
+        if (this.boxList != []) {
+          // if (this.boxList[0].eq_type == deviceType) {
+          this.tableData2.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable2.toggleRowSelection(item, true);
+                });
+              }
+            });
+          });
+          // }
+        } else {
+          this.$refs.multipleTable2.clearSelection();
+        }
+      });
     },
     // 筛选节点
     filterNode(value, data) {
@@ -1200,10 +1247,13 @@ export default {
     },
     show1() {
      //this.tableData1 = null
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return this.$modal.msgWarning('请选择所属隧道')
+      }
      this.dialogSelection = []
-     console.log(this.dialogSelection,"this.dialogSelectionthis.dialogSelectionthis.dialogSelection")
     //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
+      this.tunnelId = this.form.tunnelId;
       this.options1value = "0"
       this.getTable(this.options1value)
       //点击确定，数据还原
@@ -1219,8 +1269,12 @@ export default {
     },
     show2() {
       //this.tableData1 = null
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return this.$modal.msgWarning('请选择所属隧道')
+      }
       this.isShow2 = true;
       this.options2value = "0"
+      this.tunnelId = this.form.tunnelId;
       this.getGzTable(this.options2value)
       if(this.openGz){
         this.options2value = "0"

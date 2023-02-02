@@ -7,14 +7,13 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateService;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplate;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 情报板模板Controller
@@ -24,26 +23,26 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/system/template")
-public class SdVmsTemplateController extends BaseController
+public class IotBoardTemplateController extends BaseController
 {
     @Autowired
-    private ISdVmsTemplateService sdVmsTemplateService;
+    private IIotBoardTemplateService iotBoardTemplateService;
 
     /**
      * 查询情报板模板列表
      */
     @PreAuthorize("@ss.hasPermi('system:templateConfig:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SdVmsTemplate sdVmsTemplate)
+    public TableDataInfo list(IotBoardTemplate iotBoardTemplate)
     {
         startPage();
-        List<SdVmsTemplate> list = sdVmsTemplateService.selectSdVmsTemplateList(sdVmsTemplate);
+        List<IotBoardTemplate> list = iotBoardTemplateService.selectSdVmsTemplateList(iotBoardTemplate);
         return getDataTable(list);
     }
 
     @GetMapping("/getAllVmsTemplate")
     public AjaxResult getAllVmsTemplate(String category, String devicePixel) {
-        return AjaxResult.success(sdVmsTemplateService.getAllVmsTemplate(category, devicePixel));
+        return AjaxResult.success(iotBoardTemplateService.getAllVmsTemplate(category, devicePixel));
     }
 
     /**
@@ -52,10 +51,10 @@ public class SdVmsTemplateController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:templateConfig:export')")
     @Log(title = "情报板模板", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(SdVmsTemplate sdVmsTemplate)
+    public AjaxResult export(IotBoardTemplate iotBoardTemplate)
     {
-        List<SdVmsTemplate> list = sdVmsTemplateService.selectSdVmsTemplateList(sdVmsTemplate);
-        ExcelUtil<SdVmsTemplate> util = new ExcelUtil<SdVmsTemplate>(SdVmsTemplate.class);
+        List<IotBoardTemplate> list = iotBoardTemplateService.selectSdVmsTemplateList(iotBoardTemplate);
+        ExcelUtil<IotBoardTemplate> util = new ExcelUtil<IotBoardTemplate>(IotBoardTemplate.class);
         return util.exportExcel(list, "情报板模板列表");
     }
 
@@ -66,7 +65,7 @@ public class SdVmsTemplateController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(sdVmsTemplateService.selectSdVmsTemplateById(id));
+        return AjaxResult.success(iotBoardTemplateService.selectSdVmsTemplateById(id));
     }
 
     /**
@@ -77,7 +76,7 @@ public class SdVmsTemplateController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody JSONObject jsonObject)
     {
-        return AjaxResult.success(sdVmsTemplateService.insertSdVmsTemplate(jsonObject));
+        return AjaxResult.success(iotBoardTemplateService.insertSdVmsTemplate(jsonObject));
     }
 
     /**
@@ -88,7 +87,7 @@ public class SdVmsTemplateController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody JSONObject jsonObject)
     {
-        return toAjax(sdVmsTemplateService.updateSdVmsTemplate(jsonObject));
+        return toAjax(iotBoardTemplateService.updateSdVmsTemplate(jsonObject));
     }
 
     /**
@@ -99,7 +98,7 @@ public class SdVmsTemplateController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(sdVmsTemplateService.deleteSdVmsTemplateByIds(ids));
+        return toAjax(iotBoardTemplateService.deleteSdVmsTemplateByIds(ids));
     }
 
     /**
@@ -107,7 +106,7 @@ public class SdVmsTemplateController extends BaseController
      */
     @PostMapping("/informationBoardRelease")
     public AjaxResult informationBoardRelease(JSONObject jsonObject) {
-        return AjaxResult.success(sdVmsTemplateService.informationBoardRelease(jsonObject));
+        return AjaxResult.success(iotBoardTemplateService.informationBoardRelease(jsonObject));
     }
 
     /**
@@ -115,7 +114,7 @@ public class SdVmsTemplateController extends BaseController
      */
     @PostMapping("/informationBoardAcquisition")
     public AjaxResult informationBoardAcquisition(JSONObject jsonObject) {
-        return AjaxResult.success(sdVmsTemplateService.informationBoardAcquisition(jsonObject));
+        return AjaxResult.success(iotBoardTemplateService.informationBoardAcquisition(jsonObject));
     }
 
     /**
@@ -123,6 +122,6 @@ public class SdVmsTemplateController extends BaseController
      */
     @PostMapping("/getVMSTemplatesByDevIdAndCategory")
     public AjaxResult getVMSTemplatesByDevIdAndCategory(@RequestBody List<String> devIds) {
-        return AjaxResult.success(sdVmsTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
+        return AjaxResult.success(iotBoardTemplateService.getVMSTemplatesByDevIdAndCategory(devIds));
     }
 }

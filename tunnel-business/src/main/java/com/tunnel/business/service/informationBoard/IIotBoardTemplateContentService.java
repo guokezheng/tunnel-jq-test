@@ -1,7 +1,7 @@
 package com.tunnel.business.service.informationBoard;
 
 import com.alibaba.fastjson.JSONObject;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 
 import java.util.List;
 
@@ -11,22 +11,22 @@ import java.util.List;
  * @author ruoyi
  * @date 2022-03-22
  */
-public interface ISdVmsTemplateContentService {
+public interface IIotBoardTemplateContentService {
     /**
      * 查询发布模板内容
      *
      * @param id 发布模板内容主键
      * @return 发布模板内容
      */
-    SdVmsTemplateContent selectSdVmsTemplateContentById(Long id);
+    IotBoardTemplateContent selectSdVmsTemplateContentById(Long id);
 
     /**
      * 查询发布模板内容列表
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 发布模板内容集合
      */
-    List<SdVmsTemplateContent> selectSdVmsTemplateContentList(SdVmsTemplateContent sdVmsTemplateContent);
+    List<IotBoardTemplateContent> selectSdVmsTemplateContentList(IotBoardTemplateContent iotBoardTemplateContent);
 
     /**
      * 新增发布模板内容

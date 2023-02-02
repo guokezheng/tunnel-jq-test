@@ -5,23 +5,19 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.quartz.domain.SysJob;
-import com.ruoyi.quartz.mapper.SysJobMapper;
 import com.ruoyi.quartz.service.impl.SysJobServiceImpl;
 import com.ruoyi.quartz.util.CronUtils;
-import com.tunnel.business.datacenter.config.MapCache;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.util.CronUtil;
 import com.tunnel.business.domain.dataInfo.*;
 import com.tunnel.business.domain.event.*;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplate;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.instruction.EquipmentControlInstruction;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
@@ -29,37 +25,26 @@ import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentStateMapper;
 import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.business.mapper.event.*;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
 import com.tunnel.business.service.dataInfo.ISdDeviceCmdService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.event.ISdEventFlowService;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
-import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.deviceControl.PhoneSpkService;
 import com.tunnel.platform.service.event.ISdStrategyService;
 import com.zc.common.core.redis.pubsub.RedisPubSub;
 import org.apache.commons.lang3.StringUtils;
-import org.quartz.CronExpression;
-import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import javax.swing.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -241,9 +226,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 state.setIsControl(1);
                 if(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
                     String templateId = rlList.get(j).getState();
-                    SdVmsTemplateContent content = new SdVmsTemplateContent();
+                    IotBoardTemplateContent content = new IotBoardTemplateContent();
                     content.setTemplateId(templateId);
-                    List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                    List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                     sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
                     continue;
                 }
@@ -301,9 +286,9 @@ public class SdStrategyServiceImpl implements ISdStrategyService {
                 state.setIsControl(1);
                 if(eqTypeId.equals(DevicesTypeEnum.VMS.getCode().toString()) || eqTypeId.equals(DevicesTypeEnum.MEN_JIA_VMS.getCode().toString())){
                     String templateId = rlList.get(j).getState();
-                    SdVmsTemplateContent content = new SdVmsTemplateContent();
+                    IotBoardTemplateContent content = new IotBoardTemplateContent();
                     content.setTemplateId(templateId);
-                    List<SdVmsTemplateContent> contentList = SpringUtils.getBean(SdVmsTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
+                    List<IotBoardTemplateContent> contentList = SpringUtils.getBean(IotBoardTemplateContentMapper.class).selectSdVmsTemplateContentList(content);
                     sList.add(typeName + "发布信息：" + contentList.get(0).getContent() + "；");
                     continue;
                 }

@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.informationBoard.IotDeviceAccessMapper">
-    
+
     <resultMap type="IotDeviceAccess" id="IotDeviceAccessResult">
         <result property="deviceId"    column="device_id"    />
         <result property="deviceTypeId" column="device_type_id"/>
@@ -21,12 +21,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectIotDeviceAccessVo">
-        select device_id, device_type_id,device_ip, device_port, device_protocol_id, device_pixel,user_name ,pass_word,create_by, create_time, update_by, update_time, remark from iot_device_access
+        select device_id, device_type_id,device_ip, device_port, device_protocol_id, device_pixel,user_name ,pass_word,create_by, create_time, update_by, update_time, remark from iot_board_access
     </sql>
 
     <select id="selectIotDeviceAccessQuery" parameterType="IotDeviceAccess" resultMap="IotDeviceAccessResult">
         <include refid="selectIotDeviceAccessVo"/>
-        <where>  
+        <where>
             <if test="deviceIp != null  and deviceIp != ''"> and device_ip = #{deviceIp}</if>
             <if test="deviceTypeId != null  and deviceTypeId != ''"> and device_type_id = #{deviceTypeId}</if>
             <if test="devicePort != null  and devicePort != ''"> and device_port = #{devicePort}</if>
@@ -54,9 +54,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectIotDeviceAccessVo"/>
         where device_id = #{deviceId}
     </select>
-        
+
     <insert id="insertIotDeviceAccess" parameterType="IotDeviceAccess">
-        insert into iot_device_access
+        insert into iot_board_access
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="deviceId != null ">device_id,</if>
             <if test="deviceTypeId != null ">device_type_id,</if>
@@ -90,7 +90,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <update id="updateIotDeviceAccess" parameterType="IotDeviceAccess">
-        update iot_device_access
+        update iot_board_access
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceIp != null  and deviceIp != ''">device_ip = #{deviceIp},</if>
             <if test="deviceTypeId != null  and deviceTypeId != ''">device_type_id = #{deviceTypeId},</if>
@@ -109,14 +109,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteIotDeviceAccessById" parameterType="Long">
-        delete from iot_device_access where device_id = #{deviceId}
+        delete from iot_board_access where device_id = #{deviceId}
     </delete>
 
     <delete id="deleteIotDeviceAccessByIds" parameterType="String">
-        delete from iot_device_access where device_id in 
+        delete from iot_board_access where device_id in
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
     </delete>
-    
+
 </mapper>

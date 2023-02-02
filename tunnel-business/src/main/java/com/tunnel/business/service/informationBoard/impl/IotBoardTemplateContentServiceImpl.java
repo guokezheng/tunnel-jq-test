@@ -3,11 +3,11 @@ package com.tunnel.business.service.informationBoard.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.utils.StringUtils;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
 import com.tunnel.business.domain.informationBoard.IotBoardVocabulary;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
-import com.tunnel.business.mapper.informationBoard.SdVmsTemplateContentMapper;
+import com.tunnel.business.mapper.informationBoard.IotBoardTemplateContentMapper;
 import com.tunnel.business.service.informationBoard.IIotBoardVocabularyService;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +20,9 @@ import java.util.List;
  * @date 2022-03-22
  */
 @Service
-public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentService {
+public class IotBoardTemplateContentServiceImpl implements IIotBoardTemplateContentService {
     @Autowired
-    private SdVmsTemplateContentMapper sdVmsTemplateContentMapper;
+    private IotBoardTemplateContentMapper iotBoardTemplateContentMapper;
     @Autowired
     private IIotBoardVocabularyService iotBoardVocabularyService;
 
@@ -33,25 +33,25 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
      * @return 发布模板内容
      */
     @Override
-    public SdVmsTemplateContent selectSdVmsTemplateContentById(Long id) {
-        return sdVmsTemplateContentMapper.selectSdVmsTemplateContentById(id);
+    public IotBoardTemplateContent selectSdVmsTemplateContentById(Long id) {
+        return iotBoardTemplateContentMapper.selectSdVmsTemplateContentById(id);
     }
 
     /**
      * 查询发布模板内容列表
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 发布模板内容
      */
     @Override
-    public List<SdVmsTemplateContent> selectSdVmsTemplateContentList(SdVmsTemplateContent sdVmsTemplateContent) {
-        return sdVmsTemplateContentMapper.selectSdVmsTemplateContentList(sdVmsTemplateContent);
+    public List<IotBoardTemplateContent> selectSdVmsTemplateContentList(IotBoardTemplateContent iotBoardTemplateContent) {
+        return iotBoardTemplateContentMapper.selectSdVmsTemplateContentList(iotBoardTemplateContent);
     }
 
     /**
      * 新增发布模板内容
      *
-     * @param sdVmsTemplateContent 发布模板内容
+     * @param iotBoardTemplateContent 发布模板内容
      * @return 结果
      */
     @Override
@@ -65,8 +65,8 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                 int count = 0;
                 for (int i = 0; i < templateContent.size(); i++) {
                     JSONObject tempContent = templateContent.getJSONObject(i);
-                    SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
-                    sdVmsTemplateContent.setTemplateId(templateId);
+                    IotBoardTemplateContent iotBoardTemplateContent = new IotBoardTemplateContent();
+                    iotBoardTemplateContent.setTemplateId(templateId);
                     String content = tempContent.get("content").toString();
                     String word = "";
                     for (int g = 0;g < iotBoardVocabularies.size();g++) {
@@ -79,14 +79,14 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                     if (flag) {
                         content = content.replaceAll(word, "");
                     }
-                    sdVmsTemplateContent.setContent(content);
-                    sdVmsTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
-                    sdVmsTemplateContent.setFontColor(tempContent.get("fontColor").toString());
-                    sdVmsTemplateContent.setFontSize(Long.parseLong(tempContent.get("fontSize").toString()));
-                    sdVmsTemplateContent.setFontType(tempContent.get("fontType").toString());
-                    sdVmsTemplateContent.setFontSpacing(Long.parseLong(tempContent.get("fontSpacing").toString()));
-                    /*   sdVmsTemplateContent.setImageUrl(tempContent.get("img").toString());*/
-                    sdVmsTemplateContentMapper.insertSdVmsTemplateContent(sdVmsTemplateContent);
+                    iotBoardTemplateContent.setContent(content);
+                    iotBoardTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
+                    iotBoardTemplateContent.setFontColor(tempContent.get("fontColor").toString());
+                    iotBoardTemplateContent.setFontSize(Long.parseLong(tempContent.get("fontSize").toString()));
+                    iotBoardTemplateContent.setFontType(tempContent.get("fontType").toString());
+                    iotBoardTemplateContent.setFontSpacing(Long.parseLong(tempContent.get("fontSpacing").toString()));
+                    /*   iotBoardTemplateContent.setImageUrl(tempContent.get("img").toString());*/
+                    iotBoardTemplateContentMapper.insertSdVmsTemplateContent(iotBoardTemplateContent);
                     count++;
                 }
                 return count;
@@ -110,7 +110,7 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
             if(templateDelContent.size() > 0){
                 for(int i = 0; i < templateDelContent.size(); i++){
                     JSONObject jsonObject1 = templateDelContent.getJSONObject(i);
-                    sdVmsTemplateContentMapper.deleteSdVmsTemplateContentById(Long.valueOf(jsonObject1.get("id").toString()));
+                    iotBoardTemplateContentMapper.deleteSdVmsTemplateContentById(Long.valueOf(jsonObject1.get("id").toString()));
                 }
             }
             if (templateContent.size() > 0) {
@@ -119,8 +119,8 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                 List<IotBoardVocabulary> iotBoardVocabularies = iotBoardVocabularyService.selectIotBoardVocabularyList(null);
                 for (int i = 0; i < templateContent.size(); i++) {
                     JSONObject tempContent = templateContent.getJSONObject(i);
-                    SdVmsTemplateContent sdVmsTemplateContent = new SdVmsTemplateContent();
-                    sdVmsTemplateContent.setTemplateId(templateId);
+                    IotBoardTemplateContent iotBoardTemplateContent = new IotBoardTemplateContent();
+                    iotBoardTemplateContent.setTemplateId(templateId);
                     String content = tempContent.get("content").toString();
                     String word = "";
                     for (int g = 0;g < iotBoardVocabularies.size();g++) {
@@ -133,21 +133,21 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
                     if (flag) {
                         content = content.replaceAll(word, "");
                     }
-                    sdVmsTemplateContent.setContent(content);
-                    sdVmsTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
-                    sdVmsTemplateContent.setFontColor(tempContent.get("fontColor").toString());
-                    sdVmsTemplateContent.setFontSize(Long.parseLong(tempContent.get("fontSize").toString()));
-                    sdVmsTemplateContent.setFontType(tempContent.get("fontType").toString());
-                    sdVmsTemplateContent.setFontSpacing(Long.parseLong(tempContent.get("fontSpacing").toString()));
+                    iotBoardTemplateContent.setContent(content);
+                    iotBoardTemplateContent.setCoordinate(tempContent.get("coordinate").toString());
+                    iotBoardTemplateContent.setFontColor(tempContent.get("fontColor").toString());
+                    iotBoardTemplateContent.setFontSize(Long.parseLong(tempContent.get("fontSize").toString()));
+                    iotBoardTemplateContent.setFontType(tempContent.get("fontType").toString());
+                    iotBoardTemplateContent.setFontSpacing(Long.parseLong(tempContent.get("fontSpacing").toString()));
                /*     if(tempContent.containsKey("img") && tempContent.get("img") != null){
-                    	sdVmsTemplateContent.setImageUrl(tempContent.get("img").toString());
+                    	iotBoardTemplateContent.setImageUrl(tempContent.get("img").toString());
                     }*/
                     Object id = tempContent.get("id");
                     if(StringUtils.isNotNull(id)){
-                        sdVmsTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
-                        sdVmsTemplateContentMapper.updateSdVmsTemplateContent(sdVmsTemplateContent);
+                        iotBoardTemplateContent.setId(Long.parseLong(tempContent.get("id").toString()));
+                        iotBoardTemplateContentMapper.updateSdVmsTemplateContent(iotBoardTemplateContent);
                     }else {
-                        sdVmsTemplateContentMapper.insertSdVmsTemplateContent(sdVmsTemplateContent);
+                        iotBoardTemplateContentMapper.insertSdVmsTemplateContent(iotBoardTemplateContent);
                     }
                     count++;
                 }
@@ -165,7 +165,7 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
      */
     @Override
     public int deleteSdVmsTemplateContentByIds(Long[] ids) {
-        return sdVmsTemplateContentMapper.deleteSdVmsTemplateContentByIds(ids);
+        return iotBoardTemplateContentMapper.deleteSdVmsTemplateContentByIds(ids);
     }
 
     /**
@@ -176,6 +176,6 @@ public class SdVmsTemplateContentServiceImpl implements ISdVmsTemplateContentSer
      */
     @Override
     public int deleteSdVmsTemplateContentById(Long id) {
-        return sdVmsTemplateContentMapper.deleteSdVmsTemplateContentById(id);
+        return iotBoardTemplateContentMapper.deleteSdVmsTemplateContentById(id);
     }
 }

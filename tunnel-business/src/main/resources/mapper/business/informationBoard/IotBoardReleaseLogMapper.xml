@@ -110,4 +110,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+    <select id="getLastReleaseLogsByDeviceId" resultMap="IotBoardReleaseLogResult">
+        <include refid="selectIotBoardReleaseLogVo"/>
+        <where>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+        </where>
+        ORDER BY id DESC LIMIT 10
+    </select>
+
 </mapper>

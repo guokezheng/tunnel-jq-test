@@ -7,8 +7,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.tunnel.business.domain.informationBoard.SdVmsTemplateContent;
-import com.tunnel.business.service.informationBoard.ISdVmsTemplateContentService;
+import com.tunnel.business.domain.informationBoard.IotBoardTemplateContent;
+import com.tunnel.business.service.informationBoard.IIotBoardTemplateContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +21,20 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/system/content")
-public class SdVmsTemplateContentController extends BaseController
+public class IotBoardTemplateContentController extends BaseController
 {
     @Autowired
-    private ISdVmsTemplateContentService sdVmsTemplateContentService;
+    private IIotBoardTemplateContentService iotBoardTemplateContentService;
 
     /**
      * 查询发布模板内容列表
      */
 //    @PreAuthorize("@ss.hasPermi('system:content:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SdVmsTemplateContent sdVmsTemplateContent)
+    public TableDataInfo list(IotBoardTemplateContent iotBoardTemplateContent)
     {
         startPage();
-        List<SdVmsTemplateContent> list = sdVmsTemplateContentService.selectSdVmsTemplateContentList(sdVmsTemplateContent);
+        List<IotBoardTemplateContent> list = iotBoardTemplateContentService.selectSdVmsTemplateContentList(iotBoardTemplateContent);
         return getDataTable(list);
     }
 
@@ -44,10 +44,10 @@ public class SdVmsTemplateContentController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('system:content:export')")
     @Log(title = "发布模板内容", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
-    public AjaxResult export(SdVmsTemplateContent sdVmsTemplateContent)
+    public AjaxResult export(IotBoardTemplateContent iotBoardTemplateContent)
     {
-        List<SdVmsTemplateContent> list = sdVmsTemplateContentService.selectSdVmsTemplateContentList(sdVmsTemplateContent);
-        ExcelUtil<SdVmsTemplateContent> util = new ExcelUtil<SdVmsTemplateContent>(SdVmsTemplateContent.class);
+        List<IotBoardTemplateContent> list = iotBoardTemplateContentService.selectSdVmsTemplateContentList(iotBoardTemplateContent);
+        ExcelUtil<IotBoardTemplateContent> util = new ExcelUtil<IotBoardTemplateContent>(IotBoardTemplateContent.class);
         return util.exportExcel(list, "发布模板内容数据");
     }
 
@@ -58,7 +58,7 @@ public class SdVmsTemplateContentController extends BaseController
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
-        return AjaxResult.success(sdVmsTemplateContentService.selectSdVmsTemplateContentById(id));
+        return AjaxResult.success(iotBoardTemplateContentService.selectSdVmsTemplateContentById(id));
     }
 
     /**
@@ -69,7 +69,7 @@ public class SdVmsTemplateContentController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody JSONObject jsonObject)
     {
-        return toAjax(sdVmsTemplateContentService.insertSdVmsTemplateContent(jsonObject));
+        return toAjax(iotBoardTemplateContentService.insertSdVmsTemplateContent(jsonObject));
     }
 
     /**
@@ -80,7 +80,7 @@ public class SdVmsTemplateContentController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody JSONObject jsonObject)
     {
-        return toAjax(sdVmsTemplateContentService.updateSdVmsTemplateContent(jsonObject));
+        return toAjax(iotBoardTemplateContentService.updateSdVmsTemplateContent(jsonObject));
     }
 
     /**
@@ -91,6 +91,6 @@ public class SdVmsTemplateContentController extends BaseController
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
-        return toAjax(sdVmsTemplateContentService.deleteSdVmsTemplateContentByIds(ids));
+        return toAjax(iotBoardTemplateContentService.deleteSdVmsTemplateContentByIds(ids));
     }
 }

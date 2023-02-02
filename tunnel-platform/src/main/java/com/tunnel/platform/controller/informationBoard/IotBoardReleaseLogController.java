@@ -78,4 +78,13 @@ public class IotBoardReleaseLogController extends BaseController
         return util.exportExcel(list, "发布记录列表");
     }
 
+    /**
+     * 获取情报板内容发布日志最后10条信息
+     */
+    @GetMapping(value = "/getLastReleaseLogsByDeviceId/{id}")
+    public AjaxResult getLastReleaseLogsByDeviceId(String deviceId)
+    {
+        return AjaxResult.success(iotBoardReleaseLogService.getLastReleaseLogsByDeviceId(deviceId));
+    }
+
 }

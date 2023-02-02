@@ -359,7 +359,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private String externalDeviceId;
 
     /**
-     * 关联设备ID（关联iot_device中device_id字段）
+     * 关联设备ID（关联iot_board中device_id字段）
      * */
     private Long associatedDeviceId;
 

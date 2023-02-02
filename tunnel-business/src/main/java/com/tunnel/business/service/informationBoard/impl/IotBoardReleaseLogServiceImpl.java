@@ -85,4 +85,9 @@ public class IotBoardReleaseLogServiceImpl implements IIotBoardReleaseLogService
     public int deleteIotBoardReleaseLogById(Long id) {
         return iotBoardReleaseLogMapper.deleteIotBoardReleaseLogById(id);
     }
+
+    @Override
+    public List<IotBoardReleaseLog> getLastReleaseLogsByDeviceId(String deviceId) {
+        return iotBoardReleaseLogMapper.getLastReleaseLogsByDeviceId(deviceId);
+    }
 }

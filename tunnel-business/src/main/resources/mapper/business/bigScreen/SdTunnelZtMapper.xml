@@ -59,7 +59,7 @@
 
 
     <select id="getLightDetection" parameterType="String" resultType="Map">
-        SELECT i.item_name,d.data,i.unit,t.eq_direction
+        SELECT i.item_name,IFNULL(d.data,'') as data,i.unit,t.eq_direction
         from sd_devices t
         left join `sd_device_type_item` i on t.eq_type = i.device_type_id
         left join sd_device_data d on i.id = d.item_id and t.eq_id = d.device_id

@@ -84,7 +84,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d}") }}</span>
+          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="承巡班组" align="center" prop="bzId" >
@@ -197,11 +197,12 @@
                 size="small"
                 disabled = "disabled"
                 v-model="form.dispatchTime"
-                type="date"
+                type="datetime"
                 style="width: 89%"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd hh:mm:ss"
                 placeholder="选择派单时间">
               </el-date-picker>
+
             </div>
           </div>
           <div>
@@ -1203,6 +1204,8 @@ export default {
      console.log(this.dialogSelection,"this.dialogSelectionthis.dialogSelectionthis.dialogSelection")
     //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
+      this.options1value = "0"
+      this.getTable(this.options1value)
       //点击确定，数据还原
       if(this.openCz){
         this.options1value = "0"
@@ -1217,6 +1220,8 @@ export default {
     show2() {
       //this.tableData1 = null
       this.isShow2 = true;
+      this.options2value = "0"
+      this.getGzTable(this.options2value)
       if(this.openGz){
         this.options2value = "0"
         this.tableData2 = null

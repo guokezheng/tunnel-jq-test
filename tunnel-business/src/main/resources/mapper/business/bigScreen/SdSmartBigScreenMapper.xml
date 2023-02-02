@@ -8,7 +8,7 @@
         SELECT
             sdet.event_type AS eventType,
             sdt.tunnel_name AS tunnelName,
-            sde.start_time AS startTime,
+            sde.event_time AS startTime,
             sde.event_title AS eventDescription,
             sde.event_state AS eventState
         FROM
@@ -16,36 +16,50 @@
         LEFT JOIN sd_event_type sdet ON sde.event_type_id = sdet.id
         LEFT JOIN sd_tunnels sdt ON sde.tunnel_id = sdt.tunnel_id
         WHERE
-            sde.start_time <![CDATA[ > ]]> DATE_ADD( curdate(), INTERVAL - DAY ( curdate())+ 1 DAY )
-        AND sde.start_time <![CDATA[ < ]]> last_day(
+            sde.event_time <![CDATA[ > ]]> DATE_ADD( curdate(), INTERVAL - DAY ( curdate())+ 1 DAY )
+        AND sde.event_time <![CDATA[ < ]]> last_day(
         curdate())
         AND sdet.is_usable = '1'
         <if test="tunnelId != null and tunnelId != ''">
             AND sde.tunnel_id = #{tunnelId}
         </if>
         ORDER BY
-            sde.start_time DESC
+            sde.event_time DESC
         LIMIT 50
     </select>
 
     <select id="getEventProportion" resultType="hashmap" parameterType="java.lang.String">
         SELECT
-            event_state AS eventState,
-            ROUND(
-                    ROUND(( count(*)/ ( SELECT Count(*) FROM sd_event sde WHERE 1 = 1 ) * 100 ),
-                          3
-                        ),
-                    2
-                ) AS percentage
+            sdd.dict_value,
+            IFNULL( es.percentage, '0' ) AS percentage
         FROM
-            sd_event sde
+        sys_dict_data sdd
+        LEFT JOIN (
+            SELECT
+                event_state AS eventState,
+                ROUND( ROUND(( count(*)/ ( SELECT
+                                               Count(*)
+                                           FROM
+                                               sd_event sde
+                                           WHERE
+                                               1 = 1
+                                           <if test="tunnelId != null and tunnelId != ''">
+                                               AND tunnel_id = #{tunnelId}
+                                           </if>
+                                           ) * 100 ), 3 ), 2 ) AS percentage
+            FROM
+                sd_event sde
+            WHERE
+                1 = 1
+            <if test="tunnelId != null and tunnelId != ''">
+                AND tunnel_id = #{tunnelId}
+            </if>
+            GROUP BY
+                event_state
+            ) es ON sdd.dict_value = es.eventState
         WHERE
-            1 = 1
-        <if test="tunnelId != null and tunnelId != ''">
-            AND tunnel_id = #{tunnelId}
-        </if>
-        GROUP BY
-            event_state
+        1 = 1
+        AND sdd.dict_type = 'sd_event_state'
     </select>
 
     <select id="getToDayEventWarning" resultType="hashmap" parameterType="java.lang.String">
@@ -56,7 +70,7 @@
             sd_event se
         WHERE
             1 = 1
-          AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
+          AND DATE_FORMAT( se.event_time, '%Y-%m-%d' ) = DATE_FORMAT( NOW(), '%Y-%m-%d' )
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -88,8 +102,8 @@
             sd_event se
         WHERE
         1 = 1
-        AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ >= ]]>  DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
-        AND DATE_FORMAT( se.start_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
+        AND DATE_FORMAT( se.event_time, '%Y-%m-%d' ) <![CDATA[ >= ]]>  DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 1 )), '%Y-%m-%d' )
+        AND DATE_FORMAT( se.event_time, '%Y-%m-%d' ) <![CDATA[ <= ]]> DATE_FORMAT( CONCAT( SUBDATE( CURDATE(), DATE_FORMAT( CURDATE(), '%w' )- 7 )), '%Y-%m-%d' )
         <if test="tunnelId != null and tunnelId != ''">
             AND se.tunnel_id = #{tunnelId}
         </if>
@@ -133,22 +147,22 @@
             LEFT JOIN (
                 SELECT
                     COUNT(*) AS num,
-                    DATE ( se.start_time ) AS t
+                    DATE ( se.event_time ) AS t
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
                 LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
-                    YEAR ( se.start_time )= YEAR (CURDATE())
-                    AND MONTH ( se.start_time )= MONTH (CURDATE())
+                    YEAR ( se.event_time )= YEAR (CURDATE())
+                    AND MONTH ( se.event_time )= MONTH (CURDATE())
                     AND sdd.dict_value = #{dictValue}
                     AND et.is_usable = '1'
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
                 GROUP BY
-                DATE ( se.start_time )
+                DATE ( se.event_time )
             ) tab ON DATE ( t )= DATE
         ORDER BY
             DATE ASC;
@@ -173,22 +187,22 @@
             LEFT JOIN (
                 SELECT
                     COUNT(*) AS num,
-                    DATE ( se.start_time ) AS t
+                    DATE ( se.event_time ) AS t
                 FROM
                     sd_event se
                 LEFT JOIN sd_event_type et ON se.event_type_id = et.id
                 LEFT JOIN sys_dict_data sdd ON et.prev_control_type = sdd.dict_value
                 AND sdd.dict_type = #{prevControlType}
                 WHERE
-                    YEAR ( se.start_time )= YEAR (CURDATE())
-                    AND MONTH ( se.start_time )= MONTH (CURDATE())
+                    YEAR ( se.event_time )= YEAR (CURDATE())
+                    AND MONTH ( se.event_time )= MONTH (CURDATE())
                     AND sdd.dict_value = #{dictValue}
                     AND et.is_usable = '1'
                     <if test="tunnelId != null and tunnelId != ''">
                         AND se.tunnel_id = #{tunnelId}
                     </if>
                 GROUP BY
-                    DATE ( se.start_time )
+                    DATE ( se.event_time )
             ) tab ON DATE ( t )= DATE
         ORDER BY
             DATE ASC;
@@ -275,7 +289,7 @@
 
     <select id="getCumulativeAlarmList" resultType="hashmap" parameterType="java.lang.String">
         SELECT
-            DATE_FORMAT(se.start_time,'%Y-%m-%d %H:%i:%S') AS eventTime,
+            DATE_FORMAT(se.event_time,'%Y-%m-%d %H:%i:%S') AS eventTime,
             et.event_type AS eventType,
             sdd.dict_label AS eventState,
             t.tunnel_name AS tunnelName
@@ -424,7 +438,7 @@
     <select id="getAlarmInformation" parameterType="java.lang.String" resultType="hashmap">
         SELECT
             e.event_title AS eventTitle,
-            DATE_FORMAT(e.start_time,'%Y-%m-%d %H:%i:%S') AS startTime,
+            DATE_FORMAT(e.event_time,'%Y-%m-%d %H:%i:%S') AS startTime,
             IFNULL(e.video_url,'') AS videoUrl
         FROM
             sd_event e
@@ -434,7 +448,7 @@
             AND e.tunnel_id = #{tunnelId}
         </if>
         ORDER BY
-            e.start_time DESC
+            e.event_time DESC
         LIMIT 50
     </select>
 

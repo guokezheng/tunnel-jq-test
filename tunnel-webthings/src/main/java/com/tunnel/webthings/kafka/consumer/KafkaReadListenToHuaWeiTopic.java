@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.WindDirectionUtil;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.*;
 import com.tunnel.business.domain.dataInfo.*;
@@ -710,7 +711,7 @@ public class KafkaReadListenToHuaWeiTopic {
             JSONObject jsonObject1 = JSONObject.parseObject(objects.get(i).toString());
             String deviceId = jsonObject1.getString("deviceId");
             String windSpeed = jsonObject1.getString("windSpeed");
-            String windDirection = jsonObject1.getString("windDirection");
+            String windDirection = WindDirectionUtil.windDirectionSwitch(jsonObject1.getFloat("windDirection"));
             //校验数据库是否存在
             int numberFs = checkDeviceData(deviceId, fsId);
             if (numberFs == 0) {

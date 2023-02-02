@@ -1,3 +1,4 @@
+<!-- 大屏今日报警 -->
 <template>
   <div>
     <div class="contentTitle">
@@ -25,12 +26,11 @@ export default {
     alarmsCharts() {
       var todayCharts = echarts.init(document.getElementById("todayCharts"));
       getToDayEventWarning().then((res) => {
+        console.log(res);
         const wwc = res.data[0].eventNumber;
         const ywc = res.data[1].eventNumber;
-        const percentage = res.data[1].percentage;
-        var proportion = ((wwc / (wwc + ywc)) * 100).toFixed(2);
+        const percentage = res.data[0].percentage;
         var option = {
-          // backgroundColor: "#03141c",
           title: {
             text: percentage + "%",
             subtext: "未完成",
@@ -49,119 +49,43 @@ export default {
           },
           tooltip: {
             trigger: "item",
-            formatter: "{a} <br/>{b} : {c}" + "个" + " ({d}%)",
           },
           legend: {
-            x: "center",
-            y: "bottom",
-            data: ["rose3", "rose5", "rose6", "rose7", "rose8"],
+            top: "5%",
+            left: "center",
+            textStyle: {
+              color: "#fff",
+            },
           },
-          calculable: true,
           series: [
             {
               name: "今日报警统计",
               type: "pie",
-              radius: ["50%", "63%"],
-              center: ["45%", "50%"],
+              radius: ["40%", "70%"],
+              avoidLabelOverlap: false,
+              itemStyle: {
+                borderRadius: 10,
+                borderColor: "#fff",
+                borderWidth: 1,
+              },
+              label: {
+                show: false,
+                position: "center",
+              },
+              // emphasis: {
+              //   label: {
+              //     show: true,
+              //     fontSize: 24,
+              //   },
+              // },
+              labelLine: {
+                show: false,
+              },
               data: [
-                {
-                  value: wwc,
-                  name: "已完成",
-                  itemStyle: {
-                    color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                      {
-                        offset: 0,
-                        color: "#55ff7f",
-                      },
-                      {
-                        offset: 1,
-                        color: "#99ffff",
-                      },
-                    ]),
-                  },
-                  label: {
-                    color: "rgba(255,255,255,.45)",
-                    fontSize: 16,
-                    formatter: "已完成\n{a|" + wwc + "}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
-                    },
-                  },
-                },
-                {
-                  value: ywc,
-                  name: "未完成",
-                  itemStyle: {
-                    color: "transparent",
-                  },
-                  label: {
-                    color: "rgba(255,255,255,.45)",
-                    fontSize: 16,
-                    formatter: "未完成\n{a|" + ywc + "}个",
-                    rich: {
-                      a: {
-                        color: "#fff",
-                        fontSize: 20,
-                        lineHeight: 30,
-                      },
-                    },
-                  },
-                },
-              ],
-            },
-            {
-              name: "今日报警统计",
-              type: "pie",
-              radius: ["50%", "63%"],
-              center: ["50%", "55%"],
-              data: [
-                {
-                  value: wwc,
-                  name: "已完成",
-                  itemStyle: {
-                    color: "transparent",
-                  },
-                },
-                {
-                  value: ywc,
-                  name: "未完成",
-                  //
-                  itemStyle: {
-                    normal: {
-                      color: new echarts.graphic.LinearGradient(0, 1, 0, 0, [
-                        {
-                          //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                          offset: 0,
-                          color: "#0095ea",
-                        },
-                        {
-                          offset: 0.5,
-                          color: "#0095ea",
-                        },
-                        {
-                          offset: 1,
-                          color: "#0095ea",
-                        },
-                      ]),
-                    },
-                  },
-                  // label: {
-                  //   color: "rgba(255,255,255,.45)",
-                  //   fontSize: 14,
-                  //   // formatter: "未完成\n{a|52}个",
-                  //   rich: {
-                  //     a: {
-                  //       color: "#fff",
-                  //       fontSize: 20,
-                  //       lineHeight: 30,
-                  //     },
-                  //   },
-                  // },
-                },
+                { value: ywc, name: "已完成" },
+                { value: wwc, name: "未完成" },
+                // { value: 22, name: "已完成" },
+                // { value: 78, name: "未完成" },
               ],
             },
           ],

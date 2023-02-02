@@ -1,3 +1,4 @@
+<!-- 大屏报警信息 -->
 <template>
   <div>
     <div class="contentTitle">
@@ -27,7 +28,11 @@
                 </div>
               </div>
               <div class="realRight">
-                <img v-if="item.videoUrl != ''" :src="item.videoUrl" />
+                <video
+                  v-if="item.videoUrl != ''"
+                  :src="item.videoUrl"
+                  style="width: 100%; height: 100%"
+                ></video>
                 <h6 v-if="item.videoUrl == ''">暂无视频</h6>
               </div>
             </div>

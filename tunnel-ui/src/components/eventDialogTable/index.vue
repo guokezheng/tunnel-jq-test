@@ -74,7 +74,7 @@
                 :span="20"
                 style="display: flex; justify-content: space-between"
               >
-                <div class="overflowText">{{ item.eventTitle }}</div>
+                <div class="overflowText">{{ item.frameEventTitle }}</div>
                 <div style="float: right; margin-right: 10px">
                   {{ item.startTime }}
                 </div>

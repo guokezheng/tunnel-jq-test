@@ -70,65 +70,68 @@
 
     <select id ="eventPopAll" resultType="Map" parameterType="string">
        SELECT
-	id,
-	eventTitle,
-	iconUrl,
-	simplifyName,
-	startTime
-FROM
-	(
-							SELECT
-								id,
-								event_title AS eventTitle,
-								icon_url AS iconUrl,
-								simplify_name AS simplifyName,
-								DATE_FORMAT( start_time, '%Y-%m-%d %H:%i:%s' ) AS startTime
-							FROM
-								(
-							SELECT
-								A.id,
-								A.event_title,
-								B.icon_url,
-								B.simplify_name,
-								A.start_time
-							FROM
-								sd_event A
-								LEFT JOIN sd_event_type B ON A.event_type_id = B.id
-							WHERE
-								A.event_state = '3'
-								AND TO_DAYS( A.start_time ) = TO_DAYS( NOW( ) )
-                                AND B.is_usable = '1'
-								) a
-								UNION
-							SELECT
-								id,
-								eventTitle,
-								iconUrl,
-								simplifyName,
-								DATE_FORMAT( startTime, '%Y-%m-%d %H:%i:%s' )
-							FROM
-								(
-							SELECT
-								fault.id,
-								concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS eventTitle,
-								fault.create_time AS startTime,
-								'故障' AS simplifyName,
-								( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
-							FROM
-								sd_fault_list fault
-								LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
-								LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
-								LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
-								AND DATA.dict_type = 'sd_direction'
-								LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
-								AND type.dict_type = 'fault_type'
-							WHERE
-								fault.fault_status = '0'
-								AND TO_DAYS( fault.create_time ) = TO_DAYS( NOW( ) )
-								) b
-	) AS MERGE
-ORDER BY MERGE.startTime DESC
-	LIMIT ${subIndex}
+            id,
+            eventTitle,
+            iconUrl,
+            simplifyName,
+            startTime
+        FROM
+            (
+				SELECT
+					id,
+					event_title AS eventTitle,
+					icon_url AS iconUrl,
+					simplify_name AS simplifyName,
+					DATE_FORMAT( start_time, '%Y-%m-%d %H:%i:%s' ) AS startTime
+				FROM
+					(
+                        SELECT
+                            A.id,
+                            CONCAT( t.tunnel_name, ' ', sdd.dict_label, ',', b.simplify_name ) AS event_title,
+                            B.icon_url,
+                            B.simplify_name,
+                            A.start_time
+                        FROM
+                            sd_event A
+                            LEFT JOIN sd_event_type B ON A.event_type_id = B.id
+                            LEFT JOIN sd_tunnels t ON a.tunnel_id = t.tunnel_id
+                            LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
+                                AND sdd.dict_type = 'sd_direction'
+                        WHERE
+                            A.event_state = '3'
+                            AND TO_DAYS( A.start_time ) = TO_DAYS( NOW( ) )
+                            AND B.is_usable = '1'
+                    ) a
+					UNION
+				SELECT
+					id,
+					eventTitle,
+					iconUrl,
+					simplifyName,
+					DATE_FORMAT( startTime, '%Y-%m-%d %H:%i:%s' )
+				FROM
+					(
+                        SELECT
+                            fault.id,
+                            concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS eventTitle,
+                            fault.create_time AS startTime,
+                            '故障' AS simplifyName,
+                            ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
+                        FROM
+                            sd_fault_list fault
+                            LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
+                            LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
+                            LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
+                            AND DATA.dict_type = 'sd_direction'
+                            LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
+                            AND type.dict_type = 'fault_type'
+                        WHERE
+                            fault.fault_status = '0'
+                            AND TO_DAYS( fault.create_time ) = TO_DAYS( NOW( ) )
+					) b
+            ) AS MERGE
+        ORDER BY MERGE.startTime DESC
+            LIMIT ${subIndex}
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="string">

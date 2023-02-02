@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.tunnel.business.domain.emeResource.SdEmergencyOrg;
 import com.tunnel.business.domain.emeResource.SdEmergencyVehicle;
 import com.tunnel.business.mapper.emeResource.SdEmergencyVehicleMapper;
@@ -133,6 +135,8 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
     }
 
     public String synVehicleData() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        String deptId = user.getDeptId();
         //请求头
         HttpHeaders requestHeaders = new HttpHeaders();
         //设置JSON格式数据
@@ -146,14 +150,20 @@ public class SdEmergencyVehicleServiceImpl implements ISdEmergencyVehicleService
             httpRequestFactory.setReadTimeout(5 * 1000);
             RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
             //调取第三方接口获取车辆数据
-            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current=1&size=2000"), HttpMethod.GET, requestEntity, String.class);
+            ResponseEntity<String> exchange = restTemplate.exchange(synUrl.concat("?current=1&size=2000&deptId="+deptId), HttpMethod.GET, requestEntity, String.class);
             //解析车辆数据
             synVehicleDataList(exchange.getBody());
             log.info("返回值 --> {}", exchange.getBody());
             return JSONObject.toJSONString(exchange.getBody());
         } catch (Exception e) {
             log.error("应急车辆同步失败！{}", e.getMessage());
-            return JSONObject.toJSONString(e.getMessage());
+            //删除应急车辆旧数据
+            List<Long> collect = sdEmergencyVehicleMapper.selectSdEmergencyVehicleList(new SdEmergencyVehicle()).stream().map(SdEmergencyVehicle::getId).collect(Collectors.toList());
+            if(collect.size() > 0){
+                Long[] longs = collect.toArray(new Long[collect.size()]);
+                sdEmergencyVehicleMapper.deleteSdEmergencyVehicleByIds(longs);
+            }
+            return "";
         }
     }
 

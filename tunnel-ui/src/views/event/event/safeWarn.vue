@@ -2115,14 +2115,14 @@ export default {
         .catch(() => {});
     },
     /** 所属隧道 */
-    // getTunnel() {
-    //   if (!this.queryParams.deptId) {
-    //     listTunnels().then((response) => {
-    //       console.log(response.rows, "所属隧道");
-    //       this.tunnelList = response.rows;
-    //     });
-    //   }
-    // },
+    getTunnel() {
+      if (!this.queryParams.deptId) {
+        listTunnels().then((response) => {
+          console.log(response.rows, "所属隧道");
+          this.tunnelList = response.rows;
+        });
+      }
+    },
     /** 查询事件类型列表 */
     getEventType() {
       let prevControlType = {
@@ -2178,6 +2178,7 @@ export default {
       let that = this;
       this.isWritable = true;
       this.activeName = "2";
+      this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
@@ -2207,6 +2208,7 @@ export default {
     handleCheckDetail(row) {
       let that = this;
       this.isWritable = false;
+      this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
@@ -2416,6 +2418,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.getTunnel();
       this.isWritable = true;
       this.disstate = false;
       this.open = true;
@@ -2459,7 +2462,6 @@ export default {
 
     /** 提交按钮 */
     submitForm() {
-      debugger;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);

@@ -181,7 +181,7 @@ public class SysJobController extends BaseController
     public AjaxResult remove(@PathVariable String relationId) throws SchedulerException, TaskException
     {
         SysJob job=new SysJob();
-        /*job.setJobId(Long.valueOf(relationId));
+        /*job.setInvokeTarget(Long.valueOf(relationId));
         List<SysJob> sysJobs = jobService.selectJobList(job);
         for (SysJob rjob:sysJobs){
             jobService.deleteJob(rjob);

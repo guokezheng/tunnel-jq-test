@@ -397,7 +397,7 @@
               v-for="item in imgUrlList" :key="item.imgId">
                 <el-image  :src="item.imgUrl"  :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
-              <div 
+              <div
                 v-show="eventForm && eventForm.iconUrlList == []" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
@@ -418,15 +418,15 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
-          
+
           <!-- <div class="picBox">
             <div v-if="arrowLeft2" class="turnPages"  @click="turnLeft2()"><</div>
             <div class="picList">
-              <div 
+              <div
               v-for="item in urlsList" :key="item.imgId">
                 <el-image  :src="item.imgUrl" :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
-              <div 
+              <div
                 v-show="!urlsList" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
@@ -555,7 +555,7 @@
                     />
                   </el-col>
                 </el-row>
-                
+
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -596,8 +596,8 @@
                     </el-select>
                   </el-col>
                 </el-row>
-                
-                
+
+
               </el-form-item>
             </el-col>
             <el-col :span="16">
@@ -1409,7 +1409,7 @@ export default {
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
-      
+
 
       // 实时视频
       videoForm:{
@@ -1420,6 +1420,12 @@ export default {
     };
   },
   watch: {
+    "queryParams.deptId": function(newVal, oldVal){
+      if(!newVal){
+        this.tunnelList = null;
+        this.queryParams.tunnelId = null;
+      }
+    },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
@@ -1795,7 +1801,7 @@ export default {
       this.getVideoUrl(item)
       // 获取实时视频截图
       this.getImgUrl(item)
-      
+
     },
     getImgUrl(item){
       this.urlsList = []
@@ -2072,7 +2078,7 @@ export default {
           this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
-          
+
         });
       }
     },
@@ -2586,7 +2592,7 @@ export default {
 .formStyle {
   .el-form-item {
     margin-bottom: 1vh;
-    
+
   }
 }
 ::v-deep .el-form-item--medium .el-form-item__label{
@@ -2757,8 +2763,8 @@ export default {
             margin: 0 auto;
           }
         }
-        
-     
+
+
       }
       .turnPages{
         width:20px !important;
@@ -2782,8 +2788,8 @@ export default {
           width:50%;
         }
       }
-      
-      
+
+
     }
   }
 }
@@ -2858,7 +2864,7 @@ export default {
   width: 53%;
   position: absolute;
   left: 20%;
-  
+
 }
   ::v-deep .detailsDialog .el-dialog{
     height:calc(100% - 8vh) !important;

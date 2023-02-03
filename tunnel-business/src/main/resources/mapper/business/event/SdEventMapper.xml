@@ -75,7 +75,7 @@
             frameEventTitle,
             iconUrl,
             simplifyName,
-            startTime
+            eventTime
         FROM
             (
 				SELECT
@@ -83,7 +83,7 @@
 					event_title AS frameEventTitle,
 					icon_url AS iconUrl,
 					simplify_name AS simplifyName,
-					DATE_FORMAT( event_time, '%Y-%m-%d %H:%i:%s' ) AS startTime
+					DATE_FORMAT( event_time, '%Y-%m-%d %H:%i:%s' ) AS eventTime
 				FROM
 					(
                         SELECT
@@ -109,13 +109,13 @@
                     frameEventTitle,
 					iconUrl,
 					simplifyName,
-					DATE_FORMAT( startTime, '%Y-%m-%d %H:%i:%s' )
+					DATE_FORMAT( eventTime, '%Y-%m-%d %H:%i:%s' ) AS eventTime
 				FROM
 					(
                         SELECT
                             fault.id,
                             concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS frameEventTitle,
-                            fault.fault_fxtime AS startTime,
+                            fault.fault_fxtime AS eventTime,
                             '故障' AS simplifyName,
                             ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
                         FROM
@@ -131,12 +131,12 @@
                             AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ) )
 					) b
             ) AS MERGE
-        ORDER BY MERGE.startTime DESC
+        ORDER BY MERGE.eventTime DESC
             LIMIT ${subIndex}
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="string">
-        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as frameEventTitle,fault.create_time as startTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl from sd_fault_list fault
+        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as frameEventTitle,fault.fault_fxtime as eventTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl from sd_fault_list fault
             left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
             left join sd_devices devices on devices.eq_id = fault.eq_id
             left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'

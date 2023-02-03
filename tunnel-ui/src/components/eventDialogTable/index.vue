@@ -78,10 +78,10 @@
                 <div class="overflowText">{{ item.frameEventTitle }}</div>
               </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ item.startTime }}
+                  {{ item.eventTime }}
                 </div>
               </el-col>
-            
+
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -108,7 +108,7 @@
     </el-dialog>
   </div>
 </template>
-    
+
     <script>
 import { mapState } from "vuex";
 import moment from "moment";
@@ -138,7 +138,7 @@ export default {
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
-      startTime: "",
+      eventTime: "",
     };
   },
   computed: {
@@ -157,7 +157,7 @@ export default {
     },
   },
   created() {
-    this.startTime = moment().format("YYYY-MM-DD");
+    this.eventTime = moment().format("YYYY-MM-DD");
     // console.log(this.startTime)
     // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
     //   console.log(res, "事件弹窗分类数组");
@@ -216,7 +216,7 @@ export default {
             this.list = this.list.concat(res.data.data);
           });
         } else {
-          eventList(this.searchValue, this.pageNum, this.startTime).then(
+          eventList(this.searchValue, this.pageNum, this.eventTime).then(
             (res) => {
               console.log(res, "事件弹窗分类数组");
               // this.list.push(res.rows);
@@ -235,7 +235,7 @@ export default {
         }, 200);
         bus.$emit("openPicDialog");
       }
-      
+
     },
 
     // 忽略事件
@@ -305,7 +305,7 @@ export default {
         });
       } else {
         // 主动安全 交通事件
-        eventList(searchValue, pageNum, this.startTime).then((res) => {
+        eventList(searchValue, pageNum, this.eventTime).then((res) => {
           console.log(res, "事件弹窗分类数组");
           this.list = res.rows;
           this.total = res.total;
@@ -324,7 +324,7 @@ export default {
   },
 };
 </script>
-    
+
     <style lang="scss" scoped>
 ::v-deep .el-dialog {
   width: 100% !important;
@@ -540,4 +540,3 @@ export default {
   text-overflow: ellipsis;
 }
 </style>
-    

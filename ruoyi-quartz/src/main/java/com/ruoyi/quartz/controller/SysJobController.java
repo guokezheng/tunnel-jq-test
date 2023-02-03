@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -180,10 +181,15 @@ public class SysJobController extends BaseController
     public AjaxResult remove(@PathVariable String relationId) throws SchedulerException, TaskException
     {
         SysJob job=new SysJob();
-        job.setInvokeTarget(relationId);
+        /*job.setJobId(Long.valueOf(relationId));
         List<SysJob> sysJobs = jobService.selectJobList(job);
         for (SysJob rjob:sysJobs){
             jobService.deleteJob(rjob);
+        }*/
+        List<String> list = Arrays.asList(relationId.split(","));
+        for(String sysJobId : list){
+            job.setJobId(Long.valueOf(sysJobId));
+            jobService.deleteJob(job);
         }
         return AjaxResult.success();
     }

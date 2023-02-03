@@ -57,6 +57,7 @@
                   clearable
                   size="small"
                   style="width: 180px"
+                  @change="$forceUpdate()"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -1438,7 +1439,7 @@ export default {
     await this.getList();
     await this.getEventMsg();
     this.getEventType();
-    this.getTunnel();
+    // this.getTunnel();
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();
@@ -2108,14 +2109,14 @@ export default {
         .catch(() => {});
     },
     /** 所属隧道 */
-    getTunnel() {
-      if (!this.queryParams.deptId) {
-        listTunnels().then((response) => {
-          console.log(response.rows, "所属隧道");
-          this.tunnelList = response.rows;
-        });
-      }
-    },
+    // getTunnel() {
+    //   if (!this.queryParams.deptId) {
+    //     listTunnels().then((response) => {
+    //       console.log(response.rows, "所属隧道");
+    //       this.tunnelList = response.rows;
+    //     });
+    //   }
+    // },
     /** 查询事件类型列表 */
     getEventType() {
       let prevControlType = {

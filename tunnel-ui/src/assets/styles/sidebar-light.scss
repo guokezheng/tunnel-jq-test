@@ -536,6 +536,9 @@
     border-bottom: 1px solid #05AFE3 !important;
   }
   #app {
+    .patrol .box-father .box .number{
+      color: #fff !important;
+    }
     .show-left{
       .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
         background: #004375;

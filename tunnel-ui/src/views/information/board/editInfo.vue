@@ -28,7 +28,7 @@
             <span
               class="textBoard"
               style="line-height: 1; position: absolute;"
-
+             
               :style="{
                 color: dataForm.COLOR,
                 fontSize: getFontSize(dataForm.FONT_SIZE),
@@ -41,7 +41,7 @@
             ></span>
           </div>
         </el-card>
-
+        
         <el-card>
           <el-form
             :model="dataForm"
@@ -70,15 +70,15 @@
               </el-form-item>
             </el-col>
             <el-col :span="16" class="infoBoardButton" >
-            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
+            <!-- <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
-            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
+            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button> -->
             <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
             <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
             <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
-
+        
             <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-
+           
           </el-col>
             </el-row>
             <el-row
@@ -156,7 +156,7 @@
               <!-- <el-col :span="24" v-show="templateContent.length > 1">
                 <el-divider></el-divider>
               </el-col> -->
-
+           
               <!-- <el-col :span="6">
                 <el-form-item prop="rollSpeed" label="滚动速度">
                   <el-input-number
@@ -225,7 +225,7 @@
             </el-row>
           </el-form>
         </el-card>
-
+  
         <template slot="footer">
           <el-button size="small" @click="closeDialog()">取消</el-button>
           <el-button
@@ -255,7 +255,7 @@
 
   } from "@/api/board/template";
   import {
-
+   
     HashMap,
   } from "@/api/board/informationBoard";
   export default {
@@ -337,7 +337,7 @@
           //   code: "SimHei",
           //   content: "黑体",
           // },
-
+        
         ],
         screenSizeOptions: [
           {
@@ -488,7 +488,7 @@
           //   code: "16px",
           //   name: "16px",
           // },
-
+          
         ],
         title: "选择图片",
         loading: false,
@@ -589,7 +589,7 @@
               trigger: "blur",
             },
           ],
-
+          
         };
       },
       divStyle: function () {
@@ -603,8 +603,8 @@
     //   boardEmitItem(newval){
     //       console.log(newval,"newval")
     //       this.boardEmitItem = newval
-
-
+          
+        
     //   }
       "dataForm.CONTENT": {
         deep: true,
@@ -645,7 +645,7 @@
     methods: {
       init() {
         this.title =  "修改";
-
+        
         this.dialogVisible = true;
         this.itemPropertyMap = new HashMap();
 
@@ -671,14 +671,16 @@
         switch (alignmentNum) {
           // 左对齐
           case 1:
-            divContent[0].style.justifyContent = 'left'
-            textBoard[0].style.textAlign = 'left'
             textBoard[0].style.position = 'static'
+            divContent[0].style.justifyContent = 'left'
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.textAlign = 'left'
 
             break;
             // 左右居中
           case 2:
             divContent[0].style.justifyContent = 'center'
+            divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'center'
             textBoard[0].style.position = 'static'
 
@@ -686,6 +688,7 @@
             // 右对齐
           case 3:
             divContent[0].style.justifyContent = 'right'
+            divContent[0].style.alignItems = 'center'
             textBoard[0].style.textAlign = 'right'
             textBoard[0].style.position = 'static'
 
@@ -767,7 +770,7 @@
         if (!valid) return;
         this.loading = true;
         console.log(this.dataForm,"点击修改 表单");
-
+       
         this.loading = false;
         this.isAdd = false;
         if(this.dataForm.type == 1){
@@ -830,7 +833,7 @@
             id:this.dataForm.tcontentsId,
             templateId:this.dataForm.id
           });
-
+        
 
           var params = {
             templateContent: templateContent,
@@ -894,7 +897,7 @@
         console.log(size,"size")
         if(this.boardWidth >760){
           let i = this.boardWidth/760
-
+          
           return size.substring(0, 2)/i - 2 + 'px'
         }else{
           return size
@@ -921,7 +924,7 @@
       //   map.put(itemIdStr, array);
       // },
       /*********************************************业务代码***********************************************/
-
+      
       // /*增加新的内容*/
       // addTemplateContent() {
       //   if (this.templateContent.length >= 7) {
@@ -972,7 +975,7 @@
       // beforeRemove(file, fileList) {
       //   return this.$confirm(`确定移除 ${file.name}？`);
       // },
-
+  
       /**
        * 获取图片信息
        */
@@ -983,7 +986,7 @@
       //   console.log(params, "params");
       //   getGalleryList(params).then((data) => {
       //     console.log(data, "data");
-
+  
       //     if (!data) {
       //       return;
       //     }
@@ -1019,8 +1022,8 @@
     // height: 80px;
   }
   .infoBoardButton{
-    display:flex;
-    justify-content: center;
+    display:flex; 
+    justify-content: left;
   }
   ::v-deep .el-card__body{
     padding:10px 0;

@@ -396,7 +396,7 @@
               v-for="item in imgUrlList" :key="item.imgId">
                 <el-image  :src="item.imgUrl"  :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
-              <div
+              <div 
                 v-show="eventForm && eventForm.iconUrlList == []" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
@@ -409,7 +409,7 @@
         <div class="dialogBg dialogBg2">
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
           <el-carousel trigger="click" height="calc(100% - 14px)">
-            <el-carousel-item v-for="item in videoList" :key="item">
+            <el-carousel-item v-for="(item,index) in videoList" :key="index">
               <videoPlayer
                 v-if="item.liveUrl "
                 :rtsp="item.liveUrl"
@@ -417,15 +417,15 @@
               ></videoPlayer>
             </el-carousel-item>
           </el-carousel>
-
+          
           <!-- <div class="picBox">
             <div v-if="arrowLeft2" class="turnPages"  @click="turnLeft2()"><</div>
             <div class="picList">
-              <div
+              <div 
               v-for="item in urlsList" :key="item.imgId">
                 <el-image  :src="item.imgUrl" :preview-src-list="Array(item.imgUrl)" ></el-image>
               </div>
-              <div
+              <div 
                 v-show="!urlsList" class="noPic"
                 v-for="(item,index) of 4" :key="index">
                 <img src="../../../assets/cloudControl/nullImg.png"/>
@@ -445,7 +445,7 @@
                   v-model="eventForm.eventSource"
                   disabled
                   placeholder="请选择告警来源"
-                  style="width:12vw"
+                  style="width:calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in fromList"
@@ -466,7 +466,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width: 12vw"
+                  style="width:calc(100% - 10px)"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -486,7 +486,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width: 11vw"
+                  style="width:calc(100% - 10px)"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -499,7 +499,7 @@
                   clearable
                   size="small"
                   disabled
-                  style="width:12vw"
+                  style="width:calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -554,7 +554,7 @@
                     />
                   </el-col>
                 </el-row>
-
+                
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -595,8 +595,8 @@
                     </el-select>
                   </el-col>
                 </el-row>
-
-
+                
+                
               </el-form-item>
             </el-col>
             <el-col :span="16">
@@ -1238,7 +1238,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       //事件类型
-      eventTypeData: {},
+      eventTypeData: [],
       // 总条数
       total: 0,
       // 事件管理表格数据
@@ -1408,12 +1408,12 @@ export default {
       impressionOptions: [], //外观情况
       networkOptions: [], //网络情况
       powerOptions: [], //配电情况
-
+      
 
       // 实时视频
-      // videoForm:{
-      //   liveUrl:'',
-      // },
+      videoForm:{
+        liveUrl:'',
+      },
       videoList:[],
       cameraVisible:true,
     };
@@ -1733,6 +1733,8 @@ export default {
     },
     //详情弹窗
     detailsButton(item, type) {
+      console.log(item, "点击弹窗");
+
       this.imgUrlList = []
       this.iconUrlListAll = []
 
@@ -1745,7 +1747,6 @@ export default {
         this.detailsDisabled = false;
         this.detailsButtonType = 2;
       }
-      console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
@@ -1793,7 +1794,7 @@ export default {
       this.getVideoUrl(item)
       // 获取实时视频截图
       this.getImgUrl(item)
-
+      
     },
     getImgUrl(item){
       this.urlsList = []
@@ -1818,9 +1819,7 @@ export default {
       });
     },
     getVideoUrl(item){
-      console.log(item,"item")
-      console.log(item.stakeNum,"item.stakeNum")
-
+      // console.log(item,"item")
       this.cameraPlayer = false
       this.videoList = []
       getEventCamera(
@@ -1830,17 +1829,11 @@ export default {
       ).then((res) => {
         console.log(res,"获取实时视频上游相机")
         if(res.data){
-          let videoId = res.data[0].eqId
-          videoStreaming(videoId).then((response) =>{
-            console.log(response,"视频流");
-            if(response.code == 200){
-              this.videoList.push(response.data)
-              this.cameraPlayer = true
-            }
-          })
-          if(res.data.length>1){
-            let videoId2 = res.data[1].eqId
-            videoStreaming(videoId2).then((response) =>{
+          // let videoId = res.data[0].eqId
+          let videoId = ''
+          for(let item of res.data){
+            videoId = item.eqId
+            videoStreaming(videoId).then((response) =>{
               console.log(response,"视频流");
               if(response.code == 200){
                 this.videoList.push(response.data)
@@ -1848,6 +1841,7 @@ export default {
               }
             })
           }
+          console.log( this.videoList," this.videoList")
         }
         console.log(this.videoList,"this.videoList")
       });
@@ -2077,7 +2071,7 @@ export default {
           this.eventList = response.rows;
           this.total = response.total;
           this.loading = false;
-
+          
         });
       }
     },
@@ -2591,7 +2585,7 @@ export default {
 .formStyle {
   .el-form-item {
     margin-bottom: 1vh;
-
+    
   }
 }
 ::v-deep .el-form-item--medium .el-form-item__label{
@@ -2723,7 +2717,7 @@ export default {
   }
   .dialogBg {
     background: #f7f7f7;
-    height: 100%;
+    // height: 100%;
     width: 45%;
     color: #0087e7;
     padding: 20px 10px 10px 20px;
@@ -2762,8 +2756,8 @@ export default {
             margin: 0 auto;
           }
         }
-
-
+        
+     
       }
       .turnPages{
         width:20px !important;
@@ -2787,8 +2781,8 @@ export default {
           width:50%;
         }
       }
-
-
+      
+      
     }
   }
 }
@@ -2863,7 +2857,7 @@ export default {
   width: 53%;
   position: absolute;
   left: 20%;
-
+  
 }
   ::v-deep .detailsDialog .el-dialog{
     height:calc(100% - 8vh) !important;

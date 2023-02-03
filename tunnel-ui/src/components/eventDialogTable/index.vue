@@ -74,11 +74,14 @@
                 :span="20"
                 style="display: flex; justify-content: space-between"
               >
+              <el-tooltip class="item" effect="dark" :content="item.frameEventTitle" placement="top">
                 <div class="overflowText">{{ item.frameEventTitle }}</div>
+              </el-tooltip>
                 <div style="float: right; margin-right: 10px">
                   {{ item.startTime }}
                 </div>
               </el-col>
+            
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -226,10 +229,13 @@ export default {
       }, 2000);
     },
     handleSee(id) {
-      setTimeout(() => {
-        bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      if(searchValue != 2){
+        setTimeout(() => {
+          bus.$emit("getPicId", id);
+        }, 200);
+        bus.$emit("openPicDialog");
+      }
+      
     },
 
     // 忽略事件
@@ -446,7 +452,7 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
-  .el-dialog__body {
+  .el-dialog__body{
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;
@@ -526,6 +532,12 @@ export default {
       overflow-y: auto;
     }
   }
+}
+.overflowText{
+  width:280px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
     

@@ -134,7 +134,7 @@
       <el-table-column label="屏幕尺寸" align="center" prop="screenSize"  />
       <el-table-column label="入屏方式" align="center" prop="inScreenMode" :formatter="inScreenModeMatter" />
       <el-table-column label="模板内容" align="center" prop="tcontent.content" />
-      <el-table-column label="停留时间/秒" align="center" prop="stopTime" />
+      <el-table-column label="停留时间/毫秒" align="center" prop="stopTime" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column
         label="操作"

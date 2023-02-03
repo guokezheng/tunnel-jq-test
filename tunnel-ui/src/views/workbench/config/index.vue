@@ -66,7 +66,7 @@
                 @change="carShowChange"
               ></el-switch>
             </div>
-          <div class="display-box zoomClass">
+          <div class="display-box zoomClass" ref="treeBox">
             <!-- <div class="display-box">
               <p class="zoom-title" style="font-size: 14px">
                 {{ carShow ? "实时车辆开" : "实时车辆关" }}
@@ -81,13 +81,18 @@
               placeholder="请输入内容"
               v-model="screenEqName"
               class="input-with-select"
+              @click.native="treeClick()"
             >
               <el-button
                 slot="append"
                 icon="el-icon-search"
-                @click="screenEqNameButton"
+                @click="screenEqNameButton(screenEqName)"
               ></el-button>
             </el-input>
+            <!-- 搜索栏树状结构 -->
+            <div class="treeBox" ref="treeBox" v-show="treeShow">
+              <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+            </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -3152,6 +3157,69 @@ export default {
 
   data() {
     return {
+      treeShow: false,
+      //搜索树状数据
+      treeData: [
+        {
+          label: "一级 1",
+          children: [
+            {
+              label: "二级 1-1",
+              children: [
+                {
+                  label: "三级 1-1-1",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "一级 2",
+          children: [
+            {
+              label: "二级 2-1",
+              children: [
+                {
+                  label: "三级 2-1-1",
+                },
+              ],
+            },
+            {
+              label: "二级 2-2",
+              children: [
+                {
+                  label: "三级 2-2-1",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "一级 3",
+          children: [
+            {
+              label: "二级 3-1",
+              children: [
+                {
+                  label: "三级 3-1-1",
+                },
+              ],
+            },
+            {
+              label: "二级 3-2",
+              children: [
+                {
+                  label: "三级 3-2-1",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label",
+      },
       boardObj: {},
       fileNamesList: [],
       phoneForm1: {
@@ -4197,6 +4265,20 @@ export default {
     },
   },
   mounted() {
+    window.addEventListener("click", this.otherClose);
+    $(document).on("click", function (e) {
+      let dom = $(".treebox")[0]; // 自定义div的class
+      console.log(dom);
+      if (dom) {
+        // 如果点击的区域不在自定义dom范围
+        if (!dom.contains(e.target)) {
+          that.treeShow = false;
+        }
+      }
+    });
+    // document.addEventListener("click", (e) => {
+    //   if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+    // });
     // this.initEnergyConsumption();
     this.getTimeData();
     // this.vehicleEcharts()
@@ -4237,6 +4319,31 @@ export default {
     // this.srollAuto()
   },
   methods: {
+    otherClose(e) {
+      if (!this.$refs.treeBox.contains(e.target)) this.treeShow = false;
+    },
+    // 模糊查询
+    treeClick() {
+      console.log(this.screenEqName);
+      this.treeShow = !this.treeShow;
+    },
+    //点击树状图获取值
+    handleNodeClick(data) {
+      //console.log(data.label);
+      this.screenEqName = data.label;
+      this.screenEqNameButton(data.label);
+    },
+    // 筛选设备名称
+    screenEqNameButton(screenEqName) {
+      // console.log(screenEqName);
+      for (var item of this.selectedIconList) {
+        if (item.eqName.indexOf(screenEqName) != -1) {
+          item.click = true;
+        } else {
+          item.click = false;
+        }
+      }
+    },
     changeStrategyState(row) {
       let data = { strategyId: row.id, change: row.strategyState };
       updateState(data).then((result) => {
@@ -4260,79 +4367,77 @@ export default {
         console.log(res, "广播一键文件列表");
         this.fileNamesList = res.data;
       });
-    }, 
+    },
 
-    getBoardStyle(id, type,eqType) {
-      if(this.boardObj[id]){
-        if(JSON.parse(this.boardObj[id]).content){
-          let content = (JSON.parse(this.boardObj[id])).content;
+    getBoardStyle(id, type, eqType) {
+      if (this.boardObj[id]) {
+        if (JSON.parse(this.boardObj[id]).content) {
+          let content = JSON.parse(this.boardObj[id]).content;
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
-             if(type == 'width'){
-                if(eqType && eqType == 16 ){
-                   return devicePixel.split("*")[1]/2;
-                }else if(eqType && eqType == 36){
-                  return devicePixel.split("*")[1]/4;
-                }
-              }else if(type == 'height'){
-                if(eqType && eqType == 16 ){
-                   return devicePixel.split("*")[0]/2;
-                }else if(eqType && eqType == 36){
-                  return devicePixel.split("*")[0]/4;
-                }
-              }
-            let arr = ''
-            let fontS = ''
-            let color = ''
-          for(let i = 0;i < content.length; i++){
+          if (type == "width") {
+            if (eqType && eqType == 16) {
+              return devicePixel.split("*")[1] / 2;
+            } else if (eqType && eqType == 36) {
+              return devicePixel.split("*")[1] / 4;
+            }
+          } else if (type == "height") {
+            if (eqType && eqType == 16) {
+              return devicePixel.split("*")[0] / 2;
+            } else if (eqType && eqType == 36) {
+              return devicePixel.split("*")[0] / 4;
+            }
+          }
+          let arr = "";
+          let fontS = "";
+          let color = "";
+          for (let i = 0; i < content.length; i++) {
             var itemId = "ITEM" + this.formatNum(i, 3);
             var con = content[i][itemId][0];
-            arr += con.CONTENT.replace('<br>',' ').replace(' &nbsp',' ')
-            arr += ' '
-            color = this.getColorStyle(con.COLOR)
-            fontS = Number(con.FONT_SIZE.substring(0, 2))
+            arr += con.CONTENT.replace("<br>", " ").replace(" &nbsp", " ");
+            arr += " ";
+            color = this.getColorStyle(con.COLOR);
+            fontS = Number(con.FONT_SIZE.substring(0, 2));
           }
-          if(type == 'content'){
-                return arr
-              }else if(type == 'color'){
-                return color
-              }else if(type == 'fontSize'){
-                if(eqType && eqType == 16 ){
-                  return fontS/2
-                }else if(eqType && eqType == 36){
-                  return fontS/4
-                }
-              }
-          
-        }else{
+          if (type == "content") {
+            return arr;
+          } else if (type == "color") {
+            return color;
+          } else if (type == "fontSize") {
+            if (eqType && eqType == 16) {
+              return fontS / 2;
+            } else if (eqType && eqType == 36) {
+              return fontS / 4;
+            }
+          }
+        } else {
           let devicePixel = JSON.parse(this.boardObj[id]).devicePixel;
-          if(type == 'width'){
-            if(eqType && eqType == 16 ){
-                return devicePixel.split("*")[1]/2;
-            }else if(eqType && eqType == 36){
-              return devicePixel.split("*")[1]/4;
+          if (type == "width") {
+            if (eqType && eqType == 16) {
+              return devicePixel.split("*")[1] / 2;
+            } else if (eqType && eqType == 36) {
+              return devicePixel.split("*")[1] / 4;
             }
-          }else if(type == 'height'){
-            if(eqType && eqType == 16 ){
-                return devicePixel.split("*")[0]/2;
-            }else if(eqType && eqType == 36){
-              return devicePixel.split("*")[0]/4;
+          } else if (type == "height") {
+            if (eqType && eqType == 16) {
+              return devicePixel.split("*")[0] / 2;
+            } else if (eqType && eqType == 36) {
+              return devicePixel.split("*")[0] / 4;
             }
-          }else if(type == 'content'){
-            return '山东高速欢迎您'
-          }else if(type == 'color'){
-            return 'yellow'
-          }else if(type == 'fontSize'){
-            return 15
+          } else if (type == "content") {
+            return "山东高速欢迎您";
+          } else if (type == "color") {
+            return "yellow";
+          } else if (type == "fontSize") {
+            return 15;
           }
         }
-
-      }else{
-        if(type == 'width'){
+      } else {
+        if (type == "width") {
           return 24;
-        }else if(type == 'height'){
+        } else if (type == "height") {
           return 72;
-        }else if(type == 'content'){
-          return '山东高速欢迎您'
+        } else if (type == "content") {
+          return "山东高速欢迎您";
         }
       }
     },
@@ -4523,15 +4628,7 @@ export default {
         this.$forceUpdate();
       }
     },
-    // 筛选设备名称
-    screenEqNameButton() {
-      console.log(this.screenEqName);
-      for (var item of this.selectedIconList) {
-        if (item.eqName.indexOf(this.screenEqName)) {
-          console.log(item, "itemitem");
-        }
-      }
-    },
+
     // 抽屉车指批量控制 车道下拉框
     getTunnelLane() {
       this.chezhiLaneList = [];
@@ -6704,7 +6801,8 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
+                  40, 39,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -6742,7 +6840,10 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  if (deviceData.eqStatus == "1" || deviceData.eqStatus == "2") {
+                  if (
+                    deviceData.eqStatus == "1" ||
+                    deviceData.eqStatus == "2"
+                  ) {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2
@@ -8111,6 +8212,7 @@ export default {
     this.timer = null;
     clearInterval(this.imageTimer);
     this.imageTimer = null;
+    window.removeEventListener("click", this.otherClose);
   },
 };
 </script>
@@ -10133,13 +10235,12 @@ input {
   white-space: nowrap;
   text-align: center;
   padding: 2px;
-  border:solid 1.5px #F9B554;
+  border: solid 1.5px #f9b554;
   display: flex;
-  align-items:center;
-  border-radius:2px;
+  align-items: center;
+  border-radius: 2px;
   background: black;
-  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
-
+  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
 }
 .boardBox1 span {
   display: inline-block;
@@ -10164,12 +10265,12 @@ input {
   // color: #ffff07;
   text-align: center;
   padding: 4px;
-  border:solid 1.5px #F9B554;
+  border: solid 1.5px #f9b554;
   display: flex;
-  align-items:center;
-  border-radius:2px;
+  align-items: center;
+  border-radius: 2px;
   background: black;
-  box-shadow:0px 0px 2px #946F3B inset,0px 0px 4px #946F3B inset;
+  box-shadow: 0px 0px 2px #946f3b inset, 0px 0px 4px #946f3b inset;
 }
 .boardBox2 span {
   display: inline-block;
@@ -10184,5 +10285,12 @@ input {
   to {
     transform: translateY(-100%);
   }
+}
+.treeBox {
+  position: absolute;
+  z-index: 960619;
+  top: 4%;
+  left: 58.5%;
+  width: 8.5%;
 }
 </style>

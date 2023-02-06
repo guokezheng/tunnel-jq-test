@@ -129,3 +129,53 @@ export function exportDevicesTemplate(query) {
     params: query
   })
 }
+
+// 视频流
+export function videoStreaming(tunnelId) {
+  return request({
+    url: '/integrated/video/videoStreaming/' + tunnelId,
+    method: 'get',
+  })
+}
+
+// 广播控制
+export function playVoice(query) {
+  return request({
+    url: '/phoneSpk/playVoice',
+    method: 'post',
+    data: query
+  })
+}
+export function playVoiceGroup(query) {
+  return request({
+    url: '/phoneSpk/playVoiceGroup',
+    method: 'post',
+    data: query
+  })
+}
+
+// 广播文件列表
+export function getAudioFileList(query) {
+  return request({
+    url: '/phoneSpk/getAudioFileList',
+    method: 'post',
+    data: query
+
+  })
+}
+
+// 查询左洞或右洞扬声器
+export function getSpkList() {
+  return request({
+    url: '/devices/getSpkList',
+    method: 'get',
+  })
+}
+
+// 查询左洞或右洞扬声器
+export function getTodayYcylData(deviceId) {
+  return request({
+    url: 'system/data/getTodayYcylData/' + deviceId,
+    method: 'get',
+  })
+}

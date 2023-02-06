@@ -167,4 +167,12 @@ public interface SdSmartBigScreenMapper {
      * @return
      */
     List<Map<String, Object>> getAlarmInformation(@Param("tunnelId") String tunnelId);
+
+    /**
+     * 查询风险指标
+     *
+     * @param tunnelId
+     * @return
+     */
+    List<Map<String, Object>>getRiskIndicators(@Param("tunnelId") String tunnelId);
 }

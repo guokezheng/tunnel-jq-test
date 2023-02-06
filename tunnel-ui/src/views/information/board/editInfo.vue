@@ -4,7 +4,7 @@
       <el-dialog
         title="修改"
         :visible.sync="dialogVisible"
-        width="60%"
+        width="44%"
         :before-close="closeDialog"
       >
         <el-card class="box-card" >
@@ -12,57 +12,189 @@
             class="blackBoard"
             style="
               backgroundColor: #000000;
-              color: yellow;
               margin: 0 auto;
               overflow: hidden;
-             
+              display:flex;
               position: relative;
             "
             v-on:ondragenter="ondragenter"
             v-on:drop="faceDrop"
             v-on:dragover="allowDrop"
             :style="{
-                width:boardWidth + 'px',
-                height:boardHeight + 'px',
+                width:getDevicePixel(boardWidth,0),
+                height:getDevicePixel(boardHeight,1),
             }"
           >
             <span
               class="textBoard"
-              style="line-height: 1; position: absolute; white-space: pre-wrap"
+              style="line-height: 1; position: absolute;"
              
               :style="{
                 color: dataForm.COLOR,
-                fontSize: dataForm.FONT_SIZE,
+                fontSize: getFontSize(dataForm.FONT_SIZE),
                 fontFamily: dataForm.FONT,
-                letterSpacing: dataForm.SPEED + 'px',
-              
                 zIndex: '1000',
-                left:dataForm.COORDINATE.substring(0, 3) + 'px',
-                top:dataForm.COORDINATE.substring(3, 6) + 'px',
+                left:getCoordinate(dataForm.COORDINATE.substring(0, 3),0),
+                top:getCoordinate(dataForm.COORDINATE.substring(3, 6),1),
               }"
             v-html="dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
             ></span>
           </div>
         </el-card>
-        <el-row >
-            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-            <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
-            <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
-            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button>
-            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
-            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
-            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
-          </el-row>
+        
         <el-card>
           <el-form
             :model="dataForm"
             :rules="dataRule"
-            label-width="90px"
+            label-width="80px"
             ref="dataForm"
             size="mini"
           >
             <el-row :gutter="24">
-              <el-col :span="6">
+              <el-col :span="8">
+              <el-form-item prop="category" label="所属类别">
+                <el-select
+                  v-model="dataForm.category"
+                  placeholder="请选择所属类别"
+                  size="small"
+                  disabled
+                >
+                  <el-option
+                    v-for="item in iotTemplateCategoryList"
+                    :key="item.dictValue"
+                    :label="item.dictLabel"
+                    :value="item.dictValue"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="16" class="infoBoardButton" >
+            <!-- <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
+            <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
+            <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button> -->
+            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
+            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
+            <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
+        
+            <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
+           
+          </el-col>
+            </el-row>
+            <el-row
+              :gutter="24"
+            >
+              <el-col :span="24">
+                <el-form-item label="详细内容">
+                  <el-input
+                    type="textarea"
+                    clearable
+                    id="textContent"
+                    placeholder="详细内容"
+                    v-model="dataForm.CONTENT"
+                    @keyup.native="keyDown($event)"
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="COLOR" label="字体颜色">
+                  <el-select
+                    v-model="dataForm.COLOR"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in colorOptions"
+                      :key="item.cssClass"
+                      :label="item.dictLabel"
+                      :value="item.cssClass"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="FONT_SIZE" label="字体大小">
+                  <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
+                    <el-option
+                      v-for="item in fontSizeOpt"
+                      :key="item.dictLabel"
+                      :label="item.dictLabel"
+                      :value="item.dictLabel"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="FONT" label="字体类型">
+                  <el-select
+                    v-model="dataForm.FONT"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in fontTypeOptions"
+                      :key="item.dictLabel"
+                      :label="item.dictLabel"
+                      :value="item.dictLabel"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <!-- <el-col :span="6">
+                <el-form-item prop="SPEED" label="字体间距">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.SPEED"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col> -->
+              <!-- <el-col :span="24" v-show="templateContent.length > 1">
+                <el-divider></el-divider>
+              </el-col> -->
+           
+              <!-- <el-col :span="6">
+                <el-form-item prop="rollSpeed" label="滚动速度">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.rollSpeed"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col> -->
+              <el-col :span="8">
+                <el-form-item prop="STAY" label="停留时间">
+                  <el-input-number
+                    :min="0"
+                    controls-position="right"
+                    v-model="dataForm.STAY"
+                    style="width: 100%"
+                  />
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item prop="ACTION" label="入屏方式">
+                  <el-select
+                    v-model="dataForm.ACTION"
+                    filterable
+                    placeholder="请选择"
+                  >
+                    <el-option
+                      v-for="item in inScreenModeOptions"
+                      :key="item.dictValue"
+                      :label="item.dictLabel"
+                      :value="item.dictValue"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
                 <el-form-item prop="screenSize" label="屏幕尺寸">
                   <el-input
                     disabled
@@ -83,140 +215,6 @@
                     >
                     </el-option>
                   </el-select> -->
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-              <el-form-item prop="category" label="所属类别">
-                <el-select
-                  v-model="dataForm.category"
-                  placeholder="请选择所属类别"
-                  size="small"
-                  disabled
-                >
-                  <el-option
-                    v-for="item in iotTemplateCategoryList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            </el-row>
-            <el-row
-              :gutter="24"
-            >
-              <el-col :span="22">
-                <el-form-item label="详细内容">
-                  <el-input
-                    type="textarea"
-                    clearable
-                    id="textContent"
-
-                    placeholder="详细内容"
-                    v-model="dataForm.CONTENT"
-                    @keyup.native="keyDown($event)"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="COLOR" label="字体颜色">
-                  <el-select
-                    v-model="dataForm.COLOR"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in colorOptions"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="FONT_SIZE" label="字体大小">
-                  <el-select v-model="dataForm.FONT_SIZE" style="width: 100%">
-                    <el-option
-                      v-for="item in fontSizeOpt"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="FONT" label="字体类型">
-                  <el-select
-                    v-model="dataForm.FONT"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in fontTypeOptions"
-                      :key="item.code"
-                      :label="item.content"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="SPEED" label="字体间距">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.SPEED"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="24" v-show="templateContent.length > 1">
-                <el-divider></el-divider>
-              </el-col>
-            </el-row>
-            <el-row :gutter="24">
-              <!-- <el-col :span="6">
-                <el-form-item prop="rollSpeed" label="滚动速度">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.rollSpeed"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col> -->
-              <el-col :span="6">
-                <el-form-item prop="STAY" label="停留时间">
-                  <el-input-number
-                    :min="0"
-                    controls-position="right"
-                    v-model="dataForm.STAY"
-                    style="width: 100%"
-                  />
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item prop="ACTION" label="入屏方式">
-                  <el-select
-                    v-model="dataForm.ACTION"
-                    filterable
-                    placeholder="请选择"
-                  >
-                    <el-option
-                      v-for="item in inScreenModeOptions"
-                      :key="item.code"
-                      :label="item.name"
-                      :value="item.code"
-                    >
-                    </el-option>
-                  </el-select>
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6">
@@ -270,14 +268,13 @@
 
     data() {
       return {
-      iotTemplateCategoryList: [],
-      content: "",
+        iotTemplateCategoryList: [],
+        content: "",
 
         boardWidth:'',
         boardHeight:'',
         // boardEmitItem:this.boardEmitItem,
         disabled:true,
-        fontSizeOpt: [],
         checkList: [], //复选框一组
         obj: "",
         imgUrl: [],
@@ -310,36 +307,36 @@
         previewContent: "", //预览内容
         ispreviewContent: -1,
         dataForm: {
-          id: "",
-          screenSize: "400*40", //屏幕尺寸
-          inScreenMode: "1", //入屏方式
-          rollSpeed: "1000",
-          stopTime: "500",
-          applyType: "", //适用类型
-          vmsType: "", //情报板类型
-          remark: "", //备注
-          imgSizeFrom: "", //尺寸大小
-          imageUrl: "",
-          height: "",
-          width: "",
-          coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
+          // id: "",
+          // screenSize: "400*40", //屏幕尺寸
+          // inScreenMode: "1", //入屏方式
+          // rollSpeed: "1000",
+          // stopTime: "500",
+          // applyType: "", //适用类型
+          // vmsType: "", //情报板类型
+          // remark: "", //备注
+          // imgSizeFrom: "", //尺寸大小
+          // imageUrl: "",
+          // height: "",
+          // width: "",
+          // coordinate: "", //起始点位置;前3位代表x点的位值，后3位代表y点的位置
         },
         templateContentModel:'',
         templateContent: [],
         templateDelContent: [],
         fontTypeOptions: [
-          {
-            code: "KaiTi",
-            content: "楷体",
-          },
-          {
-            code: "SimSun",
-            content: "宋体",
-          },
-          {
-            code: "SimHei",
-            content: "黑体",
-          },
+          // {
+          //   code: "KaiTi",
+          //   content: "楷体",
+          // },
+          // {
+          //   code: "SimSun",
+          //   content: "宋体",
+          // },
+          // {
+          //   code: "SimHei",
+          //   content: "黑体",
+          // },
         
         ],
         screenSizeOptions: [
@@ -351,22 +348,22 @@
           },
         ],
         colorOptions: [
-          {
-            code: "red",
-            content: "红色",
-          },
-          {
-            code: "yellow",
-            content: "黄色",
-          },
-          {
-            code: "blue",
-            content: "蓝色",
-          },
-          {
-            code: "GreenYellow",
-            content: "绿色",
-          },
+          // {
+          //   code: "red",
+          //   content: "红色",
+          // },
+          // {
+          //   code: "yellow",
+          //   content: "黄色",
+          // },
+          // {
+          //   code: "blue",
+          //   content: "蓝色",
+          // },
+          // {
+          //   code: "GreenYellow",
+          //   content: "绿色",
+          // },
         ],
         isCurrencyOptions: [
           {
@@ -379,94 +376,94 @@
           },
         ],
         inScreenModeOptions: [
-          {
-            code: "0",
-            name: "清屏（全黑)",
-          },
-          {
-            code: "1",
-            name: "立即显示",
-          },
-          {
-            code: "2",
-            name: "上移",
-          },
-          {
-            code: "3",
-            name: "下移",
-          },
-          {
-            code: "4",
-            name: "左移",
-          },
-          {
-            code: "5",
-            name: "右移",
-          },
-          {
-            code: "6",
-            name: "横百叶窗",
-          },
-          {
-            code: "7",
-            name: "竖百叶窗",
-          },
-          {
-            code: "8",
-            name: "上下合拢",
-          },
-          {
-            code: "9",
-            name: "上下展开",
-          },
-          {
-            code: "10",
-            name: "左右合拢",
-          },
-          {
-            code: "11",
-            name: "左右展开",
-          },
-          {
-            code: "12",
-            name: "中心合拢",
-          },
-          {
-            code: "13",
-            name: "中心展开",
-          },
-          {
-            code: "14",
-            name: "向下马赛克",
-          },
-          {
-            code: "15",
-            name: "向右马赛克",
-          },
-          {
-            code: "16",
-            name: "淡入",
-          },
-          {
-            code: "17",
-            name: "淡出",
-          },
-          {
-            code: "18",
-            name: "字符闪烁（闪后消失）",
-          },
-          {
-            code: "19",
-            name: "字符闪烁（闪后停留）",
-          },
-          {
-            code: "20",
-            name: "区域闪烁（闪后复原）",
-          },
-          {
-            code: "21",
-            name: "区域闪烁（闪后区域为黑）",
-          },
+          // {
+          //   code: "0",
+          //   name: "清屏（全黑)",
+          // },
+          // {
+          //   code: "1",
+          //   name: "立即显示",
+          // },
+          // {
+          //   code: "2",
+          //   name: "上移",
+          // },
+          // {
+          //   code: "3",
+          //   name: "下移",
+          // },
+          // {
+          //   code: "4",
+          //   name: "左移",
+          // },
+          // {
+          //   code: "5",
+          //   name: "右移",
+          // },
+          // {
+          //   code: "6",
+          //   name: "横百叶窗",
+          // },
+          // {
+          //   code: "7",
+          //   name: "竖百叶窗",
+          // },
+          // {
+          //   code: "8",
+          //   name: "上下合拢",
+          // },
+          // {
+          //   code: "9",
+          //   name: "上下展开",
+          // },
+          // {
+          //   code: "10",
+          //   name: "左右合拢",
+          // },
+          // {
+          //   code: "11",
+          //   name: "左右展开",
+          // },
+          // {
+          //   code: "12",
+          //   name: "中心合拢",
+          // },
+          // {
+          //   code: "13",
+          //   name: "中心展开",
+          // },
+          // {
+          //   code: "14",
+          //   name: "向下马赛克",
+          // },
+          // {
+          //   code: "15",
+          //   name: "向右马赛克",
+          // },
+          // {
+          //   code: "16",
+          //   name: "淡入",
+          // },
+          // {
+          //   code: "17",
+          //   name: "淡出",
+          // },
+          // {
+          //   code: "18",
+          //   name: "字符闪烁（闪后消失）",
+          // },
+          // {
+          //   code: "19",
+          //   name: "字符闪烁（闪后停留）",
+          // },
+          // {
+          //   code: "20",
+          //   name: "区域闪烁（闪后复原）",
+          // },
+          // {
+          //   code: "21",
+          //   name: "区域闪烁（闪后区域为黑）",
+          // },
         ],
         imgSize: [
           {
@@ -479,18 +476,18 @@
           },
         ],
         fontSizeOpt: [
-          {
-            code: "32px",
-            name: "32px",
-          },
-          {
-            code: "24px",
-            name: "24px",
-          },
-          {
-            code: "16px",
-            name: "16px",
-          },
+          // {
+          //   code: "32px",
+          //   name: "32px",
+          // },
+          // {
+          //   code: "24px",
+          //   name: "24px",
+          // },
+          // {
+          //   code: "16px",
+          //   name: "16px",
+          // },
           
         ],
         title: "选择图片",
@@ -618,29 +615,32 @@
     },
     created(){
       console.log(this.boardEmitItem,"this.boardEmitItem")
+      this.getDicts("iot_template_category").then((res) => {
+        this.iotTemplateCategoryList = res.data;
+        console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
+      });
+      this.getDicts("iot_device_font_type").then((res) => {
+        this.fontTypeOptions = res.data;
+        console.log(this.fontTypeOptions, "字体类型");
+      });
+      this.getDicts("iot_devices_font_color").then((res) => {
+        this.colorOptions = res.data;
+        console.log(this.colorOptions, "字体颜色");
+      });
+      this.getDicts("iot_device_font_size").then((res) => {
+        this.fontSizeOpt = res.data;
+        console.log(this.fontSizeOpt, "字体大小");
+      });
+      this.getDicts("iot_device_font_inScreen_mode").then((res) => {
+        this.inScreenModeOptions = res.data;
+        console.log(this.inScreenModeOptions, "入屏方式");
+      });
       if(this.boardEmitItem){
-        // console.log(this.boardEmitItem.screenSize,"this.boardEmitItem.screenSize");
-        // console.log(this.boardEmitItem.screenSize.split("*")[0],"this.boardEmitItem.screenSize.split("*")[0]");
-
         this.boardWidth = this.boardEmitItem.screenSize.split("*")[0];
         this.boardHeight = this.boardEmitItem.screenSize.split("*")[1];
-       
+        console.log(this.boardWidth,this.boardHeight,"this.boardHeightthis.boardHeight")
         this.init()
       }
-      this.getDicts("iot_template_category").then((res) => {
-      this.iotTemplateCategoryList = res.data;
-      console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
-    });
-    },
-    mounted() {
-      console.log(this.boardEmitItem,"boardEmitItemboardEmitItem")
-      // if(this.boardEmitItem){
-      //   this.boardWidth = this.boardEmitItem.screenSize.split("*")[0];
-      //   this.boardHeight = this.boardEmitItem.screenSize.split("*")[1];
-   
-      //   this.init()
-      // }
-      
     },
     methods: {
       init() {
@@ -650,6 +650,7 @@
         this.itemPropertyMap = new HashMap();
 
         this.dataForm = this.boardEmitItem
+        this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')
       },
       alignment(alignmentNum) {
         console.log(alignmentNum,"alignmentNum");
@@ -670,37 +671,45 @@
         switch (alignmentNum) {
           // 左对齐
           case 1:
-            textBoard[0].style.left = '0px';
-            textBoard[0].style.removeProperty('right')
+            textBoard[0].style.position = 'static'
+            divContent[0].style.justifyContent = 'left'
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.textAlign = 'left'
+
             break;
             // 左右居中
           case 2:
-            textBoard[0].style.left = (divWidth - textWidth)/2 +'px';
-            textBoard[0].style.right = "unset";
-            // divContent[0].style.display='flex';
-            // divContent[0].style.justifyContent= 'center';
+            divContent[0].style.justifyContent = 'center'
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.textAlign = 'center'
+            textBoard[0].style.position = 'static'
 
             break;
             // 右对齐
           case 3:
-            textBoard[0].style.right = '0px';
-            textBoard[0].style.removeProperty('left')
+            divContent[0].style.justifyContent = 'right'
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.textAlign = 'right'
+            textBoard[0].style.position = 'static'
+
             break;
             // 上对齐
           case 4:
-            textBoard[0].style.top = '0px';
-            textBoard[0].style.removeProperty('bottom')
+            divContent[0].style.alignItems = 'flex-start'
+            textBoard[0].style.position = 'static'
+
             break;
             // 上下对齐
           case 5:
-            console.log(divHeight,textHeight,"00000");
-            textBoard[0].style.top = (divHeight - textHeight)/2 +'px';
-            textBoard[0].style.bottom = "unset";
+            divContent[0].style.alignItems = 'center'
+            textBoard[0].style.position = 'static'
+
             break;
             // 下对齐
           case 6:
-            textBoard[0].style.removeProperty('top')
-            textBoard[0].style.bottom = '0px';
+            divContent[0].style.alignItems = 'flex-end'
+            textBoard[0].style.position = 'static'
+
             break;
         }
         var textLeft = this.addZero(textBoard[0].offsetLeft)
@@ -766,9 +775,11 @@
         this.isAdd = false;
         if(this.dataForm.type == 1){
           this.$emit("receiveForm", this.dataForm);
+          console.log(this.dataForm,"this.dataForm修改后给父组件传表单内容")
         }else{
           const tcontent = {
           content: this.dataForm.CONTENT,
+          text:this.dataForm.CONTENT,
           coordinate: this.dataForm.COORDINATE,
           createBy: null,
           createTime: null,
@@ -850,6 +861,48 @@
         this.$emit("dialogClose");
 
       },
+      getDevicePixel(devicePixel, num){
+          if(num == 0){
+            if(devicePixel>760){
+              return 760 + 'px'
+            }else{
+              return devicePixel + 'px'
+            }
+          }else if(num == 1){
+            if(devicePixel>123){
+              return 123 + 'px'
+            }else{
+              return devicePixel +'px'
+            }
+          }
+      },
+      getCoordinate(coordinate,num){
+        if(num == 0){
+          if(this.boardWidth >760){
+            let i = this.boardWidth/760
+            return coordinate/i + 'px'
+          }else{
+            return coordinate + 'px'
+          }
+        }else if(num == 1){
+          if(this.boardHeight>123){
+            let i = this.boardHeight/123
+            return coordinate/i + 'px'
+          }else{
+            return coordinate + 'px'
+          }
+        }
+      },
+      getFontSize(size){
+        console.log(size,"size")
+        if(this.boardWidth >760){
+          let i = this.boardWidth/760
+          
+          return size.substring(0, 2)/i - 2 + 'px'
+        }else{
+          return size
+        }
+      }
       //将item属性存入Map
       // addItemPropertyMap(itemId, addFlg, stay, action, speed, coordinate, font, font_size, color, content) {
       //   if (!action) {
@@ -967,5 +1020,12 @@
     max-width: 300px;
     width: 100%;
     // height: 80px;
+  }
+  .infoBoardButton{
+    display:flex; 
+    justify-content: left;
+  }
+  ::v-deep .el-card__body{
+    padding:10px 0;
   }
   </style>

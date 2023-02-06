@@ -109,7 +109,9 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
   var data = {
     deviceIds:devicelds,
     protocolType:protocolType,
+    // parameters:parameters                                
     parameters:encodeURI(parameters)
+
   }
   return request({
     url: '/parser/board/uploadBoardEditInfo',
@@ -121,9 +123,19 @@ export function uploadBoardEditInfo(devicelds,protocolType,parameters) {
 
 
 //情报板管理右侧查询接口
-export function getAllVmsTemplate(category) {
+export function getAllVmsTemplate(data) {
   return request({
-    url: '/system/template/getAllVmsTemplate/' + category,
+    url: '/system/template/getAllVmsTemplate',
+    method: 'get',
+    params: data
+
+  })
+}
+
+// 情报板内容查询
+export function getBoardContent(deviceId) {
+  return request({
+    url: '/parser/board/getBoardContent?deviceId=' + deviceId,
     method: 'get',
 
   })

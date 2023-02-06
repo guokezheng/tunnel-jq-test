@@ -138,10 +138,9 @@
     <el-table
       v-loading="loading"
       :data="typeList"
-      max-height="640"
       @selection-change="handleSelectionChange"
       :row-class-name="tableRowClassName"
-
+      class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备类型名称" align="center" prop="typeName" />
@@ -203,7 +202,7 @@
     />
 
     <!-- 添加或修改设备类型对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body >
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body class="eqTypeDialog">
       <el-form ref="form" :model="form" :rules="rules" label-width="110px">
         <el-form-item label="设备类型名称" prop="typeName">
           <el-input v-model="form.typeName" placeholder="请输入设备类型名称" />
@@ -213,7 +212,7 @@
           <!-- <div style="color: #9c9c9c;font-size: 12px;line-height: 20px;">* 设备类型代号只能输入数字、字母、下划线</div> -->
         </el-form-item>
         <el-form-item label="是否可控" prop="isControl">
-                  <el-select v-model="form.isControl" placeholder="请选择是否可控">
+                  <el-select v-model="form.isControl" placeholder="请选择是否可控" style="width:100%">
                     <el-option v-for="dict in isControlOptions" :key="dict.dictSort" :label="dict.dictLabel" :value="dict.dictValue"></el-option>
                   </el-select>
                 </el-form-item>
@@ -235,7 +234,7 @@
           />
           px
         </el-form-item>
-        <el-form-item label="默认图标" label-width="100px">
+        <el-form-item label="默认图标" >
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -536,6 +535,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.typeId);
+      console.log(this.ids)
       // this.fIds = selection.map(item => item.iconFileId)
       this.single = selection.length !== 1;
       this.multiple = !selection.length;
@@ -654,5 +654,23 @@ export default {
   }
   .modifyEqTypeDialog .el-dialog__headerbtn{
     top: 10px !important;
+  }
+  ::v-deep .el-dialog__headerbtn{
+    top:14px !important;
+  }
+  ::v-deep .el-dialog__header{
+    padding: 20px;
+  }
+  
+</style>
+<style lang="scss">
+ .eqTypeDialog{
+    .el-dialog__body{
+      max-height: 700px;
+      overflow: auto;
+    }
+    ::-webkit-scrollbar{
+      width:0px;
+    }
   }
 </style>

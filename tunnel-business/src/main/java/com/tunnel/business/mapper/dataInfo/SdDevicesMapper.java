@@ -2,6 +2,7 @@ package com.tunnel.business.mapper.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
+import com.tunnel.business.domain.dataInfo.SdEquipmentStateIconFile;
 import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 import com.tunnel.business.domain.digitalmodel.SdDeviceDataItem;
 import org.apache.ibatis.annotations.Param;
@@ -25,7 +26,7 @@ public interface SdDevicesMapper
 	 */
 	public SdDevices selectSdDevicesById(String eqId);
 
-
+	SdDevices getDevicesListByExternalId(String externalId);
 	/**
 	 * 查询设备详情
 	 *
@@ -164,7 +165,11 @@ public interface SdDevicesMapper
 
 	public int updateSdDevicesByFEqId(SdDevices sdDevices);
 
+	public int updateSdDevicesByExternalSystemId(SdDevices sdDevices);
+
 	public List<SdDevices> selectFireComponentsList(SdDevices sdDevices);
+
+	public List<SdDevices> selectDevicesListByExternalSystemId(SdDevices sdDevices);
 
 	public List<Map<String, Object>> selectDeviceDataAndUnit(@Param("eqId") String eqId);
 
@@ -252,4 +257,39 @@ public interface SdDevicesMapper
 	 * @return
 	 */
     List<SdDevices> getAppDevicesStatus(@Param("eqId")String eqId);
+
+	public List<SdDevices> selectSdDevicesListByEqTypes(@Param("guidanceLampTypeId") Long guidanceLampTypeId, @Param("lunKuoBiaoTypeId") Long lunKuoBiaoTypeId);
+
+	/**
+	 * 根据类型和外部设备ID查询紧急电话和广播
+	 * @param devices
+	 * @return
+	 */
+	SdDevices selectPhoneSpk(SdDevices devices);
+
+	/**
+	 * 查询左洞或者右洞的设备
+	 * @param sdDevices
+	 * @return
+	 */
+    List<SdDevices> getSpkList(SdDevices sdDevices);
+
+	/**
+	 * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+	 * @param sdDevices
+	 * @return
+	 */
+	SdDevices getLight(SdDevices sdDevices);
+
+	/**
+	 * 查询风机对应的振动仪检测器
+	 * @param deviceId
+	 * @return
+	 */
+	SdDevices selectZdyDevice(@Param("deviceId") String deviceId,
+							  @Param("eqType") Long eqType);
+
+	SdDevices getDeviceByAssociationDeviceId(@Param("deviceId") Long deviceId);
+
+
 }

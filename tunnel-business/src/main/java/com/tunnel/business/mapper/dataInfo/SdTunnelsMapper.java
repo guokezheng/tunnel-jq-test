@@ -99,7 +99,7 @@ public interface SdTunnelsMapper
      * @param deptId
      * @return
      */
-    List<SdTunnels> selectTunnelList(String deptId);
+    List<SdTunnels> selectTunnelList(@Param("deptId")String deptId,@Param("tunnelId")String tunnelId);
 
     /**
      * 查询当前登录者所属

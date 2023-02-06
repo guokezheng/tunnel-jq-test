@@ -74,7 +74,7 @@
       v-loading="loading"
       :data="brandList"
       @selection-change="handleSelectionChange"
-      class="allTable"
+      class="allTable tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="设备厂商编号" align="center" prop="supplierId" />
@@ -283,7 +283,7 @@ export default {
       const supplierIds = row.supplierId || this.ids;
       this.$modal
         .confirm(
-          '是否确认删除物联设备厂商编号为"' + supplierIds + '"的数据项？'
+          '是否确认删除已经选择的物联设备厂商数据项？'
         )
         .then(function () {
           return delBrand(supplierIds);
@@ -312,3 +312,4 @@ export default {
   },
 };
 </script>
+

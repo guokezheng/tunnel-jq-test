@@ -101,4 +101,26 @@ public class SdMicrowavePeriodicStatisticsController extends BaseController
     {
         return toAjax(sdMicrowavePeriodicStatisticsService.deleteSdMicrowavePeriodicStatisticsByStatisticsIds(statisticsIds));
     }
+
+    /**
+     * 获取最新车流量信息
+     *
+     * @param statistics
+     * @return
+     */
+    @GetMapping("/getStatisticsNewList")
+    public AjaxResult getStatisticsNewList(SdMicrowavePeriodicStatistics statistics){
+        return AjaxResult.success(sdMicrowavePeriodicStatisticsService.getStatisticsNewList(statistics));
+    }
+
+    /**
+     * 查询24小时之内车流量信息
+     *
+     * @param statistics
+     * @return
+     */
+    @GetMapping("/getStatisticsRealList")
+    public AjaxResult getStatisticsRealList(SdMicrowavePeriodicStatistics statistics){
+        return AjaxResult.success(sdMicrowavePeriodicStatisticsService.getStatisticsRealList(statistics));
+    }
 }

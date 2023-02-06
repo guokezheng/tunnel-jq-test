@@ -27,9 +27,9 @@
 
     <insert id="insertPic">
         insert into sd_traffic_image
-            (business_id,img_name,img_url,create_time,create_by)
+            (business_id,img_name,img_url,img_type,create_time,create_by)
         values
-            (#{eventId},#{picName},#{imgUrl},NOW(),'admin')
+            (#{eventId},#{picName},#{imgUrl},#{imgType},NOW(),#{createBy})
     </insert>
 
     <insert id="insertVhc">
@@ -66,4 +66,33 @@
     <select id="selectID" resultType="java.lang.Integer">
         select COUNT(1) from sd_event where id=#{eventId}
     </select>
+
+    <select id="selectConfidence" parameterType="java.lang.Long" resultType="com.tunnel.business.domain.digitalmodel.WjConfidence">
+        SELECT
+            ec.id,
+            ec.plate,
+            ec.speed,
+            ec.event_id AS eventIds,
+            ec.confidence AS eventConfidence
+        FROM
+            sd_event_confidence ec
+        WHERE
+            1 = 1
+          <if test="eventId != null and eventId != ''">
+              AND ec.event_id = #{eventId}
+          </if>
+    </select>
+
+    <update id="updateEventConfidence" parameterType="com.tunnel.business.domain.digitalmodel.WjConfidence">
+        update sd_event_confidence
+            <set>
+                <if test="eventIds != null">event_id = #{eventIds},</if>
+                <if test="targetId != null">target_id = #{targetId},</if>
+                <if test="eventConfidence != null">confidence = #{eventConfidence},</if>
+                <if test="speed != null">speed = #{speed},</if>
+                <if test="plate != null">plate = #{plate},</if>
+            </set>
+        where id = #{id}
+    </update>
+
 </mapper>

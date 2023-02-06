@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 
 import java.util.List;
@@ -74,7 +75,18 @@ public interface ISdDeviceDataService {
 
     Map<String, Object> getTodayFSFXData(String deviceId);
 
+    Map<String, Object> getTodayYcylData(String deviceId);
+
     Map<String, Object> getTodayLDData(String deviceId);
 
     List<Map<String, String>> dataLogInfoList(SdDeviceData sdDeviceData);
+
+    Map<String, Object> energyConsumptionDetection(String tunnelId);
+
+    /**
+     * 获取风机安全检测仪实时数据
+     * @param deviceId
+     * @return
+     */
+    AjaxResult getFanSafeData(String deviceId);
 }

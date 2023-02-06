@@ -179,3 +179,65 @@ export function timeStrategySwitch(strategyId,change) {
     method: 'get',
   })
 }
+
+// 批量控制弹窗
+export function batchControlDevice(data) {
+  return request({
+    url: '/workspace/batchControlDevice',
+    method: 'post',
+    data: data
+  })
+}
+
+// 情报板显示内容定时查询
+export function addBoardContent(tunnelId) {
+  return request({
+    url: 'parser/board/getWorkBenchBoardContent/'+tunnelId,
+    method: 'get',
+  })
+}
+
+// 查询风机安全检测仪实时数据
+export function getFanSafeData(tunnelId) {
+  return request({
+    url: '/system/data/getFanSafeData/'+tunnelId,
+    method: 'get',
+  })
+}
+
+// 微波车检表格
+export function getStatisticsNewList(query) {
+  return request({
+    url: '/microwave/statistics/getStatisticsNewList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 微波车检echarts
+export function getStatisticsRealList(query) {
+  return request({
+    url: '/microwave/statistics/getStatisticsRealList',
+    method: 'get',
+    params: query
+  })
+}
+
+// 云台控制
+export function PTZContro(eqId,cmdType) {
+  return request({
+    url: '/integrated/video/PTZControl?eqId='+ eqId + '&cmdType=' + cmdType + '&speed=1',
+    method: 'get'
+  })
+}
+
+// 指示灯带
+export function controlWarningLightStripDevice(data) {
+  return request({
+    url: '/workspace/controlWarningLightStripDevice',
+    method: 'post',
+    data: data
+  })
+}
+
+

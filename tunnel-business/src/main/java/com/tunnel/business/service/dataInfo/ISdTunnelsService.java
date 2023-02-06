@@ -91,7 +91,7 @@ public interface ISdTunnelsService {
      * @param deptId
      * @return
      */
-    List<SdTunnels> selectTunnelList(String deptId);
+    List<SdTunnels> selectTunnelList(String deptId,String tunnelId);
 
     /**
      * 查询当前登录者所属

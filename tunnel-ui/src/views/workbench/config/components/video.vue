@@ -24,15 +24,15 @@
           @click="handleClosee"
         />
       </div>
-      <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
-      <div style="width: 100%; height: 200px; padding: 0 15px">
-        <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
-          muted
-          autoplay
-          disablePictureInPicture="true"
-          controlslist="nodownload noremoteplayback noplaybackrate"
-          loopstyle="width:100%;height:100%;"></video> -->
-        <video
+      <div style="width: 100%; height: 200px;padding:0 15px">
+
+        <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
+       
+        <!-- <video
           id="h5sVideo1"
           class="h5video_"
           controls
@@ -41,7 +41,7 @@
           disablePictureInPicture="true"
           controlslist="nodownload noplaybackrate noremoteplayback"
           style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video>
+        ></video> -->
       </div>
       <el-form
         ref="form"
@@ -159,14 +159,14 @@
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoViewing()"
           style="width: 80px"
           class="submitButton"
           >录像查看</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -288,49 +288,49 @@
       <el-row class="yuntaiBox">
         <el-col :span="18">
           <div class="yuntaiVideoBox">
-             
-            <video
-              class="yunTaiVideo"
-              id="tt"
-              :src="videoMoNi"
-              controls
-              muted
-              autoplay
-              disablePictureInPicture="true"
-              controlslist="nodownload noremoteplayback noplaybackrate"
-              loopstyle="width:100%;height:100%;"
-            ></video>
+            <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
           </div>
-          <div class="yuntaiPic">
-            <div @click="clickLeft()"><</div>
+          <!-- <div class="yuntaiPic"> -->
+            <!-- <div @click="clickLeft()"><</div>
             <div>
               <img :src="item.pic" v-for="(item,index) in picList" :key="index"></img>
             </div>
-            <div @click="clickRight()">></div>
-          </div>
+            <div @click="clickRight()">></div> -->
+            <!-- <img :src="videoIcon" v-for="(item,index) of 8" :key="index"/> -->
+          <!-- </div> -->
         </el-col>
         <el-col :span="6">
-          <div class="fangxiang"></div>
+          <div class="fangxiang">
+            <div class="picBox">
+              <img :src="yuntai" v-for="(item,index) of yuntaiList" :key="index" @click="changeYunTai(item.cmdType)"/>
+            </div>
+            <div class="yuzhiwei">预置位</div>
+
+          </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(11)">-</div>
             <div>变倍</div>
-            <div>+</div>
+            <div @click="changeYunTai(12)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(13)">-</div>
             <div>聚焦</div>
-            <div>+</div>
+            <div @click="changeYunTai(14)">+</div>
           </div>
           <div class="jiaJian">
-            <div>-</div>
+            <div @click="changeYunTai(16)">-</div>
             <div>光圈</div>
-            <div>+</div>
+            <div @click="changeYunTai(15)">+</div>
           </div>
-          <div class="sliderClass">
+          <!-- <div class="sliderClass">
             <div>0</div>
             <el-slider v-model="yunTaiForm.slider" :max="255"></el-slider>
             <div>255</div>
-          </div>
+          </div> -->
           <div class="switchClass">
             <div>雨刷</div>
             <el-switch
@@ -340,10 +340,11 @@
               inactive-color="#ddd"
               active-text="开"
               inactive-text="关"
+              @change="changeYunTai(yunTaiForm.yuShua,'yushua')"
             >
             </el-switch>
           </div>
-          <div class="switchClass">
+          <!-- <div class="switchClass">
             <div>灯光</div>
             <el-switch
               style="display: block"
@@ -354,8 +355,8 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
-          <div class="switchClass">
+          </div> -->
+          <!-- <div class="switchClass">
             <div>除雪</div>
             <el-switch
               style="display: block"
@@ -366,7 +367,7 @@
               inactive-text="关"
             >
             </el-switch>
-          </div>
+          </div> -->
         </el-col>
       </el-row>
     </el-dialog>
@@ -375,16 +376,26 @@
 
 <script>
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+import { getDeviceById, videoStreaming } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
+import flvjs from 'flv.js'
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
+import { PTZContro } from "@/api/workbench/config.js"; //提交控制信息
+
+// import { getLocalIP } from "@/api/event/vedioRecord";
+
 
 export default {
   props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components:{
+    videoPlayer,
+
+  },
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
       title: "",
-      cameraVisible: true, //摄像机弹窗
+      cameraPlayer: false, //摄像机弹窗
       historyVisible: false, //历史记录弹窗
       videoActive: "information", // tab页
       stateForm: {}, //弹窗表单
@@ -397,7 +408,41 @@ export default {
       dateRange: [], //选择时间数组
       total: 0, // 总条数
       src: require("@/assets/images/warningPhoto.png"),
-      videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoMoNi: '',
+      // videoMoNi: require("../../../../assets/Example/d1.mp4"),
+      videoForm:{
+        liveUrl:'',
+      },
+      // hostIP: null,
+      cameraVisible:true,
+      videoIcon:require("@/assets/logo/equipment_log/固定摄像机-正常.png"),
+      yuntai:require("@/assets/cloudControl/yuntai.png"),
+      yuntaiList:[
+        {
+          cmdType:21,//上
+        },
+        {
+          cmdType:52,//右上
+        },
+        {
+          cmdType:24,//右
+        },
+        {
+          cmdType:53,//右下
+        },
+        {
+          cmdType:22,//下
+        },
+        {
+          cmdType:51,//左下
+        },
+        {
+          cmdType:23,//左
+        },
+        {
+          cmdType:50,//左上
+        },
+      ],
       videoList: [
         {
           pic: require("@/assets/images/ruoyi-login-background.jpg"),
@@ -463,11 +508,12 @@ export default {
       ],
       yunTaiForm: {
         slider: 0,
-        yuShua: true,
+        yuShua: false,
         dengGuang: false,
         chuXue: true,
       },
       picPage:1,
+      player: null,
     };
   },
   created() {
@@ -476,17 +522,43 @@ export default {
     if(this.videoList.length > 4){
       this.picList = this.videoList.slice(0,4)
     }
+    // getLocalIP().then((response) => {
+    //   console.log(response,"responseresponse");
+    //   this.hostIP = response;
+    // });
   },
   methods: {
+    // 点击云台方向
+    changeYunTai(cmdType,type){
+      if(type && cmdType == false){
+        cmdType = 48
+      }else if (type && cmdType == true){
+        cmdType = 49
+      }
+      PTZContro(this.eqInfo.equipmentId,cmdType).then((res)=>{
+        console.log(res,"云台控制");
+      })
+
+    },
     // 根据设备id 获取弹窗内信息
     async getmessage() {
       if (this.eqInfo.equipmentId) {
+        videoStreaming(this.eqInfo.equipmentId).then((response) =>{
+          console.log(response,"视频流");
+          if(response.code == 200){
+            this.videoForm = response.data
+            this.cameraPlayer = true
+          }
+        }).catch((e)=>{
+          this.$modal.msgWarning("获取视频失败");
+        })
         await getDeviceById(this.eqInfo.equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-          displayH5sVideoAll(res.data.secureKey);
+          // displayH5sVideoAll(res.data.secureKey);
         });
+        
         // await getInfo(this.eqInfo.clickEqType).then((response) => {
         //     console.log(response, "查询设备当前状态");
         //     this.stateForm.state = response.data.state;
@@ -609,9 +681,9 @@ export default {
 }
 .yuntaiBox {
   width: 100%;
-  height: 600px;
+  // height: 600px;
+  height: 460px;
   padding: 20px;
-  // border: solid 1px red;
   > .el-col:nth-of-type(1) {
     padding-right: 10px;
   }
@@ -627,15 +699,16 @@ export default {
   }
   .yuntaiPic {
     width: 100%;
-    height: calc(100% - 450px);
-    margin-top: 20px;
+    // height: calc(100% - 450px);
+    height: calc(100% - 440px);
+    // margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 30px;
       height: 30px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       line-height: 28px;
@@ -653,16 +726,121 @@ export default {
       margin-left: 5px;
       cursor: pointer;
     }
+    // img{
+    //   width: 25%;
+    //   height: 100%;
+    //   padding-right: 5px;
+    // }
     img{
-      width: 25%;
-      height: 100%;
-      padding-right: 5px;
+      width:30px;
+      height:30px;
+      margin-left: 6px;
+      cursor: pointer;
+      caret-color: rgba(0,0,0,0);
+
+    }
+    img:nth-of-type(1){
+      margin-left: 0;
     }
   }
   .fangxiang {
-    widows: 100%;
-    height: 40%;
-    border: solid 1px white;
+    width: 100%;
+    height: 215px;
+    margin: 0 auto;
+    transform: scale(0.8);
+    position: relative;
+    .yuzhiwei{
+      text-decoration: underline;
+      color: #fff;
+      font-size: 24px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top:0;
+      bottom: 0;
+      margin: auto;
+      height: 36px;
+      width: 74px;
+      cursor: pointer;
+      caret-color: rgba(0,0,0,0);
+    }
+    .picBox{
+      width:215px;
+      height:100%;
+      margin: 0 auto;
+      position: relative;
+      transform: rotate(-23deg);
+      >div{
+        text-decoration: underline;
+        color: #fff;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top:0;
+        bottom: 0;
+        margin: auto;
+        height: 36px;
+        width: 74px;
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+      }
+      >img{
+        cursor: pointer;
+        caret-color: rgba(0,0,0,0);
+      }
+      >img:nth-of-type(1){
+        position: absolute;
+        top: -1px;
+        left:96px;
+        transform: rotate(0deg) scale(0.77)
+      }
+      >img:nth-of-type(2){
+        position: absolute;
+        top: 45px;
+        left:137px;
+        transform: rotate(45deg) scale(0.77);
+      }
+      >img:nth-of-type(3){
+        position: absolute;
+        top: 106px;
+        left: 133px;
+        transform: rotate(90deg) scale(0.77);
+      }
+      >img:nth-of-type(4){
+        position: absolute;
+        top: 147px;
+        left: 87px;
+        transform: rotate(135deg) scale(0.77);
+      }
+      >img:nth-of-type(5){
+        position: absolute;
+        top: 143px;
+        left: 26px;
+        transform: rotate(180deg) scale(0.77);
+      }
+      >img:nth-of-type(6){
+        position: absolute;
+        top: 97px;
+        left: -14px;
+        transform: rotate(225deg) scale(0.77);
+
+      }
+      >img:nth-of-type(7){
+        position: absolute;
+        top: 36px;
+        left: -11px;
+        transform: rotate(269deg) scale(0.77);
+
+      }
+      >img:nth-of-type(8){
+        position: absolute;
+        top: -5px;
+        left: 35px;
+        transform: rotate(315deg) scale(0.77);
+
+      }
+    }
   }
   .jiaJian {
     width: 100%;
@@ -671,14 +849,21 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 10px;
+    transform: translateY(-20px);
     > div:nth-of-type(1),
     > div:nth-of-type(3) {
       width: 23px;
       height: 23px;
-      // border: solid 1px white;
       border-radius: 15px;
       text-align: center;
       font-size: 18px;
+      cursor: pointer;  
+      caret-color: rgba(0,0,0,0);
+    }
+    > div:nth-of-type(1):hover,
+    > div:nth-of-type(3):hover{
+      background: #01aafd;
+      color: #fff;
     }
     > div:nth-of-type(1) {
       line-height: 18px;
@@ -694,6 +879,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 15px;
+    
     > .el-slider {
       width: 50%;
     }
@@ -705,6 +891,7 @@ export default {
     justify-content: space-around;
     align-items: center;
     padding: 0 22px;
+    transform: translateY(-20px);
   }
 }
 ::v-deep .el-switch__label{

@@ -66,11 +66,18 @@ export function getCaptchaOnOff() {
   })
 }
 
-
-export function callBack() {
+export function callBackTest(){
   return request({
-    url: '/thirdPart/login?username=admin',
+    url: '/thirdPart/testLogin?username=admin',
     method: 'get'
+  })
+}
+
+export function callBack(loginInfo) {
+  return request({
+    url: '/thirdPart/login',
+    method: 'post',
+    data:loginInfo
   })
 }
 

@@ -1,15 +1,9 @@
 package com.ruoyi.common.utils.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -25,7 +19,7 @@ import com.ruoyi.common.utils.StringUtils;
 
 /**
  * 通用http发送方法
- * 
+ *
  *
  */
 public class HttpUtils
@@ -281,5 +275,110 @@ public class HttpUtils
         {
             return true;
         }
+    }
+
+    public static String sendPostByApplicationJson(String pathUrl, String data)
+    {
+        OutputStreamWriter out = null;
+        BufferedReader br = null;
+        String result = "";
+        try {
+            URL url = new URL(pathUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");  //维持长链接
+            conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            conn.connect();
+            out = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+            out.write(data);
+            out.flush();
+            InputStream is = conn.getInputStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            String str = "";
+            while ((str = br.readLine()) != null){
+                result += str;
+            }
+            is.close();
+            conn.disconnect();
+        } catch (Exception e) {
+            log.info("访问外部系统异常：路径为：" + pathUrl + ";异常信息内容：" + e.getMessage());
+            return "";
+        }finally {
+            try {
+                if (out != null){
+                    out.close();
+                }
+                if (br != null){
+                    br.close();
+                }
+            } catch (IOException e) {
+                return "";
+            }
+        }
+        return result;
+    }
+
+    public static String sendGetWithAuth(String url, String param, String contentType, String auth)
+    {
+        StringBuilder result = new StringBuilder();
+        BufferedReader in = null;
+        try
+        {
+            String urlNameString = StringUtils.isNotBlank(param) ? url + "?" + param : url;
+            log.info("sendGet - {}", urlNameString);
+            URL realUrl = new URL(urlNameString);
+            URLConnection connection = realUrl.openConnection();
+            connection.setRequestProperty("accept", "*/*");
+            connection.setRequestProperty("connection", "Keep-Alive");
+            connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            connection.setRequestProperty("Authorization", auth);
+            connection.setConnectTimeout(3000);
+            connection.setReadTimeout(3000);
+            connection.connect();
+            in = new BufferedReader(new InputStreamReader(connection.getInputStream(), contentType));
+            String line;
+            while ((line = in.readLine()) != null)
+            {
+                result.append(line);
+            }
+            log.info("recv - {}", result);
+        }
+        catch (ConnectException e)
+        {
+            log.error("调用HttpUtils.sendGet ConnectException, url=" + url + ",param=" + param, e);
+        }
+        catch (SocketTimeoutException e)
+        {
+            log.error("调用HttpUtils.sendGet SocketTimeoutException, url=" + url + ",param=" + param, e);
+        }
+        catch (IOException e)
+        {
+            log.error("调用HttpUtils.sendGet IOException, url=" + url + ",param=" + param, e);
+        }
+        catch (Exception e)
+        {
+            log.error("调用HttpsUtil.sendGet Exception, url=" + url + ",param=" + param, e);
+        }
+        finally
+        {
+            try
+            {
+                if (in != null)
+                {
+                    in.close();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.error("调用in.close Exception, url=" + url + ",param=" + param, ex);
+            }
+        }
+        return result.toString();
     }
 }

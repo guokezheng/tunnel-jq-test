@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +42,11 @@ public class SdEmergencyVehicleController extends BaseController
     @ApiOperation("查询应急车辆列表")
     public TableDataInfo list(SdEmergencyVehicle sdEmergencyVehicle)
     {
-        sdEmergencyVehicleService.synVehicleData();
+        String syn = sdEmergencyVehicleService.synVehicleData();
         startPage();
+        if(syn == null || syn == ""){
+            return getDataTable(new ArrayList<>());
+        }
         List<SdEmergencyVehicle> list = sdEmergencyVehicleService.selectSdEmergencyVehicleList(sdEmergencyVehicle);
         return getDataTable(list);
     }
@@ -112,7 +116,7 @@ public class SdEmergencyVehicleController extends BaseController
     @ApiOperation("修改应急车辆")
     public AjaxResult edit(@RequestBody SdEmergencyVehicle sdEmergencyVehicle)
     {
-        return toAjax(sdEmergencyVehicleService.updateSdEmergencyVehicle(sdEmergencyVehicle));
+        return sdEmergencyVehicleService.updateSdEmergencyVehicle(sdEmergencyVehicle);
     }
 
     /**

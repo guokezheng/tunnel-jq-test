@@ -25,7 +25,7 @@
               :class="{ 'fixed-header': fixedHeader }"
               :style="fixedHeader ? 'background-color:white;' : ''"
             >
-              <navbar style="display: block; height: 72px" />
+              <navbar style="display: block; height: 7.6vh" />
               <!-- <tags-view v-if="needTagsView" /> -->
             </div>
             <div
@@ -232,7 +232,7 @@ export default {
       is_weather: null,
       is_breadcrumb: null,
       tunnelStyle: null,
-      eventDialogPic: false,
+      eventDialogPic: true,
       eventDialogTable: false,
       evtDialogVideo:false,
       routePath: [

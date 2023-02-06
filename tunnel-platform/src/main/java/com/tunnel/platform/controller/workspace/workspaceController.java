@@ -1,6 +1,6 @@
 package com.tunnel.platform.controller.workspace;
 
-import cn.hutool.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
@@ -8,32 +8,38 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.ip.IpUtils;
 import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesHongTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
+import com.tunnel.business.datacenter.domain.enumeration.TunnelEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
 import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
+import com.tunnel.business.mapper.dataInfo.SdDeviceTypeItemMapper;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.service.dataInfo.*;
 import com.tunnel.business.service.digitalmodel.ISdRadarDetectDataService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
 import com.tunnel.deal.guidancelamp.control.util.GuidanceLampHandle;
 import com.tunnel.deal.plc.modbus.ModbusTcpHandle;
+import com.tunnel.deal.warninglightstrip.WarningLightStripHandle;
 import com.tunnel.platform.service.SdDeviceControlService;
 import com.tunnel.platform.service.SdOptDeviceService;
+import com.tunnel.platform.service.deviceControl.HongMengDevService;
 import com.tunnel.platform.service.deviceControl.LightService;
 import com.zc.common.core.websocket.WebSocketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 工作台
@@ -44,6 +50,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/workspace")
 public class workspaceController extends BaseController {
+
+    private static final Logger log = LoggerFactory.getLogger(workspaceController.class);
+
     @Autowired
     private ISdEventService sdEventService;
     @Autowired
@@ -74,6 +83,24 @@ public class workspaceController extends BaseController {
     @Value("${authorize.name}")
     private String deploymentType;
 
+    /**
+     * 高速云端是否可控
+     */
+    @Value("${platform.control}")
+    private String platformControl;
+
+    @Autowired
+    private HongMengDevService hongMengDevService;
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+
+    @Autowired
+    private SdDeviceTypeItemMapper sdDeviceTypeItemMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     //3d测试
     @PostMapping("/test")
     public String test() {
@@ -92,16 +119,27 @@ public class workspaceController extends BaseController {
             throw new RuntimeException("未指定设备需要变更的状态信息，请联系管理员");
         }
 
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+
         if ("GSY".equals(deploymentType)) {
+            if(TunnelEnum.HANG_SHAN_DONG.getCode().equals(sdDevices.getEqTunnelId()) && DevicesHongTypeEnum.contains(sdDevices.getEqType()) && "AGREE".equals(platformControl)){
+                Map<String, String> hongMap = hongMengDevService.updateHua(devId, state);
+                Integer code = Integer.valueOf(hongMap.get("code"));
+                String msg = hongMap.get("msg").toString();
+                if(code == 200){
+                    return AjaxResult.success(1);
+                }else {
+                    return AjaxResult.success(msg,0);
+                }
+            }
             map.put("controlType", "0");
             map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
             sdOptDeviceService.optSingleDevice(map);
             return AjaxResult.success(1);
         }
 
-        String devId = map.get("devId").toString();
-        String state = map.get("state").toString();
-        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
         //获取当前设备状态
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(devId);
@@ -117,7 +155,6 @@ public class workspaceController extends BaseController {
         }
         SysDictData sysDictData = isopenList.get(0);
         String isopen = sysDictData.getDictValue();
-
         long eqType = sdDevices.getEqType().longValue();
 
         if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
@@ -305,6 +342,79 @@ public class workspaceController extends BaseController {
             sdOperationLog.setBeforeState(data.get(0).getData());
         }
         sdOperationLog.setOperationState(fDeviceState);
+        sdOperationLog.setControlType("0");
+        sdOperationLog.setState(String.valueOf(controlState));
+        sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+        sdOperationLogService.insertSdOperationLog(sdOperationLog);
+        return AjaxResult.success(controlState);
+    }
+
+    //警示灯带控制接口
+    @PostMapping("/controlWarningLightStripDevice")
+    public AjaxResult controlWarningLightStripDevice(@RequestBody Map<String, Object> map) {
+        if (map.get("devId") == null || map.get("devId").toString().equals("")) {
+            throw new RuntimeException("未指定设备");
+        } else if (map.get("state") == null || map.get("state").toString().equals("")) {
+            throw new RuntimeException("未指定设备需要变更的状态信息");
+        }
+        if ("GSY".equals(deploymentType)) {
+            map.put("controlType", "0");
+            map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+            sdOptDeviceService.optSingleDevice(map);
+            return AjaxResult.success();
+        }
+        String devId = map.get("devId").toString();
+        String state = map.get("state").toString();
+        SdDevices sdDevices = sdDevicesService.selectSdDevicesById(devId);
+        //获取当前设备状态
+        SdDeviceData sdDeviceData = new SdDeviceData();
+        sdDeviceData.setDeviceId(sdDevices.getEqId());
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode()));
+        List<SdDeviceData> data = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
+
+        //根据字典中配置的设备模拟控制值进行模拟状态展示
+        List<SysDictData> isopenList = sysDictDataService.getSysDictDataByDictType("sys_analog_control_isopen");
+        if (isopenList.size() == 0) {
+            throw new RuntimeException("设备模拟控制是否开启字典值不存在，请添加后重试");
+        }
+        SysDictData sysDictData = isopenList.get(0);
+        String isopen = sysDictData.getDictValue();
+        if (isopen != null && !isopen.equals("") && isopen.equals("1")) {
+            //设备模拟控制开启，直接变更设备状态为在线并展示对应运行状态
+            sdDevices.setEqStatus("1");
+            sdDevices.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(sdDevices);
+            if (sdDevices.getEqType().longValue() == DevicesTypeEnum.JING_SHI_DENG_DAI.getCode().longValue()) {
+                updateDeviceData(sdDevices, state, DevicesTypeItemEnum.JING_SHI_DENG_DAI.getCode());
+            }
+            //添加操作记录
+            SdOperationLog sdOperationLog = new SdOperationLog();
+            sdOperationLog.setEqTypeId(sdDevices.getEqType());
+            sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+            sdOperationLog.setEqId(sdDevices.getEqId());
+            sdOperationLog.setCreateTime(new Date());
+            if (data.size() > 0 && data.get(0) != null) {
+                sdOperationLog.setBeforeState(data.get(0).getData());
+            }
+            sdOperationLog.setOperationState(state);
+            sdOperationLog.setControlType("0");
+            sdOperationLog.setState("1");
+            sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
+            sdOperationLogService.insertSdOperationLog(sdOperationLog);
+            return AjaxResult.success(1);
+        }
+        //控制设备
+        int controlState = WarningLightStripHandle.getInstance().toControlDev(devId, Integer.parseInt(state), sdDevices);
+        //添加操作记录
+        SdOperationLog sdOperationLog = new SdOperationLog();
+        sdOperationLog.setEqTypeId(sdDevices.getEqType());
+        sdOperationLog.setTunnelId(sdDevices.getEqTunnelId());
+        sdOperationLog.setEqId(sdDevices.getEqId());
+        sdOperationLog.setCreateTime(new Date());
+        if (data.size() > 0 && data.get(0) != null) {
+            sdOperationLog.setBeforeState(data.get(0).getData());
+        }
+        sdOperationLog.setOperationState(state);
         sdOperationLog.setControlType("0");
         sdOperationLog.setState(String.valueOf(controlState));
         sdOperationLog.setOperIp(IpUtils.getIpAddr(ServletUtils.getRequest()));
@@ -527,6 +637,27 @@ public class workspaceController extends BaseController {
         return AjaxResult.success(controlDevices);
     }
 
+    /**
+     * 批量控制设备
+     * @param deviceMap
+     * @return
+     */
+    @PostMapping("/batchControlDevice")
+    public AjaxResult batchControlDevice(@RequestBody Map<String, Object> deviceMap){
+        List<String> eqIdList = Arrays.asList(deviceMap.get("eqId").toString().split(","));
+        String state = deviceMap.get("state").toString();
+        Map<String, Object> map = new HashMap<>();
+        map.put("operIp", IpUtils.getIpAddr(ServletUtils.getRequest()));
+        int count = 0;
+        for(String devId : eqIdList){
+            map.put("devId", devId);
+            map.put("state", state);
+            map.put("controlType", "0");
+            count = sdDeviceControlService.controlDevices(map);
+        }
+        return AjaxResult.success(count);
+    }
+
     @GetMapping("/getDeviceDataAndState")
     public AjaxResult selectDeviceDataAndState(String tunnelId) {
         return AjaxResult.success(sdDevicesService.getDeviceAndState(tunnelId));
@@ -542,9 +673,8 @@ public class workspaceController extends BaseController {
         String operIp = (String) params.get("operIp");
         Assert.hasText(devId, "设备参数{devId}必传");
         Assert.hasText(state, "设备控制状态参数{state}必传");
-        Assert.hasText(operIp, "IP参数{operIp}必传");
+        Assert.hasText(operIp, "操作方IP地址参数{operIp}必传");
         Integer controlState = sdDeviceControlService.controlDevices(params);
         return controlState;
     }
-
 }

@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -80,11 +80,11 @@
         <el-row style="margin-top: 10px">
           <el-col :span="13" >
             <el-form-item label="风速:" >
-             
+
                 {{ nowData }}
                 <span style="padding-left:5px"  v-if="nowData">m/s</span>
-             
-              
+
+
             </el-form-item>
           </el-col>
           <el-col :span="11">
@@ -102,14 +102,14 @@
       </el-radio-group>
       <div id="feng" style="margin-bottom: 10px"></div>
       <div slot="footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="handleClosee()"
           style="width: 80px"
           class="submitButton"
           >确 定</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -121,7 +121,7 @@
     </el-dialog>
   </div>
 </template>
-  
+
   <script>
 import * as echarts from "echarts";
 import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗数据信息
@@ -167,7 +167,7 @@ export default {
             this.nowData = parseFloat(response.data.nowData).toFixed(2)
 
           }
-          
+
           var xData = [];
           var yData = [];
           for (var item of response.data.todayFSData) {
@@ -374,7 +374,7 @@ export default {
   },
 };
 </script>
-  
+
   <style  lang="scss" scoped>
 ::v-deep .el-radio-button--medium .el-radio-button__inner {
   padding: 5px 10px !important;
@@ -400,4 +400,3 @@ export default {
   border-radius: 20px !important;
 }
 </style>
-  

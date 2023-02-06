@@ -2,7 +2,7 @@
   <div
     :class="{ 'has-logo': showLogo }"
     :style="{
-      height: topNav ? '72px' : '100%',
+      height: topNav ? '7.6vh' : '100%',
     }"
   >
     <logo v-if="showLogo" :collapse="isCollapse" />
@@ -30,22 +30,20 @@
       }"
       v-if="manageStation == '1'"
     >
-     
-        <el-select
-          v-model="manageStationSelect"
-          size="small"
-          class="topNavSelect"
-          :popper-append-to-body="false"
-        >
-          <el-option
-            v-for="item in manageStationList"
-            :key="item.tunnelId"
-            :label="item.tunnelName"
-            :value="item.tunnelId"
-           @click.native="changeNavSelect(item.tunnelId)"
-          />
-        </el-select>
-     
+      <el-select
+        v-model="manageStationSelect"
+        size="small"
+        class="topNavSelect"
+        :popper-append-to-body="false"
+      >
+        <el-option
+          v-for="item in manageStationList"
+          :key="item.tunnelId"
+          :label="item.tunnelName"
+          :value="item.tunnelId"
+          @click.native="changeNavSelect(item.tunnelId)"
+        />
+      </el-select>
     </div>
     <template v-if="topNav">
       <el-tooltip
@@ -145,7 +143,6 @@ export default {
     topNav() {
       return this.$store.state.settings.topNav;
     },
-    
   },
   data() {
     return {
@@ -161,22 +158,20 @@ export default {
   watch: {
     "$store.state.manage.manageStation": function (newVal, oldVal) {
       console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
-      this.$cache.local.set("manageStation",newVal);
-      //this.manageStationSelect = "JQ-WeiFang-JiuLongYu-HSD";
-      this.manageStation = newVal
+      this.$cache.local.set("manageStation", newVal);
+
+      this.manageStation = newVal;
       this.$forceUpdate();
     },
-    // manageStationSelect(val){
-    //   console.log(val,"watch")
-    //   console.log(val,"0000000000");
-    //   this.$store.dispatch("manage/changeTunnelId", val);
-    //   this.$cache.local.set("manageStationSelect",val)
-    //   if(val != 'JQ-WeiFang-JiuLongYu-HSD'){
-    //     this.$cache.local.set("manageStation",'0')
-    //     this.manageStation = '0'
-    //   }
-    //   this.$forceUpdate()
-    // }
+    "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
+      console.log(newVal, "监听到模式啦监听到模式啦监听到模式啦监听到模式啦");
+
+      this.$cache.local.set("manageStationSelect", newVal);
+
+      if (newVal == "JQ-WeiFang-JiuLongYu-HSD") {
+        window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+      }
+    },
   },
   mounted() {
     // 当前导航栏子元素数量
@@ -189,24 +184,51 @@ export default {
     }
     console.log(this.sidebarRouters, "sidebarRouters");
   },
-  created() {
-    getJlyTunnel().then((res) => {
+  async created() {
+    console.log(
+      this.$cache.local.get("manageStationSelect"),
+      "this.$cache.local.get('manageStationSelect')"
+    );
+    await getJlyTunnel().then((res) => {
       this.manageStationList = res.data;
-      this.manageStationSelect = res.data[0].tunnelId;
-      this.$cache.local.set("manageStationSelect",res.data[0].tunnelId)
+      var test = window.location.href;
+      if (test.substr(test.length - 1, 1) == "1") {
+        this.$store.dispatch(
+          "manage/changeTunnelId",
+          "JQ-WeiFang-JiuLongYu-JJL"
+        );
+        this.$cache.local.set(
+          "manageStationSelect",
+          "JQ-WeiFang-JiuLongYu-JJL"
+        );
+        this.manageStationSelect = "JQ-WeiFang-JiuLongYu-JJL";
+      } else if (test.substr(test.length - 1, 1) == "2") {
+        console.log("马鞍山隧道");
+        this.changeNavSelect("JQ-WeiFang-JiuLongYu-MAS");
+        this.manageStationSelect = "JQ-WeiFang-JiuLongYu-MAS";
+      } else {
+        // if (
+        //   this.$cache.local.get("manageStationSelect") ==
+        //   "JQ-WeiFang-JiuLongYu-HSD"
+        // ) {
+        //   window.location = "http://10.7.187.28:82/WorkBench?userId=8";
+        // } else {
+          this.manageStationSelect = res.data[0].tunnelId;
+          this.$cache.local.set("manageStationSelect", res.data[0].tunnelId);
+        // }
+      }
     });
   },
   methods: {
     changeNavSelect(val) {
       this.$store.dispatch("manage/changeTunnelId", val);
-      this.$cache.local.set("manageStationSelect",val)
+      this.$cache.local.set("manageStationSelect", val);
       // if(val != 'JQ-WeiFang-JiuLongYu-HSD'){
       //   this.$cache.local.set("manageStation",'0')
       //   // this.manageStation = '0'
       // }
     },
     prevScroll() {
-      console.log(111);
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft - 150;
       console.log(wrap.scrollLeft);
@@ -222,7 +244,7 @@ export default {
       let wrap = this.$refs.scroll.$refs.wrap;
       wrap.scrollLeft = wrap.scrollLeft + 150;
       console.log(wrap.scrollLeft);
-      if (wrap.scrollLeft == 320) {
+      if (wrap.scrollLeft == 782) {
         this.rightIcon = false;
         this.leftIcon = true;
       } else {
@@ -257,7 +279,9 @@ export default {
   justify-content: left;
   align-items: center;
 }
-
+.el-scrollbar__wrap{
+  // width: 100%;
+}
 // .theme-light .el-scrollbar__wrap{background-color:white;}
 // .theme-light #app .sidebar-container{background-color: white;}
 .theme-light,
@@ -288,7 +312,7 @@ export default {
     }
   }
   .el-scrollbar__view {
-    width: 100%;
+    // width: 100%;
     height: 100%;
   }
   .el-scrollbar {
@@ -345,8 +369,8 @@ export default {
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 100% 58%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 .theme-blue
   #app
@@ -364,12 +388,12 @@ export default {
 }
 .theme-blue #app .topNav_head .workbenchNavbar .router-link-active {
   color: #ffdb82 !important;
-  text-shadow: 1px 1px white;
+  // text-shadow: 1px 1px white;
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 100% 58%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 .theme-light
   #app
@@ -390,8 +414,8 @@ export default {
   background-image: url(../../../assets/cloudControl/navBg2.png) !important;
   background-repeat: no-repeat;
   background-position: 70% 52%;
-  height: 72px;
-  line-height: 72px;
+  height: 7.6vh;
+  line-height: 7.6vh;
 }
 
 // 工作台按钮样式
@@ -401,38 +425,40 @@ export default {
   a {
     height: 100%;
     font-size: 16px;
-    line-height: 72px;
+    line-height: 7.6vh;
     padding-left: 26px;
   }
 }
 .selectNavbar,
 .selectSidbar {
- margin-left: 20px;
- position: relative;
- width: 200px;
- height: 40px;
- line-height: 40px;
- .el-input__inner{
-  background: transparent !important;
-  border:solid 1px transparent !important;
-  color: white !important;
-  padding-left: 30px;
-  width: 150px;
- }
+  margin-left: 20px;
+  position: relative;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  .el-input__inner {
+    background: transparent !important;
+    border: solid 1px transparent !important;
+    color: white !important;
+    padding-left: 30px;
+    width: 150px;
+  }
 }
-.selectNavbar:after{
-	position: absolute;
-	content: '';
-	z-index: -1;/*堆叠层推到宿主元素后面，避免遮住内容*/
-	background: url(../../../assets/cloudControl/topNavSelect.png);
-	left: 0;top: -2px;bottom: 0;right: 0;
-	transform: skew(-17deg);
+.selectNavbar:after {
+  position: absolute;
+  content: "";
+  z-index: -1; /*堆叠层推到宿主元素后面，避免遮住内容*/
+  background: url(../../../assets/cloudControl/topNavSelect.png);
+  left: 0;
+  top: -2px;
+  bottom: 0;
+  right: 0;
+  transform: skew(-17deg);
   width: 170px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
   height: 40px;
-
 }
 
 .workbenchNavbar {
@@ -443,7 +469,7 @@ export default {
 
   span {
     margin-left: 10px;
-    padding-right: 30px;
+    // padding-right: 30px;
   }
 }
 .workbenchSidbar {
@@ -460,29 +486,35 @@ export default {
 }
 </style>
 <style lang="scss">
-.topNavSelect{
-  .el-select-dropdown{
-    background: #165BA2 !important;
-    border-radius:14px;
+.topNavSelect {
+  .el-select-dropdown {
+    background: #165ba2 !important;
+    border-radius: 14px;
     border: solid 1px transparent;
     padding: 5px 10px;
-    min-width:160px;
-    .el-scrollbar__view{
-      width:88% !important;
-      color:white;
+    min-width: 160px;
+    .el-select-dropdown__list{
+      padding: 0;
     }
-    .el-select-dropdown__item.selected,.el-select-dropdown__item{
-      color:white;
+    .el-scrollbar__view {
+      // width: 100% !important;
+      color: white;
+    }
+    .el-select-dropdown__item.selected,
+    .el-select-dropdown__item {
+      color: white;
       height: 50px;
       line-height: 50px;
-      padding:0 27px;
+      // padding: 0 27px;
+      text-align: center;
     }
-    .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
-      background-color: #2971CC;
+    .el-select-dropdown__item.hover,
+    .el-select-dropdown__item:hover {
+      background-color: #2971cc;
       border-radius: 8px;
     }
   }
-  .el-popper[x-placement^=bottom] .popper__arrow{
+  .el-popper[x-placement^="bottom"] .popper__arrow {
     display: none;
   }
 }

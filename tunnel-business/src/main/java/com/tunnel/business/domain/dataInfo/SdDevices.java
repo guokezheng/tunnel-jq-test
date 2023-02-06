@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @ApiModel("设备对象类")
-public class SdDevices extends BaseEntity {
+public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -70,7 +70,7 @@ public class SdDevices extends BaseEntity {
      * 设备类型
      */
     @ApiModelProperty("设备类型")
-    @Excel(name = "设备类型")
+    /*@Excel(name = "设备类型")*/
     private Long eqType;
 
 
@@ -78,7 +78,7 @@ public class SdDevices extends BaseEntity {
      * eqType对象
      */
     @Excels({
-            @Excel(name = "设备类型名称", targetAttr = "typeName", type = Excel.Type.EXPORT),
+            @Excel(name = "设备类型", targetAttr = "typeName", type = Excel.Type.EXPORT),
     })
     @ApiModelProperty("eqType对象")
     private SdEquipmentType eqTypeName;
@@ -306,6 +306,15 @@ public class SdDevices extends BaseEntity {
      */
     private boolean updateSupport;
 
+
+
+    /** 图片id */
+    @Excel(name = "图片id")
+    private String iconFileId;
+
+    @ApiModelProperty("设备类型图片")
+    private List<SdEquipmentStateIconFile> iFileList;
+
     public void setEqId(String eqId) {
         this.eqId = eqId;
     }
@@ -350,7 +359,7 @@ public class SdDevices extends BaseEntity {
     private String externalDeviceId;
 
     /**
-     * 关联设备ID（关联iot_device中device_id字段）
+     * 关联设备ID（关联iot_board中device_id字段）
      * */
     private Long associatedDeviceId;
 
@@ -403,6 +412,17 @@ public class SdDevices extends BaseEntity {
      * 运行状态
      **/
     private String runStatus;
+
+    //摄像机类型
+    private String camType;
+
+    public String getCamType() {
+        return camType;
+    }
+
+    public void setCamType(String camType) {
+        this.camType = camType;
+    }
 
     public String getRunStatus() {
         return this.runStatus;
@@ -813,6 +833,23 @@ public class SdDevices extends BaseEntity {
     public void setfEqType(String fEqType) {
         this.fEqType = fEqType;
     }
+
+    public String getIconFileId() {
+        return this.iconFileId;
+    }
+
+    public void setIconFileId(final String iconFileId) {
+        this.iconFileId = iconFileId;
+    }
+
+    public List<SdEquipmentStateIconFile> getiFileList() {
+        return this.iFileList;
+    }
+
+    public void setiFileList(final List<SdEquipmentStateIconFile> iFileList) {
+        this.iFileList = iFileList;
+    }
+
 
     @Override
     public String toString() {

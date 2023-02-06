@@ -1,6 +1,7 @@
 package com.tunnel.business.service.dataInfo.impl;
 
 import com.ruoyi.system.mapper.SysDictDataMapper;
+import com.ruoyi.system.service.ISysDictDataService;
 import com.tunnel.business.datacenter.domain.enumeration.DictTypeEnum;
 import com.tunnel.business.domain.dataInfo.ExternalSystem;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
@@ -8,6 +9,8 @@ import com.tunnel.business.domain.dataInfo.TunnelAssociation;
 import com.tunnel.business.mapper.dataInfo.ExternalSystemMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.dataInfo.TunnelAssociationMapper;
+import com.tunnel.business.service.dataInfo.IExternalSystemService;
+import com.tunnel.business.service.dataInfo.ISdTunnelsService;
 import com.tunnel.business.service.dataInfo.ITunnelAssociationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,21 @@ import java.util.List;
 @Service
 public class TunnelAssociationServiceImpl implements ITunnelAssociationService {
     @Autowired
+    private SdTunnelsMapper sdTunnelsMapper;
+    @Autowired
+    private ExternalSystemMapper externalSystemMapper;
+    @Autowired
+    private SysDictDataMapper sysDictDataMapper;
+    @Autowired
     private TunnelAssociationMapper tunnelAssociationMapper;
+    @Autowired
+    private IExternalSystemService externalSystemService;
+
+    @Autowired
+    private ISdTunnelsService sdTunnelsService;
+
+    @Autowired
+    private ISysDictDataService sysDictDataService;
 
     /**
      * 查询隧道关联关系
@@ -105,14 +122,6 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService {
     }
 
 
-    @Autowired
-    private SdTunnelsMapper sdTunnelsMapper;
-    @Autowired
-    private ExternalSystemMapper externalSystemMapper;
-    @Autowired
-    private SysDictDataMapper sysDictDataMapper;
-
-
     @Override
 
     public int updateTunnelAssociations(List<TunnelAssociation> tunnelAssociations) {
@@ -174,6 +183,32 @@ public class TunnelAssociationServiceImpl implements ITunnelAssociationService {
     public List<TunnelAssociation> checkUpdateUnique(TunnelAssociation tunnelAssociation) {
 
         return tunnelAssociationMapper.checkUpdateUnique(tunnelAssociation);
+    }
+
+    /**
+     * 根据隧道、方向、外部系统 获取外部系统隧道洞ID
+     * @param eqTunnelId
+     * @param eqDirection
+     * @param externalSystemId
+     * @return
+     */
+    @Override
+    public String getExternalSystemTunnelId(String eqTunnelId, String eqDirection, Long externalSystemId){
+        TunnelAssociation association = new TunnelAssociation();
+        association.setTunnelId(eqTunnelId);
+        association.setTunnelDirection(eqDirection);
+        association.setExternalSystemId(externalSystemId);
+
+        SdTunnels sdTunnels = sdTunnelsService.selectSdTunnelsById(eqTunnelId);
+        String directionName = sysDictDataService.selectDictLabel(DictTypeEnum.sd_direction.getCode(), eqDirection);
+        ExternalSystem externalSystem = externalSystemService.selectExternalSystemById(externalSystemId);
+        String msg = "【" + sdTunnels.getTunnelName() + "】 未查询到 方向为【" + directionName + "】系统名称为 【" + externalSystem.getSystemName() + "】的关联配置数据";
+
+        List<TunnelAssociation> associationList = tunnelAssociationMapper.selectTunnelAssociationList(association);
+        Assert.notEmpty(associationList, msg);
+
+        TunnelAssociation tunnelAssociation = associationList.get(0);
+        return tunnelAssociation.getExternalSystemTunnelId();
     }
 
 

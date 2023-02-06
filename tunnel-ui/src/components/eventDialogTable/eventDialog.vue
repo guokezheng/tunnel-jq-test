@@ -4,8 +4,9 @@
       class="evenDialogBox"
       :visible.sync="eventPicDialog"
       v-dialogDrag
+      :title="title"
     >
-      <div class="title">
+      <!-- <div class="title">
         <div>{{ eventMes.eventTitle }}</div>
         <img
           src="../../assets/cloudControl/dialogHeader.png"
@@ -23,8 +24,8 @@
           @click="closeDialogTable()"
         />
       </div>
-      <div class="blueLine"></div>
-      <div style="display: flex; width: 100%; height: calc(100% - 40px)">
+      <div class="blueLine"></div> -->
+      <div style="display: flex; width: 100%; height: 100%;">
         <div class="eventLeft">
           <div class="video">
             <video
@@ -50,7 +51,7 @@
               :interval="4000"
               type="card"
               indicator-position="none"
-              height="200px"
+              height="100%"
             >
               <el-carousel-item
                 v-for="(item, index) in urls"
@@ -63,7 +64,7 @@
             <div
               style="
                 width: 100%;
-                height: 200px;
+                height: 100%;
                 position: absolute;
                 top: 0;
                 text-align: center;
@@ -117,13 +118,13 @@
             <div>上游相机:</div>
             <!-- <div>{{'1000米'}}</div> -->
             <img
-              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              src="../../assets/logo/equipment_log/固定摄像机-正常.png"
               class="icon"
               @click="openVideoDialog(video1)"
              v-show="video1"
             />
             <img
-              src="../../assets/logo/equipment_log/qiangji_zaixian.png"
+              src="../../assets/logo/equipment_log/固定摄像机-正常.png"
               class="icon" style="margin-left:10px"
               @click="openVideoDialog(video2)"
               v-show="video2"
@@ -162,7 +163,7 @@ export default {
   data() {
     return {
       // eventList: [],
-      eventPicDialog: true,
+      eventPicDialog: false,
       urls: [],
       videoUrl: "",
       row11: null,
@@ -171,7 +172,8 @@ export default {
       eventTypeData: [],
       eventId: "",
       video1:'',
-      video2:''
+      video2:'',
+      title:''
     };
   },
   created() {
@@ -188,8 +190,11 @@ export default {
   },
   beforeCreate() {},
   // beforeDestroy(){
-  //   bus.$off();
+  //   bus.$off("getPicId");
   // },
+  destroy(){
+    bus.$off("getPicId");
+  },
   methods: {
     /** 查询事件类型列表 */
     getEventTypeList() {
@@ -211,23 +216,27 @@ export default {
         };
         listEvent(param).then((response) => {
           console.log(response, "response");
-
           if (response.rows.length > 0) {
             this.eventMes = response.rows[0];
-            this.$forceUpdate();
+            this.title = this.eventMes.eventTitle;
+            
             getEventCamera(
               response.rows[0].tunnelId,
               response.rows[0].stakeNum,
               response.rows[0].direction
-            ).then((response) => {
-              this.video1 = response.data[0].eqId
-              this.video2 = response.data[1].eqId
-
+            ).then((res) => {
+              console.log(res,"res")
+              if(res.data){
+                this.video1 = res.data[0].eqId
+                this.video2 = res.data[1].eqId
+              }
             });
+            this.$forceUpdate();
           }
         });
         this.getUrl(id);
       }
+      this.eventPicDialog = true;
       // this.eventPicDialog = true;
     },
     getUrl(id) {
@@ -243,7 +252,9 @@ export default {
       });
       video(param4).then((response) => {
         console.log(response.data, "获取视频");
-        this.videoUrl = response.data.videoUrl;
+        if(response.data.videoUrl){
+          this.videoUrl = response.data.videoUrl;
+        }
       });
     },
 
@@ -314,15 +325,19 @@ export default {
   margin: 0;
   box-shadow: none;
   background: transparent;
+  .el-dialog__title{
+    color: #fff !important;
+  }
 }
 ::v-deep .el-dialog:not(.is-fullscreen) {
   margin-top: 0vh !important;
 }
-::v-deep .el-dialog__header {
-  display: none;
-}
+// ::v-deep .el-dialog__header {
+//   display: none;
+// }
 ::v-deep .el-dialog__body {
-  padding: 0;
+  padding: 20px;
+  height: calc(100% - 60px);
 }
 .evenDialogBox {
   width: 52%;
@@ -360,8 +375,7 @@ export default {
 }
 .eventLeft {
   width: 65%;
-  height: 590px;
-  padding: 0px 20px;
+  height: 100%;
   .video {
     width: 100%;
     height: 390px;
@@ -369,7 +383,7 @@ export default {
   }
   .pic {
     width: 100%;
-    height: 180px;
+    height: calc(100% - 400px);
     margin-top: 10px;
     position: relative;
   }
@@ -380,9 +394,10 @@ export default {
 
 .eventRight {
   width: 35%;
-  height: 590px;
+  height: 100%;
   color: white;
   font-size: 16px;
+  padding-left: 20px;
   .eventRow {
     display: flex;
     height: 45px;
@@ -480,5 +495,8 @@ export default {
 }
 ::-webkit-scrollbar-thumb:hover {
   background-color: #00c2ff;
+}
+::v-deep .el-carousel--horizontal{
+  height: 100% !important;
 }
 </style>

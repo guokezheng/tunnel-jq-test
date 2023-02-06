@@ -103,10 +103,10 @@
       <el-form-item label="控制方式" prop="controlType">
         <el-select v-model="queryParams.controlType" placeholder="请选择控制方式" clearable size="small">
           <el-option
-            v-for="dict in dict.type.sd_control_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="dict in controlTypeOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
           />
         </el-select>
       </el-form-item>
@@ -135,7 +135,7 @@
 
     <el-table ref="tables" v-loading="loading" :data="list" @selection-change="handleSelectionChange"
             :row-class-name="tableRowClassName" v-show="searchValue == '1'"
-            :default-sort="{prop: 'loginTime', order: 'descending'}" @sort-change="handleSortChange" max-height="640" >
+            :default-sort="{prop: 'loginTime', order: 'descending'}" @sort-change="handleSortChange" class="tableHeight"  >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="访问编号" align="center" prop="infoId" />
       <el-table-column label="用户名称" align="center" prop="userName" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
@@ -159,7 +159,7 @@
 <!--              :row-class-name="tableRowClassName" v-show="searchValue == '2'"-->
 <!--              :default-sort="defaultSort" @sort-change="handleSortChange" max-height="640" >-->
 
-      <el-table v-loading="loading" :data="logList" max-height="640" :default-sort="{ prop: 'createTime', order: 'descending' }"
+      <el-table v-loading="loading" :data="logList" class="tableHeight"  :default-sort="{ prop: 'createTime', order: 'descending' }"
         @selection-change="handleSelectionChange" :row-class-name="tableRowClassName" v-show="searchValue == '2'" >
       <el-table-column label="序号" align="center" prop="id" display="none"/>
 
@@ -219,7 +219,7 @@ import {listLog} from "@/api/system/log";
 
 export default {
   name: "Logininfor",
-  dicts: ['sys_common_status'],
+  dicts: ['sys_common_status, sd_control_type'],
   data() {
     return {
       manageStatin:this.$cache.local.get("manageStation"),
@@ -527,6 +527,10 @@ hr {
   font-size: 18px;
   font-weight: 400;
   color: #303133;
+}
+.tableHeight{
+  max-height: 52vh !important;
+  overflow: auto;
 }
 </style>
 

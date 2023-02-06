@@ -46,6 +46,22 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="是否可用" prop="isUsable">
+        <el-select
+          v-model="queryParams.isUsable"
+          placeholder="请选择是否可用"
+          clearable
+          size="small"
+          style="width: 180px"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
         >搜索</el-button
@@ -163,6 +179,11 @@
           　　
         </template>
       </el-table-column>
+      <el-table-column label="是否可用" align="center" prop="isUsable">
+        <template slot-scope="scope">
+          <span>{{scope.row.isUsable == "0" ? "否" : "是"}}</span>
+        </template>
+      </el-table-column>
       <el-table-column
         label="操作"
         align="center"
@@ -219,7 +240,22 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="默认图标" label-width="100px" prop="iconUrl">
+        <el-form-item label="是否可用" prop="isUsable">
+          <el-select
+            v-model="form.isUsable"
+            clearable
+            placeholder="请选择是否可用"
+            size="small"
+            style="width: 100%">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="默认图标"  prop="iconUrl">
           <el-upload
             ref="upload"
             action="http://xxx.xxx.xxx/personality/uploadExcel"
@@ -294,12 +330,13 @@ export default {
         pageNum: 1,
         pageSize: 10,
         eventType: null,
-        prevControlType: null
+        prevControlType: null,
+        isUsable: null
       },
       //事件类型
       eventTypeData: {},
       // 表单参数
-      form: {simplifyName:"",prevControlType:""},
+      form: {simplifyName:"",prevControlType:"",isUsable:""},
       // 表单校验
       rules: {
         eventType: [
@@ -309,6 +346,14 @@ export default {
           { required: true, message: "请输入简称", trigger: "blur" },
         ],
       },
+      //是否可用
+      options: [{
+        value: '0',
+        label: '否'
+      }, {
+        value: '1',
+        label: '是'
+      }],
     };
   },
   created() {
@@ -380,6 +425,7 @@ export default {
         updateBy: null,
         updateTime: null,
         iconUrl: null,
+        isUsable: null,
       };
       this.resetForm("form");
       this.removeIds = [];
@@ -457,7 +503,7 @@ export default {
       this.fileData.append("eventType", this.form.eventType); //类型名称
       this.fileData.append("simplifyName", this.form.simplifyName); //类型名称
       this.fileData.append("prevControlType", this.form.prevControlType); //类型名称
-
+      this.fileData.append("isUsable", this.form.isUsable)//是否可用
       // this.fileData.append("uid", this.form.uid); //类型名称
 
       this.$refs["form"].validate((valid) => {

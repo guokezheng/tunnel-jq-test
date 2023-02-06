@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 第三方登录控制器
@@ -30,15 +31,30 @@ public class ThirdPartLoginController {
 
 
     /**
-     * 单点登录方法
+     * 单点登录方法--测试环境
      *
      * @param username 第三方用户名
      * @return 结果
      */
-    @GetMapping("/login")
+    @GetMapping("/testLogin")
     @ApiOperation(value = "单点登录方法")
-    public AjaxResult login(@RequestParam String username) {
-        return thirdPartLoginService.login(username);
+    public AjaxResult testLogin(@RequestParam String username) {
+
+        return thirdPartLoginService.testLogin(username);
+    }
+
+    /**
+     * 单点登录方法--正式环境
+     *
+     * @param loginInfo 登录code
+     * @return 结果
+     */
+    @PostMapping("/login")
+    @ApiOperation(value = "单点登录方法")
+    public AjaxResult login(@RequestBody Map loginInfo) {
+
+        String code = Optional.ofNullable(loginInfo.get("code")).orElse("").toString();
+        return thirdPartLoginService.login(code);
     }
 
     @Autowired

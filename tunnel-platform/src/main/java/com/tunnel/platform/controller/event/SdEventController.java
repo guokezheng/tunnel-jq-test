@@ -1,5 +1,6 @@
 package com.tunnel.platform.controller.event;
 
+import cn.hutool.core.util.StrUtil;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -10,12 +11,17 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.domain.event.SdEvent;
 import com.tunnel.business.domain.event.SdEventFlow;
+import com.tunnel.business.domain.event.SdEventHandle;
+import com.tunnel.business.domain.event.SdReservePlan;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.mapper.event.SdEventFlowMapper;
+import com.tunnel.business.mapper.event.SdEventHandleMapper;
 import com.tunnel.business.mapper.event.SdEventMapper;
 import com.tunnel.business.mapper.logRecord.SdOperationLogMapper;
+import com.tunnel.business.service.event.ISdEventHandleService;
 import com.tunnel.business.service.event.ISdEventService;
 import com.tunnel.business.utils.json.JSONObject;
 import com.tunnel.platform.service.SdDeviceControlService;
@@ -45,6 +51,12 @@ public class SdEventController extends BaseController
 {
     @Autowired
     private ISdEventService sdEventService;
+
+    @Autowired
+    private ISdEventHandleService sdEventHandleService;
+
+    @Autowired
+    private SdEventHandleMapper sdEventHandleMapper;
 
     /**
      * 查询事件管理列表
@@ -214,7 +226,8 @@ public class SdEventController extends BaseController
 
     @GetMapping("/performRecovery")
     @ApiOperation("应急调度一键恢复")
-    public Result performRecovery(String eventId) {
+    public Result performRecovery(@RequestParam("eventId") String eventId,
+                                  @RequestParam("handleId") String handleId) {
         List<SdOperationLog> logData = SpringUtils.getBean(SdOperationLogMapper.class).getEventOperationLog(eventId);
         if(logData.isEmpty()){
             return Result.error("处理失败，未获取到操作记录");
@@ -223,7 +236,7 @@ public class SdEventController extends BaseController
         try {
             //默认值：诱导灯、疏散标志亮度为50，频率为60，疏散标志地址标号为255
             for(SdOperationLog data:logData){
-                if(data.getBeforeState()==null){
+                if(StrUtil.isBlank(data.getBeforeState())){
                     continue;
                 }
                 issuedParam.put("eventId",eventId);
@@ -231,15 +244,24 @@ public class SdEventController extends BaseController
                 issuedParam.put("state",data.getBeforeState());
                 issuedParam.put("controlType","4");
                 //疏散标志
-                if(data.getEqTypeId()==30L){
+                if(data.getEqTypeId().equals(DevicesTypeEnum.SHU_SAN_BIAO_ZHI.getCode())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
                     issuedParam.put("fireMark","255");
                     issuedParam.put("state","2");
+                }
                 //诱导灯
-                } else if(data.getEqTypeId()==31L){
+                if(data.getEqTypeId().equals(DevicesTypeEnum.YOU_DAO_DENG.getCode())){
                     issuedParam.put("brightness","50");
                     issuedParam.put("frequency","60");
+                    if(data.getBeforeState().equals("2")){
+                        issuedParam.put("fireMark","255");
+                    }
+                }
+                //情报板
+                if(data.getEqTypeId().equals(DevicesTypeEnum.MEN_JIA_VMS.getCode()) || data.getEqTypeId().equals(DevicesTypeEnum.VMS.getCode())){
+                    continue;
+                    //issuedParam.put("templateId",data.getBeforeState());
                 }
                 try {
                     issuedParam.put("operIp", InetAddress.getLocalHost().getHostAddress());
@@ -251,7 +273,7 @@ public class SdEventController extends BaseController
             }
             //保存事件处理记录
             SdEventFlow flow = new SdEventFlow();
-            flow.setFlowDescription("执行一键恢复操作");
+            flow.setFlowDescription("执行解除管控操作");
             flow.setEventId(eventId);
             flow.setFlowTime(DateUtils.getNowDate());
             flow.setFlowHandler(SecurityUtils.getUsername());
@@ -259,9 +281,86 @@ public class SdEventController extends BaseController
             json.put("eventFlow",flow);
             WebSocketService.broadcast("eventFlow",json);
             SpringUtils.getBean(SdEventFlowMapper.class).insertSdEventFlow(flow);
+            //更新事件处置记录状态
+            SdEventHandle sdEventHandle = new SdEventHandle();
+            sdEventHandle.setId(Long.valueOf(handleId));
+            //0:未完成 1:已完成'
+            sdEventHandle.setEventState("1");
+            sdEventHandle.setUpdateTime(DateUtils.getNowDate());
+            sdEventHandleMapper.updateSdEventHandle(sdEventHandle);
         } catch (Exception e) {
             return Result.error("操作失败，请联系管理员");
         }
         return Result.success("操作成功!");
+    }
+
+    /**
+     * 交通事件-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getHandle")
+    public AjaxResult getHandle(SdEvent sdEvent){
+        return sdEventService.getHandle(sdEvent);
+    }
+
+    /**
+     * 主动安全-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getSafetyHandle")
+    public AjaxResult getSafetyHandle(SdEvent sdEvent){
+        return sdEventService.getSafetyHandle(sdEvent);
+    }
+
+    /**
+     * 更新事件处置
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/updateHandle")
+    public AjaxResult updateHandle(SdEvent sdEvent){
+        return sdEventHandleService.updateSdEventHandle(sdEvent);
+    }
+
+    /**
+     * 应急调度关联策略
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getRelation")
+    public AjaxResult getRelation(SdReservePlan sdReservePlan){
+        return sdEventService.getRelation(sdReservePlan);
+    }
+
+    /**
+     * 计算事故点
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getAccidentPoint")
+    public AjaxResult getAccidentPoint(SdEvent sdEvent){
+        return sdEventService.getAccidentPoint(sdEvent);
+    }
+
+    /**
+     * 查询预案id
+     * @param sdReservePlan
+     * @return
+     */
+    @GetMapping("/getReserveId")
+    public AjaxResult getReserveId(SdReservePlan sdReservePlan){
+        return sdEventService.getReserveId(sdReservePlan);
+    }
+
+    /**
+     * 查询应急调度出入口视频
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getEntranceExitVideo")
+    public AjaxResult getEntranceExitVideo(SdEvent sdEvent){
+        return sdEventService.getEntranceExitVideo(sdEvent);
     }
 }

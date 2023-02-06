@@ -74,9 +74,77 @@ public class SdStrategy extends BaseEntity
     @ApiModelProperty("定时任务id")
     private String jobRelationId;
 
+    @ApiModelProperty("分时控制开启时间")
+    private String timerOpen;
+
+    @ApiModelProperty("分时控制关闭时间")
+    private String timerClose;
+
+    @ApiModelProperty("处置名称")
+    private String disposalName;
+
+    @ApiModelProperty("策略关联id")
+    private Long strategyRlId;
+
+    public Long getStrategyRlId() {
+        return strategyRlId;
+    }
+
+    public void setStrategyRlId(Long strategyRlId) {
+        this.strategyRlId = strategyRlId;
+    }
+
+    public String getDisposalName() {
+        return disposalName;
+    }
+
+    public void setDisposalName(String disposalName) {
+        this.disposalName = disposalName;
+    }
+
+    public String getTimerOpen() {
+        return timerOpen;
+    }
+
+    public void setTimerOpen(String timerOpen) {
+        this.timerOpen = timerOpen;
+    }
+
+    public String getTimerClose() {
+        return timerClose;
+    }
+
+    public void setTimerClose(String timerClose) {
+        this.timerClose = timerClose;
+    }
+
+
     @Excel(name = "方向")
     @ApiModelProperty("方向")
     private String direction;
+
+    @ApiModelProperty("策略组")
+    private String strategyGroup;
+
+    @ApiModelProperty("事件类型")
+    private String eventType;
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getStrategyGroup() {
+        return strategyGroup;
+    }
+
+    public void setStrategyGroup(String strategyGroup) {
+        this.strategyGroup = strategyGroup;
+    }
+
     public void setId(Long id)
     {
         this.id = id;

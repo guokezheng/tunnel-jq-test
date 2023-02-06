@@ -7,9 +7,9 @@
       v-show="showSearch"
       label-width="68px"
     >
-      <el-form-item label="发布设备" prop="releaseDev">
+      <el-form-item label="发布设备" prop="deviceId">
         <el-input
-          v-model="queryParams.releaseDev"
+          v-model="queryParams.deviceId"
           placeholder="请输入发布设备"
           clearable
           size="small"
@@ -71,64 +71,10 @@
           plain
           size="mini"
           @click="handleExport"
-          v-hasPermi="['system:record:export']"
           >导出</el-button
         >
       </el-form-item>
     </el-form>
-
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['system:record:add']"
-          >新增</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:record:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['system:record:remove']"
-          >删除</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['system:record:export']"
-          >导出</el-button
-        >
-      </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-      ></right-toolbar>
-    </el-row> -->
 
     <el-table
       v-loading="loading"
@@ -139,57 +85,22 @@
     max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="发布用户" align="center" prop="id" />
-      <el-table-column label="发布设备" align="center" prop="releaseDev" />
+<!--      <el-table-column label="发布用户" align="center" prop="id" />-->
+      <el-table-column label="发布设备" align="center" prop="deviceId" />
       <el-table-column
         label="发布时间"
         align="center"
         prop="releaseTime"
         width="180"
-        sortable
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.releaseTime, "{y}-{m}-{d}") }}</span>
+          <span>{{ parseTime(scope.row.releaseTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="发布状态" align="center" prop="releaseStatus" />
+      <el-table-column label="发布内容" align="center" prop="releaseNewContent" />
       <el-table-column label="发布机构" align="center" prop="releaseDeptName" />
       <el-table-column label="发布用户" align="center" prop="releaseUserName" />
-      <el-table-column label="审核机构" align="center" prop="examineDeptName" />
-      <el-table-column label="审核用户" align="center" prop="examineUserName" />
-      <el-table-column
-        label="审核时间"
-        align="center"
-        prop="examineTime"
-        width="180"
-        sortable
-      >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.examineTime, "{y}-{m}-{d}") }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            class="tableBlueButtton"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:record:edit']"
-            >修改</el-button
-          >
-          <el-button
-            size="mini"
-            class="tableDelButtton"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['system:record:remove']"
-            >删除</el-button
-          >
-        </template>
-      </el-table-column>
     </el-table>
 
     <pagination
@@ -209,8 +120,8 @@
             placeholder="请输入事件发布设备关联表ID"
           />
         </el-form-item>
-        <el-form-item label="发布设备" prop="releaseDev">
-          <el-input v-model="form.releaseDev" placeholder="请输入发布设备" />
+        <el-form-item label="发布设备" prop="deviceId">
+          <el-input v-model="form.deviceId" placeholder="请输入发布设备" />
         </el-form-item>
         <el-form-item label="发布时间" prop="releaseTime">
           <el-date-picker
@@ -247,35 +158,6 @@
         <el-form-item label="发布用户" prop="releaseUserId">
           <el-input v-model="form.releaseUserId" placeholder="请输入发布用户" />
         </el-form-item>
-        <el-form-item label="审核机构" prop="examineDeptName">
-          <el-input
-            v-model="form.examineDeptName"
-            placeholder="请输入审核机构"
-          />
-        </el-form-item>
-        <el-form-item label="审核机构" prop="examineDeptId">
-          <el-input v-model="form.examineDeptId" placeholder="请输入审核机构" />
-        </el-form-item>
-        <el-form-item label="审核用户" prop="examineUserId">
-          <el-input v-model="form.examineUserId" placeholder="请输入审核用户" />
-        </el-form-item>
-        <el-form-item label="审核用户" prop="examineUserName">
-          <el-input
-            v-model="form.examineUserName"
-            placeholder="请输入审核用户"
-          />
-        </el-form-item>
-        <el-form-item label="审核时间" prop="examineTime">
-          <el-date-picker
-            clearable
-            size="small"
-            v-model="form.examineTime"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择审核时间"
-          >
-          </el-date-picker>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" :loading="submitFormLoading" @click="submitForm">确 定</el-button>
@@ -288,10 +170,6 @@
 <script>
 import {
   listRecord,
-  getRecord,
-  delRecord,
-  addRecord,
-  updateRecord,
   exportRecord,
 } from "@/api/board/record";
 
@@ -323,7 +201,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        releaseDev: null,
+        deviceId: null,
         releaseTime: null,
         releaseStatus: null,
         releaseDeptName: null,
@@ -344,7 +222,15 @@ export default {
       this.loading = true;
       listRecord(this.queryParams).then((response) => {
         this.recordList = response.rows;
-        console.log(this.recordList)
+        console.log(this.recordList);
+        for (var item of this.recordList) {
+          if (item.releaseStatus == "0") {
+            item.releaseStatus = "成功";
+          } else {
+            item.releaseStatus = "失败";
+          }
+          item.releaseNewContent = item.releaseNewContent.substring(item.releaseNewContent.indexOf("\\f")+7).replaceAll("\\n","");
+        }
         this.total = response.total;
         this.loading = false;
       });
@@ -358,19 +244,14 @@ export default {
     reset() {
       this.form = {
         id: null,
-        vmsEventId: null,
-        releaseDev: null,
+        deviceId: null,
         releaseTime: null,
         releaseStatus: null,
         releaseDeptName: null,
         releaseDeptId: null,
         releaseUserName: null,
         releaseUserId: null,
-        examineDeptName: null,
-        examineDeptId: null,
-        examineUserId: null,
-        examineUserName: null,
-        examineTime: null,
+        releaseNewContent: null,
       };
       this.resetForm("form");
     },
@@ -392,62 +273,15 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加发布记录";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getRecord(id).then((response) => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改发布记录";
-      });
     },
     /** 提交按钮 */
     submitForm() {
-      if(this.submitFormLoading) return
-      this.submitFormLoading = true
-      this.$refs["form"].validate(async (valid) => {
-        if (valid) {
-          if (this.form.id != null) {
-            await updateRecord(this.form).then((response) => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            await addRecord(this.form).then((response) => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-        this.submitFormLoading = false
-      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$confirm(
-        '是否确认删除选中数据项?',
-        "警告",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
-        .then(function () {
-          return delRecord(ids);
-        })
-        .then(() => {
-          this.getList();
-          this.$modal.msgSuccess("删除成功");
-        });
     },
     /** 导出按钮操作 */
     handleExport() {

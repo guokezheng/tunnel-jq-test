@@ -172,14 +172,14 @@ public class GuidanceLampHandle {
         //发送诱导灯控制指令
         try {
             String code = "000000000006010300010001";
-            NettyClient client = new NettyClient(ip, port,code,1);
+            NettyClient client = new NettyClient(ip, port,code,3);
             client.start(null);
             //控制亮度
             Map codeMap = InductionlampUtil.getXianKePilotLightMode(ctrState,Integer.parseInt(brightness));
-            client.pushCode(codeMap.get("code").toString());
+            client.pushHexCode(codeMap.get("code").toString());
             //控制频率（1S闪几次）
             codeMap = InductionlampUtil.getXianKeFrequency(ctrState,Integer.parseInt(frequency));
-            client.pushCode(codeMap.get("code").toString());
+            client.pushHexCode(codeMap.get("code").toString());
             //控制占空比（亮的时间在一整个周期的比例）
 //            codeMap = InductionlampUtil.getXianKeDutyCycle(ctrState,Integer.parseInt(frequency));
 //            client.pushCode(codeMap.get("code").toString());

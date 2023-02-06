@@ -353,7 +353,7 @@ INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_typ
 INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (5, '突发事件', '4', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:34:07', '', NULL, '模板类别');
 INSERT INTO  `sys_dict_data`( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`, `list_class`, `is_default`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (6, '警情播报', '5', 'iot_template_category', NULL, 'default', 'N', '0', 'admin', '2022-11-09 14:35:05', '', NULL, '模板类别');
 -- 情报板模板数据库表新增字段
-alter table sd_vms_template add column category varchar(100) comment '模板类别';
+alter table iot_board_template add column category varchar(100) comment '模板类别';
 
 -- 数据字典防空类型
 INSERT INTO `sys_dict_type`(`dict_name`, `dict_type`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES ( '防控类型', 'prev_control_type', '0', 'admin', '2022-11-09 10:37:37', '', NULL, NULL);INSERT INTO `sys_dict_data` ( `dict_sort`, `dict_label`, `dict_value`, `dict_type`, `css_class`,`list_class`,`is_default`, `status`, `create_by`, `create_time`,`update_by`,`update_time`,`remark` ) VALUES ( 0, '监控系统', '0', 'eq_system', NULL, 'default', 'N', '0', 'admin', '2022-11-04 14:14:36', '', NULL, NULL);
@@ -752,3 +752,148 @@ INSERT INTO sys_dict_type(dict_id, dict_name, dict_type, status, create_by, crea
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (511, 1, 'UDP', '1', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:06:50', '', NULL, NULL);
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (512, 2, 'TCP', '2', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:11', '', NULL, NULL);
 INSERT INTO sys_dict_data(dict_code, dict_sort, dict_label, dict_value, dict_type, css_class, list_class, is_default, status, create_by, create_time, update_by, update_time, remark) VALUES (513, 3, 'HTTP', '3', 'device_protocol_type', NULL, 'default', 'N', '0', 'admin', '2022-12-07 17:07:22', '', NULL, NULL);
+
+
+CREATE TABLE `sd_plan_flow` (
+                                `id` bigint(20) NOT NULL COMMENT 'id',
+                                `pid` bigint(20) DEFAULT NULL COMMENT 'pid父级',
+                                `flow_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节名称',
+                                `sort` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '排序',
+                                `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+                                `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+                                PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='事件环节表';
+
+-- 图片信息表新增img_type字段
+ALTER TABLE sd_traffic_image`
+    ADD COLUMN `img_type` varchar(1) NULL COMMENT '文件类型0：图片、1：视频' AFTER `business_id`;
+
+-- 同步历史记录表修改push_data字段
+ALTER TABLE `sd_push_history`
+    MODIFY COLUMN `push_data` longtext CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '推送数据' AFTER `data_type`;
+
+-- 事件管理表新增stake_end_num字段
+ALTER TABLE sd_event`
+    ADD COLUMN `stake_end_num` varchar(50) NULL COMMENT '事件终点桩号' AFTER `stake_num`;
+
+-- 新增事件类型预案流程关联表
+CREATE TABLE `sd_join_type_flow`  (
+                                      `id` bigint(20) NOT NULL COMMENT 'id',
+                                      `event_type_id` bigint(20) NULL COMMENT '事件类型id',
+                                      `flow_id` bigint(20) NULL COMMENT '环节id',
+                                      `flow_pid` bigint(20) NULL DEFAULT NULL COMMENT '环节pid',
+                                      `flow_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节名称',
+                                      `flow_sort` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '环节排序',
+                                      `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+                                      `update_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+                                      PRIMARY KEY (`id`)
+) COMMENT = '事件类型预案流程关联表';
+
+CREATE TABLE `sd_event_handle` (
+                                   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+                                   `event_id` bigint(20) DEFAULT NULL COMMENT '事件id',
+                                   `flow_id` bigint(20) DEFAULT NULL COMMENT '流程id',
+                                   `flow_pid` bigint(20) DEFAULT NULL COMMENT '流程pid',
+                                   `flow_content` varchar(100) CHARACTER SET utf8 DEFAULT NULL COMMENT '事件流程内容',
+                                   `event_state` varchar(1) DEFAULT '0' COMMENT '事件状态 0:未完成 1:已完成',
+                                   `plan_id` bigint(20) DEFAULT NULL COMMENT '预案id',
+                                   `strategy_id` bigint(20) DEFAULT NULL COMMENT '策略id',
+                                   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+                                   `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+                                   PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=latin1 COMMENT='事件处置信息表';
+
+-- 事件类型表新增字段
+ALTER TABLE `sd_event_type`
+    ADD COLUMN `is_usable` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 1 COMMENT '是否可用 0：禁用 1：启用' AFTER `icon_url`;
+
+-- 设备故障表新增字段
+ALTER TABLE `sd_fault_list`
+    ADD COLUMN `fault_escalation_type` varchar(1) NULL DEFAULT 0 COMMENT '上报区分 0：人为填报 1：设备上报' AFTER `eq_run_status`;
+
+-- 新增车道统计数据表
+CREATE TABLE `sd_lane_statistics` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `lane_no` int(20) DEFAULT NULL COMMENT '车道编号',
+      `speed` varchar(20) DEFAULT NULL COMMENT '平均速度 单位km/h',
+      `time_occupy` varchar(20) DEFAULT NULL COMMENT '时间占有率',
+      `space_occupy` varchar(20) DEFAULT NULL COMMENT '空间占有率',
+      `gap` varchar(20) DEFAULT NULL COMMENT '车头间距 单位米',
+      `gap_time` varchar(20) DEFAULT NULL COMMENT '车头时距 单位秒',
+      `time` datetime DEFAULT NULL COMMENT '时间戳',
+      `flow_small` int(20) DEFAULT NULL COMMENT '小车流量',
+      `flow_medium` int(20) DEFAULT NULL COMMENT '中车流量',
+      `flow_large` int(20) DEFAULT NULL COMMENT '大车流量',
+      `flowx_large` int(20) DEFAULT NULL COMMENT '超大车流量',
+      `cars` int(20) DEFAULT NULL COMMENT '车道车辆数',
+      `start_time` datetime DEFAULT NULL COMMENT '统计开始时间',
+      `end_time` datetime DEFAULT NULL COMMENT '统计结束时间',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='车道统计数据表';
+
+-- 新增路段统计数据表
+CREATE TABLE `sd_road_section_statistics` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `speed` varchar(20) DEFAULT NULL COMMENT '平均速度 路段平均速度，单位km/h',
+      `time_occupy` varchar(20) DEFAULT NULL COMMENT '时间占有率',
+      `space_occupy` varchar(20) DEFAULT NULL COMMENT '空间占有率,路段车辆占道路比例',
+      `gap` varchar(20) DEFAULT NULL COMMENT '平均车头间距 单位米',
+      `gap_time` varchar(20) DEFAULT NULL COMMENT '平均车头时距 单位秒',
+      `time` datetime DEFAULT NULL COMMENT '时间戳',
+      `in_flow` varchar(20) DEFAULT NULL COMMENT '进入流量',
+      `out_flow` varchar(20) DEFAULT NULL COMMENT '离开流量',
+      `congestion_index` varchar(20) DEFAULT NULL COMMENT '拥堵指标',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `saturation_vc` varchar(20) DEFAULT NULL COMMENT '饱和度',
+      `start_time` datetime DEFAULT NULL COMMENT '统计开始时间',
+      `end_time` datetime DEFAULT NULL COMMENT '统计结束时间',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='路段统计数据表';
+
+-- 新增路段车辆行驶记录表
+CREATE TABLE `sd_vehicle_driving` (
+      `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+      `tunnel_id` varchar(100) DEFAULT NULL COMMENT '隧道id',
+      `track_id` bigint(20) DEFAULT NULL COMMENT '轨迹ID',
+      `plate_color` varchar(10) DEFAULT NULL COMMENT '车牌颜色',
+      `plate_number` varchar(15) DEFAULT NULL COMMENT '车牌号',
+      `object_type` varchar(2) DEFAULT NULL COMMENT '目标类型',
+      `vehicle_type` varchar(10) DEFAULT NULL COMMENT '车辆类型',
+      `vehicle_color` varchar(10) DEFAULT NULL COMMENT '车身颜色',
+      `speed` varchar(20) DEFAULT NULL COMMENT '车辆速度，单位：km/h',
+      `travel_type` varchar(1) DEFAULT NULL COMMENT '进入或者离开标志 1：进入2：离开',
+      `start_time` datetime DEFAULT NULL COMMENT '进入或离开的时间',
+      `road_dir` varchar(1) DEFAULT NULL COMMENT '上下行标志 1：上行，2：下行',
+      `create_by` varchar(64) DEFAULT NULL COMMENT '创建者',
+      `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+      `update_by` varchar(64) DEFAULT NULL COMMENT '修改者',
+      `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+      PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='路段车辆行驶记录';
+
+-- 雷达监测感知数据表新增字段
+ALTER TABLE `sd_radar_detect_data`
+    MODIFY COLUMN `record_Serial_Number` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '流水号' AFTER `detect_time`,
+    ADD COLUMN `object_type` varchar(2) NULL COMMENT '目标类型' AFTER `distance`,
+    ADD COLUMN `road_dir` varchar(1) NULL COMMENT '上下行标志 1：上行，2：下行' AFTER `object_type`;
+
+-- 路段统计数据表新增字段
+ALTER TABLE `tunnel-jq`.`sd_road_section_statistics`
+    CHANGE COLUMN `start_time` `cars` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路段当前车辆数' AFTER `saturation_vc`;
+
+-- 雷达监测感知数据表新增字段
+ALTER TABLE `tunnel-jq`.`sd_radar_detect_data`
+    ADD COLUMN `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间' AFTER `road_dir`;

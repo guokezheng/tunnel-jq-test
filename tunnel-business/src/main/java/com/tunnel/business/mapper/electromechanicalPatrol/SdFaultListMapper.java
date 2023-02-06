@@ -106,4 +106,19 @@ public interface SdFaultListMapper
                                                           @Param("falltRemoveStatue") String falltRemoveStatue);
 
     SdFaultList exportFaultReport(String faultId);
+
+    /**
+     * 查询设备运行状态
+     * @param deviceId
+     * @param deviceType
+     * @return
+     */
+    String selectEqRunStatus(@Param("deviceId") String deviceId,
+                             @Param("deviceType") Long deviceType);
+
+    /**
+     * 查询设备上报的故障数据
+     * @return
+     */
+    List<SdFaultList> selectDeviceFault();
 }

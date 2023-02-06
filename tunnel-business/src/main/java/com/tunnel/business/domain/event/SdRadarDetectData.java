@@ -60,6 +60,25 @@ public class SdRadarDetectData {
 
     private String distance;
 
+    private String objectType;
+
+    private String roadDir;
+
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
+
+    public String getRoadDir() {
+        return roadDir;
+    }
+
+    public void setRoadDir(String roadDir) {
+        this.roadDir = roadDir;
+    }
     public String getDistance() {
         return distance;
     }

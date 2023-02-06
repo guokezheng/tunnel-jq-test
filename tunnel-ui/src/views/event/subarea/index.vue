@@ -513,7 +513,7 @@ export default {
 
 <style scoped>
 .tunnelName {
-  width: 378px;
+  width: 100%;
 }
 </style>
 

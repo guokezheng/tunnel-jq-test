@@ -8,8 +8,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.*;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import com.tunnel.business.mapper.dataInfo.SdDeviceDataMapper;
 import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentIconFileMapper;
 import com.tunnel.business.service.dataInfo.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -46,6 +48,9 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     private ISdEquipmentTypeService equipmentTypeService;
     @Autowired
     private SdDeviceDataMapper sdDeviceDataMapper;
+
+    @Autowired
+    private SdEquipmentIconFileMapper sdEquipmentIconFileMapper;
 
 
     /**
@@ -113,6 +118,18 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
                         if (devices.get("eqState") != null && devices.get("eqState").equals("1")) {
                             devices.put("state", data.getData());
                         }
+                    }
+                //加强照明
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode())) {
+                        devices.put("state", data.getData());
+                    } else if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode())) {
+                        devices.put("brightness", data.getData());
+                    }
+                //基本照明
+                } else if (devices.get("eqType") != null && String.valueOf(devices.get("eqType")).equals(String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()))) {
+                    if (data != null && data.getItemId().longValue() == Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode())) {
+                        devices.put("state", data.getData());
                     }
                 } else if (data != null) {
                     devices.put("state", data.getData());
@@ -784,6 +801,16 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     public Map getAppDevicesList(String param, String eqType, String eqStatus) {
         Map<String, Object> map=new HashMap<String, Object>();
         List<SdDevices> sdDevicesList = sdDevicesMapper.getAppDevicesList(param,eqType,eqStatus);
+        if(sdDevicesList!=null && sdDevicesList.size()>=0){
+            for(int i =0;i<sdDevicesList.size();i++){
+                String fileId = sdDevicesList.get(i).getIconFileId();
+                if (fileId != null && !"".equals(fileId) && !"null".equals(fileId)) {
+                    SdEquipmentStateIconFile sdEquipmentStateIconFilee = new SdEquipmentStateIconFile();
+                    sdEquipmentStateIconFilee.setStateIconId(fileId);
+                    sdDevicesList.get(i).setiFileList(sdEquipmentIconFileMapper.selectSdTypeImgFileList(sdEquipmentStateIconFilee));
+                }
+            }
+        }
         List<SdDevices> num = sdDevicesMapper.getDevicesNum(param,eqType,eqStatus);
         map.put("sdDevicesList",sdDevicesList);
         map.put("numList",num);
@@ -808,5 +835,36 @@ public class SdDevicesServiceImpl implements ISdDevicesService {
     @Override
     public List<SdDevices> getAppDevicesStatus(String eqId) {
        return  sdDevicesMapper.getAppDevicesStatus(eqId);
+    }
+
+    @Override
+    public List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId) {
+        List<SdDevices> devicesList = sdDevicesMapper.selectSdDevicesListByEqTypes(guidanceLampTypeId, lunKuoBiaoTypeId);
+        return devicesList;
+    }
+
+    /**
+     * 根据隧道+方向+类型 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public List<SdDevices> getSpkList(SdDevices sdDevices){
+        return sdDevicesMapper.getSpkList(sdDevices);
+    }
+
+    /**
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    @Override
+    public SdDevices getLight(SdDevices sdDevices){
+        return sdDevicesMapper.getLight(sdDevices);
+    }
+
+    @Override
+    public SdDevices getDeviceByAssociationDeviceId(Long deviceId) {
+        return sdDevicesMapper.getDeviceByAssociationDeviceId(deviceId);
     }
 }

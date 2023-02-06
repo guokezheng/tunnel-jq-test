@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
@@ -187,10 +188,17 @@ public class RadarEventServiceImpl implements RadarEventService {
             jsonObject.put("timeStamp", DateUtil.format(DateUtil.date(), sdf_pattern));
             if (eventList != null && eventList.size() > 0) {
                 for (int i = 0;i < eventList.size();i++) {
-                    jsonObject.put("event", eventList.get(i));
-                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
+                    SdEvent event = eventList.get(i);
+                    event.setEventState("1");
+                    event.setStakeNum(event.getStakeNum().replaceAll("-",""));
+                    jsonObject.put("event", event);
+//                    kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
                 }
             } else if (sdEvent != null) {
+                sdEvent.setEventState("1");
+                if(sdEvent.getStakeNum()!=null){
+                    sdEvent.setStakeNum(sdEvent.getStakeNum().replaceAll("-",""));
+                }
                 jsonObject.put("event", sdEvent);
                 kafkaTwoTemplate.send(eventTopic, jsonObject.toString());
             }
@@ -204,6 +212,7 @@ public class RadarEventServiceImpl implements RadarEventService {
         String videoImage = (String) map.get("videoImage");
         String secondVideoImage = (String) map.get("secondVideoImage");
         String thirdVideoImage = (String) map.get("thirdVideoImage");
+        String username = SecurityUtils.getUsername();
         if (StringUtils.isNotBlank(eventId)) {
             // 从缓存中获取文件存储路径
 //            String fileServerPath = RuoYiConfig.getUploadPath();
@@ -213,19 +222,19 @@ public class RadarEventServiceImpl implements RadarEventService {
                 String e1 = "事件前";
 //                String imgUrl = ImageUtil.generateImage(videoImage, url,e1);
 //                String s1 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + videoImage, e1);
+                wjMapper.insertPic(eventId, prefix + videoImage,"0", e1, username);
             }
             if (StringUtils.isNotEmpty(secondVideoImage)) {
                 String e2 = "事件中";
 //                String imgUrl = ImageUtil.generateImage(secondVideoImage, url,e2);
 //                String s2 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + secondVideoImage, e2);
+                wjMapper.insertPic(eventId, prefix + secondVideoImage, "0", e2, username);
             }
             if (StringUtils.isNotEmpty(thirdVideoImage)) {
                 String e3 = "事件后";
 //                String imgUrl = ImageUtil.generateImage(thirdVideoImage, url,e3);
 //                String s3 = this.picName(imgUrl);
-                wjMapper.insertPic(eventId, prefix + thirdVideoImage, e3);
+                wjMapper.insertPic(eventId, prefix + thirdVideoImage, "0", e3 , username);
             }
         }
         return AjaxResult.success();
@@ -234,10 +243,12 @@ public class RadarEventServiceImpl implements RadarEventService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult eventVideo(Map<String, Object> map) {
+        String username = SecurityUtils.getUsername();
         String eventId = map.get("eventId") + "";
         String eventVideoUrl = (String) map.get("eventVideoUrl");
         if (StringUtils.isNotBlank(eventVideoUrl)) {
-            wjMapper.updateVideoById(Long.parseLong(eventId), prefix + eventVideoUrl);
+            //wjMapper.updateVideoById(Long.parseLong(eventId), prefix + eventVideoUrl);
+            wjMapper.insertPic(eventId, prefix + eventVideoUrl, "1", "事件短视频" , username);
             return AjaxResult.success();
         }
         return AjaxResult.error();

@@ -25,7 +25,7 @@
           <el-row style="color: white; font-size: 14px">
             <el-col :span="2">
               <img
-                :src="item.iconUrl"
+                :src="item.eventType.iconUrl"
                 style="width: 20px; height: 20px; transform: translateY(5px)"
               />
             </el-col>
@@ -138,10 +138,8 @@ export default {
   },
   methods: {
     handleSee(id) {
-      setTimeout(() => {
         bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      // bus.$emit("openPicDialog");
     },
 
     // 忽略事件
@@ -213,6 +211,7 @@ export default {
 </script>
   
   <style lang="scss" scoped>
+  
 .eventClass {
   position: absolute;
   top: 0;
@@ -227,13 +226,16 @@ export default {
 .eventBox {
   width: 570px;
   max-height: 180px;
-  border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
+  // border: solid 1px rgba($color: #0198ff, $alpha: 0.5);
   position: absolute;
   top: 0px;
   left: calc(100% - 600px);
   background: rgba($color: #00152b, $alpha: 0.9);
   z-index: 2000;
-
+  .el-dialog__body{
+    padding: 0 !important;
+    width: 100% !important;
+  }
   .title {
     padding-left: 20px;
     height: 30px;

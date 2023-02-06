@@ -1,14 +1,19 @@
 package com.tunnel.business.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excels;
 import com.ruoyi.common.core.domain.BaseEntity;
 import com.tunnel.business.domain.dataInfo.SdTunnels;
+import com.tunnel.business.domain.digitalmodel.WjConfidence;
+import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 事件管理对象 sd_event
@@ -24,6 +29,7 @@ public class SdEvent extends BaseEntity {
      * 事件ID
      */
     @ApiModelProperty("事件id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -171,6 +177,9 @@ public class SdEvent extends BaseEntity {
     @ApiModelProperty("事件桩号")
     private String stakeNum;
 
+    @ApiModelProperty("事件终点桩号")
+    private String stakeEndNum;
+
 //    @ApiModelProperty("事件结束时间")
 //    private Date endTime;
     @ApiModelProperty("清障电话")
@@ -194,8 +203,137 @@ public class SdEvent extends BaseEntity {
     public int smallCarNum;
     public String tunnelStationName;
 
+    /**
+     * 位置
+     */
+    private String position;
 
     private Long deptId;
+
+    /**
+     * 隧道名称
+     */
+    private String tunnelName;
+
+    /**
+     * 图片集合
+     */
+    private List<SdTrafficImage> iconUrlList;
+
+    /**
+     * 类型简称
+     */
+    private String simplifyName;
+
+    /**
+     * 事件置信度集合
+     */
+    private List<WjConfidence> confidenceList;
+
+    /**
+     * 事件处置下发id
+     */
+    private String ids;
+
+    /**
+     * 事件处置流程pid
+     */
+    private String flowPid;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+    //推送物联中台 图片临时保存字段
+    private String eventImgUrl;
+
+    /**
+     * 弹框事件标题
+     */
+    private String frameEventTitle;
+
+    public String getFrameEventTitle() {
+        return frameEventTitle;
+    }
+
+    public void setFrameEventTitle(String frameEventTitle) {
+        this.frameEventTitle = frameEventTitle;
+    }
+
+    public String getEventImgUrl() {
+        return eventImgUrl;
+    }
+
+    public void setEventImgUrl(String eventImgUrl) {
+        this.eventImgUrl = eventImgUrl;
+    }
+
+    @Override
+    public String getRemark() {
+        return remark;
+    }
+
+    @Override
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getFlowPid() {
+        return flowPid;
+    }
+
+    public void setFlowPid(String flowPid) {
+        this.flowPid = flowPid;
+    }
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    public List<WjConfidence> getConfidenceList() {
+        return confidenceList;
+    }
+
+    public void setConfidenceList(List<WjConfidence> confidenceList) {
+        this.confidenceList = confidenceList;
+    }
+
+    public String getSimplifyName() {
+        return simplifyName;
+    }
+
+    public void setSimplifyName(String simplifyName) {
+        this.simplifyName = simplifyName;
+    }
+
+    public List<SdTrafficImage> getIconUrlList() {
+        return iconUrlList;
+    }
+
+    public void setIconUrlList(List<SdTrafficImage> iconUrlList) {
+        this.iconUrlList = iconUrlList;
+    }
+
+    public String getTunnelName() {
+        return tunnelName;
+    }
+
+    public void setTunnelName(String tunnelName) {
+        this.tunnelName = tunnelName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public Long getDeptId() {
         return deptId;
@@ -262,6 +400,14 @@ public class SdEvent extends BaseEntity {
 
     public void setStationId(String stationId) {
         this.stationId = stationId;
+    }
+
+    public String getStakeEndNum() {
+        return stakeEndNum;
+    }
+
+    public void setStakeEndNum(String stakeEndNum) {
+        this.stakeEndNum = stakeEndNum;
     }
 
     public String getStakeNum() {

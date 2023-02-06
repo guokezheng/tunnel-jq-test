@@ -36,6 +36,57 @@ public class SdStrategyRl extends BaseEntity
     /** 控制时间 */
     private String controlTime;
 
+    //有效时间
+    private String effectiveTime;
+    //关闭状态
+    private String endState;
+    //设备检索规则
+    private String retrievalRule;
+    //预案ID
+    private String planId;
+    //处置名称
+    private String disposalName;
+
+    public String getDisposalName() {
+        return disposalName;
+    }
+
+    public void setDisposalName(String disposalName) {
+        this.disposalName = disposalName;
+    }
+
+    public String getRetrievalRule() {
+        return retrievalRule;
+    }
+
+    public void setRetrievalRule(String retrievalRule) {
+        this.retrievalRule = retrievalRule;
+    }
+
+    public String getPlanId() {
+        return planId;
+    }
+
+    public void setPlanId(String planId) {
+        this.planId = planId;
+    }
+
+    public String getEndState() {
+        return endState;
+    }
+
+    public void setEndState(String endState) {
+        this.endState = endState;
+    }
+
+    public String getEffectiveTime() {
+        return effectiveTime;
+    }
+
+    public void setEffectiveTime(String effectiveTime) {
+        this.effectiveTime = effectiveTime;
+    }
+
     private List<SdEquipmentState> eqStateList;
     
     

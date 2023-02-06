@@ -166,3 +166,31 @@ export function getJlyTunnel() {
     method: 'get'
   })
 }
+
+// 加强照明 弹窗
+export function setBrightness(query) {
+  return request({
+    url: '/light/setBrightness',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 工作台 能耗图表
+export function energyConsumptionDetection(tunneld) {
+  return request({
+    url: '/system/data/energyConsumptionDetection/' + tunneld,
+    method: 'get'
+
+  })
+}
+
+// 情报板 设备图标样式
+export function getBoardContent(query) {
+  return request({
+    url: '/parser/board/getWorkBenchBoardContent/' + query,
+    method: 'get',
+
+  })
+}

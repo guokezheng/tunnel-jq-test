@@ -19,6 +19,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="timerOpen"    column="timer_open"    />
+        <result property="timerClose"    column="timer_close"    />
+        <result property="strategyGroup"    column="strategy_group"    />
+        <result property="eventType"    column="event_type"    />
         <association property="tunnels"  column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult" />
     </resultMap>
 
@@ -46,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="strategyInfo != null  and strategyInfo != ''"> and A.strategy_info = #{strategyInfo}</if>
             <if test="schedulerTime != null  and schedulerTime != ''"> and A.scheduler_time = #{schedulerTime}</if>
             <if test="direction != null  and direction != ''"> and A.direction = #{direction}</if>
+            <if test="strategyGroup != null  and strategyGroup != ''"> and A.strategy_group = #{strategyGroup}</if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (B.dept_id = #{params.deptId} OR B.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
             </if>
@@ -55,8 +60,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdStrategyById" parameterType="Long" resultMap="SdStrategyResult">
         select A.id, A.tunnel_id, A.strategy_name, A.strategy_type, A.strategy_info, A.warning_id, A.strategy_state,
-        		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,
-        		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name
+        		A.scheduler_time, A.job_relation_id, A.create_by, A.direction,A.event_type,A.strategy_group,
+        		A.create_time, A.update_by, A.update_time, B.tunnel_name, C.s_id, C.s_name,A.timer_open,A.timer_close
         from sd_strategy A
         left join sd_tunnels B on A.tunnel_id = B.tunnel_id
         left join sd_tunnel_subarea C on B.tunnel_id = C.tunnel_id
@@ -86,26 +91,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tunnelId != null">tunnel_id,</if>
             <if test="strategyName != null">strategy_name,</if>
             <if test="strategyType != null">strategy_type,</if>
+            <if test="eventType != null">event_type,</if>
             <if test="strategyState != null">strategy_state,</if>
             <if test="strategyInfo != null">strategy_info,</if>
             <if test="warningId != null">warning_id,</if>
+            <if test="strategyGroup != null">strategy_group,</if>
             <if test="schedulerTime != null">scheduler_time,</if>
             <if test="jobRelationId != null">job_relation_id,</if>
             <if test="direction != null">direction,</if>
             <if test="createBy != null">create_by,</if>
-            create_time
+            <if test="timerOpen != null">timer_open,</if>
+            <if test="timerClose != null">timer_close,</if>
+        create_time
  		)values(
             <if test="tunnelId != null">#{tunnelId},</if>
             <if test="strategyName != null">#{strategyName},</if>
             <if test="strategyType != null">#{strategyType},</if>
- 		    <if test="strategyState != null">#{strategyState},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="strategyState != null">#{strategyState},</if>
             <if test="strategyInfo != null">#{strategyInfo},</if>
             <if test="warningId != null">#{warningId},</if>
+            <if test="strategyGroup != null">#{strategyGroup},</if>
             <if test="schedulerTime != null">#{schedulerTime},</if>
             <if test="jobRelationId != null">#{jobRelationId},</if>
             <if test="direction != null">#{direction},</if>
             <if test="createBy != null">#{createBy},</if>
-            sysdate()
+            <if test="timerOpen != null">#{timerOpen},</if>
+            <if test="timerClose != null">#{timerClose},</if>
+        sysdate()
           )
     </insert>
 
@@ -125,6 +138,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="strategyGroup != null">strategy_group = #{strategyGroup},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="timerOpen != null">timer_open = #{timerOpen},</if>
+            <if test="timerClose != null">timer_close = #{timerClose},</if>
         </trim>
         where id = #{id}
     </update>
@@ -184,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         left join sd_reserve_process B on A.id = B.reserve_id
         where B.strategy_id like concat("%",#{id},"%")
     </select>
-    
+
     <select id="getManualStrategy" resultType="hashmap" >
         SELECT
             s.id strategyId,
@@ -205,12 +222,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         GROUP BY strategy.strategy_type
     </select>
 
-    <select id="getTimeSharingInfo"  parameterType="String" resultType="Map" >
-        SELECT strategy.strategy_name,rl.strategy_id,strategy.strategy_state,GROUP_CONCAT(rl.control_time SEPARATOR '-') as time
-        FROM sd_strategy_rl rl
-            inner join sd_strategy strategy on rl.strategy_id = strategy.id
-        where strategy.tunnel_id = #{tunnelId} and strategy.strategy_type = '3'
-        GROUP BY rl.strategy_id
+    <select id="getTimeSharingInfo"  parameterType="String" resultType="hashmap" >
+        SELECT id as strategy_id,strategy_name,strategy_state,concat(timer_open,'-',timer_close) as time FROM sd_strategy
+            where strategy_type = '3' and strategy_group = '1' and tunnel_id = #{tunnelId}
     </select>
 
+    <select id="getSafetyHandle" parameterType="sdStrategy" resultType="sdStrategy">
+        SELECT
+            s.id,
+            sr.id AS strategyRlId,
+            sr.disposal_name AS disposalName
+        FROM
+            sd_strategy s
+                LEFT JOIN sd_strategy_rl sr ON s.id = sr.strategy_id
+        WHERE
+            1 = 1
+          AND s.tunnel_id = #{tunnelId}
+          AND s.strategy_type = '0'
+          AND s.strategy_group = '2'
+          AND s.event_type = #{eventType}
+          AND s.direction = #{direction}
+    </select>
+    <select id="workTriggerInfo"  parameterType="String" resultType="hashmap">
+        select strategy.id,concat(item.item_name,'预警')as name,concat(
+        case when tri.compare_pattern = '0' then '<![CDATA[>]]>'
+            when tri.compare_pattern = '1' then '<![CDATA[>=]]>'
+            when tri.compare_pattern = '2' then '<![CDATA[<]]>'
+            when tri.compare_pattern = '3' then '<![CDATA[<=]]>'
+            when tri.compare_pattern = '4' then '<![CDATA[=]]>'
+        end,tri.compare_value) str from sd_strategy strategy
+        inner join sd_trigger tri on tri.relate_id = strategy.id
+        left join sd_device_type_item item on (item.id = tri.element_id
+        and tri.device_type_id = item.device_type_id) where strategy.tunnel_id = #{tunnelId}
+    </select>
 </mapper>

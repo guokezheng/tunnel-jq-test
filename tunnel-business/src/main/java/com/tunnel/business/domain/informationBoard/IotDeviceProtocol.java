@@ -8,8 +8,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.beans.Transient;
 
 /**
- * 通信协议对象 iot_device_protocol
- * 
+ * 通信协议对象 iot_board_protocol
+ *
  * @author wangyaozong
  * @date 2020-03-28
  */
@@ -55,25 +55,25 @@ public class IotDeviceProtocol extends BaseEntity
         this.protocolId = protocolId;
     }
 
-    public Long getProtocolId() 
+    public Long getProtocolId()
     {
         return protocolId;
     }
-    public void setProtocolName(String protocolName) 
+    public void setProtocolName(String protocolName)
     {
         this.protocolName = protocolName;
     }
 
-    public String getProtocolName() 
+    public String getProtocolName()
     {
         return protocolName;
     }
-    public void setDeviceTypeId(String deviceTypeId) 
+    public void setDeviceTypeId(String deviceTypeId)
     {
         this.deviceTypeId = deviceTypeId;
     }
 
-    public String getDeviceTypeId() 
+    public String getDeviceTypeId()
     {
         return deviceTypeId;
     }

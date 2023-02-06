@@ -693,7 +693,7 @@ export default {
     setInterval(()=>{
       this.getNodealNum()
 
-    },1000)
+    },5000)
 
     // 关闭列表弹窗
     bus.$on("closeDialog", () => {
@@ -727,7 +727,8 @@ export default {
     // 获取当前角色信息
     getUser() {
       getUserProfile().then((response) => {
-        this.roleGroup = response.roleGroup;
+        console.log(response,"获取当前角色信息")
+        this.roleGroup = response.data.nickName;
       });
     },
     block() {},
@@ -965,6 +966,10 @@ export default {
   top: 0;
   right: 0;
 }
+.right-menu{
+  position: absolute;
+  right: 0;
+}
 .theme-light .navbar {
   background-color: unset;
 }
@@ -1043,7 +1048,7 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: 72px;
+    line-height: 7.6vh;
     &:focus {
       outline: none;
     }
@@ -1077,7 +1082,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 72px;
+        height: 7.6vh;
         span {
           font-size: 16px;
           margin-left: 10px;

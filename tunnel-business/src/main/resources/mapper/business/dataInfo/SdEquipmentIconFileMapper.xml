@@ -126,5 +126,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    
+
+
+    <select id="selectSdTypeImgFileList" parameterType="SdEquipmentStateIconFile" resultMap="SdEquipmentStateIconFileResult">
+        select * from sd_equipment_state_icon_file
+        <where>
+            <if test="stateIconId != null  and stateIconId != ''"> and state_icon_id = #{stateIconId}</if>
+        </where>
+    </select>
+
 </mapper>

@@ -160,8 +160,8 @@
       v-loading="loading"
       :data="jobList"
       @selection-change="handleSelectionChange"
-      max-height="640"
       :row-class-name="tableRowClassName"
+      class="tableClass"
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column
@@ -284,7 +284,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="任务分组" prop="jobGroup">
-              <el-select v-model="form.jobGroup" placeholder="请选择">
+              <el-select v-model="form.jobGroup" placeholder="请选择" style="width:100%">
                 <el-option
                   v-for="dict in dict.type.sys_job_group"
                   :key="dict.value"
@@ -716,3 +716,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+  .scrollbar ::-webkit-scrollbar{
+    width: 0px;
+  }
+</style>

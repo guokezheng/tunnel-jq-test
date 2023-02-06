@@ -1,13 +1,12 @@
 package com.tunnel.platform.service.deviceControl;
 
+import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeEnum;
 import com.tunnel.business.datacenter.domain.enumeration.DevicesTypeItemEnum;
 import com.tunnel.business.domain.dataInfo.SdDeviceData;
-import com.tunnel.business.domain.dataInfo.SdDeviceTypeItem;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesProtocol;
 import com.tunnel.business.domain.logRecord.SdOperationLog;
 import com.tunnel.business.service.dataInfo.ISdDeviceDataService;
-import com.tunnel.business.service.dataInfo.ISdDeviceTypeItemService;
 import com.tunnel.business.service.dataInfo.ISdDevicesProtocolService;
 import com.tunnel.business.service.dataInfo.ISdDevicesService;
 import com.tunnel.business.service.logRecord.ISdOperationLogService;
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +26,6 @@ public class LightService {
     private ISdOperationLogService sdOperationLogService;
     @Autowired
     private ISdDeviceDataService sdDeviceDataService;
-    @Autowired
-    private ISdDeviceTypeItemService sdDeviceTypeItemService;
     @Autowired
     private SdDeviceControlService sdDeviceControlService;
     @Autowired
@@ -74,25 +70,29 @@ public class LightService {
         return light;
     }
 
-
+    /**
+     * @param deviceId    设备ID
+     * @param bright      亮度
+     * @param controlType 控制类型
+     * @param operIp      操作者IP地址
+     * @return
+     */
     public int setBrightness(String deviceId, Integer bright, String controlType, String operIp) {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         Light light = getBeanOfDeviceProtocol(deviceId);
         int resultStatus = light.setBrightness(deviceId, bright);
 
-        // 更新设备在线状态
-        device.setEqStatus("1");
-        device.setEqStatusTime(new Date());
-        sdDevicesService.updateSdDevices(device);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            // 更新设备在线状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
 
-        //更新设备实时数据
-        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-        sdDeviceTypeItem.setDeviceTypeId(device.getEqType());
-        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
-        Assert.notEmpty(sdDeviceTypeItems, "当前设备没有设备类型数据项数据，请添加后重试！");
-        SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-        sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), Integer.parseInt(typeItem.getId().toString()));
+            //更新设备实时数据
+            sdDeviceControlService.updateDeviceData(device, String.valueOf(bright), DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode());
+        }
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -107,12 +107,11 @@ public class LightService {
         // 确定设备之前亮度值
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(deviceId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JACK_LIGHT_BRIGHNESS.getCode()));
+        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_BRIGHNESS.getCode()));
         List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
         if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
             sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
         }
-
         sdOperationLogService.insertSdOperationLog(sdOperationLog);
 
         return resultStatus;
@@ -130,19 +129,16 @@ public class LightService {
 
         Light light = getBeanOfDeviceProtocol(deviceId);
         int resultStatus = light.lineControl(deviceId, openClose);
+        // 如果控制成功
+        if (resultStatus == 1) {
+            //更新设备状态
+            device.setEqStatus("1");
+            device.setEqStatusTime(new Date());
+            sdDevicesService.updateSdDevices(device);
 
-        //更新设备状态
-        device.setEqStatus("1");
-        device.setEqStatusTime(new Date());
-        sdDevicesService.updateSdDevices(device);
-
-        //更新设备实时数据
-        SdDeviceTypeItem sdDeviceTypeItem = new SdDeviceTypeItem();
-        sdDeviceTypeItem.setDeviceTypeId(device.getEqType());
-        List<SdDeviceTypeItem> sdDeviceTypeItems = sdDeviceTypeItemService.selectSdDeviceTypeItemList(sdDeviceTypeItem);
-        Assert.notEmpty(sdDeviceTypeItems, "当前设备没有设备类型数据项数据，请添加后重试！");
-        SdDeviceTypeItem typeItem = sdDeviceTypeItems.get(0);
-        sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), Integer.parseInt(typeItem.getId().toString()));
+            //更新设备实时数据
+            sdDeviceControlService.updateDeviceData(device, String.valueOf(openClose), DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode());
+        }
 
         //添加操作日志
         SdOperationLog sdOperationLog = new SdOperationLog();
@@ -157,7 +153,13 @@ public class LightService {
         // 确定设备之前的开关状态
         SdDeviceData sdDeviceData = new SdDeviceData();
         sdDeviceData.setDeviceId(deviceId);
-        sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JACK_LIGHT_OPENCLOSE.getCode()));
+
+
+        if (String.valueOf(DevicesTypeEnum.JIA_QIANG_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JQ_LIGHT_OPENCLOSE.getCode()));
+        } else if (String.valueOf(DevicesTypeEnum.JI_BEN_ZHAO_MING.getCode()).equals(device.getEqType())) {
+            sdDeviceData.setItemId(Long.valueOf(DevicesTypeItemEnum.JI_BEN_ZHAO_MING_OPENCLOSE.getCode()));
+        }
         List<SdDeviceData> sdDeviceDataList = sdDeviceDataService.selectSdDeviceDataList(sdDeviceData);
         if (null != sdDeviceDataList && sdDeviceDataList.size() > 0) {
             sdOperationLog.setBeforeState(sdDeviceDataList.get(0).getData());
@@ -178,26 +180,5 @@ public class LightService {
         return resultStatus;
     }
 
-
-    public String getLatestDeviceData(String deviceId) throws IOException {
-
-       /* String externalSystemTunnelId = getExternalSystemTunnelId(deviceId);
-
-
-        login(username, password);
-
-        String url = deviceData + "?tunnelId=" + externalSystemTunnelId;
-        OkHttpClient client = new OkHttpClient().newBuilder().build();
-        Request request = new Request.Builder()
-                .url(url)
-                .method("GET", null)
-                .addHeader("Cookie", jessionId)
-                .build();
-        Response response = client.newCall(request).execute();
-
-        String responseBoby = response.body().string();*/
-
-        return null;
-    }
 
 }

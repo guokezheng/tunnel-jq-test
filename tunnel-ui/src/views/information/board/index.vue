@@ -7,12 +7,12 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div class="container" style="background-color: #004375; height: 100%">
+  <div class="container infoBoardBox" style="height: 100%">
     <el-row
       :gutter="20"
       style="height: 100%; margin-left: 0px; margin-right: 0px"
     >
-      <el-col :span="4" style="background-color: white">
+      <el-col :span="4">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form" label-width="80px">
           <el-form-item label="所属单位">
@@ -59,6 +59,8 @@
                 :key="item.tunnelId"
                 :label="item.tunnelName"
                 :value="item.tunnelId"
+                @click.native="changeTunnel(item.tunnelId)"
+
               />
             </el-select>
           </el-form-item>
@@ -74,6 +76,8 @@
                 :key="item.dictValue"
                 :label="item.dictLabel"
                 :value="item.dictValue"
+                @click.native="changeposition(item.dictValue)"
+
               />
             </el-select>
           </el-form-item>
@@ -121,15 +125,12 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col
-        :span="10"
-        style="background-color: white; border-left: 1px solid #f3f3f3"
-      >
+      <el-col :span="10" style="border-left: 1px solid #05AFE3">
         <p class="bigTitle">待下发信息</p>
         <div class="contentBox">
           <div class="controlBox">
             <el-button
-              @click.native="openDialogVisible(1)"
+              @click.native="openDialogVisible(1,2)"
               :disabled="disabledButton"
               >添加信息</el-button
             >
@@ -155,21 +156,30 @@
                 @click="moveBottom(index, item)"
               ></i>
             </div>
-            <div
-              class="con"
+            <div class="con">
+              <div style="background:black;position: relative;"
               :style="{
-                color: getColorStyle(item.COLOR),
-                fontSize: getFontSize(item.FONT_SIZE),
-                fontFamily: item.FONT,
-              }"
-            >
-            <span
+                  color: getColorStyle(item.COLOR),
+                  fontSize: getFontSize(item.FONT_SIZE),
+                  fontFamily: item.FONT,
+                  width:getScreenSize(form.devicePixel,'width') + 'px',
+                  height:getScreenSize(form.devicePixel,'height') + 'px',
+                }">
+                <span
                   :style="{
-                    left:getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top:getCoordinate2(item.COORDINATE.substring(3, 6)),
+                    left: getCoordinate(item.COORDINATE.substring(0, 3),'left'),
+                    top: getCoordinate(item.COORDINATE.substring(3, 6),'top'),
                   }"
-                  style="position:absolute"
-                  v-html="item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                  style="position: absolute;line-height: 1;"
+                  v-html="
+                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
+                      / /g,
+                      ' &nbsp'
+                    )
+                  "
+                ></span>
+              </div>
+              
               <!-- {{ item.CONTENT }} -->
             </div>
             <div class="menuBox">
@@ -183,14 +193,11 @@
           </div>
         </div>
       </el-col>
-      <el-col
-        :span="10"
-        style="background-color: white; border-left: 1px solid #f3f3f3"
-      >
+      <el-col :span="10" style="border-left: 1px solid #05AFE3">
         <p class="bigTitle">信息模板</p>
         <div class="templateBox">
           <div class="controlBox">
-            <el-button type="primary" @click="openDialogVisible(2)"
+            <el-button type="primary" @click="openDialogVisible(2,2)"
               >添加模板</el-button
             >
           </div>
@@ -206,28 +213,55 @@
                 :key="indx"
                 class="con"
                 :style="{
-                  'font-size': getFontSize(itm.tcontents[0].fontSize,itm.screenSize),
+                  'font-size': getFontSize(
+                    itm.tcontents[0].fontSize,
+                    itm.screenSize
+                  ),
                   color: itm.tcontents[0].fontColor,
                   fontFamily: itm.tcontents[0].fontType,
                 }"
               >
                 <div class="templateTitle">
-                  <span
-                  :style="{
-                    left:getCoordinate1(itm.tcontents[0].coordinate.substring(0, 3),itm.screenSize),
-                    top:getCoordinate2(itm.tcontents[0].coordinate.substring(3, 6),itm.screenSize),
+                  <div :style="{
+                    width:getScreenSize(itm.screenSize,'width') + 'px',
+                    height:getScreenSize(itm.screenSize,'height') + 'px',
                   }"
-                  style="position:absolute"
-                  v-html="itm.tcontents[0].content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"></span>
+                  style="background:black;position: relative;">
+                    <span
+                      :style="{
+                        left: getCoordinate(
+                          itm.tcontents[0].coordinate.substring(0, 3),
+                          'left',
+                          itm.screenSize
+                        ),
+                        top: getCoordinate(
+                          itm.tcontents[0].coordinate.substring(3, 6),
+                          'top',
+                          itm.screenSize
+                        ),
+                      }"
+                      style="position: absolute"
+                      v-html="
+                        itm.tcontents[0].content
+                          .replace(/\n|\r\n/g, '<br>')
+                          .replace(/ /g, ' &nbsp')
+                      "
+                    ></span>
+                  </div>
+                  
                 </div>
                 <div class="menuBox">
                   <i
                     class="el-icon-d-arrow-left"
                     @click="arrowLeft(itm)"
-                    :class="disabledButton || itm.screenSize != form.devicePixel? 'disabledClass' : ''"
+                    :class="
+                      disabledButton || itm.screenSize != form.devicePixel
+                        ? 'disabledClass'
+                        : ''
+                    "
                     style="cursor: pointer"
                   ></i>
-                  
+
                   <i
                     class="el-icon-edit-outline"
                     @click="editOutline(itm, indx, 2)"
@@ -272,6 +306,7 @@ import {
   getAllVmsTemplate,
   addTemplate,
   addTemplateContent,
+  getBoardContent
 } from "@/api/board/template";
 const cityOptions = ["上海", "北京", "广州", "深圳"];
 export default {
@@ -282,6 +317,8 @@ export default {
   },
   data() {
     return {
+      tunnelId:'',
+      localInfo:'',
       devicePixelMode: null,
       editType: 0,
       disabledButton: true,
@@ -304,6 +341,7 @@ export default {
       positionList: [], //位置信息下拉框
       devicessizeList: [], //分辨率下拉框
       checkboxList: [], //多选框数组
+      deviceList:[],
       checkbox: false,
       checkboxValue: [],
       checkAll: false,
@@ -376,7 +414,7 @@ export default {
   },
   created() {
     this.getDeptList();
-    this.getAllVmsTemplate();
+    this.allVmsTemplate();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
@@ -384,10 +422,62 @@ export default {
     });
   },
   methods: {
+    getScreenSize(num,type){
+      let width = num.split('*')[0];
+      let height = num.split('*')[1];
+      // 实际分辨率比页面板子小
+      if(width < 630 && height < 75){
+        if(type == 'width'){
+          return width
+        }else if(type == 'height'){
+          return height
+        }
+      }else{
+        // 实际分辨率比页面板子大
+        if(width/630 > height/75){
+          if(type == 'width'){
+            return 630
+          }else if(type == 'height'){
+            return height/(width/630)
+          }
+        }else{
+          if(type == 'width'){
+            return width/(height/75)
+          }else if(type == 'height'){
+            return 75
+          }
+        }
+      }
+    },
+    changeTunnel(value){
+      this.form.devicePixel = ''
+      this.form.localInfo = ''
+      this.checkedCities = []
+      this.checkboxList = []
+      this.contentList = []
+      console.log(value,"value")
+      this.tunnelId = value
+      this.getdevicessize()
+
+    },
+    changeposition(value){
+      this.form.devicePixel = ''
+      console.log(value,"value")
+      this.localInfo = value
+      this.checkedCities = []
+      this.checkboxList = []
+      this.contentList = []
+
+      this.getdevicessize()
+    },
     getActiveNames(active) {
       console.log(active);
       this.activeNames = active;
-      getAllVmsTemplate(active).then((res) => {
+      const param = {
+        devicePixel: this.form.devicePixel,
+        category: active,
+      };
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
         // console.log(this.templateList,"this.templateList");
@@ -486,8 +576,12 @@ export default {
       }
     },
     // 情报板管理右侧查询接口
-    getAllVmsTemplate() {
-      getAllVmsTemplate(0).then((res) => {
+    allVmsTemplate() {
+      const param = {
+        devicePixel: this.form.devicePixel,
+        category: 0,
+      };
+      getAllVmsTemplate(param).then((res) => {
         console.log(res, "情报板管理右侧查询接口");
         this.templateList = res.data;
         // console.log(this.templateList,"this.templateList");
@@ -524,7 +618,8 @@ export default {
           this.contentList[i].FONT_SIZE.substring(0, 2) +
           "\\";
         content += "c" + this.getColorValue(this.contentList[i].COLOR);
-        content += this.contentList[i].CONTENT;
+        content += this.contentList[i].CONTENT.replace(/\n|\r\n/g, "<r><n>");
+
         if (i + 1 != this.contentList.length) {
           content += "<r><n>";
         }
@@ -534,12 +629,47 @@ export default {
       let deviceld = this.checkedCities.toString();
       uploadBoardEditInfo(deviceld, protocolType, content).then((response) => {
         console.log(response, "返回结果");
+        setTimeout(() => {
+          getBoardContent(this.checkboxList[0]).then((res) => {
+            console.log(res, "情报板内容查询");
+          });
+        }, 1000);
       });
-      // [Playlist]<r><n>
-      // ITEM_NO=3<r><n>
-      // ITEM000=500,1,1,\C010006\fs1616\c000255000000欢迎行驶山东高速 咨询求援请拨打96659<r><n>
-      // ITEM001=300,1,1,\C000000\fh3232\c255255000000欢迎拨打山东高速96659服务热线<r><n>
-      // ITEM002=300,1,1,\C024000\fh3232\c255255000000安全第一  平安有你
+    },
+    getContentInfo(content) {
+      // var content = this.boardEidtContentArea;
+      content = content.replace(/\\C.{6}/, "").trim();
+      content = content.replace(/C.{6}/, "").trim();
+      content = content.replace(/\\B.{3}/, "").trim();
+      content = content.replace(/\\y.{1}/, "").trim();
+      content = content.replace(/c.{12}/, "").trim();
+      content = content.replace(/\\b.{12}/, "").trim();
+      content = content.replace(/\\s.{12}/, "").trim();
+      content = content.replace(/\\S.{2}/, "").trim();
+      content = content.replace(/S.{2}/, "").trim();
+      content = content.replace(/f.{5}/, "").trim();
+      content = content.replace(/\\r.{12}/, "").trim();
+      content = content.replace(/\\K.{12}/, "").trim();
+      content = content.replace(/b.{12}/, "").trim();
+      content = content.replace(/\\F.{6}/, "").trim();
+      content = content.replace(/T.{12}/, "").trim();
+      content = content.replace(/\\M.{2}/, "").trim();
+      content = content.replace(/\\W/, "").trim();
+      content = content.replace(/\\\\n/, "").trim();
+      content = content.replace(/n/, "").trim();
+      content = content.replace(/N/, "").trim();
+      content = content.replace(/\\A/, "").trim();
+      content = content.replace(/A/, "").trim();
+      content = content.replace(/\\/, "").trim();
+      content = content.replace(/\\N.{2}/, "").trim();
+      if (
+        content.indexOf("\\") != -1 &&
+        content.indexOf(",") != -1 &&
+        content.indexOf(",") != content.lastIndexOf(",")
+      ) {
+        return content.substring(content.indexOf("\\") + 1, content.length);
+      }
+      return content;
     },
     // 接收子组件新增待发模板
     addInfo(form) {
@@ -643,15 +773,21 @@ export default {
       this.getDicts("iot_devices_type").then((response) => {
         console.log(response, "位置信息");
         this.positionList = response.data;
-        this.getdevicessize();
       });
     },
     // 查分辨率
     getdevicessize() {
-      devicessize().then((res) => {
-        console.log(res, "查分辨率");
-        this.devicessizeList = res.data;
-      });
+      if(this.tunnelId && this.localInfo){
+        const param = {
+          tunnelId :this.tunnelId,
+          localInfo : this.localInfo,
+        }
+        devicessize(param).then((res) => {
+          console.log(res, "查分辨率");
+          this.devicessizeList = res.data;
+        });
+      }
+      
     },
     // 查设备多选框
     changeDevicessize() {
@@ -664,23 +800,31 @@ export default {
       information(param).then((res) => {
         console.log(res, "查设备多选框");
         this.checkboxList = res.rows;
+        for (let j of this.checkboxList) {
+          console.log(j.deviceId, "123123123");
+          this.deviceList.push(j.deviceId);
+        }
       });
     },
     // 打开添加信息弹窗
-    openDialogVisible(type) {
+    openDialogVisible(type,mode) {
       // this.devicePixel = this.form.devicePixel
       if (type == 1) {
-        this.$refs.addinfo.init(this.form.devicePixel, type);
+        this.$refs.addinfo.init(this.form.devicePixel, type,mode);
       } else {
-        this.$refs.addinfo.init(this.devicePixelMode, type);
+        this.$refs.addinfo.init(this.devicePixelMode, type,mode);
       }
       console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
     },
     handleChange(val) {
       console.log(val);
       if (val) {
+        const param = {
+          devicePixel: this.form.devicePixel,
+          category: val,
+        };
         // 情报板管理右侧查询接口
-        getAllVmsTemplate(val).then((res) => {
+        getAllVmsTemplate(param).then((res) => {
           console.log(res.data, "情报板管理右侧查询接口");
           this.templateList = res.data;
           // console.log(this.templateList,"this.templateList");
@@ -688,7 +832,7 @@ export default {
       }
     },
     handleCheckAllChange(val) {
-      this.checkedCities = val ? this.checkboxList : [];
+      this.checkedCities = val ? this.deviceList : [];
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
@@ -1014,6 +1158,7 @@ export default {
       ) {
         return;
       }
+      console.log(this.checkboxValue[0],"this.checkboxValue[0]")
       getBoardInfo(this.checkboxValue[0]).then((res) => {
         console.log(res, "getBoardInfo");
         this.deviceId = res.data.deviceId;
@@ -1023,97 +1168,98 @@ export default {
           this.disabledButton = true;
         }
       });
-      // this.checkboxValue[0]
+      this.checkboxValue[0];
       // 获取情报板修改页面信息
-      // getBoardEditInfo(1)
-      //   .then((response) => {
-      //     if (response.code != 200) {
-      //       this.$message(response.msg);
-      //       return;
-      //     }
-      //     if (response.data[0] == undefined) {
-      //       this.$message(response.msg);
-      //       return;
-      //     }
-      var response = {};
-      response = boardData;
-      var parseObject = JSON.parse(response);
-      var protocolType = parseObject.support.PROTOCOL_TYPE;
-      var contents = parseObject.content;
-      // console.log(parseObject,"parseObject")
-      // console.log(protocolType,"protocolType")
-      // console.log(contents,"contents")
-
-      // this.checkboxList = contents
-      if (
-        typeof contents == "undefined" ||
-        typeof protocolType == "undefined"
-      ) {
-        this.$message(response.msg);
-        return;
-      }
-      this.supplier = protocolType;
-      var currRowId = "";
-      var reg = /,/g;
-      console.log(contents, "contents");
-      for (var i = 0; i < contents.length; i++) {
-        var content = contents[i];
-        var itemId = "ITEM" + this.formatNum(i, 3);
-        if (i == 0) {
-          currRowId = itemId;
+      getBoardEditInfo(this.checkboxValue[0]).then((response) => {
+        console.log(response, "response");
+        if (response.code != 200) {
+          this.$message(response.msg);
+          return;
         }
-        var con = content[itemId];
-
-        this.itemStr = "";
-        for (let item of con) {
-          item.COLOR = this.getColorStyle(item.COLOR);
-          item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
-          // item.font = this.getFontStyle(item.FONT)
+        if (response.data[0] == undefined) {
+          this.$message(response.msg);
+          return;
         }
-        console.log(con, "con");
-        this.contentList = con;
+        // var response = {};
+        // response = boardData;
+        var parseObject = JSON.parse(response.data[0]);
+        var protocolType = parseObject.support.PROTOCOL_TYPE;
+        var contents = parseObject.content;
+        // console.log(parseObject,"parseObject")
+        // console.log(protocolType,"protocolType")
+        // console.log(contents,"contents")
 
-        // for (var j = 0; j < con.length; j++) {
-        //   this.itemStr = this.combineItemContent(
-        //     protocolType,
-        //     con[j].STAY,
-        //     con[j].ACTION,
-        //     con[j].SPEED,
-        //     con[j].COORDINATE,
-        //     this.getFontValue(con[j].FONT),
-        //     con[j].FONT_SIZE,
-        //     this.getColorValue(con[j].COLOR),
-        //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\\n")
-        //   );
-        //   console.log(this.itemStr,"this.itemStr");
-        //   this.addItemPropertyMap(
-        //     itemId,
-        //     false,
-        //     con[j].STAY,
-        //     con[j].ACTION,
-        //     con[j].SPEED,
-        //     con[j].COORDINATE,
-        //     con[j].FONT,
-        //     con[j].FONT_SIZE,
-        //     con[j].COLOR,
-        //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\n")
-        //   );
+        // this.checkboxList = contents
+        if (
+          typeof contents == "undefined" ||
+          typeof protocolType == "undefined"
+        ) {
+          this.$message(response.msg);
+          return;
+        }
+        this.supplier = protocolType;
+        var currRowId = "";
+        var reg = /,/g;
+        console.log(contents, "contents");
+        for (var i = 0; i < contents.length; i++) {
+          var content = contents[i];
+          var itemId = "ITEM" + this.formatNum(i, 3);
+          if (i == 0) {
+            currRowId = itemId;
+          }
+          var con = content[itemId];
 
-        // }
-        // this.addContentDisplayInfos(
-        //   "ITEM" + this.formatNum(i, 3),
-        //   i + 1,
-        //   this.itemStr
-        // );
-      }
-      // this.isactive = currRowId;
-      // this.infosRowClick(this.disContentList[0]);
-      // })
-      // .catch(function (error) {
-      //   that.disContentList = [];
-      //   that.loadingDialog = false;
-      //   // this.$message(error);
-      // });
+          this.itemStr = "";
+          for (let item of con) {
+            item.COLOR = this.getColorStyle(item.COLOR);
+            item.FONT_SIZE = Number(item.FONT_SIZE.substring(0, 2)) + "px";
+            item.CONTENT = item.CONTENT.replace('<br>','').replace(' &nbsp',' ')
+            // item.font = this.getFontStyle(item.FONT)
+          }
+          console.log(con, "con");
+          this.contentList = con;
+          // for (var j = 0; j < con.length; j++) {
+          //   this.itemStr = this.combineItemContent(
+          //     protocolType,
+          //     con[j].STAY,
+          //     con[j].ACTION,
+          //     con[j].SPEED,
+          //     con[j].COORDINATE,
+          //     this.getFontValue(con[j].FONT),
+          //     con[j].FONT_SIZE,
+          //     this.getColorValue(con[j].COLOR),
+          //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\\n")
+          //   );
+          //   console.log(this.itemStr,"this.itemStr");
+          //   this.addItemPropertyMap(
+          //     itemId,
+          //     false,
+          //     con[j].STAY,
+          //     con[j].ACTION,
+          //     con[j].SPEED,
+          //     con[j].COORDINATE,
+          //     con[j].FONT,
+          //     con[j].FONT_SIZE,
+          //     con[j].COLOR,
+          //     con[j].CONTENT.replace(reg, "，").replace(/<br>/g, "\n")
+          //   );
+
+          // }
+          // this.addContentDisplayInfos(
+          //   "ITEM" + this.formatNum(i, 3),
+          //   i + 1,
+          //   this.itemStr
+          // );
+        }
+        this.allVmsTemplate();
+        // this.isactive = currRowId;
+        // this.infosRowClick(this.disContentList[0]);
+        // })
+        // .catch(function (error) {
+        //   that.disContentList = [];
+        //   that.loadingDialog = false;
+        //   // this.$message(error);
+      });
     },
     openQbbDrawer(item, index, type) {
       this.index_ = index;
@@ -1141,62 +1287,68 @@ export default {
         return font;
       }
     },
-    getFontSize(font,screenSize) {
-      if(!font){
-        return
+    getFontSize(font, screenSize) {
+      if (!font) {
+        return ;
       }
-      var screen = ''
-      if(!screenSize){
-        screen = this.form.devicePixel.split("*")[0];
+      let width = '';
+      let height = '';
+      if (!screenSize) {
+        width = this.form.devicePixel.split("*")[0];
+        height = this.form.devicePixel.split("*")[1];
+      } else {
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
+      }
+      if (width < 630 && height < 75) {
+        if (font.toString().length == 2) {
+          return font + "px";
+        } else {
+          return font.substring(0, 2) + "px";
+        }
+      } else {
+        if(width/630 > height/75){
+          if (font.toString().length == 2) {
+            return font/(width/630)-4 + 'px';
+          }else {
+            return font.substring(0, 2)/(width/630)-4 + "px";
+          }   
+        }else{
+          if (font.toString().length == 2) {
+            return font/(height/75)-4 + 'px';
+          }else{
+            return font.substring(0, 2)/(height/75)-4 + "px";
+          }
 
-      }else{
-        screen = screenSize.split("*")[0]
-      }
-      if (screen <= 630) {
-        var i = 630 / screen;
-       
-        if(font.toString().length == 2){
-          return font * i + "px";
-        }else {
-          return font.substring(0, 2) * i + "px";
-        }
-      }else{
-        var i = screen/630;
-        if(font.toString().length == 2){
-          return font / i + "px";
-        }else {
-          return font.substring(0, 2) / i + "px";
         }
       }
     },
-    getCoordinate1(coordinate,screenSize){
-      var screen = ''
-      if(!screenSize){
-        screen = this.form.devicePixel.split("*")[0];
-      }else{
-        screen = screenSize.split("*")[0]
+    getCoordinate(coordinate, type,screenSize) {
+      let width = '';
+      let height = '';
+      if (!screenSize) {
+        width = this.form.devicePixel.split("*")[0];
+        height = this.form.devicePixel.split("*")[1];
+      } else {
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
       }
-      if (screen <= 630) {
-        var i = 630 / screen;
-        return coordinate * i + "px";
-      }else{
-        var i = screen/630;
-        return coordinate / i + "px";
-      }
-    },
-    getCoordinate2(coordinate,screenSize){
-      var screen = ''
-      if(!screenSize){
-        screen = this.form.devicePixel.split("*")[1];
-      }else{
-        screen = screenSize.split("*")[1]
-      }
-      if (screen <= 75) {
-        var i = 75 / screen;
-        return coordinate * i + "px";
-      }else{
-        var i = screen/75;
-        return coordinate / i + "px";
+      if (width < 630 && height < 75) {
+        return coordinate + "px";
+      } else {
+        if(width/630 > height/75){
+          if(type == 'left'){
+            return coordinate/(width/630) + 'px';
+          }else if(type == 'top'){
+            return coordinate/(width/630) + 'px';
+          }
+        }else{
+          if(type == 'left'){
+            return coordinate/(height/75) + 'px';
+          }else if(type == 'top'){
+            return coordinate/(height/75) + 'px';
+          }
+        }
       }
     },
     getFontStyle(font) {
@@ -1223,7 +1375,6 @@ export default {
     },
     //  上移
     moveTop(i, item) {
-
       if (item && i) {
         let obj = { ...this.contentList[i - 1] };
         this.contentList.splice(i - 1, 1, item);
@@ -1243,9 +1394,11 @@ export default {
     dialogClose() {
       this.showEmit = false;
       setTimeout(() => {
-        // this.$forceUpdate()
-
-        getAllVmsTemplate(0).then((res) => {
+        const param = {
+          devicePixel: this.form.devicePixel,
+          category: 0,
+        };
+        getAllVmsTemplate(param).then((res) => {
           console.log(res, "情报板管理右侧查询接口");
           this.templateList = res.data;
           // console.log(this.templateList,"this.templateList");
@@ -1261,12 +1414,12 @@ export default {
     height: 100%;
     .bigTitle {
       padding: 15px 0;
-      border-bottom: 1px solid #f3f3f3;
+      border-bottom: 1px solid #05AFE3;
       margin-bottom: 10px;
     }
     .contentBox {
       width: 100%;
-      height: 730px;
+      height: calc(100% - 67px);
       overflow: auto;
       .listBox {
         height: 75px;
@@ -1294,15 +1447,18 @@ export default {
         }
 
         .con {
-          border: 1px solid #f3f3f3;
-          // height: 75px;
+          border: 1px solid #05AFE3;
+          height: 75px;
           // line-height: 75px;
           // text-align: center;
-          background: black;
+          // background: black;
           position: relative;
           width: 630px;
           margin-left: 10px;
           overflow: hidden;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           // position: absolute;
         }
         .menuBox {
@@ -1339,11 +1495,15 @@ export default {
           height: 75px;
           // line-height: 75px;
           // text-align: center;
-          border: 1px solid #f3f3f3;
-          background: black;
+          border: 1px solid #05AFE3;
+          // background: black;
           position: relative;
           width: 630px;
           float: left;
+          display: flex;
+          justify-content: center;
+          align-items: center;   
+          overflow: hidden;
         }
         .menuBox {
           display: flex;
@@ -1368,8 +1528,10 @@ export default {
         justify-content: center;
       }
       .el-collapse {
-        max-height: 680px !important;
+        max-height: 69vh !important;
         overflow: auto;
+        border-bottom: none;
+        border-top: solid 1px #05AFE3;
       }
     }
   }
@@ -1381,7 +1543,7 @@ export default {
     }
   }
 }
-::v-deep .el-collapse-item__content{
+::v-deep .el-collapse-item__content {
   line-height: normal;
 }
 </style>

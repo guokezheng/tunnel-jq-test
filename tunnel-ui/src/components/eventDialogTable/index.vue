@@ -9,10 +9,7 @@
     >
       <div class="title">
         事件预警
-        <!-- <img
-            src="../../assets/cloudControl/dialogHeader.png"
-            style="height: 30px"
-          /> -->
+
         <img
           src="../../assets/cloudControl/closeIcon.png"
           style="
@@ -66,9 +63,6 @@
                 />
               </el-col>
               <el-col :span="2">
-                <!-- <div>
-                  {{ item.simplifyName }}
-                </div> -->
                 <div v-if="searchValue == 2 || searchValue == 3">
                   {{ item.simplifyName }}
                 </div>
@@ -80,24 +74,14 @@
                 :span="20"
                 style="display: flex; justify-content: space-between"
               >
-                <div class="overflowText">{{ item.eventTitle }}</div>
+              <el-tooltip class="item" effect="dark" :content="item.frameEventTitle" placement="top">
+                <div class="overflowText">{{ item.frameEventTitle }}</div>
+              </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ getStartTime(item.startTime) }}
+                  {{ item.eventTime }}
                 </div>
               </el-col>
-              <!-- <el-col :span="2">
-                <el-button size="mini" type="text" @click="handleSee(item.id)"
-                  >查看
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleIgnore(item.id)"
-                  >忽略
-                </el-button>
-              </el-col> -->
+
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -120,127 +104,11 @@
         <p v-if="loading" class="loading">
           <span></span>
         </p>
-
-        <!-- <div class="listContent">
-          <div v-for="(item, index) of list" :key="index" >
-            <el-row style="color: white">
-              <el-col :span="2">
-                <img
-                  :src="item.iconUrl"
-                  style="width: 20px; height: 20px; transform: translateY(5px)"
-                />
-              </el-col>
-              <el-col :span="2">
-                <div v-if="searchValue != 3">
-                  {{ item.eventType.simplifyName }}
-                </div>
-                <div v-else-if="searchValue == 3">{{ item.simplifyName }}</div>
-              </el-col>
-              <el-col :span="16">
-                <div class="overflowText">{{ item.eventTitle }}</div>
-                <div style="float: right; margin-right: 16px">
-                  {{ item.startTime }}
-                </div>
-              </el-col>
-              <el-col :span="2">
-                <el-button size="mini" type="text" @click="handleSee(item.id)"
-                  >查看
-                </el-button>
-              </el-col>
-              <el-col :span="2">
-                <el-button
-                  size="mini"
-                  type="text"
-                  @click="handleIgnore(item.id)"
-                  >忽略
-                </el-button>
-              </el-col>
-            </el-row>
-            <div class="lineBT">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-          </div>
-        </div> -->
       </div>
-
-      <!-- <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-        <el-tab-pane
-          :label="item.dictLabel"
-          :name="item.dictValue"
-          v-for="(item, index) in tabList"
-          :key="index"
-        > -->
-
-      <!-- <el-table :data="item.list" class="eventTable" max-height="300" :row-class-name="tableRowClassName">
-              <el-table-column
-                label="隧道名称"
-                align="center"
-                prop="tunnels.tunnelName"
-              />
-              <el-table-column label="事件桩号" align="center" prop="stakeNum" />
-  
-              <el-table-column
-                label="事件类型"
-                align="center"
-                prop="eventType.eventType"
-              />
-              <el-table-column label="车道号" align="center" prop="laneNo" width="70px"/>
-              <el-table-column
-                label="事件经度"
-                align="center"
-                prop="eventLongitude"
-              />
-              <el-table-column
-                label="事件纬度"
-                align="center"
-                prop="eventLatitude"
-              />
-              <el-table-column label="开始时间" align="center" prop="startTime">
-                <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.startTime, '{h}:{i}:{s}') }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column label="结束时间" align="center" prop="endTime" >
-                <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.endTime, '{h}:{i}:{s}') }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="操作"
-                align="center"
-                class-name="small-padding fixed-width"
-              >
-                <template slot-scope="scope">
-                  <el-button
-                    size="mini"
-                    type="text"
-                    icon="el-icon-thumb"
-                    @click="handleSee(scope.row.id)"
-                    >查 看
-                  </el-button>
-                  <el-button
-                    size="mini"
-                    type="text"
-                    icon="el-icon-delete"
-                    @click="handleIgnore(scope.row)"
-                    >忽略
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table> -->
-      <!-- </el-tab-pane> -->
-      <!-- </el-tabs> -->
     </el-dialog>
-    <!-- <evtdialog
-        ref="evtdialog"
-        class="eventClass"
-        @fMethod="fatherMethod"
-      ></evtdialog> -->
   </div>
 </template>
-    
+
     <script>
 import { mapState } from "vuex";
 import moment from "moment";
@@ -270,7 +138,7 @@ export default {
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
-      startTime: "",
+      eventTime: "",
     };
   },
   computed: {
@@ -289,7 +157,7 @@ export default {
     },
   },
   created() {
-    this.startTime = moment().format("YYYY-MM-DD");
+    this.eventTime = moment().format("YYYY-MM-DD");
     // console.log(this.startTime)
     // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
     //   console.log(res, "事件弹窗分类数组");
@@ -348,7 +216,7 @@ export default {
             this.list = this.list.concat(res.data.data);
           });
         } else {
-          eventList(this.searchValue, this.pageNum, this.startTime).then(
+          eventList(this.searchValue, this.pageNum, this.eventTime).then(
             (res) => {
               console.log(res, "事件弹窗分类数组");
               // this.list.push(res.rows);
@@ -361,10 +229,13 @@ export default {
       }, 2000);
     },
     handleSee(id) {
-      setTimeout(() => {
-        bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      if(searchValue != 2){
+        setTimeout(() => {
+          bus.$emit("getPicId", id);
+        }, 200);
+        bus.$emit("openPicDialog");
+      }
+
     },
 
     // 忽略事件
@@ -434,7 +305,7 @@ export default {
         });
       } else {
         // 主动安全 交通事件
-        eventList(searchValue, pageNum, this.startTime).then((res) => {
+        eventList(searchValue, pageNum, this.eventTime).then((res) => {
           console.log(res, "事件弹窗分类数组");
           this.list = res.rows;
           this.total = res.total;
@@ -453,7 +324,7 @@ export default {
   },
 };
 </script>
-    
+
     <style lang="scss" scoped>
 ::v-deep .el-dialog {
   width: 100% !important;
@@ -518,7 +389,7 @@ export default {
     }
   }
   .listContent {
-    max-height: 290px;
+    max-height: 301px;
     overflow: auto;
     background: rgba($color: #6c8097, $alpha: 0.3);
     padding-left: 0;
@@ -581,6 +452,11 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
+  .el-dialog__body{
+    padding: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
   .title {
     padding-left: 20px;
     height: 30px;
@@ -657,5 +533,10 @@ export default {
     }
   }
 }
+.overflowText{
+  width:280px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 </style>
-    

@@ -10,7 +10,7 @@ ruoyi:
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
 #  profile: /Users/yqc/OpenSources/ruoyi
-  profile: E:/opt/suidao/file/uploadPath
+  profile: D:/project/tunnel/uploadPath
 #  profile: E:/
   # 获取ip地址开关
   addressEnabled: false
@@ -78,14 +78,16 @@ spring:
   # redis 配置
   redis:
     # 地址
-    host: 127.0.0.1
+    #    host: 127.0.0.1
+    host: 10.166.157.190
 #    host: 10.168.54.206
     # 端口，默认为6379
-    port: 6379
+    port: 8081
     # 数据库索引
-    database: 0
+    database: 2
     # 密码
-    password:
+    password: sdj@&868qDn
+    #    password:
     # 连接超时时间
     timeout: 10s
     lettuce:
@@ -181,17 +183,17 @@ wj:
 #两级平台权限控制：管理站、高速云
 authorize:
   name: GLZ
-#  name: GSY
+  #name: GSY
   gsy:
-    host: http://10.168.65.230:8000
+    host: http://211.168.65.230:8000
     tunnel_push_url: ${authorize.gsy.host}/platform/api/tunnelsAccept
     device_push_url: ${authorize.gsy.host}/platform/api/devicesAccept
   glz_host:
-    wzb_glz_host: http://10.168.65.231:8000
-    th_glz_host: http://10.168.65.232:8000
-    mz_glz_host: http://10.168.65.233:8000
-    yts_glz_host: http://10.168.65.234:8000
-    jly_glz_host: http://10.168.65.235:8000
+    wzb_glz_host: http://211.168.65.231:8000
+    th_glz_host: http://211.168.65.232:8000
+    mz_glz_host: http://211.168.65.233:8000
+    yts_glz_host: http://211.168.65.234:8000
+    jly_glz_host: http://211.168.65.235:8000
   #管理站部门id配置，用于管理站分发
   dept_id:
     #文祖北隧道管理站，太河隧道管理站，庙子隧道管理站，仰天山隧道管理站，九龙峪隧道管理站
@@ -202,7 +204,10 @@ authorize:
     jly_glz_dept_id: 10703
     #设备控制接口
   #control_device_url:
-
+#高速云端可控权限
+platform:
+  #control: AGREE #同意
+  control: DISAGREE #不同意
 
 #物联中台事件topic
 eventTopic: "wq_tunnelEvent"
@@ -214,7 +219,22 @@ tunnelDeviceBaseData: "tunnelDeviceBaseData"
 #物联中台隧道基础数据topic
 tunnelBaseData: "tunnelBaseData"
 
+#应急车辆第三方接口
 url:
   syn: "http://10.166.154.213:30001/equipment/CarInfo/list"
   edit: "http://10.166.154.213:30001/equipment/commandCenter/updateDispatchByDispatch"
   detail: "http://10.166.154.213:30001/equipment/deviceCar/getCarInfo"
+
+#视频平台接口调用地址、组织机构ID
+video-platform:
+  address: "http://10.166.147.60:9021"
+  deptId: "10000037"
+
+
+#系统对接配置
+opm:
+  #外部系统登录标识，默认使用admin获取token
+  externalLogin:
+    #访问标识
+    appId: jq_tunnel
+    loginName: admin

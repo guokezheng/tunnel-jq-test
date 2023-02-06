@@ -11,6 +11,7 @@ import com.tunnel.business.domain.event.SdReservePlanFile;
 import com.tunnel.business.service.dataInfo.ISdEquipmentFileService;
 import com.tunnel.business.service.event.ISdReservePlanFileService;
 import com.tunnel.business.service.event.ISdReservePlanService;
+import com.tunnel.platform.service.event.ISdStrategyService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,8 @@ public class SdReservePlanController extends BaseController {
     private ISdReservePlanFileService sdReservePlanFileService;
     @Autowired
     private ISdEquipmentFileService sdEquipmentFileService;
+    @Autowired
+    private ISdStrategyService sdStrategyService;
 
 
     /**
@@ -88,18 +91,22 @@ public class SdReservePlanController extends BaseController {
     @PostMapping(value = "/addReservePlan")
     @ApiOperation("新增预案信息")
     public Result addReservePlan(MultipartFile[] file,
-                                 @RequestParam("subareaId") Long subareaId,
+                                 @RequestParam("tunnelId") String tunnelId,
                                  @RequestParam("category") String category,
                                  @RequestParam("planTypeId") String planTypeId,
                                  @RequestParam("planDescription") String planDescription,
                                  @RequestParam("planName") String planName,
+                                 @RequestParam("direction") String direction,
+                                 @RequestParam("controlDirection") String controlDirection,
                                  HttpServletRequest request) {
         SdReservePlan sdReservePlan = new SdReservePlan();
-        sdReservePlan.setSubareaId(subareaId);
+        sdReservePlan.setTunnelId(tunnelId);
         sdReservePlan.setCategory(category);
         sdReservePlan.setPlanTypeId(Long.parseLong(planTypeId));
         sdReservePlan.setPlanName(planName);
         sdReservePlan.setPlanDescription(planDescription);
+        sdReservePlan.setDirection(direction);
+        sdReservePlan.setControlDirection(controlDirection);
         return Result.toResult(sdReservePlanService.insertSdReservePlan(file, sdReservePlan));
     }
 
@@ -143,11 +150,14 @@ public class SdReservePlanController extends BaseController {
     @ApiOperation("修改预案信息")
     public Result updateReservePlan(MultipartFile[] file,
                                     @RequestParam("id") Long id,
+                                    @RequestParam("tunnelId") String tunnelId,
                                     @RequestParam("planTypeId") Long planTypeId,
                                     @RequestParam("category") String category,
                                     @RequestParam("planDescription") String planDescription,
                                     @RequestParam("planName") String planName,
                                     @RequestParam("planFileId") String planFileId,
+                                    @RequestParam("direction") String direction,
+                                    @RequestParam("controlDirection") String controlDirection,
                                     @RequestParam("removeIds") Long[] removeIds,
                                     HttpServletRequest request
     ) {
@@ -158,6 +168,9 @@ public class SdReservePlanController extends BaseController {
         sdReservePlan.setPlanName(planName);
         sdReservePlan.setPlanDescription(planDescription);
         sdReservePlan.setPlanFileId(planFileId);
+        sdReservePlan.setDirection(direction);
+        sdReservePlan.setControlDirection(controlDirection);
+        sdReservePlan.setTunnelId(tunnelId);
         return Result.toResult(sdReservePlanService.updateSdReservePlan(file, sdReservePlan, removeIds));
     }
 
@@ -229,4 +242,19 @@ public class SdReservePlanController extends BaseController {
         return Result.success(sdReservePlanService.selectSdReservePlanByTunnelId(tunnelId));
     }
 
+    @Log(title = "预案一键执行")
+    @GetMapping(value = "/implementPlan")
+    public Result implementPlan(@RequestParam("planId") Long planId,
+                                @RequestParam("eventId") Long eventId) {
+        int result = sdStrategyService.implementPlan(planId,eventId);
+        return Result.success(result);
+    }
+
+    @Log(title = "环节执行")
+    @GetMapping(value = "/implementProcess")
+    public Result implementProcess(@RequestParam("processId") Long processId,
+                                   @RequestParam("eventId") Long eventId) {
+        int result = sdStrategyService.implementProcess(processId,eventId);
+        return Result.success(result);
+    }
 }

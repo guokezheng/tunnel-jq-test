@@ -3,6 +3,7 @@ package com.tunnel.platform.service.event;
 import com.tunnel.business.domain.event.SdStrategy;
 import com.tunnel.business.domain.event.SdStrategyModel;
 
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,8 @@ public interface ISdStrategyService {
      * @return
      */
     int strategySwitch(Long strategyId,String change);
+
+    List<Map> workTriggerInfo(String tunnelId);
 
     /**
      * 查询控制策略
@@ -123,7 +126,7 @@ public interface ISdStrategyService {
      * @param id 控制策略
      * @return 结果
      */
-    void handleStrategy(Long id);
+    void handleStrategy(Long id) throws UnknownHostException;
 
     /**
      * 手动控制策略一键处理
@@ -140,4 +143,12 @@ public interface ISdStrategyService {
      * @return 结果
      */
     void handleStrategyRollBack(Long warId);
+
+    int implementPlan(Long planId,Long eventId);
+
+    int implementProcess(Long processId,Long eventId);
+
+    int implementDisposalStrategy(Long strategyId,Long eventId);
+
+    int implementDisposalStrategyRl(Long rlId,Long eventId);
 }

@@ -53,10 +53,10 @@
         <result property="passWord" column="pass_word"/>
         <result property="tunnelId" column="tunnel_id"/>
         <association property="iotDeviceType" column="device_type_id" javaType="IotDeviceType" resultMap="deviceTypeResult" />
-        <association property="iotBrandName"  column="brand_id" javaType="IotBrand" resultMap="brandResult" />
+        <association property="iotBoardBrandName"  column="brand_id" javaType="IotBoardBrand" resultMap="brandResult" />
     </resultMap>
 	<resultMap type="IotDeviceType" id="deviceTypeResult"></resultMap>
-	<resultMap id="brandResult" type="IotBrand">
+	<resultMap id="brandResult" type="IotBoardBrand">
 		<id  property="brandId" column="brand_id" />
 		<result property="brandName" column="brand_name"   />
 	</resultMap>
@@ -67,9 +67,10 @@
                ide.firm_id, ide.purchase_date, ide.warranty_years, ide.unit_price,ide.run_status,ide.device_status,
                ide.install_date, ide.maintain_id, ide.collar_agency_id, ide.pile_number, ide.manage_agency_id,
                ide.producte_date, ide.repair_date, ide.operate_date, ide.service_life, ide.storage_date, ide.is_monitor,
-               ide.is_config, ide.local_info,device_pixel, ide.tunnel_id from iot_device ide
-        left join iot_device_access ida on ida.device_id = ide.device_id
+               ide.is_config, ide.local_info,device_pixel, ide.tunnel_id, pro.protocol_name from iot_board ide
+        left join iot_board_access ida on ida.device_id = ide.device_id
         left join sys_dept d on d.dept_id=ide.manage_agency_id
+        left join iot_board_protocol pro on ida.device_protocol_id = pro.protocol_id
     </sql>
 
     <select id="selectIotDeviceList" parameterType="SdIotDevice" resultMap="IotDeviceResult">
@@ -123,11 +124,13 @@
 		       ide.run_status,ide.device_status, ide.install_date, ide.maintain_id, ide.collar_agency_id,
 		       ide.pile_number, ide.manage_agency_id, ide.producte_date, ide.repair_date, ide.operate_date,
 		       ide.service_life, ide.storage_date, ide.is_monitor,ide.is_config, ide.local_info, ida.device_pixel, ide.tunnel_id
-		from iot_device ide
-        left join iot_device_access ida on ida.device_id = ide.device_id
+		from iot_board ide
+        left join iot_board_access ida on ida.device_id = ide.device_id
         left join sys_dept d on d.dept_id=ide.manage_agency_id
-        left join iot_brand e on e.brand_id=ide.brand_id
+        left join iot_board_brand e on e.brand_id=ide.brand_id
+        left join sd_devices dev on dev.associated_device_id = ide.device_id
         <where>
+            <if test="eqDirection != null and eqDirection != ''"> and dev.eq_direction = #{eqDirection}</if>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="brandId != null "> and brand_id = #{brandId}</if>
             <if test="routeId != null "> and route_id = #{routeId}</if>
@@ -162,8 +165,8 @@
             <if test="localInfo != null and localInfo != ''"> and local_info = #{localInfo}</if>
             <if test="devicePixel != null and devicePixel != ''"> and ida.device_pixel = #{devicePixel}</if>
             <if test="tunnelId != null and tunnelId != ''"> and ide.tunnel_id = #{tunnelId}</if>
-            <if test="params.deptId != null and params.deptId != ''">
-                AND (ide.dept_id = #{params.deptId} OR ide.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
+            <if test="manageAgencyId != null and manageAgencyId != ''">
+                AND (ide.manage_agency_id = #{manageAgencyId} OR d.dept_id IN ( SELECT dep.dept_id FROM sys_dept dep WHERE FIND_IN_SET (#{manageAgencyId},dep.ancestors) ))
             </if>
         </where>
     </select>
@@ -175,16 +178,16 @@
 
     <select id="selectDeviceAccessById" parameterType="Long" resultMap="IotDeviceResult">
      select ide.device_id, ide.device_type_id,ide.device_type_number, ida.device_ip,ida.device_port,idp.protocol_name,ida.device_pixel
-     from iot_device ide
-	 left join iot_device_access ida on ida.device_id = ide.device_id
-	 left join iot_device_protocol idp on ida.device_protocol_id = idp.protocol_id
+     from iot_board ide
+	 left join iot_board_access ida on ida.device_id = ide.device_id
+	 left join iot_board_protocol idp on ida.device_protocol_id = idp.protocol_id
 	 where ide.device_id = #{deviceId}
     </select>
 
     <select id="selectDeviceAccessByDeviceTypeId" parameterType="SdIotDevice" resultMap="IotDeviceResult">
         select ide.device_id,ida.device_ip,ida.device_port,ida.user_name,ida.pass_word,ide.route_id,ide.route_direction,ide.pile_number,ide.device_type_id
-        from iot_device ide
-        left join iot_device_access ida on ida.device_id = ide.device_id
+        from iot_board ide
+        left join iot_board_access ida on ida.device_id = ide.device_id
         <where>
             <if test="deviceTypeId != null and deviceTypeId != ''">and ide.device_type_id in (${deviceTypeId})</if>
             <if test="deviceTypeNumber != null and deviceTypeNumber != ''">and ide.device_type_number in (${deviceTypeNumber})</if>
@@ -195,7 +198,7 @@
     </select>
 
     <insert id="insertIotDevice" parameterType="SdIotDevice">
-        insert into iot_device
+        insert into iot_board
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="deviceId != null ">device_id,</if>
             <if test="deviceName != null  and deviceName != ''">device_name,</if>
@@ -279,7 +282,7 @@
     </insert>
 
     <update id="updateIotDevice" parameterType="SdIotDevice">
-        update iot_device
+        update iot_board
         <trim prefix="SET" suffixOverrides=",">
             <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
             <if test="brandId != null ">brand_id = #{brandId},</if>
@@ -325,11 +328,11 @@
     </update>
 
     <delete id="deleteIotDeviceById" parameterType="Long">
-        delete from iot_device where device_id = #{deviceId}
+        delete from iot_board where device_id = #{deviceId}
     </delete>
 
     <delete id="deleteIotDeviceByIds" parameterType="String">
-        delete from iot_device where device_id in
+        delete from iot_board where device_id in
         <foreach item="deviceId" collection="array" open="(" separator="," close=")">
             #{deviceId}
         </foreach>
@@ -339,7 +342,7 @@
         select device_id, device_name, ide.device_type_id,device_type_number,route_direction,pile_number, longitude,
         latitude,
         device_status,ir.route_number,ir.route_name
-        from iot_device ide
+        from iot_board ide
         left join iot_route ir on ide.route_id = ir.route_id
         <where>
             <if test="deviceTypeId != null">and ide.device_type_id = #{deviceTypeId}</if>
@@ -348,7 +351,7 @@
         </where>
     </select>
     <select id="selectIotDeviceAccessById" resultType="java.util.Map">
-        SELECT device_ip,device_port,device_pixel FROM iot_device_access where device_id = #{deviceId}
+        SELECT device_ip,device_port,device_pixel FROM iot_board_access where device_id = #{deviceId}
     </select>
     <select id="getVerifyWord" resultType="java.util.Map">
         SELECT F_ID,F_ILLEGAL_WORD from iot_verify_word
@@ -357,7 +360,7 @@
         select dev_id from  iot_inter_station where device_id=#{deviceId}
     </select>
 <select id="getStateStatusCount" parameterType="SdIotDevice" resultType="java.util.Map">
-SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN device_status = '1' THEN 1 ELSE 0 END) AS LX FROM iot_device
+SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN device_status = '1' THEN 1 ELSE 0 END) AS LX FROM iot_board
 <where>
     <if test="manageAgencyId !=null and manageAgencyId != ''">
         and manage_agency_id=#{manageAgencyId}
@@ -374,7 +377,7 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
 </where>
 </select>
     <select id="getDeviceNumber" parameterType="SdIotDevice" resultType="String">
-        select count(1) from iot_device <where>
+        select count(1) from iot_board <where>
         <if test="deviceStatus != null and deviceStatus != ''">and device_status = #{deviceStatus}</if>
     </where>
     </select>
@@ -386,6 +389,15 @@ SELECT SUM(CASE WHEN device_status = '0' THEN 1 ELSE 0 END) AS ZC,SUM(CASE WHEN 
     </select>
 
     <select id="getDevicesSize" resultType="hashmap">
-        SELECT device_pixel from iot_device_access GROUP BY device_pixel
+        SELECT a.device_pixel from iot_board_access a
+        left join iot_board b on a.device_id = b.device_id
+        where a.device_pixel is not null
+        <if test="tunnelId != null and tunnelId != ''">and b.tunnel_id = #{tunnelId}</if>
+        <if test="localInfo != null and localInfo != ''">and b.local_info = #{localInfo}</if>
+        GROUP BY a.device_pixel
+    </select>
+
+    <select id="selectIotDevicesByTunnelId" parameterType="String" resultType="Long">
+        SELECT device_id from iot_board where tunnel_id = #{tunnelId}
     </select>
 </mapper>

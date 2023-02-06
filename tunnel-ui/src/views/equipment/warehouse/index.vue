@@ -131,12 +131,12 @@
     :row-class-name="tableRowClassName" max-height="640"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="所属隧道" align="center" prop="tunnelName" min-width="100" show-overflow-tooltip />
-      <el-table-column label="备件名称" align="center" prop="partName" />
-      <el-table-column label="品牌" align="center" prop="brand" />
-      <el-table-column label="型号" align="center" prop="model" />
-      <el-table-column label="单位" align="center" prop="unit" />
-      <el-table-column label="生产厂家" align="center" prop="manufacturer" />
+      <el-table-column label="所属隧道" align="center" prop="tunnelName" min-width="100" show-overflow-tooltip/>
+      <el-table-column label="备件名称" align="center" prop="partName" show-overflow-tooltip/>
+      <el-table-column label="品牌" align="center" prop="brand" show-overflow-tooltip/>
+      <el-table-column label="型号" align="center" prop="model" show-overflow-tooltip/>
+      <el-table-column label="单位" align="center" prop="unit" show-overflow-tooltip/>
+      <el-table-column label="生产厂家" align="center" prop="manufacturer" show-overflow-tooltip/>
       <el-table-column label="上次采购时间" align="center" prop="lastPurchaseTime" width="180">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.lastPurchaseTime, '{y}-{m}-{d}') }}</span>
@@ -147,8 +147,8 @@
       <el-table-column label="当前库存量" align="center" prop="currentInventory" />
       <el-table-column label="管理员" align="center" prop="keeper" />
       <el-table-column label="联系方式" align="center" prop="phone" />
-      <el-table-column label="所在位置" align="center" prop="location" />
-      <el-table-column label="备注" align="center" prop="remake" />
+      <el-table-column label="所在位置" align="center" prop="location" show-overflow-tooltip/>
+      <el-table-column label="备注" align="center" prop="remake" show-overflow-tooltip/>
 <!--      <el-table-column label="备注1" align="center" prop="remake1" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -178,26 +178,26 @@
 
     <!-- 添加或修改备品备件库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="110px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="110px" style="max-height:600px;overflow:auto">
         <el-form-item label="所属隧道" prop="eqTunnelId">
           <el-select v-model="form.tunnelId" placeholder="请选择所属隧道" style="width: 100%">
             <el-option v-for="item in eqTunnelData" :key="item.tunnelId" :label="item.tunnelName" :value="item.tunnelId"/>
           </el-select>
         </el-form-item>
         <el-form-item label="备件名称" prop="partName">
-          <el-input v-model="form.partName" placeholder="请输入备件名称" />
+          <el-input v-model="form.partName" maxlength="100" placeholder="请输入备件名称" />
         </el-form-item>
         <el-form-item label="品牌" prop="brand">
-          <el-input v-model="form.brand" placeholder="请输入品牌" />
+          <el-input v-model="form.brand" maxlength="100" placeholder="请输入品牌" />
         </el-form-item>
         <el-form-item label="型号" prop="model">
-          <el-input v-model="form.model" placeholder="请输入型号" />
+          <el-input v-model="form.model" maxlength="100" placeholder="请输入型号" />
         </el-form-item>
         <el-form-item label="单位" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位" />
+          <el-input v-model="form.unit" maxlength="100" placeholder="请输入单位" />
         </el-form-item>
         <el-form-item label="生产厂家" prop="manufacturer">
-          <el-input v-model="form.manufacturer" placeholder="请输入生产厂家" />
+          <el-input v-model="form.manufacturer" maxlength="100" placeholder="请输入生产厂家" />
         </el-form-item>
         <el-form-item label="上次采购时间" prop="lastPurchaseTime">
           <el-date-picker clearable size="small"
@@ -209,25 +209,25 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="上次采购数量" prop="lastPurchaseQuantity">
-          <el-input v-model="form.lastPurchaseQuantity" placeholder="请输入上次采购数量" />
+          <el-input v-model="form.lastPurchaseQuantity"  maxlength="100" placeholder="请输入上次采购数量" />
         </el-form-item>
         <el-form-item label="上次采购单价" prop="lastPurchaseUnitPrice">
-          <el-input v-model="form.lastPurchaseUnitPrice" placeholder="请输入上次采购单价" />
+          <el-input v-model="form.lastPurchaseUnitPrice"  maxlength="100" placeholder="请输入上次采购单价" />
         </el-form-item>
         <el-form-item label="当前库存量" prop="currentInventory">
           <el-input v-model="form.currentInventory" placeholder="请输入当前库存量" />
         </el-form-item>
         <el-form-item label="管理员" prop="keeper">
-          <el-input v-model="form.keeper" placeholder="请输入管理员" />
+          <el-input v-model="form.keeper" maxlength="100" placeholder="请输入管理员" />
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
-          <el-input v-model="form.phone" placeholder="请输入联系方式" />
+          <el-input v-model="form.phone" maxlength="20" placeholder="请输入联系方式" />
         </el-form-item>
         <el-form-item label="所在位置" prop="location">
-          <el-input v-model="form.location" placeholder="请输入所在位置" />
+          <el-input v-model="form.location" maxlength="100" placeholder="请输入所在位置" />
         </el-form-item>
         <el-form-item label="备注" prop="remake">
-          <el-input v-model="form.remake" placeholder="请输入备注" />
+          <el-input v-model="form.remake" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

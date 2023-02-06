@@ -39,6 +39,29 @@
     //   padding: 0 10px;
     // }
   }
+  .specialPagination{
+    position:fixed;left: 30%;right: 50%;bottom: 40px;
+    .el-pager li{
+      background: white;
+      border: solid 1px #DCDFE6;
+      margin: 0 2px;
+      border-radius: 2px;
+      width: 30px;
+      height: 30px;
+    }
+    .el-pager li.active{
+      background-color: #00afe0 !important;
+      color: white !important;
+    }
+    .btn-next{
+      height: 30px;
+    }
+    .el-select .el-input .el-input__inner{
+      height: 30px;
+    }
+
+    
+  }
   .menuitem{
     height:52px;line-height:50px;overflow-y: auto;
     margin: 0px auto;
@@ -63,7 +86,24 @@
       background-color: #ffffff;
     }
   }
+  .el-input-number__increase, .el-input-number__decrease{
+    background: #012E51 !important;
+    color: white !important;
+    border-left: 1px solid #05AFE3 !important;
+  }
+  .el-input-number__increase{
+    border-bottom: 1px solid #05AFE3 !important;
+  }
   #app {
+    // .eventTypeButton{
+    //   border: solid 1px #65bfff;
+    //   color: #189fff;
+    //   background: #fff;
+
+    // }
+    .infoBoardBox{
+      background: #fff;
+    }
     .el-select .el-input .el-select__caret{
       height: 33px;
     }
@@ -80,7 +120,30 @@
     }
     .dispatchAss{
       background: #E2EEFE !important;
+      overflow: hidden;
+      .title{
+        color: #333;
+        border-bottom: solid 1px #E0E7ED;
+      }
+    }
+    .el-dialog{
+      .evtCarStyle{
+        border: solid 1px #cfd5e0;
 
+      }
+      .evtNum{
+        border: solid 1px #cfd5e0;
+
+      }
+      .show-left,.show-right{
+        border: 1px solid black;
+        
+      }
+      .pagination-container{
+        position: static !important;
+        margin-top: 0px !important;
+      }
+      
     }
     .el-table tr{
       background-color: #FFFFFF;
@@ -291,8 +354,8 @@
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
-        height: 72px;
-        line-height: 72px;
+        height: 7.6vh;
+        line-height: 7.6vh;
         font-size: 16px;
         border-radius: 10px;
       }
@@ -514,7 +577,7 @@
   .my-back{
     background-color: #010913;
   }
-   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:72px;}
+   .topNav_head{background-image:url(../images/head_bg2.png);background-size: 100% 100%;height:7.6vh;}
   // 工作台下拉框
   .menu-b .el-input--mini .el-input__inner{
     background: linear-gradient(177deg, #00ACED, #0079DB);
@@ -685,7 +748,7 @@
   //    color: #456c85;
   // }
   .listRow{
-      color: #003a5d;
+      color: #fff;
       line-height: 30px;
   }
   .popper-class-site {
@@ -788,17 +851,17 @@
       color: #01AAFD;
     }
     .el-dialog__header {
-      // padding: 0;
-      // padding-left: 20px;
-      // height: 30px;
-      // line-height: 30px;
-      // font-size: 14px;
+      padding: 0;
+      padding-left: 20px;
+      height: 30px;
+      line-height: 30px;
+      font-size: 14px;
       background: linear-gradient(270deg, rgba(1,149,251,0) 0%, rgba(1,149,251,0.35) 100%);
     }
     .el-dialog__title {
       color: #fff;
-      // font-size: 14px;
-      // line-height: 30px;
+      font-size: 14px;
+      line-height: 30px;
     }
     .el-dialog__body {
       color: #fff;
@@ -815,6 +878,7 @@
     }
     .el-radio {
       color: #fff;
+      padding: 5px 150px 5px 20px;
       // width: 240px;
       &:hover {
        background-color: #0A6591;
@@ -823,18 +887,20 @@
       }
     }
     .el-radio-selcted {
+      padding: 5px 220px 5px 20px;
       color: #fff;
       background-color: #0A6591;
       border: solid 1px #01AAFD;
     }
     /*select选择框的背景颜色*/
     .el-input__inner {
-      background-color: #00152B;
-      color: #fff;
-      border: solid 1px #01AAFD;
+      background-color: #fff;
+      color: #333;
+      // border: solid 1px #01AAFD;
     }
+    
     .el-date-editor .el-range-input{
-      background-color: #00152B !important;
+      background-color: #fff !important;
       color: white;
 
     }
@@ -872,7 +938,7 @@
       color: #B9D4ED !important;
     }
     .el-dialog__headerbtn {
-      
+        top: 6px ;
         background: url(../../assets/cloudControl/closeIcon.png) left no-repeat;
         background-size: 54% 50%;
     }
@@ -893,10 +959,11 @@
         width: 7px;
         height: 7px;
         background-color: #01AAFD;
-        
-        
     }
-    
+    .el-radio-button__orig-radio:checked + .el-radio-button__inner{
+      color: #fff;
+      background: #00CCFF;
+    }
     .el-button--primary{
       color: white;
       width: 88px;
@@ -922,8 +989,20 @@
       background-color: #00152B;
       color: white;
     }
+    // 表格鼠标移入行选中
+    .el-table--enable-row-hover .el-table__body tr:hover > td {
+      background-color: #326CA9;
+   }
     .el-slider__runway {
       background-color: #006784;
+    }
+    .el-tabs {
+      .el-tabs__item{
+        color: #fff;
+      }
+      .el-tabs__item.is-active{
+        color: #39ADFF;
+      }
     }
   }
   // .batch-table{
@@ -1053,7 +1132,7 @@
       color: #003a5d;
     }
     .el-dialog__header{
-      display: none;
+      // display: none;
     }
     //鼠标停留在table
     .el-table--enable-row-hover .el-table__body tr:hover > td {
@@ -1247,6 +1326,7 @@
   .bottomEventForm, .el-card{
     background-color: #fff;
     border: 1px solid #e6ebf5;
+    
   } 
   
   .tunnelBox{
@@ -1368,7 +1448,98 @@
     }
    
   }
+  // 应急调度
+  .dispatchLeft{
+    > div {
+      background: #F2F9FF;
+    }
+    .evtMessage .evtMessBox .evtMessLeft > div > div:nth-of-type(2){
+      color: #333 !important;
+    }
+     .evtMessage .evtMessBox .evtMessRight .evtMessTarget > div:nth-of-type(2){
+      color: #333;
+     }
+
+    .plan {
+      .planBox1 {
+        .el-radio{
+          color: #333;
+        }
+        .planRight{
+          color: #333;
+          border-left: solid 1px #E0E7ED !important;
+          > div:nth-of-type(2) > div:nth-of-type(2n){
+            color: #333;
+          }
+        }
+        .oneWayTraffic,.twoWayTraffic{
+          color:#333;
+          .el-radio__inner::after{
+            border: solid 2px #E0E7ED;
+          }
+        }
+        .planRight .el-radio__inner::after{
+          border: solid 2px #E0E7ED;
+        }
+      }
+    }
+    
+    
+  }
+  .dispatchRight{
+    .rightBottom {
+      .evtManagement{
+        background: #F2F9FF;
+        .DisRecords{
+          border-left: solid 1px #E0E7ED;;
+          .el-timeline .el-timeline-item .el-timeline-item__wrapper .el-timeline-item__content{
+            color: #333;
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+          }
+          
+        }
+        .IncHand .incHandBox .incHandContent {
+          .classification {
+            .type{
+              background: #fff;
+              border: 1px solid rgba(57, 173, 255, 1);
+              color: #333;
+            }
+            // .yijian{
+            //   color: #fff;
+            // }
+          }
+          .contentList{
+            background: #fff;
+            border: 1px solid rgba(57, 173, 255, 1);
+            color: #333;
+          }
+        }
+      }
+      .implement1 {
+        .eqRecord,.phone{
+          background: #F2F9FF;
   
-  
+        }
+        .eqRecord .eqRecordBox .implementContent .contentBox{
+          color: #333;
+        }
+      }
+    } 
+  } 
+  // 安全预警
+  .safeWarnStyle{
+    .contentText{
+      color: #0087e7;
+    }
+    .contentBox .video{
+      color: #0087e7;
+    }
+    .el-pagination__total{
+      
+    }
+  }
+
 }
     

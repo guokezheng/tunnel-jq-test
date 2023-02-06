@@ -13,6 +13,8 @@
             left join sd_equipment_state e on sol.operation_state = e.device_state
             left join sd_devices devc on devc.eq_id = sol.eq_id
         WHERE sol.create_time >= (NOW() - interval 12 hour)
+        AND devc.eq_type = e.state_type_id
+        AND e.state_type = '2'
         <if test="tunnelId != null and tunnelId != ''">
             and sol.tunnel_id = #{tunnelId}
         </if>

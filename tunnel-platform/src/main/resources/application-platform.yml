@@ -46,7 +46,10 @@ spring:
 #spring:
 #  kafka:
     wulian:
-      bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
+      #非正式环境使用地址，修改端口号避免推送测试数据
+      bootstrap-servers: 10.166.139.204:9093,10.166.139.205:9093,10.166.139.206:9093
+      #正式环境部署地址
+      #bootstrap-servers: 10.166.139.204:9092,10.166.139.205:9092,10.166.139.206:9092
       producer:
         # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
 #        retries: 3
@@ -80,27 +83,61 @@ spring:
   #    listener:
   #      ack-mode: manual
 #      concurrency: 3
+    huawei:
+      bootstrap-servers: 10.7.187.29:9092
+      # 生产者
+      producer:
+        # 重试次数，设置大于0的值，则客户端会将发送失败的记录重新发送
+        retries: 3
+        batch-size: 16384 #批量处理大小，16K
+        buffer-memory: 33554432 #缓冲存储大，32M
+        acks: 1
+        # 指定消息key和消息体的编解码方式
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      # 消费者
+      consumer:
+        # 消费者组
+        group-id: HuaWeiGroup
+        # 是否自动提交
+        enable-auto-commit: false
+        # 消费偏移配置
+        # none：如果没有为消费者找到先前的offset的值,即没有自动维护偏移量,也没有手动维护偏移量,则抛出异常
+        # earliest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从头开始消费
+        # latest：在各分区下有提交的offset时：从offset处开始消费；在各分区下无提交的offset时：从最新的数据开始消费
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        max-poll-records: 500
+      properties:
+        max.poll.interval.ms: 1000000
 
 sso:
   # 获取授权码
-  authCode: http://10.166.154.213:30001/auth/sso/test/code
+  authCode: http://10.166.157.192:31315/auth/sso/test/code
   # 获取Token
-  token: http://10.166.154.213:30001/auth/sso/token
+  token: http://10.166.157.192:31315/auth/sso/token
   # 获取当前登录用户信息
-  userInfo: http://10.166.154.213:30001/sys/user/info
+  userInfo: http://10.166.157.192:31315/sys/user/info
   # 获取组织机构树
-  deptTree: http://10.166.154.213:30001/sys/dept/tree/get_tree_all
+  deptTree: http://10.166.157.192:31315/sys/dept/tree/get_tree_all
   # 获取组织机构下的用户信息
-  userList: http://10.166.154.213:30001/sys/user/getUserListByCompanyAndDept
+  userList: http://10.166.157.192:31315/sys/user/getUserListByCompanyAndDept
 
   #业务中台分配应用ID
   appId: jq_tunnel_server
 
 device:
-  light:
-    sanjing:
-      base: http://47.119.189.80:8888
-      login: ${device.light.sanjing.base}/login
-      brightness: ${device.light.sanjing.base}/api/adjustBrightness
-      lineControl: ${device.light.sanjing.base}/api/lineControl
-      deviceData: ${device.light.sanjing.base}/api/getLatestDeviceData
+  hongmeng:
+    #非正式环境使用地址，修改地址信息避免推送测试数据
+    url: http://100.70.187.28:60400/qxsd-iot
+    #正式环境部署地址
+    #url: http://10.7.187.28:60400/qxsd-iot
+    dev:
+      fan: ${device.hongmeng.url}/deviceCtrl/fan/alterFanRunStatus
+      trafficLight: ${device.hongmeng.url}/deviceCtrl/trafficLight/alterTrafficLightRunStatus
+      laneIndicator: ${device.hongmeng.url}/deviceCtrl/laneIndicator/alterLaneIndicatorRunStatus
+      rollDoor: ${device.hongmeng.url}/deviceCtrl/rollDoor/alterRollDoorRunStatus
+
+

@@ -61,6 +61,14 @@ public interface SdStrategyRlMapper
     public int deleteSdStrategyRlById(Long id);
 
     /**
+     * 删除预案关联设备信息
+     *
+     * @param id 预案ID
+     * @return 结果
+     */
+    public int deleteSdStrategyRlByPlanId(Long id);
+
+    /**
      * 批量删除策略关联设备信息
      * 
      * @param ids 需要删除的数据ID
@@ -89,6 +97,7 @@ public interface SdStrategyRlMapper
      * @return
      */
     public int batchInsertStrategyRl(List<SdStrategyRl> list);
-    
-    
+
+    public List<SdStrategyRl> selectSdStrategyRlByPlanId(Long planId);
+
 }

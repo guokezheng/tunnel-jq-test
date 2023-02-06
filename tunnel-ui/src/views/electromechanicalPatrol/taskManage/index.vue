@@ -84,7 +84,7 @@
         width="180"
       >
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d}") }}</span>
+          <span>{{ parseTime(scope.row.dispatchTime, "{y}-{m}-{d} {h}:{m}:{s}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="承巡班组" align="center" prop="bzId" >
@@ -197,11 +197,12 @@
                 size="small"
                 disabled = "disabled"
                 v-model="form.dispatchTime"
-                type="date"
+                type="datetime"
                 style="width: 89%"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd hh:mm:ss"
                 placeholder="选择派单时间">
               </el-date-picker>
+
             </div>
           </div>
           <div>
@@ -233,6 +234,30 @@
             >
             </el-date-picker>
           </div>
+          <div>
+            <span>所属隧道</span>
+               <el-select v-model="form.tunnelId"  placeholder="请选择所属隧道" @change="tunnelSelectGet">
+                 <el-option
+                   v-for="item in eqTunnelData"
+                   :key="item.tunnelId"
+                   :label="item.tunnelName"
+                   :value="item.tunnelId"
+                 ></el-option>
+               </el-select>
+
+        </div>
+          <div>
+            <span>任务名称</span>
+            <el-input
+              type="text"
+              placeholder="请输入内容"
+              v-model="form.taskName"
+              style="width: 92%;margin-left: 8%;"
+            >
+            </el-input>
+
+          </div>
+
         </div>
         <div class="describe">
           <span>任务描述</span>
@@ -314,7 +339,7 @@
           ref="tree"
           accordion
           default-expand-all
-          @node-click="handleNodeClick"
+          @node-click="handleNodeClick1"
           node-key="id"
           highlight-current
         />
@@ -331,7 +356,7 @@
             />
           </el-select>
           <div class="cancel-determine">
-            <el-button @click="determine1">取消</el-button>
+            <el-button @click="cancelDetermine1">取消</el-button>
             <el-button type="primary" @click="determine1">确定</el-button>
           </div>
         </div>
@@ -352,10 +377,10 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; background: #fff"
+            style="width: 100%; "
             border
             height="358px"
-            class="dialogTable"
+            class="dialogTable allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -395,7 +420,7 @@
           ref="tree"
           accordion
           default-expand-all
-          @node-click="handleNodeClick"
+          @node-click="handleNodeClick2"
           node-key="id"
           highlight-current
         />
@@ -433,10 +458,10 @@
               background: '#fff',
               color: '#606266',
             }"
-            style="width: 100%; background: #fff"
+            style="width: 100%; "
             border
             height="358px"
-            class="dialogTable"
+            class="dialogTable allTable"
             @selection-change="onSiteInspectionSelection"
           >
             <el-table-column type="selection" width="39"></el-table-column>
@@ -465,8 +490,9 @@
       </div>
       <div class="col-1" v-for="(ite, index) in taskNews" :key="index">
         发布状态/执行状态：
-        <div class="col-card">{{ ite.publishStatus }}</div>
-        <div class="col-card">{{ ite.taskStatus }}</div>
+        <div class="col-card" v-show="ite.publishStatus">{{ ite.publishStatus }}</div>
+        <div class="col-card" v-show="ite.taskStatus">{{ ite.taskStatus }}</div>
+        <div v-show="!ite.publishStatus && !ite.taskStatus">暂无状态</div>
       </div>
       <div class="card" v-for="(item, index) in taskNews" :key="index">
         <div class="card-col" style="font-size:16px">
@@ -516,7 +542,7 @@
               {{ pat.xcTime }}
             </div>
           </div>
-          <div style="background-color: white; padding: 10px">
+          <div style=" padding: 10px">
             <div class="test">
               设备描述：<span>{{ pat.eqFaultDescription }}</span>
             </div>
@@ -588,7 +614,9 @@
           <div class="test">
             任务持续时长：
             <span>{{ tas.taskCxtime }}</span>
-            <div class="chaoshi">{{ tas.ifchaosgu }}</div>
+            <!-- <div class="chaoshi">{{ tas.ifchaosgu }}</div> -->
+            <div >{{ tas.ifchaosgu }}</div>
+
           </div>
         </div>
         <div class="card-cols">
@@ -599,13 +627,13 @@
         </div>
       </div>
       <div class="card">
-        <div class="table-row" v-if="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
+        <div class="table-row" v-show="taskOpt.length>0"  v-for="(item, index) in taskOpt" :key="index">
           <div style="width: 10%">操作记录</div>
           <div style="width: 10%">{{ item.optType }}</div>
-          <div style="width: 20%">凤凰山隧道 / {{item.optPersonId}}</div>
+          <div style="width: 20%">{{item.tunnelName}} / {{item.optPersonId}}</div>
           <div style="width: 30%">{{item.optTime}}</div>
         </div>
-        <div v-if="taskOpt.length==0">
+        <div v-show="taskOpt.length==0">
           <div   style="text-align: center;margin-top: 20px;margin-bottom: 20px">
             暂无执行记录
           </div>
@@ -652,7 +680,7 @@ import {
   getDevicesList,
   abolishList, addTask, getFaultList, updateTask,
 } from "@/api/electromechanicalPatrol/taskManage/task";
-import { getRepairRecordList } from "@/api/electromechanicalPatrol/faultManage/fault";
+import {getEquipmentInfo, getRepairRecordList} from "@/api/electromechanicalPatrol/faultManage/fault";
 import { listTunnels } from "@/api/equipment/tunnel/api";
 import { color } from "echarts";
 import {download} from "@/utils/request";
@@ -709,7 +737,7 @@ export default {
       dialogTotal: 0,
       pageNum: 1,
       pageSize: 10,
-
+      taskName:"",
       tunnelId: "",
       defaultProps: {
         value: "id",
@@ -719,6 +747,8 @@ export default {
       treeData: [],
       tableData1: [],
       tableData2: [],
+      //所属隧道
+      eqTunnelData: {},
       options1value: "", //设备清单绑定
       options2value: "", //故障清单绑定
       boxList: [],//巡检点list
@@ -792,7 +822,8 @@ export default {
         optType:"",
         optPersonId:"",
         optTime:"",
-        optDescription:""
+        optDescription:"",
+        tunnelName:""
       },
       //巡查点参数
       patrolNews: {
@@ -827,8 +858,8 @@ export default {
   created() {
     this.getBz();
     this.getList();
-
-    this.getTreeSelect();
+    this.getTunnel();
+    /*this.getTreeSelect();*/
     //外观情况
     this.getDicts("impression").then((response) => {
       this.impressionOptions = response.data;
@@ -862,6 +893,13 @@ export default {
       let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
       _this.gettime = yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss;
       return  _this.gettime;
+    },
+
+    tunnelSelectGet(e){
+        treeselect(this.form.tunnelId).then((response) => {
+          this.treeData = response.data;
+          console.log(response.data, "隧道部门树");
+        });
     },
 
     //  上移
@@ -913,7 +951,17 @@ export default {
     // 获取巡检点弹窗表格选中项
     onSiteInspectionSelection(selection) {
       this.dialogSelection = selection;
-      console.log("=============="+this.dialogSelection, "this.dialogSelection");
+      console.log(this.dialogSelection, "this.dialogSelection");
+    },
+    /** 所属隧道 */
+    getTunnel() {
+      if(this.$cache.local.get("manageStation") == "1"){
+        this.queryParams.tunnelId = this.$cache.local.get("manageStationSelect")
+      }
+      listTunnels(this.queryParams).then((response) => {
+        console.log(response.rows, "所属隧道列表");
+        this.eqTunnelData = response.rows;
+      });
     },
     // 获取设备table
     getTable(deviceType) {
@@ -921,17 +969,15 @@ export default {
         this.deviceType = deviceType
       }
       getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
-        console.log(res, "获取设备table");
-        console.log(this.boxList, "boxList");
-
         this.tableData1 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+          //console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
             this.tableData1.forEach((item) => {
               this.boxList.forEach((row) => {
-                if (item.eq_name == row.eq_name) {
+                const eq_id = row.eq_id.slice(0, -2);
+                if (item.eq_id == eq_id) {
                   this.$nextTick(() => {
                     this.$refs.multipleTable1.toggleRowSelection(item, true);
                   });
@@ -955,11 +1001,12 @@ export default {
         this.tableData2 = res.rows;
         this.dialogTotal = res.total;
         if (this.boxList != []) {
-          console.log(this.boxList[0].eq_type, deviceType, "0000000000");
+         // console.log(this.boxList[0].eq_type, deviceType, "0000000000");
           // if (this.boxList[0].eq_type == deviceType) {
             this.tableData2.forEach((item) => {
               this.boxList.forEach((row) => {
-                if (item.eq_name == row.eq_name) {
+                const eq_id = row.eq_id.slice(0, -2);
+                if (item.eq_id == eq_id) {
                   this.$nextTick(() => {
                     this.$refs.multipleTable2.toggleRowSelection(item, true);
                   });
@@ -972,10 +1019,59 @@ export default {
         }
       });
     },
-    //节点单击事件
-    handleNodeClick(data) {
-      console.log(data, "节点单击事件");
+    //设备节点单击事件
+    handleNodeClick1(data) {
       this.tunnelId = data.id;
+
+      getDevicesList(this.tunnelId, this.deviceType,this.pageNum,this.pageSize).then((res) => {
+        console.log(res, "获取设备table");
+        console.log(this.boxList, "boxList");
+
+        this.tableData1 = res.rows;
+        this.dialogTotal = res.total;
+        if (this.boxList != []) {
+          // if (this.boxList[0].eq_type == deviceType) {
+          this.tableData1.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable1.toggleRowSelection(item, true);
+                });
+              }
+            });
+          });
+          // }
+        } else {
+          this.$refs.multipleTable1.clearSelection();
+        }
+      });
+    },
+    //故障节点单击事件
+    handleNodeClick2(data) {
+      this.tunnelId = data.id;
+      getFaultList(this.tunnelId, this.faultLevel,this.pageNum,this.pageSize).then((res) => {
+        console.log(res, "获取故障table");
+        console.log("==================getFaultListthis.boxList=="+this.boxList, "boxList");
+        this.tableData2 = res.rows;
+        this.dialogTotal = res.total;
+        if (this.boxList != []) {
+          // if (this.boxList[0].eq_type == deviceType) {
+          this.tableData2.forEach((item) => {
+            this.boxList.forEach((row) => {
+              const eq_id = row.eq_id.slice(0, -2);
+              if (item.eq_id == eq_id) {
+                this.$nextTick(() => {
+                  this.$refs.multipleTable2.toggleRowSelection(item, true);
+                });
+              }
+            });
+          });
+          // }
+        } else {
+          this.$refs.multipleTable2.clearSelection();
+        }
+      });
     },
     // 筛选节点
     filterNode(value, data) {
@@ -1106,12 +1202,13 @@ export default {
       });
     },
     /** 隧道部门树 */
-    getTreeSelect() {
+    /*getTreeSelect() {
+      alert(this.form.tunnelId);
       treeselect().then((response) => {
         this.treeData = response.data;
         console.log(response.data, "隧道部门树");
       });
-    },
+    },*/
 
     // 表单重置
     reset() {
@@ -1128,6 +1225,7 @@ export default {
         walkerId: null,
         taskEndtime: null,
         taskCxtime: null,
+        taskName:"",
         siteDescription: null,
         createBy: null,
         createTime: null,
@@ -1149,7 +1247,15 @@ export default {
     },
     show1() {
      //this.tableData1 = null
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return this.$modal.msgWarning('请选择所属隧道')
+      }
+     this.dialogSelection = []
+    //  this.$refs.multipleTable1.toggleRowSelection(item, true);
       this.isShow1 = true;
+      this.tunnelId = this.form.tunnelId;
+      this.options1value = "0"
+      this.getTable(this.options1value)
       //点击确定，数据还原
       if(this.openCz){
         this.options1value = "0"
@@ -1163,7 +1269,13 @@ export default {
     },
     show2() {
       //this.tableData1 = null
+      if(typeof(this.form.tunnelId)=="undefined"){
+        return this.$modal.msgWarning('请选择所属隧道')
+      }
       this.isShow2 = true;
+      this.options2value = "0"
+      this.tunnelId = this.form.tunnelId;
+      this.getGzTable(this.options2value)
       if(this.openGz){
         this.options2value = "0"
         this.tableData2 = null
@@ -1173,14 +1285,18 @@ export default {
       }
       this.openGz = false;
     },
+    cancelDetermine1(){
+      this.dialogSelection = []
+      this.isShow1 = false;
 
+    },
     determine1() {
       this.isShow1 = false;
       this.dialogSelection.forEach((item) =>{
         item.eq_id= item.eq_id+"_1";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
-      this.dialogSelection = "";
+      this.dialogSelection = [];
     },
     determine2() {
       this.isShow2 = false;
@@ -1188,7 +1304,7 @@ export default {
         item.eq_id= item.eq_id+"_2";
       })
       this.boxList = this.unique(this.boxList.concat(this.dialogSelection));
-      this.dialogSelection = "";
+      this.dialogSelection = [];
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -1322,10 +1438,19 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","2");
       this.fileData.append("taskStatus","0");
+      this.fileData.append("tunnelId", this.form.tunnelId);
+      this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
       if(this.form.bzId==-1||this.form.bzId==""||this.form.bzId==null){
         this.$modal.msgWarning("请指派巡查班组");
         return
+      }
+      //判断两个字段是否填写
+      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
+        return this.$modal.msgWarning('请选择所属隧道')
+      }
+      if (this.form.taskName == "") {
+        return this.$modal.msgWarning('请填写任务名称')
       }
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
@@ -1357,7 +1482,9 @@ export default {
         }
 
       }
-      this.isClick = true;
+      setTimeout(() => {
+        this.isClick = true;
+      }, 500)
     },
 //废止
     abolish() {
@@ -1401,11 +1528,19 @@ export default {
       this.fileData.append("taskDescription",this.form.taskDescription);
       this.fileData.append("publishStatus","0");
       this.fileData.append("taskStatus","");
-
+      this.fileData.append("tunnelId", this.form.tunnelId);
+      this.fileData.append("taskName", this.form.taskName);
       //判断是否选择点
       if(this.boxList==[]||this.boxList==""){
         this.$modal.msgWarning("请选择巡检点或故障点");
         return
+      }
+      //判断两个字段是否填写
+      if (this.form.tunnelId == ""||this.form.tunnelId == -1||this.form.tunnelId==null) {
+        return this.$modal.msgWarning('请选择隧道名称')
+      }
+      if (this.form.taskName == "") {
+        return this.$modal.msgWarning('请填写任务名称')
       }
       this.boxList.forEach((item) =>{
         this.boxIds = this.boxIds+(item.eq_id+",");
@@ -1432,7 +1567,9 @@ export default {
         }
 
       }
-      this.isClick = true;
+        setTimeout(() => {
+          this.isClick = true;
+        }, 500)
     },
   },
 };
@@ -1715,7 +1852,7 @@ h1 {
     .show-left,
     .show-right {
       height: 478px;
-      border: 1px solid black;
+      // border: 1px solid black;
       border-radius: 3px;
       .show-title {
         font-weight: 400;
@@ -1724,7 +1861,7 @@ h1 {
         color: #5e7f89;
         border-radius: 3px;
         line-height: 30px;
-        border-bottom: 1px solid rgb(204, 204, 204);
+        // border-bottom: 1px solid rgb(204, 204, 204);
         padding-left: 10px;
       }
     }
@@ -1765,27 +1902,27 @@ h1 {
         .el-table {
           font-size: 12px;
         }
-        .el-table--enable-row-hover .el-table__body tr:hover > td {
-          background: #fff !important;
-        }
-        .pagination-container {
-          position: static !important;
-          margin-top: 0px !important;
-          .el-pagination__total,
-          .el-pagination__jump {
-            color: #606266 !important;
-          }
-          .el-input__inner {
-            background: #fff !important;
-            color: #606266 !important;
-          }
-          .el-pagination.is-background .btn-prev,
-          .el-pagination.is-background .btn-next,
-          .el-pagination.is-background .el-pager li {
-            background: #fff !important;
-            color: #606266 !important;
-          }
-        }
+        // .el-table--enable-row-hover .el-table__body tr:hover > td {
+        //   background: #fff !important;
+        // }
+        // .pagination-container {
+        //   position: static !important;
+        //   margin-top: 0px !important;
+        //   .el-pagination__total,
+        //   .el-pagination__jump {
+        //     color: #606266 !important;
+        //   }
+        //   .el-input__inner {
+        //     background: #fff !important;
+        //     color: #606266 !important;
+        //   }
+        //   .el-pagination.is-background .btn-prev,
+        //   .el-pagination.is-background .btn-next,
+        //   .el-pagination.is-background .el-pager li {
+        //     background: #fff !important;
+        //     color: #606266 !important;
+        //   }
+        // }
       }
     }
   }

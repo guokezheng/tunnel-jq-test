@@ -107,7 +107,7 @@ public interface ISdTaskListService
      * @param sdTaskList
      * @return
      */
-    List<SdTaskList> getTaskList(SdTaskList sdTaskList);
+    List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime);
 
     /**
      * 查询任务关联的巡查点数量
@@ -164,4 +164,17 @@ public interface ISdTaskListService
      * @return
      */
     int savePatrol(SdPatrolList sdPatrolList);
+
+    /**
+     * 获取任务状态
+     * @return
+     */
+    List<SdTaskList> getTaskStatus();
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    List<SdTaskList> getTaskToDo(String deptId);
 }

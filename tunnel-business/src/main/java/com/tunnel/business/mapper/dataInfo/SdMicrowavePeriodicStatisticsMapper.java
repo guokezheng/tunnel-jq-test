@@ -3,6 +3,7 @@ package com.tunnel.business.mapper.dataInfo;
 import com.tunnel.business.domain.dataInfo.SdMicrowavePeriodicStatistics;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 车流量信息Mapper接口
@@ -59,4 +60,18 @@ public interface SdMicrowavePeriodicStatisticsMapper
      * @return 结果
      */
     public int deleteSdMicrowavePeriodicStatisticsByStatisticsIds(Long[] statisticsIds);
+
+    /**
+     * 查询车流量信息
+     * @param statistics
+     * @return
+     */
+    SdMicrowavePeriodicStatistics getStatisticsNewList(SdMicrowavePeriodicStatistics statistics);
+
+    /**
+     * 查询24小时之内车流量信息
+     * @param statistics
+     * @return
+     */
+    List<Map<String, String>> getStatisticsRealList(SdMicrowavePeriodicStatistics statistics);
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 
 /**
  * 情报板内容发布日志对象 iot_board_release_log
- * 
+ *
  * @author wangyaozong
  * @date 2020-06-01
  */
@@ -44,66 +44,126 @@ public class IotBoardReleaseLog extends BaseEntity
     @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date releaseTime;
 
-    public void setId(Long id) 
+    /** 发布状态：0：正常，1：失败 */
+    @Excel(name = "发布状态：0：正常，1：失败")
+    private String releaseStatus;
+
+    /** 发布机构 */
+    @Excel(name = "发布机构")
+    private String releaseDeptName;
+
+    /** 发布机构 */
+    @Excel(name = "发布机构")
+    private Long releaseDeptId;
+
+    /** 发布用户 */
+    @Excel(name = "发布用户")
+    private String releaseUserName;
+
+    /** 发布用户 */
+    @Excel(name = "发布用户")
+    private String releaseUserId;
+
+    public String getReleaseStatus() {
+        return releaseStatus;
+    }
+
+    public void setReleaseStatus(String releaseStatus) {
+        this.releaseStatus = releaseStatus;
+    }
+
+    public String getReleaseDeptName() {
+        return releaseDeptName;
+    }
+
+    public void setReleaseDeptName(String releaseDeptName) {
+        this.releaseDeptName = releaseDeptName;
+    }
+
+    public Long getReleaseDeptId() {
+        return releaseDeptId;
+    }
+
+    public void setReleaseDeptId(Long releaseDeptId) {
+        this.releaseDeptId = releaseDeptId;
+    }
+
+    public String getReleaseUserName() {
+        return releaseUserName;
+    }
+
+    public void setReleaseUserName(String releaseUserName) {
+        this.releaseUserName = releaseUserName;
+    }
+
+    public String getReleaseUserId() {
+        return releaseUserId;
+    }
+
+    public void setReleaseUserId(String releaseUserId) {
+        this.releaseUserId = releaseUserId;
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setDeviceId(String deviceId) 
+    public void setDeviceId(String deviceId)
     {
         this.deviceId = deviceId;
     }
 
-    public String getDeviceId() 
+    public String getDeviceId()
     {
         return deviceId;
     }
-    public void setDeviceName(String deviceName) 
+    public void setDeviceName(String deviceName)
     {
         this.deviceName = deviceName;
     }
 
-    public String getDeviceName() 
+    public String getDeviceName()
     {
         return deviceName;
     }
-    public void setReleaseOldContent(String releaseOldContent) 
+    public void setReleaseOldContent(String releaseOldContent)
     {
         this.releaseOldContent = releaseOldContent;
     }
 
-    public String getReleaseOldContent() 
+    public String getReleaseOldContent()
     {
         return releaseOldContent;
     }
-    public void setReleaseNewContent(String releaseNewContent) 
+    public void setReleaseNewContent(String releaseNewContent)
     {
         this.releaseNewContent = releaseNewContent;
     }
 
-    public String getReleaseNewContent() 
+    public String getReleaseNewContent()
     {
         return releaseNewContent;
     }
-    public void setReleaseBy(String releaseBy) 
+    public void setReleaseBy(String releaseBy)
     {
         this.releaseBy = releaseBy;
     }
 
-    public String getReleaseBy() 
+    public String getReleaseBy()
     {
         return releaseBy;
     }
-    public void setReleaseTime(Date releaseTime) 
+    public void setReleaseTime(Date releaseTime)
     {
         this.releaseTime = releaseTime;
     }
 
-    public Date getReleaseTime() 
+    public Date getReleaseTime()
     {
         return releaseTime;
     }

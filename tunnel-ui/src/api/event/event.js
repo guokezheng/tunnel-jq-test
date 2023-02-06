@@ -105,12 +105,12 @@ export function getSubareaByStakeNum(query) {
 }
 
 // 一键恢复
-export function performRecovery(eventId) {
-  return request({
-    url: '/event/performRecovery?eventId=' + eventId,
-    method: 'get',
-  })
-}
+// export function performRecovery(eventId) {
+//   return request({
+//     url: '/event/performRecovery?eventId=' + eventId,
+//     method: 'get',
+//   })
+// }
 
 
 // 一进页面获取已执行数据
@@ -152,3 +152,120 @@ export function eventPopFault(pageNum) {
     method: 'get',
   })
 }
+
+// 获取车道数
+export function getTunnelLane(tunnelId) {
+  return request({
+    url: '/tunnels/' + tunnelId,
+    method: 'get',
+  })
+}
+
+//  处置记录
+export function eventFlowList(query) {
+  return request({
+    url: '/eventFlow/list',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 事件处置
+export function getHandle(query) {
+  return request({
+    url: '/event/getHandle',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 事件处置 下发（改状态）
+export function updateHandle(query) {
+  return request({
+    url: '/event/updateHandle',
+    method: 'get',
+    params: query
+  })
+}
+
+// 关联事件
+export function getRelation(query) {
+  return request({
+    url: '/event/getRelation',
+    method: 'get',
+    params: query
+  })
+}
+
+// 关联事件
+export function getAccidentPoint(query) {
+  return request({
+    url: '/event/getAccidentPoint',
+    method: 'get',
+    params: query
+  })
+}
+
+// 一键 下发设备
+export function implementPlan(planId,eventId) {
+  return request({
+    url: '/plan/implementPlan?planId='+planId+'&eventId='+eventId,
+    method: 'get',
+  })
+}
+
+// 单点 下发设备
+export function implementProcess(processId,eventId) {
+  return request({
+    url: '/plan/implementProcess?processId='+ processId + '&eventId=' + eventId,
+    method: 'get',
+  })
+}
+
+// 一键 下发设备 交通事件
+export function performRecovery(eventId,handleId) {
+  return request({
+    url: '/event/performRecovery?eventId='+eventId+'&handleId='+handleId,
+    method: 'get',
+  })
+}
+
+export function getReserveId(query) {
+  return request({
+    url: '/event/getReserveId',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
+// 主动安全 处置
+export function getSafetyHandle(query) {
+  return request({
+    url: '/event/getSafetyHandle',
+    method: 'get',
+    params: query
+
+  })
+}
+
+// 主动安全 一键
+export function implementDisposalStrategy(eventId,strategyId) {
+  return request({
+    url: '/strategy/implementDisposalStrategy?eventId='+eventId+'&strategyId='+strategyId,
+    method: 'get',
+  })
+}
+
+// 主动安全 单点下发
+export function implementDisposalStrategyRl(eventId,rlId) {
+  return request({
+    url: '/strategy/implementDisposalStrategyRl?eventId='+eventId+'&rlId='+rlId,
+    method: 'get',
+  })
+}
+
+

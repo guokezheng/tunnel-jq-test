@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * 操作日志Controller
- * 
+ *
  * @author yanghousheng
  * @date 2020-09-03
  */
@@ -33,7 +33,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 查询操作日志列表
      */
-    @PreAuthorize("@ss.hasPermi('system:log:list')")
+//    @PreAuthorize("@ss.hasPermi('system:log:list')")
     @GetMapping("/list")
     public TableDataInfo list(SdOperationLog sdOperationLog)
     {
@@ -45,7 +45,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 导出操作日志列表
      */
-    @PreAuthorize("@ss.hasPermi('system:log:export')")
+//    @PreAuthorize("@ss.hasPermi('system:log:export')")
     @Log(title = "操作日志", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SdOperationLog sdOperationLog) throws IOException
@@ -58,7 +58,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 获取操作日志详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:log:query')")
+//    @PreAuthorize("@ss.hasPermi('system:log:query')")
     @GetMapping(value = "/{id}")
     public AjaxResultb getInfo(@PathVariable("id") Long id)
     {
@@ -68,7 +68,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 新增操作日志
      */
-    @PreAuthorize("@ss.hasPermi('system:log:add')")
+//    @PreAuthorize("@ss.hasPermi('system:log:add')")
     @Log(title = "操作日志", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SdOperationLog sdOperationLog)
@@ -79,7 +79,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 修改操作日志
      */
-    @PreAuthorize("@ss.hasPermi('system:log:edit')")
+//    @PreAuthorize("@ss.hasPermi('system:log:edit')")
     @Log(title = "操作日志", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SdOperationLog sdOperationLog)
@@ -90,7 +90,7 @@ public class SdOperationLogController extends BaseController
     /**
      * 删除操作日志
      */
-    @PreAuthorize("@ss.hasPermi('system:log:remove')")
+//    @PreAuthorize("@ss.hasPermi('system:log:remove')")
     @Log(title = "操作日志", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

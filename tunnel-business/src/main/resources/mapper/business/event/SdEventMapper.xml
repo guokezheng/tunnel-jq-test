@@ -31,6 +31,7 @@
         <result property="endTime" column="end_time"/>
         <result property="stationId" column="station_id"/>
         <result property="stakeNum" column="stake_num"/>
+        <result property="stakeEndNum" column="stake_end_num"/>
         <result property="remark" column="remark"/>
         <result property="policePhone" column="police_phone"/>
         <result property="wreckerPhone" column="wrecker_phone"/>
@@ -43,6 +44,9 @@
         <result property="tunnelStationName" column="tunnel_station_name"/>
         <result property="slightInjured" column="slight_injured"/>
         <result property="eventSource" column="event_source"/>
+        <result property="tunnelName" column="tunnel_name"/>
+        <result property="simplifyName" column="simplify_name"/>
+        <result property="frameEventTitle" column="frameEventTitle"/>
         <association property="eventType" column="id" javaType="SdEventType" resultMap="eventTypeResult"/>
         <association property="tunnels" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
     </resultMap>
@@ -67,68 +71,72 @@
 
     <select id ="eventPopAll" resultType="Map" parameterType="string">
        SELECT
-	id,
-	eventTitle,
-	iconUrl,
-	simplifyName,
-	startTime
-FROM
-	(
-							SELECT
-								id,
-								event_title AS eventTitle,
-								icon_url AS iconUrl,
-								simplify_name AS simplifyName,
-								DATE_FORMAT( start_time, '%Y-%m-%d %H:%i:%s' ) AS startTime
-							FROM
-								(
-							SELECT
-								A.id,
-								A.event_title,
-								B.icon_url,
-								B.simplify_name,
-								A.start_time
-							FROM
-								sd_event A
-								LEFT JOIN sd_event_type B ON A.event_type_id = B.id
-							WHERE
-								A.event_state = '3'
-								AND TO_DAYS( A.start_time ) = TO_DAYS( NOW( ) )
-								) a
-								UNION
-							SELECT
-								id,
-								eventTitle,
-								iconUrl,
-								simplifyName,
-								DATE_FORMAT( startTime, '%Y-%m-%d %H:%i:%s' )
-							FROM
-								(
-							SELECT
-								fault.id,
-								concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS eventTitle,
-								fault.create_time AS startTime,
-								'故障' AS simplifyName,
-								( SELECT icon_url FROM sd_event_type WHERE id = '200' ) AS iconUrl
-							FROM
-								sd_fault_list fault
-								LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
-								LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
-								LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
-								AND DATA.dict_type = 'sd_direction'
-								LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
-								AND type.dict_type = 'fault_type'
-							WHERE
-								fault.fault_status = '0'
-								AND TO_DAYS( fault.create_time ) = TO_DAYS( NOW( ) )
-								) b
-	) AS MERGE
-ORDER BY MERGE.startTime DESC
-	LIMIT ${subIndex}
+            id,
+            frameEventTitle,
+            iconUrl,
+            simplifyName,
+            eventTime
+        FROM
+            (
+				SELECT
+					id,
+					event_title AS frameEventTitle,
+					icon_url AS iconUrl,
+					simplify_name AS simplifyName,
+					DATE_FORMAT( event_time, '%Y-%m-%d %H:%i:%s' ) AS eventTime
+				FROM
+					(
+                        SELECT
+                            A.id,
+                            CONCAT( t.tunnel_name, ' ', sdd.dict_label, ',', b.simplify_name ) AS event_title,
+                            B.icon_url,
+                            B.simplify_name,
+                            A.event_time
+                        FROM
+                            sd_event A
+                            LEFT JOIN sd_event_type B ON A.event_type_id = B.id
+                            LEFT JOIN sd_tunnels t ON a.tunnel_id = t.tunnel_id
+                            LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
+                                AND sdd.dict_type = 'sd_direction'
+                        WHERE
+                            A.event_state = '3'
+                            AND TO_DAYS( A.event_time ) = TO_DAYS( NOW( ) )
+                            AND B.is_usable = '1'
+                    ) a
+					UNION
+				SELECT
+					id,
+                    frameEventTitle,
+					iconUrl,
+					simplifyName,
+					DATE_FORMAT( eventTime, '%Y-%m-%d %H:%i:%s' ) AS eventTime
+				FROM
+					(
+                        SELECT
+                            fault.id,
+                            concat( tunnel.tunnel_name, DATA.dict_label, devices.eq_name, type.dict_label ) AS frameEventTitle,
+                            fault.fault_fxtime AS eventTime,
+                            '故障' AS simplifyName,
+                            ( SELECT icon_url FROM sd_event_type WHERE id = '200' AND is_usable = '1' ) AS iconUrl
+                        FROM
+                            sd_fault_list fault
+                            LEFT JOIN sd_tunnels tunnel ON fault.tunnel_id = tunnel.tunnel_id
+                            LEFT JOIN sd_devices devices ON devices.eq_id = fault.eq_id
+                            LEFT JOIN sys_dict_data DATA ON DATA.dict_value = devices.eq_direction
+                            AND DATA.dict_type = 'sd_direction'
+                            LEFT JOIN sys_dict_data type ON type.dict_value = fault.fault_type
+                            AND type.dict_type = 'fault_type'
+                        WHERE
+                            fault.fault_status = '0'
+                            AND TO_DAYS( fault.fault_fxtime ) = TO_DAYS( NOW( ) )
+					) b
+            ) AS MERGE
+        ORDER BY MERGE.eventTime DESC
+            LIMIT ${subIndex}
     </select>
 
     <select id="eventPopFault" resultType="hashmap" parameterType="string">
-        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as eventTitle,fault.create_time as startTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200') as iconUrl from sd_fault_list fault
+        select fault.id,concat(tunnel.tunnel_name,data.dict_label,devices.eq_name,type.dict_label) as frameEventTitle,fault.fault_fxtime as eventTime,'故障' as simplifyName,(select icon_url from sd_event_type where id = '200' AND is_usable = '1') as iconUrl from sd_fault_list fault
             left join sd_tunnels tunnel on fault.tunnel_id = tunnel.tunnel_id
             left join sd_devices devices on devices.eq_id = fault.eq_id
             left join sys_dict_data data on data.dict_value = devices.eq_direction and data.dict_type='sd_direction'
@@ -147,29 +155,33 @@ ORDER BY MERGE.startTime DESC
                     sd_fault_list
                 WHERE
                     fault_status = '0'
-                  AND TO_DAYS( create_time ) = TO_DAYS(
+                  AND TO_DAYS( fault_fxtime ) = TO_DAYS(
                         NOW()) ) as num
         FROM
             sd_event
         WHERE
             event_state = '3'
-          AND TO_DAYS( start_time ) = TO_DAYS(
+          AND TO_DAYS( event_time ) = TO_DAYS(
                 NOW())
     </select>
 
     <select id="selectSdEventList" parameterType="SdEvent" resultMap="SdEventResult">
         select A.id, A.tunnel_id, A.event_type_id, A.event_title,A.event_source, A.event_time, A.event_state, A.event_grade,
         A.event_location, A.event_death, A.event_injured,A.slight_injured, A.event_description, A.reserve_plan_id,
-        A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.start_time, A.end_time,A.video_url,
+        A.flow_id, A.warning_id,A.station_id, A.lane_no,A.longitude, A.latitude, A.stake_num, A.stake_end_num, A.start_time, A.end_time,A.video_url,
         A.create_by, A.create_time, A.update_by, A.update_time,A.direction,A.small_car_num,A.truck_num,A.passenger_car_num,A.tanker_num,
         A.car_owner_phone, A.wrecker_phone,A.police_phone,A.remark,
-        B.event_type,C.tunnel_name, C.tunnel_station_name,B.icon_url,B.simplify_name
+        B.event_type,C.tunnel_name, C.tunnel_station_name,B.icon_url,B.simplify_name,
+        CONCAT( c.tunnel_name, ' ', sdd.dict_label, ',', B.simplify_name ) AS frameEventTitle
         from sd_event A
         left join sd_event_type B
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
+        LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
+        AND sdd.dict_type = 'sd_direction'
         <where>
             1=1
+            AND B.is_usable = '1'
             <if test="id != null  and id != ''">and A.id = #{id}</if>
             <!-- <if test="tunnelStationName != null  and tunnelStationName != ''">and C.id = #{id}</if>-->
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>
@@ -186,10 +198,10 @@ ORDER BY MERGE.startTime DESC
                 #{eventDescription}
             </if>
             <if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
-                and date_format(A.start_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
+                and date_format(A.event_time,'%y%m%d') &gt;= date_format(#{startTime},'%y%m%d')
             </if>
             <if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
-                and date_format(A.end_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+                and date_format(A.event_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
             </if>
             <if test="params.deptId != null and params.deptId != ''">
                 AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
@@ -251,7 +263,11 @@ ORDER BY MERGE.startTime DESC
             <if test="startTime != null">start_time,</if>
             <if test="endTime != null">end_time,</if>
             <if test="stakeNum != null">stake_num,</if>
+            <if test="stakeEndNum != null">stake_end_num,</if>
             <if test="laneNo != null">lane_no,</if>
+            <if test="videoUrl != null">video_url,</if>
+            <if test="eventLongitude != null">longitude,</if>
+            <if test="eventLatitude != null">latitude,</if>
             <if test="eventSource != null">event_source,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -286,7 +302,11 @@ ORDER BY MERGE.startTime DESC
             <if test="startTime != null">#{startTime},</if>
             <if test="endTime != null">#{endTime},</if>
             <if test="stakeNum != null">#{stakeNum},</if>
+            <if test="stakeEndNum != null">#{stakeEndNum},</if>
             <if test="laneNo != null">#{laneNo},</if>
+            <if test="videoUrl != null">#{videoUrl},</if>
+            <if test="eventLongitude != null">#{eventLongitude},</if>
+            <if test="eventLatitude != null">#{eventLatitude},</if>
             <if test="eventSource != null">#{eventSource},</if>
         </trim>
     </insert>
@@ -322,6 +342,11 @@ ORDER BY MERGE.startTime DESC
             <if test="direction != null">direction = #{direction},</if>
             <if test="slightInjured != null">slight_injured = #{slightInjured},</if>
             <if test="eventSource != null">event_source = #{eventSource},</if>
+            <if test="stakeNum != null">stake_num = #{stakeNum},</if>
+            <if test="stakeEndNum != null">stake_end_num = #{stakeEndNum},</if>
+            <if test="laneNo != null">lane_no = #{laneNo},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
         </trim>
         where id = #{id}
     </update>
@@ -372,6 +397,7 @@ ORDER BY MERGE.startTime DESC
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
         where
         TO_DAYS(A.start_time) = TO_DAYS(NOW())
+        AND B.is_usable = '1'
         <if test="eventState != null  and eventState != ''">and A.event_state = #{eventState}</if>
         <if test="params.deptId != null and params.deptId != ''">
             AND (C.dept_id = #{params.deptId} OR C.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{params.deptId},d.ancestors) ))
@@ -394,6 +420,7 @@ ORDER BY MERGE.startTime DESC
         <foreach collection="list" item="eventId" open="(" separator="," close=")">
             #{eventId}
         </foreach>
+        AND B.is_usable = '1'
     </select>
 
 </mapper>

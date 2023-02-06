@@ -22,6 +22,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
+        <result property="tunnelId"    column="tunnel_id"    />
+        <result property="taskName"    column="task_name"    />
     </resultMap>
 
     <sql id="selectSdTaskListVo">
@@ -61,6 +63,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into sd_task_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
+            <if test="taskName != null">task_name,</if>
+            <if test="tunnelId != null">tunnel_id,</if>
             <if test="zzjgId != null">zzjg_id,</if>
             <if test="endPlantime != null">end_plantime,</if>
             <if test="dispatcher != null">dispatcher,</if>
@@ -80,6 +84,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
+            <if test="taskName != null">#{taskName},</if>
+            <if test="tunnelId != null">#{tunnelId},</if>
             <if test="zzjgId != null">#{zzjgId},</if>
             <if test="endPlantime != null">#{endPlantime},</if>
             <if test="dispatcher != null">#{dispatcher},</if>
@@ -103,6 +109,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sd_task_list
         <trim prefix="SET" suffixOverrides=",">
             <if test="zzjgId != null">zzjg_id = #{zzjgId},</if>
+            <if test="tunnelId != null">tunnel_id = #{tunnelId},</if>
+            <if test="taskName != null">task_name = #{taskName},</if>
             <if test="endPlantime != null">end_plantime = #{endPlantime},</if>
             <if test="dispatcher != null">dispatcher = #{dispatcher},</if>
             <if test="dispatchTime != null">dispatch_time = #{dispatchTime},</if>
@@ -131,9 +139,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <select id="getTaskInfoList" parameterType="String" resultMap="SdTaskListResult">
-        select s.id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
+        select e.tunnel_name,s.id,s.task_name,s.tunnel_id,s.end_plantime,s.bz_id,s.dispatch_time,s.task_description,u.user_name dispatcher,d.dept_name zzjg_id,t.dict_label task_status,p.dict_label publish_status,s.task_endtime,s.task_cxtime
         from sd_task_list s left join sys_user u on u.user_id = s.dispatcher
         left join sys_dept d on s.zzjg_id = d.dept_id
+        left join sd_tunnels e on s.tunnel_id = e.tunnel_id
         left join sys_dict_data t on t.dict_value = s.task_status and t.dict_type = 'task_status'
         left join sys_dict_data p on p.dict_value = s.publish_status and p.dict_type = 'publish_status'
         where s.id = #{task_id}
@@ -159,10 +168,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskList" parameterType="String" resultMap="SdTaskListResult">
-        select d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
+        select t.task_name,e.tunnel_name,d.dept_name zzjg_id,t.end_plantime,u.user_name dispatcher,t.task_description,t.task_status,t.id from sd_task_list t
         left join sys_dept d on d.dept_id = t.zzjg_id
         left join sys_user u on t.dispatcher = u.user_id
+        left join sd_tunnels e on t.tunnel_id = e.tunnel_id
+        where 1=1
+        <if test="taskName != null and taskName!=''"> AND CONCAT(t.task_name, e.tunnel_name) LIKE CONCAT('%',#{taskName},'%')</if>
         <if test="taskStatus != null and taskStatus!=''"> and t.task_status = #{taskStatus}</if>
+        <if test="startTime != null and startTime!=''and endTime!=null and endTime!=''"> and (t.end_plantime BETWEEN #{startTime} and #{endTime})</if>
         order by t.create_time desc
     </select>
 
@@ -173,8 +186,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getTaskOpt" parameterType="String" resultType="com.tunnel.business.domain.electromechanicalPatrol.SdTaskOpt">
-        select p.opt_type,u.user_name opt_person_id,p.opt_time,opt_description
-        from sd_task_opt p left join sys_user u on u.user_id = p.opt_person_id  where p.task_id = #{taskId}
+        select p.opt_type,u.user_name opt_person_id,p.opt_time,opt_description,e.tunnel_name
+        from sd_task_opt p
+        left join sys_user u on u.user_id = p.opt_person_id
+        left join sd_task_list t on p.task_id = t.id
+		left join sd_tunnels e on t.tunnel_id = e.tunnel_id
+        where p.task_id = #{taskId}
+    </select>
+
+
+    <select id="getTaskStatus" parameterType="String" resultMap="SdTaskListResult">
+        select dict_label,dict_value from sys_dict_data where dict_type = 'task_status'
     </select>
 
 
@@ -224,6 +246,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="optDescription != null">#{optDescription},</if>
         </trim>
     </insert>
+
+
+    <select id="getTaskToDo" parameterType="String" resultMap="SdTaskListResult">
+        select dispatch_time,task_name from sd_task_list where bz_id = #{deptId}
+    </select>
+
 
 
 </mapper>

@@ -1,8 +1,10 @@
 package com.tunnel.business.service.event;
 
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.event.SdEvent;
+import com.tunnel.business.domain.event.SdReservePlan;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +31,15 @@ public interface ISdEventService {
      * @return 事件管理集合
      */
     List<SdEvent> selectSdEventList(SdEvent sdEvent);
+
+
+    /**
+     * 查询事件管理列表(不做额外处理，单纯查询数据库SQL)
+     *
+     * @param sdEvent 事件管理
+     * @return 事件管理集合
+     */
+    List<SdEvent> querySdEventList(SdEvent sdEvent);
 
     /**
      * 新增事件管理
@@ -112,4 +123,46 @@ public interface ISdEventService {
     List<SdDevices> getEventCamera(String tunnelId,String stakeNum,String direction);
 
     List<Map> eventPopAll(String subIndex);
+
+    /**
+     * 交通事件-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getHandle(SdEvent sdEvent);
+
+    /**
+     * 主动安全-复核-处置获取预案流程
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getSafetyHandle(SdEvent sdEvent);
+
+    /**
+     * 应急调度关联策略
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getRelation(SdReservePlan sdReservePlan);
+
+    /**
+     * 计算事故点
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getAccidentPoint(SdEvent sdEvent);
+
+    /**
+     * 查询预案id
+     * @param sdReservePlan
+     * @return
+     */
+    AjaxResult getReserveId(SdReservePlan sdReservePlan);
+
+    /**
+     * 查询应急调度出入口视频
+     * @param sdEvent
+     * @return
+     */
+    AjaxResult getEntranceExitVideo(SdEvent sdEvent);
 }

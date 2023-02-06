@@ -10,6 +10,7 @@ import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,13 +176,22 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
     @Override
     public List<SdIotDevice> selectIotDeviceArrayList(SdIotDevice sdIotDevice) {
 //        sdIotDevice.setIsMonitor(1);
-        String deptId = SecurityUtils.getDeptId();
-        sdIotDevice.setManageAgencyId(deptId);
+        if (sdIotDevice.getManageAgencyId() == null || sdIotDevice.getManageAgencyId().equals("")) {
+            sdIotDevice.setManageAgencyId(SecurityUtils.getDeptId());
+        }
+        if (sdIotDevice.getEqDirection() != null && !sdIotDevice.getEqDirection().equals("") && sdIotDevice.getEqDirection() == "3") {
+            sdIotDevice.setEqDirection(null);
+        }
         return sdIotDeviceMapper.selectIotDeviceArrayList(sdIotDevice);
     }
 
     @Override
-    public List<Map<String, Object>> getDevicesSize() {
-        return sdIotDeviceMapper.getDevicesSize();
+    public List<Map<String, Object>> getDevicesSize(SdIotDevice iotDevice) {
+        return sdIotDeviceMapper.getDevicesSize(iotDevice.getTunnelId(), iotDevice.getLocalInfo());
+    }
+
+    @Override
+    public List<Long> selectIotDevicesByTunnelId(String tunnelId) {
+        return sdIotDeviceMapper.selectIotDevicesByTunnelId(tunnelId);
     }
 }

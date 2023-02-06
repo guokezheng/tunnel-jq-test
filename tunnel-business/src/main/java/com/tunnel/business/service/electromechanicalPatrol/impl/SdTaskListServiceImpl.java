@@ -431,9 +431,9 @@ public class SdTaskListServiceImpl implements ISdTaskListService
      * @return
      */
     @Override
-    public List<SdTaskList> getTaskList(@Param("sdTaskList") SdTaskList sdTaskList) {
+    public List<SdTaskList> getTaskList(String taskStatus,String taskName,String startTime,String endTime ) {
 
-        return sdTaskListMapper.getTaskList(sdTaskList);
+        return sdTaskListMapper.getTaskList(taskStatus,taskName,startTime,endTime);
     }
 
     /**
@@ -583,6 +583,25 @@ public class SdTaskListServiceImpl implements ISdTaskListService
     @Override
     public int savePatrol(SdPatrolList sdPatrolList) {
         return sdPatrolListMapper.savePatrol(sdPatrolList);
+    }
+
+    /***
+     * 获取任务状态
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskStatus() {
+        return sdTaskListMapper.getTaskStatus();
+    }
+
+    /**
+     * app端首页待处理任务单
+     * @param deptId
+     * @return
+     */
+    @Override
+    public List<SdTaskList> getTaskToDo(String deptId) {
+        return sdTaskListMapper.getTaskToDo(deptId);
     }
 
 }

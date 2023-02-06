@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询发布记录列表
 export function listRecord(query) {
   return request({
-    url: '/system/record/list',
+    url: '/system/log/list',
     method: 'get',
     params: query
   })
@@ -46,7 +46,7 @@ export function delRecord(id) {
 // 导出发布记录
 export function exportRecord(query) {
   return request({
-    url: '/system/record/export',
+    url: '/system/log/export',
     method: 'get',
     params: query
   })

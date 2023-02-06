@@ -9,21 +9,21 @@
       :visible="cameraVisible"
       :before-close="handleClosee"
     >
-      <!-- <div
+      <div
         style="
           width: 100%;
           height: 30px;
           display: flex;
           justify-content: space-between;
         "
-      > -->
+      >
         <!-- <div class="dialogLine"></div> -->
         <img
           :src="titleIcon"
           style="height: 30px; cursor: pointer;position: absolute;top: 0;right: 0;"
           @click="handleClosee"
         />
-      <!-- </div> -->
+      </div>
       <!-- <div style="width: 100%; height: 30px; padding: 0 15px"></div> -->
       <div style="width: 100%; height: 200px; padding: 0 15px">
         <!--   <video class="h5video_" id="tt" :src="videoMoNi"  controls
@@ -32,16 +32,11 @@
           disablePictureInPicture="true"
           controlslist="nodownload noremoteplayback noplaybackrate"
           loopstyle="width:100%;height:100%;"></video> -->
-        <video
-          id="h5sVideo1"
-          class="h5video_"
-          controls
-          muted
-          autoplay
-          disablePictureInPicture="true"
-          controlslist="nodownload noplaybackrate noremoteplayback"
-          style="width: 100%; height: 200px; object-fit: cover; z-index: -100"
-        ></video>
+          <videoPlayer
+            v-if="videoForm.liveUrl "
+            :rtsp="videoForm.liveUrl"
+            :open="cameraPlayer"
+          ></videoPlayer>
       </div>
       <el-form
         ref="form"
@@ -159,14 +154,14 @@
           v-show="stateForm.eqType == 24"
           >云台控制</el-button
         >
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="videoViewing()"
           style="width: 80px"
           class="submitButton"
           >录像查看</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -375,12 +370,17 @@
 
 <script>
 import { displayH5sVideoAll } from "@/api/icyH5stream";
-import { getDeviceById } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
+import { getDeviceById,videoStreaming } from "@/api/equipment/eqlist/api.js"; //查询弹窗信息
 import { getInfo } from "@/api/equipment/tunnel/api.js"; //查询设备当前状态
 import bus from "@/utils/bus";
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 
 export default {
   // props: ["eqInfo", "brandList", "directionList", "eqTypeDialogList"],
+  components:{
+    videoPlayer,
+
+  },
   data() {
     return {
       titleIcon: require("@/assets/cloudControl/dialogHeader.png"),
@@ -471,7 +471,11 @@ export default {
       picPage:1,
       brandList:[],
       eqTypeDialogList:[],
-      directionList:[]
+      directionList:[],
+      videoForm:{
+        liveUrl:'',
+      },
+      cameraVisible:true,
     };
   },
   created() {
@@ -502,7 +506,15 @@ export default {
   methods: {
     // 根据设备id 获取弹窗内信息
     async getmessage(equipmentId) {
-    
+      videoStreaming(equipmentId).then((response) =>{
+          console.log(response,"视频流");
+          if(response.code == 200){
+            this.videoForm = response.data
+            this.cameraPlayer = true
+          }
+        }).catch((e)=>{
+          this.$modal.msgWarning("获取视频失败");
+        })
         await getDeviceById(equipmentId).then((res) => {
           console.log(res, "查询摄像机弹窗信息");
           this.stateForm = res.data;
@@ -583,9 +595,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-dialog__header{
-  padding: 4px 20px !important;
-}
+// ::v-deep .el-dialog__header{
+//   padding: 4px 20px !important;
+// }
 ::v-deep .el-dialog__headerbtn{
   background-size: 47% 50% !important;
   top: 4px;

@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ stateForm.brandName }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -127,14 +127,14 @@
       <div v-show="tab == 'road'" style="margin-bottom: 10px">地道路面情况</div>
       <div v-show="tab == 'state'" style="margin-bottom: 10px">状态记录</div>
       <div slot="footer">
-          <el-button
+          <!-- <el-button
             type="primary"
             size="mini"
             @click="handleOK()"
             style="width: 80px"
             class="submitButton"
             >确 定</el-button
-          >
+          > -->
           <el-button
             type="primary"
             size="mini"

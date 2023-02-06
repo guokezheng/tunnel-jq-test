@@ -51,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="sn"    column="sn"    />
         <result property="zxNum"    column="zxNum"    />
         <result property="lxNum"    column="lxNum"    />
+        <result property="iconFileId"    column="icon_file_id"    />
         <result property="externalDeviceId"    column="external_device_id"    />
         <result property="associatedDeviceId"    column="associated_device_id"    />
         <association property="tunnelName" column="tunnel_id" javaType="SdTunnels" resultMap="tunnelResult"/>
@@ -74,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delivery_time, warranty_end_time, install_time, use_life,
         use_status, is_monitor,port_status, port_status_time, gateway_netstatus, gateway_netstatus_time, eq_status,
         eq_status_time, control_point_address, query_point_address, create_by, create_time,
-        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id,associated_device_id
+        update_by, update_time, remark,road_id,message_protocol,protocol_id,sn,external_device_id, associated_device_id
         from sd_devices
     </sql>
 
@@ -87,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
         a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
         a.control_point_address, a.query_point_address, a.create_by,
-        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name
+        a.create_time, a.update_by, a.update_time, a.remark, b.dept_id, c.dept_name,a.external_device_id, a.associated_device_id
         from sd_devices a
         left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
         left join sys_dept c on c.dept_id = b.dept_id
@@ -107,6 +108,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             </if>
             <if test="ip != null  and ip != ''">and a.ip = #{ip}</if>
             <if test="secureKey != null  and secureKey != ''">and a.secure_key = #{secureKey}</if>
+            <if test="externalSystemId != null  and externalSystemId != ''">and a.external_system_id = #{externalSystemId}</if>
+            <if test="externalDeviceId != null  and externalDeviceId != ''">and a.external_device_id = #{externalDeviceId}</if>
             <if test="deptId != null ">
                 AND (b.dept_id = #{deptId} OR c.dept_id IN ( SELECT d.dept_id FROM sys_dept d WHERE FIND_IN_SET (#{deptId},d.ancestors) ))
             </if>
@@ -168,17 +171,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--查询设备详情-->
     <select id="queryDeviceById" parameterType="String" resultType="java.util.Map">
-        select a.eq_id eqId,a.eq_name eqName, a.f_eq_id fEqId,b.tunnel_id tunnelId, b.tunnel_name tunnelName,
-        a.eq_type eqType,t.type_name typeName,s.dept_id deptId, s.dept_name deptName,
-        a.eq_model eqModel, a.brand_id brandId,a.query_point_address,
-        a.eq_direction eqDirection, a.lane, a.pile, a.pile_num pileNum, a.lat, a.lng,
-        a.ip, a.port, a.secure_key secureKey, a.eq_user eqUser, a.eq_pwd eqPwd, a.comm_protocol,
-        IFNULL(a.eq_status,"2") eqStatus,a.eq_status_time eqStatusTime,
-          a.create_by createBy, a.create_time createTime, a.update_by updateBy, a.update_time updateTime, a.remark
+        select
+        a.eq_id eqId,
+        a.eq_name eqName,
+        a.f_eq_id fEqId,
+        b.tunnel_id tunnelId,
+        b.tunnel_name tunnelName,
+        a.eq_type eqType,
+        t.type_name typeName,
+        s.dept_id deptId,
+        s.dept_name deptName,
+        a.eq_model eqModel,
+        a.brand_id brandId,
+        a.query_point_address,
+        a.eq_direction eqDirection,
+        a.lane, a.pile,
+        a.pile_num pileNum,
+        a.lat, a.lng,
+        a.ip,
+        a.port,
+        a.secure_key secureKey,
+        a.eq_user eqUser,
+        a.eq_pwd eqPwd,
+        a.comm_protocol,
+        IFNULL(a.eq_status,"2") eqStatus,
+        a.eq_status_time eqStatusTime,
+        a.create_by createBy,
+        a.create_time createTime,
+        a.update_by updateBy,
+        a.update_time updateTime,
+        a.remark ,
+        a.associated_device_id associatedDeviceId,
+        a.external_device_id externalDeviceId,
+        c.supplier_name supplierName
      from sd_devices a
      left join sd_tunnels b on a.eq_tunnel_id = b.tunnel_id
      left join sd_equipment_type t on a.eq_type = t.type_id
      left join sys_dept s on s.dept_id = b.dept_id
+     left join sd_devices_brand c on c.supplier_id = a.brand_id
      where eq_id = #{eqId}
 </select>
 
@@ -378,6 +408,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="sn != null">sn = #{sn},</if>
             <if test="externalDeviceId != null">external_device_id = #{externalDeviceId},</if>
             <if test="associatedDeviceId != null">associated_device_id = #{associatedDeviceId},</if>
+            <if test="camType != null">cam_type = #{camType},</if>
         </trim>
         where eq_id = #{eqId}
     </update>
@@ -385,6 +416,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update sd_devices
         set eq_status = #{eqStatus}
         where eq_id = #{eqId}
+    </update>
+
+    <update id="updateSdDevicesByExternalSystemId">
+        update sd_devices
+        set eq_status = #{eqStatus}, eq_status_time = #{eqStatusTime}
+        where external_system_id = #{externalSystemId}
     </update>
 
     <update id="updateSdDevicesByFEqId">
@@ -578,14 +615,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where host = #{host} and eq_loop = #{loop} and address = #{address}
     </select>
 
-    <select id="selectDeviceByHost" resultType="String">
-        select a.eq_id from sd_firefighting_components_address a
-        where host = #{host} and eq_id = #{eqId}
-    </select>
 
     <select id="getDevicesByTypeAndTunnel" parameterType="SdDevices" resultType="hashmap">
         select a.eq_id as eqId, a.eq_tunnel_id as eqTunnelId, a.eq_name as eqName, a.eq_type as eqType,
-              a.pile
+              a.pile, a.associated_device_id
         from sd_devices a
         left join sd_equipment_type b on a.eq_type = b.type_id
         <where>
@@ -613,6 +646,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectFireComponentsList" parameterType="SdDevices" resultMap="SdDevicesResult">
         select * from sd_devices where f_eq_id = #{fEqId}
+    </select>
+
+    <select id="selectDevicesListByExternalSystemId" parameterType="SdDevices" resultMap="SdDevicesResult">
+        select * from sd_devices where external_system_id = #{externalSystemId}
     </select>
 
     <select id="selectDeviceDataAndUnit" resultType="hashmap">
@@ -661,6 +698,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where f_eq_id = #{fEqId}
     </select>
 
+    <select id="getDevicesListByExternalId" parameterType="String" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"/>
+        where external_device_id = #{externalId}
+    </select>
 
     <select id="getEquipmentInfo" parameterType="String" resultType="hashmap">
         SELECT concat(c.dict_label,t.pile) pile,s.state_name runStatus,e.device_state eqStatus
@@ -766,11 +807,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesList" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id from sd_devices t
+        select t.eq_name,t.pile,u.tunnel_name eq_tunnel_id,q.icon_file_id  icon_file_id from sd_devices t
         left join sd_device_data d on t.eq_id = d.device_id
         left join  sd_device_type_item i on i.id = d.item_id
         left join sd_equipment_state s on s.state_type_id = i.device_type_id and s.device_state = d.data and s.state_type = '1'
         left join sd_tunnels u on u.tunnel_id = t.eq_tunnel_id
+        left join sd_equipment_type q on t.eq_type = q.type_id
         <where>
         1=1
             <if test="param != null and param != ''">and CONCAT(t.eq_name,t.pile) like CONCAT('%',#{param},'%') </if>
@@ -796,7 +838,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="getAppDevicesInfo" parameterType="SdDevices" resultMap="SdDevicesResult">
-        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile
+        select d.eq_name,t.type_name,eq_id,u.tunnel_name,c.dict_label eq_direction,d.pile,d.install_time
         from sd_devices d
         left join sd_equipment_type t on d.eq_type = t.type_id
         left join sd_tunnels u on d.eq_tunnel_id = u.tunnel_id
@@ -817,5 +859,96 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where 1=1
         and t.eq_id = #{eqId}
     </select>
+
+    <select id="selectSdDevicesListByEqTypes" resultMap="SdDevicesResult">
+        select a.eq_id, a.f_eq_id, a.eq_tunnel_id,c.tunnel_name, a.eq_name, a.eq_type,d.type_name, a.eq_model, a.brand_id,
+        a.eq_direction,
+        a.lane, a.pile, a.pile_num, a.lat, a.lng,a.ip, a.port, a.secure_key, a.eq_user, a.eq_pwd, a.comm_protocol,
+        a.delivery_time, a.warranty_end_time, a.install_time, a.use_life, a.use_status,a.is_monitor,
+        a.port_status, a.port_status_time, a.gateway_netstatus, a.gateway_netstatus_time, a.eq_status, a.eq_status_time,
+        a.control_point_address, a.query_point_address, a.create_by,
+        a.create_time, a.update_by, a.update_time, a.remark ,e.dept_name,c.dept_id,IFNULL(c.tunnel_address,'未配置') tunnel_address
+        ,c.tunnel_name
+        from sd_devices a
+        left join sd_tunnels c on a.eq_tunnel_id = c.tunnel_id
+        left join sd_equipment_type d on a.eq_type = d.type_id
+        left join sys_dept e on e.dept_id = c.dept_id
+        where a.eq_type = #{guidanceLampTypeId} or a.eq_type = #{lunKuoBiaoTypeId}
+    </select>
+
+    <select id="selectPhoneSpk" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
+        select eq_id, f_eq_id, eq_tunnel_id, eq_name, eq_type, f_eq_type, brand_id,external_system_id,
+               eq_direction, pile, lat, lng, ip, port, delivery_time, warranty_end_time, install_time, use_life,
+               use_status, eq_status, eq_status_time,external_device_id, associated_device_id
+        from sd_devices
+        where eq_type = #{eqType} and external_device_id=#{externalDeviceId}
+    </select>
+
+    <select id="getSpkList" parameterType="com.tunnel.business.domain.dataInfo.SdDevices" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
+        select eq_id,
+               f_eq_id,
+               eq_tunnel_id,
+               eq_name,
+               eq_type,
+               f_eq_type,
+               brand_id,
+               external_system_id,
+               eq_direction,
+               pile,
+               ip,
+               port,
+               use_status,
+               eq_status,
+               eq_status_time,
+               external_device_id,
+               associated_device_id
+        from sd_devices
+        where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType}
+    </select>
+
+    <select id="getLight" resultType="com.tunnel.business.domain.dataInfo.SdDevices">
+        select eq_id,
+            f_eq_id,
+            eq_tunnel_id,
+            eq_name,
+            eq_type,
+            f_eq_type,
+            brand_id,
+            external_system_id,
+            eq_direction,
+            pile,
+            ip,
+            port,
+            use_status,
+            eq_status,
+            eq_status_time,
+            external_device_id,
+            associated_device_id
+        from sd_devices
+        where eq_tunnel_id = #{eqTunnelId} and eq_direction = #{eqDirection} and eq_type = #{eqType} and external_device_id=#{externalDeviceId}
+
+    </select>
+
+    <select id="selectZdyDevice" resultType="sdDevices">
+        SELECT
+            d.eq_id,
+            d.eq_name,
+            d1.eq_id,
+            d1.eq_name
+        FROM
+            sd_devices d
+                LEFT JOIN sd_devices d1 ON d.f_eq_id = d1.f_eq_id
+        WHERE
+            1 = 1
+          AND d.eq_id = #{deviceId}
+          AND d1.eq_type = #{eqType}
+    </select>
+
+    <select id="getDeviceByAssociationDeviceId" parameterType="Long" resultMap="SdDevicesResult">
+        <include refid="selectSdDevicesVo"/>
+        where associated_device_id = #{deviceId}
+    </select>
+
+
 
 </mapper>

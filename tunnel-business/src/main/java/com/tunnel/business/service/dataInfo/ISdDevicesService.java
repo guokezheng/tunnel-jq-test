@@ -3,7 +3,6 @@ package com.tunnel.business.service.dataInfo;
 
 import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.dataInfo.SdDevicesBrand;
-import com.tunnel.business.domain.dataInfo.SdEquipmentType;
 
 import java.util.List;
 import java.util.Map;
@@ -228,4 +227,23 @@ public interface ISdDevicesService {
      * @return
      */
     List<SdDevices> getAppDevicesStatus(String eqId);
+
+    List<SdDevices> selectSdDevicesListByEqTypes(Long guidanceLampTypeId, Long lunKuoBiaoTypeId);
+
+    /**
+     * 根据隧道+方向+类型 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    List<SdDevices> getSpkList(SdDevices sdDevices);
+
+    /**
+     * 根据隧道+方向+类型+段号(通过external_device_id字段关联) 获取广播设备
+     * @param sdDevices
+     * @return
+     */
+    SdDevices getLight(SdDevices sdDevices);
+
+    SdDevices getDeviceByAssociationDeviceId(Long deviceId);
+
 }

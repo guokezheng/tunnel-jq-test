@@ -69,8 +69,12 @@ public class ThirdPartLoginService {
         return list;
     }
 
-
-    public AjaxResult login(String username) {
+    /**
+     * 测试环境单点登录
+     * @param username
+     * @return
+     */
+    public AjaxResult testLogin(String username) {
         //获取授权码
         String authCode = AuthUtil.getAuthCode(username);
 
@@ -85,6 +89,54 @@ public class ThirdPartLoginService {
                 String thirdUserName = (String) userInfo.get("username");
                 //查询己方系统中是否存在此用户
                 SysUser sysUser = sysUserService.selectUserByUserName(thirdUserName);
+                if (null != sysUser) {
+                    Authentication authentication = null;
+                    try {
+                        authentication = authenticationManager.authenticate(new PreAuthenticatedAuthenticationToken(username, sysUser.getPassword()));
+                    } catch (Exception e) {
+                        if (e instanceof BadCredentialsException) {
+                            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.password.not.match")));
+                            throw new UserPasswordNotMatchException();
+                        } else {
+                            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, e.getMessage()));
+                            throw new ServiceException(e.getMessage());
+                        }
+                    }
+                    AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
+                    LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+
+                    ajaxResult = AjaxResult.success().put(Constants.TOKEN, tokenService.createToken(loginUser));
+                } else {
+                    ajaxResult = AjaxResult.error("系统中无此用户！");
+                }
+
+            }
+        }
+        return ajaxResult;
+    }
+
+
+    /**
+     * 正式环境单点登录
+     * @param authCode
+     * @return
+     */
+    public AjaxResult login(String authCode) {
+        //获取授权码
+//        String authCode = AuthUtil.getAuthCode(username);
+
+        AjaxResult ajaxResult = null;
+        if (null != authCode) {
+            //获取token
+            String token = AuthUtil.getToken(authCode);
+            if (null != token) {
+                //获取用户信息
+                Map<String, Object> userInfo = AuthUtil.getUserInfo(token);
+                //通过解析token得到的第三方系统用户名称
+                String thirdUserName = (String) userInfo.get("username");
+                //查询己方系统中是否存在此用户
+                SysUser sysUser = sysUserService.selectUserByUserName(thirdUserName);
+                String username = sysUser.getUserName();
                 if (null != sysUser) {
                     Authentication authentication = null;
                     try {

@@ -22,6 +22,8 @@
         <result property="startTime" column="startTime"/>
         <result property="endTime" column="endTime"/>
         <result property="deptId" column="dept_id" />
+        <result property="objectType" column="object_type" />
+        <result property="roadDir" column="road_dir" />
     </resultMap>
 
     <sql id="selectSdRadarDetectDataVo" >
@@ -114,6 +116,10 @@
             <if test="licenseColor != null">license_color,</if>
             <if test="stakeNum != null">stake_num,</if>
             <if test="detectTime != null">detect_time,</if>
+            <if test="objectType != null">object_type,</if>
+            <if test="roadDir != null">road_dir,</if>
+            <if test="recordSerialNumber != null">record_Serial_Number,</if>
+            create_time
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -130,6 +136,10 @@
             <if test="licenseColor != null">#{licenseColor},</if>
             <if test="stakeNum != null">#{stakeNum},</if>
             <if test="detectTime != null">#{detectTime},</if>
+            <if test="objectType != null">#{objectType},</if>
+            <if test="roadDir != null">#{roadDir},</if>
+            <if test="recordSerialNumber != null">#{recordSerialNumber},</if>
+            NOW()
         </trim>
     </insert>
 
@@ -149,6 +159,9 @@
             <if test="licenseColor != null">license_color = #{licenseColor},</if>
             <if test="stakeNum != null">stake_num = #{stakeNum},</if>
             <if test="detectTime != null">detect_time = #{detectTime},</if>
+            <if test="objectType != null">object_type = #{objectType},</if>
+            <if test="roadDir != null">road_dir = #{roadDir},</if>
+            <if test="recordSerialNumber != null">record_Serial_Number = #{recordSerialNumber}</if>
         </trim>
         where id = #{id}
     </update>

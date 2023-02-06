@@ -69,6 +69,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
+    <update id="updateKafkaDeviceData" parameterType="SdDeviceData">
+        update sd_device_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="data != null">data = #{data},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId} AND item_id = #{itemId}
+    </update>
+
     <delete id="deleteSdDeviceDataById" parameterType="Long">
         delete from sd_device_data where id = #{id}
     </delete>
@@ -82,9 +94,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <!--根据隧道id查询当前设备的监测状态、实时数据或状态-->
     <select id="getDeviceDataByTunnelId" parameterType="String" resultType="java.util.Map">
-		select d.eq_id eqId,d.eq_name eqName,d.eq_tunnel_id eqTunnelId,d.eq_type eqType,
-        ifnull(d.eq_status,2) eqStatus,d.eq_direction eqDirection,i.item_code itemCode,i.item_name itemName,
-        i.unit,a.data,concat(a.data,ifnull(i.unit,'')) dataUnit
+		select
+            d.eq_id eqId,
+            d.eq_name eqName,
+            d.eq_tunnel_id eqTunnelId,
+            d.eq_type eqType,
+            ifnull(d.eq_status,2) eqStatus,
+            d.eq_direction eqDirection,
+            i.item_code itemCode,
+            i.item_name itemName,
+            i.unit,
+            a.data,
+            concat(a.data,ifnull(i.unit,'')) dataUnit
         from sd_devices d
         left join sd_device_type_item i on d.eq_type = i.device_type_id
         left join sd_device_data a on a.device_id = d.eq_id and a.item_id = i.id
@@ -115,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             FROM (SELECT a.id,a.data,a.create_time	from sd_device_data_record a WHERE a.create_time <![CDATA[ >= ]]> (#{today} - interval 25 hour)
             and a.device_id = #{deviceId} and item_id = #{itemId} ) b GROUP BY date )
             AS sa
-        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H') GROUP BY t.time ORDER BY sa.date
+        ON sa.date = DATE_FORMAT( t.time,'%Y-%m-%d %H') GROUP BY t.time
     </select>
 
     <select id="selectCOVIDataList" resultType="hashmap">
@@ -135,6 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -157,6 +179,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -177,6 +200,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i
@@ -197,6 +221,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND (c.dept_id = #{deptId} OR c.dept_id IN ( SELECT z.dept_id FROM sys_dept z WHERE FIND_IN_SET (#{deptId},z.ancestors) ))
         </if>
         <if test="tunnelId != null and tunnelId != ''"> and c.tunnel_id = #{tunnelId}</if>
+        <if test="pile != null and pile != ''"> and b.pile like concat('%', #{pile}, '%')</if>
         GROUP BY createTime,eqId
         ORDER BY a.create_time desc
         ) j,(SELECT @i:=0) i

@@ -64,7 +64,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="设备厂商:">
-              {{ getBrandName(stateForm.brandName) }}
+              {{ stateForm.supplierName }}
             </el-form-item>
           </el-col>
         </el-row>
@@ -85,7 +85,7 @@
           </el-col>
           <el-col :span="11">
             <el-form-item label="VI值:">
-              {{ VInowData }}<span style="padding-left:5px" v-if="VInowData">KM</span>
+              {{ VInowData }}<span style="padding-left:5px" v-if="VInowData">M</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -98,14 +98,14 @@
       <div id="co" v-show="tab == 'co'" style="margin-bottom: 10px"></div>
       <div id="vi" v-show="tab == 'vi'" style="margin-bottom: 10px"></div>
       <div slot="footer">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           @click="handleClosee()"
           style="width: 80px"
           class="submitButton"
           >确 定</el-button
-        >
+        > -->
         <el-button
           type="primary"
           size="mini"
@@ -169,7 +169,7 @@ export default {
           console.log(res, "查询单选框弹窗信息");
           this.stateForm = res.data;
           this.title = this.stateForm.eqName;
-         
+
         });
       } else {
         this.$modal.msgWarning("没有设备Id");
@@ -192,19 +192,15 @@ export default {
             for(var item of response.data.todayCOData){
               coXdata.push(item.order_hour)
               coYdata.push(item.count)
-              // this.coValue = coYdata[coYdata.length-1]
-              // console.log(co,"co");
             }
             for(var item of response.data.todayVIData){
               viXdata.push(item.order_hour)
               viYdata.push(item.count)
-              // this.viValue = viYdata[viYdata.length-1]
-
             }
             this.$nextTick(() => {
               this.initChart(coXdata,coYdata,viXdata,viYdata);
     });
-            
+
 
           })
     },
@@ -214,19 +210,19 @@ export default {
       var yName = "";
       var XData = [];
       var YData = [];
-      
+
         if (this.tab == "vi") {
           XData = viXdata;
           YData = viYdata
           lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-          yName = "VI/KM";
+          yName = "VI/M";
         } else {
           XData = coXdata;
           YData = coYdata;
           lincolor = ["#FC61AB", "#FFA9D1", "#FFE3F0"];
           yName = "CO/PPM";
         }
-      
+
 
       this.mychart = echarts.init(document.getElementById(this.tab));
       var option = {

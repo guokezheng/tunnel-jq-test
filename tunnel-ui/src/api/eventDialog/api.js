@@ -34,3 +34,11 @@ export function getEventCamera(tunnelId,stakeNum,direction) {
     method: 'get',
   })
 }
+
+// 出入口摄像机
+export function getEntranceExitVideo(tunnelId,direction) {
+  return request({
+    url: "/event/getEntranceExitVideo?tunnelId="+tunnelId+"&direction="+direction,
+    method: 'get',
+  })
+}

@@ -90,9 +90,9 @@
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
-            <div class="treeBox" ref="treeBox" v-show="treeShow">
+            <!-- <div class="treeBox" ref="treeBox" v-show="treeShow">
               <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-            </div>
+            </div> -->
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>

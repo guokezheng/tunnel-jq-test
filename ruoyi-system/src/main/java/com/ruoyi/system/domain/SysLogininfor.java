@@ -8,7 +8,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 系统访问记录表 sys_logininfor
- * 
+ *
  */
 public class SysLogininfor extends BaseEntity
 {
@@ -42,8 +42,8 @@ public class SysLogininfor extends BaseEntity
     @Excel(name = "操作系统")
     private String os;
 
-    /** 提示消息 */
-    @Excel(name = "提示消息")
+    /** 操作信息 */
+    @Excel(name = "操作信息")
     private String msg;
 
     /** 访问时间 */

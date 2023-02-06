@@ -34,7 +34,7 @@
           clearable
           size="small"
         >
-          <el-option label="正常" value="0" />
+          <el-option label="成功" value="0" />
           <el-option label="失败" value="1" />
         </el-select>
       </el-form-item>

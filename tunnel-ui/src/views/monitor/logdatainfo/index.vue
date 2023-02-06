@@ -35,10 +35,10 @@
           style="width: 240px"
         >
           <el-option
-            v-for="dict in dict.type.sys_common_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+            v-for="dict in loginStatusOptions"
+            :key="dict.dictValue"
+            :label="dict.dictLabel"
+            :value="dict.dictValue"
           />
         </el-select>
       </el-form-item>
@@ -143,11 +143,7 @@
       <el-table-column label="登录地点" align="center" prop="loginLocation" :show-overflow-tooltip="true" />
       <el-table-column label="浏览器" align="center" prop="browser" :show-overflow-tooltip="true" />
       <el-table-column label="操作系统" align="center" prop="os" />
-      <el-table-column label="登录状态" align="center" prop="status">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
+      <el-table-column label="登录状态" align="center" prop="status" :formatter="loginStateFormat"/>
       <el-table-column label="操作信息" align="center" prop="msg" />
       <el-table-column label="登录日期" align="center" prop="loginTime" sortable="custom" :sort-orders="['descending', 'ascending']" width="180">
         <template slot-scope="scope">
@@ -251,6 +247,7 @@ export default {
       operationStateOptions: [],
       //控制方式
       controlTypeOptions: [],
+      loginStatusOptions: [],
       // 操作日志表格数据
       logList: [],
       // 查询参数
@@ -289,6 +286,9 @@ export default {
     this.getDicts("sd_device_opt_state").then((response) => {
       this.operationStateOptions = response.data;
     });
+    this.getDicts("sys_common_status").then((response) => {
+      this.loginStatusOptions = response.data;
+    });
   },
   methods: {
     // 切换按钮
@@ -317,6 +317,9 @@ export default {
     },
     controlTypeFormat(row, column) {
       return this.selectDictLabel(this.controlTypeOptions, row.controlType);
+    },
+    loginStateFormat(row, column) {
+      return this.selectDictLabel(this.loginStatusOptions, row.status);
     },
     /** 查询登录日志列表 */
     getList(inx) {

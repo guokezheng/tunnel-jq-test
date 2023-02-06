@@ -178,10 +178,10 @@
         on A.event_type_id = B.id
         left join sd_tunnels C on A.tunnel_id = C.tunnel_id
         LEFT JOIN sys_dict_data sdd ON a.direction = sdd.dict_value
-        AND sdd.dict_type = 'sd_direction'
         <where>
             1=1
             AND B.is_usable = '1'
+            AND sdd.dict_type = 'sd_direction'
             <if test="id != null  and id != ''">and A.id = #{id}</if>
             <!-- <if test="tunnelStationName != null  and tunnelStationName != ''">and C.id = #{id}</if>-->
             <if test="deptId != null  and deptId != ''">and C.dept_id = #{deptId}</if>

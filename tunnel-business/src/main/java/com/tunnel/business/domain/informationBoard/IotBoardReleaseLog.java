@@ -21,11 +21,11 @@ public class IotBoardReleaseLog extends BaseEntity
     private Long id;
 
     /** 设备编号 */
-    @Excel(name = "设备编号")
+    @Excel(name = "发布设备")
     private String deviceId;
 
     /** 设备名称 */
-    @Excel(name = "设备名称")
+//    @Excel(name = "设备名称")
     private String deviceName;
 
     /** 发布前的内容 */
@@ -37,7 +37,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseNewContent;
 
     /** 发布人 */
-    @Excel(name = "发布人")
+//    @Excel(name = "发布人")
     private String releaseBy;
 
     /** 发布时间 */
@@ -45,7 +45,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private Date releaseTime;
 
     /** 发布状态：0：正常，1：失败 */
-    @Excel(name = "发布状态：0：正常，1：失败")
+    @Excel(name = "发布状态", readConverterExp = "0=正常,1=失败")
     private String releaseStatus;
 
     /** 发布机构 */
@@ -53,7 +53,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseDeptName;
 
     /** 发布机构 */
-    @Excel(name = "发布机构")
+//    @Excel(name = "发布机构")
     private Long releaseDeptId;
 
     /** 发布用户 */
@@ -61,7 +61,7 @@ public class IotBoardReleaseLog extends BaseEntity
     private String releaseUserName;
 
     /** 发布用户 */
-    @Excel(name = "发布用户")
+//    @Excel(name = "发布用户")
     private String releaseUserId;
 
     public String getReleaseStatus() {

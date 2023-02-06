@@ -16,6 +16,7 @@ import com.tunnel.business.domain.dataInfo.SdTunnels;
 import com.tunnel.business.domain.digitalmodel.WjConfidence;
 import com.tunnel.business.domain.event.*;
 import com.tunnel.business.domain.trafficOperationControl.eventManage.SdTrafficImage;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.dataInfo.SdTunnelsMapper;
 import com.tunnel.business.mapper.digitalmodel.RadarEventMapper;
 import com.tunnel.business.mapper.event.*;
@@ -507,6 +508,29 @@ public class SdEventServiceImpl implements ISdEventService {
     @Override
     public AjaxResult getReserveId(SdReservePlan sdReservePlan) {
         return AjaxResult.success(sdReservePlanMapper.getReserveId(sdReservePlan));
+    }
+
+    @Override
+    public AjaxResult getEntranceExitVideo(SdEvent sdEvent) {
+        SdDevicesMapper sdDevicesMapper = SpringUtils.getBean(SdDevicesMapper.class);
+        SdDevices sdDevices = new SdDevices();
+        sdDevices.setEqDirection(sdEvent.getDirection());
+        sdDevices.setEqTunnelId(sdEvent.getTunnelId());
+        sdDevices.setEqType(DevicesTypeEnum.CAMERA_BOX.getCode());
+        List<SdDevices> sdDevicesList = sdDevicesMapper.selectSdDevicesList(sdDevices);
+        String minEqId = sdDevicesList.stream().min(Comparator.comparing(SdDevices::getPileNum)).get().getEqId();
+        String maxEqId = sdDevicesList.stream().max(Comparator.comparing(SdDevices::getPileNum)).get().getEqId();
+        List<Map<String, Object>> list = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        if("1".equals(sdEvent.getDirection())){
+            map.put("outlet",maxEqId);
+            map.put("inlet",minEqId);
+        }else {
+            map.put("outlet",minEqId);
+            map.put("inlet",maxEqId);
+        }
+        list.add(map);
+        return AjaxResult.success(list);
     }
 
     @Override

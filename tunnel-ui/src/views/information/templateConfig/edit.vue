@@ -3,7 +3,7 @@
     :title="title"
     :visible.sync="visible"
     top="6vh"
-    width="1200px"
+    width="44%"
     :before-close="closeDialog"
   >
     <el-card class="box-card" style="margin-top: 2vh">
@@ -46,7 +46,7 @@
             top: res.coordinate.substring(3, 6) + 'px',
             zIndex: '1000',
           }"
-          v-html="res.content"
+          v-html="res.content.replace(/\n|\r\n/g, '<br>').replace(/ /g, ' &nbsp')"
         ></div>
         <div
           v-for="(item, i) in templateContent"
@@ -102,7 +102,7 @@
           </el-col>
           <el-col :span="16">
             <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
-            <el-button type="info" plain @click="alignment(6)" size="mini"
+            <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
               >下对齐</el-button
             >
             <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -110,7 +110,7 @@
             >
             <el-button type="info" plain @click="alignment(4)" size="mini"
               >上对齐</el-button
-            >
+            > -->
             <el-button type="info" plain @click="alignment(3)" size="mini"
               >右对齐</el-button
             >
@@ -683,7 +683,7 @@ export default {
   //     },
   //   },
   // },
-
+  
   created() {
     // 屏幕尺寸字典数据
     this.getDicts("screenSize").then((res) => {
@@ -762,17 +762,20 @@ export default {
         // 左对齐
         case 1:
           textBoard[0].style.left = "0px";
+          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
           textBoard[0].style.removeProperty("right");
           break;
         // 左右居中
         case 2:
           textBoard[0].style.left = (divWidth - textWidth) / 2 + "px";
+          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
           textBoard[0].style.right = "unset";
 
           break;
         // 右对齐
         case 3:
           textBoard[0].style.right = "0px";
+          textBoard[0].style.top = (divHeight - textHeight) / 2 + "px";
           textBoard[0].style.removeProperty("left");
           break;
         // 上对齐

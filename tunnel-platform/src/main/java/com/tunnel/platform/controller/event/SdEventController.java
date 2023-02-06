@@ -353,4 +353,14 @@ public class SdEventController extends BaseController
     public AjaxResult getReserveId(SdReservePlan sdReservePlan){
         return sdEventService.getReserveId(sdReservePlan);
     }
+
+    /**
+     * 查询应急调度出入口视频
+     * @param sdEvent
+     * @return
+     */
+    @GetMapping("/getEntranceExitVideo")
+    public AjaxResult getEntranceExitVideo(SdEvent sdEvent){
+        return sdEventService.getEntranceExitVideo(sdEvent);
+    }
 }

@@ -57,6 +57,7 @@
                   clearable
                   size="small"
                   style="width: 180px"
+                  @change="$forceUpdate()"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -409,7 +410,7 @@
         <div class="dialogBg dialogBg2">
           <div>实时视频<span>(事发位置最近的监控视频录像)</span></div>
           <el-carousel trigger="click" height="calc(100% - 14px)">
-            <el-carousel-item v-for="item in videoList" :key="item">
+            <el-carousel-item v-for="(item,index) in videoList" :key="index">
               <videoPlayer
                 v-if="item.liveUrl "
                 :rtsp="item.liveUrl"
@@ -445,7 +446,7 @@
                   v-model="eventForm.eventSource"
                   disabled
                   placeholder="请选择告警来源"
-                  style="width:12vw"
+                  style="width:calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in fromList"
@@ -466,7 +467,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择告警时间"
-                  style="width: 12vw"
+                  style="width:calc(100% - 10px)"
                   :picker-options="setDisabled"
                 >
                 </el-date-picker>
@@ -486,7 +487,7 @@
                   type="datetime"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   placeholder="选择预计解除时间"
-                  style="width: 11vw"
+                  style="width:calc(100% - 10px)"
                 >
                 </el-date-picker>
               </el-form-item>
@@ -499,7 +500,7 @@
                   clearable
                   size="small"
                   disabled
-                  style="width:12vw"
+                  style="width:calc(100% - 10px)"
                 >
                   <el-option
                     v-for="item in tunnelList"
@@ -1238,7 +1239,7 @@ export default {
       // 显示搜索条件
       showSearch: true,
       //事件类型
-      eventTypeData: {},
+      eventTypeData: [],
       // 总条数
       total: 0,
       // 事件管理表格数据
@@ -1411,14 +1412,20 @@ export default {
 
 
       // 实时视频
-      // videoForm:{
-      //   liveUrl:'',
-      // },
+      videoForm:{
+        liveUrl:'',
+      },
       videoList:[],
       cameraVisible:true,
     };
   },
   watch: {
+    "queryParams.deptId": function(newVal, oldVal){
+      if(!newVal){
+        this.tunnelList = null;
+        this.queryParams.tunnelId = null;
+      }
+    },
     "$store.state.manage.manageStationSelect": function (newVal, oldVal) {
       console.log(newVal, "监听到隧道啦监听到隧道啦监听到隧道啦监听到隧道啦");
       this.manageStationSelect = newVal;
@@ -1438,7 +1445,7 @@ export default {
     await this.getList();
     await this.getEventMsg();
     this.getEventType();
-    this.getTunnel();
+    // this.getTunnel();
     this.getEqType();
     this.getDevices();
     this.getTunnelLane();
@@ -1733,6 +1740,8 @@ export default {
     },
     //详情弹窗
     detailsButton(item, type) {
+      console.log(item, "点击弹窗");
+
       this.imgUrlList = []
       this.iconUrlListAll = []
 
@@ -1745,7 +1754,6 @@ export default {
         this.detailsDisabled = false;
         this.detailsButtonType = 2;
       }
-      console.log(item, "点击弹窗");
       this.eventTypeId = item.eventTypeId;
       this.evtId = item.id;
       this.tunnelId = item.tunnelId;
@@ -1818,9 +1826,7 @@ export default {
       });
     },
     getVideoUrl(item){
-      console.log(item,"item")
-      console.log(item.stakeNum,"item.stakeNum")
-
+      // console.log(item,"item")
       this.cameraPlayer = false
       this.videoList = []
       getEventCamera(
@@ -1830,17 +1836,11 @@ export default {
       ).then((res) => {
         console.log(res,"获取实时视频上游相机")
         if(res.data){
-          let videoId = res.data[0].eqId
-          videoStreaming(videoId).then((response) =>{
-            console.log(response,"视频流");
-            if(response.code == 200){
-              this.videoList.push(response.data)
-              this.cameraPlayer = true
-            }
-          })
-          if(res.data.length>1){
-            let videoId2 = res.data[1].eqId
-            videoStreaming(videoId2).then((response) =>{
+          // let videoId = res.data[0].eqId
+          let videoId = ''
+          for(let item of res.data){
+            videoId = item.eqId
+            videoStreaming(videoId).then((response) =>{
               console.log(response,"视频流");
               if(response.code == 200){
                 this.videoList.push(response.data)
@@ -1848,6 +1848,7 @@ export default {
               }
             })
           }
+          console.log( this.videoList," this.videoList")
         }
         console.log(this.videoList,"this.videoList")
       });
@@ -2177,6 +2178,7 @@ export default {
       let that = this;
       this.isWritable = true;
       this.activeName = "2";
+      this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
@@ -2206,6 +2208,7 @@ export default {
     handleCheckDetail(row) {
       let that = this;
       this.isWritable = false;
+      this.getTunnel();
       that.reset();
       const id = row.id || that.ids;
       getList(id).then((response) => {
@@ -2415,6 +2418,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.getTunnel();
       this.isWritable = true;
       this.disstate = false;
       this.open = true;
@@ -2458,7 +2462,6 @@ export default {
 
     /** 提交按钮 */
     submitForm() {
-      debugger;
       this.fileData = new FormData(); // new formData对象
       this.$refs.upload.submit(); // 提交调用uploadFile函数
       this.fileData.append("id", this.form.id);
@@ -2723,7 +2726,7 @@ export default {
   }
   .dialogBg {
     background: #f7f7f7;
-    height: 100%;
+    // height: 100%;
     width: 45%;
     color: #0087e7;
     padding: 20px 10px 10px 20px;

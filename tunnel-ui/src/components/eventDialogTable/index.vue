@@ -74,11 +74,14 @@
                 :span="20"
                 style="display: flex; justify-content: space-between"
               >
+              <el-tooltip class="item" effect="dark" :content="item.frameEventTitle" placement="top">
                 <div class="overflowText">{{ item.frameEventTitle }}</div>
+              </el-tooltip>
                 <div style="float: right; margin-right: 10px">
-                  {{ item.startTime }}
+                  {{ item.eventTime }}
                 </div>
               </el-col>
+
             </el-row>
             <div class="lineBT">
               <div></div>
@@ -105,7 +108,7 @@
     </el-dialog>
   </div>
 </template>
-    
+
     <script>
 import { mapState } from "vuex";
 import moment from "moment";
@@ -135,7 +138,7 @@ export default {
       list: [],
       urls: [],
       videoUrl: require("@/assets/Example/v1.mp4"),
-      startTime: "",
+      eventTime: "",
     };
   },
   computed: {
@@ -154,7 +157,7 @@ export default {
     },
   },
   created() {
-    this.startTime = moment().format("YYYY-MM-DD");
+    this.eventTime = moment().format("YYYY-MM-DD");
     // console.log(this.startTime)
     // eventList(this.searchValue, this.pageNum,this.startTime).then((res) => {
     //   console.log(res, "事件弹窗分类数组");
@@ -213,7 +216,7 @@ export default {
             this.list = this.list.concat(res.data.data);
           });
         } else {
-          eventList(this.searchValue, this.pageNum, this.startTime).then(
+          eventList(this.searchValue, this.pageNum, this.eventTime).then(
             (res) => {
               console.log(res, "事件弹窗分类数组");
               // this.list.push(res.rows);
@@ -226,10 +229,13 @@ export default {
       }, 2000);
     },
     handleSee(id) {
-      setTimeout(() => {
-        bus.$emit("getPicId", id);
-      }, 200);
-      bus.$emit("openPicDialog");
+      if(searchValue != 2){
+        setTimeout(() => {
+          bus.$emit("getPicId", id);
+        }, 200);
+        bus.$emit("openPicDialog");
+      }
+
     },
 
     // 忽略事件
@@ -299,7 +305,7 @@ export default {
         });
       } else {
         // 主动安全 交通事件
-        eventList(searchValue, pageNum, this.startTime).then((res) => {
+        eventList(searchValue, pageNum, this.eventTime).then((res) => {
           console.log(res, "事件弹窗分类数组");
           this.list = res.rows;
           this.total = res.total;
@@ -318,7 +324,7 @@ export default {
   },
 };
 </script>
-    
+
     <style lang="scss" scoped>
 ::v-deep .el-dialog {
   width: 100% !important;
@@ -446,7 +452,7 @@ export default {
   top: 0px;
   left: calc(100% - 600px);
   // background-color: #071930;
-  .el-dialog__body {
+  .el-dialog__body{
     padding: 0 !important;
     width: 100% !important;
     margin: 0 !important;
@@ -527,5 +533,10 @@ export default {
     }
   }
 }
+.overflowText{
+  width:280px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 </style>
-    

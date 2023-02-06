@@ -56,6 +56,7 @@
         },
         created(){
         //   console.info("123");
+        //   console.log(this.rtsp,"this.rtsp")
         },
         methods: {
             fullScreen () {

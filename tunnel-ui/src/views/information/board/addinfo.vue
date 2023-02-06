@@ -65,7 +65,7 @@
         <el-button type="info" plain @click="alignment(1)" size="mini"
           >左对齐</el-button
         >
-
+        
       </el-row> -->
       <el-card>
         <el-form
@@ -77,7 +77,7 @@
         >
           <el-row :gutter="24">
             <el-col :span="8">
-              <el-form-item prop="category" label="所属类别"
+              <el-form-item prop="category" label="所属类别" 
               :rules="[{ required: categoryRules?true:false,message: '请选择所属类别',trigger: 'blur',}]">
                 <el-select
                   v-model="dataForm.category"
@@ -96,7 +96,7 @@
               </el-form-item>
             </el-col>
             <el-col class="infoBoardButton" :span="16">
-              <el-button type="info" plain @click="alignment(6)" size="mini"
+              <!-- <el-button type="info" plain @click="alignment(6)" size="mini"
                 >下对齐</el-button
               >
               <el-button type="info" plain @click="alignment(5)" size="mini"
@@ -104,7 +104,7 @@
               >
               <el-button type="info" plain @click="alignment(4)" size="mini"
                 >上对齐</el-button
-              >
+              > -->
               <el-button type="info" plain @click="alignment(3)" size="mini"
                 >右对齐</el-button
               >
@@ -254,7 +254,7 @@
             <!-- <el-col :span="24" v-show="templateContent.length > 1">
               <el-divider></el-divider>
             </el-col> -->
-
+         
             <!-- <el-col :span="6">
               <el-form-item prop="rollSpeed" label="滚动速度">
                 <el-input-number
@@ -937,7 +937,7 @@ export default {
               throw err;
             });
 
-
+            
           });
         }
       } else {
@@ -1005,6 +1005,7 @@ export default {
        // 左对齐
         case 1:
           divContent[0].style.justifyContent = 'left'
+          divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'left'
           textBoard[0].style.position = 'static'
 
@@ -1012,6 +1013,7 @@ export default {
           // 左右居中
         case 2:
           divContent[0].style.justifyContent = 'center'
+          divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'center'
           textBoard[0].style.position = 'static'
 
@@ -1019,6 +1021,7 @@ export default {
           // 右对齐
         case 3:
           divContent[0].style.justifyContent = 'right'
+          divContent[0].style.alignItems = 'center'
           textBoard[0].style.textAlign = 'right'
           textBoard[0].style.position = 'static'
 

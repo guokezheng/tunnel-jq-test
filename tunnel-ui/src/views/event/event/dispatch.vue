@@ -6,14 +6,55 @@
           <div class="video">
             <div class="title">实时视频</div>
             <div class="videoBox1">
-              <div
+              <div class="videoContent">
+                <videoPlayer
+                  v-if="videoForm1.liveUrl "
+                  :rtsp="videoForm1.liveUrl"
+                  :open="videoForm1.cameraPlayer"
+                  class="video"
+                ></videoPlayer>
+                <div class="videoListTitle">{{ videoForm1.title }}</div>
+              </div>
+              <div class="videoContent">
+                <videoPlayer
+                  v-if="videoForm2.liveUrl "
+                  :rtsp="videoForm2.liveUrl"
+                  :open="videoForm2.cameraPlayer"
+                  class="video"
+                ></videoPlayer>
+                <div class="videoListTitle">{{ videoForm2.title }}</div>
+              </div>
+              <div class="videoContent">
+                <videoPlayer
+                  v-if="videoForm3.liveUrl "
+                  :rtsp="videoForm3.liveUrl"
+                  :open="videoForm3.cameraPlayer"
+                  class="video"
+                ></videoPlayer>
+                <div class="videoListTitle">{{ videoForm3.title }}</div>
+              </div>
+              <div class="videoContent">
+                <videoPlayer
+                  v-if="videoForm4.liveUrl "
+                  :rtsp="videoForm4.liveUrl"
+                  :open="videoForm4.cameraPlayer"
+                  class="video"
+                ></videoPlayer>
+                <div class="videoListTitle">{{ videoForm4.title }}</div>
+              </div>
+              <!-- <div
                 v-for="(item, index) of videoList"
                 :key="index"
                 class="videoContent"
               >
-                <video :src="item.url" controls muted loop fluid></video>
+                <videoPlayer
+                  v-if="item.liveUrl "
+                  :rtsp="item.liveUrl"
+                  :open="cameraPlayer"
+                  class="video"
+                ></videoPlayer>
                 <div class="videoListTitle">{{ item.title }}</div>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="evtMessage">
@@ -55,12 +96,13 @@
                     fluid
                   ></video>
                 </div>
-                <div class="evtMessImg" v-if="eventForm.iconUrlList > 0">
-                  <img
-                    :src="item.imgUrl"
+                <div class="evtMessImg" v-if="eventForm.iconUrlList && eventForm.iconUrlList.length > 0">
+                  <el-image
                     v-for="(item, index) of eventForm.iconUrlList"
                     :key="index"
-                  />
+                    :src="item.imgUrl"
+                    :preview-src-list="Array(item.imgUrl)" 
+                  ></el-image>
                 </div>
                 <img
                   src="../../../assets/cloudControl/nullImg.png"
@@ -622,6 +664,8 @@ import { getTunnels } from "@/api/equipment/tunnel/api.js";
 import { laneImage } from "../../../utils/configData.js";
 import { listType } from "@/api/equipment/type/api.js";
 import { getDeviceData } from "@/api/workbench/config.js";
+import { getEventCamera, getEntranceExitVideo} from "@/api/eventDialog/api.js";
+import { videoStreaming } from "@/api/equipment/eqlist/api";
 
 import workBench from "@/views/event/reservePlan/workBench";
 import comVideo from "@/views/workbench/config/components/video"; //摄像机弹窗
@@ -636,6 +680,7 @@ import comRobot from "@/views/workbench/config/components/robot"; //机器人弹
 import comData from "@/views/workbench/config/components/data"; //只有数据的弹窗
 import comYoudao from "@/views/workbench/config/components/youdao"; //诱导灯弹窗
 import comBoard from "@/views/workbench/config/components/board"; //诱导灯弹窗
+import videoPlayer from "@/views/event/vedioRecord/myVideo.vue";
 
 import { listEventType } from "@/api/event/eventType";
 import {
@@ -672,6 +717,7 @@ export default {
     comYoudao,
     comBoard,
     workBench,
+    videoPlayer
   },
   data() {
     return {
@@ -706,42 +752,13 @@ export default {
       videoUrl: require("@/assets/Example/v1.mp4"),
       imgUrl: require("@/assets/Example/pic1.jpg"),
       planType: [],
-      videoList: [
-        {
-          url: require("@/assets/Example/v1.mp4"),
-          title: "入口",
-        },
-        {
-          url: require("@/assets/Example/v1.mp4"),
-          title: "出口",
-        },
-        {
-          url: require("@/assets/Example/v1.mp4"),
-          title: "现场1",
-        },
-        {
-          url: require("@/assets/Example/v1.mp4"),
-          title: "现场2",
-        },
-      ],
-      fromList: [
-        {
-          value: "0",
-          label: "雷达",
-        },
-        {
-          value: "1",
-          label: "火灾报警",
-        },
-        {
-          value: "2",
-          label: "紧急电话",
-        },
-        {
-          value: "3",
-          label: "其他",
-        },
-      ],
+      videoList: [],
+      videoForm1:{},
+      videoForm2:{},
+      videoForm3:{},
+      videoForm4:{},
+
+      fromList: [],
       reservePlan: {
         oneWay: "1",
         twoWay: "1",
@@ -794,11 +811,11 @@ export default {
     // this.evtHandle()
     // this.getpersonnelList()
     this.getDicts("sd_direction_list").then((response) => {
-      console.log(response.data, "response.data车道方向");
+      console.log(response.data, "车道方向");
       this.directionList = response.data;
     });
     this.getDicts("sd_emergency_plan_type").then((response) => {
-      console.log(response.data, "response.data预案类型");
+      console.log(response.data, "预案类型");
       this.planType = response.data;
     });
     this.getDicts("brand").then((data) => {
@@ -813,6 +830,10 @@ export default {
       console.log(data, "设备类型");
       this.eqTypeDialogList = data.data;
     });
+    this.getDicts("sd_event_source").then((data) => {
+      console.log(data,"事件来源")
+      this.fromList = data.data;
+    });
   },
   mounted() {
     this.timer = setInterval(() => {
@@ -823,11 +844,11 @@ export default {
   methods: {
     //右键拖动
     dragImg(e) {
-      console.log(e, "e");
-      console.log(
-        this.$refs.dragImgDom.offsetLeft,
-        "this.$refs.dragImgDom.offsetLeft"
-      );
+      // console.log(e, "e");
+      // console.log(
+      //   this.$refs.dragImgDom.offsetLeft,
+      //   "this.$refs.dragImgDom.offsetLeft"
+      // );
       if (e.button == 0) {
         return;
       }
@@ -872,11 +893,8 @@ export default {
     },
     // 事件点图片
     getAccIcon() {
-      console.log(8888888888);
       let id = this.eventForm.eventTypeId;
-      console.log(this.eventForm.eventTypeId, "this.eventForm.eventTypeId");
       listEventType({ id }).then((res) => {
-        console.log(res);
         this.assIconUrl = res.rows[0].iconUrl;
       });
     },
@@ -1090,6 +1108,8 @@ export default {
         await listEvent(param).then((response) => {
           console.log(response, "事件详情");
           this.eventForm = response.rows[0];
+          this.eventForm.iconUrlList = response.rows[0].iconUrlList.splice(0,4)
+          this.getVideoList()
           this.getpersonnelList();
           this.evtHandle();
           this.getTunnelData();
@@ -1099,19 +1119,73 @@ export default {
         });
       }
     },
+    // 左上角视频
+    getVideoList(){
+      this.videoForm1.cameraPlayer = false
+      this.videoForm2.cameraPlayer = false
+      this.videoForm3.cameraPlayer = false
+      this.videoForm4.cameraPlayer = false
+
+      console.log(this.eventForm,"this.eventForm")
+      // this.videoList = []
+      getEntranceExitVideo(
+        this.eventForm.tunnelId,
+        this.eventForm.direction
+        ).then((response)=>{
+          videoStreaming(response.data[0].inlet).then((response) =>{
+            console.log(response,"视频流");
+            response.data.title = '入口';
+            if(response.code == 200){
+              this.videoForm1 = response.data
+              this.videoForm1.cameraPlayer = true
+            }
+          })
+          videoStreaming(response.data[0].outlet).then((response) =>{
+            console.log(response,"视频流");
+            response.data.title = '出口';
+            if(response.code == 200){
+              this.videoForm2 = response.data
+              this.videoForm2.cameraPlayer = true
+            }
+          })
+        })
+        setTimeout(()=>{
+          getEventCamera( 
+            this.eventForm.tunnelId,
+            this.eventForm.stakeNum,
+            this.eventForm.direction
+            ).then((res)=>{
+              videoStreaming(res.data[0].eqId).then((response) =>{
+                console.log(response,"视频流");
+                response.data.title = '现场1';
+                if(response.code == 200){
+                  this.videoForm3 = response.data
+                  this.videoForm3.cameraPlayer = true
+                }
+              })
+              videoStreaming(res.data[1].eqId).then((response) =>{
+                console.log(response,"视频流");
+                response.data.title = '现场2';
+                if(response.code == 200){
+                  this.videoForm4 = response.data
+                  this.videoForm4.cameraPlayer = true
+                }
+              })
+          })
+        },500)
+        
+    },
     /** 查询应急人员信息列表 */
     async getpersonnelList() {
       const params = {
         tunnelId: this.eventForm.tunnelId,
       };
       await listSdEmergencyPer(params).then((response) => {
-        console.log(99999999999999999999999999);
         this.implementList = response.rows;
       });
     },
     // 切换工作台和3D隧道
     changeActiveMap(type) {
-      console.log(this.activeMap, "this.activeMap");
       if (type == 1) {
         this.activeMap = 1;
       } else {
@@ -1147,10 +1221,10 @@ export default {
       }
     },
     // 转事件来源数据
-    getFrom(num) {
+    getFrom(from) {
       for (let item of this.fromList) {
-        if (num == item.value) {
-          return item.label;
+        if (from == item.dictValue) {
+          return item.dictLabel;
         }
       }
     },
@@ -1168,7 +1242,6 @@ export default {
       let that = this;
 
       await getTunnels(tunnelId).then((response) => {
-        console.log(response, "response");
         this.tunnelLane = Number(response.data.lane);
         let res = response.data.storeConfigure;
         //存在配置内容
@@ -1414,10 +1487,11 @@ export default {
         display: inline-block;
         justify-content: center;
         margin-top: 4px;
-        video {
+        .video {
           height: 90px;
           width: 70%;
           object-fit: fill;
+          margin:0 auto;
         }
         .videoListTitle {
           width: 75px;
@@ -1472,7 +1546,7 @@ export default {
           display: flex;
           justify-content: space-between;
           margin: 5px auto;
-          > img {
+          > .el-image {
             width: 24%;
           }
         }

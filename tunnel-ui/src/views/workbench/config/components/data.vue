@@ -27,7 +27,7 @@
         <el-form
           ref="form"
           :model="stateForm"
-          label-width="90px"
+          label-width="80px"
           label-position="left"
           size="mini"
           style="padding: 15px; padding-top: 0px"

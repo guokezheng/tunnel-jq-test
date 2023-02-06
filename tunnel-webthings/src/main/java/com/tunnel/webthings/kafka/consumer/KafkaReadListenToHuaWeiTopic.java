@@ -1485,6 +1485,7 @@ public class KafkaReadListenToHuaWeiTopic {
         Date time = DateUtils.parseDate(sdf.format(new Date(jsonObject.getLong("time"))));
         sdRadarDetectData.setDetectTime(time);
         sdRadarDetectData.setRoadDir(jsonObject.getString("roadDir"));
+        sdRadarDetectData.setVehicleId(jsonObject.getString("uniqId"));
         SdRadarDetectDataMapper detectDataMapper = SpringUtils.getBean(SdRadarDetectDataMapper.class);
         detectDataMapper.insertSdRadarDetectData(sdRadarDetectData);
         if(StringUtils.isNotEmpty(sdRadarDetectData.getVehicleLicense()) && StringUtils.isNotNull(sdRadarDetectData.getVehicleLicense())){

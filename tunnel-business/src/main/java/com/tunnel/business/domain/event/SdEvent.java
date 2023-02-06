@@ -248,6 +248,19 @@ public class SdEvent extends BaseEntity {
     //推送物联中台 图片临时保存字段
     private String eventImgUrl;
 
+    /**
+     * 弹框事件标题
+     */
+    private String frameEventTitle;
+
+    public String getFrameEventTitle() {
+        return frameEventTitle;
+    }
+
+    public void setFrameEventTitle(String frameEventTitle) {
+        this.frameEventTitle = frameEventTitle;
+    }
+
     public String getEventImgUrl() {
         return eventImgUrl;
     }

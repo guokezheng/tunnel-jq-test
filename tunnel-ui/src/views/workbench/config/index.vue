@@ -81,7 +81,7 @@
               placeholder="请输入内容"
               v-model="screenEqName"
               class="input-with-select"
-              @click.native="treeClick()"
+              @keyup.enter.native="screenEqNameButton"
             >
               <el-button
                 slot="append"
@@ -297,13 +297,15 @@
 
                     <el-tooltip
                       effect="dark"
-                      :content="sensorContent(item)"
+                      
                       placement="right"
                       :title="item.pile"
                       :disabled="sensorDisabledTwo(item)"
                       style="position: relative; top: 0px; left: 0px"
                       popper-class="tipCase"
                     >
+                    <!-- :content="sensorContent(item)" -->
+
                       <!-- 巡检机器人 -->
 
                       <div
@@ -387,7 +389,11 @@
                           "
                           >
 
-                          <span>{{getBoardStyle(item.associated_device_id,'content') }}</span>
+                          <span
+                          :style="{
+                              animation: 'boardBox1 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
+                          }"
+                          >{{getBoardStyle(item.associated_device_id,'content') }}</span>
                         </div>
                         <div v-show="item.eqType == 36"
                         class="boardBox2"
@@ -409,7 +415,11 @@
                               ? 'screenEqNameClass'
                               : ''
                           "
-                          ><span>{{getBoardStyle(item.associated_device_id,'content')}}</span>
+                          ><span
+                          :style="{
+                              animation: 'boardBox2 '+ getBoardStyle(item.associated_device_id,'content').length +'s' +' linear infinite'
+                          }"
+                          >{{getBoardStyle(item.associated_device_id,'content')}}</span>
                         </div>
                         <!-- 调光数值 -->
                         <label
@@ -4628,7 +4638,24 @@ export default {
         this.$forceUpdate();
       }
     },
-
+    // 筛选设备名称
+    screenEqNameButton() {
+      console.log(this.screenEqName);
+      if (this.screenEqName) {
+        for (var item of this.selectedIconList) {
+          if (item.eqName.indexOf(this.screenEqName) > -1) {
+            console.log(item.eqName);
+            item.click = true;
+          } else {
+            item.click = false;
+          }
+        }
+      } else {
+        for (var item of this.selectedIconList) {
+          item.click = false;
+        }
+      }
+    },
     // 抽屉车指批量控制 车道下拉框
     getTunnelLane() {
       this.chezhiLaneList = [];
@@ -6802,7 +6829,7 @@ export default {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
                   5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39,
+                  40, 39, 48,
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -7050,7 +7077,8 @@ export default {
       }
     },
     sensorDisabledTwo(item) {
-      let sensorDevice = [5, 17, 19];
+      let sensorDevice = [];
+      // let sensorDevice = [5, 17, 19];
       if (sensorDevice.indexOf(item.eqType) == -1) {
         return true;
       } else {
@@ -9663,6 +9691,7 @@ input {
   background: #cdedfa !important;
   border: solid 1px #1d58a9;
   color: #1d58a9 !important;
+  transform: translateX(20px);
 }
 
 // .popper-class-site {
@@ -10245,7 +10274,7 @@ input {
 .boardBox1 span {
   display: inline-block;
   /*inline样式不能使用动画*/
-  animation: boardBox1 10s linear infinite; /*滚动动画*/
+  // animation: boardBox1 10s linear infinite; /*滚动动画*/
 }
 @keyframes boardBox1 {
   from {
@@ -10275,11 +10304,11 @@ input {
 .boardBox2 span {
   display: inline-block;
   /*inline样式不能使用动画*/
-  animation: boardBox2 15s linear infinite; /*滚动动画*/
+  // animation: boardBox2 15s linear infinite; /*滚动动画*/
 }
 @keyframes boardBox2 {
   from {
-    transform: translateY(100%); /*div多宽就写多宽*/
+    transform: translateY(190px); /*div多宽就写多宽*/
   }
 
   to {

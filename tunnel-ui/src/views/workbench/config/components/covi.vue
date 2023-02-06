@@ -215,7 +215,7 @@ export default {
           XData = viXdata;
           YData = viYdata
           lincolor = ["#00AAF2", "#8DEDFF", "#E3FAFF"];
-          yName = "VI/KM";
+          yName = "VI/M";
         } else {
           XData = coXdata;
           YData = coYdata;

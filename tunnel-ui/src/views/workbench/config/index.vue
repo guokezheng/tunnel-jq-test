@@ -81,7 +81,7 @@
               placeholder="请输入内容"
               v-model="screenEqName"
               class="input-with-select"
-              @keyup.enter.native="screenEqNameButton"
+              @click.native="treeClick()"
             >
               <el-button
                 slot="append"
@@ -90,9 +90,9 @@
               ></el-button>
             </el-input>
             <!-- 搜索栏树状结构 -->
-            <!-- <div class="treeBox" ref="treeBox" v-show="treeShow">
+            <div class="treeBox" ref="treeBox" v-show="treeShow">
               <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-            </div> -->
+            </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -3170,61 +3170,61 @@ export default {
       treeShow: false,
       //搜索树状数据
       treeData: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 1-1",
-              children: [
-                {
-                  label: "三级 1-1-1",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "一级 2",
-          children: [
-            {
-              label: "二级 2-1",
-              children: [
-                {
-                  label: "三级 2-1-1",
-                },
-              ],
-            },
-            {
-              label: "二级 2-2",
-              children: [
-                {
-                  label: "三级 2-2-1",
-                },
-              ],
-            },
-          ],
-        },
-        {
-          label: "一级 3",
-          children: [
-            {
-              label: "二级 3-1",
-              children: [
-                {
-                  label: "三级 3-1-1",
-                },
-              ],
-            },
-            {
-              label: "二级 3-2",
-              children: [
-                {
-                  label: "三级 3-2-1",
-                },
-              ],
-            },
-          ],
-        },
+        // {
+        //   label: "一级 1",
+        //   children: [
+        //     {
+        //       label: "二级 1-1",
+        //       children: [
+        //         {
+        //           label: "三级 1-1-1",
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
+        // {
+        //   label: "一级 2",
+        //   children: [
+        //     {
+        //       label: "二级 2-1",
+        //       children: [
+        //         {
+        //           label: "三级 2-1-1",
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       label: "二级 2-2",
+        //       children: [
+        //         {
+        //           label: "三级 2-2-1",
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
+        // {
+        //   label: "一级 3",
+        //   children: [
+        //     {
+        //       label: "二级 3-1",
+        //       children: [
+        //         {
+        //           label: "三级 3-1-1",
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       label: "二级 3-2",
+        //       children: [
+        //         {
+        //           label: "三级 3-2-1",
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
       ],
       defaultProps: {
         children: "children",

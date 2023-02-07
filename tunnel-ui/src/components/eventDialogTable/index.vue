@@ -229,7 +229,7 @@ export default {
       }, 2000);
     },
     handleSee(id) {
-      if(searchValue != 2){
+      if(this.searchValue != 2){
         setTimeout(() => {
           bus.$emit("getPicId", id);
         }, 200);

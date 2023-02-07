@@ -92,7 +92,7 @@
             <!-- 搜索栏树状结构 -->
             <div class="treeBox" ref="treeBox" v-show="treeShow">
               <el-tree :data="treeData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-            </div>
+          </div>
           </div>
           <div class="display-box zoomClass">
             <p class="zoom-title" style="font-size: 14px">缩放：</p>
@@ -5650,13 +5650,9 @@ export default {
               },
               type: "value",
               minInterval: 1,
-              // min: 0,
-              // max: 200,
               axisTick: {
                 show: false,
               },
-              max: 200,
-              min: 0,
               splitNumber: 5,
               splitLine: {
                 show: true,
@@ -6397,9 +6393,9 @@ export default {
           }
         }
         this.getTunnelLane();
-        // this.$nextTick(() => {
-        //   this.getEnergyConsumption(this.currentTunnel.id);
-        // });
+        this.$nextTick(() => {
+          this.getEnergyConsumption(this.currentTunnel.id);
+        });
         // this.timingControl()
       });
     },
@@ -6828,8 +6824,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22,
-                  40, 39, 48,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -6867,10 +6862,7 @@ export default {
                   }
                 } else {
                   //可以控制设备状态的设备类型，比如车指
-                  if (
-                    deviceData.eqStatus == "1" ||
-                    deviceData.eqStatus == "2"
-                  ) {
+                  if (deviceData.eqStatus == "1") {
                     // 在线
                     if (
                       // 车指之类的包括正红反绿之类的图标 == 2

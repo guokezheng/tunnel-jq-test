@@ -126,7 +126,8 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="7">
-                  <el-form-item label="设备状态:">
+                  <el-form-item label="设备状态:" 
+                  :style="{color:stateForm.eqStatus=='1'?'yellowgreen':stateForm.eqStatus=='2'?'white':'red'}">
                     {{ geteqType(stateForm.eqStatus) }}
                   </el-form-item>
                 </el-col>
@@ -410,7 +411,7 @@
               :name="item.dictValue"
             >
               <div
-                v-for="(itm, indx) in templateList"
+                v-for="(itm, indx) in item.list"
                 :key="indx"
                 class="con"
                 :style="{
@@ -918,9 +919,15 @@ export default {
         category: 0,
       };
       getAllVmsTemplate(param).then((res) => {
+        let data = res.data;
         console.log(res, "情报板管理右侧查询接口");
-        this.templateList = res.data;
-        this.$forceUpdate();
+        for(let j = 0;j < this.iotTemplateCategoryList.length;j++){
+            let arr = this.iotTemplateCategoryList[j];
+            let brr = data[j];
+            arr.list = brr
+        }
+        this.$forceUpdate()
+        console.log(this.iotTemplateCategoryList,"新模板")
         // console.log(this.templateList,"this.templateList");
       });
     },

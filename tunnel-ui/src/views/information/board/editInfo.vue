@@ -652,6 +652,7 @@
 
         this.dataForm = this.boardEmitItem
         this.dataForm.CONTENT = this.boardEmitItem.CONTENT.replace('<br>','\n').replace(/ /g, ' ')
+        this.dataForm.STAY = Number(this.boardEmitItem.STAY)/100
       },
       alignment(alignmentNum) {
         console.log(alignmentNum,"alignmentNum");
@@ -813,7 +814,7 @@
           remark: "",
           screenSize:  this.dataForm.screenSize,
           searchValue: null,
-          stopTime: this.dataForm.STAY,
+          stopTime: Number(this.dataForm.STAY)*100,
           tcontents: null,
           templateType: null,
           updateBy: null,

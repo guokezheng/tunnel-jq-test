@@ -98,6 +98,7 @@
                     <div>{{ itm.deviceName }}</div>
                     <div
                       class="el-icon-tickets"
+                      :style="submitButton?'pointer-events: auto;':'pointer-events: none;'"
                       @click.stop.prevent="onSubmit(itm.deviceId)"
                     ></div>
                   </el-checkbox>
@@ -121,7 +122,7 @@
             >
             <el-button type="primary" @click="publishInfo">发布信息</el-button>
           </div>
-          <el-table :data="contentList" row-key="ID">
+          <el-table :data="contentList" row-key="ID" v-loading="loading" >
             <el-table-column align="center"  width="650">
               <template slot-scope="scope">
                 <div class="con">
@@ -362,6 +363,8 @@ export default {
 
   data() {
     return {
+      loading:false,
+      submitButton:true,
       iotBoardActive: "",
       iotBoardList: [],
       boardDirectionList: [],
@@ -436,8 +439,6 @@ export default {
       Sortable.create(tbody, {
         // 结束拖拽后的回调函数
         onEnd({newIndex, oldIndex}) {
-          console.log('拖动了行，当前序号：' + newIndex);
-          console.log(oldIndex,'oldIndex')
           const currentRow = _this.contentList.splice(oldIndex, 1)[0];
           _this.contentList.splice(newIndex, 0, currentRow);
         }
@@ -832,9 +833,62 @@ export default {
       this.disContentList.push(jsonArr);
     },
 
-    onSubmit(deviceId) {
+    async onSubmit(deviceId) {
+      this.submitButton = false
+      this.loading = true
       this.contentList = [];
+      // 获取情报板修改页面信息
+      await getBoardEditInfo(deviceId).then((response) => {
+        console.log(response, "response");
+        if (response.code != 200) {
+          this.$message.error(`设备网络连接异常，请稍后重试`);
 
+          return;
+        }
+        if (response.data[0] == undefined) {
+          this.$message(response.msg);
+          return;
+        }
+
+        var parseObject = JSON.parse(response.data[0]);
+        var protocolType = parseObject.support.PROTOCOL_TYPE;
+        var contents = parseObject.content;
+        console.log(parseObject, "parseObject");
+        if (
+          typeof contents == "undefined" ||
+          typeof protocolType == "undefined"
+        ) {
+          this.$message(response.msg);
+          return;
+        }
+        this.supplier = protocolType;
+        var currRowId = "";
+        var reg = /,/g;
+        console.log(contents, "contents");
+        for (var i = 0; i < contents.length; i++) {
+          var content = contents[i];
+          var itemId = "ITEM" + this.formatNum(i, 3);
+          if (i == 0) {
+            currRowId = itemId;
+          }
+          var con = content[itemId][0];
+          con.COLOR = this.getColorStyle(con.COLOR);
+          con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
+          con.ID = i
+          // con.CONTENT = con.CONTENT
+
+          this.contentList.push(con);
+        }
+        // this.allVmsTemplate();
+        console.log(this.contentList, "this.contentList");
+        this.submitButton = true
+        this.loading = false
+
+        this.$forceUpdate();
+      }).catch((e)=>{
+        this.$message.error(`设备网络连接异常，请稍后重试`);
+
+      })
       getBoardInfo(deviceId).then((res) => {
         console.log(res, "getBoardInfo");
         this.deviceId = res.data.deviceId;
@@ -846,55 +900,7 @@ export default {
         }
         
       });
-      // 获取情报板修改页面信息
-      getBoardEditInfo(deviceId).then((response) => {
-          console.log(response, "response");
-          if (response.code != 200) {
-            this.$message.error(`设备网络连接异常，请稍后重试`);
-
-            return;
-          }
-          if (response.data[0] == undefined) {
-            this.$message(response.msg);
-            return;
-          }
-
-          var parseObject = JSON.parse(response.data[0]);
-          var protocolType = parseObject.support.PROTOCOL_TYPE;
-          var contents = parseObject.content;
-          console.log(parseObject, "parseObject");
-          if (
-            typeof contents == "undefined" ||
-            typeof protocolType == "undefined"
-          ) {
-            this.$message(response.msg);
-            return;
-          }
-          this.supplier = protocolType;
-          var currRowId = "";
-          var reg = /,/g;
-          console.log(contents, "contents");
-          for (var i = 0; i < contents.length; i++) {
-            var content = contents[i];
-            var itemId = "ITEM" + this.formatNum(i, 3);
-            if (i == 0) {
-              currRowId = itemId;
-            }
-            var con = content[itemId][0];
-            con.COLOR = this.getColorStyle(con.COLOR);
-            con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
-            con.ID = i
-            // con.CONTENT = con.CONTENT
-
-            this.contentList.push(con);
-          }
-          // this.allVmsTemplate();
-          console.log(this.contentList, "this.contentList");
-          this.$forceUpdate();
-        }).catch((e)=>{
-          this.$message.error(`设备网络连接异常，请稍后重试`);
-
-        })
+      
     },
     openQbbDrawer(item, index, type) {
       this.index_ = index;

@@ -795,7 +795,7 @@ export default {
             ACTION: "1",
             COORDINATE: "000000",
             STATE: "true",
-            STAY: "500",
+            STAY: "5",
             screenSize: devicePixel,
           };
           this.content = "请输入内容";
@@ -909,7 +909,7 @@ export default {
             inScreenMode: this.dataForm.ACTION,
             remark: "",
             screenSize: this.dataForm.screenSize,
-            stopTime: this.dataForm.STAY,
+            stopTime: Number(this.dataForm.STAY)*100,
             vmsType: "",
             width: "",
           };

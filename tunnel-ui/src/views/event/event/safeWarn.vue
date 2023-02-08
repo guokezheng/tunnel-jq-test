@@ -275,11 +275,11 @@
             align="center"
             prop="faultFxtime"
             width="180"
-          >
-            <template slot-scope="scope">
+          />
+            <!-- <template slot-scope="scope">
               <span>{{ parseTime(scope.row.faultFxtime, "{y}-{m}-{d}") }}</span>
-            </template>
-          </el-table-column>
+            </template> -->
+          <!-- </el-table-column> -->
           <el-table-column label="持续时间" align="center" prop="faultCxtime" />
           <!--      <el-table-column label="设备id" align="center" prop="eqId"/>-->
           <el-table-column label="设备状态" align="center" prop="eqStatus">

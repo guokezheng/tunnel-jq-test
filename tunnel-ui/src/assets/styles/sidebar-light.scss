@@ -535,6 +535,10 @@
   .el-input-number__increase{
     border-bottom: 1px solid #05AFE3 !important;
   }
+  // 时间选择器箭头
+  .el-picker-panel__icon-btn{
+    color:#bbb;
+  }
   #app {
     .patrol .box-father .box .number{
       color: #fff !important;

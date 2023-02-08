@@ -52,16 +52,16 @@
                   color: getColorStyle(item.COLOR),
                   fontSize: getFontSize(item.FONT_SIZE, addForm.devicePixel),
                   fontFamily: item.FONT,
-                  width: getDevicePixel(addForm.devicePixel, 0),
-                  height: getDevicePixel(addForm.devicePixel, 1),
+                  width: getDevicePixel(addForm.devicePixel, 0) + 'px',
+                  height: getDevicePixel(addForm.devicePixel, 1) + 'px',
                 }"
               >
                 <span
                   :style="{
-                    left: getCoordinate1(item.COORDINATE.substring(0, 3)),
-                    top: getCoordinate2(item.COORDINATE.substring(3, 6)),
+                    left: getCoordinate(item.COORDINATE.substring(0, 3),'left'),
+                    top: getCoordinate(item.COORDINATE.substring(3, 6),'top'),
                   }"
-                  style="position: absolute;line-height: 1;"
+                  style="position: absolute;line-height: 1;caret-color: rgba(0,0,0,0);"
                   v-html="
                     item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                       / /g,
@@ -190,208 +190,7 @@
           >
         </div>
       </div>
-      <!-- <div v-show="infoType == 'add'">
-        <div
-          style="
-            width: calc(100% - 30px);
-            min-height: 60px;
-            border: solid 1px white;
-            margin: 0 auto 10px;
-            background: #fff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          "
-        >
-          <div
-            style="
-               {
-                backgroundcolor: #000000;
-                color: yellow;
-                margin: 0 auto;
-                overflow: hidden;
-                position: relative;
-              }
-            "
-            :style="{
-              width: boardWidth + 'px',
-              height: boardHeight + 'px',
-            }"
-            class="blackBoard"
-          >
-            <span
-              style="line-height: 1; position: absolute; white-space: nowrap"
-              :style="{
-                color: addForm.COLOR,
-                fontSize: addForm.FONT_SIZE,
-                fontFamily: addForm.FONT,
-                letterSpacing: addForm.SPEED + 'px',
-                zIndex: '1000',
-                left: addForm.COORDINATE
-                  ? addForm.COORDINATE.substring(0, 3) + 'px'
-                  : '',
-                top: addForm.COORDINATE
-                  ? addForm.COORDINATE.substring(3, 6) + 'px'
-                  : '',
-              }"
-              class="textBoard"
-              v-html="
-                addForm.CONTENT
-                  ? addForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                      / /g,
-                      ' &nbsp'
-                    )
-                  : ''
-              "
-            ></span>
-          </div>
-        </div>
-        <el-form
-          ref="form"
-          :model="addForm"
-          label-width="72px"
-          label-position="left"
-          size="mini"
-          style="padding: 0 15px 15px 15px"
-        >
-          <el-row>
-            <el-col :span="8">
-              <el-form-item prop="category" label="所属类别">
-                <el-select
-                  v-model="addForm.category"
-                  placeholder="请选择所属类别"
-                  clearable
-                  size="small"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in iotTemplateCategoryList"
-                    :key="item.dictValue"
-                    :label="item.dictLabel"
-                    :value="item.dictValue"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="分辨率">
-                <el-select
-                  v-model="addForm.screenSize"
-                  placeholder="请选择分辨率"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="(item, index) in screenSizeOptions"
-                    :key="index"
-                    :label="item.type"
-                    :value="item.type"
-                    @click.native="changeScreenSize(item.type)"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="内容位置">
-                <el-radio-group v-model="addForm.position" size="mini">
-                  <el-radio-button label="左"></el-radio-button>
-                  <el-radio-button label="中"></el-radio-button>
-                  <el-radio-button label="右"></el-radio-button>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="详细内容">
-                <el-input
-                  type="textarea"
-                  clearable
-                  id="textContent"
-                  placeholder="详细内容"
-                  v-model="addForm.CONTENT"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="字体">
-                <el-select
-                  v-model="addForm.FONT"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in fontTypeOptions"
-                    :key="item.dictLabel"
-                    :label="item.dictLabel"
-                    :value="item.dictLabel"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="FONT_SIZE" label="字体大小">
-                <el-select v-model="addForm.FONT_SIZE" style="width: 90%">
-                  <el-option
-                    v-for="item in fontSizeOpt"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="COLOR" label="字体颜色">
-                <el-select
-                  v-model="addForm.COLOR"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in colorOptions"
-                    :key="item.cssClass"
-                    :label="item.dictLabel"
-                    :value="item.cssClass"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="ACTION" label="入屏方式">
-                <el-select
-                  v-model="addForm.ACTION"
-                  filterable
-                  placeholder="请选择"
-                  style="width: 90%"
-                >
-                  <el-option
-                    v-for="item in inScreenModeOptions"
-                    :key="item.code"
-                    :label="item.name"
-                    :value="item.code"
-                  >
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item prop="STAY" label="停留时间">
-                <el-input-number
-                  :min="0"
-                  controls-position="right"
-                  v-model="addForm.STAY"
-                  style="width: 90%"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>-->
+      
     </el-dialog>
     <el-dialog
       class="workbench-dialog mesModeDialog"
@@ -424,24 +223,33 @@
                 }"
               >
                 <div class="templateTitle">
+                  <div
+                    :style="{
+                      width: getDevicePixel(itm.screenSize, 0) + 'px',
+                      height: getDevicePixel(itm.screenSize, 1) + 'px',
+                    }"
+                    style="background: black; position: relative"
+                  >
                   <span
                     :style="{
-                      left: getCoordinate1(
-                        itm.tcontents[0].coordinate.substring(0, 3),
+                      left: getCoordinate(
+                        itm.tcontents[0].coordinate.substring(0, 3),'left',
                         itm.screenSize
                       ),
-                      top: getCoordinate2(
-                        itm.tcontents[0].coordinate.substring(3, 6),
+                      top: getCoordinate(
+                        itm.tcontents[0].coordinate.substring(3, 6),'top',
                         itm.screenSize
                       ),
                     }"
-                    style="position: absolute"
+                    style="position: absolute;line-height: 1;caret-color: rgba(0,0,0,0);"
                     v-html="
                       itm.tcontents[0].content
                         .replace(/\n|\r\n/g, '<br>')
                         .replace(/ /g, ' &nbsp')
                     "
                   ></span>
+                </div>
+                  
                 </div>
                 <div class="downIcon">
                   <div
@@ -745,21 +553,7 @@ export default {
       if (color == "红色" || color == 'red') return "255000000000";
       return "255255000000"; //黄色
     },
-    // 转分辨率
-    getDevicePixel(devicePixel, num) {
-      let width = this.addForm.devicePixel.split("*")[0]
-
-      if (devicePixel) {
-        if(width > 394){
-          if(num == 0){
-            return 394 + 'px'
-          }else if(num == 1){
-            return 75 + 'px'
-          }
-        }
-        return devicePixel.split("*")[num] + "px";
-      }
-    },
+    
     // 打开添加信息弹窗
     openDialogVisible(type,mode) {
       // this.devicePixel = this.form.devicePixel
@@ -784,33 +578,11 @@ export default {
     },
     // 接收子组件form表单 修改
     receiveForm(form) {
-      // if (this.editType == 2) {
-      //   console.log(this.index, "this.index_");
-      //   console.log(form, "2222222222222");
-      //   this.templateList[this.index].tcontents[0] = {
-      //     fontColor: form.COLOR,
-      //     content: form.CONTENT,
-      //     coordinate: form.COORDINATE,
-      //     fontType: form.FONT,
-      //     fontSize: form.FONT_SIZE,
-      //     fontSpacing: form.SPEED,
-      //     stopTime: form.STAY,
-      //     inScreenMode: form.ACTION,
-      //   };
-      //   // this.templateList[this.index_] = form;
-      //   console.log(
-      //     this.templateList[this.index].tcontents[0],
-      //     "this.templateList"
-      //   );
-      //   console.log(this.templateList, "this.templateList");
-      //   this.$forceUpdate();
-      // } else {
-
+     console.log(form,"接收子组件form表单 修改")
       this.contentList[this.index_] = form;
       this.$forceUpdate();
       console.log(this.contentList, "this.contentList");
 
-      // }
     },
     // 编辑
     openQbbDrawer(item, index, type) {
@@ -818,40 +590,11 @@ export default {
       console.log(item);
       this.boardEmitItem = item;
       this.boardEmitItem.screenSize = this.addForm.devicePixel;
-      // this.boardEmitItem.deviceId = this.deviceId;
       this.boardEmitItem.type = type;
-
       this.showEmit = true;
-      // this.$refs.editInfo.init();
-      // this.$emit("boardEmitItem",item)
+    
     },
-    // 编辑
-    // editOutline(item) {
-    //   console.log(item, "item,index");
-    //   // this.index = index;
-    //   console.log(item);
-    //   this.boardEmitItem = {
-    //     FONT_SIZE: item.tcontents[0].fontSize + "px",
-    //     COLOR: item.tcontents[0].fontColor,
-    //     CONTENT: item.tcontents[0].content,
-    //     COORDINATE: item.tcontents[0].coordinate,
-    //     FONT: this.getFont(item.tcontents[0].fontType),
-    //     SPEED: item.tcontents[0].fontSpacing,
-    //     ACTION: item.inScreenMode, //出屏方式
-    //     STAY: item.stopTime, //停留时间
-    //     type: type,
-    //     screenSize: item.screenSize,
-    //     category: item.category,
-    //     id: item.id,
-    //     tcontentsId: item.tcontents[0].id,
-    //   };
-    //   // console.log(this.form.devicePixel,"this.form.devicePixel");
-    //   // this.boardEmitItem.screenSize = item.screenSize;
-    //   // this.boardEmitItem.category = item.category;
-    //   // this.boardEmitItem.deviceId = this.deviceId;
-    //   console.log(this.showEmit, "this.showEmit");
-    //   this.showEmit = true;
-    // },
+   
     onSubmit() {
       getBoardEditInfo(this.associatedDeviceId).then((response) => {
         var parseObject = JSON.parse(response.data[0]);
@@ -964,56 +707,98 @@ export default {
       });
     },
 
-    getCoordinate1(coordinate) {
-      let screen = this.addForm.devicePixel.split("*")[0];
-
-      if (screen <= 394) {
+    getCoordinate(coordinate, type, screenSize) {
+      let width = "";
+      let height = "";
+      if (!screenSize) {
+        width = this.addForm.devicePixel.split("*")[0];
+        height = this.addForm.devicePixel.split("*")[1];
+      } else {
+        width = screenSize.split("*")[0];
+        height = screenSize.split("*")[1];
+      }
+      if (width < 394 && height < 65) {
         return coordinate + "px";
       } else {
-        var i = screen / 394;
-        return coordinate / i + "px";
+        if (width / 394 > height / 65) {
+          if (type == "left") {
+            return coordinate / (width / 394) + "px";
+          } else if (type == "top") {
+            return coordinate / (width / 394) + "px";
+          }
+        } else {
+          // console.log(coordinate,"coordinate")
+          if (type == "left") {
+            if (!screenSize) {
+              return coordinate / (height / 65) + 10 + "px";
+            } else {
+              return coordinate / (height / 65) + "px";
+            }
+          } else if (type == "top") {
+            if (!screenSize) {
+              return coordinate / (height / 65) + 4 + "px";
+            } else {
+              return coordinate / (height / 65) + "px";
+            }
+          }
+        }
       }
     },
-    getCoordinate2(coordinate, screenSize) {
-      var screen = "";
-      if (!screenSize) {
-        screen = this.addForm.devicePixel.split("*")[1];
+    // 转分辨率
+    getDevicePixel(devicePixel, type) {
+      let width = devicePixel.split("*")[0];
+      let height = devicePixel.split("*")[1];
+      // 实际分辨率比页面板子小
+      if (width < 394 && height < 65) {
+        if (type == 0) {
+          return width;
+        } else if (type == 1) {
+          return height;
+        }
       } else {
-        screen = screenSize.split("*")[1];
-      }
-
-      if (screen <= 75) {
-        var i = 75 / screen;
-        return coordinate * i + "px";
-      } else {
-        var i = screen / 75;
-        return coordinate / i + "px";
+        // 实际分辨率比页面板子大
+        if (width / 394 > height / 65) {
+          if (type == 0) {
+            return 394;
+          } else if (type == 1) {
+            return height / (width / 394);
+          }
+        } else {
+          if (type == 0) {
+            return width / (height / 65);
+          } else if (type == 1) {
+            return 65;
+          }
+        }
       }
     },
     // 转字号
     getFontSize(font, screenSize) {
-      // console.log(font, screenSize)
       if (!font) {
         return;
       }
-      var screen = "";
-      if (!screenSize) {
-        screen = this.addForm.devicePixel.split("*")[0];
-      } else {
-        screen = screenSize.split("*")[0];
-      }
-      if (screen <= 394) {
+      let width = screenSize.split("*")[0];
+      let height = screenSize.split("*")[1];
+      
+      if (width < 394 && height < 65) {
         if (font.toString().length == 2) {
           return font + "px";
         } else {
           return font.substring(0, 2) + "px";
         }
       } else {
-        var i = screen / 394;
-        if (font.toString().length == 2) {
-          return font * i + "px";
+        if (width / 394 > height / 65) {
+          if (font.toString().length == 2) {
+            return font / (width / 394) - 4 + "px";
+          } else {
+            return font.substring(0, 2) / (width / 394) - 4 + "px";
+          }
         } else {
-          return font.substring(0, 2) / i + "px";
+          if (font.toString().length == 2) {
+            return font / (height / 65) - 4 + "px";
+          } else {
+            return font.substring(0, 2) / (height / 65) - 4 + "px";
+          }
         }
       }
     },
@@ -1180,8 +965,11 @@ export default {
         .templateTitle {
           height: 75px;
           // border: 1px solid #01aafd;
-          background: black;
-          position: relative;
+          // background: black;
+          // position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           width: 395px;
           float: left;
         }
@@ -1288,8 +1076,8 @@ export default {
       margin-left: 4px;
       overflow: hidden;
       .content {
-        width: calc(100% - 10px);
-        height: calc(100% - 10px);
+        // width: calc(100% - 10px);
+        // height: calc(100% - 10px);
         background: #000;
         margin: 5px auto;
         overflow: hidden;

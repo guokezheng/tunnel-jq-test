@@ -983,6 +983,8 @@ export default {
         return "green";
       } else if (font == "蓝色") {
         return "blue";
+      }else{
+        return font
       }
     },
     // 文字对齐方式

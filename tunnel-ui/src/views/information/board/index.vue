@@ -121,7 +121,7 @@
             >
             <el-button type="primary" @click="publishInfo">发布信息</el-button>
           </div>
-          <el-table :data="contentList">
+          <el-table :data="contentList" row-key="ID">
             <el-table-column align="center"  width="650">
               <template slot-scope="scope">
                 <div class="con">
@@ -251,6 +251,7 @@
               <div
                 v-for="(itm, indx) in item.list"
                 :key="indx"
+                v-if="item.list.length>0"
                 class="con"
                 :style="{
                   'font-size': getFontSize(
@@ -282,7 +283,7 @@
                           itm.screenSize
                         ),
                       }"
-                      style="position: absolute"
+                      style="position: absolute;line-height: 1;"
                       v-html="
                         itm.tcontents[0].content
                           .replace(/\n|\r\n/g, '<br>')
@@ -329,6 +330,7 @@
   </div>
 </template>
 <script>
+import Sortable from 'sortablejs';
 import addinfo from "./addinfo";
 import editInfo from "./editInfo";
 import boardData from "./boardData";
@@ -421,7 +423,26 @@ export default {
       this.allVmsTemplate();
     });
   },
+  mounted() {
+    this.rowDrop()
+    // this.columnDrop()
+  },
   methods: {
+    // 行拖拽
+    rowDrop() {
+      // 要侦听拖拽响应的DOM对象
+      const tbody = document.querySelector('.el-table__body-wrapper tbody');
+      const _this = this;
+      Sortable.create(tbody, {
+        // 结束拖拽后的回调函数
+        onEnd({newIndex, oldIndex}) {
+          console.log('拖动了行，当前序号：' + newIndex);
+          console.log(oldIndex,'oldIndex')
+          const currentRow = _this.contentList.splice(oldIndex, 1)[0];
+          _this.contentList.splice(newIndex, 0, currentRow);
+        }
+      })
+    },
     getUserDept() {
       let that = this;
       getUserDeptId(this.userQueryParams).then((response) => {
@@ -568,6 +589,7 @@ export default {
         ACTION: item.inScreenMode, //出屏方式
         STAY: item.stopTime, //停留时间
         category: item.category, //所属类别
+        ID:this.contentList.length,
       };
       this.contentList.push(contentList);
       console.log(this.contentList, "this.contentList");
@@ -646,14 +668,14 @@ export default {
       };
       getAllVmsTemplate(param).then((res) => {
         let data = res.data;
-        // console.log(res, "情报板管理右侧查询接口");
+        console.log(res, "情报板管理右侧查询接口");
         for (let j = 0; j < this.iotTemplateCategoryList.length; j++) {
           let arr = this.iotTemplateCategoryList[j];
           let brr = data[j];
           arr.list = brr;
         }
         this.$forceUpdate();
-        // console.log(this.iotTemplateCategoryList,"新模板")
+        console.log(this.iotTemplateCategoryList,"新模板")
       });
     },
     // 删除中间模板
@@ -710,6 +732,7 @@ export default {
     // 接收子组件新增待发模板
     addInfo(form) {
       console.log(form, "待发新增");
+      form.ID = this.contentList.length
       this.contentList.push(form);
       console.log(this.contentList, "this.contentListthis.contentList");
       this.$forceUpdate();
@@ -860,6 +883,7 @@ export default {
             var con = content[itemId][0];
             con.COLOR = this.getColorStyle(con.COLOR);
             con.FONT_SIZE = Number(con.FONT_SIZE.substring(0, 2)) + "px";
+            con.ID = i
             // con.CONTENT = con.CONTENT
 
             this.contentList.push(con);

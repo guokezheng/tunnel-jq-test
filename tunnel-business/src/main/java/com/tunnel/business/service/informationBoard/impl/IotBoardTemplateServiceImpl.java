@@ -162,22 +162,51 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
         return null;
     }
 
+//    @Override
+//    public List<IotBoardTemplate> getAllVmsTemplate(String category, String devicePixel) {
+//        List<IotBoardTemplate> iotBoardTemplates = iotBoardTemplateMapper.selectTemplateList(category, devicePixel);
+//        List<IotBoardTemplateContent> iotBoardTemplateContents = iotBoardTemplateContentMapper.selectSdVmsTemplateContentList(null);
+//        List<IotBoardTemplateContent> contents = new ArrayList<>();
+//        List<IotBoardTemplate> template = new ArrayList<>();
+//        for (int j = 0; j < iotBoardTemplates.size(); j++) {
+//            contents = new ArrayList<>();
+//            IotBoardTemplate iotBoardTemplate = iotBoardTemplates.get(j);
+//            if (!category.equals(iotBoardTemplate.getCategory())) {
+//                continue;
+//            }
+//            Long id = iotBoardTemplate.getId();
+//            for (int z = 0; z < iotBoardTemplateContents.size(); z++) {
+//                IotBoardTemplateContent iotBoardTemplateContent = iotBoardTemplateContents.get(z);
+//                if (iotBoardTemplateContent.getTemplateId().equals("") || iotBoardTemplateContent.getTemplateId() == null) {
+//                    continue;
+//                }
+//                Long templateId = Long.parseLong(iotBoardTemplateContent.getTemplateId());
+//                if (id.longValue() == templateId.longValue()) {
+//                    contents.add(iotBoardTemplateContent);
+//                }
+//            }
+//            iotBoardTemplate.setTcontents(contents);
+//            template.add(iotBoardTemplate);
+//        }
+//        return template;
+//    }
+
     @Override
-    public List<IotBoardTemplate> getAllVmsTemplate(String category, String devicePixel) {
-//        Map<String, List<SdVmsTemplate>> map = new HashMap<>();
-//        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
-        List<IotBoardTemplate> iotBoardTemplates = iotBoardTemplateMapper.selectTemplateList(category, devicePixel);
+    public Map<String, List<IotBoardTemplate>> getAllVmsTemplate(String category, String devicePixel) {
+        Map<String, List<IotBoardTemplate>> map = new HashMap<>();
+        List<SysDictData> categorys = sysDictDataService.getSysDictDataByDictType("iot_template_category");
+        List<IotBoardTemplate> iotBoardTemplates = iotBoardTemplateMapper.selectTemplateList(null, devicePixel);
         List<IotBoardTemplateContent> iotBoardTemplateContents = iotBoardTemplateContentMapper.selectSdVmsTemplateContentList(null);
         List<IotBoardTemplateContent> contents = new ArrayList<>();
         List<IotBoardTemplate> template = new ArrayList<>();
-//        if (!categorys.isEmpty()) {
-//            for (int i = 0;i < categorys.size();i++) {
-//                template = new ArrayList<>();
-//                String dictValue = categorys.get(i).getDictValue();
+        if (!categorys.isEmpty()) {
+            for (int i = 0;i < categorys.size();i++) {
+                template = new ArrayList<>();
+                String dictValue = categorys.get(i).getDictValue();
                 for (int j = 0; j < iotBoardTemplates.size(); j++) {
                     contents = new ArrayList<>();
                     IotBoardTemplate iotBoardTemplate = iotBoardTemplates.get(j);
-                    if (!category.equals(iotBoardTemplate.getCategory())) {
+                    if (!dictValue.equals(iotBoardTemplate.getCategory())) {
                         continue;
                     }
                     Long id = iotBoardTemplate.getId();
@@ -194,10 +223,10 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
                     iotBoardTemplate.setTcontents(contents);
                     template.add(iotBoardTemplate);
                 }
-//                map.put(category, template);
-//            }
-//        }
-        return template;
+                map.put(dictValue, template);
+            }
+        }
+        return map;
     }
 
     @Override

@@ -119,4 +119,6 @@ public interface ISdIotDeviceService {
 
     List<Long> selectIotDevicesByTunnelId(String tunnelId);
 
+    public List<Map<String, Object>> getIotBoardList(SdIotDevice iotDevice);
+
 }

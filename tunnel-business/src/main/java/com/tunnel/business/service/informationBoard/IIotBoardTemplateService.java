@@ -65,7 +65,7 @@ public interface IIotBoardTemplateService {
 
     List<Map<String, Object>> informationBoardAcquisition(JSONObject jsonObject);
 
-    List<IotBoardTemplate> getAllVmsTemplate(String category, String devicePixel);
+    Map<String, List<IotBoardTemplate>> getAllVmsTemplate(String category, String devicePixel);
 
     List<Map<String, Object>> getVMSTemplatesByDevIdAndCategory(List<String> devIds);
 }

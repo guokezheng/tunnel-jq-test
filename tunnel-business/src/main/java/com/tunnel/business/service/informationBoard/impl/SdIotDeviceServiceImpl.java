@@ -1,10 +1,14 @@
 package com.tunnel.business.service.informationBoard.impl;
 
 import com.ruoyi.common.annotation.DataScope;
+import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.text.Convert;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.system.service.ISysDictDataService;
+import com.tunnel.business.domain.dataInfo.SdDevices;
 import com.tunnel.business.domain.informationBoard.SdIotDevice;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
 import com.tunnel.business.mapper.informationBoard.SdIotDeviceMapper;
 import com.tunnel.business.service.informationBoard.ISdIotDeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,10 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
 
     @Autowired
     private SdIotDeviceMapper sdIotDeviceMapper;
+    @Autowired
+    private ISysDictDataService sysDictDataService;
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
 
     /**
      * 查询设备列表
@@ -193,5 +201,41 @@ public class SdIotDeviceServiceImpl implements ISdIotDeviceService {
     @Override
     public List<Long> selectIotDevicesByTunnelId(String tunnelId) {
         return sdIotDeviceMapper.selectIotDevicesByTunnelId(tunnelId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getIotBoardList(SdIotDevice iotDevice) {
+        List<Map<String, Object>> group = new ArrayList<>();
+        List<SysDictData> types = sysDictDataService.getSysDictDataByDictType("iot_devices_type");
+        List<Map<String, Object>> allDevicesSize = sdIotDeviceMapper.getDevicesSize(null, null);
+        if (iotDevice.getEqDirection() != null && !iotDevice.getEqDirection().equals("")
+                && iotDevice.getEqDirection().equals("3")) {
+            iotDevice.setEqDirection(null);
+        }
+        List<SdIotDevice> sdIotDevices = sdIotDeviceMapper.selectIotDeviceArrayList(iotDevice);
+        for (int m = 0;m < types.size();m++) {
+            SysDictData sysDictData = types.get(m);
+            String localInfo = sysDictData.getDictValue();
+            Map<String, Object> map = new HashMap<>();
+            for (int i = 0;i < allDevicesSize.size();i++) {
+                Map<String, Object> objectMap = allDevicesSize.get(i);
+                String device_pixel = objectMap.get("device_pixel").toString();
+                List<SdIotDevice> list = new ArrayList<>();
+                for (int y = 0;y < sdIotDevices.size();y++) {
+                    SdIotDevice sdIotDevice = sdIotDevices.get(y);
+                    if (sdIotDevice.getLocalInfo().toString().equals(localInfo)
+                            && sdIotDevice.getDevicePixel().equals(device_pixel)) {
+                        list.add(sdIotDevice);
+                    }
+                }
+                if (!list.isEmpty()) {
+                    map.put("label", sysDictData.getDictLabel() + device_pixel);
+                    map.put("devicePixel", device_pixel);
+                    map.put("list", list);
+                    group.add(map);
+                }
+            }
+        }
+        return group;
     }
 }

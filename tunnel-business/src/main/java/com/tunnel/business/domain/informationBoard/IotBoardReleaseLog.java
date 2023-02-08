@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 情报板内容发布日志对象 iot_board_release_log
@@ -63,6 +64,16 @@ public class IotBoardReleaseLog extends BaseEntity
     /** 发布用户 */
 //    @Excel(name = "发布用户")
     private String releaseUserId;
+
+    private List<String> paramsList;
+
+    public List<String> getParamsList() {
+        return paramsList;
+    }
+
+    public void setParamsList(List<String> paramsList) {
+        this.paramsList = paramsList;
+    }
 
     public String getReleaseStatus() {
         return releaseStatus;

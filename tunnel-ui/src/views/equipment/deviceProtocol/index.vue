@@ -11,7 +11,7 @@
         />
       </el-form-item>
       <el-form-item label="协议类型" prop="protocolType">
-        <el-select v-model="queryParams.protocolType" placeholder="请选择协议类型" clearable size="small">
+        <el-select v-model="queryParams.protocolType" placeholder="请选择协议类型" clearable size="small" clearable>
           <el-option
             v-for="dict in dict.type.device_protocol_type"
             :key="dict.value"
@@ -21,7 +21,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="设备品牌" prop="brandId">
-        <el-select v-model="queryParams.brandId" placeholder="请选择设备品牌">
+        <el-select v-model="queryParams.brandId" placeholder="请选择设备品牌" clearable filterable>
           <el-option
             v-for="item in brandList"
             :key="item.supplierId"
@@ -30,11 +30,19 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="设备类型" prop="eqType">
-       <!-- <el-select v-model="queryParams.eqType" placeholder="请选择设备类型">
-          <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
-          </el-option>
-        </el-select>-->
+
+      <el-form-item label="设备大类" prop="brandId">
+        <el-select v-model="queryParams.eqType" placeholder="请选择设备大类" clearable filterable>
+          <el-option
+            v-for="item in eqBigTypeList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
+      </el-form-item>
+
+      <!--<el-form-item label="设备类型" prop="eqType">
         <el-select v-model="queryParams.eqType" placeholder="请选择设备类型" clearable>
           <el-option
             v-for="dict in dict.type.eq_category"
@@ -43,7 +51,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button type="primary"  size="mini" @click="handleQuery">搜索</el-button>
         <el-button  size="mini" @click="resetQuery"  type="primary" plain >重置</el-button>
@@ -76,73 +84,22 @@
       </el-form-item>
     </el-form>
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['device:protocol:add']"
-        >新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['device:protocol:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['device:protocol:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['device:protocol:export']"
-        >导出
-        </el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row> -->
-
     <el-table v-loading="loading" :data="protocolList" @selection-change="handleSelectionChange" class="allTable">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ID" align="center" prop="id"/>
+<!--      <el-table-column label="ID" align="center" prop="id"/>-->
       <el-table-column label="设备品牌" align="center" prop="brandId">
         <template slot-scope="scope">
           <span>{{ getName(scope.row.brandId,"brand") }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="设备类型" align="center" prop="eqType">
-        <!--<template slot-scope="scope">
-          <span>{{ getName(scope.row.eqTypeId,'type') }}</span>
-        </template>-->
-
+      <el-table-column label="设备大类" align="center" prop="eqType">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.eq_category" :value="scope.row.eqType"/>
+          <span>{{ getName(scope.row.eqType,'type') }}</span>
         </template>
+
+        <!--<template slot-scope="scope">
+          <dict-tag :options="dict.type.eq_category" :value="scope.row.eqType"/>
+        </template>-->
       </el-table-column>
       <el-table-column label="协议名称" align="center" prop="protocolName"/>
       <el-table-column label="协议类型" align="center" prop="protocolType">
@@ -195,19 +152,24 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备类型" prop="eqType">
-          <!--<el-select v-model="form.eqTypeId" placeholder="请选择设备类型" style="width: 100%">
-            <el-option v-for="item in eqTypeData" :key="item.typeId" :label="item.typeName" :value="item.typeId">
+        <el-form-item label="设备大类" prop="eqType">
+          <el-select v-model="form.eqType" placeholder="请选择设备大类" style="width: 100%">
+            <el-option
+              v-for="item in eqBigTypeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
             </el-option>
-          </el-select>-->
-          <el-select v-model="form.eqType" placeholder="请选择设备类型" clearable style="width: 100%">
+          </el-select>
+          <!--<el-select v-model="form.eqType" placeholder="请选择设备类型" clearable style="width: 100%">
             <el-option
               v-for="dict in dict.type.eq_category"
               :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             />
-          </el-select>
+          </el-select>-->
         </el-form-item>
         <el-form-item label="协议名称" prop="protocolName">
           <el-input v-model="form.protocolName" placeholder="请输入协议名称"/>
@@ -247,11 +209,11 @@
     exportProtocol
   } from "@/api/equipment/deviceProtocol/protocol";
   import {getDevBrandList} from "@/api/equipment/eqlist/api";
-  import {listType} from "@/api/equipment/type/api";
+  import {listCategory} from "@/api/equipment/bigType/category";
 
   export default {
     name: "Protocol",
-    dicts: ['device_protocol_type','eq_category'],
+    dicts: ['device_protocol_type'],
     data() {
       return {
         // 遮罩层
@@ -293,7 +255,7 @@
             {required: true, message: "设备品牌不能为空", trigger: "blur"},
           ],
           eqType: [
-            {required: true, message: "设备类型不能为空", trigger: "blur"},
+            {required: true, message: "设备大类不能为空", trigger: "blur"},
           ],
           protocolName: [
             {required: true, message: "协议名称不能为空", trigger: "blur"},
@@ -307,13 +269,13 @@
         },
         //设备品牌
         brandList: [],
-        //设备类型
-        eqTypeData: {},
+        //设备大类
+        eqBigTypeList: {},
       };
     },
     created() {
       this.getList();
-      this.getEqType();
+      this.getEqBigType();
       this.getDevBrandList()
     },
     methods: {
@@ -325,16 +287,16 @@
             }
           }
         } else if ('type' == type) {
-          for (var item of this.eqTypeData) {
-            if (item.typeId == num) {
-              return item.typeName;
+          for (var item of this.eqBigTypeList) {
+            if (item.id == num) {
+              return item.name;
             }
           }
         }
       },
-      getEqType() {
-        listType().then((response) => {
-          this.eqTypeData = response.rows;
+      getEqBigType() {
+        listCategory().then(response => {
+          this.eqBigTypeList = response.rows;
         });
       },
       getDevBrandList() {

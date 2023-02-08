@@ -44,9 +44,9 @@ public class LightService {
         SdDevices device = sdDevicesService.selectSdDevicesById(deviceId);
 
         String brandId = device.getBrandId();
-        String fEqType = device.getfEqType();
+        Long fEqType = device.getfEqType();
         Assert.hasText(brandId, "未设置该设备的品牌，请联系管理员！");
-        Assert.hasText(fEqType, "未设置该设备所属大类，请联系管理员！");
+        Assert.notNull(fEqType, "未设置该设备所属大类，请联系管理员！");
 
         SdDevicesProtocol protocol = new SdDevicesProtocol();
         protocol.setBrandId(brandId);

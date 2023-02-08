@@ -257,7 +257,7 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="所属大类" prop="eqCategory">
-          <el-select
+          <!--<el-select
             v-model="form.eqCategory"
             placeholder="请选择所属大类"
             clearable
@@ -270,6 +270,22 @@
               :label="item.dictLabel"
               :value="item.dictValue"
             />
+          </el-select>-->
+
+          <el-select
+            v-model="form.eqCategory"
+            placeholder="请选择所属大类"
+            clearable
+            size="small"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="item in eqCategoryData"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="所属系统" prop="eqSystem">
@@ -313,12 +329,14 @@ import {
   eqTypeList,
   loadPicture,
 } from "@/api/equipment/type/api.js";
+import {listCategory} from "@/api/equipment/bigType/category";
 
 export default {
   name: "Type",
   data() {
     return {
       eqSystemData: {},
+      // 设备大类
       eqCategoryData: {},
       bigType:'',
       eqCategory:'',
@@ -408,12 +426,13 @@ export default {
     this.getDicts("eq_system").then(response => {
       this.eqSystemData = response.data;
     });
-    this.getDicts("eq_category").then(response => {
+    /*this.getDicts("eq_category").then(response => {
       this.eqCategoryData = response.data;
-    });
+    })*/;
 	  this.getDicts("sd_sys_name").then(response => {
 	    this.bigTypeOptions = response.data;
 	  });
+    this.getEqBigType();
     this.getList();
     this.getGroupByBigType();
     this.fileData = new FormData(); // new formData对象
@@ -423,6 +442,11 @@ export default {
       });
   },
   methods: {
+    getEqBigType() {
+      listCategory().then(response => {
+        this.eqCategoryData = response.rows;
+      });
+    },
     configData(){
       this.$router.push({
         path:'/inductionLamp'
@@ -661,7 +685,7 @@ export default {
   ::v-deep .el-dialog__header{
     padding: 20px;
   }
-  
+
 </style>
 <style lang="scss">
  .eqTypeDialog{

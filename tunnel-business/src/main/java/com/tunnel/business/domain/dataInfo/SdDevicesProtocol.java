@@ -29,7 +29,7 @@ public class SdDevicesProtocol extends BaseEntity {
      * 设备类型 ID
      */
     @Excel(name = "设备类型 ID")
-    private String eqType;
+    private Long eqType;
 
     /**
      * 协议名称
@@ -76,11 +76,11 @@ public class SdDevicesProtocol extends BaseEntity {
         return brandId;
     }
 
-    public String getEqType() {
+    public Long getEqType() {
         return eqType;
     }
 
-    public void setEqType(String eqType) {
+    public void setEqType(Long eqType) {
         this.eqType = eqType;
     }
 

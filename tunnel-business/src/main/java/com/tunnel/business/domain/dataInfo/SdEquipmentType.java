@@ -58,7 +58,7 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
     private String isAnalog;
 
     @ApiModelProperty("设备大类")
-    private String eqCategory;
+    private Long eqCategory;
 
     @ApiModelProperty("所属系统")
     private String eqSystem;
@@ -79,11 +79,11 @@ public class SdEquipmentType<SdEquipmentStateIconFile> extends BaseEntity
         this.eqSystem = eqSystem;
     }
 
-    public String getEqCategory() {
+    public Long getEqCategory() {
         return eqCategory;
     }
 
-    public void setEqCategory(String eqCategory) {
+    public void setEqCategory(Long eqCategory) {
         this.eqCategory = eqCategory;
     }
     @Override

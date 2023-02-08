@@ -329,7 +329,7 @@
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="设备大类" prop="fEqType">
+            <!--<el-form-item label="设备大类" prop="fEqType">
               <el-select
                 v-model="form.fEqType"
                 placeholder="请选择设备大类"
@@ -342,6 +342,18 @@
                   :label="dict.label"
                   :value="dict.value"
                 />
+              </el-select>
+            </el-form-item>-->
+
+            <el-form-item label="设备大类" prop="eqType">
+              <el-select v-model="form.fEqType" placeholder="请选择设备大类" clearable style="width: 100%">
+                <el-option
+                  v-for="item in eqBigTypeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -856,6 +868,7 @@ import {
 } from "@/api/equipment/eqTypeState/api";
 import { getToken } from "@/utils/auth";
 import { listAllSystem } from "@/api/equipment/externalsystem/system";
+import {listCategory} from "@/api/equipment/bigType/category";
 
 export default {
   name: "Devices",
@@ -866,8 +879,7 @@ export default {
     "sd_lane",
     "sd_use_status",
     "sd_is_monitor",
-    "inductionlamp_control_type",
-    "eq_category",
+    "inductionlamp_control_type"
   ],
   data() {
     const validatePass = (rule, value, callback) => {
@@ -879,6 +891,8 @@ export default {
       }
     };
     return {
+      //设备大类
+      eqBigTypeList: {},
       //不能选择当前日期
       optionsDisable: {
         disabledDate(time) {
@@ -1083,6 +1097,7 @@ export default {
     this.getList();
     this.getTunnel();
     this.getEqType();
+    this.getEqBigType();
     this.getStateList();
     this.getDicts("sys_eq_light").then((response) => {
       this.eqLampTypeOptions = response.data;
@@ -1098,6 +1113,11 @@ export default {
     this.getExternalSystemList();
   },
   methods: {
+    getEqBigType() {
+      listCategory().then(response => {
+        this.eqBigTypeList = response.rows;
+      });
+    },
     getDevBrandList() {
       getDevBrandList().then((result) => {
         console.log("brandList:>>>", result.data);

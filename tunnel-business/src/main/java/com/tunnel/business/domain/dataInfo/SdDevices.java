@@ -110,7 +110,7 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
      */
     @Excel(name = "设备大类")
     @ApiModelProperty("设备大类")
-    private String fEqType;
+    private Long fEqType;
 
 
     /**
@@ -826,11 +826,11 @@ public class SdDevices<SdEquipmentStateIconFile> extends BaseEntity {
         this.externalSystemId = externalSystemId;
     }
 
-    public String getfEqType() {
+    public Long getfEqType() {
         return fEqType;
     }
 
-    public void setfEqType(String fEqType) {
+    public void setfEqType(Long fEqType) {
         this.fEqType = fEqType;
     }
 

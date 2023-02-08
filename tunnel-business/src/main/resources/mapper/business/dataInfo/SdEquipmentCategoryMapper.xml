@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tunnel.business.mapper.dataInfo.SdEquipmentCategoryMapper">
+    
+    <resultMap type="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" id="SdEquipmentCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="isControl"    column="is_control"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSdEquipmentCategoryVo">
+        select id, name, is_control, create_by, create_time, update_by, update_time from sd_equipment_category
+    </sql>
+
+    <select id="selectSdEquipmentCategoryList" parameterType="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" resultMap="SdEquipmentCategoryResult">
+        <include refid="selectSdEquipmentCategoryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
+        </where>
+    </select>
+    
+    <select id="selectSdEquipmentCategoryById" parameterType="Long" resultMap="SdEquipmentCategoryResult">
+        <include refid="selectSdEquipmentCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSdEquipmentCategory" parameterType="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into sd_equipment_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="isControl != null and isControl != ''">is_control,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="isControl != null and isControl != ''">#{isControl},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSdEquipmentCategory" parameterType="com.tunnel.business.domain.dataInfo.SdEquipmentCategory">
+        update sd_equipment_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="isControl != null and isControl != ''">is_control = #{isControl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSdEquipmentCategoryById" parameterType="Long">
+        delete from sd_equipment_category where id = #{id}
+    </delete>
+
+    <delete id="deleteSdEquipmentCategoryByIds" parameterType="String">
+        delete from sd_equipment_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getAllEquipmentCategory" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
+        select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec
+        union
+        select concat('et_',et.type_id) as id,et.type_name as name,concat('ec_',et.eq_category) as parentId from sd_equipment_type et
+        union
+        select d.eq_id as id,d.eq_name as name,concat('et_',d.eq_type) as parentId from sd_devices d where d.eq_tunnel_id='JQ-WeiFang-JiuLongYu-HSD'
+    </select>
+</mapper>

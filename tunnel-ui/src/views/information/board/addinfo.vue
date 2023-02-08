@@ -105,14 +105,14 @@
               <el-button type="info" plain @click="alignment(4)" size="mini"
                 >上对齐</el-button
               > -->
-              <el-button type="info" plain @click="alignment(3)" size="mini"
-                >右对齐</el-button
+              <el-button type="info" plain @click="alignment(1)" size="mini"
+                >左对齐</el-button
               >
               <el-button type="info" plain @click="alignment(2)" size="mini"
                 >左右居中</el-button
               >
-              <el-button type="info" plain @click="alignment(1)" size="mini"
-                >左对齐</el-button
+              <el-button type="info" plain @click="alignment(3)" size="mini"
+                >右对齐</el-button
               >
               <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
             </el-col>

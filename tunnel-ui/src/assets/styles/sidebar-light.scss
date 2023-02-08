@@ -558,23 +558,35 @@
     // }
    .infoBoardBox{
     background: #004375;
-    .el-checkbox{
-      color: #fff;
+      .el-checkbox{
+        color: #fff;
 
-    }
-    .templateBox{
+      }
+      .el-collapse{
+        border-top:solid 1px #05afe3;
+      }
+      .el-collapse-item__wrap{
+        border-bottom:solid 1px #05afe3;
+
+      }
       .el-collapse-item__header, .el-collapse-item__content{
       background: #004375;
         color: #fff;
+        border-bottom: solid 1px #05afe3;
       }
       .con .menuBox i{
         color: #fff;
   
       }
-     }
      .contentBox .listBox .menuBox i{
       color: #fff;
 
+     }
+     .contentBox .menuBox i{
+      color: #fff;
+     }
+     .el-table__body-wrapper .el-table__cell{
+      border-left:transparent !important;
      }
    }
    .infoBoardButton .el-button{

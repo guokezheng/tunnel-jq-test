@@ -73,9 +73,10 @@
             <!-- <el-button type="info" plain @click="alignment(6)" size="mini">下对齐</el-button>
             <el-button type="info" plain @click="alignment(5)" size="mini">上下居中</el-button>
             <el-button type="info" plain @click="alignment(4)" size="mini">上对齐</el-button> -->
-            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
-            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
             <el-button type="info" plain @click="alignment(1)" size="mini">左对齐</el-button>
+            <el-button type="info" plain @click="alignment(2)" size="mini">左右居中</el-button>
+            <el-button type="info" plain @click="alignment(3)" size="mini">右对齐</el-button>
+
         
             <!-- <el-button type="primary" plain @click="addCurrRow">添加</el-button> -->
            
@@ -764,6 +765,7 @@
       },
       // 表单确认
       dataFormSubmitHandle() {
+        console.log(this.dataForm.type,"this.dataForm.type")
         let valid = this.$refs.dataForm.validate().catch(() => {
           return this.$modal.msgError("校验错误");
         });
@@ -843,6 +845,7 @@
           editTemplateContent(params).then(response => {
             console.log(response,'返回结果');
           });
+          this.$forceUpdate()
         }
         this.closeDialog()
 
@@ -894,7 +897,7 @@
         }
       },
       getFontSize(size){
-        console.log(size,"size")
+        // console.log(size,"size")
         if(this.boardWidth >760){
           let i = this.boardWidth/760
           

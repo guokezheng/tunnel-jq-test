@@ -220,6 +220,9 @@ public class IotBoardTemplateServiceImpl implements IIotBoardTemplateService {
                             contents.add(iotBoardTemplateContent);
                         }
                     }
+                    if (contents.isEmpty()) {
+                        continue;
+                    }
                     iotBoardTemplate.setTcontents(contents);
                     template.add(iotBoardTemplate);
                 }

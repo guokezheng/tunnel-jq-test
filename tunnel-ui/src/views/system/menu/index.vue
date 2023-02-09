@@ -1,6 +1,77 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:menu:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增菜单
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入菜单名称"
+            v-model="queryParams.menuName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="menu_boxShow = !menu_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="menu_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="菜单状态" prop="status" style="width: 100%">
+          <el-select
+            style="width: 325px"
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择菜单状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            @click="toggleExpandAll"
+          >展开/折叠</el-button>
+        </el-form-item>
+
+      </el-form>
+    </div>
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
       <el-form-item label="菜单名称" prop="menuName">
         <el-input
           v-model="queryParams.menuName"
@@ -37,7 +108,7 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -299,6 +370,7 @@ export default {
   components: { Treeselect, IconSelect },
   data() {
     return {
+      menu_boxShow:false,
       // 遮罩层
       loading: true,
       // 显示搜索条件
@@ -400,6 +472,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.menuName = "";
       this.handleQuery();
     },
     /** 新增按钮操作 */
@@ -472,3 +545,42 @@ export default {
   }
 };
 </script>
+
+<style>
+.searchBox {
+  position: absolute;
+  top: 8.5%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

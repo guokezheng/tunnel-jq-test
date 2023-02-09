@@ -1,6 +1,77 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:post:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增岗位
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入岗位名称、编码"
+            v-model="queryParams.postCode"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="post_boxShow = !post_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="post_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="岗位状态" prop="status" style="width: 100%">
+          <el-select
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择岗位状态"
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:post:export']"
+          >导出</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+<!--    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="岗位编码" prop="postCode">
         <el-input
           v-model="queryParams.postCode"
@@ -64,7 +135,7 @@
           v-hasPermi="['system:post:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -113,7 +184,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row> -->
 
-    <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange" 
+    <el-table v-loading="loading" :data="postList" @selection-change="handleSelectionChange"
               :row-class-name="tableRowClassName" max-height="640">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="岗位编号" align="center" prop="postId" />
@@ -197,6 +268,7 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      post_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -279,6 +351,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.postCode = "";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -355,3 +428,42 @@ export default {
   }
 };
 </script>
+
+<style>
+.searchBox {
+  position: absolute;
+  top: 8.5%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>

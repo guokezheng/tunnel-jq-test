@@ -1,6 +1,92 @@
 <template>
   <div class="app-container">
-    <el-form
+
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+
+        <el-button
+          v-hasPermi="['system:list:add']"
+          size="mini"
+          type="primary"
+          plain
+          @click="handleAdd"
+        >新增任务
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入所属单位"
+            v-model="queryParams.zzjgId"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="task_boxShow = !task_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+
+    <div class="searchBox" v-show="task_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item
+          style="width: 100%"
+          label="发布状态"
+          prop="publishStatus"
+        >
+          <el-select
+            v-model="queryParams.publishStatus"
+            placeholder="请选择发布状态"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.publish_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="任务状态" prop="taskStatus" style="width: 100%">
+          <el-select
+            v-model="queryParams.taskStatus"
+            placeholder="请选择任务状态"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="dict in dict.type.task_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -65,7 +151,7 @@
         >
 
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <el-table
       v-loading="loading"
@@ -638,27 +724,6 @@
             暂无执行记录
           </div>
         </div>
-<!--        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>
-        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>
-        <div class="table-row">
-          <div style="width: 10%">操作记录</div>
-          <div style="width: 10%">派单</div>
-          <div style="width: 20%">九龙峪管理站 / 监控员 / 郑腾浩</div>
-          <div style="width: 30%">2022/09/18 21:13:35</div>
-          <div style="width: 30%">平台制定巡检任务时，派单人员和派单时间。</div>
-        </div>-->
       </div>
     </el-dialog>
   </div>
@@ -727,6 +792,7 @@ export default {
   },
   data() {
     return {
+      task_boxShow:false,
       isClick:true,
       userName:'',
       currentTime:'',
@@ -1243,6 +1309,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.zzjgId = "";
       this.handleQuery();
     },
     show1() {
@@ -1577,6 +1644,17 @@ export default {
 <style lang="scss">
 .el-table tr {
   background-color: transparent;
+}
+
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
 }
 </style>
 <style lang="scss" scoped>
@@ -1939,6 +2017,31 @@ h1 {
     > .el-tree-node__content {
     background-color: #89c2f7;
     color: #fff;
+  }
+}
+
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
   }
 }
 </style>

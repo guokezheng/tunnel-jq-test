@@ -1,6 +1,91 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:role:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增角色
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入角色名称、权限字符"
+            v-model="queryParams.roleName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="role_boxShow = !role_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="role_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item label="角色状态" prop="status" style="width: 100%">
+          <el-select
+            v-model="queryParams.status"
+            placeholder="请选择角色状态"
+            clearable
+            size="small"
+            style="width: 325px"
+          >
+            <el-option
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 325px"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['system:role:export']"
+          >导出</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+
+<!--    <el-form :model="queryParams" ref="queryForm" v-show="showSearch" :inline="true">
       <el-form-item label="角色名称" prop="roleName">
         <el-input
           v-model="queryParams.roleName"
@@ -84,7 +169,7 @@
           v-hasPermi="['system:role:export']"
         >导出</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -303,6 +388,7 @@ export default {
   dicts: ['sys_normal_disable'],
   data() {
     return {
+      role_boxShow:false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -498,6 +584,7 @@ export default {
     resetQuery() {
       this.dateRange = [];
       this.resetForm("queryForm");
+      this.queryParams.roleName ="";
       this.handleQuery();
     },
     // 多选框选中数据
@@ -668,3 +755,42 @@ export default {
   }
 };
 </script>
+<style>
+.searchBox {
+position: absolute;
+top: 8.5%;
+right: 1%;
+width: 24%;
+z-index: 1996;
+background-color: #00335a;
+padding: 20px;
+box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
+

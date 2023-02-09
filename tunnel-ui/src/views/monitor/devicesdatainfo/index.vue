@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form
+<!--    <el-form
       :model="queryParams"
       ref="queryForms"
       :inline="true"
@@ -16,7 +16,7 @@
           placeholder="请选择归属部门"
           style="width: 360px;"
         />
-        <!--<el-select
+        &lt;!&ndash;<el-select
           v-model="queryParams.deptId"
           placeholder="请选择管理机构"
           clearable
@@ -28,7 +28,7 @@
             :label="item.deptName"
             :value="item.deptId"
           />
-        </el-select>-->
+        </el-select>&ndash;&gt;
       </el-form-item>
       <el-form-item label="隧道名称" prop="tunnelId" v-show="manageStatin == '0'">
         <el-select
@@ -75,7 +75,106 @@
           >重置</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
+
+
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入桩号"
+            v-model="queryParams.pile"
+            style="width: 456px;margin-left: 69%;"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="sj_boxShow = !sj_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="sj_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+        <el-form-item
+          style="width: 100%"
+          label="所属隧道"
+          prop="tunnelId"
+          v-show="manageStatin == '0'"
+        >
+          <el-select
+            v-model="queryParams.tunnelId"
+            placeholder="请选择所属隧道"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in eqTunnelData"
+              :key="item.tunnelId"
+              :label="item.tunnelName"
+              :value="item.tunnelId"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+<!--        <el-form-item label="管理机构" prop="deptId">
+          <treeselect
+            v-model="queryParams.deptId"
+            :options="deptOptions"
+            :show-count="true"
+            placeholder="请选择归属部门"
+            style="width: 360px;"
+          />
+        </el-form-item>-->
+
+        <el-form-item label="管理机构" prop="deptId" style="width: 100%">
+          <treeselect
+            v-model="queryParams.deptId"
+            :options="deptOptions"
+            :show-count="true"
+            placeholder="请选择归属部门"
+            clearable
+            size="small"
+          />
+        </el-form-item>
+
+        <el-form-item label="采集时间">
+          <el-date-picker
+            v-model="dateRange"
+            size="small"
+            style="width: 335px"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :default-time="['00:00:00', '23:59:59']"
+          ></el-date-picker>
+        </el-form-item>
+
+
+
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+
+
     <div class="topBox" style="display: flex; justify-content: space-between">
       <div class="butBox">
         <div :class="searchValue == '1' ? 'xz' : ''" @click="qiehuan('1')">
@@ -228,7 +327,7 @@ export default {
   data() {
     return {
       manageStatin:this.$cache.local.get("manageStation"),
-
+      sj_boxShow:false,
       searchValue: "1",
       // 遮罩层
       loading: true,
@@ -572,6 +671,16 @@ export default {
   width: 100vw;
   height: 80vh;
 }
+.searchBox {
+  position: absolute;
+  top: 8%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 .butBox {
   width: 315px;
   display: flex;
@@ -691,3 +800,29 @@ hr {
 }
 </style>
 
+<style lang="scss" scoped>
+  .searchBox {
+  ::v-deep .el-form-item__content {
+  width: 80%;
+  .el-select {
+  width: 100%;
+  }
+  }
+  .bottomBox {
+  .el-form-item__content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  }
+  }
+  }
+  .bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  }
+  }
+  </style>

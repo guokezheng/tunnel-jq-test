@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		left JOIN sys_user b on a.user_name = b.user_name
 		<where>
 			<if test="ipaddr != null and ipaddr != ''">
-				AND a.ipaddr like concat('%', #{ipaddr}, '%')
+				AND CONCAT(a.ipaddr, a.user_name) LIKE CONCAT('%',#{ipaddr},'%')
 			</if>
 			<if test="status != null and status != ''">
 				AND a.status = #{status}

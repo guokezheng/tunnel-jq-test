@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectOperLogVo"/>
 		<where>
 			<if test="title != null and title != ''">
-				AND title like concat('%', #{title}, '%')
+				AND CONCAT(title, oper_name) LIKE CONCAT('%',#{title},'%')
 			</if>
 			<if test="businessType != null and businessType != ''">
 				AND business_type = #{businessType}

@@ -1,6 +1,69 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          type="primary"
+          plain
+          size="mini"
+          @click="toggleExpandAll"
+        >展开/折叠</el-button>
+      </el-col>
+      <el-col :span="6" :offset="14" style ="margin-left: 75%">
+        <div class="grid-content bg-purple">
+          <el-input
+            placeholder="请输入机构、负责人"
+            v-model="queryParams.deptName"
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="jg_boxShow = !jg_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="jg_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="机构状态" prop="status" style="width: 100%">
+          <el-select
+            style="width:335px"
+            v-model="queryParams.status"
+            clearable
+            placeholder="请选择机构状态"
+            size="small"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </div>
+
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
@@ -49,7 +112,7 @@
           @click="toggleExpandAll"
         >展开/折叠</el-button>
       </el-form-item>
-    </el-form>
+    </el-form>-->
 
       <el-table
         v-if="refreshTable"
@@ -88,6 +151,7 @@ import { batchDelete } from "@/api/surveyMechanism/api.js";
 export default {
   data() {
     return {
+      jg_boxShow:false,
       //新增弹出
       open: false,
       // 遮罩层
@@ -148,10 +212,11 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.deptName = "";
       this.$refs.queryForm.resetFields();
       this.queryForm = {
         deptName: null,
-        leader: null,
+        /*leader: null,*/
         status: null
       };
       this.handleQuery();
@@ -211,4 +276,42 @@ export default {
 </script>
 
 <style>
+.searchBox {
+  position: absolute;
+  top: 12.5%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
 </style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+</style>
+
+

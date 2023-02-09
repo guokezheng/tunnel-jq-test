@@ -1,15 +1,131 @@
 <template>
   <div class="app-container">
-    <el-form
+
+    <!-- 全局搜索 -->
+    <el-row :gutter="20" style="margin: 10px 0 25px">
+      <el-col :span="4">
+        <el-button
+          v-hasPermi="['system:material:add']"
+          size="small"
+          type="primary"
+          plain
+          @click="handleAdd()"
+        >新增物资
+        </el-button>
+      </el-col>
+      <el-col :span="6" :offset="14">
+        <div class="grid-content bg-purple">
+          <el-input
+            @keyup.enter.native="handleQuery"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-s-fold"
+              @click="wz_boxShow = !wz_boxShow"
+            ></el-button>
+          </el-input>
+        </div>
+      </el-col>
+    </el-row>
+    <div class="searchBox" v-show="wz_boxShow">
+      <el-form
+        ref="queryForm"
+        :inline="true"
+        :model="queryParams"
+        label-width="75px"
+      >
+
+        <el-form-item label="物资类型" prop="materialType" style="width: 100%">
+          <el-select
+            v-model="queryParams.materialType"
+            clearable
+            placeholder="请选择物资类型"
+            size="small"
+          >
+            <el-option
+              v-for="dict in materialTypeOptions"
+              :key="dict.dictValue"
+              :label="dict.dictLabel"
+              :value="dict.dictValue"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="开始桩号:">
+          <el-form-item prop="station">
+            <el-input
+              style="width:335px"
+              class="dateClass"
+              v-model.number="queryParams.station"
+              placeholder="0~999"
+              clearable
+              size="small"
+              oninput="value=value.replace(/[^\d]/g,'')"
+            >
+              <template slot="prepend">K</template>
+            </el-input>
+          </el-form-item>
+          <span style="margin: 0 5px" class="formAddClass">+</span>
+          <el-form-item prop="deviation">
+            <el-input
+              style="width:335px"
+              class="dateClass"
+              v-model.number="queryParams.deviation"
+              placeholder="桩号偏差"
+              clearable
+              size="small"
+            />
+          </el-form-item>
+        </el-form-item>
+        <el-form-item label="结束桩号:">
+          <el-form-item prop="endStation">
+            <el-input
+              style="width: 335px"
+              class="dateClass"
+              v-model.number="queryParams.endStation"
+              placeholder="0~999"
+              clearable
+              size="small"
+              oninput="value=value.replace(/[^\d]/g,'')"
+            >
+              <template slot="prepend">K</template>
+            </el-input>
+          </el-form-item>
+          <span style="margin: 0 5px" class="formAddClass">+</span>
+          <el-form-item prop="endDeviation">
+            <el-input
+              style="width: 335px"
+              class="dateClass"
+              v-model.number="queryParams.endDeviation"
+              placeholder="桩号偏差"
+              clearable
+              size="small"
+            />
+          </el-form-item>
+        </el-form-item>
+        <el-form-item class="bottomBox">
+          <el-button size="small" type="primary" @click="handleQuery"
+          >搜索</el-button
+          >
+          <el-button size="small" @click="resetQuery" type="primary" plain
+          >重置</el-button
+          >
+          <el-button
+            type="primary"
+            plain
+            size="small"
+            @click="toggleExpandAll"
+          >展开/折叠</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+<!--    <el-form
       :model="queryParams"
       ref="queryForm"
       :inline="true"
       v-show="showSearch"
       :rules="queryParamsRules"
     >
-      <!--      <el-form-item label="物资编号" prop="materialId">-->
-      <!--        <el-input class="dateClass" v-model="queryParams.materialId" placeholder="请输入物资编号" clearable size="small" @keyup.enter.native="handleQuery" />-->
-      <!--      </el-form-item>-->
       <el-form-item label="物资类型" prop="materialType">
         <el-select
           v-model="queryParams.materialType"
@@ -77,11 +193,11 @@
           />
         </el-form-item>
       </el-form-item>
-      <!--      <el-form-item label="状态" prop="state">-->
-      <!--        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">-->
-      <!--          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
+      &lt;!&ndash;      <el-form-item label="状态" prop="state">&ndash;&gt;
+      &lt;!&ndash;        <el-select v-model="queryParams.state" placeholder="请选择状态" clearable size="small">&ndash;&gt;
+      &lt;!&ndash;          <el-option v-for="dict in stateOptions" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue" />&ndash;&gt;
+      &lt;!&ndash;        </el-select>&ndash;&gt;
+      &lt;!&ndash;      </el-form-item>&ndash;&gt;
       <el-form-item>
         <el-button type="primary" size="mini" @click="handleQuery"
           >搜索</el-button
@@ -116,7 +232,7 @@
           >删除</el-button
         >
       </el-form-item>
-    </el-form>
+    </el-form>-->
     <!-- <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:material:add']">新增物资</el-button>
@@ -585,6 +701,7 @@ export default {
       },
       disabled: false,
       // 遮罩层
+      wz_boxShow:false,
       loading: true,
       dloading: false,
       // 选中数组
@@ -1192,8 +1309,8 @@ h3 {
 .el-input {
   position: relative;
   /* font-size: 14px; */
-  display: inline;
-  width: 65%;
+  /*display: inline;*/
+  width: 100%;
 }
 
 .material-msg {
@@ -1258,5 +1375,44 @@ h3 {
   width: 100%;
   display: inline-table;
   vertical-align: middle;
+}
+</style>
+
+<style>
+.searchBox {
+  position: absolute;
+  top: 8.5%;
+  right: 1%;
+  width: 24%;
+  z-index: 1996;
+  background-color: #00335a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+</style>
+<style lang="scss" scoped>
+.searchBox {
+  ::v-deep .el-form-item__content {
+    width: 80%;
+    .el-select {
+      width: 100%;
+    }
+  }
+  .bottomBox {
+    .el-form-item__content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+  }
+}
+.bottomBox {
+  width: 100%;
+  ::v-deep .el-form-item__content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
 }
 </style>

@@ -15,17 +15,16 @@
       <el-col :span="4">
         <p class="bigTitle">情报板列表</p>
         <el-form ref="form" :model="form">
-          <el-form-item>
-            <el-cascader
+          <el-form-item prop="deptId">
+            <treeselect
               v-model="form.deptId"
               :options="siteList"
               :props="siteProps"
-              :show-all-levels="false"
-              @change="changeSite"
-              placeholder="请选择"
-              size="small"
-              popper-class="popper-class-site"
+              :show-count="true"
+              placeholder="请选择归属部门"
+              @select="changeSite"
               style="width: 100%"
+              size="small"
             />
           </el-form-item>
           <el-form-item>
@@ -96,11 +95,14 @@
                     :key="index"
                   >
                     <div>{{ itm.deviceName }}</div>
-                    <div
-                      class="el-icon-tickets"
-                      :style="submitButton?'pointer-events: auto;':'pointer-events: none;'"
-                      @click.stop.prevent="onSubmit(itm.deviceId)"
-                    ></div>
+                    <el-tooltip content="回读当前信息" placement="top">
+                      <el-button
+                        class="el-icon-tickets huiduButton"
+                        @click.stop.prevent="onSubmit(itm.deviceId)"
+                        :disabled="submitButton"
+                      ></el-button>
+                    </el-tooltip>
+                    
                   </el-checkbox>
                 </el-checkbox-group>
               </el-collapse-item>
@@ -110,19 +112,23 @@
       </el-col>
       <el-col :span="10" style="border-left: 1px solid #05afe3">
         <div class="bigTitle">
-          <span>待下发信息</span
-          ><span v-if="form.devicePixel">【 {{ form.devicePixel }}】</span>
-        </div>
-        <div class="contentBox">
+          <div>
+            <span>待下发信息</span>
+            <span v-if="form.devicePixel">【 {{ form.devicePixel }}】</span>
+          </div>
+          
           <div class="controlBox">
             <el-button
               @click.native="openDialogVisible(1, 2)"
               :disabled="disabledButton"
               >添加信息</el-button
             >
-            <el-button type="primary" @click="publishInfo">发布信息</el-button>
+            <el-button type="primary" @click="publishInfo" :disabled="disabledCheckbox">发布信息</el-button>
           </div>
-          <el-table :data="contentList" row-key="ID" v-loading="loading" >
+        </div>
+        <div class="contentBox">
+          
+          <el-table :data="contentList" row-key="ID" v-loading="loading" max-height="700">
             <el-table-column align="center"  width="650">
               <template slot-scope="scope">
                 <div class="con">
@@ -144,7 +150,7 @@
                         ),
                         top: getCoordinate(scope.row.COORDINATE.substring(3, 6), 'top'),
                       }"
-                      style="position: absolute; line-height: 1;user-select:none"
+                      class="boardTextStyle"
                       v-html="
                         scope.row.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                           / /g,
@@ -159,90 +165,42 @@
             <el-table-column  align="center" style="width:20%;border:solid 1px red">
               <template slot-scope="scope">
                 <div class="menuBox">
-                  <i class="el-icon-d-arrow-right" @click="arrowRight(scope.row)"></i>
-                  <i
-                    class="el-icon-edit-outline"
-                    @click="openQbbDrawer(scope.row, scope.$index, 1)"
-                  ></i>
-                  <i class="el-icon-close" @click="delQbbDrawer(scope.$index)"></i>
+                  <el-tooltip content="加入信息模板" placement="top">
+                    <i class="el-icon-d-arrow-right" @click="arrowRight(scope.row)"></i>
+                  </el-tooltip>
+                  
+                  <el-tooltip content="编辑" placement="top">
+                    <i
+                      class="el-icon-edit-outline"
+                      @click="openQbbDrawer(scope.row, scope.$index, 1)"
+                    ></i>
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="top">
+                    <i class="el-icon-close" @click="delQbbDrawer(scope.$index)"></i>
+                  </el-tooltip>
                 </div>
               </template>
             </el-table-column>
-
           </el-table>
-          <!-- <div
-            v-for="(item, index) in contentList"
-            :key="index"
-            class="listBox"
-          >
-            <div class="indexBox">
-              <i
-                :class="index == 0 ? 'disabledClass' : ''"
-                class="el-icon-caret-top"
-                size="18"
-                style="cursor: pointer"
-                @click="moveTop(index, item)"
-              ></i>
-              <i
-                :class="contentList.length == index + 1 ? 'disabledClass' : ''"
-                class="el-icon-caret-bottom"
-                style="cursor: pointer"
-                @click="moveBottom(index, item)"
-              ></i>
-            </div>
-            <div class="con">
-              <div
-                style="background: black; position: relative"
-                :style="{
-                  color: getColorStyle(item.COLOR),
-                  fontSize: getFontSize(item.FONT_SIZE),
-                  fontFamily: item.FONT,
-                  width: getScreenSize(form.devicePixel, 'width') + 'px',
-                  height: getScreenSize(form.devicePixel, 'height') + 'px',
-                }"
-              >
-                <span
-                  :style="{
-                    left: getCoordinate(
-                      item.COORDINATE.substring(0, 3),
-                      'left'
-                    ),
-                    top: getCoordinate(item.COORDINATE.substring(3, 6), 'top'),
-                  }"
-                  style="position: absolute; line-height: 1"
-                  v-html="
-                    item.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
-                      / /g,
-                      ' &nbsp'
-                    )
-                  "
-                ></span>
-              </div>
-            </div>
-            <div class="menuBox">
-              <i class="el-icon-d-arrow-right" @click="arrowRight(item)"></i>
-              <i
-                class="el-icon-edit-outline"
-                @click="openQbbDrawer(item, index, 1)"
-              ></i>
-              <i class="el-icon-close" @click="delQbbDrawer(index)"></i>
-            </div>
-          </div> -->
         </div>
       </el-col>
       <el-col :span="10" style="border-left: 1px solid #05afe3">
         <div class="bigTitle">
-          <span>信息模板</span
-          ><span v-if="form.devicePixel">【 {{ form.devicePixel }}】</span>
-        </div>
-
-        <div class="templateBox">
+          <div>
+            <span>信息模板</span>
+            <span v-if="form.devicePixel">【 {{ form.devicePixel }}】</span>
+          </div>
           <div class="controlBox">
             <el-button type="primary" @click="openDialogVisible(2, 2)"
               >添加模板</el-button
             >
           </div>
-          <el-collapse v-model="activeNames">
+        </div>
+
+        <div class="templateBox">
+          
+          <el-collapse v-model="activeNames"
+          >
             <el-collapse-item
               v-for="(item, index) in iotTemplateCategoryList"
               :key="index"
@@ -252,7 +210,6 @@
               <div
                 v-for="(itm, indx) in item.list"
                 :key="indx"
-                v-if="item.list.length>0"
                 class="con"
                 :style="{
                   'font-size': getFontSize(
@@ -284,7 +241,7 @@
                           itm.screenSize
                         ),
                       }"
-                      style="position: absolute;line-height: 1;"
+                      class="boardTextStyle"
                       v-html="
                         itm.tcontents[0].content
                           .replace(/\n|\r\n/g, '<br>')
@@ -294,21 +251,32 @@
                   </div>
                 </div>
                 <div class="menuBox">
-                  <i
-                    class="el-icon-d-arrow-left"
-                    @click="arrowLeft(itm)"
-                    :class="
-                      disabledButton || itm.screenSize != form.devicePixel
-                        ? 'disabledClass'
-                        : ''
-                    "
-                    style="cursor: pointer"
-                  ></i>
-
-                  <i
-                    class="el-icon-edit-outline"
-                    @click="editOutline(itm, indx, 2)"
-                  ></i>
+                  <el-tooltip content="加入待下发信息" placement="top">
+                    <i
+                      class="el-icon-d-arrow-left"
+                      @click="arrowLeft(itm)"
+                      :class="
+                        disabledButton && !form.devicePixel
+                          ? 'disabledClass'
+                          : ''
+                      "
+                      style="cursor: pointer"
+                    ></i>
+                  </el-tooltip>
+                  <el-tooltip content="编辑" placement="top">
+                    <i
+                      class="el-icon-edit-outline"
+                      @click="editOutline(itm, indx, 2)"
+                    ></i>
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="top">
+                    <i
+                      class="el-icon-delete"
+                      @click="handleDelete(itm)"
+                    ></i>
+                  </el-tooltip>
+                  
+                  
                 </div>
               </div>
             </el-collapse-item>
@@ -331,12 +299,15 @@
   </div>
 </template>
 <script>
+import Treeselect from "@riophae/vue-treeselect";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
 import Sortable from 'sortablejs';
 import addinfo from "./addinfo";
 import editInfo from "./editInfo";
 import boardData from "./boardData";
 import { getUserDeptId } from "@/api/system/user";
-import { listDept, getTreeByDeptId } from "@/api/system/dept";
+import { listDept, getTreeByDeptId, treeselectExcYG1 } from "@/api/system/dept";
 import {
   listTunnels,
   devicessize,
@@ -351,6 +322,7 @@ import {
   addTemplate,
   addTemplateContent,
   getBoardContent,
+  deleteTemplate
 } from "@/api/board/template";
 const cityOptions = ["上海", "北京", "广州", "深圳"];
 export default {
@@ -358,17 +330,19 @@ export default {
   components: {
     addinfo,
     editInfo,
+    Treeselect
   },
   dicts: ["iot_board_direction"],
 
   data() {
     return {
+      disabledCheckbox:true,
       loading:false,
-      submitButton:true,
-      iotBoardActive: "",
+      submitButton:false,
+      iotBoardActive: 0,
       iotBoardList: [],
       boardDirectionList: [],
-      siteList: null,
+      siteList: [],
       userQueryParams: {
         userName: this.$store.state.user.name,
       },
@@ -408,7 +382,7 @@ export default {
       itemStr: "",
       supplier: null,
       dialogVisible: false,
-      activeNames: "0",
+      activeNames: [],
       iotTemplateCategoryList: [],
       checkAll: true,
       isIndeterminate: false,
@@ -418,18 +392,15 @@ export default {
   },
   created() {
     this.getUserDept();
-    // this.getDeptList();
-    // this.allVmsTemplate();
     this.getDicts("iot_template_category").then((res) => {
       this.iotTemplateCategoryList = res.data;
       console.log(this.iotTemplateCategoryList, "this.iotTemplateCategoryList");
-      this.allVmsTemplate();
     });
   },
   mounted() {
     this.rowDrop()
-    // this.columnDrop()
   },
+ 
   methods: {
     // 行拖拽
     rowDrop() {
@@ -468,37 +439,29 @@ export default {
           });
         }
         a(options);
+        console.log(childs,"childschilds")
         if (childs.length == 0) {
           this.siteList = options[0].children;
         } else {
-          this.siteList = childs;
+            this.siteList = childs;
         }
-        let arr = [];
-        // console.log(this.siteList,"this.siteListthis.siteList")
-        this.checkData(this.siteList[0], arr);
+        this.checkData(childs[0]);
       });
     },
-    checkData(obj, arr) {
+    checkData(obj) {
       if (obj.children && obj.children.length > 0) {
-        arr.push(obj.id);
-        this.checkData(obj.children[0], arr);
+        this.checkData(obj.children[0]);
       } else {
-        arr.push(obj.id);
-        arr.shift();
-        this.changeSite(arr);
-        this.$forceUpdate();
+        this.changeSite(obj);
+        this.form.deptId = obj.id
       }
     },
     // 改变站点
     changeSite(index) {
+      this.changeMechanism(index.id)
+      this.form.tunnel = ''
       this.positionList = [];
       this.boardDirectionList = [];
-      // console.log(index, "index------------------------1");
-      if (index) {
-        this.form.deptId = index[index.length - 1];
-        // console.log(this.form.deptId,"this.form.deptId")
-        this.changeMechanism(this.form.deptId);
-      }
     },
     // 通过所属机构查隧道
     changeMechanism(val) {
@@ -539,7 +502,12 @@ export default {
       };
       getIotBoardList(param).then((res) => {
         console.log(res, "查询情报板设备列表");
+        console.log(this.checkAll,"checkAllcheckAllcheckAllcheckAll")
         this.iotBoardList = res.data;
+        this.checkAll = false;
+        this.iotBoardActive = res.data[0].devicePixel
+        this.handleChange(res.data[0].devicePixel)
+        let arr = ['0','1','2','3','4','5']
         this.$forceUpdate();
       });
     },
@@ -660,10 +628,33 @@ export default {
       console.log(this.showEmit, "this.showEmit");
       this.showEmit = true;
     },
-
+    /** 删除按钮操作 */
+    handleDelete(row) {
+      const ids = row.id || this.ids;
+      let content = '是否确认删除选中数据项?'
+      if(ids == null || ids == undefined || ids == [] || ids == '') {
+        content = '是否确认删除当前情报板模板?'
+      }
+      this.$confirm(
+        content,
+        "警告",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(function () {
+          return deleteTemplate(ids);
+        })
+        .then(() => {
+          this.allVmsTemplate();
+          this.$modal.msgSuccess("删除成功");
+        });
+    },
     // 情报板管理右侧查询接口
     allVmsTemplate() {
-      // alert(1)
+      // this.activeNames = []
       const param = {
         devicePixel: this.form.devicePixel,
       };
@@ -674,6 +665,7 @@ export default {
           let arr = this.iotTemplateCategoryList[j];
           let brr = data[j];
           arr.list = brr;
+          this.activeNames.push(j.toString())
         }
         this.$forceUpdate();
         console.log(this.iotTemplateCategoryList,"新模板")
@@ -751,21 +743,32 @@ export default {
     // 打开添加信息弹窗
     openDialogVisible(type, mode) {
       // this.devicePixel = this.form.devicePixel
-      if (type == 1) {
+      // if (type == 1) {
         this.$refs.addinfo.init(this.form.devicePixel, type, mode);
-      } else {
-        this.$refs.addinfo.init(this.devicePixelMode, type, mode);
-      }
+      // } else {
+        // this.$refs.addinfo.init(this.devicePixelMode, type, mode);
+      // }
       console.log(this.form.devicePixel, "this.devicePixelthis.devicePixel");
     },
 
     handleCheckAllChange(val) {
+      if(val){
+        this.disabledCheckbox = false
+      }else{
+        this.disabledCheckbox = true
+      }
       this.checkedCities = val ? this.deviceList : [];
     },
     handleCheckedCitiesChange(value) {
-      console.log(value)
+      
       this.checkboxValue = value;
       let val = JSON.parse(JSON.stringify(value));
+      if(val.length>0){
+        this.disabledCheckbox = false
+      }else{
+        this.disabledCheckbox = true
+      }
+      this.$forceUpdate()
       for (let itm of this.deviceList) {
         if (val.indexOf(itm) > -1) {
           this.checkAll = true;
@@ -775,6 +778,7 @@ export default {
       }
     },
     handleChange(val) {
+      console.log(val,"情报板列表手风琴")
       this.contentList = [];
       this.deviceList = [];
       this.checkboxList = [];
@@ -834,7 +838,7 @@ export default {
     },
 
     async onSubmit(deviceId) {
-      this.submitButton = false
+      this.submitButton = true
       this.loading = true
       this.contentList = [];
       // 获取情报板修改页面信息
@@ -859,6 +863,8 @@ export default {
           typeof protocolType == "undefined"
         ) {
           this.$message(response.msg);
+          this.getDeptList()
+          this.$forceUpdate();
           return;
         }
         this.supplier = protocolType;
@@ -881,12 +887,15 @@ export default {
         }
         // this.allVmsTemplate();
         console.log(this.contentList, "this.contentList");
-        this.submitButton = true
+        this.submitButton = false
         this.loading = false
 
         this.$forceUpdate();
       }).catch((e)=>{
-        this.$message.error(`设备网络连接异常，请稍后重试`);
+        this.getDeptList()
+        this.$forceUpdate();
+        this.$message.error(`设备网络连接异常，请稍后重试...`);
+
 
       })
       getBoardInfo(deviceId).then((res) => {
@@ -919,7 +928,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "GreenYellow";
       } else if (font == "蓝色") {
         return "blue";
       } else {
@@ -1056,6 +1065,7 @@ export default {
       border-bottom: 1px solid #05afe3;
       margin-bottom: 10px;
       display: flex;
+      justify-content: space-between;
     }
     .contentBox {
       width: 100%;
@@ -1109,6 +1119,8 @@ export default {
             font-size: 24px;
             color: #666;
             cursor: pointer;
+            caret-color: rgba(0,0,0,0);
+            user-select: none;
           }
         }
       // }
@@ -1153,6 +1165,10 @@ export default {
           i {
             font-size: 24px;
             color: #666;
+            padding-left: 4px;
+            cursor: pointer;
+            caret-color: rgba(0,0,0,0);
+            user-select: none;
           }
           .disabledClass {
             pointer-events: none;
@@ -1186,6 +1202,7 @@ export default {
 }
 ::v-deep .el-collapse-item__content {
   line-height: normal;
+  padding-bottom: 0px;
 }
 ::v-deep .el-checkbox__label {
   display: flex !important;
@@ -1199,9 +1216,32 @@ export default {
 ::v-deep .el-table {
   tr{
     background: #004375 !important;
+    margin-top: 4px;
   }
   thead{
     display: none;
   }
+}
+::v-deep .vue-treeselect__control {
+  height: 3vh;
+}
+::v-deep .vue-treeselect__placeholder,
+.vue-treeselect__single-value {
+  line-height: 3vh;
+}
+.huiduButton{
+  background: transparent;
+  border: none;
+  height: 19px;
+  line-height: 20px;
+  padding: 0;
+  color: #fff;
+  font-size: 16px;
+}
+.boardTextStyle{
+  position: absolute;
+  line-height: 1;
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
 }
 </style>

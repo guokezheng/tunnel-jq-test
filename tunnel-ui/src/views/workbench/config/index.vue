@@ -1007,7 +1007,7 @@
               </el-row>
             </vue-seamless-scroll>
           </div>
-
+          
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -4461,7 +4461,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "GreenYellow";
       } else if (font == "蓝色") {
         return "blue";
       } else {

@@ -169,7 +169,7 @@
                 </el-form-item>
               </el-col> -->
               <el-col :span="8">
-                <el-form-item prop="STAY" label="停留时间">
+                <el-form-item prop="STAY" label="停留时间(秒)">
                   <el-input-number
                     :min="0"
                     controls-position="right"

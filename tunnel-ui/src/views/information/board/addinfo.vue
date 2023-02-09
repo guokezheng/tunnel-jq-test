@@ -27,7 +27,6 @@
           class="blackBoard"
         >
           <span
-            style="line-height: 1; white-space: nowrap;position: absolute;"
             :style="{
               color: dataForm.COLOR,
               fontSize: dataForm.FONT_SIZE,
@@ -36,7 +35,7 @@
               left: dataForm.COORDINATE.substring(0, 3) + 'px',
               top: dataForm.COORDINATE.substring(3, 6) + 'px',
             }"
-            class="textBoard"
+            class="textBoard boardTextStyle"
             v-html="
               dataForm.CONTENT.replace(/\n|\r\n/g, '<br>').replace(
                 / /g,
@@ -266,7 +265,7 @@
               </el-form-item>
             </el-col> -->
             <el-col :span="8">
-              <el-form-item prop="STAY" label="停留时间">
+              <el-form-item prop="STAY" label="停留时间(秒)">
                 <el-input-number
                   :min="0"
                   controls-position="right"
@@ -980,7 +979,7 @@ export default {
       } else if (font == "红色") {
         return "red";
       } else if (font == "绿色") {
-        return "green";
+        return "GreenYellow";
       } else if (font == "蓝色") {
         return "blue";
       }else{
@@ -1154,5 +1153,11 @@ export default {
 .infoBoardButton {
   display: flex;
   justify-content: left;
+}
+.boardTextStyle{
+  position: absolute;
+  line-height: 1;
+  caret-color: rgba(0,0,0,0);
+  user-select: none;
 }
 </style>

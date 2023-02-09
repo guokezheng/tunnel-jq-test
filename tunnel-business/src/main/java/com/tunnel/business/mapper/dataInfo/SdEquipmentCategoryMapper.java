@@ -61,6 +61,8 @@ public interface SdEquipmentCategoryMapper
      */
     public int deleteSdEquipmentCategoryByIds(Long[] ids);
 
-    List<SdEquipmentCategoryDto> getAllEquipmentCategory();
+    List<SdEquipmentCategoryDto> getCategoryDeviceList(String tunnelId);
+
+    List<SdEquipmentCategoryDto> getCategoryList(String tunnelId);
 
 }

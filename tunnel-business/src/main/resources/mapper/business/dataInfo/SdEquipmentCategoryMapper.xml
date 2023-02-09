@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tunnel.business.mapper.dataInfo.SdEquipmentCategoryMapper">
-    
+
     <resultMap type="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" id="SdEquipmentCategoryResult">
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
@@ -20,17 +20,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSdEquipmentCategoryList" parameterType="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" resultMap="SdEquipmentCategoryResult">
         <include refid="selectSdEquipmentCategoryVo"/>
-        <where>  
+        <where>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="isControl != null  and isControl != ''"> and is_control = #{isControl}</if>
         </where>
     </select>
-    
+
     <select id="selectSdEquipmentCategoryById" parameterType="Long" resultMap="SdEquipmentCategoryResult">
         <include refid="selectSdEquipmentCategoryVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSdEquipmentCategory" parameterType="com.tunnel.business.domain.dataInfo.SdEquipmentCategory" useGeneratedKeys="true" keyProperty="id">
         insert into sd_equipment_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -69,17 +69,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSdEquipmentCategoryByIds" parameterType="String">
-        delete from sd_equipment_category where id in 
+        delete from sd_equipment_category where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
 
-    <select id="getAllEquipmentCategory" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
-        select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec
+    <select id="getCategoryDeviceList" parameterType="String" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
+        select ec.id as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec where ec.is_control=1
         union
-        select concat('et_',et.type_id) as id,et.type_name as name,concat('ec_',et.eq_category) as parentId from sd_equipment_type et
+        select d.eq_id as id,d.eq_name as name,d.f_eq_type as parentId from sd_devices d left join sd_equipment_type et on d.eq_type=et.type_id
+        where d.eq_tunnel_id = #{tunnelId} and et.is_control=1
+    </select>
+
+    <select id="getCategoryList" parameterType="String" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
+        select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec where ec.is_control=1
         union
-        select d.eq_id as id,d.eq_name as name,concat('et_',d.eq_type) as parentId from sd_devices d where d.eq_tunnel_id='JQ-WeiFang-JiuLongYu-HSD'
+        select et.type_id as id,et.type_name as name,concat('ec_',et.eq_category) as parentId from sd_equipment_type et where et.is_control=1
     </select>
 </mapper>

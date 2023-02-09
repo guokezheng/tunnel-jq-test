@@ -61,7 +61,10 @@ public interface ISdEquipmentCategoryService {
      */
     public int deleteSdEquipmentCategoryById(Long id);
 
-    List<SdEquipmentCategoryDto> getAllEquipmentCategory();
+    List<SdEquipmentCategoryDto> getCategoryDeviceList(String tunnelId);
+
+    List<SdEquipmentCategoryDto> getCategoryList(String tunnelId);
+
 
     /**
      * 构建前端所需要树结构

@@ -89,20 +89,36 @@ public class SdEquipmentCategoryController extends BaseController {
     }
 
     /**
-     *
+     * 设备类型树结构
+     * 二级：大类---设备
+     * @param tunnelId 隧道ID
      * @return
      */
-    @GetMapping(value = "/getCategoryTree")
-    public AjaxResult getCategoryTree() {
-        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getAllEquipmentCategory();
+    @GetMapping(value = "/getCategoryDeviceTree")
+    public AjaxResult getCategoryDeviceTree(@RequestParam String tunnelId) {
+        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryDeviceList(tunnelId);
 
-        List<TreeCategorySelect> treeCategorySelects = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
+        List<TreeCategorySelect> treeCategoryDevice = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
 
-        return AjaxResult.success(treeCategorySelects);
+        return AjaxResult.success(treeCategoryDevice);
     }
 
 
+    /**
+     * 设备类型树结构
+     *
+     * 二级：大类---小类
+     * @param tunnelId 隧道ID
+     * @return
+     */
+    @GetMapping(value = "/getCategoryTree")
+    public AjaxResult getCategoryTree(@RequestParam String tunnelId) {
+        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList(tunnelId);
 
+        List<TreeCategorySelect> treeCategory = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
+
+        return AjaxResult.success(treeCategory);
+    }
 
 
 

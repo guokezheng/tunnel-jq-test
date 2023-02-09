@@ -67,6 +67,16 @@ public class IotBoardReleaseLog extends BaseEntity
 
     private List<String> paramsList;
 
+    private String pile;
+
+    public String getPile() {
+        return pile;
+    }
+
+    public void setPile(String pile) {
+        this.pile = pile;
+    }
+
     public List<String> getParamsList() {
         return paramsList;
     }

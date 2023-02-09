@@ -587,7 +587,7 @@ export default {
               ) {
                 //无法控制设备状态的设备类型，比如PLC、摄像机
                 let arr = [
-                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35,
+                  5, 14, 17, 18, 19, 20, 21, 23, 24, 25, 28, 29, 32, 33, 35, 22, 40, 39, 48, 45
                 ];
                 if (arr.includes(deviceData.eqType)) {
                   if (
@@ -604,7 +604,7 @@ export default {
                           parseFloat(deviceData.CO).toFixed(2) +
                           "/PPM  VI:" +
                           parseFloat(deviceData.VI).toFixed(2) +
-                          "KM";
+                          "M";
                       } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
                           parseFloat(deviceData.FS).toFixed(2) +

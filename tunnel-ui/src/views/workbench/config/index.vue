@@ -297,7 +297,7 @@
 
                     <el-tooltip
                       effect="dark"
-                      
+
                       placement="right"
                       :title="item.pile"
                       :disabled="sensorDisabledTwo(item)"
@@ -1007,7 +1007,7 @@
               </el-row>
             </vue-seamless-scroll>
           </div>
-          
+
         </div>
       </div>
       <!-- <div class="footer" v-show="displayThumbnail == false"></div> -->
@@ -6841,7 +6841,7 @@ export default {
                           parseFloat(deviceData.CO).toFixed(2) +
                           "/PPM  VI:" +
                           parseFloat(deviceData.VI).toFixed(2) +
-                          "KM";
+                          "M";
                       } else if (deviceData.eqType == 17) {
                         this.selectedIconList[j].num =
                           parseFloat(deviceData.FS).toFixed(2) +

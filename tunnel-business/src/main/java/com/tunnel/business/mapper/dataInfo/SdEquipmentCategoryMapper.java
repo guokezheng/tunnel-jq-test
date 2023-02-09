@@ -63,6 +63,6 @@ public interface SdEquipmentCategoryMapper
 
     List<SdEquipmentCategoryDto> getCategoryDeviceList(String tunnelId);
 
-    List<SdEquipmentCategoryDto> getCategoryList(String tunnelId);
+    List<SdEquipmentCategoryDto> getCategoryList();
 
 }

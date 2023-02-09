@@ -106,14 +106,12 @@ public class SdEquipmentCategoryController extends BaseController {
 
     /**
      * 设备类型树结构
-     *
      * 二级：大类---小类
-     * @param tunnelId 隧道ID
      * @return
      */
     @GetMapping(value = "/getCategoryTree")
-    public AjaxResult getCategoryTree(@RequestParam String tunnelId) {
-        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList(tunnelId);
+    public AjaxResult getCategoryTree() {
+        List<SdEquipmentCategoryDto> list = sdEquipmentCategoryService.getCategoryList();
 
         List<TreeCategorySelect> treeCategory = sdEquipmentCategoryService.buildCategoryTreeSelect(list);
 

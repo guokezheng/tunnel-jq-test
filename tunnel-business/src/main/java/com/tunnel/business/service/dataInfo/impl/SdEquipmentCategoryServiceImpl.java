@@ -100,8 +100,8 @@ public class SdEquipmentCategoryServiceImpl implements ISdEquipmentCategoryServi
     }
 
     @Override
-    public List<SdEquipmentCategoryDto> getCategoryList(String tunnelId) {
-        return sdEquipmentCategoryMapper.getCategoryList(tunnelId);
+    public List<SdEquipmentCategoryDto> getCategoryList() {
+        return sdEquipmentCategoryMapper.getCategoryList();
     }
 
     /**

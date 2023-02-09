@@ -3,8 +3,15 @@ package com.tunnel.platform.controller.sso;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDeptSg;
 import com.ruoyi.system.mapper.SysDeptSgMapper;
+import com.tunnel.business.domain.dataInfo.SdDevices;
+import com.tunnel.business.domain.dataInfo.SdEquipmentType;
+import com.tunnel.business.mapper.dataInfo.SdDevicesMapper;
+import com.tunnel.business.mapper.dataInfo.SdEquipmentTypeMapper;
 import com.tunnel.platform.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +21,8 @@ import java.util.Map;
  * 用于同步集团数据库数据的控制器
  * 暂时不对外开放
  */
-// @RestController
-// @RequestMapping(value = "/syncData")
+@RestController
+@RequestMapping(value = "/syncData")
 public class SyncDataController {
 
     @Autowired
@@ -78,4 +85,34 @@ public class SyncDataController {
 
         return AjaxResult.success("部门数据同步完成");
     }
+
+    @Autowired
+    private SdDevicesMapper sdDevicesMapper;
+    @Autowired
+    private SdEquipmentTypeMapper sdEquipmentTypeMapper;
+
+
+    /**
+     * 同步设备表————————父设备类型
+     */
+    @GetMapping(value = "/synDeviceFeqType")
+    public void synDeviceFeqType() {
+        // 1、查询所有设备
+        List<SdDevices> list = sdDevicesMapper.selectAll();
+        // 2、遍历设备获取设备类型
+        for (SdDevices devices : list) {
+            Long eqType = devices.getEqType();
+            SdEquipmentType sdEquipmentType = sdEquipmentTypeMapper.selectSdEquipmentTypeById(eqType);
+            // 3、根据设备类型获取父设备类型
+            Long eqCategory = sdEquipmentType.getEqCategory();
+            if (null != eqCategory) {
+                // 4、给当前遍历设备的父设备类型字段 fEqType赋值
+                devices.setfEqType(eqCategory);
+            }
+            // 5、执行更新
+            sdDevicesMapper.updateSdDevices(devices);
+        }
+    }
+
+
 }

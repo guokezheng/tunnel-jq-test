@@ -82,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where d.eq_tunnel_id = #{tunnelId} and et.is_control=1
     </select>
 
-    <select id="getCategoryList" parameterType="String" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
+    <select id="getCategoryList" resultType="com.ruoyi.common.core.domain.SdEquipmentCategoryDto">
         select concat('ec_',ec.id) as id,ec.`name`,ec.parent_id as parentId from  sd_equipment_category ec where ec.is_control=1
         union
         select et.type_id as id,et.type_name as name,concat('ec_',et.eq_category) as parentId from sd_equipment_type et where et.is_control=1
